@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4THWALL® — AI Services</title>
+<meta name="description" content="4THWALL deploys AI across the full stack of how your business operates — communications, scheduling, marketing, automation, and custom systems. Based in Greenwich, CT.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg:      #111110;
+  --bg-2:    #171716;
+  --bg-3:    #1d1d1c;
+  --line:    rgba(255,255,255,0.07);
+  --line-2:  rgba(255,255,255,0.04);
+  --white:   #f4f2ee;
+  --off:     rgba(244,242,238,0.5);
+  --dim:     rgba(244,242,238,0.25);
+  --gold:    #c8a045;
+  --gold-2:  rgba(200,160,69,0.12);
+  --font:    'Inter',-apple-system,sans-serif;
+  --pad:     clamp(1.25rem,4.5vw,4rem);
+  --max:     1200px;
+}
+
+html { scroll-behavior:smooth }
+body {
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--white);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  letter-spacing:-0.02em;
+}
+a { text-decoration:none; color:inherit }
+img { display:block; max-width:100% }
+.wrap { max-width:var(--max); margin:0 auto; padding:0 var(--pad) }
+
+/* ── PILLS ─────────────────────────────────────────────── */
+.pill {
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:13px 24px; border-radius:50px;
+  font-size:.7rem; font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase;
+  cursor:pointer; white-space:nowrap;
+  transition:opacity .2s, background .2s, color .2s, border-color .2s;
+}
+.pill-white  { background:var(--white); color:var(--bg) }
+.pill-white:hover { opacity:.88 }
+.pill-ghost  { background:transparent; color:var(--off); border:1px solid var(--line) }
+.pill-ghost:hover { border-color:rgba(255,255,255,.25); color:var(--white) }
+.pill-gold   { background:var(--gold); color:var(--bg) }
+.pill-gold:hover { opacity:.88 }
+
+/* ── NAV ───────────────────────────────────────────────── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:300;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.35rem var(--pad);
+  border-bottom:1px solid var(--line-2);
+  background:rgba(17,17,16,0.88);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.nav-logo { font-size:.8rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase }
+.nav-logo sup { color:var(--gold); font-size:.48rem; vertical-align:super }
+.nav-links { display:flex; align-items:center; gap:2rem }
+.nav-a { font-size:.67rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--off); transition:color .2s }
+.nav-a:hover { color:var(--white) }
+@media(max-width:700px){ .nav-links .nav-a { display:none } }
+
+/* ── HERO ──────────────────────────────────────────────── */
+.hero {
+  min-height:100svh;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:0 var(--pad); position:relative; overflow:hidden;
+}
+.hero-ghost {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  font-size:clamp(7rem,21vw,21rem); font-weight:900;
+  letter-spacing:-.06em; line-height:1;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,0.032);
+  pointer-events:none; user-select:none; white-space:nowrap;
+}
+.hero-body {
+  position:relative; z-index:2;
+  padding-top:9rem; padding-bottom:2rem;
+  flex:1; display:flex; flex-direction:column; justify-content:flex-end;
+}
+.hero-eyebrow {
+  display:flex; flex-wrap:wrap; gap:.45rem; margin-bottom:2.25rem;
+}
+.etag {
+  font-size:.6rem; font-weight:500; letter-spacing:.16em;
+  text-transform:uppercase; padding:.3rem .85rem;
+  border-radius:50px; border:1px solid var(--line); color:var(--dim);
+}
+.hero-h {
+  font-size:clamp(2.8rem,7vw,6.8rem);
+  font-weight:600; letter-spacing:-.045em; line-height:1.02;
+  color:var(--white); max-width:900px; margin-bottom:2.75rem;
+}
+.hero-h em { font-style:normal; color:var(--off) }
+.hero-lower {
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:2rem; flex-wrap:wrap; padding-bottom:2.5rem;
+}
+.hero-sub { font-size:.88rem; font-weight:400; line-height:1.8; color:var(--off); max-width:400px }
+.hero-cta  { display:flex; align-items:center; gap:1rem; flex-shrink:0 }
+.hero-foot {
+  border-top:1px solid var(--line); padding:1.2rem 0;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:.75rem;
+}
+.hero-foot-items { display:flex; gap:2.5rem; flex-wrap:wrap }
+.hero-foot-items span { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim) }
+.hero-stamp { font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim) }
+
+/* ── TICKER ────────────────────────────────────────────── */
+.ticker {
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  background:var(--bg-2); padding:1.05rem 0; overflow:hidden;
+}
+.ticker-track {
+  display:flex; width:max-content; gap:3rem;
+  animation:tick 28s linear infinite;
+}
+.ticker-track span { font-size:.62rem; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); white-space:nowrap; flex-shrink:0 }
+.ticker-track .sep { color:var(--gold); font-size:.45rem }
+@keyframes tick { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ── SECTION BASE ──────────────────────────────────────── */
+.s { padding:5.5rem 0 }
+.s-label { font-size:.6rem; font-weight:500; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); margin-bottom:.65rem }
+.s-h {
+  font-size:clamp(2.4rem,5vw,5rem);
+  font-weight:600; letter-spacing:-.04em; line-height:1.03; color:var(--white);
+}
+.s-h em { font-style:normal; color:var(--off) }
+.s-note { font-size:.85rem; line-height:1.8; color:var(--off); max-width:38rem; margin-top:.9rem }
+.s-meta {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:3rem; margin-bottom:4rem; flex-wrap:wrap;
+}
+.s-count { font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); padding-top:.2rem }
+
+/* ── CAPABILITIES LIST ─────────────────────────────────── */
+.cap-list { border-top:1px solid var(--line) }
+.cap-row {
+  display:grid; grid-template-columns:4rem 1fr 1fr auto;
+  gap:2rem; align-items:start; padding:2.2rem 0;
+  border-bottom:1px solid var(--line);
+  transition:background .15s; cursor:default;
+}
+.cap-row:hover { background:rgba(255,255,255,.02); margin:0 -1.25rem; padding-left:1.25rem; padding-right:1.25rem }
+.cap-n { font-size:.6rem; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); padding-top:.15rem }
+.cap-title { font-size:clamp(1.15rem,2.2vw,1.8rem); font-weight:600; letter-spacing:-.03em; line-height:1.2; color:var(--white) }
+.cap-desc  { font-size:.8rem; line-height:1.8; color:var(--off) }
+.cap-arrow { color:var(--dim); font-size:1.05rem; padding-top:.2rem; transition:transform .2s, color .2s }
+.cap-row:hover .cap-arrow { transform:translate(3px,-3px); color:var(--white) }
+@media(max-width:780px){ .cap-row{grid-template-columns:3rem 1fr auto} .cap-desc{display:none} }
+
+/* ── 3×2 IMPACT GRID ───────────────────────────────────── */
+.spread {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--line); border:1px solid var(--line); margin-top:4rem;
+}
+.spread-card { background:var(--bg); padding:2.25rem 2rem; transition:background .2s }
+.spread-card:hover { background:var(--bg-2) }
+.sc-q { font-size:clamp(1rem,1.8vw,1.3rem); font-weight:600; letter-spacing:-.03em; line-height:1.3; color:var(--white); margin-bottom:1rem }
+.sc-a { font-size:.78rem; line-height:1.75; color:var(--off) }
+@media(max-width:780px){ .spread{grid-template-columns:1fr} }
+
+/* ── STATS BAR ─────────────────────────────────────────── */
+.stats-band { background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line) }
+.stats-row  { display:grid; grid-template-columns:repeat(4,1fr) }
+.stat       { padding:2.75rem 2rem; border-right:1px solid var(--line) }
+.stat:last-child { border-right:none }
+.stat-n { font-size:clamp(2rem,4.5vw,3.8rem); font-weight:700; letter-spacing:-.05em; line-height:1; margin-bottom:.55rem }
+.stat-l { font-size:.75rem; line-height:1.65; color:var(--off) }
+@media(max-width:800px){
+  .stats-row { grid-template-columns:repeat(2,1fr) }
+  .stat:nth-child(2){ border-right:none }
+  .stat:nth-child(1),.stat:nth-child(2){ border-bottom:1px solid var(--line) }
+}
+@media(max-width:440px){
+  .stats-row{grid-template-columns:1fr}
+  .stat{border-right:none!important;border-bottom:1px solid var(--line)}
+  .stat:last-child{border-bottom:none}
+}
+
+/* ── MARKET INTELLIGENCE SECTION ──────────────────────── */
+.market-section { background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line) }
+
+/* Top row: pull quote left, data points right */
+.market-top {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:5rem; align-items:start; padding-bottom:4rem;
+  border-bottom:1px solid var(--line); margin-bottom:4rem;
+}
+.market-pull {
+  font-size:clamp(1.8rem,3.5vw,3.2rem);
+  font-weight:600; letter-spacing:-.04em; line-height:1.18;
+  margin-bottom:1.5rem; color:var(--white);
+}
+.market-pull em { font-style:normal; color:var(--off) }
+.market-body { font-size:.85rem; line-height:1.85; color:var(--off); margin-bottom:2rem }
+.market-data { display:flex; flex-direction:column; gap:0 }
+.mdata-row {
+  display:grid; grid-template-columns:auto 1fr;
+  gap:1.5rem; align-items:baseline;
+  padding:1.2rem 0; border-bottom:1px solid var(--line);
+}
+.mdata-row:first-child { border-top:1px solid var(--line) }
+.mdata-n { font-size:clamp(1.6rem,3vw,2.6rem); font-weight:700; letter-spacing:-.05em; color:var(--white); white-space:nowrap }
+.mdata-l { font-size:.78rem; line-height:1.6; color:var(--off) }
+
+/* Bottom row: scope grid */
+.market-scope-label { margin-bottom:1.5rem }
+.scope-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--line); border:1px solid var(--line);
+}
+.scope-cell {
+  background:var(--bg); padding:1.15rem 1.3rem;
+  transition:background .2s;
+}
+.scope-cell:hover { background:var(--bg-3); }
+.scope-cell strong {
+  display:block; font-size:.58rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--dim); margin-bottom:.35rem; font-weight:500;
+}
+.scope-cell span { font-size:.77rem; line-height:1.55; color:var(--off) }
+
+@media(max-width:800px){ .market-top{grid-template-columns:1fr;gap:3rem} }
+@media(max-width:600px){ .scope-grid{grid-template-columns:repeat(2,1fr)} }
+@media(max-width:400px){ .scope-grid{grid-template-columns:1fr} }
+
+/* ── HOW IT STARTS ─────────────────────────────────────── */
+.ramp { border:1px solid var(--line); margin-top:4rem }
+.ramp-row { display:grid; grid-template-columns:7rem 1fr; border-bottom:1px solid var(--line) }
+.ramp-row:last-child { border-bottom:none }
+.ramp-time {
+  padding:2rem; border-right:1px solid var(--line);
+  font-size:.6rem; font-weight:700; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--gold);
+  display:flex; align-items:flex-start;
+}
+.ramp-content { padding:2rem }
+.ramp-title { font-size:.95rem; font-weight:600; letter-spacing:-.02em; margin-bottom:.5rem }
+.ramp-desc  { font-size:.8rem; line-height:1.75; color:var(--off) }
+@media(max-width:600px){
+  .ramp-row { grid-template-columns:1fr }
+  .ramp-time { border-right:none; border-bottom:1px solid var(--line); padding:.9rem 1.25rem }
+  .ramp-content { padding:1.25rem }
+}
+
+/* ── WHY ───────────────────────────────────────────────── */
+.why-split { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start }
+.why-pull {
+  font-size:clamp(1.4rem,2.7vw,2.2rem); font-weight:600;
+  letter-spacing:-.04em; line-height:1.3;
+  padding-left:1.2rem; border-left:2px solid var(--gold); margin-bottom:1.75rem;
+}
+.why-body { font-size:.85rem; line-height:1.85; color:var(--off) }
+.why-list  { display:flex; flex-direction:column; gap:0 }
+.why-card  {
+  display:flex; gap:1.15rem; align-items:flex-start;
+  padding:1.35rem 1.4rem; background:var(--bg);
+  border:1px solid var(--line); margin-bottom:-1px; transition:background .18s;
+}
+.why-card:hover { background:var(--bg-2) }
+.why-dot   {
+  width:1.5rem; height:1.5rem; border-radius:50%;
+  background:var(--gold-2); border:1px solid rgba(200,160,69,.22);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; font-size:.62rem; color:var(--gold);
+}
+.why-card-t { font-size:.82rem; font-weight:600; letter-spacing:-.01em; margin-bottom:.2rem }
+.why-card-d { font-size:.77rem; line-height:1.65; color:var(--off) }
+@media(max-width:800px){ .why-split{grid-template-columns:1fr;gap:3rem} }
+
+/* ── FAQ ───────────────────────────────────────────────── */
+.faq { border-top:1px solid var(--line); margin-top:4rem }
+.faq-item { border-bottom:1px solid var(--line) }
+.faq-btn {
+  width:100%; display:flex; align-items:center; justify-content:space-between;
+  gap:1.5rem; padding:1.4rem 0; background:none; border:none;
+  cursor:pointer; text-align:left; color:var(--white);
+}
+.faq-qt { font-size:.9rem; font-weight:500; letter-spacing:-.01em; line-height:1.4 }
+.faq-ic {
+  width:1.55rem; height:1.55rem; border-radius:50%;
+  border:1px solid var(--line); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--off); font-size:.9rem;
+  transition:transform .28s, border-color .28s, color .28s;
+}
+.faq-item.open .faq-ic { transform:rotate(45deg); border-color:var(--gold); color:var(--gold) }
+.faq-ans {
+  font-size:.82rem; line-height:1.8; color:var(--off);
+  max-height:0; overflow:hidden;
+  transition:max-height .35s ease, padding-bottom .35s;
+}
+.faq-item.open .faq-ans { max-height:240px; padding-bottom:1.4rem }
+
+/* ── CONTACT ───────────────────────────────────────────── */
+.contact-split { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start }
+.contact-h {
+  font-size:clamp(3rem,6.5vw,6.5rem);
+  font-weight:700; letter-spacing:-.055em; line-height:.96;
+  margin:1rem 0 1.5rem;
+}
+.contact-h em { font-style:normal; color:var(--off) }
+.contact-sub { font-size:.85rem; line-height:1.8; color:var(--off); margin-bottom:2.5rem }
+.contact-info { display:flex; flex-direction:column; gap:1.1rem }
+.ci   { display:flex; flex-direction:column; gap:.16rem }
+.ci-l { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim) }
+.ci-v { font-size:.85rem }
+.ci-v a { color:var(--gold); border-bottom:1px solid rgba(200,160,69,.2); transition:border-color .2s }
+.ci-v a:hover { border-color:var(--gold) }
+.form   { display:flex; flex-direction:column; gap:.85rem }
+.form-2 { display:grid; grid-template-columns:1fr 1fr; gap:.85rem }
+.fg     { display:flex; flex-direction:column; gap:.32rem }
+.fl     { font-size:.58rem; letter-spacing:.17em; text-transform:uppercase; color:var(--dim) }
+.fi,.fsel,.fta {
+  background:var(--bg-3); border:1px solid var(--line);
+  padding:.8rem 1rem; font-family:var(--font); font-size:.82rem;
+  color:var(--white); outline:none; transition:border-color .2s;
+  width:100%; -webkit-appearance:none; border-radius:0; letter-spacing:-.01em;
+}
+.fi::placeholder,.fta::placeholder { color:var(--dim) }
+.fi:focus,.fsel:focus,.fta:focus { border-color:rgba(200,160,69,.45) }
+.fsel { cursor:pointer }
+.fsel option { background:var(--bg-2) }
+.fta  { resize:vertical; min-height:95px }
+.fsub {
+  width:100%; padding:14px 24px; border-radius:50px; border:none;
+  background:var(--white); color:var(--bg);
+  font-family:var(--font); font-size:.7rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+  cursor:pointer; transition:opacity .2s; margin-top:.3rem;
+}
+.fsub:hover { opacity:.88 }
+@media(max-width:800px){ .contact-split{grid-template-columns:1fr;gap:3rem} .form-2{grid-template-columns:1fr} }
+
+/* ── FOOTER ────────────────────────────────────────────── */
+footer { border-top:1px solid var(--line); padding:3rem var(--pad) 1.5rem }
+.foot-top {
+  display:grid; grid-template-columns:1.3fr 1fr 1fr;
+  gap:3rem; padding-bottom:2.5rem;
+  border-bottom:1px solid var(--line); margin-bottom:1.5rem;
+}
+.foot-brand-n { font-size:.8rem; font-weight:800; letter-spacing:.18em; text-transform:uppercase; margin-bottom:.7rem }
+.foot-brand-n sup { color:var(--gold); font-size:.48rem }
+.foot-brand-p { font-size:.77rem; line-height:1.7; color:var(--dim) }
+.foot-col h4  { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-bottom:.85rem }
+.foot-col ul  { list-style:none; display:flex; flex-direction:column; gap:.5rem }
+.foot-col ul li a { font-size:.77rem; color:var(--off); transition:color .2s }
+.foot-col ul li a:hover { color:var(--white) }
+.foot-bot { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem }
+.foot-copy,.foot-loc { font-size:.68rem; color:var(--dim) }
+@media(max-width:700px){ .foot-top{grid-template-columns:1fr;gap:2rem} .foot-bot{flex-direction:column;align-items:flex-start} }
+
+/* ── REVEAL ────────────────────────────────────────────── */
+.r  { opacity:0; transform:translateY(18px); transition:opacity .65s cubic-bezier(.16,1,.3,1),transform .65s cubic-bezier(.16,1,.3,1) }
+.r.in { opacity:1; transform:none }
+.d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">4THWALL<sup>®</sup></a>
+  <div class="nav-links">
+    <a href="#capabilities" class="nav-a">What We Do</a>
+    <a href="#market"       class="nav-a">Our Market</a>
+    <a href="#how"          class="nav-a">How It Works</a>
+    <a href="#faq"          class="nav-a">FAQ</a>
+    <a href="#contact"      class="pill pill-white" style="padding:10px 20px;font-size:.63rem">Let's talk</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-ghost">4THWALL</div>
+  <div class="hero-body">
+    <div class="hero-eyebrow">
+      <span class="etag">AI Systems</span>
+      <span class="etag">Full Stack Deployment</span>
+      <span class="etag">Fully Managed</span>
+    </div>
+    <h1 class="hero-h">
+      We build the AI<br>
+      your business <em>should<br>
+      already have.</em>
+    </h1>
+    <div class="hero-lower">
+      <p class="hero-sub">
+        Communications, scheduling, marketing, automation, custom workflows —
+        deployed across the full stack of how your business runs.
+        Built by us. Managed by us. Compounding over time.
+      </p>
+      <div class="hero-cta">
+        <a href="#contact"      class="pill pill-white">Let's talk</a>
+        <a href="#capabilities" class="pill pill-ghost">What we do ↓</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <div class="hero-foot-items">
+      <span>AI Communications</span>
+      <span>Automation Systems</span>
+      <span>Custom Builds</span>
+      <span>Full Stack</span>
+    </div>
+    <span class="hero-stamp">Based in Greenwich, CT — Fairfield County &nbsp;©&nbsp;2026</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span>Communication AI</span><span class="sep">◆</span>
+    <span>Scheduling Systems</span><span class="sep">◆</span>
+    <span>Marketing Automation</span><span class="sep">◆</span>
+    <span>Custom AI Builds</span><span class="sep">◆</span>
+    <span>Workflow Automation</span><span class="sep">◆</span>
+    <span>Fully Managed</span><span class="sep">◆</span>
+    <span>Based in Greenwich CT</span><span class="sep">◆</span>
+    <span>Fairfield County</span><span class="sep">◆</span>
+    <!-- duplicate for seamless loop -->
+    <span>Communication AI</span><span class="sep">◆</span>
+    <span>Scheduling Systems</span><span class="sep">◆</span>
+    <span>Marketing Automation</span><span class="sep">◆</span>
+    <span>Custom AI Builds</span><span class="sep">◆</span>
+    <span>Workflow Automation</span><span class="sep">◆</span>
+    <span>Fully Managed</span><span class="sep">◆</span>
+    <span>Based in Greenwich CT</span><span class="sep">◆</span>
+    <span>Fairfield County</span><span class="sep">◆</span>
+  </div>
+</div>
+
+<!-- CAPABILITIES -->
+<section class="s wrap" id="capabilities">
+  <div class="s-meta r">
+    <div>
+      <div class="s-label">What we do</div>
+      <h2 class="s-h">The AI layer<br><em>your business is missing.</em></h2>
+      <p class="s-note">We identify where AI creates the most leverage in your operation and deploy it — then manage it so you never have to think about it.</p>
+    </div>
+    <div class="s-count">(04)</div>
+  </div>
+  <div class="cap-list">
+    <div class="cap-row r">
+      <div class="cap-n">(001)</div>
+      <div class="cap-title">Communications<br>& Customer Handling</div>
+      <div class="cap-desc">Phone calls, text messages, emails — handled by AI around the clock. Every inbound inquiry gets an intelligent, on-brand response. Every lead captured. Nothing falls through regardless of channel or volume.</div>
+      <div class="cap-arrow">↗</div>
+    </div>
+    <div class="cap-row r d1">
+      <div class="cap-n">(002)</div>
+      <div class="cap-title">Scheduling, Booking<br>& Calendar Automation</div>
+      <div class="cap-desc">Appointments, confirmations, reminders, and follow-ups running automatically without staff involvement. Your calendar fills itself. No-shows drop. The whole cycle runs on its own.</div>
+      <div class="cap-arrow">↗</div>
+    </div>
+    <div class="cap-row r d2">
+      <div class="cap-n">(003)</div>
+      <div class="cap-title">Marketing, Retention<br>& Reputation</div>
+      <div class="cap-desc">Review requests, loyalty campaigns, re-engagement flows, AI-generated content. Every customer interaction triggers the right follow-up automatically — building your reputation and bringing people back without manual effort.</div>
+      <div class="cap-arrow">↗</div>
+    </div>
+    <div class="cap-row r d3">
+      <div class="cap-n">(004)</div>
+      <div class="cap-title">Custom Systems<br>& Workflow AI</div>
+      <div class="cap-desc">Internal tools, data pipelines, dispatch optimization, CRM automation, multilingual AI, bespoke integrations. If your operation has a problem AI can solve — routing, reporting, coordination, compliance — we build it to spec.</div>
+      <div class="cap-arrow">↗</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT AI ELIMINATES -->
+<section class="s wrap" style="border-top:1px solid var(--line)">
+  <div class="s-meta r">
+    <div>
+      <div class="s-label">The actual impact</div>
+      <h2 class="s-h">What AI<br><em>eliminates.</em></h2>
+    </div>
+  </div>
+  <div class="spread">
+    <div class="spread-card r">
+      <div class="sc-q">The call that goes to voicemail after hours</div>
+      <div class="sc-a">AI answers every inbound call with full knowledge of your business — hours, services, pricing, availability. It books, answers, and escalates. The customer never hits a wall.</div>
+    </div>
+    <div class="spread-card r d1">
+      <div class="sc-q">The message that sits unanswered until morning</div>
+      <div class="sc-a">An AI that responds to every inquiry in under 30 seconds — intelligently, on-brand, at any hour. Leads convert. Customers don't go looking elsewhere while they wait.</div>
+    </div>
+    <div class="spread-card r d2">
+      <div class="sc-q">The follow-up that never happened</div>
+      <div class="sc-a">Post-service review requests, loyalty nudges, re-engagement messages — sent automatically at exactly the right time. The system runs whether you're in the building or not.</div>
+    </div>
+    <div class="spread-card r">
+      <div class="sc-q">The appointment that slipped through</div>
+      <div class="sc-a">Automated booking, confirmation, and reminder flows keep your calendar full and no-shows low — without your staff chasing anyone down.</div>
+    </div>
+    <div class="spread-card r d1">
+      <div class="sc-q">The repetitive task your team does every day</div>
+      <div class="sc-a">Routing, data entry, status updates, intake forms, report generation — we identify what's eating your team's time and build AI that handles it permanently.</div>
+    </div>
+    <div class="spread-card r d2">
+      <div class="sc-q">The marketing that never got done</div>
+      <div class="sc-a">AI-generated content, automated campaigns, and review systems that build your reputation continuously — without a marketing manager on payroll.</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-band">
+  <div class="wrap">
+    <div class="stats-row">
+      <div class="stat r">
+        <div class="stat-n">24/7</div>
+        <div class="stat-l">AI that works every hour — including the ones your team doesn't.</div>
+      </div>
+      <div class="stat r d1">
+        <div class="stat-n">&lt;30s</div>
+        <div class="stat-l">Typical AI response time to inbound inquiries across all channels.</div>
+      </div>
+      <div class="stat r d2">
+        <div class="stat-n">Days</div>
+        <div class="stat-l">From first conversation to a deployed, live AI system in your business.</div>
+      </div>
+      <div class="stat r d3">
+        <div class="stat-n">One</div>
+        <div class="stat-l">Local team to call. We build it, manage it, and improve it over time.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARKET INTELLIGENCE -->
+<section class="market-section" id="market">
+  <div class="s wrap">
+    <div class="s-meta r">
+      <div>
+        <div class="s-label">Our market</div>
+        <h2 class="s-h">Why Fairfield County —<br><em>and why now.</em></h2>
+        <p class="s-note">We've spent significant time researching this market. Here's what we found.</p>
+      </div>
+    </div>
+
+    <!-- Pull quote + data points -->
+    <div class="market-top">
+      <div>
+        <div class="market-pull r">Most businesses here are running on <em>2015 infrastructure</em> with 2026 customer expectations.</div>
+        <p class="market-body r d1">
+          Fairfield County concentrates more capital per square mile than almost anywhere in America. Greenwich hedge funds manage over $200B in assets. Stamford houses Fortune 500 headquarters. The residential wealth is among the highest in the country.<br><br>
+          And yet — the majority of businesses here are operating with the same digital infrastructure they had a decade ago. They've seen enterprise AI pitches. Nobody has shown up with something built for them, deployed in person, and managed by someone who understands the local market.<br><br>
+          That gap is the opportunity. The businesses that move now own the advantage for years.
+        </p>
+        <a href="#contact" class="pill pill-gold r d2">Start a conversation</a>
+      </div>
+      <div class="market-data r d1">
+        <div class="mdata-row">
+          <div class="mdata-n">$200B+</div>
+          <div class="mdata-l">Hedge fund AUM concentrated within a 5-mile radius of Greenwich Avenue</div>
+        </div>
+        <div class="mdata-row">
+          <div class="mdata-n">~65%</div>
+          <div class="mdata-l">Of identified Fairfield County businesses operating with low digital maturity</div>
+        </div>
+        <div class="mdata-row">
+          <div class="mdata-n">$3.8M</div>
+          <div class="mdata-l">Greenwich median home price Q1 2026 — up 17.6% year-over-year</div>
+        </div>
+        <div class="mdata-row">
+          <div class="mdata-n">$47.5B</div>
+          <div class="mdata-l">Projected voice AI market by 2034, up from $2.4B in 2024 — a 20× expansion</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Industries we serve -->
+    <div class="r">
+      <div class="s-label market-scope-label">Every kind of Fairfield County business</div>
+    </div>
+    <div class="scope-grid r d1">
+      <div class="scope-cell"><strong>Professional Services</strong><span>Legal, accounting, wealth management, advisory</span></div>
+      <div class="scope-cell"><strong>Healthcare & Wellness</strong><span>Medical practices, dental, therapy, med spa, fitness</span></div>
+      <div class="scope-cell"><strong>Real Estate</strong><span>Independent brokers, property management, developers</span></div>
+      <div class="scope-cell"><strong>Hospitality & Food</strong><span>Restaurants, cafes, catering, specialty food, hotels</span></div>
+      <div class="scope-cell"><strong>Retail & Services</strong><span>Boutiques, galleries, salons, dry cleaning, automotive</span></div>
+      <div class="scope-cell"><strong>Contractors & Trades</strong><span>HVAC, plumbing, landscaping, construction, cleaning</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT STARTS -->
+<section class="s wrap" id="how">
+  <div class="s-meta r">
+    <div>
+      <div class="s-label">Deployment</div>
+      <h2 class="s-h">How it<br><em>starts.</em></h2>
+      <p class="s-note">Most clients deploy one AI system first — then add layers as the results compound.</p>
+    </div>
+  </div>
+  <div class="ramp r">
+    <div class="ramp-row">
+      <div class="ramp-time">Day 1</div>
+      <div class="ramp-content">
+        <div class="ramp-title">Discovery & configuration</div>
+        <div class="ramp-desc">We spend time understanding your business — how it actually runs, where the friction is, what's being lost. We identify the highest-leverage entry point and configure your first AI system around your exact operation.</div>
+      </div>
+    </div>
+    <div class="ramp-row">
+      <div class="ramp-time">Day 2–3</div>
+      <div class="ramp-content">
+        <div class="ramp-title">Live deployment</div>
+        <div class="ramp-desc">Your first AI system goes live. No changes to your existing infrastructure. We handle everything. You test it, we refine it, it runs.</div>
+      </div>
+    </div>
+    <div class="ramp-row">
+      <div class="ramp-time">Month 1–3</div>
+      <div class="ramp-content">
+        <div class="ramp-title">Optimization & expansion</div>
+        <div class="ramp-desc">We monitor performance, tune the system based on real interactions, and identify the next area to automate. Most clients expand from one system to two or three as the results compound — each layer amplifying the last.</div>
+      </div>
+    </div>
+    <div class="ramp-row">
+      <div class="ramp-time">Ongoing</div>
+      <div class="ramp-content">
+        <div class="ramp-title">Managed & growing</div>
+        <div class="ramp-desc">We stay on as your AI team — managing infrastructure, updating models as technology improves, and building new systems as your operation evolves. Weekly reporting. Everything else is our problem, not yours.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY 4THWALL -->
+<section class="s wrap" style="border-top:1px solid var(--line)">
+  <div class="why-split">
+    <div>
+      <div class="s-label r">Why 4THWALL</div>
+      <div class="why-pull r d1">"We're not a vendor you onboard once. We're the AI team you never had to hire."</div>
+      <p class="why-body r d2">National AI platforms are self-serve tools with support tickets. We are the opposite — a local team that deploys, manages, and improves your AI systems as your business evolves. We sit in your market, understand your customers, and show up in person when it matters.<br><br>Our clients don't think about their AI. They just watch it work.</p>
+    </div>
+    <div class="why-list r d1">
+      <div class="why-card">
+        <div class="why-dot">✓</div>
+        <div>
+          <div class="why-card-t">Genuinely local</div>
+          <div class="why-card-d">Based in Greenwich. We pitch in person, deploy in person, and understand this market because we operate inside it every day.</div>
+        </div>
+      </div>
+      <div class="why-card">
+        <div class="why-dot">✓</div>
+        <div>
+          <div class="why-card-t">Full-stack, not single-product</div>
+          <div class="why-card-d">We build AI infrastructure across your entire operation — communications, scheduling, marketing, custom workflows. One partner for the whole stack.</div>
+        </div>
+      </div>
+      <div class="why-card">
+        <div class="why-dot">✓</div>
+        <div>
+          <div class="why-card-t">Fully managed, zero maintenance</div>
+          <div class="why-card-d">You don't manage software. We handle all updates, tuning, monitoring, and improvements. Your AI gets better without touching your calendar.</div>
+        </div>
+      </div>
+      <div class="why-card">
+        <div class="why-dot">✓</div>
+        <div>
+          <div class="why-card-t">Month-to-month only</div>
+          <div class="why-card-d">No long-term lock-ins. We earn your business every month by delivering measurable results. Cancel any time with 30 days notice.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="s wrap" id="faq" style="border-top:1px solid var(--line)">
+  <div class="s-meta r">
+    <div>
+      <div class="s-label">Questions</div>
+      <h2 class="s-h">FAQ.</h2>
+      <p class="s-note">What business owners typically ask before getting started.</p>
+    </div>
+  </div>
+  <div class="faq">
+    <div class="faq-item">
+      <button class="faq-btn"><span class="faq-qt">How is this different from just subscribing to an AI tool like ChatGPT?</span><div class="faq-ic">+</div></button>
+      <div class="faq-ans">ChatGPT and similar tools are general-purpose — you use them manually, and they require ongoing effort to get value. We build AI systems that are purpose-specific to your business, run automatically without you touching them, and compound in value over time. The difference is between a tool you use and infrastructure that works for you.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-btn"><span class="faq-qt">What kinds of businesses do you work with?</span><div class="faq-ic">+</div></button>
+      <div class="faq-ans">We work across the full Fairfield County market — professional services, healthcare, real estate, hospitality, retail, contractors, and more. If your business has operations AI can improve, there's a deployment path. There's no single industry we're locked into.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-btn"><span class="faq-qt">How quickly can we get started?</span><div class="faq-ic">+</div></button>
+      <div class="faq-ans">Faster than you'd expect. Communication and scheduling AI can go live within 48 hours of our initial meeting. More complex custom systems take one to two weeks. We'll give you an honest timeline in our first conversation — no inflated promises.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-btn"><span class="faq-qt">What does "fully managed" actually mean in practice?</span><div class="faq-ic">+</div></button>
+      <div class="faq-ans">It means you never touch the software. We configure it, deploy it, monitor real interactions, tune the system as patterns emerge, update it as AI technology evolves, and build new layers as your needs change. You get weekly performance reports. Everything operational is our responsibility.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-btn"><span class="faq-qt">How do you handle compliance for regulated industries?</span><div class="faq-ic">+</div></button>
+      <div class="faq-ans">For healthcare we deploy HIPAA-compliant infrastructure with signed Business Associate Agreements, AES-256 encryption, role-based access controls, and full audit logging. For financial services and legal, we configure data handling to match your firm's compliance requirements. Compliance isn't an add-on — it's built into the deployment for any regulated client.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-btn"><span class="faq-qt">What are the pricing and contract terms?</span><div class="faq-ic">+</div></button>
+      <div class="faq-ans">Pricing scales with the scope of deployment — simple communication AI starts at $149/month, and larger custom system engagements are quoted per project. All ongoing service is month-to-month with no lock-in. We'll give you a clear, itemized quote in our first meeting. No surprises.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="s wrap" id="contact" style="border-top:1px solid var(--line);background:var(--bg-2)">
+  <div class="contact-split">
+    <div>
+      <div class="s-label r">Start a conversation</div>
+      <h2 class="contact-h r d1">Let's<br><em>talk.</em></h2>
+      <p class="contact-sub r d2">Tell us about your business and we'll show you exactly where AI creates leverage — and what it would take to deploy it. No pitch deck. No obligations. Just an honest conversation from someone who knows this market.</p>
+      <div class="contact-info r d3">
+        <div class="ci">
+          <span class="ci-l">Email</span>
+          <span class="ci-v"><a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a></span>
+        </div>
+        <div class="ci">
+          <span class="ci-l">Location</span>
+          <span class="ci-v">Greenwich, CT — Fairfield County</span>
+        </div>
+        <div class="ci">
+          <span class="ci-l">Response time</span>
+          <span class="ci-v">Within a few hours</span>
+        </div>
+      </div>
+    </div>
+    <div class="r d1">
+      <form class="form" onsubmit="handleSub(event)">
+        <div class="form-2">
+          <div class="fg"><label class="fl">Your name</label><input type="text" class="fi" placeholder="Jane Smith" required></div>
+          <div class="fg"><label class="fl">Business name</label><input type="text" class="fi" placeholder="Your Business" required></div>
+        </div>
+        <div class="fg"><label class="fl">Email</label><input type="email" class="fi" placeholder="jane@yourbusiness.com" required></div>
+        <div class="fg">
+          <label class="fl">Industry (optional)</label>
+          <select class="fsel fi">
+            <option value="">What kind of business...</option>
+            <option>Professional Services (Legal / Finance / Accounting)</option>
+            <option>Healthcare / Wellness / Medical</option>
+            <option>Real Estate</option>
+            <option>Hospitality / Food / Catering</option>
+            <option>Retail / Consumer Services</option>
+            <option>Contractors / Trades / Field Services</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">What's the challenge? (optional)</label><textarea class="fta" placeholder="What's eating your team's time? Where are you losing leads? What would you automate if you could?"></textarea></div>
+        <button type="submit" class="fsub">Send message →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-top">
+    <div>
+      <div class="foot-brand-n">4THWALL<sup>®</sup></div>
+      <p class="foot-brand-p">AI infrastructure for businesses — communications, automation, marketing, and custom builds. Fully managed. Based in Greenwich, CT.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Capabilities</h4>
+      <ul>
+        <li><a href="#capabilities">Communications & AI Handling</a></li>
+        <li><a href="#capabilities">Scheduling & Booking</a></li>
+        <li><a href="#capabilities">Marketing & Retention</a></li>
+        <li><a href="#capabilities">Custom Systems & Automation</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#market">Our Market</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bot">
+    <span class="foot-copy">© 2026 4THWALL. All rights reserved.</span>
+    <span class="foot-loc">Based in Greenwich, CT — Serving Fairfield County</span>
+  </div>
+</footer>
+
+<script>
+const io = new IntersectionObserver(
+  es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target) } }),
+  { threshold: 0.1 }
+);
+document.querySelectorAll('.r').forEach(el => io.observe(el));
+
+document.querySelectorAll('.faq-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const was  = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!was) item.classList.add('open');
+  });
+});
+
+function handleSub(e) {
+  e.preventDefault();
+  const b = e.target.querySelector('.fsub');
+  b.textContent = "Sent ✓  We'll be in touch";
+  b.style.cssText += ';background:#2a2a2a;color:rgba(255,255,255,.35);cursor:default';
+  b.disabled = true;
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior:'smooth', block:'start' }) }
+  });
+});
+</script>
+</body>
+</html>
