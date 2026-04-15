@@ -746,7 +746,7 @@ footer { border-top:1px solid var(--line); padding:3rem var(--pad) 1.5rem }
       </div>
     </div>
     <div class="r d1">
-      <form class="form" id="contactForm">
+      <form class="form" id="contactForm" action="https://formspree.io/f/mlgadkle" method="POST">
         <input type="text" name="_honey" style="display:none">
         <div class="form-2">
           <div class="fg"><label class="fl">Your name</label><input type="text" name="name" class="fi" placeholder="Jane Smith" required></div>
@@ -844,10 +844,10 @@ function handleSub(e) {
     return;
   }
 
-  fetch('/api/contact', {
+  fetch(form.action, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+    body: new FormData(form),
+    headers: { 'Accept': 'application/json' }
   }).then(res => {
     if (res.ok) {
       b.textContent = "Sent ✓ We'll be in touch";
@@ -856,12 +856,12 @@ function handleSub(e) {
     } else {
       b.textContent = origText;
       b.disabled = false;
-      alert('Something went wrong. Please email us directly at andrew@4thwall.solutions');
+      alert('Something went wrong. Please email andrew@4thwall.solutions directly.');
     }
   }).catch(() => {
     b.textContent = origText;
     b.disabled = false;
-    alert('Something went wrong. Please email us directly at andrew@4thwall.solutions');
+    alert('Something went wrong. Please email andrew@4thwall.solutions directly.');
   });
 }
 
