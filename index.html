@@ -746,15 +746,20 @@ footer { border-top:1px solid var(--line); padding:3rem var(--pad) 1.5rem }
       </div>
     </div>
     <div class="r d1">
-      <form class="form" onsubmit="handleSub(event)">
+      <form class="form" action="https://formsubmit.co/andrew@4thwall.solutions" method="POST">
+        <input type="hidden" name="_subject" value="4THWALL — New Lead from Website">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://4thwall.solutions/#contact">
+        <input type="text" name="_honey" style="display:none">
         <div class="form-2">
-          <div class="fg"><label class="fl">Your name</label><input type="text" class="fi" placeholder="Jane Smith" required></div>
-          <div class="fg"><label class="fl">Business name</label><input type="text" class="fi" placeholder="Your Business" required></div>
+          <div class="fg"><label class="fl">Your name</label><input type="text" name="name" class="fi" placeholder="Jane Smith" required></div>
+          <div class="fg"><label class="fl">Business name</label><input type="text" name="business" class="fi" placeholder="Your Business" required></div>
         </div>
-        <div class="fg"><label class="fl">Email</label><input type="email" class="fi" placeholder="jane@yourbusiness.com" required></div>
+        <div class="fg"><label class="fl">Email</label><input type="email" name="email" class="fi" placeholder="jane@yourbusiness.com" required></div>
         <div class="fg">
           <label class="fl">Industry (optional)</label>
-          <select class="fsel fi">
+          <select name="industry" class="fsel fi">
             <option value="">What kind of business...</option>
             <option>Professional Services (Legal / Finance / Accounting)</option>
             <option>Healthcare / Wellness / Medical</option>
@@ -765,7 +770,7 @@ footer { border-top:1px solid var(--line); padding:3rem var(--pad) 1.5rem }
             <option>Other</option>
           </select>
         </div>
-        <div class="fg"><label class="fl">What's the challenge? (optional)</label><textarea class="fta" placeholder="What's eating your team's time? Where are you losing leads? What would you automate if you could?"></textarea></div>
+        <div class="fg"><label class="fl">What's the challenge? (optional)</label><textarea name="challenge" class="fta" placeholder="What's eating your team's time? Where are you losing leads? What would you automate if you could?"></textarea></div>
         <button type="submit" class="fsub">Send message →</button>
       </form>
     </div>
@@ -822,10 +827,30 @@ document.querySelectorAll('.faq-btn').forEach(btn => {
 
 function handleSub(e) {
   e.preventDefault();
-  const b = e.target.querySelector('.fsub');
-  b.textContent = "Sent ✓  We'll be in touch";
-  b.style.cssText += ';background:#2a2a2a;color:rgba(255,255,255,.35);cursor:default';
+  const form = e.target;
+  const b = form.querySelector('.fsub');
+  const origText = b.textContent;
+  b.textContent = 'Sending...';
   b.disabled = true;
+  fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    headers: { 'Accept': 'application/json' }
+  }).then(res => {
+    if (res.ok) {
+      b.textContent = "Sent ✓ We'll be in touch";
+      b.style.cssText += ';background:#2a2a2a;color:rgba(255,255,255,.35);cursor:default';
+      form.reset();
+    } else {
+      b.textContent = origText;
+      b.disabled = false;
+      alert('Something went wrong. Please email us directly at andrew@4thwall.solutions');
+    }
+  }).catch(() => {
+    b.textContent = origText;
+    b.disabled = false;
+    alert('Something went wrong. Please email us directly at andrew@4thwall.solutions');
+  });
 }
 
 document.querySelectorAll('a[href^="#"]').forEach(a => {
