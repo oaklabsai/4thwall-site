@@ -746,8 +746,7 @@ footer { border-top:1px solid var(--line); padding:3rem var(--pad) 1.5rem }
       </div>
     </div>
     <div class="r d1">
-      <form class="form" action="https://formspree.io/f/mlgadkle" method="POST">
-        <input type="hidden" name="_subject" value="4THWALL — New Lead from Website">
+      <form class="form" id="contactForm">
         <input type="text" name="_honey" style="display:none">
         <div class="form-2">
           <div class="fg"><label class="fl">Your name</label><input type="text" name="name" class="fi" placeholder="Jane Smith" required></div>
@@ -829,10 +828,26 @@ function handleSub(e) {
   const origText = b.textContent;
   b.textContent = 'Sending...';
   b.disabled = true;
-  fetch(form.action, {
+
+  const data = {
+    name: form.name.value,
+    business: form.business.value,
+    email: form.email.value,
+    industry: form.industry.value,
+    challenge: form.challenge.value
+  };
+
+  // Skip if honeypot filled (bot)
+  if (form.querySelector('[name="_honey"]').value) {
+    b.textContent = "Sent ✓ We'll be in touch";
+    b.style.cssText += ';background:#2a2a2a;color:rgba(255,255,255,.35);cursor:default';
+    return;
+  }
+
+  fetch('/api/contact', {
     method: 'POST',
-    body: new FormData(form),
-    headers: { 'Accept': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
   }).then(res => {
     if (res.ok) {
       b.textContent = "Sent ✓ We'll be in touch";
