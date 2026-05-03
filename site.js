@@ -319,12 +319,17 @@
   const dropClose = document.getElementById('dropClose');
   const dropBd    = document.getElementById('dropBd');
 
+  const topnav = document.querySelector('nav.topnav');
   function positionDrop(){
-    const nav = document.querySelector('nav.topnav');
-    if(nav && navDrop) navDrop.style.top = (nav.offsetHeight + 8) + 'px';
+    if(topnav && navDrop) navDrop.style.top = (topnav.offsetHeight + 8) + 'px';
   }
   positionDrop();
   window.addEventListener('resize', positionDrop);
+
+  // ── Hide nav links on scroll, keep menu btn ───────
+  window.addEventListener('scroll', () => {
+    topnav.classList.toggle('scrolled', window.scrollY > 16);
+  }, {passive:true});
 
   function openDrop(){
     navDrop.classList.add('is-open');
