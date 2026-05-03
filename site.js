@@ -276,19 +276,37 @@
     chip.addEventListener('click', ()=>{
       document.querySelectorAll('#cm-chips .chip').forEach(c=>c.classList.remove('active'));
       chip.classList.add('active');
+      const tradeInput = document.getElementById('cm-trade');
+      if(tradeInput) tradeInput.value = chip.dataset.chip || '';
     });
   });
   const form = document.getElementById('composer-form');
   if(form){
-    form.addEventListener('submit', (e)=>{
+    form.addEventListener('submit', async (e)=>{
       e.preventDefault();
       const send = document.getElementById('cm-send');
-      send.classList.add('sent');
-      send.textContent = '✓';
       const msg = document.getElementById('cm-msg');
-      msg.value = '';
-      msg.placeholder = 'Got it — Andrew will reply within an hour during business hours.';
-      setTimeout(()=>{ send.classList.remove('sent'); send.textContent = '↑'; }, 4500);
+      const originalLabel = send.textContent;
+      send.textContent = '…';
+      send.disabled = true;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
+        });
+        if(!res.ok) throw new Error('submit failed: ' + res.status);
+        send.classList.add('sent');
+        send.textContent = '✓';
+        form.reset();
+        document.querySelectorAll('#cm-chips .chip').forEach(c=>c.classList.remove('active'));
+        msg.placeholder = 'Got it — Andrew will reply within an hour during business hours.';
+        setTimeout(()=>{ send.classList.remove('sent'); send.textContent = originalLabel; send.disabled = false; }, 4500);
+      } catch (err) {
+        send.textContent = originalLabel;
+        send.disabled = false;
+        msg.placeholder = "Couldn't send — email andrew@4thwall.solutions or call (203) 670-9477.";
+      }
     });
   }
 

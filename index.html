@@ -900,13 +900,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <section class="composer-section wrap" id="contact" data-screen-label="08 Contact">
   <h2 class="composer-h r in">Tell us what's <span class="ital">on fire.</span></h2>
 
-  <form class="composer r in d1" id="composer-form">
+  <form class="composer r in d1" id="composer-form" action="https://formspree.io/f/mlgadkle" method="POST">
     <div class="composer-prompt"><span class="star">✦</span><span>Talk to us like you'd text a colleague.</span></div>
-    <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="Missing after-hours leads? Not enough reviews? Invisible on AI search? Tell us what's happening..."></textarea>
+    <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="Missing after-hours leads? Not enough reviews? Invisible on AI search? Tell us what's happening..." required></textarea>
 
     <div class="composer-input-line"><span class="lbl">From</span><input type="text" name="name" placeholder="Your name" required></div>
     <div class="composer-input-line"><span class="lbl">Company</span><input type="text" name="company" placeholder="Business name"></div>
     <div class="composer-input-line"><span class="lbl">Reply to</span><input type="email" name="email" placeholder="you@email.com" required></div>
+    <input type="hidden" name="trade" id="cm-trade" value="">
 
     <div class="composer-bar">
       <div class="composer-chips" id="cm-chips">
