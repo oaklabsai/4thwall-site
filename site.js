@@ -326,9 +326,14 @@
   positionDrop();
   window.addEventListener('resize', positionDrop);
 
-  // ── Hide nav links on scroll, keep menu btn ───────
+  // ── Fade nav links + logo on scroll, keep menu btn ─
+  const navFadeEls = [topnav.querySelector('.nav-logo'), ...topnav.querySelectorAll('.nav-a')].filter(Boolean);
   window.addEventListener('scroll', () => {
-    topnav.classList.toggle('scrolled', window.scrollY > 16);
+    const fade = Math.max(0, 1 - window.scrollY / 100);
+    navFadeEls.forEach(el => {
+      el.style.opacity = fade;
+      el.style.pointerEvents = fade < 0.05 ? 'none' : '';
+    });
   }, {passive:true});
 
   function openDrop(){
