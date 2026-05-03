@@ -212,7 +212,13 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .vig-caption{margin-top:.5rem;font-family:var(--hand);line-height:1.05;font-size:1.08rem;font-weight:500}
 .vig-you{display:block;color:var(--ink)}
 .vig-we{display:block;color:var(--orange);margin-top:.1rem}
-@media(max-width:1200px){.hero-vignette{display:none}}
+@media(max-width:1200px){
+  .hero-vignette{position:absolute;left:50%;top:auto;bottom:-88px;transform:translateX(-50%) rotate(0deg);width:240px;display:flex;flex-direction:row;align-items:center;gap:.65rem;text-align:left;background:rgba(247,243,236,.92);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid rgba(26,26,24,.07);border-radius:14px;padding:.55rem .8rem;box-shadow:0 8px 24px -8px rgba(0,0,0,.14)}
+  .hero-vignette.swap{opacity:0;transform:translateX(-50%) translateY(4px) rotate(0deg)}
+  .vig-illo{width:42px;height:42px;margin:0;flex-shrink:0}
+  .vig-caption{margin-top:0;font-size:.82rem}
+  #demo-mount{padding-bottom:76px}
+}
 
 /* scenario dots */
 .demo-dots{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
@@ -415,8 +421,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .hero-cta{margin-top:1.3rem}
   .hero-foot{margin-top:1.6rem;font-size:.66rem;gap:.5rem;padding-top:.9rem}
   .hero-foot .feats{gap:.9rem}
-  .demo-tag{display:none}
-  .demo-stage{max-width:280px}
+  .demo-stage{max-width:min(320px,88vw)}
+  .demo-tag{min-width:unset;padding:.32rem .55rem;border-radius:9px;background:rgba(247,243,236,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);animation:none}
+  .demo-tag .tag-h{font-size:.7rem}
+  .demo-tag .tag-s{font-size:.52rem}
+  .demo-tag.t-live{top:7%;right:4%;left:auto}
+  .demo-tag.t-done{bottom:12%;left:4%;right:auto}
+  .hero-vignette{width:min(230px,80vw);bottom:-82px}
+  #demo-mount{padding-bottom:70px}
   nav.topnav{padding:.85rem var(--pad)}
   .nav-logo .brand-mark{height:22px}
   .pill{padding:9px 16px;font-size:.78rem}

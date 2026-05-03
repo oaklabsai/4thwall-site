@@ -66,12 +66,12 @@
         vignette:{illo:'sleeping',you:'while you sleep,',we:'we catch the storm.'},
         script:[
           {who:'them', text:'Hey, my roof started leaking after the storm. Can someone come look?', ts:'11:47 PM'},
-          {typing:1200},
-          {who:'us',   text:'Sorry to hear that — we can. Is the leak active right now, and roughly where on the house?', ts:'11:47 PM', delay:1800},
-          {who:'them', text:'Yeah it\'s dripping into the kitchen. Back of the house.', ts:'11:48 PM', delay:2200},
-          {typing:1100},
-          {who:'us',   text:'Got it. I\'ve booked a free emergency assessment for tomorrow 9am with Mike. He\'ll text 30 min before. Cover the drip with a bucket if you can.', ts:'11:48 PM', delay:2000},
-          {who:'them', text:'Wow that was fast. Thanks.', ts:'11:49 PM', delay:2400},
+          {typing:650},
+          {who:'us',   text:'Sorry to hear that — we can. Is the leak active right now, and roughly where on the house?', ts:'11:47 PM', delay:900},
+          {who:'them', text:'Yeah it\'s dripping into the kitchen. Back of the house.', ts:'11:48 PM', delay:1100},
+          {typing:600},
+          {who:'us',   text:'Got it. I\'ve booked a free emergency assessment for tomorrow 9am with Mike. He\'ll text 30 min before. Cover the drip with a bucket if you can.', ts:'11:48 PM', delay:1000},
+          {who:'them', text:'Wow that was fast. Thanks.', ts:'11:49 PM', delay:1200},
         ]
       },
       {
@@ -84,12 +84,12 @@
         vignette:{illo:'dinner',you:"while you're at dinner,",we:'we close the lead.'},
         script:[
           {who:'them', text:'Hi, looking for a quote on a kitchen remodel. About 180 sqft, mid-range finishes.', ts:'9:23 PM'},
-          {typing:1100},
-          {who:'us',   text:'Happy to help. Are you in the early planning stage, or do you have a timeline you\'re working toward?', ts:'9:23 PM', delay:1800},
-          {who:'them', text:'Hoping to start in 6-8 weeks if possible.', ts:'9:24 PM', delay:2100},
-          {typing:1300},
-          {who:'us',   text:'Workable. I\'ll send our 4 most recent kitchen projects in your range, and a 45-min intro call with our PM Thursday at 10am — does that work?', ts:'9:24 PM', delay:2000},
-          {who:'them', text:'Thursday 10 is perfect.', ts:'9:25 PM', delay:2300},
+          {typing:600},
+          {who:'us',   text:'Happy to help. Are you in the early planning stage, or do you have a timeline you\'re working toward?', ts:'9:23 PM', delay:900},
+          {who:'them', text:'Hoping to start in 6-8 weeks if possible.', ts:'9:24 PM', delay:1050},
+          {typing:700},
+          {who:'us',   text:'Workable. I\'ll send our 4 most recent kitchen projects in your range, and a 45-min intro call with our PM Thursday at 10am — does that work?', ts:'9:24 PM', delay:1000},
+          {who:'them', text:'Thursday 10 is perfect.', ts:'9:25 PM', delay:1150},
         ]
       },
       {
@@ -102,12 +102,12 @@
         vignette:{illo:'coffee',you:'while you have coffee,',we:'we book the visit.'},
         script:[
           {who:'them', text:'Buenos días. Necesito reparar el techo de mi garaje. ¿Pueden venir a verlo?', ts:'7:14 AM'},
-          {typing:1100},
-          {who:'us',   text:'Buenos días Carlos. Sí, claro. ¿Es una reparación pequeña o hay daño visible desde el interior?', ts:'7:14 AM', delay:1800},
-          {who:'them', text:'Hay manchas en el techo de adentro. Como un metro cuadrado.', ts:'7:15 AM', delay:2200},
-          {typing:1300},
-          {who:'us',   text:'Entendido. Podemos pasar mañana entre 8 y 10 AM para inspección gratis. Te mando confirmación por texto. ¿Está bien?', ts:'7:15 AM', delay:2000},
-          {who:'them', text:'Perfecto, gracias.', ts:'7:16 AM', delay:2300},
+          {typing:600},
+          {who:'us',   text:'Buenos días Carlos. Sí, claro. ¿Es una reparación pequeña o hay daño visible desde el interior?', ts:'7:14 AM', delay:900},
+          {who:'them', text:'Hay manchas en el techo de adentro. Como un metro cuadrado.', ts:'7:15 AM', delay:1100},
+          {typing:700},
+          {who:'us',   text:'Entendido. Podemos pasar mañana entre 8 y 10 AM para inspección gratis. Te mando confirmación por texto. ¿Está bien?', ts:'7:15 AM', delay:1000},
+          {who:'them', text:'Perfecto, gracias.', ts:'7:16 AM', delay:1150},
         ]
       },
       {
@@ -120,13 +120,13 @@
         vignette:{illo:'roof',you:"while you're on the roof,",we:'we return the call.'},
         script:[
           {who:'us',   text:'Hi Tom — sorry we missed your call. This is a text follow-up from the office. What can we help you with?', ts:'2:08 PM', delay:0},
-          {typing:1500},
-          {who:'them', text:'Looking for siding replacement on a 2-story colonial. Got a referral from my neighbor.', ts:'2:09 PM', delay:2100},
-          {typing:1100},
-          {who:'us',   text:'Appreciate the referral. Best way is a 20-min site visit so we can measure and walk you through options. Saturday 11am or Monday 4pm work?', ts:'2:09 PM', delay:2000},
-          {who:'them', text:'Saturday 11.', ts:'2:10 PM', delay:2200},
-          {typing:1000},
-          {who:'us',   text:'Booked. Calendar invite + reminder coming through. We\'ll see you then.', ts:'2:10 PM', delay:1900},
+          {typing:750},
+          {who:'them', text:'Looking for siding replacement on a 2-story colonial. Got a referral from my neighbor.', ts:'2:09 PM', delay:1050},
+          {typing:600},
+          {who:'us',   text:'Appreciate the referral. Best way is a 20-min site visit so we can measure and walk you through options. Saturday 11am or Monday 4pm work?', ts:'2:09 PM', delay:1000},
+          {who:'them', text:'Saturday 11.', ts:'2:10 PM', delay:1100},
+          {typing:550},
+          {who:'us',   text:'Booked. Calendar invite + reminder coming through. We\'ll see you then.', ts:'2:10 PM', delay:950},
         ]
       },
       {
@@ -139,12 +139,12 @@
         vignette:{illo:'family',you:"while you're with the kids,",we:'we honor the warranty.'},
         script:[
           {who:'them', text:'Hi! You did our gutters last spring — we have a small issue with one of the downspouts.', ts:'10:02 AM'},
-          {typing:1100},
-          {who:'us',   text:'Hi Priya — good to hear from you. I see your file. Is it pulling away from the house, or is something blocking the flow?', ts:'10:02 AM', delay:1800},
-          {who:'them', text:'It\'s pulling away near the garage corner.', ts:'10:03 AM', delay:2200},
-          {typing:1300},
-          {who:'us',   text:'Covered under your 2-year workmanship warranty. We\'ll have a tech out Wed afternoon — no charge. Confirmation coming through.', ts:'10:03 AM', delay:2000},
-          {who:'them', text:'You guys are the best.', ts:'10:04 AM', delay:2300},
+          {typing:600},
+          {who:'us',   text:'Hi Priya — good to hear from you. I see your file. Is it pulling away from the house, or is something blocking the flow?', ts:'10:02 AM', delay:900},
+          {who:'them', text:'It\'s pulling away near the garage corner.', ts:'10:03 AM', delay:1100},
+          {typing:700},
+          {who:'us',   text:'Covered under your 2-year workmanship warranty. We\'ll have a tech out Wed afternoon — no charge. Confirmation coming through.', ts:'10:03 AM', delay:1000},
+          {who:'them', text:'You guys are the best.', ts:'10:04 AM', delay:1150},
         ]
       },
     ];
@@ -222,10 +222,10 @@
       clearStream();
       // show island expanded for ~1.6s as a "new lead" notification
       islandEl.classList.add('expanded');
-      await sleep(1700);
+      await sleep(900);
       if(token!==cycleToken) return;
       islandEl.classList.remove('expanded');
-      await sleep(350);
+      await sleep(200);
       if(token!==cycleToken) return;
       // play conversation
       for(const step of s.script){
@@ -241,7 +241,7 @@
         }
       }
       // dwell at end
-      await sleep(4000);
+      await sleep(2000);
     }
 
     async function loop(){
