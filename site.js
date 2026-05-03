@@ -290,10 +290,13 @@
       send.textContent = '…';
       send.disabled = true;
       try {
-        const res = await fetch(form.action, {
+        const fd = new FormData(form);
+        const body = {};
+        fd.forEach((v, k) => { body[k] = v; });
+        const res = await fetch('https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website', {
           method: 'POST',
-          headers: { 'Accept': 'application/json' },
-          body: new FormData(form)
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(body)
         });
         if(!res.ok) throw new Error('submit failed: ' + res.status);
         send.classList.add('sent');
@@ -309,5 +312,42 @@
       }
     });
   }
+
+  // ── Nav dropdown ─────────────────────────────────
+  const menuBtn   = document.getElementById('menuBtn');
+  const navDrop   = document.getElementById('navDrop');
+  const dropClose = document.getElementById('dropClose');
+  const dropBd    = document.getElementById('dropBd');
+
+  function positionDrop(){
+    const nav = document.querySelector('nav.topnav');
+    if(nav && navDrop) navDrop.style.top = (nav.offsetHeight + 8) + 'px';
+  }
+  positionDrop();
+  window.addEventListener('resize', positionDrop);
+
+  function openDrop(){
+    navDrop.classList.add('is-open');
+    dropBd.classList.add('is-open');
+    menuBtn.classList.add('is-open');
+    menuBtn.setAttribute('aria-expanded','true');
+  }
+  function closeDrop(){
+    navDrop.classList.remove('is-open');
+    dropBd.classList.remove('is-open');
+    menuBtn.classList.remove('is-open');
+    menuBtn.setAttribute('aria-expanded','false');
+  }
+
+  if(menuBtn) menuBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    navDrop.classList.contains('is-open') ? closeDrop() : openDrop();
+  });
+
+  if(dropClose) dropClose.addEventListener('click', closeDrop);
+  if(dropBd)    dropBd.addEventListener('click', closeDrop);
+
+  document.querySelectorAll('.drop-a').forEach(a => a.addEventListener('click', closeDrop));
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeDrop(); });
 
 })();
