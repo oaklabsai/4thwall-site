@@ -521,7 +521,9 @@ function renderTradeWidget(stats, sys, data){
 }
 
 // ── Bot toggle ─────────────────────────────────────────────
-let botPauseDuration = '1h';
+const pauseDurEl = document.getElementById('pauseDuration');
+pauseDurEl.addEventListener('change', ()=> botPauseDuration = pauseDurEl.value);
+let botPauseDuration = pauseDurEl.value || '1h';
 
 function updateBotUI(){
   const btn = document.getElementById('botToggleBtn');
@@ -536,44 +538,26 @@ function updateBotUI(){
   } else {
     btn.textContent='Pause bot'; btn.className='btn-sm btn-ghost';
     if (statusDot) statusDot.className='status-dot';
-    if (statusLabel) statusLabel.textContent='ACTIVE';
+    if (statusLabel) statusLabel.textContent='LIVE';
     if (statusPill) statusPill.classList.remove('paused');
   }
 }
 document.getElementById('botToggleBtn').addEventListener('click', ()=>{
   botPendingAction = botIsPaused ? 'resume' : 'pause';
-  // Inject duration selector into confirm row when pausing
-  const confirmRow = document.getElementById('confirmRow');
-  if (botPendingAction === 'pause'){
-    const existing = confirmRow.querySelector('.pause-dur-sel');
-    if (!existing){
-      const sel = document.createElement('select');
-      sel.className = 'pause-dur-sel';
-      sel.style.cssText = 'margin-right:.5rem;font-family:var(--mono);font-size:.72rem;padding:.25rem .4rem;border:1px solid var(--cream-3);border-radius:4px;background:var(--cream-2)';
-      sel.innerHTML = '<option value="1h">1 hour</option><option value="4h">4 hours</option><option value="forever">Until I resume</option>';
-      sel.value = botPauseDuration;
-      sel.addEventListener('change', ()=> botPauseDuration = sel.value);
-      const confirmYes = document.getElementById('confirmYes');
-      confirmRow.insertBefore(sel, confirmYes);
-    }
-  } else {
-    const existing = confirmRow.querySelector('.pause-dur-sel');
-    if (existing) existing.remove();
-  }
-  confirmRow.classList.add('show');
+  // Show/hide duration selector for pause only
+  pauseDurEl.style.display = botPendingAction === 'pause' ? '' : 'none';
+  document.getElementById('confirmRow').classList.add('show');
   document.getElementById('botToggleBtn').style.display='none';
 });
 document.getElementById('confirmNo').addEventListener('click', ()=>{
   document.getElementById('confirmRow').classList.remove('show');
+  pauseDurEl.style.display='none';
   document.getElementById('botToggleBtn').style.display='';
   botPendingAction = '';
-  const existing = document.getElementById('confirmRow').querySelector('.pause-dur-sel');
-  if (existing) existing.remove();
 });
 document.getElementById('confirmYes').addEventListener('click', async ()=>{
   document.getElementById('confirmRow').classList.remove('show');
-  const existing = document.getElementById('confirmRow').querySelector('.pause-dur-sel');
-  if (existing) existing.remove();
+  pauseDurEl.style.display='none';
   document.getElementById('botToggleBtn').style.display='';
   const msg = document.getElementById('botStatusMsg');
   msg.textContent = botPendingAction==='pause' ? 'Pausing bot…' : 'Resuming bot…';
