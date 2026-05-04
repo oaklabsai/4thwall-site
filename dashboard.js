@@ -352,9 +352,15 @@ function renderKpiCards(stats){
 }
 
 function renderStatusPanel(sys){
+  // Bot row: show resume time if paused with TTL
+  let botVal = sys.bot==='paused' ? 'PAUSED' : 'ACTIVE';
+  if (sys.bot==='paused' && sys.bot_paused_until) {
+    const resumeIn = Math.max(0, Math.round((new Date(sys.bot_paused_until).getTime() - Date.now()) / 60000));
+    if (resumeIn > 0) botVal = `PAUSED · resumes in ${resumeIn}m`;
+  }
   const rows = [
-    { name:'AI Response Bot', val: sys.bot==='paused' ? 'PAUSED' : 'ACTIVE', state: sys.bot==='paused' ? 'paused':'active' },
-    { name:'Missed Call Text-Back', val:'ACTIVE', state:'active' },
+    { name:'AI Response Bot', val: botVal, state: sys.bot==='paused' ? 'paused':'active' },
+    { name:'Missed Call Text-Back', val:(sys.missed_call_textback||'active').toUpperCase(), state:sys.missed_call_textback||'active' },
     { name:'Review Requests', val:(sys.review_requests||'active').toUpperCase(), state:sys.review_requests||'active' },
     { name:'Lead Nurture', val:(sys.nurture||'active').toUpperCase(), state:sys.nurture||'active' },
     { name:'Storm Mode', val:(sys.storm_mode||'monitoring').toUpperCase(), state: sys.storm_mode && sys.storm_mode!=='inactive' ? 'warning' : 'inactive' },
