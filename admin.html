@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Console — 4THWALL®</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dashboard.css">
+<style>
+.main-inner{max-width:1240px}
+body{background:linear-gradient(180deg,var(--cream-2),var(--cream))}
+.admin-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.65rem;margin-bottom:1.4rem}
+@media(min-width:768px){.admin-stat-grid{grid-template-columns:repeat(4,1fr)}}
+.admin-stat{background:var(--cream-2);border:1px solid var(--line);border-radius:14px;padding:1.1rem 1.1rem}
+.admin-stat-label{font-family:var(--mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:.45rem}
+.admin-stat-num{font-family:var(--display);font-size:2rem;font-style:italic;color:var(--green);line-height:1}
+.admin-stat-sub{font-family:var(--body);font-size:.72rem;color:var(--muted);margin-top:.3rem}
+
+.admin-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem;border-bottom:1px solid var(--line);padding-bottom:.6rem}
+.atab{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px;border-radius:50px;border:1.5px solid var(--line);background:transparent;color:var(--muted)}
+.atab.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+.cli-tbl{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--cream-2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.cli-tbl th{font-family:var(--mono);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:left;padding:.75rem .9rem;border-bottom:1px solid var(--line);background:var(--cream-3)}
+.cli-tbl td{padding:.75rem .9rem;border-bottom:1px solid var(--line);color:var(--ink);font-family:var(--body)}
+.cli-tbl tr:last-child td{border-bottom:none}
+.cli-tbl tr:hover{background:var(--cream)}
+.cli-tbl td.num{font-family:var(--mono);text-align:right}
+.health-pill{display:inline-flex;align-items:center;gap:.3rem;padding:3px 8px;border-radius:50px;font-family:var(--mono);font-size:.55rem;letter-spacing:.06em;text-transform:uppercase}
+.h-live{background:var(--green-soft);color:var(--green)}
+.h-paused{background:var(--amber-soft);color:var(--amber)}
+.h-issue{background:var(--red-soft);color:var(--red)}
+.tier-badge{display:inline-block;padding:2px 7px;border-radius:50px;font-family:var(--mono);font-size:.55rem;letter-spacing:.06em;text-transform:uppercase;background:var(--cream-3);color:var(--muted)}
+.cli-action{font-family:var(--mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green);padding:4px 10px;border:1px solid var(--green);border-radius:50px;background:transparent;transition:background .15s,color .15s;cursor:pointer}
+.cli-action:hover{background:var(--green);color:var(--cream)}
+
+.alert-row{background:var(--red-soft);border:1px solid var(--red);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.5rem}
+.alert-row .al-text{font-size:.82rem;color:var(--ink)}
+.alert-row .al-text strong{color:var(--red)}
+
+.onb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.75rem}
+.onb-col{background:var(--cream-2);border:1px solid var(--line);border-radius:14px;padding:.95rem .9rem;min-height:120px}
+.onb-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.6rem;padding-bottom:.5rem;border-bottom:1px solid var(--line)}
+.onb-stage-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.onb-stage-cnt{font-family:var(--mono);font-size:.6rem;color:var(--dim)}
+.onb-card{background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:.75rem .85rem;margin-bottom:.55rem;cursor:pointer;transition:background .15s}
+.onb-card:hover{background:var(--cream-3)}
+.onb-card-name{font-family:var(--display);font-size:.88rem;color:var(--ink);margin-bottom:.3rem}
+.onb-card-meta{font-family:var(--mono);font-size:.58rem;color:var(--dim);display:flex;justify-content:space-between;align-items:center}
+.onb-progress{height:4px;background:var(--cream-3);border-radius:2px;margin-top:.55rem;overflow:hidden}
+.onb-progress-fill{height:100%;background:var(--green);transition:width .8s var(--ease)}
+
+.onb-detail{margin-top:1.25rem;background:var(--cream-2);border:1px solid var(--line);border-radius:14px;padding:1.4rem;display:none}
+.onb-detail.open{display:block}
+.onb-checklist{display:grid;grid-template-columns:1fr 1fr;gap:.6rem 1.5rem;margin-top:.5rem}
+@media(max-width:768px){.onb-checklist{grid-template-columns:1fr}}
+.onb-check{display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid var(--line)}
+.onb-check input{width:16px;height:16px;cursor:pointer;accent-color:var(--green)}
+.onb-check label{font-size:.84rem;color:var(--ink);cursor:pointer;flex:1}
+.onb-check.done label{color:var(--muted);text-decoration:line-through}
+
+.broadcast-card{background:var(--cream-2);border:1px solid var(--line);border-radius:14px;padding:1.4rem}
+.broadcast-textarea{width:100%;min-height:120px;padding:.85rem 1rem;background:var(--cream);border:1.5px solid var(--line);border-radius:10px;font-family:var(--body);font-size:.88rem;color:var(--ink);outline:none;resize:vertical;line-height:1.5}
+.broadcast-textarea:focus{border-color:var(--green)}
+.bc-meta{display:flex;justify-content:space-between;align-items:center;margin-top:.85rem;font-family:var(--mono);font-size:.62rem;color:var(--dim)}
+
+.recipient-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.4rem;margin-top:.85rem;max-height:240px;overflow-y:auto;padding:.5rem;background:var(--cream);border:1px solid var(--line);border-radius:10px}
+.recipient-item{display:flex;align-items:center;gap:.5rem;padding:.4rem .55rem;border-radius:6px;cursor:pointer;transition:background .15s}
+.recipient-item:hover{background:var(--cream-3)}
+.recipient-item input{accent-color:var(--green)}
+.recipient-item label{font-size:.78rem;color:var(--ink);flex:1;cursor:pointer}
+
+.bill-trend{display:flex;align-items:flex-end;gap:8px;height:120px;margin-top:1rem}
+.bill-trend .bar{flex:1;background:var(--cream-3);border-radius:4px 4px 0 0;min-height:6px;transition:height .9s var(--ease);position:relative}
+.bill-trend .bar.current{background:var(--green)}
+.bill-trend .bar:hover::after{content:attr(data-val);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:.55rem;padding:2px 6px;border-radius:4px;white-space:nowrap;margin-bottom:4px}
+.bill-trend-axis{display:flex;justify-content:space-between;margin-top:.3rem;font-family:var(--mono);font-size:.55rem;color:var(--dim);letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <svg class="brand-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    <span class="topbar-logo">4THWALL<sup>®</sup></span>
+    <span class="topbar-div"></span>
+    <span class="topbar-biz">Admin Console</span>
+  </div>
+  <div class="topbar-right">
+    <a href="/dashboard.html" class="ico-btn" title="Back to dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+    <div class="status-pill"><span class="status-dot live"></span><span>ADMIN</span></div>
+    <div class="user-avatar" id="userAvatar">A</div>
+  </div>
+</header>
+
+<main class="main" style="margin-left:0;padding-top:calc(var(--topbar) + 2rem)">
+<div class="main-inner">
+
+  <div class="page-header r">
+    <h1 class="page-h1">All <em>clients.</em></h1>
+    <p class="page-sub" id="adminPulse">Operations dashboard.</p>
+  </div>
+
+  <div class="admin-stat-grid r d1">
+    <div class="admin-stat"><div class="admin-stat-label">Total MRR</div><div class="admin-stat-num" id="aMrr">—</div><div class="admin-stat-sub">monthly recurring</div></div>
+    <div class="admin-stat"><div class="admin-stat-label">Active clients</div><div class="admin-stat-num" id="aActive">—</div><div class="admin-stat-sub">paying</div></div>
+    <div class="admin-stat"><div class="admin-stat-label">With alerts</div><div class="admin-stat-num" id="aAlerts" style="color:var(--red)">—</div><div class="admin-stat-sub">need attention</div></div>
+    <div class="admin-stat"><div class="admin-stat-label">Leads today</div><div class="admin-stat-num" id="aLeadsToday">—</div><div class="admin-stat-sub">across all clients</div></div>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="atab active" data-tab="clients">Clients</button>
+    <button class="atab" data-tab="health">Health monitor</button>
+    <button class="atab" data-tab="onboarding">Onboarding</button>
+    <button class="atab" data-tab="billing">Billing</button>
+    <button class="atab" data-tab="broadcast">Broadcast</button>
+  </div>
+
+  <div id="alertsContainer" class="r d2"></div>
+
+  <!-- TAB: CLIENTS -->
+  <section class="atab-section active" id="atab-clients">
+    <div class="r d3" id="clientsTbl">
+      <div class="report-card skeleton" style="height:200px"></div>
+    </div>
+  </section>
+
+  <!-- TAB: HEALTH -->
+  <section class="atab-section" id="atab-health" style="display:none">
+    <div id="healthList"><div class="report-card skeleton" style="height:200px"></div></div>
+    <div style="display:flex;gap:.5rem;margin-top:1.25rem;flex-wrap:wrap">
+      <button class="btn-sm btn-ink" id="runSyntheticBtn">Run synthetic suite</button>
+      <button class="btn-sm btn-ghost" id="errorLogBtn">View error log</button>
+      <button class="btn-sm btn-ghost" id="driftBtn">Check workflow drift</button>
+    </div>
+  </section>
+
+  <!-- TAB: ONBOARDING -->
+  <section class="atab-section" id="atab-onboarding" style="display:none">
+    <div class="onb-grid" id="onbGrid"><div class="onb-col skeleton" style="height:140px"></div></div>
+    <div class="onb-detail" id="onbDetail"></div>
+  </section>
+
+  <!-- TAB: BILLING -->
+  <section class="atab-section" id="atab-billing" style="display:none">
+    <div id="billingContainer"><div class="report-card skeleton" style="height:200px"></div></div>
+  </section>
+
+  <!-- TAB: BROADCAST -->
+  <section class="atab-section" id="atab-broadcast" style="display:none">
+    <div class="broadcast-card">
+      <div class="section-title">Compose broadcast</div>
+      <textarea class="broadcast-textarea" id="bcMsg" placeholder="Talk to them like you'd text a colleague…"></textarea>
+
+      <div style="display:flex;gap:1rem;align-items:center;margin-top:.85rem;flex-wrap:wrap">
+        <div class="filter-tabs">
+          <button class="filter-tab active" data-channel="sms">SMS</button>
+          <button class="filter-tab" data-channel="email">Email</button>
+        </div>
+        <button class="btn-sm btn-ghost" id="selectAllBtn">Select all</button>
+        <button class="btn-sm btn-ghost" id="selectNoneBtn">Clear</button>
+        <span style="font-family:var(--mono);font-size:.65rem;color:var(--dim);margin-left:auto" id="bcCount">0 selected</span>
+      </div>
+
+      <div class="recipient-grid" id="bcRecipients"></div>
+
+      <div class="bc-meta">
+        <span>Preview shown on send</span>
+        <button class="btn-sm btn-green" id="bcSendBtn">Send broadcast</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script>
+(function(){
+'use strict';
+const WORKER = 'https://fourthwall-bot.4thwalldevelopment.workers.dev';
+const token = localStorage.getItem('fw_token');
+if (!token) { window.location.href = '/login.html'; return; }
+const userEmail = localStorage.getItem('fw_email') || '';
+if (userEmail !== 'andrew@4thwall.solutions'){
+  alert('Admin access only.');
+  window.location.href = '/dashboard.html';
+  return;
+}
+
+document.getElementById('userAvatar').textContent = 'A';
+
+function escHtml(s){
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function timeAgo(iso){
+  if (!iso) return '—';
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff/60000);
+  if (m < 1) return 'now';
+  if (m < 60) return m+'m';
+  const h = Math.floor(m/60);
+  if (h < 24) return h+'h';
+  return Math.floor(h/24)+'d';
+}
+function fmtDate(iso){ return iso ? new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; }
+function k(n){ return n>=1000 ? Math.round(n/1000)+'K' : String(n); }
+
+async function api(path, body={}){
+  try {
+    const res = await fetch(`${WORKER}${path}`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+      body:JSON.stringify(body),
+    });
+    if (res.status === 401){ localStorage.clear(); window.location.href='/login.html'; return {ok:false}; }
+    return await res.json();
+  } catch(err){ return {ok:false,error:err.message}; }
+}
+
+function toast(msg, type='success', dur=4000){
+  const stack = document.getElementById('toastStack');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><div class="toast-body">${escHtml(msg)}</div><button class="toast-close">×</button>`;
+  stack.appendChild(el);
+  const close = () => { el.style.opacity='0'; setTimeout(()=>el.remove(),200); };
+  el.querySelector('.toast-close').addEventListener('click', close);
+  if (dur) setTimeout(close, dur);
+}
+
+// reveal
+requestAnimationFrame(()=> setTimeout(()=> document.querySelectorAll('.r').forEach((el,i)=> setTimeout(()=> el.classList.add('in'), i*40)), 50));
+
+// ── Tab switching ──
+const tabs = document.querySelectorAll('.atab');
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(x => x.classList.toggle('active', x===t));
+  document.querySelectorAll('.atab-section').forEach(s => s.style.display = 'none');
+  document.getElementById('atab-'+t.dataset.tab).style.display = '';
+  if (t.dataset.tab === 'health' && !healthLoaded){ loadHealth(); healthLoaded = true; }
+  if (t.dataset.tab === 'onboarding' && !onbLoaded){ loadOnboarding(); onbLoaded = true; }
+  if (t.dataset.tab === 'billing' && !billLoaded){ loadBilling(); billLoaded = true; }
+  if (t.dataset.tab === 'broadcast' && !bcLoaded){ loadBroadcastRecipients(); bcLoaded = true; }
+}));
+let healthLoaded=false, onbLoaded=false, billLoaded=false, bcLoaded=false;
+
+// ── Top stats ──
+async function loadTopStats(){
+  const billingData = await api('/portal/admin/billing');
+  const healthData = await api('/portal/admin/health');
+  if (billingData.ok){
+    document.getElementById('aMrr').textContent = '$' + k(billingData.mrr || 0);
+    document.getElementById('aActive').textContent = billingData.client_count || 0;
+  }
+  if (healthData.ok){
+    document.getElementById('aAlerts').textContent = healthData.total_alerts || 0;
+    let totalToday = 0;
+    (healthData.clients||[]).forEach(c => totalToday += (c.leads_today||0));
+    document.getElementById('aLeadsToday').textContent = totalToday;
+    renderAlerts(healthData.clients || []);
+    renderClients(healthData.clients || []);
+  }
+}
+
+function renderAlerts(clients){
+  const alerts = clients.filter(c => c.health === 'issue' || c.error_count_24h > 0);
+  if (!alerts.length){ document.getElementById('alertsContainer').innerHTML = ''; return; }
+  document.getElementById('alertsContainer').innerHTML = alerts.map(c=>`
+    <div class="alert-row">
+      <div class="al-text"><strong>${escHtml(c.business_name)}</strong> — ${c.error_count_24h ? c.error_count_24h+' errors in 24h' : 'health issue'}</div>
+      <button class="btn-sm btn-ghost" onclick="window.open('sms:+12036709477?body=Investigate ${encodeURIComponent(c.business_name)}','_self')">Notify</button>
+    </div>
+  `).join('');
+}
+
+function renderClients(clients){
+  const html = `<table class="cli-tbl">
+    <thead><tr>
+      <th>Business</th><th>Tier</th><th>Trade</th><th>Health</th>
+      <th style="text-align:right">Leads today</th>
+      <th style="text-align:right">Last activity</th>
+      <th></th>
+    </tr></thead>
+    <tbody>
+      ${clients.map(c=>`<tr>
+        <td>${escHtml(c.business_name)}<div style="font-family:var(--mono);font-size:.6rem;color:var(--dim)">${escHtml(c.email)}</div></td>
+        <td><span class="tier-badge">${escHtml(c.tier||'growth')}</span></td>
+        <td style="text-transform:capitalize">${escHtml((c.trade_type||'roofing').replace(/_/g,' '))}</td>
+        <td><span class="health-pill h-${c.health}">${escHtml(c.health)}</span></td>
+        <td class="num">${c.leads_today||0}</td>
+        <td class="num">${timeAgo(c.last_lead_at)} ago</td>
+        <td><button class="cli-action" data-email="${escHtml(c.email)}">View</button></td>
+      </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:2rem">No clients yet.</td></tr>'}
+    </tbody>
+  </table>`;
+  document.getElementById('clientsTbl').innerHTML = html;
+}
+
+// ── Health monitor ──
+async function loadHealth(){
+  const data = await api('/portal/admin/health');
+  if (!data.ok){ document.getElementById('healthList').innerHTML = '<div class="empty-state"><div class="empty-headline">Could not load.</div></div>'; return; }
+  const html = (data.clients||[]).map(c=>`
+    <div class="report-card" style="margin-bottom:.55rem">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-family:var(--display);font-size:1rem;color:var(--ink)">${escHtml(c.business_name)}</div>
+          <div style="font-family:var(--mono);font-size:.6rem;color:var(--dim);margin-top:.2rem">${escHtml(c.location_id)}</div>
+        </div>
+        <span class="health-pill h-${c.health}">${escHtml(c.health)}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.65rem;margin-top:.85rem">
+        <div class="tw-cell"><div class="tw-cell-label">Bot</div><div class="tw-cell-val">${escHtml((c.bot||'').toUpperCase())}</div></div>
+        <div class="tw-cell"><div class="tw-cell-label">Storm</div><div class="tw-cell-val">${escHtml((c.storm_mode||'').toUpperCase())}</div></div>
+        <div class="tw-cell"><div class="tw-cell-label">Leads today</div><div class="tw-cell-val">${c.leads_today||0}</div></div>
+        <div class="tw-cell"><div class="tw-cell-label">Errors 24h</div><div class="tw-cell-val">${c.error_count_24h||0}</div></div>
+      </div>
+    </div>
+  `).join('') || '<div class="empty-state"><div class="empty-headline">No clients yet.</div></div>';
+  document.getElementById('healthList').innerHTML = html;
+}
+
+document.getElementById('runSyntheticBtn').addEventListener('click', async()=>{
+  toast('Running synthetic suite…', 'info', 2000);
+  try {
+    const res = await fetch(`${WORKER}/run-synthetic-tests`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+      body:'{}'
+    });
+    const data = await res.json();
+    toast(`Synthetic: ${data.passed || 0}/${data.total || 14} passed`, data.passed === data.total ? 'success' : 'warning');
+  } catch(err){ toast('Synthetic run failed', 'error'); }
+});
+document.getElementById('errorLogBtn').addEventListener('click', async()=>{
+  try {
+    const res = await fetch(`${WORKER}/error-log`, {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    const data = await res.json();
+    const errs = (data.errors || []).slice(0,10);
+    alert(errs.length ? errs.map(e => `${e.timestamp || ''}\n${e.error || e.message}`).join('\n\n---\n\n') : 'No errors logged.');
+  } catch(err){ toast('Could not load error log', 'error'); }
+});
+document.getElementById('driftBtn').addEventListener('click', async()=>{
+  toast('Checking workflow drift…', 'info', 2000);
+  try {
+    const res = await fetch(`${WORKER}/workflow-drift-check`, {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    const data = await res.json();
+    toast(`Drift: ${data.drift_count || 0} workflows flagged`, data.drift_count > 0 ? 'warning' : 'success');
+  } catch(err){ toast('Drift check failed', 'error'); }
+});
+
+// ── Onboarding ──
+const ONBOARDING_STEPS = [
+  ['ghl_subaccount','GHL sub-account created'],
+  ['snapshot_installed','Snapshot installed'],
+  ['custom_values','Custom values configured'],
+  ['calendly_webhook','Calendly webhook set'],
+  ['a2p_brand','A2P brand submitted'],
+  ['a2p_campaign','A2P campaign submitted'],
+  ['a2p_approved','A2P approved'],
+  ['onboard_run','/onboard-client run'],
+  ['smoke_passed','Smoke tests passed'],
+  ['portal_account','Portal account created'],
+  ['welcome_sent','Welcome SMS/email sent'],
+  ['handoff_scheduled','Handoff call scheduled'],
+  ['handoff_done','Handoff call completed'],
+  ['live','LIVE'],
+];
+
+async function loadOnboarding(){
+  const data = await api('/portal/admin/onboarding', { action:'list' });
+  if (!data.ok){ document.getElementById('onbGrid').innerHTML = '<div class="empty-state"><div class="empty-headline">Could not load.</div></div>'; return; }
+  const stages = ['Inquiry','Signed','Building','Live'];
+  const byStage = {};
+  stages.forEach(s => byStage[s] = []);
+  (data.clients||[]).forEach(c => byStage[c.stage]?.push(c));
+  document.getElementById('onbGrid').innerHTML = stages.map(s=>`
+    <div class="onb-col">
+      <div class="onb-head"><span class="onb-stage-label">${s}</span><span class="onb-stage-cnt">${byStage[s].length}</span></div>
+      ${byStage[s].map(c=>`
+        <div class="onb-card" data-email="${escHtml(c.email)}">
+          <div class="onb-card-name">${escHtml(c.business_name)}</div>
+          <div class="onb-card-meta"><span>${escHtml((c.trade_type||'').replace(/_/g,' '))}</span><span>${c.progress.done}/${c.progress.total}</span></div>
+          <div class="onb-progress"><div class="onb-progress-fill" style="width:${c.progress.pct}%"></div></div>
+        </div>
+      `).join('') || '<div style="font-size:.7rem;color:var(--dim);padding:.4rem 0;text-align:center">—</div>'}
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.onb-card').forEach(card => {
+    card.addEventListener('click', () => openOnbDetail(card.dataset.email, data.clients));
+  });
+}
+
+function openOnbDetail(email, clients){
+  const c = clients.find(x => x.email === email);
+  if (!c) return;
+  const detail = document.getElementById('onbDetail');
+  detail.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+      <div>
+        <div style="font-family:var(--display);font-size:1.4rem;color:var(--ink)">${escHtml(c.business_name)}</div>
+        <div style="font-family:var(--mono);font-size:.7rem;color:var(--dim);margin-top:.3rem">${escHtml(c.email)} · ${escHtml(c.tier)} · ${escHtml((c.trade_type||'').replace(/_/g,' '))}</div>
+      </div>
+      <button class="btn-sm btn-ghost" onclick="document.getElementById('onbDetail').classList.remove('open')">Close</button>
+    </div>
+    <div class="onb-checklist">
+      ${ONBOARDING_STEPS.map(([key,label])=>{
+        const checked = !!c.checklist[key];
+        return `<div class="onb-check ${checked?'done':''}">
+          <input type="checkbox" id="onb-${key}" ${checked?'checked':''} data-key="${key}">
+          <label for="onb-${key}">${escHtml(label)}</label>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+  detail.classList.add('open');
+
+  detail.querySelectorAll('input[data-key]').forEach(inp => {
+    inp.addEventListener('change', async ()=>{
+      const k = inp.dataset.key;
+      const update = { [k]: inp.checked };
+      const res = await api('/portal/admin/onboarding', { action:'update', email, checklist: update });
+      if (res.ok){ toast(`${k} ${inp.checked?'checked':'unchecked'}`, 'success', 2000); inp.closest('.onb-check').classList.toggle('done', inp.checked); }
+      else { toast('Save failed', 'error'); inp.checked = !inp.checked; }
+    });
+  });
+}
+
+// ── Billing ──
+async function loadBilling(){
+  const data = await api('/portal/admin/billing');
+  if (!data.ok){ document.getElementById('billingContainer').innerHTML = '<div class="empty-state"><div class="empty-headline">Could not load.</div></div>'; return; }
+  const trend = data.trend || [];
+  const max = Math.max(1, ...trend.map(t=>t.mrr));
+  document.getElementById('billingContainer').innerHTML = `
+    <div class="report-card">
+      <div class="report-card-title">MRR overview</div>
+      <div style="font-family:var(--display);font-size:2.4rem;font-style:italic;color:var(--green)">$${k(data.mrr)}</div>
+      <div style="font-family:var(--mono);font-size:.65rem;color:var(--dim);margin-top:.3rem">${data.client_count} active client${data.client_count!==1?'s':''}</div>
+      <div class="bill-trend">${trend.map((t,i)=>`<div class="bar ${i===trend.length-1?'current':''}" style="height:${(t.mrr/max)*100}%" data-val="${t.month}: $${k(t.mrr)}"></div>`).join('')}</div>
+      <div class="bill-trend-axis">${trend.map(t=>`<span>${t.month.slice(5)}</span>`).join('')}</div>
+    </div>
+
+    <div class="report-card">
+      <div class="report-card-title">Client billing</div>
+      <table class="cli-tbl" style="margin-top:.5rem">
+        <thead><tr><th>Business</th><th>Tier</th><th style="text-align:right">Monthly</th><th>Status</th><th>Since</th></tr></thead>
+        <tbody>${(data.clients||[]).map(c=>`<tr>
+          <td>${escHtml(c.business_name)}</td>
+          <td><span class="tier-badge">${escHtml(c.tier)}</span></td>
+          <td class="num" style="color:var(--green)">$${c.monthly.toLocaleString()}</td>
+          <td><span class="health-pill h-${c.status==='active'?'live':'paused'}">${escHtml(c.status)}</span></td>
+          <td>${fmtDate(c.since)}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ── Broadcast ──
+let bcRecipientList = [];
+let bcChannel = 'sms';
+
+async function loadBroadcastRecipients(){
+  const data = await api('/portal/admin/clients');
+  if (!data.ok) return;
+  bcRecipientList = data.clients || [];
+  renderBcRecipients();
+}
+function renderBcRecipients(){
+  document.getElementById('bcRecipients').innerHTML = bcRecipientList.map(c=>`
+    <div class="recipient-item">
+      <input type="checkbox" data-email="${escHtml(c.email)}" id="rcp-${escHtml(c.email)}">
+      <label for="rcp-${escHtml(c.email)}">${escHtml(c.business_name)}</label>
+    </div>
+  `).join('') || '<div style="grid-column:1/-1;text-align:center;font-size:.8rem;color:var(--dim);padding:1rem">No clients.</div>';
+  document.querySelectorAll('#bcRecipients input').forEach(i => i.addEventListener('change', updateBcCount));
+  updateBcCount();
+}
+function updateBcCount(){
+  const n = document.querySelectorAll('#bcRecipients input:checked').length;
+  document.getElementById('bcCount').textContent = `${n} selected`;
+}
+document.getElementById('selectAllBtn').addEventListener('click', ()=>{ document.querySelectorAll('#bcRecipients input').forEach(i=>{i.checked=true}); updateBcCount(); });
+document.getElementById('selectNoneBtn').addEventListener('click', ()=>{ document.querySelectorAll('#bcRecipients input').forEach(i=>{i.checked=false}); updateBcCount(); });
+document.querySelectorAll('[data-channel]').forEach(t => t.addEventListener('click', ()=>{
+  document.querySelectorAll('[data-channel]').forEach(x => x.classList.toggle('active', x===t));
+  bcChannel = t.dataset.channel;
+}));
+document.getElementById('bcSendBtn').addEventListener('click', async ()=>{
+  const msg = document.getElementById('bcMsg').value.trim();
+  const recipients = Array.from(document.querySelectorAll('#bcRecipients input:checked')).map(i => i.dataset.email);
+  if (!msg){ toast('Write a message first.', 'warning'); return; }
+  if (!recipients.length){ toast('Pick at least one recipient.', 'warning'); return; }
+  if (!confirm(`Send to ${recipients.length} client${recipients.length!==1?'s':''}?\n\n${msg.slice(0,100)}`)) return;
+  const res = await api('/portal/admin/broadcast', { message: msg, recipients, channel: bcChannel });
+  if (res.ok){
+    toast(`Broadcast sent to ${res.sent}. ${res.failed?'('+res.failed+' failed)':''}`, res.failed ? 'warning' : 'success');
+    document.getElementById('bcMsg').value = '';
+    document.querySelectorAll('#bcRecipients input').forEach(i => i.checked = false);
+    updateBcCount();
+  } else {
+    toast('Broadcast failed: '+(res.error||'unknown'), 'error');
+  }
+});
+
+// boot
+loadTopStats();
+})();
+</script>
+</body>
+</html>
