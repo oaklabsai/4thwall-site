@@ -427,6 +427,12 @@ section{position:relative;z-index:2}
 
 .composer-sub{text-align:center;margin-top:1.4rem;font-size:.78rem;color:var(--muted);display:flex;justify-content:center;gap:1.6rem;flex-wrap:wrap}
 .composer-sub a:hover{color:var(--ink)}
+.consent-block{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line)}
+.consent-check{display:flex;align-items:flex-start;gap:.55rem;cursor:pointer}
+.consent-check input[type="checkbox"]{width:13px;height:13px;margin-top:.18rem;flex-shrink:0;accent-color:var(--ink);cursor:pointer}
+.consent-text{font-size:.7rem;line-height:1.7;color:var(--muted)}
+.consent-text a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--line)}
+.consent-text a:hover{color:var(--orange)}
 
 /* ── footer ──────────────── */
 footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position:relative;z-index:2}
@@ -1001,6 +1007,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <button type="button" class="chip" data-chip="Other">Other</button>
       </div>
       <button type="submit" class="composer-send" id="cm-send" aria-label="Send">↑</button>
+    </div>
+    <div class="consent-block">
+      <label class="consent-check">
+        <input type="checkbox" name="sms_consent" required>
+        <span class="consent-text">By submitting this form, I agree to receive SMS communications from 4THWALL regarding appointment scheduling and service-related messages. Message frequency varies. Message and data rates may apply. Reply STOP to unsubscribe at any time. Reply HELP for help. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</span>
+      </label>
     </div>
   </form>
 
