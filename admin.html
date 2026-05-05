@@ -402,8 +402,8 @@ function renderClients(data){
       <span><strong>GHL Agency token not set.</strong> Run <code>npx wrangler secret put GHL_AGENCY_TOKEN</code> to enable automated sub-account creation and pull live clients from GHL.</span>
     </div>` : '';
 
-  const srcLabel = data.source === 'ghl_agency'
-    ? '<span class="src-pill src-ghl">GHL live</span>'
+  const srcLabel = data.source === 'kv_ghl_enriched'
+    ? '<span class="src-pill src-ghl">GHL enriched</span>'
     : '<span class="src-pill src-kv">local KV</span>';
 
   const rows = clients.map(c => `<tr>
