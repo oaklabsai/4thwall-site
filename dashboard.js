@@ -657,7 +657,7 @@ document.getElementById('confirmYes').addEventListener('click', async ()=>{
     const durLabel = botPendingAction==='pause'
       ? (botPauseDuration==='forever' ? '.' : ` for ${botPauseDuration}.`)
       : '';
-    msg.textContent = botIsPaused ? `Bot paused${durLabel} Andrew has been notified.` : 'Bot is active and running.';
+    msg.textContent = botIsPaused ? `Bot paused${durLabel} Your 4THWALL team has been notified.` : 'Bot is active and running.';
     toast(botIsPaused ? `Bot paused ${botPauseDuration}` : 'Bot resumed', 'success');
     setTimeout(()=> msg.classList.remove('show'), 5000);
   } else {
@@ -843,7 +843,7 @@ document.getElementById('leadsContainer').addEventListener('click', async e=>{
         ${!isWon ? `<button class="btn-sm btn-green lead-action-btn" data-opp="${escHtml(lead.id||'')}" data-action="mark_won" onclick="event.stopPropagation();leadAction(this)">Mark Won</button>` : ''}
         ${!isLost ? `<button class="btn-sm" style="background:var(--red);color:#fff;border:none;cursor:pointer" class="lead-action-btn" data-opp="${escHtml(lead.id||'')}" data-action="mark_lost" onclick="event.stopPropagation();leadAction(this)">Mark Lost</button>` : ''}
         ${(isWon||isLost) ? `<button class="btn-sm btn-ghost lead-action-btn" data-opp="${escHtml(lead.id||'')}" data-action="reopen" onclick="event.stopPropagation();leadAction(this)">Reopen</button>` : ''}
-        <button class="btn-sm btn-ghost lead-action-btn" onclick="event.stopPropagation();window.open('sms:+12036709477?body=Flag lead: ${encodeURIComponent(lead.name||'')}','_self')">Flag for Andrew</button>
+        <button class="btn-sm btn-ghost lead-action-btn" onclick="event.stopPropagation();window.open('sms:+12036709477?body=Flag lead: ${encodeURIComponent(lead.name||'')}','_self')">Flag for 4THWALL</button>
       </div>
     `;
   }
@@ -880,7 +880,7 @@ function convRowHTML(c){
   if (c.message_count >= 3) qs.push({ok:true,text:`${c.message_count} messages exchanged`});
   if (c.outcome === 'booked') qs.push({ok:true,text:'Appointment booked'});
   if (c.outcome === 'won') qs.push({ok:true,text:'Marked won'});
-  if (c.outcome === 'escalated') qs.push({ok:false,text:'Escalated to Andrew'});
+  if (c.outcome === 'escalated') qs.push({ok:false,text:'Escalated to 4THWALL'});
   if (c.outcome === 'awaiting' || (c.outcome === 'active' && c.message_count===1)) qs.push({ok:false,text:'Awaiting reply'});
   if (c.avg_response_sec) qs.push({ok: c.avg_response_sec < 60, text:`${c.avg_response_sec}s avg response`});
   if (c.language === 'es') qs.push({ok:true,text:'Spanish detected — bilingual response'});
@@ -1150,7 +1150,7 @@ async function loadIntelligence(){
   const wbRows = wb.length
     ? wb.map(w=>`<div class="win-back-row">
         <div><div class="wb-name">${escHtml(w.name)}</div><div class="wb-meta">${escHtml(w.stage)} · ${timeAgo(w.last_seen)} ago</div></div>
-        <a class="wb-action" href="sms:+12036709477?body=Restart%20nurture%20for%20${encodeURIComponent(w.name)}">Win back</a>
+        <a class="wb-action" href="sms:+12036709477?body=Restart%20nurture%20for%20${encodeURIComponent(w.name)}">Notify 4THWALL</a>
       </div>`).join('')
     : '<div style="text-align:center;color:var(--dim);font-size:.78rem;padding:1rem 0">No candidates right now.</div>';
 
@@ -1238,7 +1238,7 @@ async function loadSettings(){
       <div class="set-row"><div class="set-row-l"><div class="set-row-name">Active since</div></div><div class="set-row-val">${fmtDate(p.created_at)}</div></div>
       ${cachedDashboard?.custom_values?.booking_link ? `<div class="set-row"><div class="set-row-l"><div class="set-row-name">Booking link</div></div><a class="set-row-val" href="${escHtml(cachedDashboard.custom_values.booking_link)}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;font-size:.76rem">Open ↗</a></div>` : ''}
       ${cachedDashboard?.custom_values?.google_review_link ? `<div class="set-row"><div class="set-row-l"><div class="set-row-name">Review link</div></div><a class="set-row-val" href="${escHtml(cachedDashboard.custom_values.google_review_link)}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;font-size:.76rem">Google ↗</a></div>` : ''}
-      <div style="font-family:var(--body);font-size:.74rem;color:var(--dim);margin-top:.85rem;font-style:italic">To update any of these, message Andrew.</div>
+      <div style="font-family:var(--body);font-size:.74rem;color:var(--dim);margin-top:.85rem;font-style:italic">To update any of these, contact your 4THWALL team.</div>
     </div>
 
     <div class="settings-card">
@@ -1262,7 +1262,7 @@ async function loadSettings(){
 
     <div class="plan-card">
       <div class="plan-name">${(p.tier||'GROWTH').toUpperCase()}</div>
-      <div class="plan-price">${p.tier==='dominance'?'$4,500':p.tier==='starter'?'$1,500':'$2,500'}/month · Month-to-month</div>
+      <div class="plan-price">${p.tier==='dominance'||p.tier==='elite'?'$4,500':p.tier==='pro'?'$3,500':p.tier==='starter'?'$1,500':p.tier==='admin'?'Agency':' $2,500'}/month · Month-to-month</div>
       <ul class="plan-features">
         <li>AI response bot (24/7)</li>
         <li>Missed call text-back</li>
@@ -1271,7 +1271,7 @@ async function loadSettings(){
         <li>14-day nurture sequences</li>
         <li>This command center</li>
       </ul>
-      ${p.tier!=='dominance' ? `<button class="btn-sm btn-green" onclick="window.location='sms:+12036709477?body=Interested%20in%20Dominance%20upgrade'">Upgrade to Dominance</button>` : ''}
+      ${(p.tier!=='dominance'&&p.tier!=='elite'&&p.tier!=='admin') ? `<button class="btn-sm btn-green" onclick="window.location='sms:+12036709477?body=Interested%20in%20upgrading%20my%20plan'">Talk to 4THWALL about upgrading</button>` : ''}
     </div>
 
     <div class="settings-card" id="securityCard">
@@ -1366,7 +1366,7 @@ const NAV_ITEMS = [
 const ACTIONS = [
   { label:'Pause bot', action: ()=>{ closeCmdk(); document.getElementById('botToggleBtn').click(); } },
   { label:'Generate report', action: ()=>{ closeCmdk(); showSection('reports'); } },
-  { label:'Message Andrew', action: ()=>{ closeCmdk(); window.open('sms:+12036709477?body=Hi%20Andrew','_self'); } },
+  { label:'Contact 4THWALL', action: ()=>{ closeCmdk(); window.open('sms:+12036709477?body=Hi%204THWALL%20team','_self'); } },
   { label:'Run system audit', action: ()=>{ closeCmdk(); document.getElementById('qaAudit').click(); } },
   { label:'Sign out', action: ()=>{ closeCmdk(); doLogout(); } },
 ];
