@@ -46,6 +46,7 @@
 <!-- SIDEBAR -->
 <nav class="sidebar">
   <div id="sidebarNav">
+    <div class="nav-group-label">Monitor</div>
     <div class="nav-item active" data-section="overview">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
       Overview
@@ -58,6 +59,7 @@
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Conversations
     </div>
+    <div class="nav-group-label">Analyze</div>
     <div class="nav-item" data-section="reviews">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       Reviews
@@ -70,6 +72,7 @@
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       Intelligence
     </div>
+    <div class="nav-group-label">Manage</div>
     <div class="nav-item" data-section="settings">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
       Settings
@@ -80,6 +83,10 @@
     </div>
   </div>
   <div class="sidebar-footer">
+    <div class="sidebar-live">
+      <span class="sidebar-live-dot"></span>
+      System Live
+    </div>
     <button class="logout-btn" id="logoutBtnSide">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M10 11l3-3-3-3M13 8H6"/></svg>
       Sign out
@@ -118,13 +125,15 @@
       <div class="ticker" id="ticker"></div>
     </div>
 
-    <div class="kpi-grid r d2" id="kpiGrid">
-      <div class="kpi-card"><div class="kpi-label">Leads today</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
-      <div class="kpi-card"><div class="kpi-label">Response time</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">Industry avg: 3.5hr</div></div>
-      <div class="kpi-card"><div class="kpi-label">Active now</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
-      <div class="kpi-card"><div class="kpi-label">Reviews this month</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
-      <div class="kpi-card kpi-trade-5"><div class="kpi-label" id="kpi5Label">—</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
-      <div class="kpi-card kpi-trade-6"><div class="kpi-label" id="kpi6Label">—</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
+    <div class="kpi-tray r d2">
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card"><div class="kpi-label">Leads today</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
+        <div class="kpi-card"><div class="kpi-label">Response time</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">Industry avg: 3.5hr</div></div>
+        <div class="kpi-card"><div class="kpi-label">Active now</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
+        <div class="kpi-card"><div class="kpi-label">Reviews this month</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
+        <div class="kpi-card kpi-trade-5"><div class="kpi-label" id="kpi5Label">—</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
+        <div class="kpi-card kpi-trade-6"><div class="kpi-label" id="kpi6Label">—</div><div class="kpi-num skeleton">&nbsp;</div><div class="kpi-sub">&nbsp;</div></div>
+      </div>
     </div>
 
     <div class="grid-2 r d3">
