@@ -1260,19 +1260,6 @@ async function loadSettings(){
       ${tg('review_alerts','New review alerts','When a Google review is posted.')}
     </div>
 
-    <div class="plan-card">
-      <div class="plan-name">${(p.tier||'GROWTH').toUpperCase()}</div>
-      <div class="plan-price">${p.tier==='dominance'||p.tier==='elite'?'$4,500':p.tier==='pro'?'$3,500':p.tier==='starter'?'$1,500':p.tier==='admin'?'Agency':' $2,500'}/month · Month-to-month</div>
-      <ul class="plan-features">
-        <li>AI response bot (24/7)</li>
-        <li>Missed call text-back</li>
-        <li>Review automation</li>
-        <li>Storm mode</li>
-        <li>14-day nurture sequences</li>
-        <li>This command center</li>
-      </ul>
-      ${(p.tier!=='dominance'&&p.tier!=='elite'&&p.tier!=='admin') ? `<button class="btn-sm btn-green" onclick="window.location='sms:+12036709477?body=Interested%20in%20upgrading%20my%20plan'">Talk to 4THWALL about upgrading</button>` : ''}
-    </div>
 
     <div class="settings-card" id="securityCard">
       <div class="section-title">Security</div>
