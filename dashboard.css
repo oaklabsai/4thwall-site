@@ -529,3 +529,35 @@ button,a{font-family:inherit;cursor:pointer;border:none;background:none;color:in
   .ico-btn,.user-avatar{transform:scale(.95)}
   .storm-badge{display:none!important}
 }
+
+/* ── ROI HERO CARD ────────────────────── */
+.roi-card{margin-bottom:1.25rem;background:var(--ink);color:var(--cream);border-radius:16px;padding:1.5rem 1.6rem;position:relative;overflow:hidden}
+.roi-card::after{content:"";position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:rgba(30,102,66,.14);border-radius:50%;pointer-events:none}
+.roi-eyebrow{font-family:var(--mono);font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(247,243,236,.4);margin-bottom:.85rem;display:flex;align-items:center;gap:.45rem}
+.roi-eyebrow svg{opacity:.6}
+.roi-math{font-family:var(--body);font-size:.82rem;color:rgba(247,243,236,.6);margin-bottom:.35rem;line-height:1.5}
+.roi-result{font-family:var(--display);font-size:2.6rem;font-weight:400;font-style:italic;color:var(--cream);line-height:1;margin-bottom:.55rem}
+.roi-result span{color:#7fb893}
+.roi-footer{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.roi-compare{font-family:var(--mono);font-size:.62rem;color:rgba(247,243,236,.42);letter-spacing:.03em}
+.roi-multiplier{font-family:var(--mono);font-size:.6rem;font-weight:600;padding:3px 10px;border-radius:50px;background:rgba(30,102,66,.38);color:#7fb893;letter-spacing:.04em}
+
+/* ── ACTIVITY FEED STATUS BADGES ──────── */
+.act-right{display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;flex-shrink:0}
+.act-badge{font-family:var(--mono);font-size:.5rem;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:50px;white-space:nowrap}
+.act-badge-ai{background:var(--cream-3);color:var(--dim)}
+.act-badge-needs{background:var(--red-soft);color:var(--red);font-weight:700}
+.act-badge-booked{background:var(--green-soft);color:var(--green)}
+.act-badge-new{background:rgba(35,78,122,.1);color:var(--blue)}
+
+/* ── KPI BENCHMARK LINE ───────────────── */
+.kpi-bench{font-family:var(--mono);font-size:.57rem;color:var(--green);margin-top:.25rem;display:flex;align-items:center;gap:.2rem;letter-spacing:.01em}
+.kpi-bench svg{width:10px;height:10px;flex-shrink:0}
+.kpi-bench.warn{color:var(--amber)}
+.kpi-bench.bad{color:var(--red)}
+
+/* ── LAST ACTION STRIP ─────────────────── */
+.last-action-strip{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.58rem;color:var(--green);padding:.5rem 0 0;letter-spacing:.03em;border-top:1px solid var(--line);margin-top:.4rem}
+.last-action-strip .la-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2.4s ease infinite}
+.last-action-strip.inactive{color:var(--dim)}
+.last-action-strip.inactive .la-dot{background:var(--dim);animation:none}

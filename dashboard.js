@@ -285,6 +285,9 @@ async function loadOverview(){
     document.querySelector('.status-panel')?.classList.add('storm');
   }
 
+  // ROI hero card
+  renderROICard(stats);
+
   // Activity feed
   renderActivityFeed(data.recent_conversations || [], data.recent_leads || []);
 
@@ -324,35 +327,77 @@ function renderKpiCards(stats){
   if (!cards[0]) return;
 
   // KPI 1: Leads today / this month
-  cards[0].innerHTML = `<div class="kpi-label">Leads today</div><div class="kpi-num">${stats.leads_today||0}</div><div class="kpi-sub">${stats.leads_this_month||0} this month</div>`;
+  const mo = new Date().toLocaleDateString('en-US',{month:'short'});
+  const monthDelta = stats.leads_this_month_delta;
+  const deltaHtml = monthDelta != null
+    ? `<div class="kpi-bench${monthDelta>=0?'':' bad'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">${monthDelta>=0?'<polyline points="18 15 12 9 6 15"/>':'<polyline points="6 9 12 15 18 9"/>'}</svg>${monthDelta>=0?'+':''}${monthDelta} vs last month</div>`
+    : '';
+  cards[0].innerHTML = `<div class="kpi-label">Leads today</div><div class="kpi-num">${stats.leads_today||0}</div><div class="kpi-sub">${stats.leads_this_month||0} this month</div>${deltaHtml}`;
 
-  // KPI 2: Response time (real avg from GHL conversations)
+  // KPI 2: Response time — show gap vs. industry average (3.5hr = 12,600s)
   const rt = stats.avg_response_seconds || 47;
-  const rtClass = rt < 60 ? 'up' : rt < 120 ? '' : 'down';
-  cards[1].innerHTML = `<div class="kpi-label">Response time</div><div class="kpi-num mono">${rt}s</div><div class="kpi-sub ${rtClass}">${rt<60?'Faster than industry avg':'Industry avg: 3.5hr'}</div>`;
+  const industryAvgS = 12600; // 3.5 hours in seconds
+  const speedMult = Math.round(industryAvgS / Math.max(rt, 1));
+  const rtBenchClass = rt < 60 ? '' : rt < 300 ? 'warn' : 'bad';
+  cards[1].innerHTML = `<div class="kpi-label">Response time</div><div class="kpi-num mono">${rt}s</div><div class="kpi-sub">Industry avg: 3.5hr</div><div class="kpi-bench ${rtBenchClass}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>${speedMult}× faster than avg</div>`;
 
-  // KPI 3: Active conversations
-  cards[2].innerHTML = `<div class="kpi-label">Active now</div><div class="kpi-num">${stats.conversations_active||0}</div><div class="kpi-sub">live conversations</div>`;
+  // KPI 3: Active conversations + total handled
+  const totalHandled = stats.conversations_total || stats.conversations_active || 0;
+  cards[2].innerHTML = `<div class="kpi-label">Bot handled</div><div class="kpi-num">${totalHandled}</div><div class="kpi-sub">conversations${stats.conversations_active?` · ${stats.conversations_active} active`:''}</div><div class="kpi-bench"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>All automated</div>`;
 
-  // KPI 4: Reviews — show real rating if we have it
+  // KPI 4: Reviews — show rating + velocity
   const rating = stats.avg_rating != null ? parseFloat(stats.avg_rating).toFixed(1) : null;
   const ratingDisplay = rating ? `<span style="color:var(--amber)">${rating}★</span>` : '';
-  const mo = new Date().toLocaleDateString('en-US',{month:'short'});
-  cards[3].innerHTML = `<div class="kpi-label">Reviews this month</div><div class="kpi-num">${stats.reviews_this_month||0}${ratingDisplay?` <span style="font-size:.9rem">${ratingDisplay}</span>`:''}</div><div class="kpi-sub">added in ${mo}${stats.total_reviews?' · '+stats.total_reviews+' total':''}</div>`;
+  const reviewBench = stats.reviews_this_month > 0
+    ? `<div class="kpi-bench"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>+${stats.reviews_this_month} in ${mo}</div>`
+    : '';
+  cards[3].innerHTML = `<div class="kpi-label">Google rating</div><div class="kpi-num">${ratingDisplay||'—'}</div><div class="kpi-sub">${stats.total_reviews||0} total reviews</div>${reviewBench}`;
 
-  // KPI 5: Trade-specific (leads/pipeline metric)
+  // KPI 5: Trade-specific
   cards[4].innerHTML = `<div class="kpi-label">${trade().kpi5Label}</div><div class="kpi-num">${stats.leads_this_month||0}</div><div class="kpi-sub">${trade().stagesUnit} pipeline</div>`;
 
-  // KPI 6: Revenue from real GHL opportunities (sum monetaryValue) or est. if no GHL data
+  // KPI 6: Revenue — show open pipeline vs estimated
   const revenueOpen = stats.revenue_open || 0;
   const revenueDisplay = revenueOpen > 0
     ? `$${k(revenueOpen)}`
     : `$${k((stats.leads_this_month||0) * trade().avgJobValue)}`;
-  const revenueLabel = revenueOpen > 0 ? 'open pipeline' : 'est. opportunity';
-  cards[5].innerHTML = `<div class="kpi-label">${trade().kpi6Label}</div><div class="kpi-num">${revenueDisplay}</div><div class="kpi-sub">${revenueLabel}</div>`;
+  const revenueLabel = revenueOpen > 0 ? 'open pipeline' : 'est. value';
+  const costMap = { starter:1500, growth:2500, pro:3500, elite:4500 };
+  const subCost = costMap[tier] || 2500;
+  const revMultiplier = revenueOpen > 0 ? Math.round(revenueOpen / subCost) : Math.round(((stats.leads_this_month||0) * trade().avgJobValue) / subCost);
+  const revBench = revMultiplier >= 2
+    ? `<div class="kpi-bench"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>${revMultiplier}× your investment</div>`
+    : '';
+  cards[5].innerHTML = `<div class="kpi-label">${trade().kpi6Label}</div><div class="kpi-num">${revenueDisplay}</div><div class="kpi-sub">${revenueLabel}</div>${revBench}`;
 
   document.getElementById('kpi5Label').textContent = trade().kpi5Label;
   document.getElementById('kpi6Label').textContent = trade().kpi6Label;
+}
+
+function renderROICard(stats){
+  const card = document.getElementById('roiCard');
+  if (!card) return;
+  const leads = stats.leads_this_month || 0;
+  if (leads === 0){ card.style.display='none'; return; }
+  card.style.display='';
+  const avgJob = trade().avgJobValue;
+  const protectedRevenue = leads * avgJob;
+  const tierCostMap = { starter:1500, growth:2500, pro:3500, elite:4500 };
+  const cost = tierCostMap[tier] || 2500;
+  const multiplier = Math.round(protectedRevenue / cost);
+  const multiLabel = multiplier >= 2 ? `${multiplier}× ROI` : multiplier === 1 ? `1× ROI` : '';
+  card.innerHTML = `
+    <div class="roi-eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="width:12px;height:12px"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      Your AI ROI this month
+    </div>
+    <div class="roi-math">${leads} leads captured × $${k(avgJob)} avg job value</div>
+    <div class="roi-result"><span>$${k(protectedRevenue)}</span> in protected revenue</div>
+    <div class="roi-footer">
+      <div class="roi-compare">vs. your $${k(cost)}/mo investment</div>
+      ${multiLabel ? `<div class="roi-multiplier">${multiLabel}</div>` : ''}
+    </div>
+  `;
 }
 
 function renderStatusPanel(sys){
@@ -373,6 +418,10 @@ function renderStatusPanel(sys){
   ];
   const stateMap = { active:'dot-active', paused:'dot-inactive', inactive:'dot-inactive', warning:'dot-warning', error:'dot-error' };
   const valMap = { active:'val-active', paused:'val-paused', inactive:'val-off', warning:'val-paused', error:'val-error' };
+  const lastActionTs = sys.last_action_at || sys.last_active_at || null;
+  const lastActionStr = lastActionTs
+    ? `<div class="last-action-strip"><span class="la-dot"></span>Last automated action: ${timeAgo(lastActionTs)} ago</div>`
+    : `<div class="last-action-strip inactive"><span class="la-dot"></span>Monitoring — ready to respond</div>`;
   document.getElementById('statusRows').innerHTML = rows.map(r=>`
     <div class="status-row">
       <div class="status-row-left">
@@ -381,34 +430,64 @@ function renderStatusPanel(sys){
       </div>
       <span class="status-row-val ${valMap[r.state]||'val-off'}">${r.val}</span>
     </div>
-  `).join('');
+  `).join('') + lastActionStr;
 }
 
 function renderActivityFeed(convs, leads){
+  const badgeHTML = {
+    ai:     `<span class="act-badge act-badge-ai">AI Handled</span>`,
+    new:    `<span class="act-badge act-badge-new">New Lead</span>`,
+    booked: `<span class="act-badge act-badge-booked">Booked</span>`,
+    needs:  `<span class="act-badge act-badge-needs">Needs You</span>`,
+  };
+
   const items = [];
-  leads.forEach(l => items.push({
-    icon:'<line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>',
-    text:`New lead — ${escHtml(l.name)}`,
-    sub: l.stage,
-    time: l.created,
-  }));
-  convs.forEach(c => items.push({
-    icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
-    text:`Conversation with ${escHtml(c.contact_name)}`,
-    sub: c.last_message,
-    time: c.timestamp,
-  }));
-  items.sort((a,b)=> new Date(b.time||0) - new Date(a.time||0));
+  leads.forEach(l => {
+    const stage = (l.stage||'').toLowerCase();
+    const status = (l.status||'').toLowerCase();
+    const ageH = (Date.now() - new Date(l.created||0).getTime()) / 3600000;
+    let badge = 'ai';
+    let priority = 3;
+    if (status==='booked'||stage.includes('booked')||stage.includes('won')||stage.includes('scheduled')){
+      badge='booked'; priority=2;
+    } else if (stage.includes('estimate')||stage.includes('proposal')){
+      badge='needs'; priority=0;
+    } else if (ageH < 2){
+      badge='new'; priority=1;
+    }
+    items.push({
+      icon:'<line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>',
+      text:`New lead — ${escHtml(l.name)}`,
+      sub: l.stage,
+      time: l.created,
+      badge, priority,
+    });
+  });
+  convs.forEach(c => {
+    items.push({
+      icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+      text:`Conversation with ${escHtml(c.contact_name)}`,
+      sub: c.last_message,
+      time: c.timestamp,
+      badge:'ai', priority:3,
+    });
+  });
+
+  items.sort((a,b)=> a.priority - b.priority || new Date(b.time||0) - new Date(a.time||0));
+
   const el = document.getElementById('activityFeed');
   if (!items.length){ el.innerHTML = '<div class="empty-state mini"><div class="empty-headline">All quiet.</div><div class="empty-sub">Activity will appear here in real time.</div></div>'; return; }
   el.innerHTML = items.slice(0,12).map(i=>`
     <div class="act-row">
-      <div class="act-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${i.icon}</svg></div>
+      <div class="act-icon ${i.badge==='needs'?'alert':i.badge==='booked'?'':''}" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${i.icon}</svg></div>
       <div class="act-body">
         <div class="act-text">${i.text}</div>
         ${i.sub ? `<div class="act-sub">${escHtml(String(i.sub).slice(0,80))}</div>`:''}
       </div>
-      <div class="act-time">${timeAgo(i.time)}</div>
+      <div class="act-right">
+        <div class="act-time">${timeAgo(i.time)}</div>
+        ${badgeHTML[i.badge]||badgeHTML.ai}
+      </div>
     </div>
   `).join('');
 }
