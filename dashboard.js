@@ -257,6 +257,10 @@ async function loadOverview(){
   }
   document.getElementById('leadsSub').textContent = trade().leadsSub;
 
+  // Temp password banner
+  const tempBanner = document.getElementById('tempPwBanner');
+  if (tempBanner) tempBanner.style.display = data.temp_password ? 'flex' : 'none';
+
   const stats = data.stats || {};
   const sys = data.system_status || {};
 
@@ -470,7 +474,7 @@ function renderTradeWidget(stats, sys, data){
     ? `<div style="margin-top:.8rem"><div style="font-family:var(--mono);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:.4rem">Follow-up needed</div>${
       estQueue.map(q=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:.35rem 0;border-bottom:1px solid var(--cream-3);font-size:.76rem">
         <span>${escHtml(q.name)}</span>
-        <span style="font-family:var(--mono);color:${q.urgency==='hot'?'var(--red)':q.urgency==='warm'?'var(--amber)':'var(--dim)'">${q.age_days}d</span>
+        <span style="font-family:var(--mono);color:${q.urgency==='hot'?'var(--red)':q.urgency==='warm'?'var(--amber)':'var(--dim)'}">${q.age_days}d</span>
       </div>`).join('')
     }</div>` : '';
 
@@ -1194,10 +1198,19 @@ async function loadSettings(){
       ${p.tier!=='dominance' ? `<button class="btn-sm btn-green" onclick="window.location='sms:+12036709477?body=Interested%20in%20Dominance%20upgrade'">Upgrade to Dominance</button>` : ''}
     </div>
 
-    <div class="settings-card">
+    <div class="settings-card" id="securityCard">
       <div class="section-title">Security</div>
       <div class="set-row"><div class="set-row-l"><div class="set-row-name">Signed in as</div></div><div class="set-row-val">${escHtml(p.email||'')}</div></div>
-      <div class="set-row"><div class="set-row-l"><div class="set-row-name"></div></div><button class="btn-sm btn-ghost" onclick="window.dispatchEvent(new Event('fwLogout'))">Sign out</button></div>
+      ${p.temp_password ? `<div style="background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);border-radius:8px;padding:.75rem 1rem;margin:.75rem 0;font-size:.76rem;color:var(--red)">⚠ You're using a temporary password. Set a permanent one below.</div>` : ''}
+      <div id="pwChangeForm" style="margin-top:.75rem">
+        <div style="font-family:var(--mono);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:.65rem">Change password</div>
+        <input id="pwCurrent" type="password" placeholder="Current password" style="width:100%;font-family:var(--body);font-size:.82rem;border:1px solid var(--line);border-radius:6px;padding:.5rem .75rem;background:var(--cream-2);color:var(--ink);margin-bottom:.45rem;outline:none">
+        <input id="pwNew" type="password" placeholder="New password (min 8 chars)" style="width:100%;font-family:var(--body);font-size:.82rem;border:1px solid var(--line);border-radius:6px;padding:.5rem .75rem;background:var(--cream-2);color:var(--ink);margin-bottom:.45rem;outline:none">
+        <input id="pwConfirm" type="password" placeholder="Confirm new password" style="width:100%;font-family:var(--body);font-size:.82rem;border:1px solid var(--line);border-radius:6px;padding:.5rem .75rem;background:var(--cream-2);color:var(--ink);margin-bottom:.65rem;outline:none">
+        <button id="pwSaveBtn" class="btn-sm btn-green">Update password</button>
+        <span id="pwMsg" style="display:none;margin-left:.75rem;font-size:.74rem"></span>
+      </div>
+      <div class="set-row" style="margin-top:1rem"><div class="set-row-l"><div class="set-row-name"></div></div><button class="btn-sm btn-ghost" onclick="window.dispatchEvent(new Event('fwLogout'))">Sign out</button></div>
       <div style="font-family:var(--body);font-size:.74rem;color:var(--dim);margin-top:.85rem">Your data is encrypted and never shared with third parties.</div>
     </div>
   `;
@@ -1210,6 +1223,30 @@ async function loadSettings(){
       if (res.ok) toast(`${key} saved`, 'success', 2000);
       else toast('Could not save', 'error');
     });
+  });
+
+  document.getElementById('pwSaveBtn')?.addEventListener('click', async ()=>{
+    const cur = document.getElementById('pwCurrent').value;
+    const nw = document.getElementById('pwNew').value;
+    const conf = document.getElementById('pwConfirm').value;
+    const msg = document.getElementById('pwMsg');
+    msg.style.display='';
+    if (!cur || !nw || !conf){ msg.textContent='Fill all fields.'; msg.style.color='var(--red)'; return; }
+    if (nw !== conf){ msg.textContent='Passwords do not match.'; msg.style.color='var(--red)'; return; }
+    if (nw.length < 8){ msg.textContent='Min 8 characters.'; msg.style.color='var(--red)'; return; }
+    const btn = document.getElementById('pwSaveBtn');
+    btn.disabled=true; btn.textContent='Saving…';
+    const res = await api('/portal/change-password', { current_password: cur, new_password: nw });
+    btn.disabled=false; btn.textContent='Update password';
+    if (res.ok){
+      msg.textContent='Password updated.'; msg.style.color='var(--green)';
+      document.getElementById('pwCurrent').value='';
+      document.getElementById('pwNew').value='';
+      document.getElementById('pwConfirm').value='';
+      toast('Password updated successfully', 'success');
+    } else {
+      msg.textContent=res.error||'Failed to update.'; msg.style.color='var(--red)';
+    }
   });
 }
 window.addEventListener('fwLogout', doLogout);
