@@ -369,9 +369,6 @@ function renderKpiCards(stats){
     ? `<div class="kpi-bench"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>${revMultiplier}× your investment</div>`
     : '';
   cards[5].innerHTML = `<div class="kpi-label">${trade().kpi6Label}</div><div class="kpi-num">${revenueDisplay}</div><div class="kpi-sub">${revenueLabel}</div>${revBench}`;
-
-  document.getElementById('kpi5Label').textContent = trade().kpi5Label;
-  document.getElementById('kpi6Label').textContent = trade().kpi6Label;
 }
 
 function renderROICard(stats){
