@@ -1003,6 +1003,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="composer-input-line"><span class="lbl">From</span><input type="text" name="name" placeholder="Your name" required></div>
     <div class="composer-input-line"><span class="lbl">Company</span><input type="text" name="company" placeholder="Business name"></div>
     <div class="composer-input-line"><span class="lbl">Reply to</span><input type="email" name="email" placeholder="you@email.com" required></div>
+    <div class="composer-input-line"><span class="lbl">Phone</span><input type="tel" name="phone" placeholder="(555) 000-0000" required></div>
     <input type="hidden" name="trade" id="cm-trade" value="">
 
     <div class="composer-bar">
@@ -1016,8 +1017,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
     <div class="consent-block">
       <label class="consent-check">
-        <input type="checkbox" name="sms_consent">
-        <span class="consent-text">By submitting this form, I agree to receive promotional and informational SMS messages from 4THWALL regarding my inquiry, appointment scheduling, and service updates. Reply STOP to opt out. Message frequency varies. Message and data rates may apply. Reply HELP for help. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</span>
+        <input type="checkbox" name="sms_consent" required>
+        <span class="consent-text">By submitting this form, I agree to receive automated promotional and informational SMS messages from 4THWALL regarding my inquiry, appointment scheduling, and service updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out. Reply HELP for help. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</span>
       </label>
     </div>
   </form>
