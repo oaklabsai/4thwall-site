@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>4THWALL® — AI Infrastructure for Trades Contractors</title>
+<title>4THWALL® Trades — AI Infrastructure for Trades Contractors</title>
 <meta name="description" content="4THWALL builds and fully manages AI infrastructure for roofing contractors, home remodelers, and general contractors. Every lead answered in 60 seconds, day or night.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -573,6 +573,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </div>
     </div>
     <a href="#how" class="nav-a">How it works</a>
+    <a href="#faq" class="nav-a">FAQ</a>
     <a href="/login.html" class="nav-a" style="opacity:.55">Client login</a>
     <button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="navDrop">
       <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
@@ -618,6 +619,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <span class="d-label">How It Works</span>
       <span class="d-arr">↗</span>
     </a>
+    <a href="#faq" class="drop-a">
+      <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2"/></svg></span>
+      <span class="d-label">FAQ</span>
+      <span class="d-arr">↗</span>
+    </a>
     <a href="#contact" class="drop-a">
       <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
       <span class="d-label">Let's Talk</span>
@@ -644,45 +650,292 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <span class="orbit-dot"></span>
   </div>
 
-  <div class="hero-row" style="grid-template-columns:1fr;max-width:820px">
+  <div class="hero-row">
     <div>
       <h1 class="hero-h r in">
-        We build the <span class="ital">AI layer</span><br>
-        your business is missing.
+        You're on the job.<br>
+        <span class="ital orange">We handle</span> everything else.
       </h1>
       <p class="hero-sub r in d2">
-        Fully managed AI infrastructure for trades contractors and service businesses. Every lead answered. Every operation running. While you focus on the work.
+        We build and run the AI layer for your contracting business — every lead answered in under 60 seconds, every review chased, every campaign on autopilot.
       </p>
       <div class="hero-cta r in d3">
         <a href="#contact" class="hero-link">Let's talk</a>
-        <a href="#products" class="hero-link">See our products</a>
+        <a href="#capabilities" class="hero-link">See what we do</a>
+      </div>
+    </div>
+
+    <!-- animated phone demo -->
+    <div class="r in d2" id="demo-mount" style="position:relative">
+      <div class="demo-stage">
+        <div class="hero-vignette" id="hero-vignette" aria-hidden="true">
+          <div class="vig-illo" id="vig-illo"></div>
+          <div class="vig-caption">
+            <span class="vig-you" id="vig-you">while you sleep,</span>
+            <span class="vig-we" id="vig-we">we catch the storm.</span>
+          </div>
+        </div>
+        <div class="demo-tag t-live">
+          <span class="tag-h">Replying instantly</span>
+          <span class="tag-s">SMS · web · phone</span>
+        </div>
+        <div class="demo-bezel">
+          <div class="demo-screen">
+            <div class="demo-island" id="demo-island">
+              <span class="di-icon" id="di-icon">R</span>
+              <div class="di-text" id="di-text"><strong>New lead</strong><span>SMS · just now</span></div>
+              <span class="di-pulse"></span>
+            </div>
+            <div class="demo-statusbar">
+              <span id="demo-time">11:47</span>
+              <span class="sb-r"><span>•••</span><span>📶</span><span class="sb-bat"><i></i></span></span>
+            </div>
+            <div class="demo-header">
+              <div class="demo-avatar" id="demo-avatar">RN</div>
+              <div>
+                <div class="demo-name" id="demo-name">New conversation</div>
+              </div>
+              <span class="demo-channel" id="demo-channel">SMS</span>
+            </div>
+            <div class="demo-stream" id="demo-stream">
+              <div class="demo-scenario-tag" id="demo-scenario-tag">Scenario 01 · Storm leak, 11:47 PM</div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-tag t-done">
+          <span class="tag-h">Auto-booked</span>
+          <span class="tag-s">handoff sent to inbox</span>
+        </div>
+        <div class="demo-dots" id="demo-dots"></div>
       </div>
     </div>
   </div>
 
 </section>
 
-<!-- ════════════════════════════════════════════ PRODUCTS ════════════════════════════════════════════ -->
-<section class="s wrap" id="products" data-screen-label="Products">
+<!-- ════════════════════════════════════════════ CAPABILITIES ════════════════════════════════════════════ -->
+<section class="s wrap" id="capabilities" data-screen-label="02 Capabilities">
   <div class="s-meta">
     <div>
-      <div class="s-label r">Our products</div>
-      <h2 class="s-h r in">Two products.<br><span class="ital">One operating layer.</span></h2>
+      <div class="s-label r">What we do · 01</div>
+      <h2 class="s-h r in">The AI layer your<br><span class="ital">operation is missing.</span></h2>
+      <p class="s-note r in d2">Five things, deployed in 48 hours, managed permanently. No subscriptions to track. No tools to learn.</p>
+    </div>
+    <div class="s-count r in d3">(05 capabilities)</div>
+  </div>
+
+  <div class="bento" id="bento">
+    <div class="bento-card bento-a r">
+      <div>
+        <div class="b-num">001 · Lead Response</div>
+        <div class="b-h">Every lead, answered in <span class="ital">60 seconds.</span></div>
+        <div class="b-d">Every text, web chat, and missed call gets an intelligent AI response — 24 hours a day, in English or Spanish. The homeowner who texts at 11pm gets answered before they call your competitor.</div>
+      </div>
+      <div class="b-illo" data-illo="phone"></div>
+    </div>
+
+    <div class="bento-card bento-b r d1">
+      <div>
+        <div class="b-num">002</div>
+        <div class="b-h">Booking <span class="ital">on autopilot.</span></div>
+        <div class="b-d">Estimates, confirmations, reminders, follow-ups.</div>
+      </div>
+      <div class="b-illo" data-illo="calendar"></div>
+    </div>
+
+    <div class="bento-card bento-c r d2">
+      <div>
+        <div class="b-num">003</div>
+        <div class="b-h"><span class="ital">5-star</span> reviews, automated.</div>
+        <div class="b-d">Every closed job triggers a review request that sounds human.</div>
+      </div>
+      <div class="b-illo" data-illo="star"></div>
+    </div>
+
+    <div class="bento-card bento-d r d3">
+      <div>
+        <div class="b-num">004 · Visibility</div>
+        <div class="b-h">Found on <span class="ital">Google + AI Search.</span></div>
+        <div class="b-d">Be the contractor that AI assistants recommend by name when neighbors ask.</div>
+      </div>
+      <div class="b-illo" data-illo="search"></div>
+    </div>
+
+    <div class="bento-card bento-e r d4">
+      <div>
+        <div class="b-num">005 · Storm Mode</div>
+        <div class="b-h">When demand <span class="ital">spikes,</span> we scale.</div>
+        <div class="b-d">Hurricane, hail, blizzard — the system absorbs 10× volume without dropping leads.</div>
+      </div>
+      <div class="b-illo" data-illo="storm"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ ELIMINATES — flip cards ════════════════════════════════════════════ -->
+<section class="s wrap" data-screen-label="03 Eliminates">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">What this eliminates · 02</div>
+      <h2 class="s-h r in">Six things you'll<br><span class="ital">never do again.</span></h2>
+      <p class="s-note r in d2">Tap a card to see what disappears.</p>
     </div>
   </div>
 
-  <div class="prod-cards">
-    <div class="prod-card pc-dark r">
-      <div class="pc-eyebrow">4THWALL Trades</div>
-      <div class="pc-h">The AI layer built for <em style="font-style:italic">the trades.</em></div>
-      <div class="pc-body">Lead response, booking, reviews, storm mode, and AI visibility. Deployed in 48 hours. Fully managed. Month-to-month.</div>
-      <a href="/trades.html" class="pc-link">See what's included <span class="pc-arr">→</span></a>
+  <div class="flip-grid">
+    <div class="flip r" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">01</div>
+            <div class="flip-q">Calling back leads <span class="ital">at 9pm.</span></div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">The AI replies in 47 seconds.</div>
+          <div class="flip-a">By the time you check your phone, the lead is already qualified, scheduled, or moved into a 14-day nurture sequence.</div>
+        </div>
+      </div>
     </div>
-    <div class="prod-card pc-light r d1">
-      <div class="pc-eyebrow">4THWALL Ops</div>
-      <div class="pc-h">AI infrastructure for operations at scale.</div>
-      <div class="pc-body">Built for agencies, amenity management companies, and any service business managing multiple clients or locations simultaneously. Custom built. Fully managed.</div>
-      <a href="/ops.html" class="pc-link">See how it works <span class="pc-arr">→</span></a>
+    <div class="flip r d1" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">02</div>
+            <div class="flip-q">Asking customers<br>for <span class="ital">reviews</span> manually.</div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">Every closed job triggers one automatically.</div>
+          <div class="flip-a">Personalized to the customer, the work, and the season — not a template they'll ignore.</div>
+        </div>
+      </div>
+    </div>
+    <div class="flip r d2" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">03</div>
+            <div class="flip-q">Wondering <span class="ital">where leads</span> went.</div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">Every lead has a status, in writing.</div>
+          <div class="flip-a">Replied · qualified · booked · won · lost. With timestamps, transcripts, and the conversation that got them there.</div>
+        </div>
+      </div>
+    </div>
+    <div class="flip r d3" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">04</div>
+            <div class="flip-q">Saying <em style="font-style:italic">"sorry,</em> we don't speak Spanish."</div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">EN ⇄ ES, fluent.</div>
+          <div class="flip-a">The AI switches mid-conversation. Every follow-up, every reminder, every quote — in whatever language they prefer.</div>
+        </div>
+      </div>
+    </div>
+    <div class="flip r d4" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">05</div>
+            <div class="flip-q">Hiring an <span class="ital">office manager</span> to keep up.</div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">The AI is the office manager.</div>
+          <div class="flip-a">$3,000/month for a part-timer who works 40 hours and takes vacations? Or this, running 24/7 for less?</div>
+        </div>
+      </div>
+    </div>
+    <div class="flip r d5" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">06</div>
+            <div class="flip-q">Losing leads to the contractor<br>with the <span class="ital">faster reply.</span></div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">You become the faster reply.</div>
+          <div class="flip-a">78% of homeowners hire whoever responds first. The math is decided in the first 5 minutes — long before the quote.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ MARKET — story stats ════════════════════════════════════════════ -->
+<section class="s wrap" id="market" data-screen-label="04 Market">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">Why now · 03</div>
+      <h2 class="s-h r in">The math has<br><span class="ital">already decided.</span></h2>
+      <p class="s-note r in d2">Five numbers. Read them in order.</p>
+    </div>
+    <div class="s-count r in d3">(01 → 05)</div>
+  </div>
+
+  <div class="story">
+    <div class="story-row r">
+      <div class="story-num">01</div>
+      <div class="story-stat"><span class="story-figure">42%</span></div>
+      <div class="story-body">
+        <div class="story-h">of inbound leads come in <span class="ital">after 5pm.</span></div>
+        <div class="story-d">Storms hit at night. Pipes burst on weekends. Homeowners scroll Google between dinner and bed.</div>
+      </div>
+    </div>
+
+    <div class="story-row r d1">
+      <div class="story-num">02</div>
+      <div class="story-stat"><span class="story-figure">78%</span></div>
+      <div class="story-body">
+        <div class="story-h">hire <span class="ital">whoever replies first.</span></div>
+        <div class="story-d">Not the most experienced. Not the cheapest. The fastest. The race ends in the first five minutes — long before the quote.</div>
+      </div>
+    </div>
+
+    <div class="story-row r d2">
+      <div class="story-num">03</div>
+      <div class="story-stat"><span class="story-figure">3.5<span class="story-unit">hrs</span></span></div>
+      <div class="story-body">
+        <div class="story-h">average <span class="ital">local trades</span> response time.</div>
+        <div class="story-d">In the time you take to reply, the homeowner has texted three other contractors and one of them already showed up.</div>
+      </div>
+    </div>
+
+    <div class="story-row r d3">
+      <div class="story-num">04</div>
+      <div class="story-stat"><span class="story-figure">$3.8<span class="story-unit">M</span></span></div>
+      <div class="story-body">
+        <div class="story-h">median high-end <span class="ital">home value.</span></div>
+        <div class="story-d">In our market a standard roof replacement runs $40,000+. Each missed lead is a five-figure loss — at minimum.</div>
+      </div>
+    </div>
+
+    <div class="story-row story-row-final r d4">
+      <div class="story-num">05</div>
+      <div class="story-stat"><span class="story-figure orange">47<span class="story-unit">sec</span></span></div>
+      <div class="story-body">
+        <div class="story-h"><span class="ital">our</span> response time.</div>
+        <div class="story-d">By the time your competitor's voicemail picks up, the lead is already qualified, scheduled, or in a 14-day nurture sequence.</div>
+      </div>
+    </div>
+
+    <div class="story-conclusion r d5">
+      <p class="story-conclusion-h">The contractor in each trade who fixes this first <span class="ital">owns the referral network</span> for the next decade.</p>
+      <p class="story-conclusion-d">That's the entire thesis. We make sure that contractor is you.</p>
     </div>
   </div>
 </section>
@@ -744,6 +997,47 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div>
 </section>
 
+<!-- ════════════════════════════════════════════ FAQ ════════════════════════════════════════════ -->
+<section class="s wrap" id="faq" data-screen-label="07 FAQ">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">FAQ · 05</div>
+      <h2 class="s-h r in">The honest<br><span class="ital">questions.</span></h2>
+    </div>
+  </div>
+
+  <div class="faq-list" id="faq-list">
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">Is this another monthly software tool I have to learn?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No. We build it. We run it. We tune it. You text us when you want something changed. The only "tool" you'll see is the dashboard, and that's optional.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">Will the AI sound like a robot?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No. It's trained on how you and your team actually talk. Tone, vocabulary, what you say "no" to. We test every conversation flow with you before going live, and homeowners regularly don't realize they're talking to AI until you tell them.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">What if a lead asks something the AI can't handle?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">It hands off to you with full context — who it is, what they need, what's been said. You walk into the call already informed.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">Do I have to switch off Jobber / ServiceTitan / my CRM?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No. We sit on top of your existing stack. If you change tools later, we adjust. The AI infrastructure is yours, not a platform's.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">What does it cost?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Less than a part-time office manager and more than basic software. Pricing depends on volume, languages, and scope — but most contractors pay it back inside the first month from leads that would have otherwise gone to voicemail.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">How long does deployment take?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">48 hours from signed contract to live system. We've done it faster, but two days is what we promise.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">What if I want to stop?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">30-day notice, no penalty. We hand you the system or wind it down — your call. We've never had a contractor leave, but the door's not locked.</div></div></div>
+    </div>
+  </div>
+</section>
+
 <!-- ════════════════════════════════════════════ CONTACT — composer ════════════════════════════════════════════ -->
 <section class="composer-section wrap" id="contact" data-screen-label="08 Contact">
   <h2 class="composer-h r in">Tell us what's <span class="ital">on fire.</span></h2>
@@ -788,7 +1082,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="foot-mark">4THWALL</div>
     <div class="foot-top">
       <div>
-        <p class="foot-brand-p">AI infrastructure for businesses that can't afford to miss a lead. Fully built. Fully managed.</p>
+        <p class="foot-brand-p">AI infrastructure for trades contractors. Lead response, reputation, seasonal campaigns, visibility. Fully managed.</p>
       </div>
       <div class="foot-col">
         <h4>Products</h4>
