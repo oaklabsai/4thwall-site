@@ -360,4 +360,22 @@
   document.querySelectorAll('.drop-a').forEach(a => a.addEventListener('click', closeDrop));
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closeDrop(); });
 
+  // ── Products nav dropdown ─────────────────────────────────
+  const prodBtn  = document.getElementById('prodBtn');
+  const prodWrap = document.getElementById('prodWrap');
+  if(prodBtn && prodWrap){
+    prodBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = prodWrap.classList.toggle('prod-open');
+      prodBtn.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('click', () => {
+      prodWrap.classList.remove('prod-open');
+      prodBtn.setAttribute('aria-expanded','false');
+    });
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape'){ prodWrap.classList.remove('prod-open'); prodBtn.setAttribute('aria-expanded','false'); }
+    });
+  }
+
 })();

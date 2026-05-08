@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4THWALL® Ops — AI Infrastructure for Service Operations</title>
+<meta name="description" content="4THWALL Ops builds and manages custom AI infrastructure for agencies, property managers, and multi-location service businesses. Not a tool. An operating layer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#f7f3ec;
+  --cream-2:#efe9df;
+  --cream-3:#e8e0d2;
+  --ink:#1a1a18;
+  --ink-2:#2a2a26;
+  --muted:rgba(26,26,24,0.62);
+  --dim:rgba(26,26,24,0.38);
+  --faint:rgba(26,26,24,0.16);
+  --line:rgba(26,26,24,0.12);
+  --line-2:rgba(26,26,24,0.06);
+  --orange:#1e6642;
+  --orange-2:#165535;
+  --orange-soft:rgba(30,102,66,0.10);
+  --display:'Fraunces',Georgia,serif;
+  --body:'Inter Tight','Inter',-apple-system,sans-serif;
+  --hand:'Caveat',cursive;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --pad:clamp(1.25rem,4.5vw,4rem);
+  --max:1280px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;letter-spacing:-0.011em;background:radial-gradient(ellipse 90% 55% at 50% -8%,rgba(255,255,255,.5),transparent 55%),linear-gradient(90deg,rgba(26,26,24,.05),transparent 18%,transparent 82%,rgba(26,26,24,.05)),radial-gradient(ellipse 100% 32% at 50% 108%,rgba(26,26,24,.06),transparent 70%),var(--cream);background-attachment:fixed}
+a{text-decoration:none;color:inherit}
+img,svg{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;-webkit-appearance:none}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.hand{font-family:var(--hand);font-weight:500}
+.serif{font-family:var(--display)}
+.ital{font-style:italic}
+
+/* ── grain texture overlay ───────────────── */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.4;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ── nav ─────────────────────────────────── */
+nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:1.1rem var(--pad)}
+.nav-logo{display:flex;align-items:center;gap:.7rem;line-height:1;color:var(--ink);text-decoration:none}
+.nav-logo:hover{color:var(--ink)}
+.nav-logo .brand-mark{height:22px;width:auto;display:block;flex-shrink:0;color:var(--ink)}
+.nav-logo .brand-name{font-family:var(--body);font-weight:600;font-size:.82rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);line-height:1}
+.nav-links{display:flex;align-items:center;gap:1.85rem}
+.nav-a{font-size:.86rem;color:var(--muted);transition:color .2s;display:inline-flex;align-items:center;gap:.4rem;position:relative;padding-bottom:2px}
+.nav-a:not(.nav-cta)::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1.5px;background:var(--orange);border-radius:1px;transform:scaleX(0);transform-origin:left center;transition:transform .28s cubic-bezier(.16,1,.3,1)}
+.nav-a:not(.nav-cta):hover{color:var(--ink)}
+.nav-a:not(.nav-cta):hover::after{transform:scaleX(1)}
+@media(max-width:760px){.nav-links .nav-a{display:none}}
+
+/* ── menu toggle button ──────────────────────────── */
+.menu-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--cream);border-radius:8px;cursor:pointer;border:none;transition:background .2s,box-shadow .2s;flex-shrink:0;padding:0;margin-left:.5rem}
+.menu-btn:hover{background:var(--ink-2);box-shadow:0 4px 14px rgba(26,26,24,.22)}
+.menu-btn.is-open{background:var(--ink-2)}
+.menu-btn svg{width:17px;height:17px;display:block}
+
+/* ── nav dropdown panel ──────────────────────────── */
+.drop-bd{display:none;position:fixed;inset:0;z-index:490}
+.drop-bd.is-open{display:block}
+.nav-drop{position:fixed;top:68px;right:var(--pad);width:315px;background:var(--ink);border:1px solid rgba(247,243,236,.09);border-radius:14px;box-shadow:0 32px 64px rgba(0,0,0,.32),0 10px 28px rgba(0,0,0,.18),inset 0 1px 0 rgba(247,243,236,.06);z-index:500;overflow:hidden;opacity:0;transform:translateY(-8px) scale(.97);pointer-events:none;transition:opacity .22s cubic-bezier(.16,1,.3,1),transform .22s cubic-bezier(.16,1,.3,1);transform-origin:top right}
+.nav-drop.is-open{opacity:1;transform:none;pointer-events:all}
+@media(max-width:500px){.nav-drop{right:1rem;left:1rem;width:auto}}
+
+.drop-head{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem 0.85rem;border-bottom:1px solid rgba(247,243,236,.08)}
+.drop-brand{display:flex;align-items:center;gap:.55rem}
+.drop-brand .d-emblem{width:20px;height:20px;color:var(--cream);flex-shrink:0}
+.drop-brand .d-name{font-family:var(--body);font-weight:600;font-size:.74rem;letter-spacing:.21em;text-transform:uppercase;color:var(--cream);line-height:1}
+.drop-x{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:rgba(247,243,236,.38);border-radius:5px;cursor:pointer;transition:color .16s,background .16s}
+.drop-x:hover{color:var(--cream);background:rgba(247,243,236,.07)}
+
+.drop-list{padding:.28rem 0}
+.drop-a{display:flex;align-items:center;gap:.8rem;padding:.78rem 1rem;color:rgba(247,243,236,.68);font-size:.88rem;font-weight:450;letter-spacing:-.013em;text-decoration:none;border-bottom:1px solid rgba(247,243,236,.055);transition:color .15s,background .15s}
+.drop-a:last-child{border-bottom:none}
+.drop-a:hover{color:var(--cream);background:rgba(247,243,236,.045)}
+.d-icon{width:18px;height:18px;flex-shrink:0;color:rgba(247,243,236,.3);transition:color .15s;display:flex;align-items:center;justify-content:center}
+.d-icon svg{width:16px;height:16px;display:block}
+.drop-a:hover .d-icon{color:rgba(247,243,236,.65)}
+.d-label{flex:1;line-height:1}
+.d-arr{color:rgba(247,243,236,.2);font-size:.85rem;line-height:1;transition:transform .18s,color .18s}
+.drop-a:hover .d-arr{transform:translate(2px,-2px);color:rgba(247,243,236,.5)}
+
+/* ── pills ───────────────────────────────── */
+.pill{display:inline-flex;align-items:center;gap:.5rem;padding:11px 22px;border-radius:50px;font-size:.86rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity .2s,background .2s,transform .2s}
+.pill .arr{font-family:var(--display);line-height:1;transition:transform .25s}
+.pill:hover .arr{transform:translateX(2px)}
+.pill-ink{background:var(--ink);color:var(--cream)}
+.pill-ink:hover{background:var(--ink-2)}
+.pill-orange{background:var(--orange);color:var(--cream)}
+.pill-orange:hover{background:var(--orange-2)}
+.pill-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.pill-ghost:hover{border-color:var(--ink);background:rgba(0,0,0,.02)}
+
+/* line-art "draw on scroll" */
+.draw path,.draw line,.draw circle,.draw polyline,.draw rect{stroke-dasharray:var(--len,1000);stroke-dashoffset:var(--len,1000);transition:stroke-dashoffset 1.4s cubic-bezier(.55,.16,.36,1)}
+.draw.in path,.draw.in line,.draw.in circle,.draw.in polyline,.draw.in rect{stroke-dashoffset:0}
+
+/* reveal on scroll */
+.r{opacity:0;transform:translateY(14px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.r.in{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.4s}.d6{transition-delay:.48s}
+
+/* ───────────────────────────────────────── HERO ───────────────────────────── */
+.hero{min-height:auto;padding:6.5rem var(--pad) 3rem;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.hero-grid{position:absolute;inset:0;bottom:55%;opacity:.45;pointer-events:none;background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);background-size:60px 60px;mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%)}
+.hero-floor{position:absolute;left:-25%;right:-25%;top:55%;bottom:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(26,26,24,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(26,26,24,.13) 1px,transparent 1px);background-size:78px 78px;transform:perspective(820px) rotateX(58deg);transform-origin:center top;mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);opacity:.6}
+.hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr 1fr;gap:5rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
+@media(max-width:880px){.hero-row{grid-template-columns:1fr;gap:3rem}}
+.hero-eyebrow{font-size:.78rem;color:var(--muted);margin-bottom:1.4rem;display:flex;align-items:center;gap:.55rem}
+.hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.hero-h{font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,6.4vw,5.6rem);line-height:.98;letter-spacing:-0.035em;color:var(--ink)}
+.hero-h .ital{font-style:italic;font-weight:400;color:var(--ink)}
+.hero-h .orange{color:var(--orange)}
+.hero-sub{margin-top:1.6rem;font-size:1rem;line-height:1.6;color:var(--muted);max-width:32rem}
+.hero-cta{margin-top:1.9rem;display:flex;gap:2rem;flex-wrap:wrap}
+.hero-link{font-size:.95rem;color:var(--muted);display:inline-flex;align-items:center;gap:.5rem;position:relative;padding-bottom:3px;transition:color .2s}
+.hero-link::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1.5px;background:var(--orange);border-radius:1px;transform:scaleX(0);transform-origin:left center;transition:transform .28s cubic-bezier(.16,1,.3,1)}
+.hero-link:hover{color:var(--ink)}
+.hero-link:hover::after{transform:scaleX(1)}
+.hero-link .arr{font-family:var(--display);line-height:1;transition:transform .25s}
+.hero-link:hover .arr{transform:translateX(2px)}
+
+/* hero orbiting particles (subtle) */
+.orbit{position:absolute;inset:0;pointer-events:none;z-index:2}
+.orbit-dot{position:absolute;width:6px;height:6px;background:var(--orange);border-radius:50%;opacity:.35;animation:drift 14s linear infinite}
+.orbit-dot:nth-child(2){left:18%;top:30%;animation-duration:18s;animation-delay:-3s;background:var(--ink);opacity:.18}
+.orbit-dot:nth-child(3){left:80%;top:60%;animation-duration:22s;animation-delay:-7s;width:4px;height:4px}
+.orbit-dot:nth-child(4){left:45%;top:80%;animation-duration:16s;background:var(--ink);opacity:.18;width:3px;height:3px}
+.orbit-dot:nth-child(5){left:65%;top:18%;animation-duration:20s;animation-delay:-12s;width:5px;height:5px}
+.orbit-dot:nth-child(1){left:10%;top:55%;animation-duration:24s}
+@keyframes drift{0%{transform:translate(0,0)}25%{transform:translate(30px,-20px)}50%{transform:translate(-10px,30px)}75%{transform:translate(-25px,-15px)}100%{transform:translate(0,0)}}
+
+/* ───────────────────────────────── SECTIONS ──────────────────── */
+section{position:relative;z-index:2}
+.s{padding:4.5rem 0;position:relative}
+.s-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:2.4rem}
+.s-label{font-size:.78rem;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.s-label::before{content:"";width:18px;height:1px;background:var(--orange)}
+.s-h{font-family:var(--display);font-size:clamp(2.2rem,5vw,4.4rem);font-weight:400;letter-spacing:-.035em;line-height:1.02;max-width:24ch}
+.s-h .ital{font-style:italic;color:var(--orange)}
+.s-note{font-size:.95rem;line-height:1.7;color:var(--muted);max-width:32rem;margin-top:1rem}
+.s-count{font-family:var(--mono);font-size:.74rem;color:var(--dim)}
+
+/* ── CAPABILITIES — bento grid ─────────────── */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(190px,auto);gap:14px}
+.bento-card{background:var(--cream-2);border:1px solid var(--line);border-radius:18px;padding:1.6rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s,background .35s}
+.bento-card:hover{background:var(--cream);box-shadow:0 18px 38px -22px rgba(0,0,0,.18);transform:translateY(-3px)}
+.bento-card .b-num{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--orange);text-transform:uppercase}
+.bento-card .b-h{font-family:var(--display);font-size:1.5rem;line-height:1.1;font-weight:500;letter-spacing:-.025em;margin-top:.5rem}
+.bento-card .b-h .ital{font-style:italic;color:var(--orange)}
+.bento-card .b-d{font-size:.85rem;line-height:1.55;color:var(--muted);margin-top:.6rem}
+.bento-card .b-illo{position:absolute;right:-22px;bottom:-22px;width:120px;height:120px;color:var(--ink);opacity:.16;transition:transform .5s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:0}
+.bento-card > div{position:relative;z-index:1}
+.bento-card:hover .b-illo{transform:rotate(-6deg) scale(1.06);opacity:.28}
+.bento-card .b-illo svg{width:100%;height:100%;stroke:var(--ink);stroke-width:1.4;fill:none}
+.bento-a{grid-column:span 4;grid-row:span 2}
+.bento-b{grid-column:span 2;grid-row:span 1}
+.bento-c{grid-column:span 2;grid-row:span 1}
+.bento-d{grid-column:span 3;grid-row:span 1}
+.bento-e{grid-column:span 3;grid-row:span 1}
+.bento-a{background:var(--ink);color:var(--cream)}
+.bento-a .b-num{color:var(--cream)}
+.bento-a .b-d{color:rgba(247,243,236,.72)}
+.bento-a .b-illo svg{stroke:var(--orange);opacity:.5}
+.bento-a .b-h{font-size:2rem}
+@media(max-width:880px){.bento{grid-template-columns:repeat(2,1fr)}.bento-a{grid-column:span 2;grid-row:span 1}.bento-b,.bento-c,.bento-d,.bento-e{grid-column:span 1}}
+
+/* ── HOW — step draw ─────────── */
+.how-list{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid var(--line)}
+.how-row{display:grid;grid-template-columns:6rem 1.4fr 1.6fr 8rem;gap:2.5rem;align-items:start;padding:2.4rem 0;border-bottom:1px solid var(--line);transition:background .25s}
+.how-row:hover{background:linear-gradient(90deg,var(--orange-soft),transparent 70%)}
+.how-n{font-family:var(--display);font-size:2.2rem;font-weight:400;letter-spacing:-.02em;color:var(--orange);font-style:italic;line-height:1}
+.how-h{font-family:var(--display);font-size:clamp(1.25rem,2vw,1.7rem);font-weight:500;line-height:1.18;letter-spacing:-.02em}
+.how-h .ital{font-style:italic;color:var(--muted);font-weight:400}
+.how-d{font-size:.86rem;line-height:1.7;color:var(--muted);padding-top:.25rem}
+.how-illo{width:90px;height:90px;justify-self:end}
+.how-illo svg{width:100%;height:100%;stroke:var(--ink);stroke-width:1.4;fill:none}
+@media(max-width:880px){.how-row{grid-template-columns:3.5rem 1fr;gap:1rem}.how-d{grid-column:1/-1;padding-left:3.5rem}.how-illo{display:none}}
+
+/* ── WHO (cards) ─────────────── */
+.why-cards{margin-top:2.2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:840px){.why-cards{grid-template-columns:1fr}}
+.manif-card{padding:1.4rem;background:var(--cream-2);border:1px solid var(--line);border-radius:16px}
+.manif-card-h{font-family:var(--display);font-size:1.05rem;font-weight:500;line-height:1.25;letter-spacing:-.02em}
+.manif-card-d{font-size:.8rem;line-height:1.6;color:var(--muted);margin-top:.5rem}
+
+/* ── FAQ — accordion ─────────── */
+.faq-list{border-top:1px solid var(--line)}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{padding:1.5rem 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:2rem;width:100%;text-align:left}
+.faq-q-text{font-family:var(--display);font-size:clamp(1.05rem,1.7vw,1.35rem);font-weight:500;letter-spacing:-.02em;line-height:1.25}
+.faq-q-icon{flex-shrink:0;width:32px;height:32px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:1.2rem;line-height:1;transition:transform .35s,background .25s,color .25s}
+.faq-item.open .faq-q-icon{transform:rotate(45deg);background:var(--orange);color:var(--cream);border-color:var(--orange)}
+.faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.16,1,.3,1)}
+.faq-item.open .faq-a{grid-template-rows:1fr}
+.faq-a-inner{overflow:hidden}
+.faq-a-text{padding:0 0 1.5rem;font-size:.92rem;line-height:1.7;color:var(--muted);max-width:48rem}
+
+/* ── CONTACT — composer ─────── */
+.composer-section{padding:4.5rem 0 6rem}
+.composer-h{font-family:var(--display);font-size:clamp(2.4rem,5vw,4.2rem);line-height:1;font-weight:400;letter-spacing:-.035em;text-align:center;max-width:18ch;margin:0 auto 3rem}
+.composer-h .ital{font-style:italic;color:var(--orange)}
+.composer{max-width:680px;margin:0 auto;background:var(--cream);border:1px solid var(--ink);border-radius:24px;padding:1.4rem;box-shadow:0 30px 60px -28px rgba(0,0,0,.18);position:relative}
+.composer-prompt{font-family:var(--display);font-style:italic;color:var(--muted);font-size:1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.composer-prompt .star{color:var(--orange);font-style:normal;font-size:1.4rem;line-height:0}
+.composer-input{width:100%;border:none;background:transparent;font-family:inherit;font-size:1rem;padding:.5rem 0;color:var(--ink);outline:none;resize:none;min-height:80px;line-height:1.5}
+.composer-input::placeholder{color:var(--dim)}
+.composer-input-line{display:flex;gap:.5rem;align-items:center;border-bottom:1px solid var(--line-2);padding:.5rem 0}
+.composer-input-line input{flex:1;border:none;background:transparent;font-family:inherit;font-size:.9rem;outline:none;color:var(--ink)}
+.composer-input-line input::placeholder{color:var(--dim)}
+.composer-input-line .lbl{font-size:.7rem;color:var(--orange);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;width:80px;flex-shrink:0}
+.composer-bar{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)}
+.composer-chips{display:flex;gap:.4rem;flex-wrap:wrap}
+.chip{font-size:.74rem;padding:.35rem .7rem;border:1px solid var(--line);border-radius:50px;background:var(--cream-2);cursor:pointer;transition:all .2s}
+.chip:hover{border-color:var(--ink)}
+.chip.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.composer-send{width:36px;height:36px;border-radius:50%;background:var(--ink);color:var(--cream);display:grid;place-items:center;cursor:pointer;font-size:1.1rem;transition:background .2s}
+.composer-send:hover{background:var(--orange)}
+.composer-send.sent{background:var(--orange)}
+.composer-sub{text-align:center;margin-top:1.4rem;font-size:.78rem;color:var(--muted);display:flex;justify-content:center;gap:1.6rem;flex-wrap:wrap}
+.composer-sub a:hover{color:var(--ink)}
+.consent-block{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line)}
+.consent-check{display:flex;align-items:flex-start;gap:.55rem;cursor:pointer}
+.consent-check input[type="checkbox"]{width:13px;height:13px;margin-top:.18rem;flex-shrink:0;accent-color:var(--ink);cursor:pointer}
+.consent-text{font-size:.7rem;line-height:1.7;color:var(--muted)}
+.consent-text a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;text-decoration-color:var(--line)}
+.consent-text a:hover{color:var(--orange)}
+
+/* ── footer ──────────────── */
+footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position:relative;z-index:2}
+.foot-mark{font-family:var(--display);font-size:clamp(3.4rem,15vw,13rem);line-height:.85;font-weight:500;color:transparent;-webkit-text-stroke:1px rgba(247,243,236,.18);letter-spacing:-.04em;text-transform:uppercase}
+.foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:2.4rem;margin-top:2.2rem;padding-bottom:1.6rem;border-bottom:1px solid rgba(247,243,236,.1)}
+@media(max-width:760px){.foot-top{grid-template-columns:1fr 1fr}}
+.foot-brand-p{font-size:.86rem;line-height:1.7;color:rgba(247,243,236,.62);max-width:22rem}
+.foot-col h4{font-size:.7rem;color:rgba(247,243,236,.45);margin-bottom:1rem;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.foot-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.foot-col a{font-size:.92rem;color:rgba(247,243,236,.85)}
+.foot-col a:hover{color:var(--orange)}
+.foot-bot{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.66rem;color:rgba(247,243,236,.4);margin-top:1.6rem;letter-spacing:.05em}
+
+/* ── responsive nudges ───────────────── */
+@media(max-width:760px){
+  .s{padding:3.4rem 0}
+  .s-meta{margin-bottom:1.8rem;gap:1.2rem}
+  .s-h{font-size:clamp(1.9rem,7vw,2.8rem)}
+  .hero{padding-top:5.2rem;padding-bottom:2.5rem}
+  .hero-h{font-size:clamp(2.2rem,9vw,3.2rem)}
+  .hero-sub{font-size:.92rem;margin-top:1.1rem}
+  .hero-cta{margin-top:1.3rem}
+  nav.topnav{padding:.85rem var(--pad)}
+  .nav-logo .brand-mark{height:19px}
+  .bento{gap:9px;grid-auto-rows:minmax(150px,auto)}
+  .bento-card{padding:1.15rem}
+  .bento-card .b-h{font-size:1.2rem}
+  .bento-card .b-d{font-size:.78rem}
+  .bento-card .b-illo{width:90px;height:90px;right:-10px;bottom:-10px}
+  .bento-a .b-h{font-size:1.5rem}
+  .how-row{padding:1.4rem 0;gap:.8rem}
+  .how-n{font-size:1.6rem}
+  .how-h{font-size:1.05rem}
+  .how-d{font-size:.78rem;line-height:1.6}
+  .why-cards{margin-top:1.5rem;gap:.7rem}
+  .faq-q{padding:1.05rem 0;gap:.9rem}
+  .faq-q-text{font-size:1rem}
+  .faq-q-icon{width:26px;height:26px;font-size:.95rem}
+  .faq-a-text{padding-bottom:1rem;font-size:.84rem}
+  .composer-section{padding:3rem 0 4.5rem}
+  .composer-h{font-size:clamp(1.9rem,7vw,2.8rem);margin-bottom:1.8rem}
+  .composer{padding:1rem;border-radius:18px}
+  .composer-prompt{font-size:.95rem;margin-bottom:.6rem}
+  .composer-input{font-size:.92rem;min-height:55px}
+  .composer-input-line .lbl{width:62px;font-size:.62rem}
+  .composer-input-line input{font-size:.86rem}
+  .composer-bar{margin-top:.7rem;padding-top:.7rem;flex-direction:column;align-items:stretch;gap:.7rem}
+  .composer-send{align-self:flex-end}
+  .chip{font-size:.7rem;padding:.3rem .6rem}
+  .composer-sub{flex-direction:column;gap:.35rem;font-size:.7rem;margin-top:.9rem}
+  footer{padding:2.5rem 0 1.2rem}
+  .foot-top{margin-top:1.4rem;gap:1.4rem;padding-bottom:1.1rem}
+  .foot-col h4{margin-bottom:.7rem;font-size:.62rem}
+  .foot-col a{font-size:.84rem}
+  .foot-brand-p{font-size:.78rem}
+  .foot-bot{flex-direction:column;gap:.4rem;margin-top:.9rem;font-size:.6rem}
+}
+
+/* ── Products nav dropdown ────────── */
+.nav-prod-wrap{position:relative}
+.nav-prod-btn{background:none;border:none;padding:0 0 2px;font-family:inherit;font-size:.86rem;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:.35rem;transition:color .2s;letter-spacing:inherit;line-height:1}
+.nav-prod-btn:hover,.nav-prod-wrap.prod-open .nav-prod-btn{color:var(--ink)}
+.nav-prod-btn::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1.5px;background:var(--orange);border-radius:1px;transform:scaleX(0);transform-origin:left center;transition:transform .28s cubic-bezier(.16,1,.3,1)}
+.nav-prod-btn:hover::after{transform:scaleX(1)}
+.prod-chevron{font-size:.6rem;transition:transform .22s;display:inline-block;line-height:1;margin-left:1px}
+.nav-prod-wrap.prod-open .prod-chevron{transform:rotate(180deg)}
+@media(max-width:760px){.nav-prod-wrap{display:none}}
+.prod-drop{position:absolute;top:calc(100% + .9rem);left:50%;transform:translateX(-50%) translateY(-6px) scale(.97);width:222px;background:var(--ink);border:1px solid rgba(247,243,236,.09);border-radius:12px;box-shadow:0 20px 44px rgba(0,0,0,.28),0 8px 20px rgba(0,0,0,.16);z-index:400;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .22s cubic-bezier(.16,1,.3,1),transform .22s cubic-bezier(.16,1,.3,1);transform-origin:top center}
+.nav-prod-wrap.prod-open .prod-drop{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0) scale(1)}
+.prod-drop-a{display:flex;flex-direction:column;padding:.75rem 1rem;color:rgba(247,243,236,.72);text-decoration:none;border-bottom:1px solid rgba(247,243,236,.07);transition:color .15s,background .15s}
+.prod-drop-a:last-child{border-bottom:none}
+.prod-drop-a:hover{color:var(--cream);background:rgba(247,243,236,.045)}
+.prod-drop-name{font-size:.88rem;font-weight:500;letter-spacing:-.01em;line-height:1}
+.prod-drop-sub{font-size:.63rem;color:rgba(247,243,236,.38);margin-top:3px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em}
+
+/* tweaks panel z */
+#tweaks-root{z-index:1000;position:relative}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg class="brand-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    <span class="brand-name">4THWALL</span>
+  </a>
+  <div class="nav-links">
+    <div class="nav-prod-wrap" id="prodWrap">
+      <button class="nav-a nav-prod-btn" id="prodBtn" aria-haspopup="true" aria-expanded="false">Products <span class="prod-chevron">▾</span></button>
+      <div class="prod-drop" id="prodDrop">
+        <a href="/" class="prod-drop-a">
+          <span class="prod-drop-name">4THWALL Trades</span>
+          <span class="prod-drop-sub">For trades contractors</span>
+        </a>
+        <a href="/ops.html" class="prod-drop-a">
+          <span class="prod-drop-name">4THWALL Ops</span>
+          <span class="prod-drop-sub">For service operations</span>
+        </a>
+      </div>
+    </div>
+    <a href="#how" class="nav-a">How it works</a>
+    <a href="#faq" class="nav-a">FAQ</a>
+    <a href="/login.html" class="nav-a" style="opacity:.55">Client login</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="navDrop">
+      <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+        <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+        <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ── Navigation dropdown ─────────────────────────────────────────────── -->
+<div class="drop-bd" id="dropBd"></div>
+<div class="nav-drop" id="navDrop" role="dialog" aria-modal="false" aria-label="Site navigation">
+  <div class="drop-head">
+    <div class="drop-brand">
+      <svg class="d-emblem" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+        <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+        <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+      </svg>
+      <span class="d-name">4THWALL</span>
+    </div>
+    <button class="drop-x" id="dropClose" aria-label="Close navigation">
+      <svg viewBox="0 0 14 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1,1 7,7 13,1"/>
+      </svg>
+    </button>
+  </div>
+  <nav class="drop-list">
+    <a href="/" class="drop-a">
+      <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+      <span class="d-label">4THWALL Trades</span>
+      <span class="d-arr">↗</span>
+    </a>
+    <a href="/ops.html" class="drop-a">
+      <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+      <span class="d-label">4THWALL Ops</span>
+      <span class="d-arr">↗</span>
+    </a>
+    <a href="#how" class="drop-a">
+      <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+      <span class="d-label">How It Works</span>
+      <span class="d-arr">↗</span>
+    </a>
+    <a href="#faq" class="drop-a">
+      <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2"/></svg></span>
+      <span class="d-label">FAQ</span>
+      <span class="d-arr">↗</span>
+    </a>
+    <a href="#contact" class="drop-a">
+      <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+      <span class="d-label">Let's Talk</span>
+      <span class="d-arr">↗</span>
+    </a>
+    <a href="/login.html" class="drop-a">
+      <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+      <span class="d-label">Client Login</span>
+      <span class="d-arr">↗</span>
+    </a>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════════ HERO ════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-grid"></div>
+  <div class="hero-floor"></div>
+  <div class="orbit">
+    <span class="orbit-dot"></span>
+    <span class="orbit-dot"></span>
+    <span class="orbit-dot"></span>
+    <span class="orbit-dot"></span>
+    <span class="orbit-dot"></span>
+  </div>
+
+  <div class="hero-row" style="grid-template-columns:1fr;max-width:820px">
+    <div>
+      <div class="hero-eyebrow r in">
+        <span class="dot"></span>
+        4THWALL Ops
+      </div>
+      <h1 class="hero-h r in">
+        Your operation,<br>
+        <span class="ital">running on AI.</span>
+      </h1>
+      <p class="hero-sub r in d2">
+        4THWALL Ops builds and manages custom AI infrastructure for service businesses running multiple clients, accounts, or locations. Not a tool. An operating layer.
+      </p>
+      <div class="hero-cta r in d3">
+        <a href="#contact" class="hero-link">Let's talk</a>
+        <a href="#what-it-does" class="hero-link">See what it does</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ SECTION 01 — WHAT IT DOES ════════════════════════════════════════════ -->
+<section class="s wrap" id="what-it-does" data-screen-label="01 What it does">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">What it does · 01</div>
+      <h2 class="s-h r in">Five systems.<br><span class="ital">One infrastructure.</span></h2>
+      <p class="s-note r in d2">Built to run across every client, location, and operation you manage.</p>
+    </div>
+    <div class="s-count r in d3">(05 systems)</div>
+  </div>
+
+  <div class="bento">
+    <div class="bento-card bento-a r">
+      <div>
+        <div class="b-num">001 · Client Communications</div>
+        <div class="b-h">Every inquiry handled, <span class="ital">every client served.</span></div>
+        <div class="b-d">Every client inquiry handled intelligently, 24/7. White-labeled as your brand across every account. No client waits. No message slips through.</div>
+      </div>
+      <div class="b-illo" data-illo="phone"></div>
+    </div>
+
+    <div class="bento-card bento-b r d1">
+      <div>
+        <div class="b-num">002</div>
+        <div class="b-h">Staff <span class="ital">&amp; Hiring.</span></div>
+        <div class="b-d">Screening, scheduling, follow-up. The hiring pipeline runs without manual effort — from application to booked interview.</div>
+      </div>
+      <div class="b-illo" data-illo="step1"></div>
+    </div>
+
+    <div class="bento-card bento-c r d2">
+      <div>
+        <div class="b-num">003</div>
+        <div class="b-h"><span class="ital">New business,</span> automatically.</div>
+        <div class="b-d">Targeted outreach to your ideal clients. Qualified leads and booked discovery calls, on autopilot.</div>
+      </div>
+      <div class="b-illo" data-illo="search"></div>
+    </div>
+
+    <div class="bento-card bento-d r d3">
+      <div>
+        <div class="b-num">004 · Operations</div>
+        <div class="b-h">Nothing <span class="ital">falls through.</span></div>
+        <div class="b-d">Deadlines tracked, deliveries scheduled, daily briefings generated. Operations and compliance run on the system — not on you.</div>
+      </div>
+      <div class="b-illo" data-illo="calendar"></div>
+    </div>
+
+    <div class="bento-card bento-e r d4">
+      <div>
+        <div class="b-num">005 · Personal OS</div>
+        <div class="b-h">One place for <span class="ital">every decision.</span></div>
+        <div class="b-d">Configured on your machine. Connected to every tool you use. Loaded with your business context. Every decision starts here.</div>
+      </div>
+      <div class="b-illo" data-illo="step2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ SECTION 02 — WHO IT IS FOR ════════════════════════════════════════════ -->
+<section class="s wrap" id="who-its-for" data-screen-label="02 Who it's for">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">Who it is for · 02</div>
+      <h2 class="s-h r in">Built for businesses<br><span class="ital">that run at scale.</span></h2>
+      <p class="s-note r in d2">Complexity here is not a product problem — it's an operations problem. That's exactly what this is built for.</p>
+    </div>
+  </div>
+
+  <div class="why-cards" style="grid-template-columns:repeat(2,1fr)">
+    <div class="manif-card r">
+      <div class="manif-card-h">Agencies</div>
+      <div class="manif-card-d">Managing multiple client accounts simultaneously. Every client communication, deliverable, and outreach — handled without the overhead of growing your team proportionally.</div>
+    </div>
+    <div class="manif-card r d1">
+      <div class="manif-card-h">Amenity &amp; Property Managers</div>
+      <div class="manif-card-d">Running multiple buildings, units, or amenity programs. Resident inquiries, maintenance coordination, and reporting — automated across every property.</div>
+    </div>
+    <div class="manif-card r d2">
+      <div class="manif-card-h">Multi-Location Operators</div>
+      <div class="manif-card-d">Consistency across locations is the hardest operational problem. AI infrastructure solves it at the system level — not with more managers.</div>
+    </div>
+    <div class="manif-card r d3">
+      <div class="manif-card-h">Concierge &amp; Staffing Firms</div>
+      <div class="manif-card-d">Any service business where complexity comes from running many client relationships simultaneously. If the operation is more complex than the product, this is for you.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ SECTION 03 — HOW IT WORKS ════════════════════════════════════════════ -->
+<section class="s wrap" id="how" data-screen-label="03 How we work">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">How we work · 03</div>
+      <h2 class="s-h r in">Four steps,<br><span class="ital">then forever.</span></h2>
+      <p class="s-note r in d2">No 40-minute intake calls. No months of onboarding. Something live in the first week, managed permanently after that.</p>
+    </div>
+  </div>
+
+  <div class="how-list">
+    <div class="how-row r">
+      <div class="how-n">i.</div>
+      <div class="how-h">We read <span class="ital">what you share.</span></div>
+      <div class="how-d">No 40-minute intake call. Send us the proposal, the website, the brief — we extract everything we need. The system is built on your context, not a template.</div>
+      <div class="how-illo" data-illo="step1"></div>
+    </div>
+    <div class="how-row r d1">
+      <div class="how-n">ii.</div>
+      <div class="how-h">Built to <span class="ital">your business.</span></div>
+      <div class="how-d">Every system configured around how you actually operate. Your tools, your language, your clients. Nothing generic. Nothing to adapt.</div>
+      <div class="how-illo" data-illo="step2"></div>
+    </div>
+    <div class="how-row r d2">
+      <div class="how-n">iii.</div>
+      <div class="how-h">Deployed <span class="ital">and connected.</span></div>
+      <div class="how-d">Tools integrated, systems live, team handed off in one session. We configure connections together. You walk away with everything running.</div>
+      <div class="how-illo" data-illo="step3"></div>
+    </div>
+    <div class="how-row r d3">
+      <div class="how-n">iv.</div>
+      <div class="how-h">Managed <span class="ital">permanently.</span></div>
+      <div class="how-d">We monitor, tune, and expand as the business grows. One contact. Everything handled. The system is never finished — it improves.</div>
+      <div class="how-illo" data-illo="step4"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ SECTION 04 — FAQ ════════════════════════════════════════════ -->
+<section class="s wrap" id="faq" data-screen-label="04 FAQ">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">FAQ · 04</div>
+      <h2 class="s-h r in">The honest<br><span class="ital">questions.</span></h2>
+    </div>
+  </div>
+
+  <div class="faq-list" id="faq-list">
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">How is this different from hiring a consultant?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">A consultant tells you what to build. We build it, deploy it, and run it permanently. The system is live, monitored, and improving long after any engagement would have ended.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">Do you need access to our systems?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">We configure connections together in a single session. We do not store credentials or maintain ongoing access to your accounts. The system runs on your infrastructure, fully under your control.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">How long does it take?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Depends on scope. Most engagements have something live within the first week. A full operating layer across multiple systems takes longer to build completely, but the first pieces are running fast.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">What kinds of businesses is this for?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Any service business managing multiple clients, accounts, or locations — agencies, property managers, amenity companies, concierge operators, staffing firms. If complexity comes from scale, not from the product, this is the right fit.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">What does it cost?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Every engagement is scoped to what you actually need. We discuss scope before any number is mentioned. There are no tiers or packages — just what makes sense for your operation.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ CONTACT ════════════════════════════════════════════ -->
+<section class="composer-section wrap" id="contact" data-screen-label="05 Contact">
+  <h2 class="composer-h r in">Tell us what you're <span class="ital">running.</span></h2>
+
+  <form class="composer r in d1" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
+    <div class="composer-prompt"><span class="star">✦</span><span>Talk to us like you'd text a colleague.</span></div>
+    <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="Managing multiple clients and the ops are getting complex? Running multiple locations and need consistency? Tell us what's happening..." required></textarea>
+
+    <div class="composer-input-line"><span class="lbl">From</span><input type="text" name="name" placeholder="Your name" required></div>
+    <div class="composer-input-line"><span class="lbl">Company</span><input type="text" name="company" placeholder="Business name"></div>
+    <div class="composer-input-line"><span class="lbl">Phone</span><input type="tel" name="phone" placeholder="(555) 000-0000" required></div>
+    <div class="composer-input-line"><span class="lbl">Reply to</span><input type="email" name="email" placeholder="you@email.com" required></div>
+    <input type="hidden" name="trade" id="cm-trade" value="">
+
+    <div class="composer-bar">
+      <div class="composer-chips" id="cm-chips">
+        <button type="button" class="chip" data-chip="Agency">Agency</button>
+        <button type="button" class="chip" data-chip="Property Mgmt">Property Mgmt</button>
+        <button type="button" class="chip" data-chip="Multi-Location">Multi-Location</button>
+        <button type="button" class="chip" data-chip="Other">Other</button>
+      </div>
+      <button type="submit" class="composer-send" id="cm-send" aria-label="Send">↑</button>
+    </div>
+    <div class="consent-block">
+      <label class="consent-check">
+        <input type="checkbox" name="sms_consent" required>
+        <span class="consent-text">By submitting this form, I agree to receive SMS communications from 4THWALL regarding appointment scheduling and service-related messages. Message frequency varies. Message and data rates may apply. Reply STOP to unsubscribe at any time. Reply HELP for help. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</span>
+      </label>
+    </div>
+  </form>
+
+  <div class="composer-sub">
+    <span><a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a></span>
+    <span><a href="tel:+12036709477">(203) 670-9477</a></span>
+    <span>U.S. based · Eastern time</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ FOOTER ════════════════════════════════════════════ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-mark">4THWALL</div>
+    <div class="foot-top">
+      <div>
+        <p class="foot-brand-p">AI infrastructure for service businesses. Custom built. Fully managed. Built for agencies, property managers, and multi-location operators.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="/">4THWALL Trades</a></li>
+          <li><a href="/ops.html">4THWALL Ops</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a></li>
+          <li><a href="tel:+12036709477">(203) 670-9477</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 4THWALL · ALL RIGHTS RESERVED</span>
+      <span><a href="/privacy.html">PRIVACY</a> · <a href="/terms.html">TERMS</a></span>
+    </div>
+  </div>
+</footer>
+
+<div id="tweaks-root"></div>
+
+<script src="site.js"></script>
+</body>
+</html>
