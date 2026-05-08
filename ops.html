@@ -378,7 +378,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 /* ── Laptop OS demo ─────────────────────────────────────────── */
 @keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes lapFloat{0%,100%{transform:perspective(2000px) rotateX(3deg) rotateY(-5deg) rotateZ(-.4deg) translateY(0)}50%{transform:perspective(2000px) rotateX(2.5deg) rotateY(-4deg) rotateZ(-.4deg) translateY(-7px)}}
+@keyframes lapFloat{0%,100%{transform:perspective(2400px) rotateX(4deg) rotateY(-6deg) rotateZ(-.5deg) translateY(0)}50%{transform:perspective(2400px) rotateX(3.2deg) rotateY(-5deg) rotateZ(-.5deg) translateY(-8px)}}
 @keyframes lapRowIn{to{opacity:1;transform:none}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .lap-wrap{position:relative;width:100%;max-width:520px;margin:0 auto}
@@ -386,11 +386,39 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lt-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);flex-shrink:0;animation:pulse 2.4s ease-in-out infinite}
 .lt-body strong{display:block;font-size:.75rem;font-weight:600;line-height:1.2;color:var(--ink);letter-spacing:-.005em}
 .lt-body span{display:block;font-size:.57rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;margin-top:1px}
-.lap-lid{width:100%;aspect-ratio:1.62;background:linear-gradient(150deg,#323230 0%,#1c1c1a 35%,#0e0e0d 68%,#262624 100%);border-radius:9px 9px 0 0;padding:5px;box-shadow:0 52px 96px -16px rgba(0,0,0,.55),0 22px 44px -10px rgba(0,0,0,.32),0 5px 12px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.13),inset 1px 0 0 rgba(255,255,255,.05),inset -1px 0 0 rgba(255,255,255,.04),inset 0 0 0 1.5px rgba(255,255,255,.04);transform:perspective(2000px) rotateX(3deg) rotateY(-5deg) rotateZ(-.4deg);animation:lapFloat 9s ease-in-out infinite;position:relative}
-.lap-lid::before{content:"";position:absolute;top:3px;left:50%;transform:translateX(-50%);width:7px;height:7px;background:#0a0a09;border-radius:50%;z-index:10}
-.lap-screen{width:100%;height:100%;background:#0f0f0e;border-radius:5px;overflow:hidden;display:flex;flex-direction:column;color:rgba(247,243,236,.88);font-family:var(--mono)}
-.lap-bar{display:flex;align-items:center;padding:.3rem .5rem;background:rgba(0,0,0,.35);border-bottom:1px solid rgba(247,243,236,.055);flex-shrink:0;gap:.35rem}
-.lap-tl{width:7px;height:7px;border-radius:50%;flex-shrink:0}.lap-tl:nth-child(1){background:#ff5f57}.lap-tl:nth-child(2){background:#febc2e}.lap-tl:nth-child(3){background:#28c840}
+
+/* MacBook Pro — Space Gray aluminum lid */
+.lap-lid{width:100%;aspect-ratio:1.62;background:linear-gradient(168deg,#575450 0%,#4a4845 18%,#333130 52%,#46443f 100%);border-radius:11px 11px 2px 2px;padding:6px 5px 0 5px;
+  box-shadow:
+    0 65px 120px -16px rgba(0,0,0,.65),
+    0 28px 56px -12px rgba(0,0,0,.42),
+    0 7px 18px rgba(0,0,0,.16),
+    0 0 0 1px rgba(0,0,0,.9),
+    inset 0 1.5px 0 rgba(255,255,255,.26),
+    inset 1.5px 0 0 rgba(255,255,255,.12),
+    inset -1.5px 0 0 rgba(255,255,255,.06),
+    inset 0 0 0 2px rgba(255,255,255,.05);
+  transform:perspective(2400px) rotateX(4deg) rotateY(-6deg) rotateZ(-.5deg);
+  animation:lapFloat 9s ease-in-out infinite;
+  position:relative;transform-style:preserve-3d}
+/* camera notch — MacBook Pro style, extends into screen */
+.lap-lid::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:90px;height:20px;
+  background:linear-gradient(168deg,#575450 0%,#4a4845 100%);border-radius:0 0 11px 11px;z-index:10;
+  box-shadow:0 4px 10px rgba(0,0,0,.45),inset 0 -1px 0 rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04)}
+/* camera lens dot */
+.lap-lid::after{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:8px;height:8px;
+  background:radial-gradient(circle at 35% 35%,#2a2a28,#0a0a09 70%);border-radius:50%;z-index:11;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.07),0 0 0 3px rgba(0,0,0,.4)}
+/* Thunderbolt / MagSafe port nub on left edge */
+.lap-screen::before{content:"";position:absolute;left:-5px;top:38%;width:5px;height:10px;background:linear-gradient(90deg,#2a2826,#3e3c39);border-radius:2px 0 0 2px;z-index:12}
+
+/* screen display */
+.lap-screen{width:100%;height:100%;background:#080807;border-radius:5px 5px 0 0;overflow:hidden;display:flex;flex-direction:column;color:rgba(247,243,236,.88);font-family:var(--mono);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6);position:relative}
+.lap-bar{display:flex;align-items:center;padding:.3rem .5rem;background:rgba(0,0,0,.38);border-bottom:1px solid rgba(247,243,236,.055);flex-shrink:0;gap:.35rem}
+.lap-tl{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.lap-tl:nth-child(1){background:#ff5f57;box-shadow:0 0 0 .5px rgba(255,60,50,.4)}
+.lap-tl:nth-child(2){background:#febc2e;box-shadow:0 0 0 .5px rgba(254,180,40,.3)}
+.lap-tl:nth-child(3){background:#28c840;box-shadow:0 0 0 .5px rgba(35,190,55,.3)}
 .lap-bar-label{flex:1;text-align:center;font-size:.46rem;letter-spacing:.11em;color:rgba(247,243,236,.32);text-transform:uppercase;overflow:hidden;white-space:nowrap;margin:0 .3rem}
 .lap-bar-time{font-size:.46rem;letter-spacing:.06em;color:rgba(247,243,236,.28);flex-shrink:0}
 .lap-body{flex:1;display:flex;overflow:hidden;min-height:0}
@@ -416,16 +444,39 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lp-star{color:var(--orange);font-size:.7rem;flex-shrink:0;line-height:1}
 .lp-text{flex:1;font-size:.47rem;color:rgba(247,243,236,.2);overflow:hidden;white-space:nowrap;font-family:var(--mono)}
 .lp-send{width:13px;height:13px;border-radius:50%;background:rgba(30,102,66,.38);border:none;color:rgba(247,243,236,.6);font-size:.5rem;display:flex;align-items:center;justify-content:center;cursor:default;flex-shrink:0;padding:0;font-family:var(--mono)}
-.lap-base{width:100%;height:20px;background:linear-gradient(180deg,#2e2e2c 0%,#1e1e1c 55%,#161614 100%);border-radius:0 0 5px 5px;box-shadow:0 18px 38px -10px rgba(0,0,0,.5),0 5px 12px rgba(0,0,0,.18)}
-.lap-hinge{width:100%;height:3px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.55) 20%,rgba(0,0,0,.55) 80%,transparent)}
+
+/* MacBook base — aluminum wedge body */
+.lap-base{width:96%;margin:0 auto;height:22px;
+  background:linear-gradient(180deg,#3e3c39 0%,#464340 28%,#4a4845 62%,#3e3c39 88%,#2c2a27 100%);
+  border-radius:0 0 6px 6px;position:relative;
+  box-shadow:0 22px 48px -10px rgba(0,0,0,.6),0 6px 14px rgba(0,0,0,.24),0 0 0 1px rgba(0,0,0,.8)}
+/* hinge shadow groove */
+.lap-hinge{position:absolute;top:0;left:4%;right:4%;height:2px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.5) 15%,rgba(0,0,0,.62) 50%,rgba(0,0,0,.5) 85%,transparent)}
+/* rubber feet */
+.lap-base::before,.lap-base::after{content:"";position:absolute;bottom:3px;width:24px;height:3px;background:#181614;border-radius:0 0 2px 2px}
+.lap-base::before{left:5%}.lap-base::after{right:5%}
+
+/* floating stat */
 .lap-stat{position:absolute;bottom:18px;right:-5%;background:rgba(247,243,236,.88);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border:1px solid rgba(26,26,24,.09);border-radius:10px;padding:.42rem .6rem;box-shadow:0 10px 28px -10px rgba(0,0,0,.2),0 2px 4px rgba(0,0,0,.04);text-align:center;min-width:82px;animation:tagFloat 9s ease-in-out infinite;animation-delay:-4.5s}
 .ls-num{font-family:var(--display);font-size:1.3rem;font-weight:400;letter-spacing:-.03em;font-style:italic;line-height:1;color:var(--ink)}
 .ls-lbl{font-size:.52rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+
+/* scenario dots */
 .lap-dots{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
 .lap-dots span{width:6px;height:6px;border-radius:99px;background:rgba(26,26,24,.18);transition:all .4s ease;cursor:pointer}
 .lap-dots span.on{background:var(--orange);width:22px}
 .lap-dots span:hover{background:rgba(26,26,24,.4)}
 .lap-dots span.on:hover{background:var(--orange)}
+
+/* vignette annotation — "while you ___ / we ___" */
+.lap-vignette{position:absolute;bottom:-85px;left:50%;transform:translateX(-50%);width:min(240px,80vw);display:flex;flex-direction:row;align-items:center;gap:.65rem;background:rgba(247,243,236,.92);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid rgba(26,26,24,.07);border-radius:14px;padding:.55rem .8rem;box-shadow:0 8px 24px -8px rgba(0,0,0,.14);transition:opacity .35s ease,transform .45s cubic-bezier(.16,1,.3,1)}
+.lap-vignette.swap{opacity:0;transform:translateX(-50%) translateY(4px)}
+.lap-vig-illo{width:42px;height:42px;flex-shrink:0;color:var(--ink)}
+.lap-vig-illo svg{width:100%;height:100%;stroke:currentColor;stroke-width:1.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lap-vig-caption{font-family:var(--hand);line-height:1.1;font-size:.82rem;font-weight:500}
+.lap-vig-you{display:block;color:var(--ink)}
+.lap-vig-we{display:block;color:var(--orange);margin-top:.1rem}
+
 @media(max-width:880px){.lap-wrap{max-width:min(420px,88vw)}}
 
 /* tweaks panel z */
@@ -533,10 +584,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   <div class="hero-row">
     <div>
-      <div class="hero-eyebrow r in">
-        <span class="dot"></span>
-        4THWALL Ops
-      </div>
       <h1 class="hero-h r in">
         You built the business.<br>
         <span class="ital">Stop running the ops.</span>
@@ -551,7 +598,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
 
     <!-- laptop OS demo -->
-    <div class="r in d2" id="lap-mount" style="position:relative;padding-top:28px;padding-bottom:34px">
+    <div class="r in d2" id="lap-mount" style="position:relative;padding-top:28px;padding-bottom:94px">
       <div class="lap-wrap">
         <div class="lap-toast">
           <div class="lt-dot"></div>
@@ -594,6 +641,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <div class="ls-lbl">client touches today</div>
         </div>
         <div class="lap-dots" id="lap-dots"></div>
+        <div class="lap-vignette" id="lap-vignette" aria-hidden="true">
+          <div class="lap-vig-illo" id="lap-vig-illo"></div>
+          <div class="lap-vig-caption">
+            <span class="lap-vig-you" id="lap-vig-you">while you sleep,</span>
+            <span class="lap-vig-we" id="lap-vig-we">we prep tomorrow.</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -954,6 +1008,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 (function(){
   var lapOutput=document.getElementById('lap-output');
   if(!lapOutput)return;
+  var LAP_ILLOS={
+    sleeping:`<svg viewBox="0 0 100 100"><path d="M 16 14 a 7 7 0 1 0 5 5 a 5 5 0 0 1 -5 -5z" fill="currentColor" stroke="none"/><path d="M 12 70 L 12 56 L 88 56 L 88 70"/><line x1="8" y1="70" x2="92" y2="70"/><line x1="14" y1="70" x2="14" y2="82"/><line x1="86" y1="70" x2="86" y2="82"/><rect x="20" y="50" width="22" height="6" rx="2"/><path d="M 20 56 Q 35 44 52 52 Q 70 60 86 56"/><text x="56" y="32" font-family="serif" font-style="italic" font-size="14" stroke="none" fill="currentColor">Z</text><text x="68" y="22" font-family="serif" font-style="italic" font-size="10" stroke="none" fill="currentColor">z</text><text x="76" y="14" font-family="serif" font-style="italic" font-size="7" stroke="none" fill="currentColor">z</text></svg>`,
+    dinner:`<svg viewBox="0 0 100 100"><line x1="50" y1="4" x2="50" y2="20"/><path d="M 42 20 L 58 20 L 54 30 L 46 30 Z"/><circle cx="22" cy="50" r="5"/><path d="M 17 56 L 17 68 L 27 68 L 27 56 Z"/><circle cx="50" cy="44" r="6"/><path d="M 44 51 L 44 68 L 56 68 L 56 51 Z"/><circle cx="78" cy="50" r="5"/><path d="M 73 56 L 73 68 L 83 68 L 83 56 Z"/><rect x="8" y="68" width="84" height="5" rx="1"/><line x1="18" y1="73" x2="18" y2="92"/><line x1="82" y1="73" x2="82" y2="92"/><ellipse cx="22" cy="70" rx="4" ry="1"/><ellipse cx="50" cy="70" rx="5" ry="1.2"/><ellipse cx="78" cy="70" rx="4" ry="1"/></svg>`,
+    coffee:`<svg viewBox="0 0 100 100"><path d="M 38 28 Q 35 18 41 10"/><path d="M 50 28 Q 47 16 53 6"/><path d="M 62 28 Q 59 18 65 10"/><path d="M 26 32 L 26 70 Q 26 84 40 84 L 60 84 Q 74 84 74 70 L 74 32 Z"/><path d="M 74 44 Q 88 44 88 56 Q 88 70 74 70"/><ellipse cx="50" cy="88" rx="34" ry="3"/><ellipse cx="50" cy="34" rx="22" ry="3"/></svg>`,
+    desk:`<svg viewBox="0 0 100 100"><rect x="14" y="28" width="72" height="44" rx="4"/><line x1="14" y1="38" x2="86" y2="38"/><circle cx="20" cy="33" r="1.2" fill="currentColor"/><circle cx="25" cy="33" r="1.2" fill="currentColor"/><line x1="22" y1="48" x2="38" y2="48"/><line x1="22" y1="56" x2="50" y2="56"/><line x1="22" y1="64" x2="44" y2="64"/><rect x="54" y="44" width="22" height="18" rx="2"/><line x1="54" y1="50" x2="76" y2="50"/><line x1="62" y1="50" x2="62" y2="62"/><line x1="14" y1="72" x2="14" y2="86"/><line x1="86" y1="72" x2="86" y2="86"/></svg>`,
+    call:`<svg viewBox="0 0 100 100"><path d="M 28 22 Q 22 22 20 28 Q 18 36 22 46 Q 28 62 40 74 Q 52 86 68 90 Q 78 92 82 88 Q 86 84 84 78 L 78 68 Q 76 64 70 66 L 62 70 Q 58 72 54 68 L 42 56 Q 38 52 40 48 L 44 40 Q 46 34 42 30 L 34 24 Q 31 22 28 22Z"/></svg>`
+  };
   var SCENARIOS=[
     {
       barLabel:'BRIEFING · DAILY OVERVIEW · MON 6:58',barTime:'6:58 AM',
@@ -962,6 +1023,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       toast:{title:'Brief assembled',sub:'in 11 seconds, before 7am'},
       prompt:"Ask: reschedule, flag, or run today's summary...",
       sidebarIdx:0,
+      vignette:{illo:'sleeping',you:'while you sleep,',we:'we prep your morning.'},
       rows:[
         {icon:'◷',main:'4 calls scheduled',val:'Today',sub:'9am · 10:30 · 2pm · 4pm',tag:'CAL',cls:''},
         {icon:'⚠',main:'2 accounts flagged',val:'Yellow',sub:'Northside · Summit',tag:'RISK',cls:'lr-warn'},
@@ -976,6 +1038,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       toast:{title:'Scan complete',sub:'24 accounts reviewed'},
       prompt:"Ask: who's at risk, churn signals, sentiment...",
       sidebarIdx:1,
+      vignette:{illo:'dinner',you:"while you're at dinner,",we:'we watch every account.'},
       rows:[
         {icon:'●',main:'Northside Collective',val:'Yellow',sub:'18 days since last call',tag:'AT RISK',cls:'lr-warn'},
         {icon:'●',main:'Summit Partners',val:'Red',sub:'Payment overdue + silent 26d',tag:'URGENT',cls:'lr-alert'},
@@ -989,6 +1052,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       toast:{title:'Call in 32 minutes',sub:'pre-loaded from Fathom + Stripe'},
       prompt:'Ask: talking points, risks, history, open items...',
       sidebarIdx:2,
+      vignette:{illo:'coffee',you:'while you have coffee,',we:'we pull the brief.'},
       rows:[
         {icon:'◷',main:'Last meeting',val:'47d ago',sub:'Feb 11 · Fathom transcript ready',tag:'HISTORY',cls:''},
         {icon:'◉',main:'Sentiment',val:'Positive',sub:'Engagement up vs Q4',tag:'TONE',cls:'lr-ok'},
@@ -1003,6 +1067,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       toast:{title:'Brief assembled',sub:'in 12 seconds, before 8am'},
       prompt:'Ask: AR, retries, top late payers...',
       sidebarIdx:3,
+      vignette:{illo:'desk',you:'while you focus,',we:'we track the money.'},
       rows:[
         {icon:'✓',main:'Sources reconciled',val:'2',sub:'Stripe + QuickBooks in sync',tag:'SYNC',cls:'lr-ok'},
         {icon:'$',main:'Outstanding AR',val:'$12,400',sub:'3 invoices · oldest 14 days',tag:'AR',cls:'lr-warn'},
@@ -1016,6 +1081,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       toast:{title:'Pipeline updated',sub:'3 screened overnight'},
       prompt:'Ask: next steps, screening status, interviews...',
       sidebarIdx:4,
+      vignette:{illo:'call',you:"while you're on a call,",we:'we screen the pipeline.'},
       rows:[
         {icon:'◈',main:'Applications this week',val:'8',sub:'3 via LinkedIn · 5 via Indeed',tag:'NEW',cls:''},
         {icon:'✓',main:'Screened + moved forward',val:'3',sub:'Auto-scored above threshold',tag:'PASS',cls:'lr-ok'},
@@ -1031,6 +1097,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   var toastTitleEl=document.getElementById('lt-title');
   var toastSubEl=document.getElementById('lt-sub');
   var lpTextEl=document.getElementById('lp-text');
+  var vigEl=document.getElementById('lap-vignette');
+  var vigIllo=document.getElementById('lap-vig-illo');
+  var vigYou=document.getElementById('lap-vig-you');
+  var vigWe=document.getElementById('lap-vig-we');
   var sidebarBtns=document.querySelectorAll('#lap-mount .ls-icon');
   SCENARIOS.forEach(function(_,i){
     var s=document.createElement('span');
@@ -1040,6 +1110,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   var dots=Array.from(dotsEl.children);
   var activeIdx=0,cycleToken=0;
   function sleep(ms){return new Promise(function(r){setTimeout(r,ms);})}
+  function swapVignette(sc){
+    if(!vigEl||!sc.vignette)return;
+    vigEl.classList.add('swap');
+    setTimeout(function(){
+      if(sc.vignette.illo&&LAP_ILLOS[sc.vignette.illo])vigIllo.innerHTML=LAP_ILLOS[sc.vignette.illo];
+      if(vigYou)vigYou.textContent=sc.vignette.you;
+      if(vigWe)vigWe.textContent=sc.vignette.we;
+      vigEl.classList.remove('swap');
+    },320);
+  }
   async function runScenario(sc,idx,token){
     if(barLabelEl)barLabelEl.textContent=sc.barLabel;
     if(barTimeEl)barTimeEl.textContent=sc.barTime;
@@ -1049,6 +1129,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     if(lpTextEl)lpTextEl.textContent=sc.prompt;
     sidebarBtns.forEach(function(b,i){b.classList.toggle('ls-active',i===sc.sidebarIdx);});
     dots.forEach(function(d,i){d.classList.toggle('on',i===idx);});
+    swapVignette(sc);
     lapOutput.innerHTML='';
     queryEl.textContent='';
     queryEl.classList.remove('done');
