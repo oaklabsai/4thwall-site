@@ -98,6 +98,21 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .d-arr{color:rgba(247,243,236,.2);font-size:.85rem;line-height:1;transition:transform .18s,color .18s}
 .drop-a:hover .d-arr{transform:translate(2px,-2px);color:rgba(247,243,236,.5)}
 
+/* ── hamburger Products sub-dropdown ── */
+.drop-prod-btn{width:100%;text-align:left;display:flex;align-items:center;gap:.8rem;padding:.78rem 1rem;color:rgba(247,243,236,.68);font-size:.88rem;font-weight:450;letter-spacing:-.013em;background:none;border:none;border-bottom:1px solid rgba(247,243,236,.055);cursor:pointer;transition:color .15s,background .15s;font-family:inherit;-webkit-appearance:none}
+.drop-prod-btn:hover,.drop-prod-wrap.open .drop-prod-btn{color:var(--cream);background:rgba(247,243,236,.045)}
+.drop-prod-wrap.open .drop-prod-btn{border-bottom-color:transparent}
+.drop-prod-chev{font-size:.6rem;transition:transform .22s;display:inline-block;line-height:1;color:rgba(247,243,236,.2);margin-left:auto}
+.drop-prod-wrap.open .drop-prod-chev{transform:rotate(180deg)}
+.drop-sub{display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s cubic-bezier(.16,1,.3,1);border-bottom:1px solid rgba(247,243,236,.055)}
+.drop-prod-wrap.open .drop-sub{grid-template-rows:1fr}
+.drop-sub-inner{overflow:hidden}
+.drop-sub-a{display:flex;flex-direction:column;padding:.62rem 1rem .62rem 2.8rem;color:rgba(247,243,236,.52);text-decoration:none;border-bottom:1px solid rgba(247,243,236,.04);transition:color .15s,background .15s}
+.drop-sub-a:last-child{border-bottom:none}
+.drop-sub-a:hover{color:var(--cream);background:rgba(247,243,236,.04)}
+.drop-sub-name{font-size:.84rem;font-weight:500;line-height:1;letter-spacing:-.01em}
+.drop-sub-desc{font-size:.57rem;color:rgba(247,243,236,.28);margin-top:2px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em}
+
 /* ── pills ───────────────────────────────── */
 .pill{display:inline-flex;align-items:center;gap:.5rem;padding:11px 22px;border-radius:50px;font-size:.86rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity .2s,background .2s,transform .2s}
 .pill .arr{font-family:var(--display);line-height:1;transition:transform .25s}
@@ -604,6 +619,30 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div>
 
   <nav class="drop-list">
+    <div class="drop-prod-wrap" id="dropProdWrap">
+      <button class="drop-prod-btn" id="dropProdBtn" type="button">
+        <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="7" height="7" rx="1"/><rect x="15" y="3" width="7" height="7" rx="1"/><rect x="2" y="14" width="7" height="7" rx="1"/><rect x="15" y="14" width="7" height="7" rx="1"/></svg></span>
+        <span class="d-label">Products</span>
+        <span class="drop-prod-chev">▾</span>
+      </button>
+      <div class="drop-sub">
+        <div class="drop-sub-inner">
+          <a href="/trades.html" class="drop-sub-a">
+            <span class="drop-sub-name">4THWALL Trades</span>
+            <span class="drop-sub-desc">For trades contractors</span>
+          </a>
+          <a href="/ops.html" class="drop-sub-a">
+            <span class="drop-sub-name">4THWALL Ops</span>
+            <span class="drop-sub-desc">For service operations</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <a href="#contact" class="drop-a" id="dropTalk">
+      <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+      <span class="d-label">Let's Talk</span>
+      <span class="d-arr">↗</span>
+    </a>
     <a href="/login.html" class="drop-a">
       <span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
       <span class="d-label">Client Login</span>
@@ -1096,5 +1135,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <div id="tweaks-root"></div>
 
 <script src="site.js"></script>
+<script>
+(function(){
+  var btn=document.getElementById('dropProdBtn'),wrap=document.getElementById('dropProdWrap');
+  if(btn&&wrap){btn.addEventListener('click',function(e){e.stopPropagation();wrap.classList.toggle('open')});}
+  var talk=document.getElementById('dropTalk');
+  if(talk){talk.addEventListener('click',function(){var c=document.getElementById('dropClose');if(c)c.click();});}
+})();
+</script>
 </body>
 </html>
