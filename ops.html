@@ -199,6 +199,51 @@ section{position:relative;z-index:2}
 .manif-card-h{font-family:var(--display);font-size:1.05rem;font-weight:500;line-height:1.25;letter-spacing:-.02em}
 .manif-card-d{font-size:.8rem;line-height:1.6;color:var(--muted);margin-top:.5rem}
 
+/* ── flip cards ─────────────────────────────── */
+.flip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:920px){.flip-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.flip-grid{grid-template-columns:1fr}}
+.flip{cursor:pointer;height:230px;position:relative;border-radius:18px;overflow:hidden}
+.flip-inner{position:relative;width:100%;height:100%}
+.flip-face{position:absolute;inset:0;border-radius:18px;padding:1.4rem;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--line);transition:opacity .45s cubic-bezier(.16,1,.3,1),transform .55s cubic-bezier(.16,1,.3,1)}
+.flip-front{background:var(--cream-2);opacity:1;transform:translateY(0);z-index:2}
+.flip-back{background:var(--ink);color:var(--cream);border-color:transparent;opacity:0;transform:translateY(8px);z-index:1}
+.flip.flipped .flip-front{opacity:0;transform:translateY(-8px);z-index:1}
+.flip.flipped .flip-back{opacity:1;transform:translateY(0);z-index:2}
+.flip-num{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--orange);text-transform:uppercase}
+.flip-q{font-family:var(--display);font-size:1.18rem;line-height:1.25;font-weight:500;margin-top:.4rem}
+.flip-q .ital{font-style:italic;color:var(--orange)}
+.flip-cta{font-size:.74rem;color:var(--muted);display:inline-flex;align-items:center;gap:.4rem}
+.flip-a{font-size:.86rem;line-height:1.6;color:rgba(247,243,236,.85)}
+.flip-back .flip-cta{color:rgba(247,243,236,.55)}
+
+/* ── story / stats ───────────────────────────── */
+.story{border-top:1px solid var(--line);max-width:920px;margin:0 auto}
+.story-row{display:grid;grid-template-columns:3.5rem 10rem 1fr;gap:2.4rem;align-items:start;padding:2.4rem 0;border-bottom:1px solid var(--line);transition:background .25s}
+.story-row:hover{background:linear-gradient(90deg,var(--orange-soft),transparent 70%)}
+.story-num{font-family:var(--mono);font-size:.78rem;color:var(--orange);letter-spacing:.08em;padding-top:.7rem}
+.story-stat{display:flex;align-items:flex-start}
+.story-figure{font-family:var(--display);font-size:clamp(3rem,6vw,5.4rem);font-weight:400;letter-spacing:-.04em;line-height:.92;color:var(--ink);font-style:italic}
+.story-figure.orange{color:var(--orange)}
+.story-unit{font-size:.42em;font-style:normal;font-family:var(--body);font-weight:500;letter-spacing:0;color:var(--muted);margin-left:.15em;vertical-align:.25em}
+.story-body{padding-top:.7rem}
+.story-h{font-family:var(--display);font-size:clamp(1.2rem,2vw,1.65rem);font-weight:500;line-height:1.2;letter-spacing:-.02em}
+.story-h .ital{font-style:italic;color:var(--muted);font-weight:400}
+.story-d{font-size:.9rem;line-height:1.65;color:var(--muted);margin-top:.55rem;max-width:34rem}
+.story-row-final{background:var(--ink);color:var(--cream);border-radius:18px;border-color:transparent;padding:2.4rem 1.8rem;margin:1.4rem 0 0;border:none;grid-template-columns:3.5rem 10rem 1fr}
+.story-row-final:hover{background:var(--ink)}
+.story-row-final .story-num{color:rgba(247,243,236,.55)}
+.story-row-final .story-figure{color:var(--cream)}
+.story-row-final .story-figure.orange{color:var(--orange)}
+.story-row-final .story-h{color:var(--cream)}
+.story-row-final .story-h .ital{color:rgba(247,243,236,.55)}
+.story-row-final .story-d{color:rgba(247,243,236,.7)}
+.story-conclusion{padding:2.6rem 0 0;text-align:center;max-width:42rem;margin:0 auto}
+.story-conclusion-h{font-family:var(--display);font-size:clamp(1.4rem,2.6vw,2rem);font-weight:400;letter-spacing:-.025em;line-height:1.25}
+.story-conclusion-h .ital{font-style:italic;color:var(--orange)}
+.story-conclusion-d{font-size:.9rem;color:var(--muted);margin-top:.7rem;line-height:1.65}
+@media(max-width:640px){.story-row{grid-template-columns:2.5rem 6rem 1fr;gap:1.2rem;padding:1.6rem 0}.story-row-final{grid-template-columns:2.5rem 6rem 1fr;padding:1.6rem 1.2rem}}
+
 /* ── FAQ — accordion ─────────── */
 .faq-list{border-top:1px solid var(--line)}
 .faq-item{border-bottom:1px solid var(--line)}
@@ -425,11 +470,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         4THWALL Ops
       </div>
       <h1 class="hero-h r in">
-        Scale the work.<br>
-        <span class="ital">Not the overhead.</span>
+        You built the business.<br>
+        <span class="ital">Stop running the ops.</span>
       </h1>
       <p class="hero-sub r in d2">
-        4THWALL Ops builds and manages custom AI infrastructure for service businesses — so you can take on more clients and more complexity without hiring more people to handle it.
+        4THWALL Ops builds and manages custom AI infrastructure for agency owners and service operators — so client communications, hiring, outreach, and daily operations run automatically while you focus on growth.
       </p>
       <div class="hero-cta r in d3">
         <a href="#contact" class="hero-link">Let's talk</a>
@@ -444,8 +489,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <div class="s-meta">
     <div>
       <div class="s-label r">What it does · 01</div>
-      <h2 class="s-h r in">Five systems.<br><span class="ital">One infrastructure.</span></h2>
-      <p class="s-note r in d2">Built to run across every client, location, and operation you manage.</p>
+      <h2 class="s-h r in">Five systems.<br><span class="ital">Everything automated.</span></h2>
+      <p class="s-note r in d2">Custom-built to your operation. Every client managed. Every process handled. All running while you sleep.</p>
     </div>
     <div class="s-count r in d3">(05 systems)</div>
   </div>
@@ -453,82 +498,249 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <div class="bento">
     <div class="bento-card bento-a r">
       <div>
-        <div class="b-num">001 · Client Communications</div>
-        <div class="b-h">Every message answered, <span class="ital">every client served.</span></div>
-        <div class="b-d">Inbound handled 24/7, white-labeled as your brand across every account. No client waits. No message falls through the cracks.</div>
+        <div class="b-num">001 · Personal AI OS</div>
+        <div class="b-h">Your business, <span class="ital">already briefed.</span></div>
+        <div class="b-d">Installed on your machine. Connected to every tool in your stack. Pre-loaded with your clients, your history, your standards. Not a generic AI you explain yourself to every time — one that already knows.</div>
       </div>
-      <div class="b-illo" data-illo="phone"></div>
+      <div class="b-illo" data-illo="step2"></div>
     </div>
 
     <div class="bento-card bento-b r d1">
       <div>
-        <div class="b-num">002 · Hiring</div>
-        <div class="b-h">Staffing pipeline <span class="ital">on autopilot.</span></div>
-        <div class="b-d">Screening, scheduling, follow-up — handled without manual effort. From application to booked interview without you touching it.</div>
+        <div class="b-num">002 · Client Management</div>
+        <div class="b-h">Every client touched, <span class="ital">every day.</span></div>
+        <div class="b-d">Daily personalized check-ins to every account. Pre-call briefs 30 minutes before each meeting. Weekly health scores across your full book. Red, yellow, green — before problems become cancellations.</div>
       </div>
-      <div class="b-illo" data-illo="step1"></div>
+      <div class="b-illo" data-illo="phone"></div>
     </div>
 
     <div class="bento-card bento-c r d2">
       <div>
-        <div class="b-num">003 · Outreach</div>
-        <div class="b-h"><span class="ital">New clients,</span> booked automatically.</div>
-        <div class="b-d">Targeted outreach to your ideal clients. Qualified leads and booked discovery calls — without a sales team.</div>
+        <div class="b-num">003 · Hiring Pipeline</div>
+        <div class="b-h">Application to interview, <span class="ital">zero manual steps.</span></div>
+        <div class="b-d">Screening, scheduling, follow-up — fully automated. You engage when a candidate is qualified and ready. The pipeline handles 500 applicants the same way it handles 5.</div>
       </div>
-      <div class="b-illo" data-illo="search"></div>
+      <div class="b-illo" data-illo="step1"></div>
     </div>
 
     <div class="bento-card bento-d r d3">
       <div>
-        <div class="b-num">004 · Operations</div>
-        <div class="b-h">Nothing <span class="ital">falls through.</span></div>
-        <div class="b-d">Deadlines tracked, deliverables scheduled, daily briefings generated. The system runs the operation — you run the business.</div>
+        <div class="b-num">004 · Growth & Outreach</div>
+        <div class="b-h">New clients booked, <span class="ital">without a sales team.</span></div>
+        <div class="b-d">Personalized outreach to your ideal clients. Intelligent follow-up. Inbound qualified and booked. After a discovery call, the proposal is drafted and ready to send.</div>
       </div>
-      <div class="b-illo" data-illo="calendar"></div>
+      <div class="b-illo" data-illo="search"></div>
     </div>
 
     <div class="bento-card bento-e r d4">
       <div>
-        <div class="b-num">005 · Personal OS</div>
-        <div class="b-h">Your command center, <span class="ital">always loaded.</span></div>
-        <div class="b-d">One interface connected to every tool you use, loaded with your business context. Every decision starts here instead of inside your inbox.</div>
+        <div class="b-num">005 · Ops & Revenue</div>
+        <div class="b-h">Nothing missed. <span class="ital">Nothing forgotten.</span></div>
+        <div class="b-d">Daily briefings before you start. Failed payments caught same-day. Deadlines tracked per client. Monthly P&L auto-generated. The operational overhead of running a complex business — off your plate.</div>
       </div>
-      <div class="b-illo" data-illo="step2"></div>
+      <div class="b-illo" data-illo="calendar"></div>
     </div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════ SECTION 02 — WHO IT IS FOR ════════════════════════════════════════════ -->
-<section class="s wrap" id="who-its-for" data-screen-label="02 Who it's for">
+<!-- ════════════════════════════════════════════ SECTION 02 — ELIMINATES ════════════════════════════════════════════ -->
+<section class="s wrap" data-screen-label="02 Eliminates">
   <div class="s-meta">
     <div>
-      <div class="s-label r">Who it is for · 02</div>
-      <h2 class="s-h r in">If your ops are <span class="ital">outpacing your team,</span><br>this is for you.</h2>
-      <p class="s-note r in d2">The right fit isn't about your industry. It's about whether complexity is the problem.</p>
+      <div class="s-label r">What this eliminates · 02</div>
+      <h2 class="s-h r in">Six things you'll<br><span class="ital">stop doing.</span></h2>
+      <p class="s-note r in d2">Tap a card to see what disappears.</p>
+    </div>
+  </div>
+
+  <div class="flip-grid">
+    <div class="flip r" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">01</div>
+            <div class="flip-q">Going into client calls <span class="ital">unprepared.</span></div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">Pre-call brief lands in your inbox 30 minutes before every meeting.</div>
+          <div class="flip-a">Fathom history, payment status, open issues, talking points, and risk flags — assembled automatically so you walk in already knowing the full picture.</div>
+        </div>
+      </div>
+    </div>
+    <div class="flip r d1" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">02</div>
+            <div class="flip-q">Finding out about churn <span class="ital">after it's already decided.</span></div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">Weekly health scan flags at-risk accounts 4–8 weeks early.</div>
+          <div class="flip-a">Every client scored Red, Yellow, or Green based on call recency, payment history, and communication patterns. Issues surface before they become cancellations.</div>
+        </div>
+      </div>
+    </div>
+    <div class="flip r d2" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">03</div>
+            <div class="flip-q">Manually chasing <span class="ital">applicants and follow-ups.</span></div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">The hiring pipeline runs end-to-end without you.</div>
+          <div class="flip-a">Screening, scheduling, and follow-up handled automatically. You engage once — when the candidate is qualified and ready to move forward.</div>
+        </div>
+      </div>
+    </div>
+    <div class="flip r d3" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">04</div>
+            <div class="flip-q">Explaining your business to AI <span class="ital">every single time.</span></div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">A personal AI OS that already knows everything.</div>
+          <div class="flip-a">Pre-loaded with your clients, your workflows, your history, your standards. Every session starts with full context. No re-briefing. No generic answers.</div>
+        </div>
+      </div>
+    </div>
+    <div class="flip r d4" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">05</div>
+            <div class="flip-q">Piecing together revenue numbers <span class="ital">from five different tools.</span></div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">On-demand P&L snapshot in seconds.</div>
+          <div class="flip-a">Monthly P&L auto-generated on the 1st. Profit splits calculated automatically. Failed payments caught same-day. Revenue clarity without opening a single spreadsheet.</div>
+        </div>
+      </div>
+    </div>
+    <div class="flip r d5" data-flip>
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div>
+            <div class="flip-num">06</div>
+            <div class="flip-q">Starting every morning by <span class="ital">figuring out what's on fire.</span></div>
+          </div>
+          <div class="flip-cta">tap to flip ↗</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">Daily briefing ready before you open your inbox.</div>
+          <div class="flip-a">Today's calls, open issues, payment alerts, and action items — assembled and delivered every morning. You start with situational awareness instead of building it from scratch.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ SECTION 03 — BY THE NUMBERS ════════════════════════════════════════════ -->
+<section class="s wrap" id="results" data-screen-label="03 Results">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">What it produces · 03</div>
+      <h2 class="s-h r in">The numbers from<br><span class="ital">a live deployment.</span></h2>
+      <p class="s-note r in d2">From a real engagement — a 95-client service agency, two sessions, everything live.</p>
+    </div>
+  </div>
+
+  <div class="story">
+    <div class="story-row r">
+      <div class="story-num">01</div>
+      <div class="story-stat"><span class="story-figure">23</span></div>
+      <div class="story-body">
+        <div class="story-h">automations <span class="ital">deployed and live.</span></div>
+        <div class="story-d">Onboarding, collections, reporting, client health, hiring, daily briefings. Every repeatable process removed from the operator's plate and running automatically.</div>
+      </div>
+    </div>
+
+    <div class="story-row r d1">
+      <div class="story-num">02</div>
+      <div class="story-stat"><span class="story-figure">475</span></div>
+      <div class="story-body">
+        <div class="story-h">AI-personalized client messages <span class="ital">sent every week.</span></div>
+        <div class="story-d">Daily check-ins to every client — generated, personalized, and sent automatically. Every client touched. Zero manual effort from the team.</div>
+      </div>
+    </div>
+
+    <div class="story-row r d2">
+      <div class="story-num">03</div>
+      <div class="story-stat"><span class="story-figure">90<span class="story-unit">sec</span></span></div>
+      <div class="story-body">
+        <div class="story-h">to fully onboard <span class="ital">a new client.</span></div>
+        <div class="story-d">Was 2–4 hours of manual steps. Now a single command triggers the full sequence. Drive folders, welcome emails, team briefings — done before the call ends.</div>
+      </div>
+    </div>
+
+    <div class="story-row r d3">
+      <div class="story-num">04</div>
+      <div class="story-stat"><span class="story-figure">0</span></div>
+      <div class="story-body">
+        <div class="story-h">manual hours per week <span class="ital">spent on ops.</span></div>
+        <div class="story-d">The operator now only touches new deals and strategic decisions. Everything else — collections, reporting, client management, hiring — runs on its own.</div>
+      </div>
+    </div>
+
+    <div class="story-row story-row-final r d4">
+      <div class="story-num">05</div>
+      <div class="story-stat"><span class="story-figure orange">2</span></div>
+      <div class="story-body">
+        <div class="story-h"><span class="ital">sessions.</span> Everything live.</div>
+        <div class="story-d">Two working engagements. Full operating infrastructure built, deployed, and running. Not a roadmap. Not a pilot. A live system from day one.</div>
+      </div>
+    </div>
+
+    <div class="story-conclusion r d5">
+      <p class="story-conclusion-h">When the right infrastructure is running, <span class="ital">the business stops demanding so much of the people inside it.</span></p>
+      <p class="story-conclusion-d">That's the entire point. The hours go back. The operator runs the business instead of the operation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ SECTION 04 — WHO IT IS FOR ════════════════════════════════════════════ -->
+<section class="s wrap" id="who-its-for" data-screen-label="04 Who it's for">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">Who it is for · 04</div>
+      <h2 class="s-h r in">You'll recognize<br><span class="ital">yourself in this.</span></h2>
+      <p class="s-note r in d2">It's not about the industry. It's about whether the operation is outpacing the team.</p>
     </div>
   </div>
 
   <div class="why-cards" style="grid-template-columns:repeat(3,1fr)">
     <div class="manif-card r">
-      <div class="manif-card-h">Agencies</div>
-      <div class="manif-card-d">Managing multiple client accounts at once. Client comms, deliverables, outreach, and reporting — handled without having to hire proportionally as you grow.</div>
+      <div class="manif-card-h">You're the single point of failure.</div>
+      <div class="manif-card-d">Onboarding, collections, client management, hiring — everything runs through you. Every new client creates more work. Growth means more hours, not more margin.</div>
     </div>
     <div class="manif-card r d1">
-      <div class="manif-card-h">Multi-Location Operators</div>
-      <div class="manif-card-d">Consistency across locations is the hardest operational problem. AI infrastructure solves it at the system level — not with more managers.</div>
+      <div class="manif-card-h">The coordination is eating your day.</div>
+      <div class="manif-card-d">Not any one big thing. Just the constant overhead — checking in on accounts, tracking what's open, making sure nothing slips. It's relentless and it scales with every new client.</div>
     </div>
     <div class="manif-card r d2">
-      <div class="manif-card-h">Growing Service Businesses</div>
-      <div class="manif-card-d">Revenue is growing but the ops overhead is growing faster. If you're managing more clients and more moving parts than your current team can handle cleanly, this is exactly what we built.</div>
+      <div class="manif-card-h">The team is there. The systems aren't.</div>
+      <div class="manif-card-d">Revenue is real. People are in place. But the operation still requires constant management from the top because there's no infrastructure running underneath it.</div>
     </div>
   </div>
 </section>
 
 <!-- ════════════════════════════════════════════ SECTION 03 — HOW IT WORKS ════════════════════════════════════════════ -->
-<section class="s wrap" id="how" data-screen-label="03 How we work">
+<section class="s wrap" id="how" data-screen-label="05 How we work">
   <div class="s-meta">
     <div>
-      <div class="s-label r">How we work · 03</div>
+      <div class="s-label r">How we work · 05</div>
       <h2 class="s-h r in">Four steps,<br><span class="ital">then forever.</span></h2>
       <p class="s-note r in d2">No 40-minute intake calls. No months of onboarding. Something live in the first week, managed permanently after that.</p>
     </div>
@@ -563,10 +775,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 </section>
 
 <!-- ════════════════════════════════════════════ SECTION 04 — FAQ ════════════════════════════════════════════ -->
-<section class="s wrap" id="faq" data-screen-label="04 FAQ">
+<section class="s wrap" id="faq" data-screen-label="06 FAQ">
   <div class="s-meta">
     <div>
-      <div class="s-label r">FAQ · 04</div>
+      <div class="s-label r">FAQ · 06</div>
       <h2 class="s-h r in">The honest<br><span class="ital">questions.</span></h2>
     </div>
   </div>
@@ -597,7 +809,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- ════════════════════════════════════════════ CONTACT ════════════════════════════════════════════ -->
 <section class="composer-section wrap" id="contact" data-screen-label="05 Contact">
-  <h2 class="composer-h r in">Tell us what you're <span class="ital">running.</span></h2>
+  <h2 class="composer-h r in">Tell us what you're <span class="ital">stuck doing manually.</span></h2>
 
   <form class="composer r in d1" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
     <div class="composer-prompt"><span class="star">✦</span><span>Talk to us like you'd text a colleague.</span></div>
