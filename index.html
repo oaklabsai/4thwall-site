@@ -72,6 +72,7 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .menu-btn:hover{background:var(--ink-2);box-shadow:0 4px 14px rgba(26,26,24,.22)}
 .menu-btn.is-open{background:var(--ink-2)}
 .menu-btn svg{width:17px;height:17px;display:block}
+@media(min-width:761px){.menu-btn{display:none}}
 
 /* ── nav dropdown panel ──────────────────────────── */
 .drop-bd{display:none;position:fixed;inset:0;z-index:490}
@@ -587,6 +588,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         </a>
       </div>
     </div>
+    <a href="#contact" class="nav-a">Let's Talk</a>
     <a href="/login.html" class="nav-a" style="opacity:.55">Client login</a>
     <button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="navDrop">
       <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
