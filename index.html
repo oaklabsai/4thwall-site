@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>4THWALL® — AI Infrastructure for Trades Contractors</title>
-<meta name="description" content="4THWALL builds and fully manages AI infrastructure for roofing contractors, home remodelers, and general contractors. Every lead answered in 60 seconds, day or night.">
+<title>4THWALL® — AI Infrastructure</title>
+<meta name="description" content="4THWALL builds and fully manages AI infrastructure for trades contractors who need every lead answered and operators who need their business to run without them.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -125,7 +125,7 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .pill-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .pill-ghost:hover{border-color:var(--ink);background:rgba(0,0,0,.02)}
 
-/* ── annotation bits (margin notes / arrows / handwritten) ── */
+/* ── annotation bits ── */
 .annotate{font-family:var(--hand);color:var(--orange);line-height:1.05;font-size:1.4rem;font-weight:500;display:inline-block;transform:rotate(-3deg);position:absolute;pointer-events:none}
 .note-arrow{position:absolute;pointer-events:none;color:var(--orange)}
 .note-arrow svg{display:block;overflow:visible}
@@ -146,7 +146,6 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 
 .hero-grid{position:absolute;inset:0;bottom:55%;opacity:.45;pointer-events:none;background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);background-size:60px 60px;mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%)}
 
-/* immersive 3D perspective floor — receding into the distance */
 .hero-floor{position:absolute;left:-25%;right:-25%;top:55%;bottom:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(26,26,24,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(26,26,24,.13) 1px,transparent 1px);background-size:78px 78px;transform:perspective(820px) rotateX(58deg);transform-origin:center top;mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);opacity:.6}
 
 .hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr 1fr;gap:5rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
@@ -175,105 +174,6 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .hero-foot .feats span{display:inline-flex;align-items:center;gap:.4rem}
 .hero-foot .feats span::before{content:"";width:5px;height:5px;background:var(--orange);border-radius:50%}
 
-/* ───── animated phone demo (iPhone 17 Pro Max — floating, premium) ───── */
-.demo-stage{position:relative;width:100%;aspect-ratio:.49;max-width:300px;margin:0 auto;perspective:1800px}
-.demo-bezel{position:absolute;inset:0;border-radius:50px;
-  background:linear-gradient(145deg,#3d3d3a 0%,#1a1a18 32%,#0a0a09 62%,#2c2c29 100%);
-  padding:8px;
-  box-shadow:
-    0 70px 130px -28px rgba(0,0,0,.55),
-    0 30px 60px -18px rgba(0,0,0,.4),
-    0 4px 12px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.16),
-    inset 1px 0 0 rgba(255,255,255,.05),
-    inset 0 0 0 1.5px rgba(255,255,255,.04);
-  transform-style:preserve-3d;
-  transform:rotateY(-4deg) rotateX(2deg) rotateZ(-.6deg);
-  animation:phoneFloat 7s ease-in-out infinite;
-  z-index:3;
-}
-@keyframes phoneFloat{
-  0%,100%{transform:rotateY(-4deg) rotateX(2deg) rotateZ(-.6deg) translateY(0)}
-  50%    {transform:rotateY(-3deg) rotateX(1.5deg) rotateZ(-.6deg) translateY(-10px)}
-}
-/* titanium side rail buttons */
-.demo-bezel::before{content:"";position:absolute;left:-2.5px;top:14%;width:3px;height:30px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0}
-.demo-bezel::after{content:"";position:absolute;left:-2.5px;top:30%;width:3px;height:48px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;box-shadow:0 64px 0 0 #2c2c29,0 64px 0 -1px #5d5d5a}
-
-.demo-screen{width:100%;height:100%;background:var(--cream);border-radius:42px;overflow:hidden;position:relative;display:flex;flex-direction:column}
-
-/* dynamic island */
-.demo-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:104px;height:30px;background:#0a0a09;border-radius:20px;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:0 9px;transition:width .55s cubic-bezier(.34,1.56,.64,1),height .55s cubic-bezier(.34,1.56,.64,1)}
-.demo-island.expanded{width:86%;height:54px;border-radius:26px;padding:0 14px}
-.demo-island .di-icon{width:18px;height:18px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono);font-size:9px;color:#fff;font-weight:700}
-.demo-island.expanded .di-icon{width:30px;height:30px;font-size:11px}
-.demo-island .di-text{flex:1;color:#fff;font-size:.6rem;font-family:var(--sans);margin-left:8px;opacity:0;transition:opacity .25s ease .2s;overflow:hidden;white-space:nowrap}
-.demo-island.expanded .di-text{opacity:1}
-.demo-island .di-text strong{display:block;font-weight:600;font-size:.7rem;letter-spacing:-.005em}
-.demo-island .di-text span{display:block;font-size:.55rem;color:rgba(255,255,255,.6);margin-top:1px}
-.demo-island .di-pulse{width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 0 rgba(30,102,66,.65);animation:diPulse 1.6s ease-in-out infinite;flex-shrink:0;opacity:0;transition:opacity .25s ease .2s}
-.demo-island.expanded .di-pulse{opacity:1}
-@keyframes diPulse{0%,100%{box-shadow:0 0 0 0 rgba(30,102,66,.65)}50%{box-shadow:0 0 0 7px rgba(30,102,66,0)}}
-
-.demo-statusbar{display:flex;justify-content:space-between;align-items:center;padding:.95rem 1.5rem .35rem;font-family:var(--sans);font-size:.66rem;font-weight:600;color:var(--ink);height:54px;flex-shrink:0}
-.demo-statusbar .sb-r{display:flex;align-items:center;gap:5px}
-.sb-bat{width:24px;height:11px;border:1px solid var(--ink);border-radius:3px;position:relative;padding:1px;display:inline-block}
-.sb-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--ink);border-radius:0 2px 2px 0}
-.sb-bat i{display:block;height:100%;width:78%;background:var(--ink);border-radius:1px}
-
-.demo-header{display:flex;align-items:center;gap:.7rem;padding:.4rem 1rem .8rem;border-bottom:1px solid rgba(26,26,24,.07);flex-shrink:0}
-.demo-avatar{width:34px;height:34px;border-radius:50%;background:var(--orange);color:var(--cream);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.78rem;font-family:var(--display);flex-shrink:0;transition:background .4s ease}
-.demo-name{font-size:.86rem;font-weight:500;line-height:1;transition:opacity .3s}
-.demo-status{font-size:.62rem;color:var(--orange);margin-top:3px;display:flex;align-items:center;gap:.3rem}
-.demo-status::before{content:"";width:5px;height:5px;background:var(--orange);border-radius:50%;animation:diPulse 1.6s ease-in-out infinite}
-.demo-channel{margin-left:auto;font-family:var(--mono);font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:rgba(26,26,24,.04);border:1px solid rgba(26,26,24,.08);padding:3px 6px;border-radius:7px;flex-shrink:0;white-space:nowrap}
-
-.demo-stream{flex:1;padding:.95rem .85rem 1.1rem;display:flex;flex-direction:column;gap:.5rem;overflow:hidden;position:relative}
-.demo-scenario-tag{position:absolute;top:.55rem;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;background:var(--cream);padding:3px 9px;border:1px solid rgba(26,26,24,.1);border-radius:99px;z-index:5;white-space:nowrap}
-
-.bub{padding:.55rem .8rem;border-radius:16px;font-size:.78rem;line-height:1.4;max-width:80%;opacity:0;transform:translateY(8px);animation:pop .45s cubic-bezier(.16,1,.3,1) forwards}
-.bub.them{background:var(--cream-3);color:var(--ink);border-bottom-left-radius:5px;align-self:flex-start}
-.bub.us{background:var(--ink);color:var(--cream);border-bottom-right-radius:5px;align-self:flex-end}
-.bub .ts{display:block;font-family:var(--mono);font-size:.56rem;color:var(--dim);margin-top:.25rem;letter-spacing:.04em}
-.bub.us .ts{color:rgba(247,243,236,.55)}
-.bub.typing{background:var(--cream-3);color:var(--muted);align-self:flex-start;border-bottom-left-radius:5px;display:inline-flex;gap:3px;padding:.7rem .85rem}
-.bub.typing span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:bounce 1s ease-in-out infinite}
-.bub.typing span:nth-child(2){animation-delay:.15s}
-.bub.typing span:nth-child(3){animation-delay:.3s}
-@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
-@keyframes pop{to{opacity:1;transform:translateY(0)}}
-
-/* modernized floating tags around the phone */
-.demo-tag{position:absolute;z-index:4;display:flex;flex-direction:column;background:rgba(247,243,236,.78);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);border:1px solid rgba(26,26,24,.08);border-radius:14px;padding:.6rem .85rem;box-shadow:0 14px 36px -16px rgba(0,0,0,.22),0 2px 4px rgba(0,0,0,.04);min-width:140px;animation:tagFloat 7s ease-in-out infinite}
-.demo-tag .tag-h{font-size:.82rem;font-weight:500;color:var(--ink);letter-spacing:-.005em;line-height:1.15}
-.demo-tag .tag-s{font-size:.6rem;color:var(--muted);margin-top:2px;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase}
-.demo-tag.t-live{top:14%;right:-22%}
-.demo-tag.t-done{bottom:16%;left:-20%;animation-delay:-3.5s}
-@keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-
-/* "while you ___ / we ___" vignette next to phone */
-.hero-vignette{position:absolute;top:50%;left:-58%;width:135px;z-index:4;pointer-events:none;text-align:center;transform:translateY(-50%) rotate(-2deg);transition:opacity .35s ease,transform .45s cubic-bezier(.16,1,.3,1)}
-.hero-vignette.swap{opacity:0;transform:translateY(-50%) rotate(-2deg) translateX(-6px)}
-.vig-illo{width:90px;height:90px;margin:0 auto;color:var(--ink)}
-.vig-illo svg{width:100%;height:100%;stroke:currentColor;stroke-width:1.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.vig-caption{margin-top:.5rem;font-family:var(--hand);line-height:1.05;font-size:1.08rem;font-weight:500}
-.vig-you{display:block;color:var(--ink)}
-.vig-we{display:block;color:var(--orange);margin-top:.1rem}
-@media(max-width:1200px){
-  .hero-vignette{position:absolute;left:50%;top:auto;bottom:-88px;transform:translateX(-50%) rotate(0deg);width:240px;display:flex;flex-direction:row;align-items:center;gap:.65rem;text-align:left;background:rgba(247,243,236,.92);backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);border:1px solid rgba(26,26,24,.07);border-radius:14px;padding:.55rem .8rem;box-shadow:0 8px 24px -8px rgba(0,0,0,.14)}
-  .hero-vignette.swap{opacity:0;transform:translateX(-50%) translateY(4px) rotate(0deg)}
-  .vig-illo{width:42px;height:42px;margin:0;flex-shrink:0}
-  .vig-caption{margin-top:0;font-size:.82rem}
-  #demo-mount{padding-bottom:76px}
-}
-
-/* scenario dots */
-.demo-dots{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
-.demo-dots span{width:6px;height:6px;border-radius:99px;background:rgba(26,26,24,.18);transition:all .4s ease;cursor:pointer}
-.demo-dots span.on{background:var(--orange);width:22px}
-.demo-dots span:hover{background:rgba(26,26,24,.4)}
-.demo-dots span.on:hover{background:var(--orange)}
-
 /* hero orbiting particles (subtle) */
 .orbit{position:absolute;inset:0;pointer-events:none;z-index:2}
 .orbit-dot{position:absolute;width:6px;height:6px;background:var(--orange);border-radius:50%;opacity:.35;animation:drift 14s linear infinite}
@@ -295,6 +195,21 @@ section{position:relative;z-index:2}
 .s-note{font-size:.95rem;line-height:1.7;color:var(--muted);max-width:32rem;margin-top:1rem}
 .s-count{font-family:var(--mono);font-size:.74rem;color:var(--dim)}
 .section-divider{height:1px;background:var(--line);margin:0 var(--pad)}
+
+/* ── ENGINE SECTION ─────────────────────────────────────────── */
+.engine-section{background:var(--ink);position:relative;z-index:2;overflow:hidden}
+.engine-canvas-wrap{width:100%;line-height:0;position:relative}
+#engine-canvas{width:100%;display:block;cursor:default}
+.engine-copy{max-width:var(--max);margin:0 auto;padding:3rem var(--pad) 4.5rem}
+.engine-s-label{font-size:.78rem;color:rgba(247,243,236,.4);margin-bottom:1.1rem;display:flex;align-items:center;gap:.5rem}
+.engine-s-label::before{content:"";width:18px;height:1px;background:var(--orange)}
+.engine-s-h{font-family:var(--display);font-size:clamp(2.2rem,5vw,4.4rem);font-weight:400;letter-spacing:-.035em;line-height:1.02;color:rgba(247,243,236,.95);max-width:24ch}
+.engine-s-h .ital{font-style:italic;color:var(--orange)}
+.engine-cols{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;margin-top:2.2rem}
+.engine-col-tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin-bottom:.65rem}
+.engine-col-body{font-size:.95rem;line-height:1.7;color:rgba(247,243,236,.58)}
+.engine-closing{margin-top:2.8rem;text-align:center;font-family:var(--display);font-style:italic;font-size:1.05rem;color:rgba(247,243,236,.45);max-width:46rem;margin-left:auto;margin-right:auto}
+@media(max-width:640px){.engine-cols{grid-template-columns:1fr;gap:2rem}.engine-closing{font-size:.92rem}}
 
 /* ── CAPABILITIES — bento grid ─────────────── */
 .bento{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(190px,auto);gap:14px}
@@ -375,7 +290,9 @@ section{position:relative;z-index:2}
   .story-figure{font-size:clamp(2.6rem,12vw,3.4rem)}
   .story-h{font-size:1.05rem}
   .story-d{font-size:.82rem;margin-top:.45rem}
-  .story-row-final{padding:1.6rem 1.2rem;margin-top:1rem}
+  .story-row-final{padding:1.6rem 1.2rem;margin-top:1rem;grid-template-columns:2.5rem 1fr}
+  .story-row-final .story-stat{grid-column:2}
+  .story-row-final .story-body{grid-column:2;padding-top:0}
   .story-conclusion{padding-top:2rem}
   .story-conclusion-h{font-size:1.25rem}
 }
@@ -397,8 +314,6 @@ section{position:relative;z-index:2}
 .why-eyebrow{font-family:var(--hand);color:var(--orange);font-size:1.4rem;line-height:1;margin-bottom:1rem;transform:rotate(-1.5deg);display:inline-block}
 .why-h{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,3rem);line-height:1.08;font-weight:400;letter-spacing:-.03em;max-width:24ch}
 .why-h .ital{font-style:italic;color:var(--orange)}
-.why-h .strike{position:relative;display:inline-block}
-.why-h .strike::after{content:"";position:absolute;left:-2%;right:-2%;top:55%;height:3px;background:var(--orange);border-radius:2px;transform:rotate(-2deg)}
 .why-cards{margin-top:2.2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
 @media(max-width:840px){.why-cards{grid-template-columns:1fr}}
 .manif-card{padding:1.4rem;background:var(--cream-2);border:1px solid var(--line);border-radius:16px}
@@ -474,14 +389,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .hero-cta{margin-top:1.3rem}
   .hero-foot{margin-top:1.6rem;font-size:.66rem;gap:.5rem;padding-top:.9rem}
   .hero-foot .feats{gap:.9rem}
-  .demo-stage{max-width:min(320px,88vw)}
-  .demo-tag{min-width:unset;padding:.32rem .55rem;border-radius:9px;background:rgba(247,243,236,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);animation:none}
-  .demo-tag .tag-h{font-size:.7rem}
-  .demo-tag .tag-s{font-size:.52rem}
-  .demo-tag.t-live{top:7%;right:4%;left:auto}
-  .demo-tag.t-done{bottom:12%;left:4%;right:auto}
-  .hero-vignette{width:min(230px,80vw);bottom:-82px}
-  #demo-mount{padding-bottom:70px}
   nav.topnav{padding:.85rem var(--pad)}
   .nav-logo .brand-mark{height:19px}
   .pill{padding:9px 16px;font-size:.78rem}
@@ -667,11 +574,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <div class="hero-row" style="grid-template-columns:1fr;max-width:820px">
     <div>
       <h1 class="hero-h r in">
-        Two products.<br>
-        <span class="ital">One infrastructure.</span>
+        The AI layer<br>
+        <span class="ital">your business runs on.</span>
       </h1>
+      <p class="r in d1" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.13em;text-transform:uppercase;color:var(--orange);margin-top:1.4rem">Not a tool. The operating system.</p>
       <p class="hero-sub r in d2">
-        4THWALL builds and permanently manages AI infrastructure for two fundamentally different problems — contractors who need every lead answered, and operators who need their entire business to run with less of them in it.
+        Two products. One continuous loop. 4THWALL Trades captures every lead before it goes cold. 4THWALL Ops turns the business behind those leads into one that runs without you at the center of everything. Both built by us. Both run by us. Permanently.
       </p>
       <div class="hero-cta r in d3">
         <a href="#contact" class="hero-link">Let's talk</a>
@@ -682,13 +590,35 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 </section>
 
+<!-- ════════════════════════════════════════════ ENGINE ════════════════════════════════════════════ -->
+<section class="engine-section" id="engine" data-screen-label="00 Engine">
+  <div class="engine-canvas-wrap">
+    <canvas id="engine-canvas" aria-hidden="true"></canvas>
+  </div>
+  <div class="engine-copy">
+    <div class="engine-s-label r">How it works · 00</div>
+    <h2 class="engine-s-h r in d1">One captures demand.<br>One handles what<br><span class="ital">demand creates.</span></h2>
+    <div class="engine-cols r in d2">
+      <div>
+        <div class="engine-col-tag">4THWALL Trades</div>
+        <p class="engine-col-body">The customer-facing layer. The AI responds the moment someone reaches out — qualifying, booking, following up, requesting reviews. It runs on the outside of your business so every lead gets answered before your competitor picks up the phone.</p>
+      </div>
+      <div>
+        <div class="engine-col-tag">4THWALL Ops</div>
+        <p class="engine-col-body">The intelligence layer. The AI runs the inside of your business — briefing you before client calls, managing account health, running the hiring pipeline, tracking compliance, handling outreach. It is not talking to your customers. It is the operating system underneath everything.</p>
+      </div>
+    </div>
+    <p class="engine-closing r in d3">Trades captures the lead. Ops builds the business capable of handling it. Each one makes the other more powerful.</p>
+  </div>
+</section>
+
 <!-- ════════════════════════════════════════════ PRODUCTS ════════════════════════════════════════════ -->
-<section class="s wrap" id="products" data-screen-label="Products">
+<section class="s wrap" id="products" data-screen-label="Products · 01">
   <div class="s-meta">
     <div>
-      <div class="s-label r">Our products</div>
-      <h2 class="s-h r in">Not the same product.<br><span class="ital">Not the same problem.</span></h2>
-      <p class="s-note r in d1">One faces your customers. One faces your operation. Both are built by us, run by us, and never stopped.</p>
+      <div class="s-label r">Our products · 01</div>
+      <h2 class="s-h r in">Same standard.<br><span class="ital">Different battlefield.</span></h2>
+      <p class="s-note r in d1">Both are custom-built AI infrastructure. Both are fully managed. Both run permanently. The difference is what each one is built to do.</p>
     </div>
   </div>
 
@@ -696,55 +626,168 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="prod-card pc-dark r">
       <div class="pc-eyebrow">4THWALL Trades</div>
       <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.85rem">
-        <span style="font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(247,243,236,.38);border:1px solid rgba(247,243,236,.13);border-radius:50px;padding:3px 9px">Packaged product</span>
-        <span style="font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(247,243,236,.38);border:1px solid rgba(247,243,236,.13);border-radius:50px;padding:3px 9px">48hr deploy</span>
+        <span style="font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(247,243,236,.38);border:1px solid rgba(247,243,236,.13);border-radius:50px;padding:3px 9px">47 sec</span>
+        <span style="font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(247,243,236,.38);border:1px solid rgba(247,243,236,.13);border-radius:50px;padding:3px 9px">48 hr deploy</span>
         <span style="font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(247,243,236,.38);border:1px solid rgba(247,243,236,.13);border-radius:50px;padding:3px 9px">Month-to-month</span>
       </div>
-      <div class="pc-h">The AI that answers<br>every lead.</div>
-      <div class="pc-body">Built for trades contractors. Every text, every missed call, every web inquiry — answered intelligently in 47 seconds, 24 hours a day. Lead qualification, booking, review requests, storm mode. Five capabilities. Deployed in 48 hours. The AI faces your customers so you don't have to.</div>
-      <p style="font-size:.78rem;color:rgba(247,243,236,.45);font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;margin-top:1rem">Roofing · HVAC · Plumbing · Remodeling · GC<br>Owner-operators. Fairfield County and beyond.</p>
+      <div class="pc-h">The AI that never<br>lets a lead go cold.</div>
+      <div class="pc-body">Every text, missed call, and web inquiry answered in 47 seconds — 24 hours a day, in English or Spanish. Lead qualification, booking automation, 5-star review requests, storm mode, AI search visibility. Five capabilities. Deployed in 48 hours. The AI handles every customer conversation so you never have to stop working to answer one.</div>
+      <p style="font-size:.78rem;color:rgba(247,243,236,.4);font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;margin-top:1rem">Trades contractors. Roofing, HVAC, plumbing,<br>remodeling, electrical. Owner-operators who want<br>to stay on the job — not on the phone.</p>
       <a href="/trades.html" class="pc-link">See what's included <span class="pc-arr">→</span></a>
     </div>
     <div class="prod-card pc-light r d1">
       <div class="pc-eyebrow">4THWALL Ops</div>
       <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.85rem">
         <span style="font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:50px;padding:3px 9px">Custom built</span>
-        <span style="font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:50px;padding:3px 9px">Scoped per client</span>
+        <span style="font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:50px;padding:3px 9px">Five systems</span>
         <span style="font-family:var(--mono);font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:50px;padding:3px 9px">Permanently managed</span>
       </div>
-      <div class="pc-h">The AI that runs<br>your operation.</div>
-      <div class="pc-body">Built for operators managing serious complexity — agencies running dozens of client accounts, luxury service companies managing multiple locations, businesses where the founder is still the bottleneck. Custom built from scratch around your operation. Client intelligence, hiring, outreach, compliance, daily briefings, personal OS. The AI faces inward — so your business runs without you holding everything together.</div>
-      <p style="font-size:.78rem;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;margin-top:1rem">Operators · Agencies · Multi-client service businesses<br>Anyone whose operation has outgrown the team running it.</p>
+      <div class="pc-h">The AI that runs<br>the operation.</div>
+      <div class="pc-body">Client intelligence, hiring automation, new business outreach, compliance tracking, daily briefings, and a personal AI OS installed on your machine and connected to every tool you use. Custom built from scratch around how your operation actually runs. The AI faces inward — so the business runs with less of you holding everything together.</div>
+      <p style="font-size:.78rem;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;margin-top:1rem">Operators. Agencies. Multi-client service<br>businesses where the founder is still the bottleneck.</p>
       <a href="/ops.html" class="pc-link">See how it works <span class="pc-arr">→</span></a>
     </div>
   </div>
+
+  <p class="r in d2" style="text-align:center;font-family:var(--display);font-style:italic;font-size:.95rem;color:var(--muted);margin-top:2.8rem">Tools plateau. Infrastructure compounds.</p>
 </section>
 
-<!-- ════════════════════════════════════════════ DISTINCTION ════════════════════════════════════════════ -->
-<section class="s wrap" id="distinction" data-screen-label="Distinction">
-  <div class="s-label r">The distinction · 02</div>
-  <h2 class="s-h r in d1">One faces your customers.<br><span class="ital">One faces your business.</span></h2>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;margin-top:2.4rem" class="r in d2" id="distinction-cols">
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════ WHY NOW ════════════════════════════════════════════ -->
+<section class="s wrap" id="why-now" data-screen-label="Why Now · 03">
+  <div class="s-meta">
     <div>
-      <div style="font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin-bottom:.75rem">4THWALL Trades</div>
-      <p style="font-size:.95rem;line-height:1.7;color:var(--muted)">The AI responds to your customers the moment they reach out — qualifying, booking, following up. You never touch it. The contractor stays on the job while the AI handles every conversation.</p>
-    </div>
-    <div>
-      <div style="font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin-bottom:.75rem">4THWALL Ops</div>
-      <p style="font-size:.95rem;line-height:1.7;color:var(--muted)">The AI runs your operation — briefing you before calls, managing client health, running the hiring pipeline, tracking compliance, handling outreach. It is not talking to your clients. It is running the intelligence layer of your business so you can operate at a level that was previously only possible with a much larger team.</p>
+      <div class="s-label r">Why now · 03</div>
+      <h2 class="s-h r in">The window is<br><span class="ital">right now.</span></h2>
+      <p class="s-note r in d2">Most businesses use AI as a tool — ChatGPT for emails, maybe an automation here and there. That is not what 4THWALL builds. We build the operating system the business runs on. The companies that build this infrastructure now get a compounding advantage that widens every day.</p>
     </div>
   </div>
-  <style>@media(max-width:640px){#distinction-cols{grid-template-columns:1fr;gap:2rem}}</style>
+
+  <div class="story">
+    <div class="story-row r">
+      <div class="story-num">01</div>
+      <div class="story-stat">
+        <div class="story-figure">95<span class="story-unit">%</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-h">of businesses haven't built AI infrastructure</div>
+        <p class="story-d">They might use AI tools. They haven't restructured their operations around AI. That gap is the entire opportunity.</p>
+      </div>
+    </div>
+    <div class="story-row r d1">
+      <div class="story-num">02</div>
+      <div class="story-stat">
+        <div class="story-figure">40<span class="story-unit">%</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-h">of enterprise apps will have embedded AI agents by end of 2026</div>
+        <p class="story-d">Gartner calls it the fastest adoption curve in enterprise history. SaaS took 6 years to do what AI agents are doing in 18 months.</p>
+      </div>
+    </div>
+    <div class="story-row r d2">
+      <div class="story-num">03</div>
+      <div class="story-stat">
+        <div class="story-figure">171<span class="story-unit">%</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-h">average ROI reported by businesses running AI operations</div>
+        <p class="story-d">Not productivity gains. A new operating model. One person with the right AI infrastructure produces what used to require an entire team.</p>
+      </div>
+    </div>
+    <div class="story-row r d3">
+      <div class="story-num">04</div>
+      <div class="story-stat">
+        <div class="story-figure orange">47<span class="story-unit">s</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-h">our response time vs. 3.5 hour industry average</div>
+        <p class="story-d">By the time your competitor's voicemail picks up, the lead is already qualified, scheduled, and in a nurture sequence.</p>
+      </div>
+    </div>
+    <div class="story-row story-row-final r d4">
+      <div class="story-num">05</div>
+      <div class="story-stat">
+        <div class="story-figure">$0</div>
+      </div>
+      <div class="story-body">
+        <div class="story-h">marginal cost per additional client communication</div>
+        <p class="story-d">The system handles the tenth inquiry the same way it handles the first. Your overhead doesn't scale. Your capacity does.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-conclusion r in d5">
+    <p class="story-conclusion-d">The contractor and the operator who build this first own their market. That's the entire thesis. We make sure that's you.</p>
+  </div>
 </section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════ HOW WE WORK ════════════════════════════════════════════ -->
+<section class="s wrap" id="how" data-screen-label="How We Work · 02">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">How we work · 02</div>
+      <h2 class="s-h r in">Built. Deployed.<br><span class="ital">Never stopped.</span></h2>
+    </div>
+  </div>
+
+  <div class="how-list">
+    <div class="how-row r">
+      <div class="how-n">i.</div>
+      <div class="how-h">Discovery.</div>
+      <div class="how-d">A 30-minute conversation. We write down what we would build before charging anything.</div>
+      <div class="how-illo" data-illo="step1"></div>
+    </div>
+    <div class="how-row r d1">
+      <div class="how-n">ii.</div>
+      <div class="how-h">Built to your business.</div>
+      <div class="how-d">We build on top of your existing tools. Your number stays the same. Your workflow stays the same. Nothing to migrate.</div>
+      <div class="how-illo" data-illo="step2"></div>
+    </div>
+    <div class="how-row r d2">
+      <div class="how-n">iii.</div>
+      <div class="how-h">Deployed fast.</div>
+      <div class="how-d">Trades is live in 48 hours. Ops engagements have something running inside a week.</div>
+      <div class="how-illo" data-illo="step3"></div>
+    </div>
+    <div class="how-row r d3">
+      <div class="how-n">iv.</div>
+      <div class="how-h">Managed forever.</div>
+      <div class="how-d">We monitor, tune, and expand as the business grows. You text us when you want something changed.</div>
+      <div class="how-illo" data-illo="step4"></div>
+    </div>
+  </div>
+
+  <div class="why-banner">
+    <p class="r in" style="font-family:var(--display);font-style:italic;font-size:1rem;color:var(--muted);margin-bottom:2.2rem;text-align:center;max-width:42rem;margin-left:auto;margin-right:auto">We're not a SaaS. We're infrastructure operators who happen to use AI.</p>
+    <div class="why-cards">
+      <div class="manif-card r">
+        <div class="manif-card-h">Genuinely local.</div>
+        <div class="manif-card-d">We pitch in person, deploy in person, and operate inside the same markets as our clients. We're not a remote agency — we're around the corner.</div>
+      </div>
+      <div class="manif-card r d1">
+        <div class="manif-card-h">One throat to choke.</div>
+        <div class="manif-card-d">No subscriptions to manage. No vendors to chase. Text one person and the whole system gets fixed.</div>
+      </div>
+      <div class="manif-card r d2">
+        <div class="manif-card-h">Performance, not platforms.</div>
+        <div class="manif-card-d">We win when your business runs better. That is the only metric.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="section-divider"></div>
 
 <!-- ════════════════════════════════════════════ CONTACT — composer ════════════════════════════════════════════ -->
-<section class="composer-section wrap" id="contact" data-screen-label="08 Contact">
+<section class="composer-section wrap" id="contact" data-screen-label="Contact">
   <h2 class="composer-h r in">Tell us what's <span class="ital">on fire.</span></h2>
 
   <form class="composer r in d1" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
     <div class="composer-prompt"><span class="star">✦</span><span>Talk to us like you'd text a colleague.</span></div>
-    <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="Tell us what's happening. Missing leads, complex ops, multiple clients or locations — whatever the problem is, start here." required></textarea>
+    <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="Tell us what's happening. Missing leads, complex ops, multiple clients — whatever the problem is, start here." required></textarea>
 
     <div class="composer-input-line"><span class="lbl">From</span><input type="text" name="name" placeholder="Your name" required></div>
     <div class="composer-input-line"><span class="lbl">Company</span><input type="text" name="company" placeholder="Business name"></div>
@@ -795,7 +838,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <h4>Company</h4>
         <ul>
           <li><a href="#how">How it works</a></li>
-          <li><a href="#faq">FAQ</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </div>
@@ -819,10 +861,124 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <script src="site.js"></script>
 <script>
 (function(){
+  /* nav dropdown */
   var btn=document.getElementById('dropProdBtn'),wrap=document.getElementById('dropProdWrap');
   if(btn&&wrap){btn.addEventListener('click',function(e){e.stopPropagation();wrap.classList.toggle('open')});}
   var talk=document.getElementById('dropTalk');
   if(talk){talk.addEventListener('click',function(){var c=document.getElementById('dropClose');if(c)c.click();});}
+})();
+</script>
+<script>
+/* ── Engine canvas animation ─────────────────────────────────── */
+(function(){
+  var canvas=document.getElementById('engine-canvas');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var theta=0,frame=0;
+  var trailA=[],trailB=[],MAX_T=60;
+
+  function setSize(){
+    var w=canvas.parentElement.offsetWidth;
+    canvas.width=w;
+    canvas.height=Math.round(w*7/16);
+    trailA.length=0;
+    trailB.length=0;
+  }
+  setSize();
+  var resizeTimer;
+  window.addEventListener('resize',function(){clearTimeout(resizeTimer);resizeTimer=setTimeout(setSize,80);});
+
+  function draw(){
+    var w=canvas.width,h=canvas.height;
+    if(!w||!h){requestAnimationFrame(draw);return;}
+    var cx=w/2,cy=h/2;
+    var R=Math.min(w,h)*0.41;
+    var oR=R*0.70;
+    var dR=Math.max(5,R*0.062);
+
+    theta+=0.0022;
+    frame++;
+
+    ctx.clearRect(0,0,w,h);
+
+    /* outer ring */
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle='rgba(247,243,236,.07)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    /* tick marks */
+    for(var i=0;i<36;i++){
+      var a=i/36*Math.PI*2,maj=(i%9===0);
+      var tl=maj?R*.065:R*.028;
+      ctx.beginPath();
+      ctx.moveTo(cx+Math.cos(a)*(R-tl),cy+Math.sin(a)*(R-tl));
+      ctx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);
+      ctx.strokeStyle=maj?'rgba(247,243,236,.16)':'rgba(247,243,236,.06)';
+      ctx.lineWidth=maj?1.5:0.75;
+      ctx.stroke();
+    }
+
+    /* dashed orbit guide */
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx,cy,oR,0,Math.PI*2);
+    ctx.strokeStyle='rgba(247,243,236,.035)';
+    ctx.lineWidth=1;
+    ctx.setLineDash([2,11]);
+    ctx.stroke();
+    ctx.restore();
+    ctx.setLineDash([]);
+
+    /* dot positions — always opposite */
+    var ax=cx+Math.cos(theta)*oR,ay=cy+Math.sin(theta)*oR;
+    var bx=cx+Math.cos(theta+Math.PI)*oR,by=cy+Math.sin(theta+Math.PI)*oR;
+
+    trailA.push({x:ax,y:ay});if(trailA.length>MAX_T)trailA.shift();
+    trailB.push({x:bx,y:by});if(trailB.length>MAX_T)trailB.shift();
+
+    /* trails */
+    for(var j=0;j<trailA.length;j++){
+      var t=(j+1)/trailA.length;
+      ctx.beginPath();
+      ctx.arc(trailA[j].x,trailA[j].y,Math.max(0.5,dR*t*0.48),0,Math.PI*2);
+      ctx.fillStyle='rgba(30,102,66,'+(t*0.44)+')';
+      ctx.fill();
+    }
+    for(var k=0;k<trailB.length;k++){
+      var t2=(k+1)/trailB.length;
+      ctx.beginPath();
+      ctx.arc(trailB[k].x,trailB[k].y,Math.max(0.5,dR*t2*0.48),0,Math.PI*2);
+      ctx.fillStyle='rgba(247,243,236,'+(t2*0.22)+')';
+      ctx.fill();
+    }
+
+    /* center "your business" — breathing */
+    var breathe=0.85+0.15*Math.sin(frame*0.02);
+    var cR=Math.max(3,R*0.03)*breathe;
+    var cg=ctx.createRadialGradient(cx,cy,0,cx,cy,cR*5.5);
+    cg.addColorStop(0,'rgba(30,102,66,.13)');
+    cg.addColorStop(1,'rgba(30,102,66,0)');
+    ctx.beginPath();ctx.arc(cx,cy,cR*5.5,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,cR,0,Math.PI*2);ctx.fillStyle='rgba(30,102,66,.58)';ctx.fill();
+
+    /* dot A — green (Trades) */
+    var gA=ctx.createRadialGradient(ax,ay,0,ax,ay,dR*2.6);
+    gA.addColorStop(0,'rgba(30,102,66,.26)');gA.addColorStop(1,'rgba(30,102,66,0)');
+    ctx.beginPath();ctx.arc(ax,ay,dR*2.6,0,Math.PI*2);ctx.fillStyle=gA;ctx.fill();
+    ctx.beginPath();ctx.arc(ax,ay,dR,0,Math.PI*2);ctx.fillStyle='#1e6642';ctx.fill();
+
+    /* dot B — cream (Ops) */
+    var gB=ctx.createRadialGradient(bx,by,0,bx,by,dR*2.6);
+    gB.addColorStop(0,'rgba(247,243,236,.1)');gB.addColorStop(1,'rgba(247,243,236,0)');
+    ctx.beginPath();ctx.arc(bx,by,dR*2.6,0,Math.PI*2);ctx.fillStyle=gB;ctx.fill();
+    ctx.beginPath();ctx.arc(bx,by,dR,0,Math.PI*2);ctx.fillStyle='rgba(247,243,236,.76)';ctx.fill();
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
 })();
 </script>
 </body>
