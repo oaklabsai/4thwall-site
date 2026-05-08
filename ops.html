@@ -147,8 +147,8 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 
 /* ───────────────────────────────── SECTIONS ──────────────────── */
 section{position:relative;z-index:2}
-.s{padding:4.5rem 0;position:relative}
-.s-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:2.4rem}
+.s{padding:3rem 0;position:relative}
+.s-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:1.6rem}
 .s-label{font-size:.78rem;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
 .s-label::before{content:"";width:18px;height:1px;background:var(--orange)}
 .s-h{font-family:var(--display);font-size:clamp(2.2rem,5vw,4.4rem);font-weight:400;letter-spacing:-.035em;line-height:1.02;max-width:24ch}
@@ -255,8 +255,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 /* ── responsive nudges ───────────────── */
 @media(max-width:760px){
-  .s{padding:3.4rem 0}
-  .s-meta{margin-bottom:1.8rem;gap:1.2rem}
+  .s{padding:2.2rem 0}
+  .s-meta{margin-bottom:1.2rem;gap:1.2rem}
   .s-h{font-size:clamp(1.9rem,7vw,2.8rem)}
   .hero{padding-top:5.2rem;padding-bottom:2.5rem}
   .hero-h{font-size:clamp(2.2rem,9vw,3.2rem)}
@@ -425,11 +425,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         4THWALL Ops
       </div>
       <h1 class="hero-h r in">
-        Your operation,<br>
-        <span class="ital">running on AI.</span>
+        Scale the work.<br>
+        <span class="ital">Not the overhead.</span>
       </h1>
       <p class="hero-sub r in d2">
-        4THWALL Ops builds and manages custom AI infrastructure for service businesses running multiple clients, accounts, or locations. Not a tool. An operating layer.
+        4THWALL Ops builds and manages custom AI infrastructure for service businesses — so you can take on more clients and more complexity without hiring more people to handle it.
       </p>
       <div class="hero-cta r in d3">
         <a href="#contact" class="hero-link">Let's talk</a>
@@ -454,26 +454,26 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="bento-card bento-a r">
       <div>
         <div class="b-num">001 · Client Communications</div>
-        <div class="b-h">Every inquiry handled, <span class="ital">every client served.</span></div>
-        <div class="b-d">Every client inquiry handled intelligently, 24/7. White-labeled as your brand across every account. No client waits. No message slips through.</div>
+        <div class="b-h">Every message answered, <span class="ital">every client served.</span></div>
+        <div class="b-d">Inbound handled 24/7, white-labeled as your brand across every account. No client waits. No message falls through the cracks.</div>
       </div>
       <div class="b-illo" data-illo="phone"></div>
     </div>
 
     <div class="bento-card bento-b r d1">
       <div>
-        <div class="b-num">002</div>
-        <div class="b-h">Staff <span class="ital">&amp; Hiring.</span></div>
-        <div class="b-d">Screening, scheduling, follow-up. The hiring pipeline runs without manual effort — from application to booked interview.</div>
+        <div class="b-num">002 · Hiring</div>
+        <div class="b-h">Staffing pipeline <span class="ital">on autopilot.</span></div>
+        <div class="b-d">Screening, scheduling, follow-up — handled without manual effort. From application to booked interview without you touching it.</div>
       </div>
       <div class="b-illo" data-illo="step1"></div>
     </div>
 
     <div class="bento-card bento-c r d2">
       <div>
-        <div class="b-num">003</div>
-        <div class="b-h"><span class="ital">New business,</span> automatically.</div>
-        <div class="b-d">Targeted outreach to your ideal clients. Qualified leads and booked discovery calls, on autopilot.</div>
+        <div class="b-num">003 · Outreach</div>
+        <div class="b-h"><span class="ital">New clients,</span> booked automatically.</div>
+        <div class="b-d">Targeted outreach to your ideal clients. Qualified leads and booked discovery calls — without a sales team.</div>
       </div>
       <div class="b-illo" data-illo="search"></div>
     </div>
@@ -482,7 +482,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <div>
         <div class="b-num">004 · Operations</div>
         <div class="b-h">Nothing <span class="ital">falls through.</span></div>
-        <div class="b-d">Deadlines tracked, deliveries scheduled, daily briefings generated. Operations and compliance run on the system — not on you.</div>
+        <div class="b-d">Deadlines tracked, deliverables scheduled, daily briefings generated. The system runs the operation — you run the business.</div>
       </div>
       <div class="b-illo" data-illo="calendar"></div>
     </div>
@@ -490,8 +490,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="bento-card bento-e r d4">
       <div>
         <div class="b-num">005 · Personal OS</div>
-        <div class="b-h">One place for <span class="ital">every decision.</span></div>
-        <div class="b-d">Configured on your machine. Connected to every tool you use. Loaded with your business context. Every decision starts here.</div>
+        <div class="b-h">Your command center, <span class="ital">always loaded.</span></div>
+        <div class="b-d">One interface connected to every tool you use, loaded with your business context. Every decision starts here instead of inside your inbox.</div>
       </div>
       <div class="b-illo" data-illo="step2"></div>
     </div>
@@ -503,27 +503,23 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <div class="s-meta">
     <div>
       <div class="s-label r">Who it is for · 02</div>
-      <h2 class="s-h r in">Built for businesses<br><span class="ital">that run at scale.</span></h2>
-      <p class="s-note r in d2">Complexity here is not a product problem — it's an operations problem. That's exactly what this is built for.</p>
+      <h2 class="s-h r in">If your ops are <span class="ital">outpacing your team,</span><br>this is for you.</h2>
+      <p class="s-note r in d2">The right fit isn't about your industry. It's about whether complexity is the problem.</p>
     </div>
   </div>
 
-  <div class="why-cards" style="grid-template-columns:repeat(2,1fr)">
+  <div class="why-cards" style="grid-template-columns:repeat(3,1fr)">
     <div class="manif-card r">
       <div class="manif-card-h">Agencies</div>
-      <div class="manif-card-d">Managing multiple client accounts simultaneously. Every client communication, deliverable, and outreach — handled without the overhead of growing your team proportionally.</div>
+      <div class="manif-card-d">Managing multiple client accounts at once. Client comms, deliverables, outreach, and reporting — handled without having to hire proportionally as you grow.</div>
     </div>
     <div class="manif-card r d1">
-      <div class="manif-card-h">Amenity &amp; Property Managers</div>
-      <div class="manif-card-d">Running multiple buildings, units, or amenity programs. Resident inquiries, maintenance coordination, and reporting — automated across every property.</div>
-    </div>
-    <div class="manif-card r d2">
       <div class="manif-card-h">Multi-Location Operators</div>
       <div class="manif-card-d">Consistency across locations is the hardest operational problem. AI infrastructure solves it at the system level — not with more managers.</div>
     </div>
-    <div class="manif-card r d3">
-      <div class="manif-card-h">Concierge &amp; Staffing Firms</div>
-      <div class="manif-card-d">Any service business where complexity comes from running many client relationships simultaneously. If the operation is more complex than the product, this is for you.</div>
+    <div class="manif-card r d2">
+      <div class="manif-card-h">Growing Service Businesses</div>
+      <div class="manif-card-d">Revenue is growing but the ops overhead is growing faster. If you're managing more clients and more moving parts than your current team can handle cleanly, this is exactly what we built.</div>
     </div>
   </div>
 </section>
@@ -590,7 +586,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">What kinds of businesses is this for?</span><span class="faq-q-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Any service business managing multiple clients, accounts, or locations — agencies, property managers, amenity companies, concierge operators, staffing firms. If complexity comes from scale, not from the product, this is the right fit.</div></div></div>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Any service business managing multiple clients, locations, or accounts — agencies, multi-location operators, growing service firms. The common thread is that complexity comes from scale, not from the product itself.</div></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">What does it cost?</span><span class="faq-q-icon">+</span></button>
@@ -605,7 +601,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   <form class="composer r in d1" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
     <div class="composer-prompt"><span class="star">✦</span><span>Talk to us like you'd text a colleague.</span></div>
-    <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="Managing multiple clients and the ops are getting complex? Running multiple locations and need consistency? Tell us what's happening..." required></textarea>
+    <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="What's the operation? How many clients or locations? Where does it break down? Tell us what's happening..." required></textarea>
 
     <div class="composer-input-line"><span class="lbl">From</span><input type="text" name="name" placeholder="Your name" required></div>
     <div class="composer-input-line"><span class="lbl">Company</span><input type="text" name="company" placeholder="Business name"></div>
@@ -616,8 +612,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="composer-bar">
       <div class="composer-chips" id="cm-chips">
         <button type="button" class="chip" data-chip="Agency">Agency</button>
-        <button type="button" class="chip" data-chip="Property Mgmt">Property Mgmt</button>
         <button type="button" class="chip" data-chip="Multi-Location">Multi-Location</button>
+        <button type="button" class="chip" data-chip="Service Business">Service Business</button>
         <button type="button" class="chip" data-chip="Other">Other</button>
       </div>
       <button type="submit" class="composer-send" id="cm-send" aria-label="Send">↑</button>
@@ -643,7 +639,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="foot-mark">4THWALL</div>
     <div class="foot-top">
       <div>
-        <p class="foot-brand-p">AI infrastructure for service businesses. Custom built. Fully managed. Built for agencies, property managers, and multi-location operators.</p>
+        <p class="foot-brand-p">AI infrastructure for service businesses that are scaling. Custom built. Fully managed. No headcount required.</p>
       </div>
       <div class="foot-col">
         <h4>Products</h4>

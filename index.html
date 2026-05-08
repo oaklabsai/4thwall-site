@@ -270,8 +270,8 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 
 /* ───────────────────────────────── SECTIONS ──────────────────── */
 section{position:relative;z-index:2}
-.s{padding:4.5rem 0;position:relative}
-.s-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:2.4rem}
+.s{padding:3rem 0;position:relative}
+.s-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:1.6rem}
 .s-label{font-size:.78rem;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
 .s-label::before{content:"";width:18px;height:1px;background:var(--orange)}
 .s-h{font-family:var(--display);font-size:clamp(2.2rem,5vw,4.4rem);font-weight:400;letter-spacing:-.035em;line-height:1.02;max-width:24ch}
@@ -448,8 +448,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 /* ── responsive nudges ───────────────── */
 @media(max-width:760px){
-  .s{padding:3.4rem 0}
-  .s-meta{margin-bottom:1.8rem;gap:1.2rem}
+  .s{padding:2.2rem 0}
+  .s-meta{margin-bottom:1.2rem;gap:1.2rem}
   .s-h{font-size:clamp(1.9rem,7vw,2.8rem)}
   .hero{padding-top:5.2rem;padding-bottom:2.5rem}
   .hero-row{gap:2.2rem}
@@ -645,7 +645,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         your business is missing.
       </h1>
       <p class="hero-sub r in d2">
-        Fully managed AI infrastructure for trades contractors and service businesses. Every lead answered. Every operation running. While you focus on the work.
+        Fully managed AI infrastructure. We build it, run it, and keep it running — so every lead gets answered and every operation keeps moving while you focus on the work.
       </p>
       <div class="hero-cta r in d3">
         <a href="#contact" class="hero-link">Let's talk</a>
@@ -661,7 +661,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <div class="s-meta">
     <div>
       <div class="s-label r">Our products</div>
-      <h2 class="s-h r in">Two products.<br><span class="ital">One operating layer.</span></h2>
+      <h2 class="s-h r in">Two products.<br><span class="ital">Built for different problems.</span></h2>
     </div>
   </div>
 
@@ -674,8 +674,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
     <div class="prod-card pc-light r d1">
       <div class="pc-eyebrow">4THWALL Ops</div>
-      <div class="pc-h">AI infrastructure for operations at scale.</div>
-      <div class="pc-body">Built for agencies, amenity management companies, and any service business managing multiple clients or locations simultaneously. Custom built. Fully managed.</div>
+      <div class="pc-h">The AI layer for <em style="font-style:italic">service businesses at scale.</em></div>
+      <div class="pc-body">For agencies, multi-location operators, and growing service businesses where the ops are outpacing the team. Custom built. Fully managed.</div>
       <a href="/ops.html" class="pc-link">See how it works <span class="pc-arr">→</span></a>
     </div>
   </div>
@@ -687,7 +687,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   <form class="composer r in d1" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
     <div class="composer-prompt"><span class="star">✦</span><span>Talk to us like you'd text a colleague.</span></div>
-    <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="Missing after-hours leads? Not enough reviews? Invisible on AI search? Tell us what's happening..." required></textarea>
+    <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="Tell us what's happening. Missing leads, complex ops, multiple clients or locations — whatever the problem is, start here." required></textarea>
 
     <div class="composer-input-line"><span class="lbl">From</span><input type="text" name="name" placeholder="Your name" required></div>
     <div class="composer-input-line"><span class="lbl">Company</span><input type="text" name="company" placeholder="Business name"></div>
@@ -697,9 +697,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
     <div class="composer-bar">
       <div class="composer-chips" id="cm-chips">
-        <button type="button" class="chip" data-chip="Roofing">Roofing</button>
-        <button type="button" class="chip" data-chip="Remodeling">Remodeling</button>
-        <button type="button" class="chip" data-chip="GC">General contracting</button>
+        <button type="button" class="chip" data-chip="Trades">Trades</button>
+        <button type="button" class="chip" data-chip="Agency">Agency</button>
+        <button type="button" class="chip" data-chip="Multi-Location">Multi-Location</button>
         <button type="button" class="chip" data-chip="Other">Other</button>
       </div>
       <button type="submit" class="composer-send" id="cm-send" aria-label="Send">↑</button>
@@ -725,7 +725,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="foot-mark">4THWALL</div>
     <div class="foot-top">
       <div>
-        <p class="foot-brand-p">AI infrastructure for businesses that can't afford to miss a lead. Fully built. Fully managed.</p>
+        <p class="foot-brand-p">AI infrastructure for trades contractors and service businesses. Fully built. Fully managed. We never leave.</p>
       </div>
       <div class="foot-col">
         <h4>Products</h4>
