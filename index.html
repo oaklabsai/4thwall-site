@@ -724,7 +724,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <!-- RIGHT: video in angled black frame -->
     <div class="hero-panel hero-stage hd">
       <div class="hero-vid-frame">
-        <video class="hero-vid" src="hero.mp4?v=3" poster="hero-poster.jpg" width="1920" height="1080" autoplay loop muted playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback x-webkit-airplay="deny"></video>
+        <video class="hero-vid" src="hero.mp4?v=3" poster="hero-poster.jpg" width="1920" height="1080" autoplay muted playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback x-webkit-airplay="deny"></video>
       </div>
     </div>
   </div>
@@ -1927,26 +1927,22 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
     video.addEventListener('loadedmetadata', setRate);
     video.addEventListener('play', setRate);
 
-    // ── Loop only the SECOND HALF of the source video ────────────────────
-    // The first half builds up; the second half is the calm cinematic part
-    // we want on repeat. Jump to mid-point on first metadata load, then
-    // loop mid → near-end → back to mid.
-    var LOOP_TAIL = 0.4;  // skip last 0.4s of any chaotic frames at end
-    var midpoint  = 0;    // computed once duration is known
-
-    video.addEventListener('loadedmetadata', function(){
-      if(video.duration && video.duration > 1){
-        midpoint = video.duration * 0.5;
-        // Start playback from midpoint on first load
-        try { video.currentTime = midpoint; } catch(e){}
-      }
-    });
-
-    video.addEventListener('timeupdate', function(){
-      if(!video.duration || video.duration <= 1) return;
-      if(video.currentTime >= video.duration - LOOP_TAIL){
-        try { video.currentTime = midpoint || video.duration * 0.5; } catch(e){}
-      }
+    // ── Custom loop: play once, hold last frame for 7s, then restart ─────
+    // The `loop` HTML attribute was removed; we manage looping manually.
+    // The canvas keeps drawing while video is paused, so the final frame
+    // remains visible during the hold period.
+    var HOLD_MS = 7000;
+    var loopTimer = null;
+    video.addEventListener('ended', function(){
+      // Video naturally pauses on its last frame. Schedule restart.
+      clearTimeout(loopTimer);
+      loopTimer = setTimeout(function(){
+        try {
+          video.currentTime = 0;
+          var p = video.play();
+          if(p && p.catch) p.catch(function(){});
+        } catch(e){}
+      }, HOLD_MS);
     });
 
     // ── Pause off-screen on desktop only (mobile keeps playing for autoplay) ─
@@ -1999,9 +1995,33 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       var ready   = false;
       var hasPrev = false;
 
+      // Helper to draw current video frame fully (no blend) — used when
+      // we want to lock in a specific frame (e.g. the final frame on ended).
+      function drawSolid(){
+        if(video.readyState < 2) return;
+        var vw = video.videoWidth, vh = video.videoHeight;
+        if(!vw || !vh) return;
+        if(!ready){
+          out.width = prev.width = vw;
+          out.height = prev.height = vh;
+          ready = true;
+        }
+        var dw = vw * ZOOM, dh = vh * ZOOM;
+        var dx = (vw - dw) / 2, dy = (vh - dh) / 2;
+        oCtx.globalAlpha = 1;
+        oCtx.drawImage(video, dx, dy, dw, dh);
+        pCtx.drawImage(out, 0, 0);
+        hasPrev = true;
+      }
+      // When video finishes, force a clean draw of the true last frame —
+      // the rAF blend pipeline may have lagged the actual end frame.
+      video.addEventListener('ended', drawSolid);
+
       (function tick(){
         requestAnimationFrame(tick);
-        if(video.paused || video.readyState < 2) return;
+        // Keep drawing while paused (so last frame stays visible during
+        // the 7s hold) — but skip if there's no usable data yet.
+        if(video.readyState < 2) return;
 
         var vw = video.videoWidth, vh = video.videoHeight;
         if(!vw || !vh) return;
@@ -2015,6 +2035,16 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
         // Compute zoomed draw rectangle, centred
         var dw = vw * ZOOM, dh = vh * ZOOM;
         var dx = (vw - dw) / 2, dy = (vh - dh) / 2;
+
+        // When paused, just keep prev painted — no need to blend.
+        // (Blending a static frame against itself is a no-op anyway.)
+        if(video.paused){
+          if(hasPrev){
+            oCtx.globalAlpha = 1;
+            oCtx.drawImage(prev, 0, 0);
+          }
+          return;
+        }
 
         if(hasPrev){
           oCtx.globalAlpha = 1;
