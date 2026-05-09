@@ -35,7 +35,7 @@
   --mono:'JetBrains Mono',ui-monospace,monospace;
   --pad:clamp(1.25rem,4.5vw,4rem);
   --max:1280px;
-  --density:1;
+  --density:0.78;
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--body);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;letter-spacing:-0.011em;background:radial-gradient(ellipse 90% 55% at 50% -8%,rgba(255,255,255,.5),transparent 55%),linear-gradient(90deg,rgba(26,26,24,.05),transparent 18%,transparent 82%,rgba(26,26,24,.05)),radial-gradient(ellipse 100% 32% at 50% 108%,rgba(26,26,24,.06),transparent 70%),var(--cream);background-attachment:fixed}
@@ -1140,7 +1140,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 ═══════════════════════════════════════════════════════ */
 .lp-section{
   background:transparent;
-  padding:3rem 0;
+  padding:2rem 0;
   border-top:1px solid var(--line-2);
   border-bottom:1px solid var(--line-2);
   position:relative;
@@ -1195,7 +1195,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lp-trio{
   display:grid;
   grid-template-columns:1fr 1.35fr 1fr;
-  gap:2.5rem;
+  gap:1.4rem;
   align-items:center;
   position:relative;z-index:1;
 }
@@ -1215,10 +1215,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   transform-origin:left center;
 }
 .lp-node-text{
-  font-family:var(--display);
-  font-size:clamp(1.2rem,2.2vw,1.75rem);
-  font-weight:500;
-  font-style:italic;
+  font-family:var(--body);
+  font-size:clamp(1rem,1.8vw,1.4rem);
+  font-weight:600;
+  font-style:normal;
+  letter-spacing:.18em;
+  text-transform:uppercase;
   line-height:1;
   color:var(--ink);
   margin:0;
