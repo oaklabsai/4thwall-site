@@ -1847,51 +1847,69 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
   // 3) After intro completes, freeze final state so tweak-driven re-renders don't re-animate
   setTimeout(()=>{ document.body.classList.add('intro-done'); }, 5200);
 
-  // 4) Hero video — maximum-compatibility autoplay + mobile performance
+  // 4) Hero video — guaranteed autoplay on every browser / device
   (function(){
     var video = document.querySelector('.hero-vid');
     if(!video) return;
 
-    // ── Step 1: force muted state programmatically ──────────────────────
-    // iOS Safari requires BOTH the HTML attribute AND the JS property.
-    // Without this, play() is silently rejected on some devices.
+    // ── Force every muted / inline flag both as HTML attrs and JS props ──
+    // iOS Safari, older Android WebView, and WeChat all have slightly different
+    // requirements. Setting everything covers all bases.
     video.muted        = true;
     video.defaultMuted = true;
-    video.setAttribute('muted', '');
-    video.setAttribute('playsinline', '');
-    video.setAttribute('webkit-playsinline', '');
+    video.playsInline  = true;          // camelCase property (newer browsers)
+    video.setAttribute('muted',               '');
+    video.setAttribute('playsinline',         '');
+    video.setAttribute('webkit-playsinline',  ''); // iOS < 10
+    video.setAttribute('x5-playsinline',      ''); // WeChat / Tencent
+    video.setAttribute('x5-video-player-type','h5');
 
     var isMobile = window.innerWidth <= 980
       || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    // ── Step 2: tryPlay — re-asserts muted before every attempt ─────────
+    // ── Core play function — always re-asserts muted first ──────────────
     function tryPlay(){
-      video.muted = true; // re-assert — some browsers reset it
-      var p = video.play();
-      if(p && p.catch) p.catch(function(){});
+      video.muted = true;
+      if(video.paused){
+        var p = video.play();
+        if(p && p.catch) p.catch(function(){});
+      }
     }
 
-    // ── Step 3: fire immediately, then at every readiness checkpoint ─────
-    // No {once:true} — keep listeners alive so any future stall re-triggers play.
+    // ── Fire immediately ─────────────────────────────────────────────────
     tryPlay();
-    video.addEventListener('canplay',        tryPlay);
-    video.addEventListener('canplaythrough', tryPlay);
-    video.addEventListener('loadeddata',     tryPlay);
 
-    // ── Step 4: resume if user tabs away and back ────────────────────────
+    // ── Fire on every data-readiness event (no {once} — stays alive) ────
+    ['loadstart','loadedmetadata','loadeddata','canplay','canplaythrough']
+      .forEach(function(e){ video.addEventListener(e, tryPlay); });
+
+    // ── Timed fallbacks: keep retrying until video is playing ────────────
+    // Covers slow connections where data events fire late.
+    [100, 300, 600, 1200, 2500].forEach(function(ms){
+      setTimeout(function(){ if(video.paused) tryPlay(); }, ms);
+    });
+
+    // ── If still paused at 1.5 s, force a reload then play ──────────────
+    // Last resort for browsers that silently drop the first play() call.
+    setTimeout(function(){
+      if(video.paused){
+        video.load();
+        tryPlay();
+      }
+    }, 1500);
+
+    // ── Resume when user returns to this tab ─────────────────────────────
     document.addEventListener('visibilitychange', function(){
       if(!document.hidden) tryPlay();
     });
 
-    // ── Step 5: mobile exits here — plain full-speed playback ───────────
-    // No canvas blending (too heavy), no IntersectionObserver pause
-    // (risk of blocking autoplay). Video plays freely.
+    // ── Mobile: full-speed, no canvas, no off-screen pausing ─────────────
     if(isMobile){
       video.playbackRate = 1.0;
       return;
     }
 
-    // ── Desktop only: IntersectionObserver pause when off-screen ────────
+    // ── Desktop only: pause off-screen, resume when back ─────────────────
     var hasPlayed = false;
     video.addEventListener('playing', function(){ hasPlayed = true; });
     if('IntersectionObserver' in window){
