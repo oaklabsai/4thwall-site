@@ -197,91 +197,87 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 /* ── Pendulum SVG ─────────────────────────────── */
 .pendulum-svg{overflow:visible;}
 
-/* ═══════════════════════════════════════════════════════════════════
-   HERO — TV-on-angled-wall illusion
-   .hero-panel  →  perspective context (viewer left-of-panel-center)
-     .hero-tv   →  entire TV unit, rotates as one piece
-       .htv-wall     wall surface behind TV
-       .hero-vid-frame  the screen
-       .htv-stand    splay legs + base
-     .htv-shadow   floor cast shadow (flat, not 3D-rotated)
-═══════════════════════════════════════════════════════════════════ */
+/* ── Hero — angled black frame ───────────────────────────────── */
 
-/* Viewer's eye — establishes perspective for all 3D children */
+/* Perspective context: viewer at the left edge of the panel */
 .hero-panel{
   position:relative;
   z-index:1;
   perspective:800px;
-  perspective-origin:0% 50%; /* viewer sits at the left edge of the panel */
+  perspective-origin:0% 50%;
 }
 
-/* ── The TV unit — all children share this rotation ─────────── */
-.hero-tv{
+/* The frame — 3D angle + premium black treatment */
+.hero-vid-frame{
   position:relative;
-  /* ~36° right-wall angle: left edge near viewer, right recedes */
+  z-index:1;
+  border-radius:5px;
+  overflow:hidden;
+  aspect-ratio:16/9;
+
+  /* Right-wall angle — the angle the user approved */
   transform:rotateY(-36deg);
   transform-origin:62% 50%;
   transition:transform 1.1s cubic-bezier(.16,1,.3,1);
   will-change:transform;
-}
-
-/* ── Wall surface the TV is mounted on ──────────────────────── */
-/* Slightly larger; same rotated plane; left-edge shadow = room corner */
-.htv-wall{
-  position:absolute;
-  top:-10%;left:-7%;right:-7%;bottom:-20%;
-  background:linear-gradient(
-    to right,
-    rgba(26,26,24,0.055) 0%,
-    rgba(26,26,24,0.018) 38%,
-    rgba(26,26,24,0.006) 65%,
-    transparent 100%
-  );
-  box-shadow:inset -20px 0 36px rgba(26,26,24,0.08);
-  border-radius:10px;
-  z-index:0;
-}
-
-/* ── Screen bezel + shadows ──────────────────────────────────── */
-.hero-vid-frame{
-  position:relative;
-  z-index:1;
-  border-radius:8px;
-  overflow:hidden;
-  aspect-ratio:16/9;
 
   box-shadow:
-    /* Screen glass — illuminated edge bevels */
-    inset 0  1px 0 rgba(255,255,255,0.15),
-    inset 0 -1px 0 rgba(26,26,24,0.14),
+    /*
+      ── Screen glass ────────────────────────────────────────
+      Inset highlights on the inner edges simulate the glass
+      panel sitting inside the frame rebate.
+    */
+    inset 0  1px 0 rgba(255,255,255,0.16),
+    inset 0 -1px 0 rgba(0,0,0,0.35),
     inset  1px 0 0 rgba(255,255,255,0.08),
-    inset -1px 0 0 rgba(26,26,24,0.06),
-    /* TV bezel — the wide dark ring that reads as a real screen */
-    0 0 0  9px rgba(18,18,16,0.93),
-    0 0 0 10px rgba(28,28,26,0.50),
-    0 0 0 12px rgba(26,26,24,0.08),
-    /* Cast shadow — offset right+down matching the rotation angle */
-    10px 12px 26px rgba(26,26,24,0.22),
-    14px 26px 52px rgba(26,26,24,0.16),
-    18px 48px 84px rgba(26,26,24,0.10),
-    22px 76px 120px rgba(26,26,24,0.06),
-    /* Screen emission glow */
-    0 0 55px rgba(30,102,66,0.065);
+    inset -1px 0 0 rgba(0,0,0,0.22),
+
+    /*
+      ── Black frame body ─────────────────────────────────────
+      Inner hairline: where glass meets frame (thin bright rim)
+      Frame core: near-opaque black, fills most of the frame width
+      Outer bevel: slightly lighter strip — chamfered edge detail
+      Outer face: darkest, closes the frame profile
+      Outer rim: barely-there highlight — catches light on edge
+    */
+    0 0 0  1px  rgba(210,208,200,0.22),
+    0 0 0 16px  rgba(13,13,11,0.98),
+    0 0 0 17px  rgba(72,70,64,0.48),
+    0 0 0 18px  rgba(11,11,9,0.97),
+    0 0 0 19px  rgba(255,255,255,0.04),
+    0 0 0 21px  rgba(8,8,6,0.12),
+
+    /*
+      ── Cast shadow ─────────────────────────────────────────
+      Offset right + down to match the rotateY(-36deg) angle.
+      Near shadows are darker and sharper; far shadows spread wide.
+    */
+    11px 14px 28px  rgba(8,8,6,0.32),
+    15px 28px 56px  rgba(8,8,6,0.22),
+    20px 52px 90px  rgba(8,8,6,0.14),
+    26px 82px 128px rgba(8,8,6,0.08),
+
+    /* ── Screen emission — faint green ambient from display ── */
+    0 0 60px rgba(30,102,66,0.06);
 }
 
-/* Glass gloss — specular highlight + diagonal sheen */
+/*
+  Glass gloss overlay.
+  Top-left radial: studio-light specular on the glass surface.
+  Diagonal linear: subtle surface sheen across the whole screen.
+*/
 .hero-vid-frame::before{
   content:'';
   position:absolute;
   inset:0;z-index:2;
   pointer-events:none;
-  border-radius:7px;
+  border-radius:4px;
   background:
-    radial-gradient(ellipse 62% 34% at 16% -1%,rgba(255,255,255,0.17) 0%,transparent 54%),
-    linear-gradient(146deg,rgba(255,255,255,0.06) 0%,transparent 35%);
+    radial-gradient(ellipse 60% 32% at 15% -2%,rgba(255,255,255,0.18) 0%,transparent 52%),
+    linear-gradient(145deg,rgba(255,255,255,0.065) 0%,transparent 34%);
 }
 
-/* Video */
+/* Video fills the frame, bottom fades to hide watermark */
 .hero-vid{
   position:absolute;
   inset:0;
@@ -291,63 +287,6 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
   display:block;
   -webkit-mask-image:linear-gradient(to bottom,black 0%,black 84%,transparent 100%);
   mask-image:linear-gradient(to bottom,black 0%,black 84%,transparent 100%);
-}
-
-/* ── TV stand — legs splay outward at an angle ───────────────── */
-.htv-stand{
-  position:relative;z-index:1;
-  display:flex;flex-direction:column;align-items:center;
-  margin-top:1px;
-}
-.htv-neck{
-  position:relative;
-  width:68%;height:46px;
-}
-/* Two legs angled outward from center */
-.htv-leg{
-  position:absolute;top:0;
-  width:9px;height:50px;
-  background:linear-gradient(to bottom,rgba(18,18,16,0.90) 0%,rgba(30,29,26,0.54) 100%);
-  border-radius:3px 3px 4px 4px;
-}
-.htv-leg-l{
-  left:28%;
-  transform:rotate(-15deg);
-  transform-origin:top center;
-}
-.htv-leg-r{
-  right:28%;
-  transform:rotate(15deg);
-  transform-origin:top center;
-}
-/* Wide base foot */
-.htv-base{
-  position:relative;
-  width:80%;height:9px;
-  background:linear-gradient(to bottom,rgba(20,20,18,0.84) 0%,rgba(20,20,18,0.48) 100%);
-  border-radius:3px 3px 5px 5px;
-}
-.htv-base::after{
-  content:'';
-  position:absolute;
-  top:100%;left:6%;right:6%;
-  height:8px;
-  background:rgba(26,26,24,0.18);
-  filter:blur(6px);
-  border-radius:50%;
-}
-
-/* ── Floor cast shadow — flat, not 3D-rotated ───────────────── */
-.htv-shadow{
-  position:absolute;
-  bottom:-26px;left:-5%;right:-5%;
-  height:62px;
-  background:radial-gradient(ellipse 76% 100% at 58% 0%,rgba(26,26,24,0.20) 0%,transparent 70%);
-  filter:blur(18px);
-  pointer-events:none;
-  z-index:0;
-  transform:perspective(400px) rotateX(52deg) scaleX(0.84);
-  transform-origin:top center;
 }
 
 @media(max-width:980px){
@@ -672,25 +611,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         Two products. One closed loop. <strong>Trades</strong> captures the front. <strong>Ops</strong> runs the back. Built to your business. Operated by us.
       </p>
     </div>
-    <!-- RIGHT: TV on angled wall -->
+    <!-- RIGHT: video in angled black frame -->
     <div class="hero-panel hero-stage hd">
-      <!-- TV unit — wall surface + screen + stand all rotate as one -->
-      <div class="hero-tv">
-        <div class="htv-wall" aria-hidden="true"></div>
-        <div class="hero-vid-frame">
-          <video class="hero-vid" src="hero.mp4" autoplay loop muted playsinline></video>
-        </div>
-        <!-- Stand: splayed legs angling outward from base -->
-        <div class="htv-stand" aria-hidden="true">
-          <div class="htv-neck">
-            <div class="htv-leg htv-leg-l"></div>
-            <div class="htv-leg htv-leg-r"></div>
-          </div>
-          <div class="htv-base"></div>
-        </div>
+      <div class="hero-vid-frame">
+        <video class="hero-vid" src="hero.mp4" autoplay loop muted playsinline></video>
       </div>
-      <!-- Floor cast shadow — not rotated, stays flat -->
-      <div class="htv-shadow" aria-hidden="true"></div>
     </div>
   </div>
 
