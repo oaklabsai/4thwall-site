@@ -143,7 +143,10 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 /* ─────────────────────────────────────  HERO  ───────────────────────────── */
 .hero{padding:calc(7rem * var(--density)) var(--pad) calc(2.5rem * var(--density));position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;min-height:88vh}
 .hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1.1fr 1fr;gap:4rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
-@media(max-width:980px){.hero-row{grid-template-columns:1fr;gap:2rem}}
+/* Mobile two-column: text takes priority, video shrinks beside it */
+@media(max-width:980px){.hero-row{grid-template-columns:1.35fr 0.82fr;gap:1.4rem;align-items:center}}
+@media(max-width:600px){.hero-row{grid-template-columns:1.5fr 0.72fr;gap:.85rem}}
+@media(max-width:420px){.hero-row{grid-template-columns:1.65fr 0.6fr;gap:.6rem}}
 
 .hero-eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:1.6rem;display:flex;align-items:center;gap:.6rem}
 .hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:pulse 2.4s ease-in-out infinite}
@@ -304,15 +307,15 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 }
 
 @media(max-width:980px){
-  /* Show video on mobile — flat frame, no 3D rotation */
+  /* Show video on mobile — flat frame, grid cell sizes it */
   .hero-panel{
     display:block;
-    width:100%;
     perspective:none;
+    min-width:0; /* allow grid shrinkage */
   }
   .hero-vid-frame{
     transform:none;
-    /* Flat cast shadows for mobile */
+    /* Flat cast shadows — no rotated offset */
     box-shadow:
       inset 0  1px 0 rgba(255,255,255,0.16),
       inset 0 -1px 0 rgba(0,0,0,0.35),
@@ -325,9 +328,14 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
       0 0 0  9.5px rgba(255,255,255,0.04),
       0 0 0 11px  rgba(8,8,6,0.11),
       0 8px 28px  rgba(8,8,6,0.28),
-      0 20px 56px rgba(8,8,6,0.18),
-      0 0 60px rgba(30,102,66,0.06);
+      0 18px 48px rgba(8,8,6,0.16),
+      0 0 40px rgba(30,102,66,0.05);
   }
+  /* Scale hero text down so both columns coexist comfortably */
+  .hero-h{font-size:clamp(1.55rem,5.5vw,2.8rem)}
+  .hero-sub{font-size:.82rem;margin-top:.85rem;line-height:1.55}
+  .hero-cta{margin-top:1.1rem;gap:.5rem}
+  .hero-cta .pill{padding:8px 14px;font-size:.75rem}
 }
 
 /* ── Bottom pendulum sizing ──────────────────── */
@@ -1307,22 +1315,43 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   color:var(--muted);line-height:1;
 }
 
-/* ── Mobile ─────────────────────────── */
+/* ── Mobile — keep Trades | Pendulum | Ops side-by-side ── */
 @media(max-width:860px){
-  /* Switch to flex so `order` is bulletproof — grid order can be unpredictable */
   .lp-grid{
-    display:flex;
-    flex-direction:column;
-    gap:.9rem;
+    display:grid;
+    grid-template-columns:1fr 1.25fr 1fr;
+    gap:.55rem;
+    align-items:center;
   }
-  /* Trades top → Pendulum middle → Ops bottom */
-  .lp-card-ink{order:1;}
-  .lp-center{order:2;}
-  .lp-card-cream{order:3;}
-  .lp-svg{max-width:220px;}
+  /* Reset any order overrides */
+  .lp-card-ink,.lp-center,.lp-card-cream{order:unset}
+  /* Scale cards down for narrow columns */
+  .lp-card{padding:1rem .75rem;border-radius:14px}
+  .lp-card-name{font-size:1.5rem}
+  .lp-statement{font-size:.8rem;margin-top:.45rem}
+  .lp-svg{max-width:190px;}
   .lp-flow{display:none;}
-  .lp-section{padding:4rem 0 3.5rem;}
-  .lp-sub{margin-bottom:2.4rem;}
+  .lp-section{padding:3.5rem 0 3rem;}
+  .lp-sub{margin-bottom:2rem;}
+}
+/* Very small screens — tighten further */
+@media(max-width:520px){
+  .lp-grid{
+    grid-template-columns:1fr 1.1fr 1fr;
+    gap:.35rem;
+  }
+  .lp-card{padding:.7rem .55rem;border-radius:12px}
+  .lp-card-name{font-size:1.1rem}
+  .lp-card-tag{font-size:.52rem;letter-spacing:.12em}
+  .lp-statement{font-size:.72rem;line-height:1.35}
+  .lp-svg{max-width:150px;}
+}
+@media(max-width:380px){
+  /* Extreme small — hide statement text, just show name */
+  .lp-statement{display:none}
+  .lp-card{padding:.6rem .45rem}
+  .lp-card-name{font-size:.95rem}
+  .lp-svg{max-width:120px;}
 }
 @media(max-width:520px){
   .lp-bar{grid-template-columns:repeat(2,1fr);}
@@ -1779,7 +1808,7 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
   // 3) After intro completes, freeze final state so tweak-driven re-renders don't re-animate
   setTimeout(()=>{ document.body.classList.add('intro-done'); }, 5200);
 
-  // 4) Hero video — mobile-aware playback + performance optimisation
+  // 4) Hero video — autoplay + mobile-aware performance optimisation
   (function(){
     var video = document.querySelector('.hero-vid');
     if(!video) return;
@@ -1788,19 +1817,35 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
     var isMobile = window.innerWidth <= 980
       || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    // Pause when scrolled off-screen; resume when visible (saves battery + CPU)
+    // Aggressive autoplay: trigger on multiple readiness events so it fires
+    // reliably across browsers even when the `autoplay` attribute is blocked.
+    var everPlayed = false;
+    function tryPlay(){
+      var p = video.play();
+      if(p && p.catch) p.catch(function(){});
+    }
+    video.addEventListener('canplay',    tryPlay, {once:true});
+    video.addEventListener('loadeddata', tryPlay, {once:true});
+    video.addEventListener('playing', function(){ everPlayed = true; }, {once:true});
+
+    // Resume when tab becomes visible again
+    document.addEventListener('visibilitychange', function(){
+      if(!document.hidden && everPlayed) tryPlay();
+    });
+
+    // Pause when scrolled off-screen; resume when back (only after first play)
     if('IntersectionObserver' in window){
       var visIO = new IntersectionObserver(function(entries){
         entries.forEach(function(e){
-          if(e.isIntersecting){ video.play().catch(function(){}); }
-          else { video.pause(); }
+          if(e.isIntersecting){ tryPlay(); }
+          else if(everPlayed){ video.pause(); }
         });
-      }, {threshold:0.1});
+      }, {threshold:0.05});
       visIO.observe(video);
     }
 
     if(isMobile){
-      // Mobile: full-speed playback — slow-mo without frame blending is choppy
+      // Mobile: full-speed playback — slow-mo without canvas blending is choppy
       // and canvas rAF is too heavy for mobile CPUs.
       video.playbackRate = 1.0;
       return;
