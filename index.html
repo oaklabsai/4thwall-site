@@ -211,35 +211,44 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
   width:100%;
   height:100%;
   object-fit:cover;
-  /* anchor top so bottom (Veo watermark) crops off first */
-  object-position:center top;
+  /* center position — preserves full video quality, no aggressive crop */
+  object-position:center center;
   display:block;
+  /*
+    Mask-image approach: true alpha fade on all 4 edges.
+    Two gradient layers composited with intersect — a pixel is only visible
+    where BOTH masks are opaque. This creates a clean rectangular window
+    that fades uniformly into the cream background on every side.
+
+    Bottom fade starts at 76% (covers last 24%) — buries the bottom-right
+    Veo watermark without cropping or distorting the video content.
+    Side fades are narrower (10% each) for a wide visible zone.
+    Top fade is very gentle (6%) for a soft entry under the nav.
+  */
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0%, black 6%,  black 76%, transparent 100%),
+    linear-gradient(to right,  transparent 0%, black 9%,  black 91%, transparent 100%);
+  -webkit-mask-composite: source-in;   /* WebKit: intersect */
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, black 6%,  black 76%, transparent 100%),
+    linear-gradient(to right,  transparent 0%, black 9%,  black 91%, transparent 100%);
+  mask-composite: intersect;           /* Standard: intersect */
 }
-/* Layered overlay:
-   1. bottom gradient — fully cream up to 10%, fading out to 30% — buries watermark hard
-   2. left gradient  — reading strip so text stays crisp regardless of video content
-   3. top veil       — preserves nav legibility
-*/
+
+/* Light reading strip — only purpose is text legibility on the left.
+   Very subtle: the mask already blends the video into cream on edges. */
 .hero-vid-wrap::after{
   content:'';
   position:absolute;
   inset:0;
   pointer-events:none;
-  background:
-    linear-gradient(to top,
-      var(--cream)                0%,
-      var(--cream)                10%,
-      rgba(247,243,236,0.55)      24%,
-      transparent                 42%),
-    linear-gradient(to right,
-      rgba(247,243,236,0.94)      0%,
-      rgba(247,243,236,0.78)      22%,
-      rgba(247,243,236,0.40)      48%,
-      rgba(247,243,236,0.10)      68%,
-      transparent                 88%),
-    linear-gradient(to bottom,
-      rgba(247,243,236,0.35)      0%,
-      transparent                 18%);
+  background:linear-gradient(
+    to right,
+    rgba(247,243,236,0.68) 0%,
+    rgba(247,243,236,0.32) 24%,
+    rgba(247,243,236,0.08) 48%,
+    transparent            68%
+  );
 }
 
 /* ── Bottom pendulum sizing ──────────────────── */
