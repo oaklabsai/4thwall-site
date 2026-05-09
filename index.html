@@ -687,6 +687,19 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .doormat-bottom{margin-top:1.4rem;padding-top:1rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.7rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
   .doormat-bottom .bi{display:inline-flex;align-items:center;gap:.5rem}
   .doormat-bottom .bi::before{content:"";width:10px;height:1px;background:var(--orange)}
+
+  @media(max-width:640px){
+    .doormat{padding:1.5rem 0 2rem}
+    .doormat-h{font-size:clamp(1.65rem,6vw,2.2rem)}
+    .doormat-grid{gap:.75rem}
+    .dm-card{padding:1.1rem 1rem;gap:.5rem;border-radius:16px}
+    .dm-mark{font-size:2rem;margin-top:.1rem}
+    .dm-line{font-size:1rem}
+    .dm-body{font-size:.8rem;line-height:1.55}
+    .dm-caps{font-size:.64rem;gap:.22rem .7rem}
+    .dm-caps li{padding:.12rem 0}
+    .dm-foot{padding-top:.65rem;margin-top:.3rem;font-size:.64rem}
+  }
 </style>
 <section class="doormat wrap" id="products" data-screen-label="02 Products">
   <div class="doormat-head">
