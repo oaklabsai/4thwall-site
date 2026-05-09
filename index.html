@@ -841,7 +841,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <h2 class="lp-heading">One closed loop.<br><em>Always running.</em></h2>
     <p class="lp-sub">One captures. One operates. Neither stops.</p>
 
-    <div class="lp-solo">
+    <div class="lp-trio">
+
+      <!-- LEFT NODE -->
+      <div class="lp-node lp-node-l">
+        <div class="lp-node-tag">A · Capture</div>
+        <p class="lp-node-text">Catches every lead before it disappears.</p>
+      </div>
 
       <!-- PENDULUM -->
       <div class="lp-center">
@@ -1127,9 +1133,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         </svg>
       </div>
 
-      <p class="lp-define">One catches every lead before it disappears. The other runs the operation so you don't have to be in it. We build both. We run both. Permanently.</p>
+      <!-- RIGHT NODE -->
+      <div class="lp-node lp-node-r">
+        <div class="lp-node-tag">B · Operate</div>
+        <p class="lp-node-text">Runs the operation so you don't have to be in it.</p>
+      </div>
 
-    </div><!-- /lp-solo -->
+    </div><!-- /lp-trio -->
 
   </div><!-- /wrap -->
 </section>
@@ -1201,22 +1211,48 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   position:relative;z-index:1;
 }
 
-/* Solo pendulum layout */
-.lp-solo{
-  display:flex;
-  flex-direction:column;
+/* Trio: bare text left + pendulum + bare text right */
+.lp-trio{
+  display:grid;
+  grid-template-columns:1fr 1.4fr 1fr;
+  gap:2rem;
   align-items:center;
-  gap:2.4rem;
   position:relative;z-index:1;
 }
-.lp-define{
-  font-family:var(--body);
-  font-size:clamp(.95rem,1.4vw,1.05rem);
-  color:var(--muted);
-  text-align:center;
-  max-width:44ch;
-  line-height:1.7;
-  letter-spacing:-.008em;
+.lp-node{
+  display:flex;
+  flex-direction:column;
+  gap:.55rem;
+}
+.lp-node-l{text-align:right;}
+.lp-node-r{text-align:left;}
+.lp-node-tag{
+  font-family:var(--mono);
+  font-size:.62rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--orange);
+  opacity:.8;
+}
+.lp-node-text{
+  font-family:var(--display);
+  font-size:clamp(1rem,1.6vw,1.2rem);
+  font-weight:400;
+  font-style:italic;
+  line-height:1.45;
+  color:var(--ink);
+}
+@media(max-width:860px){
+  .lp-trio{grid-template-columns:1fr 1.2fr 1fr;gap:1rem;}
+  .lp-node-text{font-size:.82rem;}
+}
+@media(max-width:520px){
+  .lp-trio{grid-template-columns:1fr 1fr 1fr;gap:.5rem;}
+  .lp-node-text{font-size:.72rem;line-height:1.35;}
+  .lp-node-tag{font-size:.52rem;}
+}
+@media(max-width:380px){
+  .lp-node-text{display:none;}
 }
 
 /* Shared card styles */
