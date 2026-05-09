@@ -142,11 +142,11 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 
 /* ─────────────────────────────────────  HERO  ───────────────────────────── */
 .hero{padding:calc(7rem * var(--density)) var(--pad) calc(2.5rem * var(--density));position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;min-height:88vh}
-.hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1.1fr 1fr;gap:4rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
-/* Mobile two-column: text takes priority, video shrinks beside it */
-@media(max-width:980px){.hero-row{grid-template-columns:1.35fr 0.82fr;gap:1.4rem;align-items:center}}
-@media(max-width:600px){.hero-row{grid-template-columns:1.5fr 0.72fr;gap:.85rem}}
-@media(max-width:420px){.hero-row{grid-template-columns:1.65fr 0.6fr;gap:.6rem}}
+.hero-row{position:relative;z-index:3;display:grid;grid-template-columns:0.9fr 1.1fr;gap:2.5rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
+/* Mobile two-column: video takes more space, header still readable */
+@media(max-width:980px){.hero-row{grid-template-columns:1.05fr 1fr;gap:1rem;align-items:center}}
+@media(max-width:600px){.hero-row{grid-template-columns:1.15fr 0.92fr;gap:.7rem}}
+@media(max-width:420px){.hero-row{grid-template-columns:1.3fr 0.82fr;gap:.5rem}}
 
 .hero-eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:1.6rem;display:flex;align-items:center;gap:.6rem}
 .hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:pulse 2.4s ease-in-out infinite}
@@ -395,11 +395,6 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
       */
       0 0  8px rgba(30,102,66,0.12),
       0 0 22px rgba(30,102,66,0.05);
-  }
-  /* Mobile: zoomed-in video — crops to hero subject */
-  .hero-vid{
-    transform:translateZ(0) scale(1.32);
-    transform-origin:center center;
   }
   /* Scale hero text down so both columns coexist comfortably */
   .hero-h{font-size:clamp(1.55rem,5.5vw,2.8rem)}
@@ -1925,16 +1920,29 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       if(!document.hidden) tryPlay();
     });
 
-    // ── Mobile: full-speed, no canvas, no off-screen pausing ─────────────
-    if(isMobile){
-      video.playbackRate = 1.0;
-      return;
-    }
+    // ── Slow playback: 0.4× on every device for buttery slow-mo ──────────
+    var TARGET_RATE = 0.4;
+    var setRate = function(){ video.playbackRate = TARGET_RATE; };
+    setRate();
+    video.addEventListener('loadedmetadata', setRate);
+    video.addEventListener('play', setRate);
 
-    // ── Desktop only: pause off-screen, resume when back ─────────────────
+    // ── Seamless loop: skip the last ~0.6s where the source goes chaotic
+    // and snap back to a small offset so the start frame doesn't snap-cut.
+    var LOOP_TAIL = 0.6;     // seconds of source to skip at the end
+    var LOOP_HEAD = 0.05;    // tiny offset on restart to avoid first-frame stutter
+    video.addEventListener('timeupdate', function(){
+      // Safety: only act if duration is at least 4× the tail trim
+      if(video.duration && video.duration > LOOP_TAIL * 4
+         && video.currentTime >= video.duration - LOOP_TAIL){
+        try { video.currentTime = LOOP_HEAD; } catch(e){}
+      }
+    });
+
+    // ── Pause off-screen on desktop only (mobile keeps playing for autoplay) ─
     var hasPlayed = false;
     video.addEventListener('playing', function(){ hasPlayed = true; });
-    if('IntersectionObserver' in window){
+    if(!isMobile && 'IntersectionObserver' in window){
       var visIO = new IntersectionObserver(function(entries){
         entries.forEach(function(e){
           if(e.isIntersecting){ tryPlay(); }
@@ -1944,15 +1952,15 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       visIO.observe(video);
     }
 
-    // ── Desktop: 0.5× slow-mo + canvas temporal frame blending ────────────
-    // Problem: 0.5× on a 24fps source = ~12fps effective → choppy.
-    // Fix: rAF cross-fades current frame with previous blended output (55/45)
-    //   creating an ~80ms dissolve window between slow-mo frames.
-    var setRate = function(){ video.playbackRate = 0.5; };
-    setRate();
-    video.addEventListener('loadedmetadata', setRate);
-    video.addEventListener('play', setRate);
-
+    // ── Canvas temporal frame blending (every device) ─────────────────────
+    // 0.4× on a 24fps source = ~9.6fps effective → would be very choppy.
+    // Each rAF tick lerps the canvas toward the latest video frame, creating
+    // a soft dissolve between native frames. Stronger blend (50/50) than
+    // the previous 55/45 → more motion blur, smoother perceived motion.
+    //
+    // On mobile we also draw the video larger than the canvas to bake the
+    // zoom-in into the rendered output (instead of CSS transform which would
+    // only zoom the hidden video, not the canvas).
     try {
       var out  = document.createElement('canvas');
       var oCtx = out.getContext('2d');
@@ -1974,12 +1982,15 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       video.parentNode.insertBefore(out, video);
       video.style.opacity = '0';
 
+      // Zoom factor for canvas draw — mobile gets baked-in zoom-in
+      var ZOOM = isMobile ? 1.32 : 1.0;
+      var BLEND = 0.5; // 50% current / 50% prior — softer than 0.55
+
       var ready   = false;
       var hasPrev = false;
 
       (function tick(){
         requestAnimationFrame(tick);
-        // Skip if paused (IntersectionObserver paused it) or not ready
         if(video.paused || video.readyState < 2) return;
 
         var vw = video.videoWidth, vh = video.videoHeight;
@@ -1991,14 +2002,18 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
           ready = true;
         }
 
+        // Compute zoomed draw rectangle, centred
+        var dw = vw * ZOOM, dh = vh * ZOOM;
+        var dx = (vw - dw) / 2, dy = (vh - dh) / 2;
+
         if(hasPrev){
           oCtx.globalAlpha = 1;
           oCtx.drawImage(prev, 0, 0);
-          oCtx.globalAlpha = 0.55;
-          oCtx.drawImage(video, 0, 0, vw, vh);
+          oCtx.globalAlpha = BLEND;
+          oCtx.drawImage(video, dx, dy, dw, dh);
           oCtx.globalAlpha = 1;
         } else {
-          oCtx.drawImage(video, 0, 0, vw, vh);
+          oCtx.drawImage(video, dx, dy, dw, dh);
           hasPrev = true;
         }
 
