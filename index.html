@@ -841,16 +841,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <h2 class="lp-heading">One closed loop.<br><em>Always running.</em></h2>
     <p class="lp-sub">One captures. One operates. Neither stops.</p>
 
-    <div class="lp-grid">
+    <div class="lp-solo">
 
-      <!-- LEFT · TRADES NODE -->
-      <div class="lp-card lp-card-ink">
-        <div class="lp-card-tag">A · Capture</div>
-        <p class="lp-statement">Answers every lead. Books every job. Before they find someone else.</p>
-        <div class="lp-pill lp-pill-green"><span class="lp-pulse"></span>Live in 48 hours</div>
-      </div>
-
-      <!-- CENTER · PENDULUM -->
+      <!-- PENDULUM -->
       <div class="lp-center">
         <svg class="lp-svg lp-pendulum" viewBox="0 0 260 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
@@ -1134,14 +1127,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         </svg>
       </div>
 
-      <!-- RIGHT · OPS NODE -->
-      <div class="lp-card lp-card-cream">
-        <div class="lp-card-tag">B · Operate</div>
-        <p class="lp-statement">Runs everything behind the scenes. Permanently.</p>
-        <div class="lp-pill lp-pill-ink"><span class="lp-pulse lp-pulse-ink"></span>Permanently managed</div>
-      </div>
+      <p class="lp-define">One catches every lead before it disappears. The other runs the operation so you don't have to be in it. We build both. We run both. Permanently.</p>
 
-    </div><!-- /lp-grid -->
+    </div><!-- /lp-solo -->
 
   </div><!-- /wrap -->
 </section>
@@ -1203,7 +1191,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   margin:0 0 3.2rem;max-width:40ch;
 }
 
-/* Three-column grid */
+/* Three-column grid (kept for reference) */
 .lp-grid{
   display:grid;
   grid-template-columns:1fr 1.55fr 1fr;
@@ -1211,6 +1199,24 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   align-items:center;
   margin-bottom:2rem;
   position:relative;z-index:1;
+}
+
+/* Solo pendulum layout */
+.lp-solo{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2.4rem;
+  position:relative;z-index:1;
+}
+.lp-define{
+  font-family:var(--body);
+  font-size:clamp(.95rem,1.4vw,1.05rem);
+  color:var(--muted);
+  text-align:center;
+  max-width:44ch;
+  line-height:1.7;
+  letter-spacing:-.008em;
 }
 
 /* Shared card styles */
@@ -1340,7 +1346,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 }
 .lp-svg{
   width:100%;
-  max-width:260px;
+  max-width:300px;
   overflow:visible;
 }
 .lp-center-pill{
