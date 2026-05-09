@@ -1920,22 +1920,32 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       if(!document.hidden) tryPlay();
     });
 
-    // ── Slow playback: 0.4× on every device for buttery slow-mo ──────────
-    var TARGET_RATE = 0.4;
+    // ── Slow playback: 0.55× — slow but not sluggish ──────────────────────
+    var TARGET_RATE = 0.55;
     var setRate = function(){ video.playbackRate = TARGET_RATE; };
     setRate();
     video.addEventListener('loadedmetadata', setRate);
     video.addEventListener('play', setRate);
 
-    // ── Seamless loop: skip the last ~0.6s where the source goes chaotic
-    // and snap back to a small offset so the start frame doesn't snap-cut.
-    var LOOP_TAIL = 0.6;     // seconds of source to skip at the end
-    var LOOP_HEAD = 0.05;    // tiny offset on restart to avoid first-frame stutter
+    // ── Loop only the SECOND HALF of the source video ────────────────────
+    // The first half builds up; the second half is the calm cinematic part
+    // we want on repeat. Jump to mid-point on first metadata load, then
+    // loop mid → near-end → back to mid.
+    var LOOP_TAIL = 0.4;  // skip last 0.4s of any chaotic frames at end
+    var midpoint  = 0;    // computed once duration is known
+
+    video.addEventListener('loadedmetadata', function(){
+      if(video.duration && video.duration > 1){
+        midpoint = video.duration * 0.5;
+        // Start playback from midpoint on first load
+        try { video.currentTime = midpoint; } catch(e){}
+      }
+    });
+
     video.addEventListener('timeupdate', function(){
-      // Safety: only act if duration is at least 4× the tail trim
-      if(video.duration && video.duration > LOOP_TAIL * 4
-         && video.currentTime >= video.duration - LOOP_TAIL){
-        try { video.currentTime = LOOP_HEAD; } catch(e){}
+      if(!video.duration || video.duration <= 1) return;
+      if(video.currentTime >= video.duration - LOOP_TAIL){
+        try { video.currentTime = midpoint || video.duration * 0.5; } catch(e){}
       }
     });
 
