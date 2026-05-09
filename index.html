@@ -200,6 +200,35 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 /* ── Pendulum SVG ─────────────────────────────── */
 .pendulum-svg{overflow:visible;}
 
+/* ── Hero video ──────────────────────────────── */
+.hero-vid-wrap{
+  position:relative;
+  width:100%;
+  max-width:520px;
+  margin-left:auto;
+  border-radius:22px;
+  overflow:hidden;
+  /* subtle shadow to lift it off the background */
+  box-shadow:0 32px 64px -20px rgba(26,26,24,0.18),
+             0 8px 24px -8px rgba(26,26,24,0.10);
+}
+.hero-vid{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:22px;
+}
+@media(max-width:980px){
+  .hero-vid-wrap{max-width:100%;margin:0 auto;}
+}
+
+/* ── Bottom pendulum sizing ──────────────────── */
+.lp-pendulum{
+  width:100%;
+  max-width:200px;
+  overflow:visible;
+}
+
 
 /* hero footer meta */
 .hero-foot{margin-top:2.4rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.74rem;color:var(--muted);border-top:1px solid var(--line);padding-top:1.1rem;position:relative;z-index:3}
@@ -513,175 +542,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </p>
     </div>
 
-    <!-- HERO CLOSED-LOOP DIAGRAM -->
+    <!-- HERO VIDEO -->
     <div class="hero-stage hd">
-      <div class="loop-stage" id="loopStage" aria-hidden="true">
-        <svg class="loop-svg pendulum-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-
-            <!-- Marble sphere gradient: forest green, sphere shading -->
-            <radialGradient id="pb-grad" cx="36%" cy="28%" r="72%" fx="36%" fy="28%">
-              <stop offset="0%"   stop-color="#96ddb8"/>
-              <stop offset="16%"  stop-color="#3fa870"/>
-              <stop offset="48%"  stop-color="#1e6642"/>
-              <stop offset="80%"  stop-color="#0e3b23"/>
-              <stop offset="100%" stop-color="#061a0f"/>
-            </radialGradient>
-
-            <!-- Specular highlight (soft white overlay) -->
-            <radialGradient id="pb-spec" cx="38%" cy="30%" r="44%">
-              <stop offset="0%"   stop-color="rgba(255,255,255,0.50)"/>
-              <stop offset="60%"  stop-color="rgba(255,255,255,0.06)"/>
-              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-            </radialGradient>
-
-            <!-- Secondary internal reflection (bottom edge) -->
-            <radialGradient id="pb-reflex" cx="52%" cy="82%" r="36%">
-              <stop offset="0%"   stop-color="rgba(255,255,255,0.14)"/>
-              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-            </radialGradient>
-
-            <!-- Bob ambient glow -->
-            <filter id="pb-glow" x="-70%" y="-70%" width="240%" height="240%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="11" result="b1"/>
-              <feGaussianBlur in="SourceGraphic" stdDeviation="4"  result="b2"/>
-              <feMerge>
-                <feMergeNode in="b1"/>
-                <feMergeNode in="b2"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-
-            <!-- Pivot mount glow -->
-            <filter id="pb-pivot-glow" x="-200%" y="-200%" width="500%" height="500%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="7"/>
-            </filter>
-
-            <!-- Subtle drop shadow for rod -->
-            <filter id="pb-rod-shadow" x="-20%" y="-5%" width="140%" height="110%">
-              <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="blur"/>
-              <feOffset dx="2" dy="0" result="off"/>
-              <feComposite in="SourceGraphic" in2="off" operator="over"/>
-            </filter>
-
-          </defs>
-
-          <!-- ═══ FRAME ════════════════════════════════ -->
-          <rect x="5" y="5" width="390" height="390" rx="20"
-                fill="none" stroke="rgba(26,26,24,0.09)" stroke-width="1"/>
-          <rect x="12" y="12" width="376" height="376" rx="16"
-                fill="none" stroke="rgba(26,26,24,0.04)" stroke-width="0.75"
-                stroke-dasharray="3 6"/>
-
-          <!-- ═══ AMBIENT RINGS around pivot ══════════ -->
-          <circle cx="200" cy="72" r="72"
-                  fill="none" stroke="rgba(30,102,66,0.06)" stroke-width="1"/>
-          <circle cx="200" cy="72" r="130"
-                  fill="none" stroke="rgba(30,102,66,0.04)" stroke-width="0.75"/>
-          <circle cx="200" cy="72" r="196"
-                  fill="none" stroke="rgba(30,102,66,0.025)" stroke-width="0.75"/>
-
-          <!-- ═══ SWING ARC (static, bob travel path) ═ -->
-          <!-- Bob center traces: M 79 232 A 200 200 0 0 1 321 232 -->
-          <path d="M 79 232 A 200 200 0 0 1 321 232"
-                fill="none"
-                stroke="rgba(26,26,24,0.10)"
-                stroke-width="1"
-                stroke-dasharray="4 7"
-                stroke-linecap="round"/>
-
-          <!-- Arc endpoint dots -->
-          <circle cx="79"  cy="232" r="2.5" fill="rgba(26,26,24,0.12)"/>
-          <circle cx="321" cy="232" r="2.5" fill="rgba(26,26,24,0.12)"/>
-          <!-- Arc center dot (nadir) -->
-          <circle cx="200" cy="272" r="2.5" fill="rgba(30,102,66,0.25)"/>
-
-          <!-- Fine angle ticks on arc (at 0° ±20° ±37°) -->
-          <!-- Center tick (horizontal) -->
-          <line x1="194" y1="272" x2="206" y2="272"
-                stroke="rgba(30,102,66,0.3)" stroke-width="1" stroke-linecap="round"/>
-          <!-- ±20° ticks -->
-          <line x1="260" y1="260" x2="268" y2="256"
-                stroke="rgba(26,26,24,0.1)" stroke-width="0.85" stroke-linecap="round"/>
-          <line x1="132" y1="256" x2="140" y2="260"
-                stroke="rgba(26,26,24,0.1)" stroke-width="0.85" stroke-linecap="round"/>
-          <!-- ±37° (major) ticks -->
-          <line x1="73"  y1="229" x2="85"  y2="235"
-                stroke="rgba(26,26,24,0.13)" stroke-width="1" stroke-linecap="round"/>
-          <line x1="315" y1="229" x2="327" y2="235"
-                stroke="rgba(26,26,24,0.13)" stroke-width="1" stroke-linecap="round"/>
-
-          <!-- ═══ GHOST BOBS at extreme positions ══════ -->
-          <circle cx="79" cy="232" r="22"
-                  fill="rgba(30,102,66,0.06)" stroke="rgba(30,102,66,0.08)" stroke-width="0.75"/>
-          <circle cx="321" cy="232" r="22"
-                  fill="rgba(30,102,66,0.06)" stroke="rgba(30,102,66,0.08)" stroke-width="0.75"/>
-
-          <!-- ═══ PIVOT MOUNT ════════════════════════════ -->
-          <!-- Halo -->
-          <circle cx="200" cy="72" r="8" fill="rgba(30,102,66,0.18)" filter="url(#pb-pivot-glow)"/>
-          <!-- Fine crosshair -->
-          <line x1="200" y1="56" x2="200" y2="88"
-                stroke="rgba(26,26,24,0.14)" stroke-width="0.75"/>
-          <line x1="184" y1="72" x2="216" y2="72"
-                stroke="rgba(26,26,24,0.14)" stroke-width="0.75"/>
-          <!-- Pivot ring outer -->
-          <circle cx="200" cy="72" r="6"
-                  fill="none" stroke="rgba(26,26,24,0.18)" stroke-width="1"/>
-          <!-- Pivot pin -->
-          <circle cx="200" cy="72" r="2.5" fill="rgba(26,26,24,0.55)"/>
-          <circle cx="200" cy="72" r="1.2" fill="rgba(30,102,66,0.9)"/>
-
-          <!-- ═══ ANIMATED PENDULUM ═══════════════════════ -->
-          <g id="p-arm">
-
-            <!-- Rod (precision suspension thread) -->
-            <line x1="200" y1="72" x2="200" y2="252"
-                  stroke="rgba(26,26,24,0.22)" stroke-width="0.85" stroke-linecap="round"
-                  filter="url(#pb-rod-shadow)"/>
-
-            <!-- Collar at rod end (subtle) -->
-            <circle cx="200" cy="252" r="3"
-                    fill="none" stroke="rgba(26,26,24,0.15)" stroke-width="1"/>
-
-            <!-- Bob ambient glow -->
-            <circle cx="200" cy="272" r="30"
-                    fill="rgba(30,102,66,0.13)" filter="url(#pb-glow)"/>
-
-            <!-- Bob: main marble sphere -->
-            <circle cx="200" cy="272" r="23" fill="url(#pb-grad)"/>
-
-            <!-- Bob: specular highlight overlay -->
-            <circle cx="200" cy="272" r="23" fill="url(#pb-spec)"/>
-
-            <!-- Bob: internal reflection (bottom) -->
-            <circle cx="200" cy="272" r="23" fill="url(#pb-reflex)"/>
-
-            <!-- Bob: equatorial rim highlight (thin white arc) -->
-            <path d="M 179 266 A 23 23 0 0 1 221 266"
-                  fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"
-                  stroke-linecap="round"/>
-
-            <!-- Bob: outer edge (very subtle) -->
-            <circle cx="200" cy="272" r="23"
-                    fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
-
-            <!-- Pendulum swing animation (simple harmonic: slow at extremes, fast center) -->
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              values="-37 200 72; 37 200 72; -37 200 72"
-              keyTimes="0; 0.5; 1"
-              keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"
-              calcMode="spline"
-              dur="3s"
-              repeatCount="indefinite"/>
-
-          </g><!-- /p-arm -->
-
-        </svg>
+      <div class="hero-vid-wrap">
+        <video class="hero-vid" src="hero.mp4" autoplay loop muted playsinline></video>
       </div>
-
     </div>
   </div>
 
@@ -814,120 +679,235 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <div class="lp-pill lp-pill-green"><span class="lp-pulse"></span>Live · 24/7</div>
       </div>
 
-      <!-- CENTER · ANIMATED LOOP SVG -->
+      <!-- CENTER · PENDULUM -->
       <div class="lp-center">
-        <svg class="lp-svg" viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="lp-svg lp-pendulum" viewBox="0 0 260 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
-            <!-- Glow: green dot -->
-            <filter id="glow-g" x="-80%" y="-80%" width="260%" height="260%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b1"/>
-              <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="b2"/>
-              <feMerge><feMergeNode in="b1"/><feMergeNode in="b2"/><feMergeNode in="SourceGraphic"/></feMerge>
+
+            <!-- ── Bob: 5-stop sphere gradient ── -->
+            <radialGradient id="lp-bob-grad" cx="36%" cy="28%" r="72%" fx="36%" fy="28%">
+              <stop offset="0%"   stop-color="#a8e4c4"/>
+              <stop offset="14%"  stop-color="#45b07a"/>
+              <stop offset="44%"  stop-color="#1e6642"/>
+              <stop offset="78%"  stop-color="#0d3820"/>
+              <stop offset="100%" stop-color="#061710"/>
+            </radialGradient>
+
+            <!-- ── Bob: specular white highlight ── -->
+            <radialGradient id="lp-spec" cx="37%" cy="29%" r="42%">
+              <stop offset="0%"   stop-color="rgba(255,255,255,0.52)"/>
+              <stop offset="55%"  stop-color="rgba(255,255,255,0.05)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+
+            <!-- ── Bob: bottom-edge internal reflection ── -->
+            <radialGradient id="lp-reflex" cx="50%" cy="84%" r="34%">
+              <stop offset="0%"   stop-color="rgba(255,255,255,0.16)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+
+            <!-- ── Bob: wide ambient glow ── -->
+            <filter id="lp-glow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur-wide"/>
+              <feGaussianBlur in="SourceGraphic" stdDeviation="4"  result="blur-tight"/>
+              <feMerge>
+                <feMergeNode in="blur-wide"/>
+                <feMergeNode in="blur-tight"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
             </filter>
-            <!-- Glow: ink dot -->
-            <filter id="glow-k" x="-80%" y="-80%" width="260%" height="260%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b1"/>
-              <feMerge><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
+
+            <!-- ── Pivot: soft radial halo ── -->
+            <filter id="lp-pivot-halo" x="-300%" y="-300%" width="700%" height="700%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="8"/>
             </filter>
-            <!-- Subtle halo on nodes -->
-            <filter id="halo" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
-              <feMerge><feMergeNode in="blur"/></feMerge>
+
+            <!-- ── Ceiling bracket shadow ── -->
+            <filter id="lp-bracket-shadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="2.5" result="blur"/>
+              <feOffset dx="0" dy="3"/>
+              <feComposite in="SourceGraphic" operator="over"/>
             </filter>
-            <!-- Arc paths for dot travel -->
-            <path id="arc-up" d="M 22 160 C 22 34 238 34 238 160" fill="none"/>
-            <path id="arc-dn" d="M 238 160 C 238 286 22 286 22 160" fill="none"/>
-            <!-- Readable text paths (both L→R, curving away from center) -->
-            <path id="arc-up-txt" d="M 22 160 C 22 34 238 34 238 160" fill="none"/>
-            <path id="arc-dn-txt" d="M 22 160 C 22 286 238 286 238 160" fill="none"/>
+
+            <!-- ── Rod: metallic linear gradient ── -->
+            <linearGradient id="lp-rod-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="rgba(26,26,24,0.08)"/>
+              <stop offset="35%"  stop-color="rgba(26,26,24,0.32)"/>
+              <stop offset="55%"  stop-color="rgba(247,243,236,0.18)"/>
+              <stop offset="80%"  stop-color="rgba(26,26,24,0.22)"/>
+              <stop offset="100%" stop-color="rgba(26,26,24,0.06)"/>
+            </linearGradient>
+
           </defs>
 
-          <!-- ── Outer glow rings on nodes ── -->
-          <circle cx="22" cy="160" r="16" fill="#1e6642" filter="url(#halo)" opacity="0.35"/>
-          <circle cx="238" cy="160" r="16" fill="#1a1a18" filter="url(#halo)" opacity="0.25"/>
+          <!-- ════ BACKGROUND DETAIL ════════════════════ -->
 
-          <!-- ── Track lines ── -->
-          <path d="M 22 160 C 22 34 238 34 238 160"
-                fill="none" stroke="#1e6642" stroke-width="1.5"
-                stroke-dasharray="5 6" opacity="0.45"/>
-          <path d="M 238 160 C 238 286 22 286 22 160"
-                fill="none" stroke="#1a1a18" stroke-width="1.5"
-                stroke-dasharray="5 6" opacity="0.35"/>
+          <!-- Ambient radial wash centred on pivot -->
+          <circle cx="130" cy="52" r="100"
+                  fill="radial-gradient(circle,rgba(30,102,66,0.04),transparent)"
+                  opacity="0"/>
+          <!-- Concentric precision rings -->
+          <circle cx="130" cy="52" r="52"
+                  fill="none" stroke="rgba(30,102,66,0.055)" stroke-width="0.75"/>
+          <circle cx="130" cy="52" r="98"
+                  fill="none" stroke="rgba(30,102,66,0.038)" stroke-width="0.75"/>
+          <circle cx="130" cy="52" r="152"
+                  fill="none" stroke="rgba(30,102,66,0.022)" stroke-width="0.75"/>
+          <circle cx="130" cy="52" r="210"
+                  fill="none" stroke="rgba(30,102,66,0.012)" stroke-width="0.75"/>
 
-          <!-- ── Solid track highlights (short) ── -->
-          <path d="M 22 160 C 22 34 238 34 238 160"
-                fill="none" stroke="#1e6642" stroke-width="2.5"
-                stroke-dasharray="32 999" stroke-dashoffset="-10" opacity="0.2" stroke-linecap="round"/>
-          <path d="M 238 160 C 238 286 22 286 22 160"
-                fill="none" stroke="#1a1a18" stroke-width="2.5"
-                stroke-dasharray="32 999" stroke-dashoffset="-10" opacity="0.15" stroke-linecap="round"/>
+          <!-- ════ CEILING MOUNT ═════════════════════════ -->
 
-          <!-- ── Arc text labels ── -->
-          <text font-family="'JetBrains Mono',monospace" font-size="7.2" fill="#1e6642"
-                opacity="0.65" letter-spacing="1.4" font-weight="500">
-            <textPath href="#arc-up-txt" startOffset="14%">LEADS · QUALIFIED · BOOKED</textPath>
-          </text>
-          <text font-family="'JetBrains Mono',monospace" font-size="7.2" fill="#1a1a18"
-                opacity="0.4" letter-spacing="1.4">
-            <textPath href="#arc-dn-txt" startOffset="13%">OPS · BRIEFED · COMPOUNDING</textPath>
-          </text>
+          <!-- Ceiling plate (horizontal bar) -->
+          <rect x="90" y="8" width="80" height="10" rx="4"
+                fill="rgba(26,26,24,0.12)" stroke="rgba(26,26,24,0.18)" stroke-width="0.75"
+                filter="url(#lp-bracket-shadow)"/>
+          <!-- Plate bolts -->
+          <circle cx="101" cy="13" r="2.5" fill="rgba(26,26,24,0.25)"/>
+          <circle cx="101" cy="13" r="1"   fill="rgba(247,243,236,0.3)"/>
+          <circle cx="159" cy="13" r="2.5" fill="rgba(26,26,24,0.25)"/>
+          <circle cx="159" cy="13" r="1"   fill="rgba(247,243,236,0.3)"/>
+          <!-- Bracket arms down to pivot -->
+          <path d="M 115 18 L 122 46" fill="none" stroke="rgba(26,26,24,0.18)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M 145 18 L 138 46" fill="none" stroke="rgba(26,26,24,0.18)" stroke-width="1.5" stroke-linecap="round"/>
 
-          <!-- ── Left node: Trades (pulsing ring + solid dot) ── -->
-          <circle cx="22" cy="160" r="10" fill="#1e6642" opacity="0.12">
-            <animate attributeName="r" values="10;15;10" dur="3s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.12;0.04;0.12" dur="3s" repeatCount="indefinite"/>
-          </circle>
-          <circle cx="22" cy="160" r="6" fill="#1e6642" opacity="1"/>
-          <circle cx="22" cy="160" r="6" fill="none" stroke="rgba(247,243,236,0.3)" stroke-width="1"/>
+          <!-- ════ SWING ARC + SCALE ═════════════════════ -->
 
-          <!-- ── Right node: Ops (pulsing ring + solid dot) ── -->
-          <circle cx="238" cy="160" r="10" fill="#1a1a18" opacity="0.18">
-            <animate attributeName="r" values="10;15;10" dur="3s" begin="1.5s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.18;0.05;0.18" dur="3s" begin="1.5s" repeatCount="indefinite"/>
-          </circle>
-          <circle cx="238" cy="160" r="6" fill="#1a1a18" opacity="0.9"/>
-          <circle cx="238" cy="160" r="6" fill="none" stroke="rgba(30,102,66,0.25)" stroke-width="1"/>
+          <!-- Main dashed swing arc (bob-centre trace) -->
+          <!-- Pivot (130,52), rod length 220px, angle ±40° -->
+          <!-- Extremes: x=130±141.4, y=52+168.5 → (−11,221) clipped, use (0,221)→(260,221) approx -->
+          <!-- Precise: x=130−220·sin40°=130−141.4=−11 → clip to edges -->
+          <!-- Slightly reduced to ±36° so it fits: x=130±129.3=0.7/259.3, y=52+178.1=230.1 -->
+          <path d="M 2 230 A 220 220 0 0 1 258 230"
+                fill="none"
+                stroke="rgba(26,26,24,0.09)"
+                stroke-width="1"
+                stroke-dasharray="3.5 6"
+                stroke-linecap="round"/>
 
-          <!-- ── Center engine ── -->
-          <circle cx="130" cy="160" r="22" fill="none" stroke="#1e6642" stroke-width="0.75" opacity="0.12"/>
-          <circle cx="130" cy="160" r="15" fill="none" stroke="#1e6642" stroke-width="0.75" opacity="0.18"/>
-          <circle cx="130" cy="160" r="7" fill="#1e6642" opacity="0.45">
-            <animate attributeName="r" values="7;9;7" dur="2.8s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.45;0.85;0.45" dur="2.8s" repeatCount="indefinite"/>
-          </circle>
-          <text x="130" y="177" text-anchor="middle"
-                font-family="'JetBrains Mono',monospace" font-size="6"
-                fill="#1e6642" letter-spacing="1.8" opacity="0.7">ONE LOOP</text>
+          <!-- Arc endpoint markers -->
+          <circle cx="2"   cy="230" r="2" fill="rgba(26,26,24,0.10)"/>
+          <circle cx="258" cy="230" r="2" fill="rgba(26,26,24,0.10)"/>
+          <!-- Nadir marker (centre of arc) -->
+          <circle cx="130" cy="272" r="2.5" fill="rgba(30,102,66,0.30)"/>
 
-          <!-- ── Traveling dot 1: upper arc, green (Trades → Ops) ── -->
-          <circle r="5" fill="#1e6642" filter="url(#glow-g)" opacity="0.95">
-            <animateMotion dur="4s" repeatCount="indefinite">
-              <mpath href="#arc-up"/>
-            </animateMotion>
-          </circle>
-          <!-- Trailing ghost 1 -->
-          <circle r="3" fill="#1e6642" filter="url(#glow-g)" opacity="0.45">
-            <animateMotion dur="4s" begin="-0.4s" repeatCount="indefinite">
-              <mpath href="#arc-up"/>
-            </animateMotion>
-          </circle>
+          <!-- Angle graduation ticks (every ~12°, 7 ticks) -->
+          <!-- ±36° major -->
+          <line x1="-4"  y1="228" x2="8"   y2="232" stroke="rgba(26,26,24,0.14)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="252" y1="228" x2="264" y2="232" stroke="rgba(26,26,24,0.14)" stroke-width="1" stroke-linecap="round"/>
+          <!-- ±24° -->
+          <line x1="34"  y1="249" x2="43"  y2="245" stroke="rgba(26,26,24,0.09)" stroke-width="0.85" stroke-linecap="round"/>
+          <line x1="217" y1="245" x2="226" y2="249" stroke="rgba(26,26,24,0.09)" stroke-width="0.85" stroke-linecap="round"/>
+          <!-- ±12° -->
+          <line x1="82"  y1="265" x2="88"  y2="262" stroke="rgba(26,26,24,0.08)" stroke-width="0.75" stroke-linecap="round"/>
+          <line x1="172" y1="262" x2="178" y2="265" stroke="rgba(26,26,24,0.08)" stroke-width="0.75" stroke-linecap="round"/>
+          <!-- 0° (nadir) long tick -->
+          <line x1="124" y1="271" x2="136" y2="271" stroke="rgba(30,102,66,0.32)" stroke-width="1" stroke-linecap="round"/>
 
-          <!-- ── Traveling dot 2: lower arc, ink (Ops → Trades) ── -->
-          <circle r="5" fill="#2a2a26" filter="url(#glow-k)" opacity="0.9">
-            <animateMotion dur="4s" begin="-2s" repeatCount="indefinite">
-              <mpath href="#arc-dn"/>
-            </animateMotion>
-          </circle>
-          <!-- Trailing ghost 2 -->
-          <circle r="3" fill="#3a3a34" filter="url(#glow-k)" opacity="0.4">
-            <animateMotion dur="4s" begin="-2.4s" repeatCount="indefinite">
-              <mpath href="#arc-dn"/>
-            </animateMotion>
-          </circle>
+          <!-- ════ GHOST BOBS at extremes ════════════════ -->
+          <circle cx="2"   cy="230" r="26"
+                  fill="rgba(30,102,66,0.05)" stroke="rgba(30,102,66,0.07)" stroke-width="0.75"/>
+          <circle cx="258" cy="230" r="26"
+                  fill="rgba(30,102,66,0.05)" stroke="rgba(30,102,66,0.07)" stroke-width="0.75"/>
+
+          <!-- ════ PIVOT ════════════════════════════════ -->
+          <!-- Halo glow -->
+          <circle cx="130" cy="52" r="7" fill="rgba(30,102,66,0.22)" filter="url(#lp-pivot-halo)"/>
+          <!-- Fine crosshair -->
+          <line x1="130" y1="34" x2="130" y2="70"
+                stroke="rgba(26,26,24,0.12)" stroke-width="0.75"/>
+          <line x1="112" y1="52" x2="148" y2="52"
+                stroke="rgba(26,26,24,0.12)" stroke-width="0.75"/>
+          <!-- Outer pivot ring -->
+          <circle cx="130" cy="52" r="7.5"
+                  fill="none" stroke="rgba(26,26,24,0.16)" stroke-width="1"/>
+          <!-- Inner pivot ring -->
+          <circle cx="130" cy="52" r="4"
+                  fill="none" stroke="rgba(26,26,24,0.14)" stroke-width="0.75"/>
+          <!-- Pivot pin: dark + green core -->
+          <circle cx="130" cy="52" r="2.8" fill="rgba(26,26,24,0.65)"/>
+          <circle cx="130" cy="52" r="1.4" fill="rgba(30,102,66,0.95)"/>
+
+          <!-- ════ ANIMATED PENDULUM ═══════════════════ -->
+          <g id="lp-arm">
+
+            <!-- Rod: thin metallic suspension -->
+            <!-- Two parallel lines = cylindrical rod illusion -->
+            <line x1="129" y1="52" x2="129" y2="244"
+                  stroke="rgba(26,26,24,0.10)" stroke-width="0.75" stroke-linecap="round"/>
+            <line x1="130" y1="52" x2="130" y2="244"
+                  stroke="rgba(26,26,24,0.28)" stroke-width="1"   stroke-linecap="round"/>
+            <line x1="131" y1="52" x2="131" y2="244"
+                  stroke="rgba(247,243,236,0.14)" stroke-width="0.5" stroke-linecap="round"/>
+
+            <!-- Collar where rod meets bob -->
+            <ellipse cx="130" cy="245" rx="5" ry="2.5"
+                     fill="rgba(26,26,24,0.18)" stroke="rgba(26,26,24,0.25)" stroke-width="0.75"/>
+
+            <!-- Bob: wide ambient glow -->
+            <circle cx="130" cy="272" r="34"
+                    fill="rgba(30,102,66,0.11)" filter="url(#lp-glow)"/>
+
+            <!-- Bob: marble surface (main gradient) -->
+            <circle cx="130" cy="272" r="27" fill="url(#lp-bob-grad)"/>
+
+            <!-- Bob: specular highlight -->
+            <circle cx="130" cy="272" r="27" fill="url(#lp-spec)"/>
+
+            <!-- Bob: bottom internal reflection -->
+            <circle cx="130" cy="272" r="27" fill="url(#lp-reflex)"/>
+
+            <!-- Bob: equatorial terminator arc (boundary between light/shadow) -->
+            <path d="M 106 265 A 27 27 0 0 1 154 265"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.11)"
+                  stroke-width="1.2"
+                  stroke-linecap="round"/>
+
+            <!-- Bob: subtle surface scratches/texture lines -->
+            <path d="M 116 259 Q 130 256 144 260"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.06)"
+                  stroke-width="0.75"
+                  stroke-linecap="round"/>
+            <path d="M 113 267 Q 130 269 147 267"
+                  fill="none"
+                  stroke="rgba(0,0,0,0.07)"
+                  stroke-width="0.5"
+                  stroke-linecap="round"/>
+
+            <!-- Bob: outer rim -->
+            <circle cx="130" cy="272" r="27"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.06)"
+                    stroke-width="1.2"/>
+
+            <!-- Shadow cast below (on implied floor) -->
+            <ellipse cx="130" cy="362" rx="20" ry="5"
+                     fill="rgba(26,26,24,0.07)">
+              <animate attributeName="rx"
+                       values="20;14;20"
+                       keyTimes="0;0.5;1"
+                       keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"
+                       calcMode="spline"
+                       dur="3s"
+                       repeatCount="indefinite"/>
+            </ellipse>
+
+            <!-- ── Simple harmonic swing ── -->
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              values="-36 130 52; 36 130 52; -36 130 52"
+              keyTimes="0; 0.5; 1"
+              keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"
+              calcMode="spline"
+              dur="3s"
+              repeatCount="indefinite"/>
+
+          </g><!-- /lp-arm -->
 
         </svg>
-        <!-- Pill overlay under SVG -->
-        <div class="lp-center-pill">Closed loop · Permanent</div>
       </div>
 
       <!-- RIGHT · OPS NODE -->
@@ -944,26 +924,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </div>
 
     </div><!-- /lp-grid -->
-
-    <!-- STATUS BAR -->
-    <div class="lp-bar">
-      <div class="lp-bar-cell">
-        <span class="lp-bar-val">Active</span>
-        <span class="lp-bar-key">Loop status</span>
-      </div>
-      <div class="lp-bar-cell">
-        <span class="lp-bar-val">2.4M+</span>
-        <span class="lp-bar-key">Cycles logged</span>
-      </div>
-      <div class="lp-bar-cell">
-        <span class="lp-bar-val">99.97%</span>
-        <span class="lp-bar-key">Uptime</span>
-      </div>
-      <div class="lp-bar-cell">
-        <span class="lp-bar-val">48h</span>
-        <span class="lp-bar-key">To deploy</span>
-      </div>
-    </div>
 
   </div><!-- /wrap -->
 </section>
