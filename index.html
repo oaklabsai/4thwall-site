@@ -142,10 +142,6 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 
 /* ─────────────────────────────────────  HERO  ───────────────────────────── */
 .hero{padding:calc(7rem * var(--density)) var(--pad) calc(2.5rem * var(--density));position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;min-height:88vh}
-/* Room SVG environment */
-.hero-room{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.hero-room-svg{width:100%;height:100%;display:block}
-
 .hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1.1fr 1fr;gap:4rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
 @media(max-width:980px){.hero-row{grid-template-columns:1fr;gap:2rem}}
 
@@ -201,42 +197,118 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 /* ── Pendulum SVG ─────────────────────────────── */
 .pendulum-svg{overflow:visible;}
 
-/* ── Hero video panel ─────────────────────── */
-.hero-panel{position:relative}
+/* ── Hero floating video frame ──────────────────────────────────── */
+.hero-panel{
+  position:relative;
+  z-index:1;
+}
+
+/* Cast shadow projected below — suggests the frame hovering over a surface */
+.hero-panel::before{
+  content:'';
+  position:absolute;
+  bottom:-44px;left:8%;right:8%;
+  height:72px;
+  background:radial-gradient(ellipse 88% 100% at 50% 0%,rgba(26,26,24,0.24) 0%,transparent 70%);
+  filter:blur(18px);
+  pointer-events:none;
+  z-index:0;
+  transform:scaleX(0.90);
+}
+
+/* Ambient screen glow — diffuse light emanating from behind the panel */
 .hero-panel::after{
   content:'';
   position:absolute;
-  bottom:-30px;left:6%;right:6%;
-  height:48px;
-  background:radial-gradient(ellipse,rgba(26,26,24,0.18) 0%,transparent 70%);
-  border-radius:50%;
-  filter:blur(10px);
+  inset:-50px;
+  background:
+    radial-gradient(ellipse 75% 60% at 52% 50%,rgba(30,102,66,0.07) 0%,transparent 65%);
   pointer-events:none;
-  z-index:-1;
+  z-index:0;
 }
+
+/* The frame — multi-ring bezel + deep shadow stack + 3D tilt */
 .hero-vid-frame{
-  border-radius:14px;
-  overflow:hidden;
   position:relative;
+  z-index:1;
+  border-radius:16px;
+  overflow:hidden;
   aspect-ratio:16/9;
+
+  /*
+    Tilt: left edge closer to viewer, right edge recedes toward center text.
+    Feels intentional — like a product held at an angle, not a flat crop.
+  */
+  transform:perspective(960px) rotateY(-6deg) rotateX(2deg);
+  transition:transform .9s cubic-bezier(.16,1,.3,1),box-shadow .9s;
+  will-change:transform;
+
   box-shadow:
-    0 0 0 1px rgba(26,26,24,0.13),
-    0 8px 28px rgba(26,26,24,0.15),
-    0 24px 60px rgba(26,26,24,0.09),
-    inset 0 1px 0 rgba(255,255,255,0.06);
+    /* ── Glass surface: inset edge highlights ── */
+    inset 0  1px 0  rgba(255,255,255,0.22),
+    inset 0 -1px 0  rgba(26,26,24,0.14),
+    inset  1px 0 0  rgba(255,255,255,0.10),
+    inset -1px 0 0  rgba(26,26,24,0.06),
+    /* ── Outer bezel: thin dark ring → cream gap → dark outer ring ── */
+    0 0 0 1px   rgba(26,26,24,0.20),
+    0 0 0 3.5px rgba(247,243,236,0.92),
+    0 0 0 5px   rgba(26,26,24,0.08),
+    /* ── Float shadow stack: near → far ── */
+    0  4px  8px   rgba(26,26,24,0.12),
+    0 12px 24px   rgba(26,26,24,0.14),
+    0 28px 50px   rgba(26,26,24,0.13),
+    0 52px 80px   rgba(26,26,24,0.09),
+    0 80px 120px  rgba(26,26,24,0.06),
+    0 110px 160px rgba(26,26,24,0.04),
+    /* ── Screen emission: faint green ambient from display ── */
+    0 0 70px rgba(30,102,66,0.06);
 }
+
+/* Lift + flatten tilt on hover */
+.hero-vid-frame:hover{
+  transform:perspective(960px) rotateY(-3deg) rotateX(1deg) translateY(-6px);
+  box-shadow:
+    inset 0  1px 0  rgba(255,255,255,0.22),
+    inset 0 -1px 0  rgba(26,26,24,0.14),
+    inset  1px 0 0  rgba(255,255,255,0.10),
+    inset -1px 0 0  rgba(26,26,24,0.06),
+    0 0 0 1px   rgba(26,26,24,0.20),
+    0 0 0 3.5px rgba(247,243,236,0.92),
+    0 0 0 5px   rgba(26,26,24,0.08),
+    0  6px 12px  rgba(26,26,24,0.14),
+    0 18px 34px  rgba(26,26,24,0.16),
+    0 40px 66px  rgba(26,26,24,0.14),
+    0 72px 106px rgba(26,26,24,0.10),
+    0 104px 148px rgba(26,26,24,0.07),
+    0 134px 186px rgba(26,26,24,0.04),
+    0 0 90px rgba(30,102,66,0.08);
+}
+
+/* Glass gloss overlay — specular highlight top-left + surface sheen */
+.hero-vid-frame::before{
+  content:'';
+  position:absolute;
+  inset:0;z-index:2;
+  pointer-events:none;
+  border-radius:15px;
+  background:
+    radial-gradient(ellipse 68% 38% at 20% 0%,rgba(255,255,255,0.15) 0%,transparent 58%),
+    linear-gradient(158deg,rgba(255,255,255,0.07) 0%,transparent 40%);
+}
+
+/* Video fills frame absolutely */
 .hero-vid{
   position:absolute;
   inset:0;
-  width:100%;
-  height:100%;
+  width:100%;height:100%;
   object-fit:cover;
   object-position:center center;
   display:block;
-  /* Fade bottom edge to hide Veo watermark */
-  -webkit-mask-image:linear-gradient(to bottom,black 0%,black 82%,transparent 100%);
-  mask-image:linear-gradient(to bottom,black 0%,black 82%,transparent 100%);
+  /* bottom fade hides Veo watermark */
+  -webkit-mask-image:linear-gradient(to bottom,black 0%,black 84%,transparent 100%);
+  mask-image:linear-gradient(to bottom,black 0%,black 84%,transparent 100%);
 }
+
 @media(max-width:980px){
   .hero-panel{display:none}
 }
@@ -548,172 +620,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <!-- ════════════════════ HERO ════════════════════ -->
 <section class="hero" id="home" data-screen-label="01 Hero">
 
-  <!-- ROOM ENVIRONMENT — precise one-point perspective SVG -->
-  <div class="hero-room" aria-hidden="true">
-    <svg class="hero-room-svg" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <!-- Depth fog toward vanishing point -->
-        <radialGradient id="hr-fog" cx="50%" cy="37.5%" r="55%">
-          <stop offset="0%"   stop-color="#f7f3ec" stop-opacity="0.66"/>
-          <stop offset="100%" stop-color="#f7f3ec" stop-opacity="0"/>
-        </radialGradient>
-        <!-- VP green glow -->
-        <radialGradient id="hr-vp-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(30,102,66,0.09)"/>
-          <stop offset="100%" stop-color="rgba(30,102,66,0)"/>
-        </radialGradient>
-        <!-- Video panel aura -->
-        <radialGradient id="hr-panel-aura" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(30,102,66,0.062)"/>
-          <stop offset="100%" stop-color="rgba(30,102,66,0)"/>
-        </radialGradient>
-        <!-- Wall shadow tones -->
-        <linearGradient id="hr-lwall-shd" x1="100%" y1="0%" x2="0%" y2="0%">
-          <stop offset="0%" stop-color="rgba(26,26,24,0)"/>
-          <stop offset="100%" stop-color="rgba(26,26,24,0.042)"/>
-        </linearGradient>
-        <linearGradient id="hr-rwall-shd" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="rgba(26,26,24,0)"/>
-          <stop offset="100%" stop-color="rgba(26,26,24,0.030)"/>
-        </linearGradient>
-        <linearGradient id="hr-ceil-shd" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stop-color="rgba(26,26,24,0)"/>
-          <stop offset="100%" stop-color="rgba(26,26,24,0.026)"/>
-        </linearGradient>
-        <linearGradient id="hr-floor-shd" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="rgba(26,26,24,0)"/>
-          <stop offset="100%" stop-color="rgba(26,26,24,0.050)"/>
-        </linearGradient>
-      </defs>
-
-      <!-- ── WALL SURFACE TONES ─────────────────────────── -->
-      <!-- VP = (720, 300). Left wall triangle, right wall triangle, ceiling, floor -->
-      <polygon points="0,0 720,300 0,800"       fill="url(#hr-lwall-shd)"/>
-      <polygon points="1440,0 720,300 1440,800"  fill="url(#hr-rwall-shd)"/>
-      <polygon points="0,0 1440,0 720,300"       fill="url(#hr-ceil-shd)"/>
-      <polygon points="0,800 1440,800 720,300"   fill="url(#hr-floor-shd)"/>
-
-      <!-- ── STRUCTURAL ROOM EDGES ──────────────────────── -->
-      <line x1="0"    y1="300" x2="1440"  y2="300" stroke="rgba(26,26,24,0.14)"  stroke-width="1"/>
-      <line x1="0"    y1="0"   x2="720"   y2="300" stroke="rgba(26,26,24,0.17)"  stroke-width="1.1"/>
-      <line x1="1440" y1="0"   x2="720"   y2="300" stroke="rgba(26,26,24,0.17)"  stroke-width="1.1"/>
-      <line x1="0"    y1="800" x2="720"   y2="300" stroke="rgba(26,26,24,0.17)"  stroke-width="1.1"/>
-      <line x1="1440" y1="800" x2="720"   y2="300" stroke="rgba(26,26,24,0.17)"  stroke-width="1.1"/>
-      <line x1="0"    y1="0"   x2="0"     y2="800" stroke="rgba(26,26,24,0.12)"  stroke-width="1"/>
-      <line x1="1440" y1="0"   x2="1440"  y2="800" stroke="rgba(26,26,24,0.12)"  stroke-width="1"/>
-      <line x1="0"    y1="0"   x2="1440"  y2="0"   stroke="rgba(26,26,24,0.08)"  stroke-width="1"/>
-
-      <!-- ── FLOOR — perspective lines to bottom edge ───── -->
-      <g stroke="rgba(26,26,24,0.062)" stroke-width="0.75" fill="none">
-        <line x1="720" y1="300" x2="0"    y2="800"/>
-        <line x1="720" y1="300" x2="144"  y2="800"/>
-        <line x1="720" y1="300" x2="288"  y2="800"/>
-        <line x1="720" y1="300" x2="432"  y2="800"/>
-        <line x1="720" y1="300" x2="576"  y2="800"/>
-        <line x1="720" y1="300" x2="720"  y2="800"/>
-        <line x1="720" y1="300" x2="864"  y2="800"/>
-        <line x1="720" y1="300" x2="1008" y2="800"/>
-        <line x1="720" y1="300" x2="1152" y2="800"/>
-        <line x1="720" y1="300" x2="1296" y2="800"/>
-        <line x1="720" y1="300" x2="1440" y2="800"/>
-      </g>
-
-      <!-- ── FLOOR — cross-lines at perspective depth intervals ── -->
-      <!-- x-span = 720 ± 720t;  y = 300 + 500t -->
-      <g stroke="rgba(26,26,24,0.050)" stroke-width="0.65" fill="none">
-        <line x1="648"  y1="350"  x2="792"  y2="350"/>
-        <line x1="576"  y1="400"  x2="864"  y2="400"/>
-        <line x1="468"  y1="475"  x2="972"  y2="475"/>
-        <line x1="360"  y1="550"  x2="1080" y2="550"/>
-        <line x1="252"  y1="625"  x2="1188" y2="625"/>
-        <line x1="144"  y1="700"  x2="1296" y2="700"/>
-        <line x1="58"   y1="760"  x2="1382" y2="760"/>
-      </g>
-
-      <!-- ── LEFT WALL — perspective lines ─────────────── -->
-      <g stroke="rgba(26,26,24,0.050)" stroke-width="0.65" fill="none">
-        <line x1="720" y1="300" x2="0" y2="80"/>
-        <line x1="720" y1="300" x2="0" y2="180"/>
-        <line x1="720" y1="300" x2="0" y2="420"/>
-        <line x1="720" y1="300" x2="0" y2="520"/>
-        <line x1="720" y1="300" x2="0" y2="640"/>
-        <line x1="720" y1="300" x2="0" y2="730"/>
-      </g>
-
-      <!-- ── LEFT WALL — vertical cross-lines ──────────── -->
-      <!-- x=720(1-t)  top_y=300(1-t)  bot_y=300+500t -->
-      <g stroke="rgba(26,26,24,0.040)" stroke-width="0.6" fill="none">
-        <line x1="590" y1="246" x2="590" y2="390"/>
-        <line x1="468" y1="195" x2="468" y2="475"/>
-        <line x1="324" y1="135" x2="324" y2="575"/>
-        <line x1="202" y1="84"  x2="202" y2="660"/>
-        <line x1="86"  y1="36"  x2="86"  y2="740"/>
-      </g>
-
-      <!-- ── RIGHT WALL — perspective lines ────────────── -->
-      <g stroke="rgba(26,26,24,0.050)" stroke-width="0.65" fill="none">
-        <line x1="720" y1="300" x2="1440" y2="80"/>
-        <line x1="720" y1="300" x2="1440" y2="180"/>
-        <line x1="720" y1="300" x2="1440" y2="420"/>
-        <line x1="720" y1="300" x2="1440" y2="520"/>
-        <line x1="720" y1="300" x2="1440" y2="640"/>
-        <line x1="720" y1="300" x2="1440" y2="730"/>
-      </g>
-
-      <!-- ── RIGHT WALL — vertical cross-lines ─────────── -->
-      <g stroke="rgba(26,26,24,0.040)" stroke-width="0.6" fill="none">
-        <line x1="850"  y1="246" x2="850"  y2="390"/>
-        <line x1="972"  y1="195" x2="972"  y2="475"/>
-        <line x1="1116" y1="135" x2="1116" y2="575"/>
-        <line x1="1238" y1="84"  x2="1238" y2="660"/>
-        <line x1="1354" y1="36"  x2="1354" y2="740"/>
-      </g>
-
-      <!-- ── CEILING — perspective lines ───────────────── -->
-      <g stroke="rgba(26,26,24,0.036)" stroke-width="0.6" fill="none">
-        <line x1="720" y1="300" x2="180"  y2="0"/>
-        <line x1="720" y1="300" x2="360"  y2="0"/>
-        <line x1="720" y1="300" x2="540"  y2="0"/>
-        <line x1="720" y1="300" x2="720"  y2="0"/>
-        <line x1="720" y1="300" x2="900"  y2="0"/>
-        <line x1="720" y1="300" x2="1080" y2="0"/>
-        <line x1="720" y1="300" x2="1260" y2="0"/>
-      </g>
-
-      <!-- ── CEILING — cross-lines ──────────────────────── -->
-      <g stroke="rgba(26,26,24,0.030)" stroke-width="0.6" fill="none">
-        <line x1="590" y1="246" x2="850"  y2="246"/>
-        <line x1="468" y1="195" x2="972"  y2="195"/>
-        <line x1="324" y1="135" x2="1116" y2="135"/>
-        <line x1="202" y1="84"  x2="1238" y2="84"/>
-        <line x1="86"  y1="36"  x2="1354" y2="36"/>
-      </g>
-
-      <!-- ── HORIZON TICK MARKS ──────────────────────────── -->
-      <g stroke="rgba(26,26,24,0.13)" stroke-width="0.75">
-        <line x1="180"  y1="297" x2="180"  y2="303"/>
-        <line x1="360"  y1="297" x2="360"  y2="303"/>
-        <line x1="540"  y1="297" x2="540"  y2="303"/>
-        <line x1="720"  y1="291" x2="720"  y2="309"/>
-        <line x1="900"  y1="297" x2="900"  y2="303"/>
-        <line x1="1080" y1="297" x2="1080" y2="303"/>
-        <line x1="1260" y1="297" x2="1260" y2="303"/>
-      </g>
-
-      <!-- ── VANISHING POINT ─────────────────────────────── -->
-      <ellipse cx="720" cy="300" rx="220" ry="140" fill="url(#hr-vp-glow)"/>
-      <line x1="712" y1="300" x2="728" y2="300" stroke="rgba(30,102,66,0.30)" stroke-width="1"/>
-      <line x1="720" y1="292" x2="720" y2="308" stroke="rgba(30,102,66,0.30)" stroke-width="1"/>
-      <circle cx="720" cy="300" r="2.5" fill="rgba(30,102,66,0.44)"/>
-
-      <!-- ── VIDEO PANEL AURA (right-side warm zone) ──────── -->
-      <ellipse cx="1105" cy="300" rx="265" ry="205" fill="url(#hr-panel-aura)"/>
-
-      <!-- ── DEPTH FOG OVERLAY ───────────────────────────── -->
-      <rect x="0" y="0" width="1440" height="800" fill="url(#hr-fog)" pointer-events="none"/>
-    </svg>
-  </div>
-
   <div class="hero-row">
     <!-- LEFT: headline + subhead -->
     <div>
@@ -725,7 +631,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         Two products. One closed loop. <strong>Trades</strong> captures the front. <strong>Ops</strong> runs the back. Built to your business. Operated by us.
       </p>
     </div>
-    <!-- RIGHT: video panel -->
+    <!-- RIGHT: floating video frame -->
     <div class="hero-panel hero-stage hd">
       <div class="hero-vid-frame">
         <video class="hero-vid" src="hero.mp4" autoplay loop muted playsinline></video>
