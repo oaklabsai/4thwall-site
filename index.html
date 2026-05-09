@@ -197,6 +197,9 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 /* traveling dots along path (CSS only — uses path offset) */
 .loop-pulse{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.16),0 0 18px rgba(30,102,66,.55);offset-rotate:0deg}
 
+/* ── Pendulum SVG ─────────────────────────────── */
+.pendulum-svg{overflow:visible;}
+
 
 /* hero footer meta */
 .hero-foot{margin-top:2.4rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.74rem;color:var(--muted);border-top:1px solid var(--line);padding-top:1.1rem;position:relative;z-index:3}
@@ -513,103 +516,169 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <!-- HERO CLOSED-LOOP DIAGRAM -->
     <div class="hero-stage hd">
       <div class="loop-stage" id="loopStage" aria-hidden="true">
-        <svg class="loop-svg engine-svg" viewBox="0 0 400 400" fill="none">
-          <!-- outer frame -->
-          <rect class="eng-frame" x="6" y="6" width="388" height="388" rx="14"/>
-
-          <!-- top header band -->
-          <text class="eng-meta" x="20" y="26">ENGINE · 4-STROKE</text>
-          <text class="eng-meta eng-rpm" x="380" y="26" text-anchor="end">RPM 2,847</text>
-          <line class="eng-rule" x1="6" y1="38" x2="394" y2="38"/>
-
-          <!-- cylinder labels -->
-          <text class="eng-cyllabel" x="68"  y="58" text-anchor="middle">VOICE</text>
-          <text class="eng-cyllabel" x="140" y="58" text-anchor="middle">BOOK</text>
-          <text class="eng-cyllabel" x="212" y="58" text-anchor="middle">OPS</text>
-          <text class="eng-cyllabel" x="284" y="58" text-anchor="middle">BRIEF</text>
-
-          <!-- engine block outline -->
-          <rect class="eng-block" x="26" y="68" width="294" height="222" rx="6"/>
-
-          <!-- cylinder bores (dashed) -->
-          <g class="eng-bores">
-            <rect class="eng-bore" x="38"  y="78" width="60" height="202" rx="3"/>
-            <rect class="eng-bore" x="110" y="78" width="60" height="202" rx="3"/>
-            <rect class="eng-bore" x="182" y="78" width="60" height="202" rx="3"/>
-            <rect class="eng-bore" x="254" y="78" width="60" height="202" rx="3"/>
-          </g>
-
-          <!-- combustion flashes (above each piston, fire in order 1→3→4→2) -->
-          <g class="eng-flashes">
-            <ellipse class="eng-flash eng-flash-1" cx="68"  cy="86" rx="22" ry="5"/>
-            <ellipse class="eng-flash eng-flash-3" cx="140" cy="86" rx="22" ry="5"/>
-            <ellipse class="eng-flash eng-flash-4" cx="212" cy="86" rx="22" ry="5"/>
-            <ellipse class="eng-flash eng-flash-2" cx="284" cy="86" rx="22" ry="5"/>
-          </g>
-
-          <!-- pistons (translate Y over the cycle) -->
-          <g class="eng-pistons">
-            <rect class="eng-piston eng-piston-1" x="42"  y="94" width="52" height="38" rx="2"/>
-            <rect class="eng-piston eng-piston-3" x="114" y="94" width="52" height="38" rx="2"/>
-            <rect class="eng-piston eng-piston-4" x="186" y="94" width="52" height="38" rx="2"/>
-            <rect class="eng-piston eng-piston-2" x="258" y="94" width="52" height="38" rx="2"/>
-          </g>
-
-          <!-- piston rings (decorative) -->
-          <g class="eng-rings">
-            <line class="eng-piston-1" x1="46"  y1="106" x2="90"  y2="106"/>
-            <line class="eng-piston-1" x1="46"  y1="116" x2="90"  y2="116"/>
-            <line class="eng-piston-3" x1="118" y1="106" x2="162" y2="106"/>
-            <line class="eng-piston-3" x1="118" y1="116" x2="162" y2="116"/>
-            <line class="eng-piston-4" x1="190" y1="106" x2="234" y2="106"/>
-            <line class="eng-piston-4" x1="190" y1="116" x2="234" y2="116"/>
-            <line class="eng-piston-2" x1="262" y1="106" x2="306" y2="106"/>
-            <line class="eng-piston-2" x1="262" y1="116" x2="306" y2="116"/>
-          </g>
-
-          <!-- crankshaft -->
-          <line class="eng-shaft" x1="20" y1="298" x2="326" y2="298"/>
-          <g class="eng-pins">
-            <circle cx="68"  cy="298" r="4"/>
-            <circle cx="140" cy="298" r="4"/>
-            <circle cx="212" cy="298" r="4"/>
-            <circle cx="284" cy="298" r="4"/>
-          </g>
-          <line class="eng-shaft-link" x1="320" y1="298" x2="350" y2="298"/>
-
-          <!-- flywheel (rotates) -->
-          <circle class="eng-fw-outer" cx="368" cy="298" r="28"/>
-          <circle class="eng-fw-inner" cx="368" cy="298" r="20"/>
-          <circle class="eng-fw-hub" cx="368" cy="298" r="3"/>
-          <g class="eng-fw-spokes">
-            <line x1="368" y1="272" x2="368" y2="324"/>
-            <line x1="342" y1="298" x2="394" y2="298"/>
-            <line x1="349" y1="279" x2="387" y2="317"/>
-            <line x1="349" y1="317" x2="387" y2="279"/>
-            <animateTransform attributeName="transform" type="rotate" from="0 368 298" to="360 368 298" dur="1.6s" repeatCount="indefinite"/>
-          </g>
-
-          <!-- bottom rule -->
-          <line class="eng-rule" x1="6" y1="318" x2="394" y2="318"/>
-
-          <!-- output stream label + ticker text -->
-          <text class="eng-meta" x="20" y="338">OUT →</text>
-          <g clip-path="url(#engStreamClip)">
-            <text class="eng-stream" x="56" y="338">booked · brief sent · routed · screened · qualified · invoiced · captured · replied · </text>
-          </g>
+        <svg class="loop-svg pendulum-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
-            <clipPath id="engStreamClip">
-              <rect x="56" y="324" width="338" height="22"/>
-            </clipPath>
+
+            <!-- Marble sphere gradient: forest green, sphere shading -->
+            <radialGradient id="pb-grad" cx="36%" cy="28%" r="72%" fx="36%" fy="28%">
+              <stop offset="0%"   stop-color="#96ddb8"/>
+              <stop offset="16%"  stop-color="#3fa870"/>
+              <stop offset="48%"  stop-color="#1e6642"/>
+              <stop offset="80%"  stop-color="#0e3b23"/>
+              <stop offset="100%" stop-color="#061a0f"/>
+            </radialGradient>
+
+            <!-- Specular highlight (soft white overlay) -->
+            <radialGradient id="pb-spec" cx="38%" cy="30%" r="44%">
+              <stop offset="0%"   stop-color="rgba(255,255,255,0.50)"/>
+              <stop offset="60%"  stop-color="rgba(255,255,255,0.06)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+
+            <!-- Secondary internal reflection (bottom edge) -->
+            <radialGradient id="pb-reflex" cx="52%" cy="82%" r="36%">
+              <stop offset="0%"   stop-color="rgba(255,255,255,0.14)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+
+            <!-- Bob ambient glow -->
+            <filter id="pb-glow" x="-70%" y="-70%" width="240%" height="240%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="11" result="b1"/>
+              <feGaussianBlur in="SourceGraphic" stdDeviation="4"  result="b2"/>
+              <feMerge>
+                <feMergeNode in="b1"/>
+                <feMergeNode in="b2"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+
+            <!-- Pivot mount glow -->
+            <filter id="pb-pivot-glow" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="7"/>
+            </filter>
+
+            <!-- Subtle drop shadow for rod -->
+            <filter id="pb-rod-shadow" x="-20%" y="-5%" width="140%" height="110%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="blur"/>
+              <feOffset dx="2" dy="0" result="off"/>
+              <feComposite in="SourceGraphic" in2="off" operator="over"/>
+            </filter>
+
           </defs>
 
-          <!-- bottom status row -->
-          <line class="eng-rule" x1="6" y1="356" x2="394" y2="356"/>
-          <circle class="eng-running-dot" cx="20" cy="376" r="3.5"/>
-          <text class="eng-meta" x="32" y="380">RUNNING</text>
-          <text class="eng-meta" x="160" y="380">CYCLES 2.4M</text>
-          <text class="eng-meta" x="290" y="380">UPTIME 99.97%</text>
-          <text class="eng-meta" x="380" y="380" text-anchor="end">v1.0</text>
+          <!-- ═══ FRAME ════════════════════════════════ -->
+          <rect x="5" y="5" width="390" height="390" rx="20"
+                fill="none" stroke="rgba(26,26,24,0.09)" stroke-width="1"/>
+          <rect x="12" y="12" width="376" height="376" rx="16"
+                fill="none" stroke="rgba(26,26,24,0.04)" stroke-width="0.75"
+                stroke-dasharray="3 6"/>
+
+          <!-- ═══ AMBIENT RINGS around pivot ══════════ -->
+          <circle cx="200" cy="72" r="72"
+                  fill="none" stroke="rgba(30,102,66,0.06)" stroke-width="1"/>
+          <circle cx="200" cy="72" r="130"
+                  fill="none" stroke="rgba(30,102,66,0.04)" stroke-width="0.75"/>
+          <circle cx="200" cy="72" r="196"
+                  fill="none" stroke="rgba(30,102,66,0.025)" stroke-width="0.75"/>
+
+          <!-- ═══ SWING ARC (static, bob travel path) ═ -->
+          <!-- Bob center traces: M 79 232 A 200 200 0 0 1 321 232 -->
+          <path d="M 79 232 A 200 200 0 0 1 321 232"
+                fill="none"
+                stroke="rgba(26,26,24,0.10)"
+                stroke-width="1"
+                stroke-dasharray="4 7"
+                stroke-linecap="round"/>
+
+          <!-- Arc endpoint dots -->
+          <circle cx="79"  cy="232" r="2.5" fill="rgba(26,26,24,0.12)"/>
+          <circle cx="321" cy="232" r="2.5" fill="rgba(26,26,24,0.12)"/>
+          <!-- Arc center dot (nadir) -->
+          <circle cx="200" cy="272" r="2.5" fill="rgba(30,102,66,0.25)"/>
+
+          <!-- Fine angle ticks on arc (at 0° ±20° ±37°) -->
+          <!-- Center tick (horizontal) -->
+          <line x1="194" y1="272" x2="206" y2="272"
+                stroke="rgba(30,102,66,0.3)" stroke-width="1" stroke-linecap="round"/>
+          <!-- ±20° ticks -->
+          <line x1="260" y1="260" x2="268" y2="256"
+                stroke="rgba(26,26,24,0.1)" stroke-width="0.85" stroke-linecap="round"/>
+          <line x1="132" y1="256" x2="140" y2="260"
+                stroke="rgba(26,26,24,0.1)" stroke-width="0.85" stroke-linecap="round"/>
+          <!-- ±37° (major) ticks -->
+          <line x1="73"  y1="229" x2="85"  y2="235"
+                stroke="rgba(26,26,24,0.13)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="315" y1="229" x2="327" y2="235"
+                stroke="rgba(26,26,24,0.13)" stroke-width="1" stroke-linecap="round"/>
+
+          <!-- ═══ GHOST BOBS at extreme positions ══════ -->
+          <circle cx="79" cy="232" r="22"
+                  fill="rgba(30,102,66,0.06)" stroke="rgba(30,102,66,0.08)" stroke-width="0.75"/>
+          <circle cx="321" cy="232" r="22"
+                  fill="rgba(30,102,66,0.06)" stroke="rgba(30,102,66,0.08)" stroke-width="0.75"/>
+
+          <!-- ═══ PIVOT MOUNT ════════════════════════════ -->
+          <!-- Halo -->
+          <circle cx="200" cy="72" r="8" fill="rgba(30,102,66,0.18)" filter="url(#pb-pivot-glow)"/>
+          <!-- Fine crosshair -->
+          <line x1="200" y1="56" x2="200" y2="88"
+                stroke="rgba(26,26,24,0.14)" stroke-width="0.75"/>
+          <line x1="184" y1="72" x2="216" y2="72"
+                stroke="rgba(26,26,24,0.14)" stroke-width="0.75"/>
+          <!-- Pivot ring outer -->
+          <circle cx="200" cy="72" r="6"
+                  fill="none" stroke="rgba(26,26,24,0.18)" stroke-width="1"/>
+          <!-- Pivot pin -->
+          <circle cx="200" cy="72" r="2.5" fill="rgba(26,26,24,0.55)"/>
+          <circle cx="200" cy="72" r="1.2" fill="rgba(30,102,66,0.9)"/>
+
+          <!-- ═══ ANIMATED PENDULUM ═══════════════════════ -->
+          <g id="p-arm">
+
+            <!-- Rod (precision suspension thread) -->
+            <line x1="200" y1="72" x2="200" y2="252"
+                  stroke="rgba(26,26,24,0.22)" stroke-width="0.85" stroke-linecap="round"
+                  filter="url(#pb-rod-shadow)"/>
+
+            <!-- Collar at rod end (subtle) -->
+            <circle cx="200" cy="252" r="3"
+                    fill="none" stroke="rgba(26,26,24,0.15)" stroke-width="1"/>
+
+            <!-- Bob ambient glow -->
+            <circle cx="200" cy="272" r="30"
+                    fill="rgba(30,102,66,0.13)" filter="url(#pb-glow)"/>
+
+            <!-- Bob: main marble sphere -->
+            <circle cx="200" cy="272" r="23" fill="url(#pb-grad)"/>
+
+            <!-- Bob: specular highlight overlay -->
+            <circle cx="200" cy="272" r="23" fill="url(#pb-spec)"/>
+
+            <!-- Bob: internal reflection (bottom) -->
+            <circle cx="200" cy="272" r="23" fill="url(#pb-reflex)"/>
+
+            <!-- Bob: equatorial rim highlight (thin white arc) -->
+            <path d="M 179 266 A 23 23 0 0 1 221 266"
+                  fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"
+                  stroke-linecap="round"/>
+
+            <!-- Bob: outer edge (very subtle) -->
+            <circle cx="200" cy="272" r="23"
+                    fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+
+            <!-- Pendulum swing animation (simple harmonic: slow at extremes, fast center) -->
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              values="-37 200 72; 37 200 72; -37 200 72"
+              keyTimes="0; 0.5; 1"
+              keySplines="0.45 0 0.55 1; 0.45 0 0.55 1"
+              calcMode="spline"
+              dur="3s"
+              repeatCount="indefinite"/>
+
+          </g><!-- /p-arm -->
+
         </svg>
       </div>
 
