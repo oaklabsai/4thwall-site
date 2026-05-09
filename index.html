@@ -833,14 +833,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <section class="lp-section" id="the-loop">
   <div class="wrap">
 
-    <div class="lp-eyebrow">
-      <span class="lp-tag-num">03</span>
-      <span class="lp-tag-sep">·</span>
-      <span class="lp-tag-label">The Engine</span>
-    </div>
-    <h2 class="lp-heading">One closed loop.<br><em>Always running.</em></h2>
-    <p class="lp-sub">One captures. One operates. Neither stops.</p>
-
     <div class="lp-trio">
 
       <!-- LEFT NODE -->
@@ -1150,7 +1142,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 ═══════════════════════════════════════════════════════ */
 .lp-section{
   background:var(--cream);
-  padding:5.5rem 0 5rem;
+  padding:4rem 0 4rem;
   border-top:1px solid var(--line);
   position:relative;overflow:hidden;
 }
@@ -1211,45 +1203,59 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   position:relative;z-index:1;
 }
 
-/* Trio: bare text left + pendulum + bare text right */
+/* Trio: graphic nodes left + pendulum + right */
 .lp-trio{
   display:grid;
-  grid-template-columns:1fr 1.4fr 1fr;
-  gap:2rem;
+  grid-template-columns:1fr 1.35fr 1fr;
+  gap:2.5rem;
   align-items:center;
   position:relative;z-index:1;
 }
 .lp-node{
   display:flex;
   flex-direction:column;
-  gap:.55rem;
+  gap:.7rem;
 }
-.lp-node-l{text-align:right;}
-.lp-node-r{text-align:left;}
+.lp-node-l{
+  text-align:right;
+  transform:perspective(700px) rotateY(10deg);
+  transform-origin:right center;
+}
+.lp-node-r{
+  text-align:left;
+  transform:perspective(700px) rotateY(-10deg);
+  transform-origin:left center;
+}
 .lp-node-tag{
   font-family:var(--mono);
-  font-size:.62rem;
-  letter-spacing:.2em;
+  font-size:.64rem;
+  letter-spacing:.22em;
   text-transform:uppercase;
   color:var(--orange);
-  opacity:.8;
 }
 .lp-node-text{
   font-family:var(--display);
-  font-size:clamp(1rem,1.6vw,1.2rem);
-  font-weight:400;
+  font-size:clamp(1.45rem,2.6vw,2.2rem);
+  font-weight:600;
   font-style:italic;
-  line-height:1.45;
+  line-height:1.15;
   color:var(--ink);
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.7),
+    2px 4px 0 rgba(26,26,24,.06),
+    4px 8px 0 rgba(26,26,24,.04),
+    0 16px 40px rgba(26,26,24,.13),
+    0 32px 64px rgba(26,26,24,.07);
 }
 @media(max-width:860px){
-  .lp-trio{grid-template-columns:1fr 1.2fr 1fr;gap:1rem;}
-  .lp-node-text{font-size:.82rem;}
+  .lp-trio{gap:1.2rem;}
+  .lp-node-l,.lp-node-r{transform:none;}
+  .lp-node-text{font-size:clamp(1rem,3.5vw,1.35rem);}
 }
 @media(max-width:520px){
-  .lp-trio{grid-template-columns:1fr 1fr 1fr;gap:.5rem;}
-  .lp-node-text{font-size:.72rem;line-height:1.35;}
-  .lp-node-tag{font-size:.52rem;}
+  .lp-trio{gap:.65rem;}
+  .lp-node-text{font-size:clamp(.82rem,2.8vw,1rem);line-height:1.25;}
+  .lp-node-tag{font-size:.5rem;}
 }
 @media(max-width:380px){
   .lp-node-text{display:none;}
