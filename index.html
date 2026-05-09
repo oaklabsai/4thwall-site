@@ -1753,14 +1753,80 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
   // 3) After intro completes, freeze final state so tweak-driven re-renders don't re-animate
   setTimeout(()=>{ document.body.classList.add('intro-done'); }, 5200);
 
-  // 4) Slow hero video to 50% speed
+  // 4) Hero video — slow motion + canvas temporal blending for smooth playback
+  // Problem: 0.5× playback on a 24fps source = ~12fps effective, which looks choppy.
+  // Solution: rAF loop cross-fades each new slow-mo frame with the previous blended
+  //   output (55% current / 45% previous). This creates a ~80ms transition window
+  //   between frames — effectively motion-blurring the gaps between slow-mo frames.
   (function(){
-    var v = document.querySelector('.hero-vid');
-    if(!v) return;
-    var set = function(){ v.playbackRate = 0.5; };
-    set();
-    v.addEventListener('loadedmetadata', set);
-    v.addEventListener('play', set);
+    var video = document.querySelector('.hero-vid');
+    if(!video) return;
+
+    // Keep playback slow
+    var setRate = function(){ video.playbackRate = 0.5; };
+    setRate();
+    video.addEventListener('loadedmetadata', setRate);
+    video.addEventListener('play', setRate);
+
+    try {
+      var out  = document.createElement('canvas');
+      var oCtx = out.getContext('2d');
+      var prev = document.createElement('canvas');
+      var pCtx = prev.getContext('2d');
+      if(!oCtx || !pCtx) return;
+
+      // Same bottom-fade mask as the .hero-vid CSS
+      var MASK = 'linear-gradient(to bottom,'
+        + 'black 0%,black 52%,'
+        + 'rgba(0,0,0,.92) 65%,'
+        + 'rgba(0,0,0,.68) 76%,'
+        + 'rgba(0,0,0,.32) 88%,'
+        + 'transparent 100%)';
+
+      out.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none';
+      out.style.webkitMaskImage = MASK;
+      out.style.maskImage       = MASK;
+
+      // Insert canvas in front of video; keep video alive (hidden) so it keeps decoding
+      video.parentNode.insertBefore(out, video);
+      video.style.opacity = '0';
+
+      var ready   = false;
+      var hasPrev = false;
+
+      (function tick(){
+        requestAnimationFrame(tick);
+        if(video.readyState < 2) return;
+
+        var vw = video.videoWidth, vh = video.videoHeight;
+        if(!vw || !vh) return;
+
+        if(!ready){
+          out.width = prev.width = vw;
+          out.height = prev.height = vh;
+          ready = true;
+        }
+
+        if(hasPrev){
+          // 1. Lay down previous blended frame
+          oCtx.globalAlpha = 1;
+          oCtx.drawImage(prev, 0, 0);
+          // 2. Cross-fade current frame on top — 55% weight on new, 45% on old
+          //    Each tick without a new video frame converges toward current frame.
+          //    When a new frame arrives the transition unfolds over ~5 rAF ticks (~80ms).
+          oCtx.globalAlpha = 0.55;
+          oCtx.drawImage(video, 0, 0, vw, vh);
+          oCtx.globalAlpha = 1;
+        } else {
+          oCtx.drawImage(video, 0, 0, vw, vh);
+          hasPrev = true;
+        }
+
+        // Store blended output for next tick
+        pCtx.drawImage(out, 0, 0);
+      })();
+
+    } catch(e){}
   })();
 })();
 </script>
