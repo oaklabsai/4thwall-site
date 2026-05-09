@@ -304,7 +304,30 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 }
 
 @media(max-width:980px){
-  .hero-panel{display:none}
+  /* Show video on mobile — flat frame, no 3D rotation */
+  .hero-panel{
+    display:block;
+    width:100%;
+    perspective:none;
+  }
+  .hero-vid-frame{
+    transform:none;
+    /* Flat cast shadows for mobile */
+    box-shadow:
+      inset 0  1px 0 rgba(255,255,255,0.16),
+      inset 0 -1px 0 rgba(0,0,0,0.35),
+      inset  1px 0 0 rgba(255,255,255,0.08),
+      inset -1px 0 0 rgba(0,0,0,0.22),
+      0 0 0  1px  rgba(210,208,200,0.20),
+      0 0 0  7px  rgba(13,13,11,0.98),
+      0 0 0  8px  rgba(72,70,64,0.44),
+      0 0 0  9px  rgba(11,11,9,0.97),
+      0 0 0  9.5px rgba(255,255,255,0.04),
+      0 0 0 11px  rgba(8,8,6,0.11),
+      0 8px 28px  rgba(8,8,6,0.28),
+      0 20px 56px rgba(8,8,6,0.18),
+      0 0 60px rgba(30,102,66,0.06);
+  }
 }
 
 /* ── Bottom pendulum sizing ──────────────────── */
@@ -628,7 +651,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <!-- RIGHT: video in angled black frame -->
     <div class="hero-panel hero-stage hd">
       <div class="hero-vid-frame">
-        <video class="hero-vid" src="hero.mp4" autoplay loop muted playsinline></video>
+        <video class="hero-vid" src="hero.mp4" autoplay loop muted playsinline preload="auto"></video>
       </div>
     </div>
   </div>
@@ -1286,12 +1309,15 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 /* ── Mobile ─────────────────────────── */
 @media(max-width:860px){
+  /* Switch to flex so `order` is bulletproof — grid order can be unpredictable */
   .lp-grid{
-    grid-template-columns:1fr;
+    display:flex;
+    flex-direction:column;
     gap:.9rem;
   }
-  .lp-center{order:2;}
+  /* Trades top → Pendulum middle → Ops bottom */
   .lp-card-ink{order:1;}
+  .lp-center{order:2;}
   .lp-card-cream{order:3;}
   .lp-svg{max-width:220px;}
   .lp-flow{display:none;}
@@ -1753,16 +1779,37 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
   // 3) After intro completes, freeze final state so tweak-driven re-renders don't re-animate
   setTimeout(()=>{ document.body.classList.add('intro-done'); }, 5200);
 
-  // 4) Hero video — slow motion + canvas temporal blending for smooth playback
-  // Problem: 0.5× playback on a 24fps source = ~12fps effective, which looks choppy.
-  // Solution: rAF loop cross-fades each new slow-mo frame with the previous blended
-  //   output (55% current / 45% previous). This creates a ~80ms transition window
-  //   between frames — effectively motion-blurring the gaps between slow-mo frames.
+  // 4) Hero video — mobile-aware playback + performance optimisation
   (function(){
     var video = document.querySelector('.hero-vid');
     if(!video) return;
 
-    // Keep playback slow
+    // Detect mobile/low-power: small screen OR mobile UA
+    var isMobile = window.innerWidth <= 980
+      || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    // Pause when scrolled off-screen; resume when visible (saves battery + CPU)
+    if('IntersectionObserver' in window){
+      var visIO = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){ video.play().catch(function(){}); }
+          else { video.pause(); }
+        });
+      }, {threshold:0.1});
+      visIO.observe(video);
+    }
+
+    if(isMobile){
+      // Mobile: full-speed playback — slow-mo without frame blending is choppy
+      // and canvas rAF is too heavy for mobile CPUs.
+      video.playbackRate = 1.0;
+      return;
+    }
+
+    // ── Desktop: 0.5× slow-mo + canvas temporal frame blending ────────────
+    // Problem: 0.5× on a 24fps source = ~12fps effective → choppy.
+    // Fix: rAF cross-fades current frame with previous blended output (55/45)
+    //   creating an ~80ms dissolve window between slow-mo frames.
     var setRate = function(){ video.playbackRate = 0.5; };
     setRate();
     video.addEventListener('loadedmetadata', setRate);
@@ -1775,7 +1822,6 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       var pCtx = prev.getContext('2d');
       if(!oCtx || !pCtx) return;
 
-      // Same bottom-fade mask as the .hero-vid CSS
       var MASK = 'linear-gradient(to bottom,'
         + 'black 0%,black 52%,'
         + 'rgba(0,0,0,.92) 65%,'
@@ -1787,7 +1833,6 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       out.style.webkitMaskImage = MASK;
       out.style.maskImage       = MASK;
 
-      // Insert canvas in front of video; keep video alive (hidden) so it keeps decoding
       video.parentNode.insertBefore(out, video);
       video.style.opacity = '0';
 
@@ -1796,7 +1841,8 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
 
       (function tick(){
         requestAnimationFrame(tick);
-        if(video.readyState < 2) return;
+        // Skip if paused (IntersectionObserver paused it) or not ready
+        if(video.paused || video.readyState < 2) return;
 
         var vw = video.videoWidth, vh = video.videoHeight;
         if(!vw || !vh) return;
@@ -1808,12 +1854,8 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
         }
 
         if(hasPrev){
-          // 1. Lay down previous blended frame
           oCtx.globalAlpha = 1;
           oCtx.drawImage(prev, 0, 0);
-          // 2. Cross-fade current frame on top — 55% weight on new, 45% on old
-          //    Each tick without a new video frame converges toward current frame.
-          //    When a new frame arrives the transition unfolds over ~5 rAF ticks (~80ms).
           oCtx.globalAlpha = 0.55;
           oCtx.drawImage(video, 0, 0, vw, vh);
           oCtx.globalAlpha = 1;
@@ -1822,7 +1864,6 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
           hasPrev = true;
         }
 
-        // Store blended output for next tick
         pCtx.drawImage(out, 0, 0);
       })();
 
