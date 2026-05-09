@@ -698,7 +698,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <!-- RIGHT: video in angled black frame -->
     <div class="hero-panel hero-stage hd">
       <div class="hero-vid-frame">
-        <video class="hero-vid" src="hero.mp4" autoplay loop muted playsinline preload="auto"></video>
+        <video class="hero-vid" src="hero.mp4" autoplay loop muted playsinline webkit-playsinline preload="auto"></video>
       </div>
     </div>
   </div>
@@ -1847,47 +1847,61 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
   // 3) After intro completes, freeze final state so tweak-driven re-renders don't re-animate
   setTimeout(()=>{ document.body.classList.add('intro-done'); }, 5200);
 
-  // 4) Hero video — autoplay + mobile-aware performance optimisation
+  // 4) Hero video — maximum-compatibility autoplay + mobile performance
   (function(){
     var video = document.querySelector('.hero-vid');
     if(!video) return;
 
-    // Detect mobile/low-power: small screen OR mobile UA
+    // ── Step 1: force muted state programmatically ──────────────────────
+    // iOS Safari requires BOTH the HTML attribute AND the JS property.
+    // Without this, play() is silently rejected on some devices.
+    video.muted        = true;
+    video.defaultMuted = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
     var isMobile = window.innerWidth <= 980
       || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    // Aggressive autoplay: trigger on multiple readiness events so it fires
-    // reliably across browsers even when the `autoplay` attribute is blocked.
-    var everPlayed = false;
+    // ── Step 2: tryPlay — re-asserts muted before every attempt ─────────
     function tryPlay(){
+      video.muted = true; // re-assert — some browsers reset it
       var p = video.play();
       if(p && p.catch) p.catch(function(){});
     }
-    video.addEventListener('canplay',    tryPlay, {once:true});
-    video.addEventListener('loadeddata', tryPlay, {once:true});
-    video.addEventListener('playing', function(){ everPlayed = true; }, {once:true});
 
-    // Resume when tab becomes visible again
+    // ── Step 3: fire immediately, then at every readiness checkpoint ─────
+    // No {once:true} — keep listeners alive so any future stall re-triggers play.
+    tryPlay();
+    video.addEventListener('canplay',        tryPlay);
+    video.addEventListener('canplaythrough', tryPlay);
+    video.addEventListener('loadeddata',     tryPlay);
+
+    // ── Step 4: resume if user tabs away and back ────────────────────────
     document.addEventListener('visibilitychange', function(){
-      if(!document.hidden && everPlayed) tryPlay();
+      if(!document.hidden) tryPlay();
     });
 
-    // Pause when scrolled off-screen; resume when back (only after first play)
+    // ── Step 5: mobile exits here — plain full-speed playback ───────────
+    // No canvas blending (too heavy), no IntersectionObserver pause
+    // (risk of blocking autoplay). Video plays freely.
+    if(isMobile){
+      video.playbackRate = 1.0;
+      return;
+    }
+
+    // ── Desktop only: IntersectionObserver pause when off-screen ────────
+    var hasPlayed = false;
+    video.addEventListener('playing', function(){ hasPlayed = true; });
     if('IntersectionObserver' in window){
       var visIO = new IntersectionObserver(function(entries){
         entries.forEach(function(e){
           if(e.isIntersecting){ tryPlay(); }
-          else if(everPlayed){ video.pause(); }
+          else if(hasPlayed){ video.pause(); }
         });
-      }, {threshold:0.05});
+      }, {threshold:0.1});
       visIO.observe(video);
-    }
-
-    if(isMobile){
-      // Mobile: full-speed playback — slow-mo without canvas blending is choppy
-      // and canvas rAF is too heavy for mobile CPUs.
-      video.playbackRate = 1.0;
-      return;
     }
 
     // ── Desktop: 0.5× slow-mo + canvas temporal frame blending ────────────
