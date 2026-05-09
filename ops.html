@@ -481,6 +481,26 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 /* tweaks panel z */
 #tweaks-root{z-index:1000;position:relative}
+
+/* ── MANIFEST ─── */
+.mfst{border-top:1px solid var(--line)}
+.mfst-row{display:grid;grid-template-columns:4.5rem 1fr 1fr;gap:2.5rem;padding:2rem 0;border-bottom:1px solid var(--line);align-items:start;transition:background .25s}
+.mfst-row:hover{background:linear-gradient(90deg,var(--orange-soft),transparent 70%)}
+.mfst-num{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--orange);padding-top:.35rem}
+.mfst-name{font-family:var(--display);font-size:clamp(1.1rem,1.7vw,1.35rem);font-weight:500;letter-spacing:-.02em;margin-bottom:.5rem;line-height:1.15}
+.mfst-desc{font-size:.87rem;line-height:1.65;color:var(--muted)}
+.mfst-cut{font-size:.78rem;line-height:1.55;color:var(--dim);font-style:italic;padding-left:1.1rem;border-left:1.5px solid var(--line);padding-top:.2rem}
+@media(max-width:760px){
+  .mfst-row{grid-template-columns:3rem 1fr;gap:1.2rem}
+  .mfst-cut{grid-column:1/-1;padding-left:3rem;border-left:none;border-top:1px solid var(--line-2);padding-top:.6rem;margin-top:.2rem}
+}
+
+/* ── RECOGNITION ─── */
+.recog{border-top:1px solid var(--line)}
+.recog-row{display:grid;grid-template-columns:2rem 1fr;gap:1.5rem;padding:1.4rem 0;border-bottom:1px solid var(--line);align-items:baseline}
+.recog-marker{font-family:var(--display);color:var(--orange);font-size:1.1rem;line-height:1}
+.recog-text{font-size:.92rem;line-height:1.7;color:var(--ink)}
+.recog-text strong{font-weight:600;display:block;margin-bottom:.18rem}
 </style>
 </head>
 <body>
@@ -654,18 +674,61 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════ SECTION 01 — WHAT IT DOES ════════════════════════════════════════════ -->
-<section class="s wrap" id="what-it-does" data-screen-label="01 What it does">
+<!-- ════════════════════════════════════════════ SECTION 01 — FIVE SYSTEMS ════════════════════════════════════════════ -->
+<section class="s wrap" id="what-it-does">
   <div class="s-meta">
     <div>
       <div class="s-label r">What it does · 01</div>
       <h2 class="s-h r in">Five systems.<br><span class="ital">Everything automated.</span></h2>
       <p class="s-note r in d2">Not a fixed package. A capability set scoped to what your operation actually needs — then built, deployed, and managed permanently.</p>
     </div>
-    <div class="s-count r in d3">(05 systems)</div>
   </div>
 
-  <div class="bento">
+  <div class="mfst">
+    <div class="mfst-row r">
+      <div class="mfst-num">001</div>
+      <div class="mfst-body">
+        <div class="mfst-name">Personal AI OS</div>
+        <p class="mfst-desc">Installed on your machine. Connected to every tool in your stack. Pre-loaded with your clients, history, and standards. Every session starts with full context — no re-briefing, no generic answers.</p>
+      </div>
+      <div class="mfst-cut">No more explaining your business to AI every time you open it.</div>
+    </div>
+    <div class="mfst-row r d1">
+      <div class="mfst-num">002</div>
+      <div class="mfst-body">
+        <div class="mfst-name">Client Management</div>
+        <p class="mfst-desc">Daily personalized check-ins to every account. Pre-call briefs 30 minutes before each meeting. Weekly health scores across your full book — Red, Yellow, Green before problems become cancellations.</p>
+      </div>
+      <div class="mfst-cut">No more missed relationships or finding out about churn after it's already decided.</div>
+    </div>
+    <div class="mfst-row r d2">
+      <div class="mfst-num">003</div>
+      <div class="mfst-body">
+        <div class="mfst-name">Hiring Pipeline</div>
+        <p class="mfst-desc">Screening, scheduling, and follow-up handled automatically. The pipeline runs end-to-end. You engage once — when the candidate is qualified and ready to move forward.</p>
+      </div>
+      <div class="mfst-cut">No more manually chasing applicants or coordinating interviews.</div>
+    </div>
+    <div class="mfst-row r d3">
+      <div class="mfst-num">004</div>
+      <div class="mfst-body">
+        <div class="mfst-name">Growth & Outreach</div>
+        <p class="mfst-desc">Personalized outreach to your ideal clients. Intelligent follow-up. Inbound qualified and booked. After a discovery call, the proposal is drafted and ready to send.</p>
+      </div>
+      <div class="mfst-cut">No more cold pipelines, slow inbound, or manually writing proposals.</div>
+    </div>
+    <div class="mfst-row r d4">
+      <div class="mfst-num">005</div>
+      <div class="mfst-body">
+        <div class="mfst-name">Ops & Revenue</div>
+        <p class="mfst-desc">Daily briefings before you start. Failed payments caught same-day. Deadlines tracked per client. Monthly P&L auto-generated. The operational overhead of a complex business — off your plate.</p>
+      </div>
+      <div class="mfst-cut">No more piecing together numbers or starting the day figuring out what's on fire.</div>
+    </div>
+  </div>
+</section>
+
+<!-- REMOVED: bento grid placeholder --><div style="display:none"><div class="bento">
     <div class="bento-card bento-a r">
       <div>
         <div class="b-num">001 · Personal AI OS</div>
@@ -711,9 +774,62 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <div class="b-illo" data-illo="calendar"></div>
     </div>
   </div>
+</div><!-- /hidden bento -->
+
+<!-- ════════════════════════════════════════════ SECTION 02 — BUILT FOR YOU ════════════════════════════════════════════ -->
+<section class="s wrap" id="built-for-you">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">Built for you · 02</div>
+      <h2 class="s-h r in">You'll recognize<br><span class="ital">yourself in this.</span></h2>
+    </div>
+  </div>
+
+  <div class="recog r">
+    <div class="recog-row">
+      <span class="recog-marker">—</span>
+      <p class="recog-text"><strong>You are the single point of failure.</strong> Every client relationship, every hire, every revenue question, every operational decision runs through you. Growth means more of your time — not more margin.</p>
+    </div>
+    <div class="recog-row">
+      <span class="recog-marker">—</span>
+      <p class="recog-text"><strong>The complexity scaled. The infrastructure didn't.</strong> You have ten clients where you had three. The coordination overhead is real and it scales with every relationship you add.</p>
+    </div>
+    <div class="recog-row">
+      <span class="recog-marker">—</span>
+      <p class="recog-text"><strong>The work is excellent. The operation is the problem.</strong> Revenue is real. Clients are happy. But running the business still requires you at the center of everything.</p>
+    </div>
+  </div>
+
+  <div class="how-list" style="margin-top:3.5rem">
+    <div class="how-row r">
+      <div class="how-n">i.</div>
+      <div class="how-h">We read <span class="ital">what you share.</span></div>
+      <div class="how-d">No intake call. Send us the proposal, the website, the brief — we extract everything we need. The system is built on your context, not a template.</div>
+      <div class="how-illo" data-illo="step1"></div>
+    </div>
+    <div class="how-row r d1">
+      <div class="how-n">ii.</div>
+      <div class="how-h">Built to <span class="ital">your business.</span></div>
+      <div class="how-d">Every system configured around how you actually operate. Your tools, your language, your clients. Nothing generic. Nothing to adapt.</div>
+      <div class="how-illo" data-illo="step2"></div>
+    </div>
+    <div class="how-row r d2">
+      <div class="how-n">iii.</div>
+      <div class="how-h">Deployed <span class="ital">and connected.</span></div>
+      <div class="how-d">Tools integrated, systems live, team handed off in one session. You walk away with everything running.</div>
+      <div class="how-illo" data-illo="step3"></div>
+    </div>
+    <div class="how-row r d3">
+      <div class="how-n">iv.</div>
+      <div class="how-h">Managed <span class="ital">permanently.</span></div>
+      <div class="how-d">We monitor, tune, and expand as the business grows. One contact. Everything handled. The system never stops improving.</div>
+      <div class="how-illo" data-illo="step4"></div>
+    </div>
+  </div>
 </section>
 
-<!-- ════════════════════════════════════════════ SECTION 02 — ELIMINATES ════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════ HIDDEN OLD SECTIONS ════════════════════════════════════════════ -->
+<div style="display:none">
 <section class="s wrap" data-screen-label="02 Eliminates">
   <div class="s-meta">
     <div>
@@ -917,12 +1033,36 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
   </div>
 </section>
+</div><!-- /hidden old sections -->
 
 <!-- ════════════════════════════════════════════ CONTACT ════════════════════════════════════════════ -->
-<section class="composer-section wrap" id="contact" data-screen-label="05 Contact">
+<section class="composer-section wrap" id="contact">
   <h2 class="composer-h r in">Tell us what you're <span class="ital">stuck doing manually.</span></h2>
 
-  <form class="composer r in d1" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
+  <div class="faq-list r in d1" id="faq-list" style="max-width:680px;margin:0 auto 3rem">
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">Is this a package, like most software subscriptions?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No. There are no tiers, no bundles, no fixed feature sets you buy. We scope each engagement around your actual operation — what's breaking, what's manual, what's costing you the most. Scope is determined by what your business actually needs, not by a pricing page.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">How is this different from hiring an ops manager or a consultant?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">A consultant tells you what to build, then leaves. An ops manager needs managing themselves. We build the infrastructure, deploy it, and run it permanently — no ramp-up, no management overhead, no knowledge walking out the door. The system improves over time instead of degrading.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">How long before something is actually running?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Most clients have their first live system within the first week. We read what you share, build fast, and keep adding. The first pieces are live before a typical engagement would have even started.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">What determines the scope and the price?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Scope is determined by what's actually broken or manual in your operation. We talk through it before any number is mentioned. Price follows scope, not the other way around.</div></div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-q-text">What does ongoing management actually look like?</span><span class="faq-q-icon">+</span></button>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">One contact, everything handled. We monitor, tune, and expand as the business changes. You don't manage us — we manage the infrastructure.</div></div></div>
+    </div>
+  </div>
+
+  <form class="composer r in d2" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
     <div class="composer-prompt"><span class="star">✦</span><span>Talk to us like you'd text a colleague.</span></div>
     <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="What's the operation? How many clients or locations? Where does it break down? Tell us what's happening..." required></textarea>
 
