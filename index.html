@@ -837,8 +837,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
       <!-- LEFT NODE -->
       <div class="lp-node lp-node-l">
-        <div class="lp-node-tag">A · Capture</div>
-        <p class="lp-node-text">Catches every lead before it disappears.</p>
+        <p class="lp-node-text">Capture</p>
       </div>
 
       <!-- PENDULUM -->
@@ -1127,8 +1126,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
       <!-- RIGHT NODE -->
       <div class="lp-node lp-node-r">
-        <div class="lp-node-tag">B · Operate</div>
-        <p class="lp-node-text">Runs the operation so you don't have to be in it.</p>
+        <p class="lp-node-text">Operate</p>
       </div>
 
     </div><!-- /lp-trio -->
@@ -1235,17 +1233,20 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 }
 .lp-node-text{
   font-family:var(--display);
-  font-size:clamp(1.45rem,2.6vw,2.2rem);
+  font-size:clamp(2.2rem,5.5vw,4.4rem);
   font-weight:600;
   font-style:italic;
-  line-height:1.15;
+  line-height:1;
   color:var(--ink);
+  margin:0;
   text-shadow:
-    0 1px 0 rgba(255,255,255,.7),
-    2px 4px 0 rgba(26,26,24,.06),
-    4px 8px 0 rgba(26,26,24,.04),
-    0 16px 40px rgba(26,26,24,.13),
-    0 32px 64px rgba(26,26,24,.07);
+    0 1px 0 rgba(255,255,255,.8),
+    1px 2px 0 rgba(26,26,24,.07),
+    2px 4px 0 rgba(26,26,24,.05),
+    3px 6px 0 rgba(26,26,24,.04),
+    0 12px 28px rgba(26,26,24,.14),
+    0 28px 56px rgba(26,26,24,.08),
+    0 48px 80px rgba(26,26,24,.04);
 }
 @media(max-width:860px){
   .lp-trio{gap:1.2rem;}
