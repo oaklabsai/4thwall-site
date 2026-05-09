@@ -718,7 +718,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <span class="ital">your business runs on.</span>
       </h1>
       <p class="hero-sub hero-stage hs" id="hero-sub">
-        Two products. One closed loop. <strong>Front Of House</strong> captures the front. <strong>Back Of House</strong> runs the back. Built to your business. Operated by us.
+        Two products. One closed loop. Built to your business, operated by us — and we never leave.
       </p>
     </div>
     <!-- RIGHT: video in angled black frame -->
@@ -841,14 +841,21 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <span class="lp-tag-label">The Engine</span>
     </div>
     <h2 class="lp-heading">One closed loop.<br><em>Always running.</em></h2>
-    <p class="lp-sub">Front Of House captures. Back Of House compounds. The loop never stops.</p>
+    <p class="lp-sub">Capture the lead. Compound the business. The loop never stops.</p>
 
     <div class="lp-grid">
 
       <!-- LEFT · TRADES NODE -->
       <div class="lp-card lp-card-ink">
         <div class="lp-card-tag">A · Capture</div>
-        <p class="lp-statement">Answers every call, texts every lead, books every job — before they dial the next guy.</p>
+        <p class="lp-statement">Every lead answered before they dial the next guy.</p>
+        <ul class="lp-flow">
+          <li><span class="lp-fi">◆</span>24/7 voice &amp; SMS answering</li>
+          <li><span class="lp-fi">◆</span>Lead qualification</li>
+          <li><span class="lp-fi">◆</span>Automated booking</li>
+          <li><span class="lp-fi">◆</span>After-hours coverage</li>
+        </ul>
+        <div class="lp-pill lp-pill-green"><span class="lp-pulse"></span>Live in 48 hours</div>
       </div>
 
       <!-- CENTER · PENDULUM -->
@@ -1138,7 +1145,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <!-- RIGHT · OPS NODE -->
       <div class="lp-card lp-card-cream">
         <div class="lp-card-tag">B · Operate</div>
-        <p class="lp-statement">Automates the ops, briefings, hiring, and outreach. The business runs without you in it.</p>
+        <p class="lp-statement">Every system running without you in it.</p>
+        <ul class="lp-flow">
+          <li><span class="lp-fi">◆</span>Client intelligence</li>
+          <li><span class="lp-fi">◆</span>Hiring &amp; outreach</li>
+          <li><span class="lp-fi">◆</span>Briefings &amp; reporting</li>
+          <li><span class="lp-fi">◆</span>Personal operating system</li>
+        </ul>
+        <div class="lp-pill lp-pill-ink"><span class="lp-pulse lp-pulse-ink"></span>Permanently managed</div>
       </div>
 
     </div><!-- /lp-grid -->
@@ -1274,11 +1288,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 /* Conceptual two-line statement — replaces feature list */
 .lp-statement{
   font-family:var(--display);
-  font-size:clamp(.95rem,1.5vw,1.1rem);
+  font-size:clamp(1.05rem,1.7vw,1.3rem);
   font-weight:400;font-style:italic;
-  line-height:1.45;
-  margin-top:.7rem;
-  flex:1;
+  line-height:1.4;
+  margin-top:.1rem;
+  margin-bottom:.15rem;
 }
 .lp-card-ink .lp-statement{color:rgba(247,243,236,0.78)}
 .lp-card-cream .lp-statement{color:var(--ink)}
@@ -1391,9 +1405,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   /* Scale cards down for narrow columns */
   .lp-card{padding:1rem .75rem;border-radius:14px}
   .lp-card-name{font-size:1.5rem}
-  .lp-statement{font-size:.8rem;margin-top:.45rem}
+  .lp-statement{font-size:.88rem;margin-top:.1rem;margin-bottom:0}
   .lp-svg{max-width:190px;}
   .lp-flow{display:none;}
+  .lp-pill{display:none;}
   .lp-section{padding:3.5rem 0 3rem;}
   .lp-sub{margin-bottom:2rem;}
 }
@@ -1406,12 +1421,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .lp-card{padding:.7rem .55rem;border-radius:12px}
   .lp-card-name{font-size:1.1rem}
   .lp-card-tag{font-size:.52rem;letter-spacing:.12em}
-  .lp-statement{font-size:.72rem;line-height:1.35}
+  .lp-statement{font-size:.75rem;line-height:1.3}
   .lp-svg{max-width:150px;}
 }
 @media(max-width:380px){
-  /* Extreme small — hide statement text, just show name */
-  .lp-statement{display:none}
+  .lp-statement{font-size:.65rem;line-height:1.25}
   .lp-card{padding:.6rem .45rem}
   .lp-card-name{font-size:.95rem}
   .lp-svg{max-width:120px;}
