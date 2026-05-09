@@ -197,13 +197,6 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 /* traveling dots along path (CSS only — uses path offset) */
 .loop-pulse{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.16),0 0 18px rgba(30,102,66,.55);offset-rotate:0deg}
 
-/* ticker beneath loop */
-.loop-ticker{margin-top:1.4rem;border:1px solid var(--line);border-radius:12px;background:var(--cream);overflow:hidden;font-family:var(--mono);font-size:.7rem}
-.loop-ticker-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .85rem;border-bottom:1px solid var(--line-2);color:var(--muted);transition:opacity .25s}
-.loop-ticker-row:last-child{border-bottom:none}
-.loop-ticker-row .ts{color:var(--orange);width:60px;flex-shrink:0;letter-spacing:.04em}
-.loop-ticker-row .ev{flex:1;color:var(--ink);letter-spacing:-.005em;font-family:var(--body);font-size:.78rem;font-weight:450;font-variant-numeric:normal}
-.loop-ticker-row .src{font-size:.58rem;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;background:var(--cream-2);padding:.18rem .4rem;border-radius:4px}
 
 /* hero footer meta */
 .hero-foot{margin-top:2.4rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.74rem;color:var(--muted);border-top:1px solid var(--line);padding-top:1.1rem;position:relative;z-index:3}
@@ -621,10 +614,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         </svg>
       </div>
 
-      <!-- live-event ticker -->
-      <div class="loop-ticker" id="loopTicker">
-        <div class="loop-ticker-row"><span class="ts">11:47p</span><span class="ev">Storm leak captured · assessment booked 9:00a</span><span class="src">Trades</span></div>
-      </div>
     </div>
   </div>
 
@@ -796,38 +785,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 })();
 </script>
 
-<!-- ── ticker rotation ── -->
-<script>
-(function(){
-  const events = [
-    {ts:'11:47p', ev:'Storm leak captured · assessment booked 9:00a', src:'Trades'},
-    {ts:'08:33p', ev:'After-hours estimate qualified · booked Tue 2:00p', src:'Trades'},
-    {ts:'04:18p', ev:'Compliance docs auto-renewed · audit log clean', src:'Ops'},
-    {ts:'10:22a', ev:'Named skill `/route-tech` invoked · 6 stops sequenced', src:'Edge'},
-    {ts:'06:30a', ev:'Founder asked anything · brief answered in 4s', src:'Edge'},
-  ];
-  const ticker = document.getElementById('loopTicker');
-  if(!ticker) return;
-  let pool = [...events];
-  let idx = 3;
-  function rotate(){
-    if(window.__tickerOff) return;
-    const rows = ticker.querySelectorAll('.loop-ticker-row');
-    const slot = rows[idx % rows.length];
-    if(!slot) return;
-    slot.style.opacity = '0';
-    setTimeout(()=>{
-      const e = pool[(idx) % pool.length];
-      slot.querySelector('.ts').textContent = e.ts;
-      slot.querySelector('.ev').textContent = e.ev;
-      slot.querySelector('.src').textContent = e.src;
-      slot.style.opacity = '1';
-      idx++;
-    }, 280);
-  }
-  setInterval(rotate, 2400);
-})();
-</script>
 
 <!-- ── Tweaks panel ── -->
 <div id="tweaks-root"></div>
@@ -904,12 +861,6 @@ function HomeTweaks(){
     document.documentElement.style.setProperty('--density', String(t.density));
   },[t.density]);
 
-  // ticker
-  React.useEffect(()=>{
-    window.__tickerOff = !t.ticker;
-    const tk = document.getElementById('loopTicker');
-    if(tk) tk.style.display = t.ticker ? '' : 'none';
-  },[t.ticker]);
 
   return (
     <TweaksPanel title="Tweaks">
@@ -1046,14 +997,6 @@ if(tweaksRoot) ReactDOM.createRoot(tweaksRoot).render(<HomeTweaks/>);
 .loop-mid{opacity:0;animation:midFade .9s 3.4s forwards}
 @keyframes midFade{ to { opacity:1; } }
 
-/* ticker rows slide in from right, staggered */
-.loop-ticker{opacity:0;animation:tickerShellFade .7s 3.3s forwards}
-@keyframes tickerShellFade{ 0%{opacity:0;transform:translateY(8px)} 100%{opacity:1;transform:none} }
-.loop-ticker-row{opacity:0;transform:translateX(20px);animation:rowSlide .7s cubic-bezier(.16,1,.3,1) forwards}
-.loop-ticker-row:nth-child(1){animation-delay:3.55s}
-.loop-ticker-row:nth-child(2){animation-delay:3.7s}
-.loop-ticker-row:nth-child(3){animation-delay:3.85s}
-@keyframes rowSlide{ to { opacity:1; transform:none; } }
 
 /* once intro plays, freeze final state — prevent re-triggers when innerHTML mutates */
 body.intro-done .hero-stage,
@@ -1079,9 +1022,7 @@ body.intro-done .hero-h .word,
 body.intro-done .hero-grid,
 body.intro-done .hero-floor,
 body.intro-done .loop-node-card,
-body.intro-done .loop-mid,
-body.intro-done .loop-ticker,
-body.intro-done .loop-ticker-row { transform: none !important; }
+body.intro-done .loop-mid { transform: none !important; }
 body.intro-done .hero-h .signature { transform: rotate(-1.2deg) translateX(2px) !important; }
 body.intro-done .loop-sats circle { transform: scale(1) !important; opacity: .5 !important; }
 /* pulses keep running */
