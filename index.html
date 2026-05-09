@@ -1139,21 +1139,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
    THE ENGINE — loop section
 ═══════════════════════════════════════════════════════ */
 .lp-section{
-  background:var(--cream);
-  padding:4rem 0 4rem;
-  border-top:1px solid var(--line);
-  position:relative;overflow:hidden;
-}
-/* Subtle radial glow behind SVG area */
-.lp-section::before{
-  content:'';
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  width:min(640px,80vw);
-  height:min(420px,55vw);
-  background:radial-gradient(ellipse,rgba(30,102,66,0.055) 0%,transparent 70%);
-  pointer-events:none;
+  background:transparent;
+  padding:3rem 0;
+  border-top:1px solid var(--line-2);
+  border-bottom:1px solid var(--line-2);
+  position:relative;
 }
 
 /* Eyebrow */
@@ -1216,42 +1206,31 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 }
 .lp-node-l{
   text-align:right;
-  transform:perspective(700px) rotateY(10deg);
+  transform:perspective(900px) rotateY(7deg);
   transform-origin:right center;
 }
 .lp-node-r{
   text-align:left;
-  transform:perspective(700px) rotateY(-10deg);
+  transform:perspective(900px) rotateY(-7deg);
   transform-origin:left center;
-}
-.lp-node-tag{
-  font-family:var(--mono);
-  font-size:.64rem;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--orange);
 }
 .lp-node-text{
   font-family:var(--display);
-  font-size:clamp(2.2rem,5.5vw,4.4rem);
-  font-weight:600;
+  font-size:clamp(1.2rem,2.2vw,1.75rem);
+  font-weight:500;
   font-style:italic;
   line-height:1;
   color:var(--ink);
   margin:0;
   text-shadow:
-    0 1px 0 rgba(255,255,255,.8),
-    1px 2px 0 rgba(26,26,24,.07),
-    2px 4px 0 rgba(26,26,24,.05),
-    3px 6px 0 rgba(26,26,24,.04),
-    0 12px 28px rgba(26,26,24,.14),
-    0 28px 56px rgba(26,26,24,.08),
-    0 48px 80px rgba(26,26,24,.04);
+    0 1px 0 rgba(255,255,255,.65),
+    0 4px 16px rgba(26,26,24,.1),
+    0 12px 32px rgba(26,26,24,.06);
 }
 @media(max-width:860px){
   .lp-trio{gap:1.2rem;}
   .lp-node-l,.lp-node-r{transform:none;}
-  .lp-node-text{font-size:clamp(1rem,3.5vw,1.35rem);}
+  .lp-node-text{font-size:clamp(1rem,3vw,1.2rem);}
 }
 @media(max-width:520px){
   .lp-trio{gap:.65rem;}
