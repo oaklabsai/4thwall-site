@@ -134,7 +134,7 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .hero{min-height:auto;padding:6.5rem var(--pad) 3rem;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
 .hero-grid{position:absolute;inset:0;bottom:55%;opacity:.45;pointer-events:none;background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);background-size:60px 60px;mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%)}
 .hero-floor{position:absolute;left:-25%;right:-25%;top:55%;bottom:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(26,26,24,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(26,26,24,.13) 1px,transparent 1px);background-size:78px 78px;transform:perspective(820px) rotateX(58deg);transform-origin:center top;mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);opacity:.6}
-.hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr 1fr;gap:5rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
+.hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1fr 1.35fr;gap:4rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
 @media(max-width:880px){.hero-row{grid-template-columns:1fr;gap:3rem}}
 .hero-eyebrow{font-size:.78rem;color:var(--muted);margin-bottom:1.4rem;display:flex;align-items:center;gap:.55rem}
 .hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:pulse 2.4s ease-in-out infinite}
@@ -411,7 +411,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 @keyframes lapFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes lapRowIn{to{opacity:1;transform:none}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.lap-wrap{position:relative;width:100%;max-width:750px;margin:0 auto;aspect-ratio:696/452;background:url('macbook.png') center/contain no-repeat;animation:lapFloat 9s ease-in-out infinite;filter:drop-shadow(0 60px 80px rgba(0,0,0,.32)) drop-shadow(0 28px 44px rgba(0,0,0,.22)) drop-shadow(0 8px 16px rgba(0,0,0,.14)) drop-shadow(0 2px 4px rgba(0,0,0,.08))}
+.lap-wrap{position:relative;width:100%;max-width:900px;margin:0 auto;aspect-ratio:696/452;background:url('macbook.png') center/contain no-repeat;animation:lapFloat 9s ease-in-out infinite;filter:drop-shadow(0 60px 80px rgba(0,0,0,.32)) drop-shadow(0 28px 44px rgba(0,0,0,.22)) drop-shadow(0 8px 16px rgba(0,0,0,.14)) drop-shadow(0 2px 4px rgba(0,0,0,.08))}
 .lap-toast{position:absolute;top:-22px;left:6%;background:rgba(247,243,236,.9);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border:1px solid rgba(26,26,24,.08);border-radius:10px;padding:.42rem .65rem;display:flex;align-items:center;gap:.45rem;box-shadow:0 8px 24px -8px rgba(0,0,0,.18),0 2px 4px rgba(0,0,0,.04);z-index:5;animation:tagFloat 9s ease-in-out infinite;min-width:148px}
 .lt-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);flex-shrink:0;animation:pulse 2.4s ease-in-out infinite}
 .lt-body strong{display:block;font-size:.75rem;font-weight:600;line-height:1.2;color:var(--ink);letter-spacing:-.005em}
