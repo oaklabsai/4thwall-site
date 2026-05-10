@@ -405,6 +405,17 @@ section{position:relative;z-index:2}
 .manif-card-h{font-family:var(--display);font-size:1.05rem;font-weight:500;line-height:1.25;letter-spacing:-.02em}
 .manif-card-d{font-size:.8rem;line-height:1.6;color:var(--muted);margin-top:.5rem}
 
+/* ── MANIFEST — numbered rows ─────────── */
+.mfst{border-top:1px solid var(--line)}
+.mfst-row{display:grid;grid-template-columns:5rem 1fr 1fr;gap:2.4rem;align-items:start;padding:2.2rem 0;border-bottom:1px solid var(--line);transition:background .25s}
+.mfst-row:hover{background:linear-gradient(90deg,var(--orange-soft),transparent 70%)}
+.mfst-num{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:var(--orange);padding-top:.7rem}
+.mfst-name{font-family:var(--display);font-size:clamp(1.1rem,1.8vw,1.45rem);font-weight:500;letter-spacing:-.02em;line-height:1.2;margin-bottom:.45rem}
+.mfst-desc{font-size:.86rem;line-height:1.68;color:var(--muted)}
+.mfst-cut{font-size:.84rem;line-height:1.55;color:var(--muted);border-left:2px solid var(--orange);padding-left:1rem;padding-top:.7rem;font-style:italic}
+@media(max-width:860px){.mfst-row{grid-template-columns:3.5rem 1fr}.mfst-cut{grid-column:1/-1;padding-left:3.5rem;border-left:none;border-top:1px solid var(--line);padding-top:1rem;margin-top:-.5rem}}
+/* ── FAQ label ─────────────────── */
+.faq-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin:0 auto 1.8rem;max-width:680px;width:100%}
 /* ── FAQ — accordion ─────────── */
 .faq-list{border-top:1px solid var(--line)}
 .faq-item{border-bottom:1px solid var(--line)}
@@ -579,12 +590,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <button class="nav-a nav-prod-btn" id="prodBtn" aria-haspopup="true" aria-expanded="false">Products <span class="prod-chevron">▾</span></button>
       <div class="prod-drop" id="prodDrop">
         <a href="/trades.html" class="prod-drop-a">
-          <span class="prod-drop-name">4THWALL Trades</span>
-          <span class="prod-drop-sub">For trades contractors</span>
+          <span class="prod-drop-name">Front Of House</span>
+          <span class="prod-drop-sub">Capture · Trades contractors</span>
         </a>
         <a href="/ops.html" class="prod-drop-a">
-          <span class="prod-drop-name">4THWALL Ops</span>
-          <span class="prod-drop-sub">For service operations</span>
+          <span class="prod-drop-name">Back Of House</span>
+          <span class="prod-drop-sub">Operate · Service operations</span>
         </a>
       </div>
     </div>
@@ -630,12 +641,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <div class="drop-sub">
         <div class="drop-sub-inner">
           <a href="/trades.html" class="drop-sub-a">
-            <span class="drop-sub-name">4THWALL Trades</span>
-            <span class="drop-sub-desc">For trades contractors</span>
+            <span class="drop-sub-name">Front Of House</span>
+            <span class="drop-sub-desc">Capture · Trades</span>
           </a>
           <a href="/ops.html" class="drop-sub-a">
-            <span class="drop-sub-name">4THWALL Ops</span>
-            <span class="drop-sub-desc">For service operations</span>
+            <span class="drop-sub-name">Back Of House</span>
+            <span class="drop-sub-desc">Operate · Service ops</span>
           </a>
         </div>
       </div>
@@ -729,165 +740,55 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 </section>
 
-<!-- ════════════════════════════════════════════ CAPABILITIES ════════════════════════════════════════════ -->
-<section class="s wrap" id="capabilities" data-screen-label="02 Capabilities">
+<!-- ════════════════════════════════════════════ MANIFEST ════════════════════════════════════════════ -->
+<section class="s wrap" id="capabilities">
   <div class="s-meta">
     <div>
-      <div class="s-label r">What we do · 01</div>
-      <h2 class="s-h r in">The AI layer your<br><span class="ital">operation is missing.</span></h2>
-      <p class="s-note r in d2">Five things, deployed in 48 hours, managed permanently. No subscriptions to track. No tools to learn.</p>
-    </div>
-    <div class="s-count r in d3">(05 capabilities)</div>
-  </div>
-
-  <div class="bento" id="bento">
-    <div class="bento-card bento-a r">
-      <div>
-        <div class="b-num">001 · Lead Response</div>
-        <div class="b-h">Every lead, answered in <span class="ital">60 seconds.</span></div>
-        <div class="b-d">Every text, web chat, and missed call gets an intelligent AI response — 24 hours a day, in English or Spanish. The homeowner who texts at 11pm gets answered before they call your competitor.</div>
-      </div>
-      <div class="b-illo" data-illo="phone"></div>
-    </div>
-
-    <div class="bento-card bento-b r d1">
-      <div>
-        <div class="b-num">002</div>
-        <div class="b-h">Booking <span class="ital">on autopilot.</span></div>
-        <div class="b-d">Estimates, confirmations, reminders, follow-ups.</div>
-      </div>
-      <div class="b-illo" data-illo="calendar"></div>
-    </div>
-
-    <div class="bento-card bento-c r d2">
-      <div>
-        <div class="b-num">003</div>
-        <div class="b-h"><span class="ital">5-star</span> reviews, automated.</div>
-        <div class="b-d">Every closed job triggers a review request that sounds human.</div>
-      </div>
-      <div class="b-illo" data-illo="star"></div>
-    </div>
-
-    <div class="bento-card bento-d r d3">
-      <div>
-        <div class="b-num">004 · Visibility</div>
-        <div class="b-h">Found on <span class="ital">Google + AI Search.</span></div>
-        <div class="b-d">Be the contractor that AI assistants recommend by name when neighbors ask.</div>
-      </div>
-      <div class="b-illo" data-illo="search"></div>
-    </div>
-
-    <div class="bento-card bento-e r d4">
-      <div>
-        <div class="b-num">005 · Storm Mode</div>
-        <div class="b-h">When demand <span class="ital">spikes,</span> we scale.</div>
-        <div class="b-d">Hurricane, hail, blizzard — the system absorbs 10× volume without dropping leads.</div>
-      </div>
-      <div class="b-illo" data-illo="storm"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════ ELIMINATES — flip cards ════════════════════════════════════════════ -->
-<section class="s wrap" data-screen-label="03 Eliminates">
-  <div class="s-meta">
-    <div>
-      <div class="s-label r">What this eliminates · 02</div>
-      <h2 class="s-h r in">Six things you'll<br><span class="ital">never do again.</span></h2>
-      <p class="s-note r in d2">Tap a card to see what disappears.</p>
+      <div class="s-label r">What it does · 01</div>
+      <h2 class="s-h r in">Five systems.<br><span class="ital">Everything automated.</span></h2>
     </div>
   </div>
 
-  <div class="flip-grid">
-    <div class="flip r" data-flip>
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div>
-            <div class="flip-num">01</div>
-            <div class="flip-q">Calling back leads <span class="ital">at 9pm.</span></div>
-          </div>
-          <div class="flip-cta">tap to flip ↗</div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">The AI replies in 47 seconds.</div>
-          <div class="flip-a">By the time you check your phone, the lead is already qualified, scheduled, or moved into a 14-day nurture sequence.</div>
-        </div>
+  <div class="mfst">
+    <div class="mfst-row r">
+      <div class="mfst-num">001</div>
+      <div class="mfst-body">
+        <div class="mfst-name">Lead Response</div>
+        <p class="mfst-desc">Every text, web chat, and missed call answered in 47 seconds — 24/7, in English or Spanish. The homeowner who texts at 11pm is qualified before your competitor picks up.</p>
       </div>
+      <div class="mfst-cut">No more calling back leads at 9pm.</div>
     </div>
-    <div class="flip r d1" data-flip>
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div>
-            <div class="flip-num">02</div>
-            <div class="flip-q">Asking customers<br>for <span class="ital">reviews</span> manually.</div>
-          </div>
-          <div class="flip-cta">tap to flip ↗</div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">Every closed job triggers one automatically.</div>
-          <div class="flip-a">Personalized to the customer, the work, and the season — not a template they'll ignore.</div>
-        </div>
+    <div class="mfst-row r d1">
+      <div class="mfst-num">002</div>
+      <div class="mfst-body">
+        <div class="mfst-name">Booking &amp; Scheduling</div>
+        <p class="mfst-desc">Estimates, confirmations, reminders, follow-ups — automated from first contact to confirmed appointment. Nothing falls through the cracks.</p>
       </div>
+      <div class="mfst-cut">No more manually chasing every confirmation.</div>
     </div>
-    <div class="flip r d2" data-flip>
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div>
-            <div class="flip-num">03</div>
-            <div class="flip-q">Wondering <span class="ital">where leads</span> went.</div>
-          </div>
-          <div class="flip-cta">tap to flip ↗</div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">Every lead has a status, in writing.</div>
-          <div class="flip-a">Replied · qualified · booked · won · lost. With timestamps, transcripts, and the conversation that got them there.</div>
-        </div>
+    <div class="mfst-row r d2">
+      <div class="mfst-num">003</div>
+      <div class="mfst-body">
+        <div class="mfst-name">Review Generation</div>
+        <p class="mfst-desc">Every closed job triggers a personalized review request trained on your tone, the customer, and the season. Not a template. Never sounds like one.</p>
       </div>
+      <div class="mfst-cut">No more asking for reviews by hand.</div>
     </div>
-    <div class="flip r d3" data-flip>
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div>
-            <div class="flip-num">04</div>
-            <div class="flip-q">Saying <em style="font-style:italic">"sorry,</em> we don't speak Spanish."</div>
-          </div>
-          <div class="flip-cta">tap to flip ↗</div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">EN ⇄ ES, fluent.</div>
-          <div class="flip-a">The AI switches mid-conversation. Every follow-up, every reminder, every quote — in whatever language they prefer.</div>
-        </div>
+    <div class="mfst-row r d3">
+      <div class="mfst-num">004</div>
+      <div class="mfst-body">
+        <div class="mfst-name">AI Search Visibility</div>
+        <p class="mfst-desc">Be the contractor Google and AI assistants name when neighbors ask. Built into the infrastructure — not a campaign you have to run or a ranking you have to chase.</p>
       </div>
+      <div class="mfst-cut">No more being invisible while competitors get named.</div>
     </div>
-    <div class="flip r d4" data-flip>
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div>
-            <div class="flip-num">05</div>
-            <div class="flip-q">Hiring an <span class="ital">office manager</span> to keep up.</div>
-          </div>
-          <div class="flip-cta">tap to flip ↗</div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">The AI is the office manager.</div>
-          <div class="flip-a">$3,000/month for a part-timer who works 40 hours and takes vacations? Or this, running 24/7 for less?</div>
-        </div>
+    <div class="mfst-row r d4">
+      <div class="mfst-num">005</div>
+      <div class="mfst-body">
+        <div class="mfst-name">Storm Mode</div>
+        <p class="mfst-desc">Hurricane, hail, blizzard — the system absorbs 10× volume without dropping a lead. When demand spikes, capacity doesn't.</p>
       </div>
-    </div>
-    <div class="flip r d5" data-flip>
-      <div class="flip-inner">
-        <div class="flip-face flip-front">
-          <div>
-            <div class="flip-num">06</div>
-            <div class="flip-q">Losing leads to the contractor<br>with the <span class="ital">faster reply.</span></div>
-          </div>
-          <div class="flip-cta">tap to flip ↗</div>
-        </div>
-        <div class="flip-face flip-back">
-          <div class="flip-q" style="color:var(--cream);font-size:1.05rem">You become the faster reply.</div>
-          <div class="flip-a">78% of homeowners hire whoever responds first. The math is decided in the first 5 minutes — long before the quote.</div>
-        </div>
-      </div>
+      <div class="mfst-cut">No more losing a surge to whoever picked up faster.</div>
     </div>
   </div>
 </section>
@@ -956,70 +857,26 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════ HOW + WHY (merged) ════════════════════════════════════════════ -->
-<section class="s wrap" id="how" data-screen-label="05 How we work">
-  <div class="s-meta">
-    <div>
-      <div class="s-label r">How we work · 04</div>
-      <h2 class="s-h r in">Four steps,<br><span class="ital">forty-eight hours,</span><br>then forever.</h2>
-      <p class="s-note r in d2">From first call to deployed system in two days. After that, we never leave — we run it.</p>
-    </div>
-  </div>
+<!-- ════════════════════════════════════════════ CONTACT — composer ════════════════════════════════════════════ -->
+<section class="composer-section wrap" id="contact" data-screen-label="08 Contact">
+  <div class="faq-label r in">Frequently Asked Questions</div>
 
-  <div class="how-list">
-    <div class="how-row r">
-      <div class="how-n">i.</div>
-      <div class="how-h">Discovery <span class="ital">call</span></div>
-      <div class="how-d">A 30-minute conversation about how leads come in, where they go, what's working, what's not. We write down what we'd build before charging anything.</div>
-      <div class="how-illo" data-illo="step1"></div>
-    </div>
-    <div class="how-row r d1">
-      <div class="how-n">ii.</div>
-      <div class="how-h">Built <span class="ital">to your business</span></div>
-      <div class="how-d">We build the AI on top of your existing phone system and business setup. Your number stays the same. Your workflow stays the same. Nothing to migrate.</div>
-      <div class="how-illo" data-illo="step2"></div>
-    </div>
-    <div class="how-row r d2">
-      <div class="how-n">iii.</div>
-      <div class="how-h">Deployed <span class="ital">in 48 hours</span></div>
-      <div class="how-d">From contract to live system. Your team gets a 20-minute walkthrough. The AI is answering leads by Tuesday.</div>
-      <div class="how-illo" data-illo="step3"></div>
-    </div>
-    <div class="how-row r d3">
-      <div class="how-n">iv.</div>
-      <div class="how-h">Managed <span class="ital">forever</span></div>
-      <div class="how-d">We monitor every conversation, every campaign, every review. We tune. We expand. You text us when you want something changed.</div>
-      <div class="how-illo" data-illo="step4"></div>
-    </div>
-  </div>
-
-</section>
-
-<!-- ════════════════════════════════════════════ FAQ ════════════════════════════════════════════ -->
-<section class="s wrap" id="faq" data-screen-label="07 FAQ">
-  <div class="s-meta">
-    <div>
-      <div class="s-label r">FAQ · 05</div>
-      <h2 class="s-h r in">The honest<br><span class="ital">questions.</span></h2>
-    </div>
-  </div>
-
-  <div class="faq-list" id="faq-list">
+  <div class="faq-list r in d1" id="faq-list" style="max-width:680px;margin:0 auto 3rem">
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">What's actually included — can I pick and choose?</span><span class="faq-q-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No picking required. Every contractor gets the same five capabilities: lead response, booking, review generation, storm mode, and AI visibility. The scope is fixed. What changes is how each one is configured — to your trade, your market, how you talk, what you work on. You're not buying a platform. You're getting a running system, built for your operation, live in 48 hours.</div></div></div>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No picking required. Every contractor gets the same five systems: lead response, booking, review generation, storm mode, and AI visibility. What changes is how each one is configured — to your trade, your market, how you talk, what you work on. You're not buying a platform. You're getting a running system, live in 48 hours.</div></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">Is this another monthly software tool I have to learn?</span><span class="faq-q-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No. We build it. We run it. We tune it. You text us when you want something changed. The only "tool" you'll see is the dashboard, and that's optional.</div></div></div>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No. We build it. We run it. We tune it. You text us when you want something changed. The only thing you'll see is the dashboard — and that's optional.</div></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">Will the AI sound like a robot?</span><span class="faq-q-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No. It's trained on how you and your team actually talk. Tone, vocabulary, what you say "no" to. We test every conversation flow with you before going live, and homeowners regularly don't realize they're talking to AI until you tell them.</div></div></div>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">No. It's trained on how you and your team actually talk — tone, vocabulary, what you say "no" to. We test every conversation flow before going live. Homeowners regularly don't realize they're talking to AI until you tell them.</div></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">What if a lead asks something the AI can't handle?</span><span class="faq-q-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">It hands off to you with full context — who it is, what they need, what's been said. You walk into the call already informed.</div></div></div>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">It hands off to you with full context — who they are, what they need, what's been said. You walk into the conversation already informed.</div></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">Do I have to switch off Jobber / ServiceTitan / my CRM?</span><span class="faq-q-icon">+</span></button>
@@ -1027,21 +884,18 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">What does it cost?</span><span class="faq-q-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Less than a part-time office manager and more than basic software. Pricing depends on volume, languages, and scope — but most contractors pay it back inside the first month from leads that would have otherwise gone to voicemail.</div></div></div>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">Less than a part-time office manager. Pricing depends on volume, languages, and scope — most contractors recover it inside the first month from leads that would have gone to voicemail.</div></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">How long does deployment take?</span><span class="faq-q-icon">+</span></button>
-      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">48 hours from signed contract to live system. We've done it faster, but two days is what we promise.</div></div></div>
+      <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">48 hours from signed contract to live system. We've done it faster — two days is what we promise.</div></div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q"><span class="faq-q-text">What if I want to stop?</span><span class="faq-q-icon">+</span></button>
       <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">30-day notice, no penalty. We hand you the system or wind it down — your call. We've never had a contractor leave, but the door's not locked.</div></div></div>
     </div>
   </div>
-</section>
 
-<!-- ════════════════════════════════════════════ CONTACT — composer ════════════════════════════════════════════ -->
-<section class="composer-section wrap" id="contact" data-screen-label="08 Contact">
   <h2 class="composer-h r in">Tell us what's <span class="ital">on fire.</span></h2>
 
   <form class="composer r in d1" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
@@ -1089,8 +943,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <div class="foot-col">
         <h4>Products</h4>
         <ul>
-          <li><a href="/trades.html">4THWALL Trades</a></li>
-          <li><a href="/ops.html">4THWALL Ops</a></li>
+          <li><a href="/trades.html">Front Of House</a></li>
+          <li><a href="/ops.html">Back Of House</a></li>
         </ul>
       </div>
       <div class="foot-col">
