@@ -260,6 +260,8 @@ section{position:relative;z-index:2}
 .story-conclusion-d{font-size:.9rem;color:var(--muted);margin-top:.7rem;line-height:1.65}
 @media(max-width:640px){.story-row{grid-template-columns:2.5rem 6rem 1fr;gap:1.2rem;padding:1.6rem 0}.story-row-final{grid-template-columns:2.5rem 6rem 1fr;padding:1.6rem 1.2rem}}
 
+/* ── FAQ label ─────────────────── */
+.faq-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin:0 auto 1.8rem;max-width:680px;width:100%}
 /* ── FAQ — accordion ─────────── */
 .faq-list{border-top:1px solid var(--line)}
 .faq-item{border-bottom:1px solid var(--line)}
@@ -1002,7 +1004,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- ════════════════════════════════════════════ CONTACT ════════════════════════════════════════════ -->
 <section class="composer-section wrap" id="contact">
-  <h2 class="composer-h r in">Tell us what you're <span class="ital">stuck doing manually.</span></h2>
+  <div class="faq-label r in">Frequently Asked Questions</div>
 
   <div class="faq-list r in d1" id="faq-list" style="max-width:680px;margin:0 auto 3rem">
     <div class="faq-item">
@@ -1026,6 +1028,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text">One contact, everything handled. We monitor, tune, and expand as the business changes. You don't manage us — we manage the infrastructure.</div></div></div>
     </div>
   </div>
+
+  <h2 class="composer-h r in">Tell us what you're <span class="ital">stuck doing manually.</span></h2>
 
   <form class="composer r in d2" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
     <div class="composer-prompt"><span class="star">✦</span><span>Talk to us like you'd text a colleague.</span></div>
