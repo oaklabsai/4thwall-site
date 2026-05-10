@@ -319,19 +319,19 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
   backface-visibility:hidden;
   -webkit-mask-image:linear-gradient(to bottom,
     black 0%,
-    black 52%,
-    rgba(0,0,0,0.92) 65%,
-    rgba(0,0,0,0.68) 76%,
-    rgba(0,0,0,0.32) 88%,
-    transparent 100%
+    black 48%,
+    rgba(0,0,0,0.88) 58%,
+    rgba(0,0,0,0.55) 68%,
+    rgba(0,0,0,0.18) 76%,
+    transparent 82%
   );
   mask-image:linear-gradient(to bottom,
     black 0%,
-    black 52%,
-    rgba(0,0,0,0.92) 65%,
-    rgba(0,0,0,0.68) 76%,
-    rgba(0,0,0,0.32) 88%,
-    transparent 100%
+    black 48%,
+    rgba(0,0,0,0.88) 58%,
+    rgba(0,0,0,0.55) 68%,
+    rgba(0,0,0,0.18) 76%,
+    transparent 82%
   );
 }
 
@@ -1972,15 +1972,20 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       visIO.observe(video);
     }
 
-    // ── Canvas temporal frame blending (every device) ─────────────────────
-    // 0.4× on a 24fps source = ~9.6fps effective → would be very choppy.
-    // Each rAF tick lerps the canvas toward the latest video frame, creating
-    // a soft dissolve between native frames. Stronger blend (50/50) than
-    // the previous 55/45 → more motion blur, smoother perceived motion.
+    // ── Canvas temporal frame blending ─────────────────────────────────────
+    // DESKTOP ONLY: blends the current video frame with the previous frame
+    // for motion-blur smoothing on the slowed-down playback.
     //
-    // On mobile we also draw the video larger than the canvas to bake the
-    // zoom-in into the rendered output (instead of CSS transform which would
-    // only zoom the hidden video, not the canvas).
+    // On MOBILE we skip the canvas entirely — mobile browsers (especially
+    // iOS in Low Power Mode) won't decode frames from an opacity:0 video,
+    // so the canvas would stay empty. Showing the video natively guarantees
+    // playback at the cost of slightly choppier motion.
+    if(isMobile){
+      // Make sure the video is visible and the mask is already applied via CSS.
+      video.style.opacity = '1';
+      return;
+    }
+
     try {
       var out  = document.createElement('canvas');
       var oCtx = out.getContext('2d');
@@ -1989,11 +1994,11 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       if(!oCtx || !pCtx) return;
 
       var MASK = 'linear-gradient(to bottom,'
-        + 'black 0%,black 52%,'
-        + 'rgba(0,0,0,.92) 65%,'
-        + 'rgba(0,0,0,.68) 76%,'
-        + 'rgba(0,0,0,.32) 88%,'
-        + 'transparent 100%)';
+        + 'black 0%,black 48%,'
+        + 'rgba(0,0,0,.88) 58%,'
+        + 'rgba(0,0,0,.55) 68%,'
+        + 'rgba(0,0,0,.18) 76%,'
+        + 'transparent 82%)';
 
       out.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none';
       out.style.webkitMaskImage = MASK;
