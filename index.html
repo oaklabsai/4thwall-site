@@ -216,10 +216,14 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
   z-index:1;
   border-radius:5px;
   overflow:hidden;
-  aspect-ratio:16/9;
+  /* Was 16/9 (1.78). Now shorter so the bottom ~7.5% of the video,
+     where the Veo watermark sits, is below the visible frame and
+     hidden by overflow:hidden. */
+  aspect-ratio:16/8.3;
   /* Poster as always-visible fallback — shows immediately on first paint
-     and remains visible if video/canvas never loads (slow net, codec issue) */
-  background:#080807 url('hero-poster.jpg') center/cover no-repeat;
+     and remains visible if video/canvas never loads (slow net, codec issue).
+     background-position 'top' so the poster aligns the same as the cropped video. */
+  background:#080807 url('hero-poster.jpg') center top/cover no-repeat;
 
   /* Right-wall angle — the angle the user approved */
   transform:rotateY(-36deg);
@@ -314,46 +318,23 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
   pointer-events:auto;background:transparent;
 }
 
-/* Video fills the frame. No mask — bottom fade was exposing the
-   poster background and creating a 'frozen still' look. Watermark is
-   handled by .hero-vid-blur below instead. */
+/* Video fills the frame, top-aligned. The frame is now 16/8.3 (wider
+   than the 16/9 video), so object-fit:cover scales the video so its
+   WIDTH fills the frame; object-position:center top keeps the top
+   of the video at the top of the frame, and the bottom ~7.5% (where
+   the Veo watermark sits) is pushed below the visible area and
+   clipped by overflow:hidden. No overlays needed. */
 .hero-vid{
   position:absolute;
   inset:0;
   width:100%;height:100%;
   object-fit:cover;
-  object-position:center center;
+  object-position:center top;
   display:block;
   min-width:100%;min-height:100%;
   max-width:100%;max-height:100%;
   transform:translateZ(0);
   backface-visibility:hidden;
-}
-/* Subtle bottom trim vignette — covers the full frame but only the
-   bottom edge has any visible effect. A barely-there dark fade across
-   the bottom (cinematic trim feel) with a slightly stronger pool
-   concentrated in the bottom-right corner where the Veo watermark
-   sits. Both layers feather out gradually so the effect reads as
-   natural lens shading, not an applied overlay. Also serves as the
-   tap absorber over the video. */
-.hero-vid-blur{
-  position:absolute;
-  inset:0;
-  z-index:4;
-  pointer-events:auto;
-  background:
-    /* Watermark cover: soft dark pool in bottom-right corner */
-    radial-gradient(ellipse 32% 26% at 92% 96%,
-      rgba(0,0,0,.72) 0%,
-      rgba(0,0,0,.42) 40%,
-      rgba(0,0,0,.14) 72%,
-      transparent 100%),
-    /* Cinematic bottom edge — subtle full-width fade */
-    linear-gradient(to top,
-      rgba(0,0,0,.22) 0%,
-      rgba(0,0,0,.08) 5%,
-      rgba(0,0,0,.02) 11%,
-      transparent 18%);
 }
 
 @media(max-width:980px){
@@ -746,7 +727,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="hero-panel hero-stage hd">
       <div class="hero-vid-frame">
         <video class="hero-vid" src="hero.mp4?v=3" poster="hero-poster.jpg" width="1920" height="1080" autoplay muted playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback x-webkit-airplay="deny"></video>
-        <div class="hero-vid-blur" aria-hidden="true"></div>
       </div>
     </div>
   </div>
@@ -2015,10 +1995,11 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
       var pCtx = prev.getContext('2d');
       if(!oCtx || !pCtx) return;
 
-      // No mask — bottom fade was creating a 'frozen still' artifact
-      // by exposing the poster background. Watermark handled by the
-      // .hero-vid-blur element instead.
-      out.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none';
+      // Canvas is a replaced element — object-fit/object-position apply
+      // the same way they do to <video>, so the canvas content (full
+      // 16/9 video frame) is cropped from the bottom inside the shorter
+      // 16/8.3 frame, hiding the Veo watermark.
+      out.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;object-fit:cover;object-position:center top';
 
       video.parentNode.insertBefore(out, video);
       video.style.opacity = '0';
