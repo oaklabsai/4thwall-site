@@ -414,6 +414,33 @@ section{position:relative;z-index:2}
 .mfst-desc{font-size:.86rem;line-height:1.68;color:var(--muted)}
 .mfst-cut{font-size:.84rem;line-height:1.55;color:var(--muted);border-left:2px solid var(--orange);padding-left:1rem;padding-top:.7rem;font-style:italic}
 @media(max-width:860px){.mfst-row{grid-template-columns:3.5rem 1fr}.mfst-cut{grid-column:1/-1;padding-left:3.5rem;border-left:none;border-top:1px solid var(--line);padding-top:1rem;margin-top:-.5rem}}
+/* ── FEATURE SWITCHER ─────────── */
+.feat{display:grid;grid-template-columns:240px 1fr;border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.feat-nav{border-right:1px solid var(--line);background:var(--cream-2);display:flex;flex-direction:column}
+.feat-btn{width:100%;padding:1.1rem 1.3rem;display:grid;grid-template-columns:2.8rem 1fr .7rem;align-items:center;gap:.5rem;text-align:left;cursor:pointer;border:none;border-bottom:1px solid var(--line);background:transparent;transition:background .18s}
+.feat-btn:last-of-type{border-bottom:none}
+.feat-btn:hover:not(.is-active){background:var(--cream-3)}
+.feat-btn.is-active{background:var(--ink)}
+.feat-btn-n{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--orange);line-height:1;transition:color .18s}
+.feat-btn.is-active .feat-btn-n{color:rgba(247,243,236,.35)}
+.feat-btn-label{font-family:var(--display);font-size:.9rem;font-weight:500;letter-spacing:-.015em;line-height:1.2;color:var(--ink);transition:color .18s}
+.feat-btn.is-active .feat-btn-label{color:var(--cream)}
+.feat-btn-dot{width:5px;height:5px;border-radius:50%;background:transparent;transition:background .18s;justify-self:end;flex-shrink:0}
+.feat-btn.is-active .feat-btn-dot{background:var(--orange)}
+.feat-prog-wrap{height:2px;background:var(--line-2);overflow:hidden;flex-shrink:0}
+.feat-prog-bar{height:100%;background:var(--orange);width:0}
+.feat-body{padding:2.6rem;background:var(--cream);min-height:340px;display:flex;align-items:stretch}
+.feat-pane{display:none;flex-direction:column;gap:1.1rem;width:100%}
+.feat-pane.is-active{display:flex;animation:fpIn .4s cubic-bezier(.16,1,.3,1)}
+@keyframes fpIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.feat-pane-ey{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
+.feat-pane-h{font-family:var(--display);font-size:clamp(1.55rem,2.6vw,2.2rem);font-weight:500;letter-spacing:-.03em;line-height:1.1}
+.feat-pane-h em{font-style:italic;color:var(--orange)}
+.feat-pane-d{font-size:.9rem;line-height:1.74;color:var(--muted);max-width:38rem}
+.feat-pane-cut{border-left:2px solid var(--orange);padding:.65rem 1rem;background:var(--orange-soft);border-radius:0 8px 8px 0;font-size:.85rem;line-height:1.5;color:var(--ink);font-style:italic;max-width:34rem}
+.feat-pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.2rem}
+.feat-pill{font-family:var(--mono);font-size:.58rem;letter-spacing:.05em;text-transform:uppercase;padding:.28rem .65rem;border:1px solid var(--line);border-radius:50px;color:var(--dim)}
+@media(max-width:760px){.feat{grid-template-columns:1fr;border-radius:14px}.feat-nav{border-right:none;border-bottom:1px solid var(--line)}.feat-btn{grid-template-columns:2.4rem 1fr .7rem;padding:.85rem 1rem}.feat-btn-label{font-size:.82rem}.feat-body{padding:1.5rem;min-height:auto}}
 /* ── FAQ label ─────────────────── */
 .faq-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin:0 auto 1.8rem;max-width:680px;width:100%}
 /* ── FAQ — accordion ─────────── */
@@ -740,7 +767,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 </section>
 
-<!-- ════════════════════════════════════════════ MANIFEST ════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════ FEATURES ════════════════════════════════════════════ -->
 <section class="s wrap" id="capabilities">
   <div class="s-meta">
     <div>
@@ -749,46 +776,92 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
   </div>
 
-  <div class="mfst">
-    <div class="mfst-row r">
-      <div class="mfst-num">001</div>
-      <div class="mfst-body">
-        <div class="mfst-name">Lead Response</div>
-        <p class="mfst-desc">Every text, web chat, and missed call answered in 47 seconds — 24/7, in English or Spanish. The homeowner who texts at 11pm is qualified before your competitor picks up.</p>
-      </div>
-      <div class="mfst-cut">No more calling back leads at 9pm.</div>
+  <div class="feat r in d2">
+    <div class="feat-nav">
+      <button class="feat-btn is-active" data-fi="0">
+        <span class="feat-btn-n">001</span>
+        <span class="feat-btn-label">Lead Response</span>
+        <span class="feat-btn-dot"></span>
+      </button>
+      <button class="feat-btn" data-fi="1">
+        <span class="feat-btn-n">002</span>
+        <span class="feat-btn-label">Booking</span>
+        <span class="feat-btn-dot"></span>
+      </button>
+      <button class="feat-btn" data-fi="2">
+        <span class="feat-btn-n">003</span>
+        <span class="feat-btn-label">Review Generation</span>
+        <span class="feat-btn-dot"></span>
+      </button>
+      <button class="feat-btn" data-fi="3">
+        <span class="feat-btn-n">004</span>
+        <span class="feat-btn-label">AI Visibility</span>
+        <span class="feat-btn-dot"></span>
+      </button>
+      <button class="feat-btn" data-fi="4">
+        <span class="feat-btn-n">005</span>
+        <span class="feat-btn-label">Storm Mode</span>
+        <span class="feat-btn-dot"></span>
+      </button>
+      <div class="feat-prog-wrap"><div class="feat-prog-bar" id="feat-bar"></div></div>
     </div>
-    <div class="mfst-row r d1">
-      <div class="mfst-num">002</div>
-      <div class="mfst-body">
-        <div class="mfst-name">Booking &amp; Scheduling</div>
-        <p class="mfst-desc">Estimates, confirmations, reminders, follow-ups — automated from first contact to confirmed appointment. Nothing falls through the cracks.</p>
+
+    <div class="feat-body">
+      <div class="feat-pane is-active" data-fp="0">
+        <div class="feat-pane-ey">001 · Lead Response</div>
+        <h3 class="feat-pane-h">Every lead, answered<br><em>in 47 seconds.</em></h3>
+        <p class="feat-pane-d">Every text, web chat, and missed call answered 24/7, in English or Spanish. The homeowner who texts at 11pm is qualified before your competitor even sees the notification.</p>
+        <div class="feat-pane-cut">No more calling back leads at 9pm.</div>
+        <div class="feat-pills">
+          <span class="feat-pill">47 sec avg response</span>
+          <span class="feat-pill">24 / 7</span>
+          <span class="feat-pill">English + Spanish</span>
+        </div>
       </div>
-      <div class="mfst-cut">No more manually chasing every confirmation.</div>
-    </div>
-    <div class="mfst-row r d2">
-      <div class="mfst-num">003</div>
-      <div class="mfst-body">
-        <div class="mfst-name">Review Generation</div>
-        <p class="mfst-desc">Every closed job triggers a personalized review request trained on your tone, the customer, and the season. Not a template. Never sounds like one.</p>
+      <div class="feat-pane" data-fp="1">
+        <div class="feat-pane-ey">002 · Booking &amp; Scheduling</div>
+        <h3 class="feat-pane-h">Estimates, confirmations,<br><em>on autopilot.</em></h3>
+        <p class="feat-pane-d">From first contact to confirmed appointment — automated end to end. Reminders go out, follow-ups happen, nothing falls through. Your calendar fills without you touching it.</p>
+        <div class="feat-pane-cut">No more manually chasing every confirmation.</div>
+        <div class="feat-pills">
+          <span class="feat-pill">Estimates</span>
+          <span class="feat-pill">Reminders</span>
+          <span class="feat-pill">Follow-ups</span>
+        </div>
       </div>
-      <div class="mfst-cut">No more asking for reviews by hand.</div>
-    </div>
-    <div class="mfst-row r d3">
-      <div class="mfst-num">004</div>
-      <div class="mfst-body">
-        <div class="mfst-name">AI Search Visibility</div>
-        <p class="mfst-desc">Be the contractor Google and AI assistants name when neighbors ask. Built into the infrastructure — not a campaign you have to run or a ranking you have to chase.</p>
+      <div class="feat-pane" data-fp="2">
+        <div class="feat-pane-ey">003 · Review Generation</div>
+        <h3 class="feat-pane-h">5-star reviews,<br><em>without asking.</em></h3>
+        <p class="feat-pane-d">Every closed job triggers a personalized review request trained on your tone, the customer, and the season. Not a template. Never sounds like one.</p>
+        <div class="feat-pane-cut">No more asking for reviews by hand.</div>
+        <div class="feat-pills">
+          <span class="feat-pill">Triggers every close</span>
+          <span class="feat-pill">Personalized tone</span>
+          <span class="feat-pill">Sounds human</span>
+        </div>
       </div>
-      <div class="mfst-cut">No more being invisible while competitors get named.</div>
-    </div>
-    <div class="mfst-row r d4">
-      <div class="mfst-num">005</div>
-      <div class="mfst-body">
-        <div class="mfst-name">Storm Mode</div>
-        <p class="mfst-desc">Hurricane, hail, blizzard — the system absorbs 10× volume without dropping a lead. When demand spikes, capacity doesn't.</p>
+      <div class="feat-pane" data-fp="3">
+        <div class="feat-pane-ey">004 · AI Search Visibility</div>
+        <h3 class="feat-pane-h">The name Google<br><em>recommends.</em></h3>
+        <p class="feat-pane-d">Be the contractor AI assistants name when neighbors ask. Built into the infrastructure — not a campaign you run, not a ranking you chase. Permanent, not periodic.</p>
+        <div class="feat-pane-cut">No more being invisible while competitors get named.</div>
+        <div class="feat-pills">
+          <span class="feat-pill">Google</span>
+          <span class="feat-pill">AI Search</span>
+          <span class="feat-pill">No campaigns needed</span>
+        </div>
       </div>
-      <div class="mfst-cut">No more losing a surge to whoever picked up faster.</div>
+      <div class="feat-pane" data-fp="4">
+        <div class="feat-pane-ey">005 · Storm Mode</div>
+        <h3 class="feat-pane-h">10× volume.<br><em>Zero dropped leads.</em></h3>
+        <p class="feat-pane-d">Hurricane, hail, blizzard — the system absorbs the surge without slowing down. When demand spikes overnight, capacity doesn't. Every lead gets the same 47-second response.</p>
+        <div class="feat-pane-cut">No more losing a surge to whoever picked up faster.</div>
+        <div class="feat-pills">
+          <span class="feat-pill">10× capacity</span>
+          <span class="feat-pill">No lead drops</span>
+          <span class="feat-pill">Always on</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -807,7 +880,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <div class="story">
     <div class="story-row r">
       <div class="story-num">01</div>
-      <div class="story-stat"><span class="story-figure">42%</span></div>
+      <div class="story-stat"><span class="story-figure"><span class="cnt" data-to="42">42</span>%</span></div>
       <div class="story-body">
         <div class="story-h">of inbound leads come in <span class="ital">after 5pm.</span></div>
         <div class="story-d">Storms hit at night. Pipes burst on weekends. Homeowners scroll Google between dinner and bed.</div>
@@ -816,7 +889,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
     <div class="story-row r d1">
       <div class="story-num">02</div>
-      <div class="story-stat"><span class="story-figure">78%</span></div>
+      <div class="story-stat"><span class="story-figure"><span class="cnt" data-to="78">78</span>%</span></div>
       <div class="story-body">
         <div class="story-h">hire <span class="ital">whoever replies first.</span></div>
         <div class="story-d">Not the most experienced. Not the cheapest. The fastest. The race ends in the first five minutes — long before the quote.</div>
@@ -825,7 +898,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
     <div class="story-row r d2">
       <div class="story-num">03</div>
-      <div class="story-stat"><span class="story-figure">3.5<span class="story-unit">hrs</span></span></div>
+      <div class="story-stat"><span class="story-figure"><span class="cnt" data-to="3.5" data-dec="1">3.5</span><span class="story-unit">hrs</span></span></div>
       <div class="story-body">
         <div class="story-h">average <span class="ital">local trades</span> response time.</div>
         <div class="story-d">In the time you take to reply, the homeowner has texted three other contractors and one of them already showed up.</div>
@@ -834,7 +907,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
     <div class="story-row r d3">
       <div class="story-num">04</div>
-      <div class="story-stat"><span class="story-figure">$3.8<span class="story-unit">M</span></span></div>
+      <div class="story-stat"><span class="story-figure">$<span class="cnt" data-to="3.8" data-dec="1">3.8</span><span class="story-unit">M</span></span></div>
       <div class="story-body">
         <div class="story-h">median high-end <span class="ital">home value.</span></div>
         <div class="story-d">In our market a standard roof replacement runs $40,000+. Each missed lead is a five-figure loss — at minimum.</div>
@@ -843,7 +916,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
     <div class="story-row story-row-final r d4">
       <div class="story-num">05</div>
-      <div class="story-stat"><span class="story-figure orange">47<span class="story-unit">sec</span></span></div>
+      <div class="story-stat"><span class="story-figure orange"><span class="cnt" data-to="47">47</span><span class="story-unit">sec</span></span></div>
       <div class="story-body">
         <div class="story-h"><span class="ital">our</span> response time.</div>
         <div class="story-d">By the time your competitor's voicemail picks up, the lead is already qualified, scheduled, or in a 14-day nurture sequence.</div>
@@ -979,6 +1052,64 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   if(btn&&wrap){btn.addEventListener('click',function(e){e.stopPropagation();wrap.classList.toggle('open')});}
   var talk=document.getElementById('dropTalk');
   if(talk){talk.addEventListener('click',function(){var c=document.getElementById('dropClose');if(c)c.click();});}
+})();
+</script>
+<script>
+/* ── Feature switcher ── */
+(function(){
+  var feat=document.querySelector('.feat');
+  if(!feat)return;
+  var btns=feat.querySelectorAll('.feat-btn');
+  var panes=feat.querySelectorAll('.feat-pane');
+  var bar=feat.querySelector('.feat-prog-bar');
+  var cur=0,timer=null,DUR=4600,paused=false;
+  function animBar(){
+    if(!bar)return;
+    bar.style.transition='none';bar.style.width='0%';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      bar.style.transition='width '+DUR+'ms linear';bar.style.width='100%';
+    });});
+  }
+  function show(i){
+    btns[cur].classList.remove('is-active');
+    panes[cur].classList.remove('is-active');
+    cur=i;
+    btns[cur].classList.add('is-active');
+    panes[cur].classList.add('is-active');
+    animBar();
+  }
+  function startAuto(){
+    clearInterval(timer);
+    timer=setInterval(function(){if(!paused)show((cur+1)%btns.length);},DUR);
+  }
+  btns.forEach(function(b,i){
+    b.addEventListener('click',function(){show(i);startAuto();});
+  });
+  feat.addEventListener('mouseenter',function(){paused=true;if(bar){bar.style.transition='none';bar.style.width='0%';}});
+  feat.addEventListener('mouseleave',function(){paused=false;show(cur);startAuto();});
+  show(0);startAuto();
+})();
+/* ── Stat counters ── */
+(function(){
+  var els=document.querySelectorAll('.cnt');
+  if(!els.length)return;
+  var seen=new Set();
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting||seen.has(e.target))return;
+      seen.add(e.target);
+      var el=e.target,to=parseFloat(el.dataset.to),dec=parseInt(el.dataset.dec||0),start=null,dur=1400;
+      function step(ts){
+        if(!start)start=ts;
+        var p=Math.min((ts-start)/dur,1),ease=1-Math.pow(1-p,3);
+        el.textContent=dec?(to*ease).toFixed(dec):Math.round(to*ease);
+        if(p<1)requestAnimationFrame(step);
+        else el.textContent=dec?to.toFixed(dec):to;
+      }
+      requestAnimationFrame(step);
+    });
+  },{threshold:0.6});
+  els.forEach(function(el){obs.observe(el);});
 })();
 </script>
 </body>
