@@ -217,6 +217,9 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
   border-radius:5px;
   overflow:hidden;
   aspect-ratio:16/9;
+  /* Poster as always-visible fallback — shows immediately on first paint
+     and remains visible if video/canvas never loads (slow net, codec issue) */
+  background:#080807 url('hero-poster.jpg') center/cover no-repeat;
 
   /* Right-wall angle — the angle the user approved */
   transform:rotateY(-36deg);
@@ -2005,6 +2008,39 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
 
       var ready   = false;
       var hasPrev = false;
+
+      // ── Pre-paint poster onto canvas as a safety net ─────────────────
+      // If the video fails or stalls, this keeps the poster visible
+      // instead of a blank white canvas. Runs before any video frame
+      // arrives, so the user sees content immediately.
+      var posterImg = new Image();
+      posterImg.onload = function(){
+        try {
+          var iw = posterImg.naturalWidth, ih = posterImg.naturalHeight;
+          if(!iw || !ih) return;
+          if(!ready){
+            out.width = prev.width = iw;
+            out.height = prev.height = ih;
+            ready = true;
+          }
+          var dw = iw * ZOOM, dh = ih * ZOOM;
+          var dx = (iw - dw) / 2, dy = (ih - dh) / 2;
+          oCtx.drawImage(posterImg, dx, dy, dw, dh);
+          pCtx.drawImage(out, 0, 0);
+          hasPrev = true;
+        } catch(e){}
+      };
+      posterImg.src = 'hero-poster.jpg';
+
+      // ── Video error / stall recovery ────────────────────────────────
+      // If the video errors or stalls, retry load. The canvas poster
+      // (above) and frame background poster (CSS) remain visible during
+      // the retry, so the user never sees white.
+      function handleFailure(){
+        try { video.load(); } catch(e){}
+      }
+      video.addEventListener('error', handleFailure);
+      video.addEventListener('stalled', handleFailure);
 
       // Helper to draw current video frame fully (no blend) — used when
       // we want to lock in a specific frame (e.g. the final frame on ended).
