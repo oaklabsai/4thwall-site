@@ -441,34 +441,52 @@ section{position:relative;z-index:2}
 .feat-pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.2rem}
 .feat-pill{font-family:var(--mono);font-size:.58rem;letter-spacing:.05em;text-transform:uppercase;padding:.28rem .65rem;border:1px solid var(--line);border-radius:50px;color:var(--dim)}
 @media(max-width:760px){.feat{grid-template-columns:1fr;border-radius:14px}.feat-nav{border-right:none;border-bottom:1px solid var(--line)}.feat-btn{grid-template-columns:2.4rem 1fr .7rem;padding:.85rem 1rem}.feat-btn-label{font-size:.82rem}.feat-body{padding:1.5rem;min-height:auto}}
-/* ── WHY NOW — dropdown rows ─────────── */
-.wn-list{border-top:1px solid var(--line)}
-.wn-row{border-bottom:1px solid var(--line)}
-.wn-trigger{display:grid;grid-template-columns:2.8rem 8rem 1fr 1.4rem;gap:2rem;align-items:center;padding:1.75rem 0;cursor:pointer;width:100%;text-align:left;background:transparent;border:none;transition:opacity .2s}
-.wn-trigger:hover{opacity:.78}
-.wn-n{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;color:var(--orange)}
-.wn-fig{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,3rem);font-weight:400;font-style:italic;letter-spacing:-.04em;line-height:1;color:var(--ink);transition:color .25s}
-.wn-fig small{font-size:.42em;font-style:normal;font-family:var(--body);font-weight:500;letter-spacing:0;color:var(--muted);vertical-align:.26em}
-.wn-fig.grn{color:var(--orange)}
-.wn-headline{font-family:var(--display);font-size:clamp(.95rem,1.65vw,1.32rem);font-weight:500;letter-spacing:-.02em;line-height:1.2}
-.wn-headline em{font-style:italic;color:var(--muted);font-weight:400}
-.wn-chev{font-size:.68rem;color:var(--dim);line-height:1;justify-self:end;transition:transform .38s cubic-bezier(.16,1,.3,1),color .25s}
-.wn-row.open .wn-chev{transform:rotate(180deg);color:var(--orange)}
-.wn-row.open .wn-fig:not(.grn){color:var(--orange)}
-.wn-drop{display:grid;grid-template-rows:0fr;transition:grid-template-rows .52s cubic-bezier(.16,1,.3,1)}
-.wn-row.open .wn-drop{grid-template-rows:1fr}
-.wn-drop-inner{overflow:hidden}
-.wn-drop-text{padding:0 0 1.8rem calc(2.8rem + 8rem + 4rem);font-size:.9rem;line-height:1.74;color:var(--muted);max-width:56rem}
-@media(max-width:720px){.wn-trigger{grid-template-columns:2rem 5.5rem 1fr 1.2rem;gap:1rem;padding:1.3rem 0}.wn-fig{font-size:1.55rem}.wn-headline{font-size:.88rem}.wn-drop-text{padding-left:0}}
-/* ── FAQ label ─────────────────── */
+/* ── MARKET — stat selector ─── */
+.stat-sel{margin-top:1.8rem}
+.stat-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.stat-tabs{display:grid;grid-template-columns:repeat(5,1fr);min-width:480px;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.stat-tab{padding:1.35rem 1.1rem;text-align:left;background:transparent;border:none;border-right:1px solid var(--line);cursor:pointer;transition:background .18s}
+.stat-tab:last-child{border-right:none}
+.stat-tab:hover:not(.is-active){background:var(--orange-soft)}
+.stat-tab.is-active{background:var(--ink)}
+.stat-num{font-family:var(--display);font-size:clamp(1.8rem,3.5vw,3.2rem);font-weight:400;font-style:italic;letter-spacing:-.04em;line-height:.95;color:var(--ink);transition:color .2s;white-space:nowrap}
+.stat-tab.is-active .stat-num{color:var(--cream)}
+.stat-num.grn{color:var(--orange)}
+.stat-num small{font-size:.42em;font-style:normal;font-family:var(--body);font-weight:500;color:var(--muted);vertical-align:.26em;letter-spacing:0}
+.stat-tab.is-active .stat-num small{color:rgba(247,243,236,.45)}
+.stat-lbl{font-family:var(--mono);font-size:.55rem;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-top:.5rem;line-height:1.4;transition:color .2s}
+.stat-tab.is-active .stat-lbl{color:rgba(247,243,236,.32)}
+.stat-panel-wrap{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:.75rem;min-height:180px}
+.stat-panel{display:none;padding:2.6rem 2.4rem;animation:spIn .35s cubic-bezier(.16,1,.3,1)}
+.stat-panel.is-active{display:block}
+@keyframes spIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.stat-panel-grid{display:grid;grid-template-columns:auto 1fr;gap:3.5rem;align-items:start}
+.stat-panel-fig{font-family:var(--display);font-size:clamp(3.2rem,7vw,5.8rem);font-weight:400;font-style:italic;letter-spacing:-.04em;line-height:.9;color:var(--ink);white-space:nowrap}
+.stat-panel-fig.grn{color:var(--orange)}
+.stat-unit{font-size:.36em;font-style:normal;font-family:var(--body);font-weight:500;color:var(--muted);vertical-align:.32em;letter-spacing:0}
+.stat-panel-fig.grn .stat-unit{color:var(--orange);opacity:.7}
+.stat-panel-h{font-family:var(--display);font-size:clamp(1.2rem,2.2vw,1.7rem);font-weight:500;letter-spacing:-.025em;line-height:1.2;color:var(--ink);padding-top:.25rem}
+.stat-panel-h em{font-style:italic;color:var(--muted);font-weight:400}
+.stat-panel-d{font-size:.9rem;line-height:1.74;color:var(--muted);margin-top:.7rem;max-width:44rem}
+@media(max-width:640px){.stat-panel-grid{grid-template-columns:1fr;gap:1rem}.stat-panel{padding:1.6rem 1.4rem}.stat-panel-fig{font-size:clamp(2.6rem,12vw,4rem)}}
+/* ── FAQ — editorial cards ─── */
 .faq-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin:0 0 1.8rem;width:100%}
-/* ── FAQ grid ─────────── */
-.faq-grid{border-top:1px solid var(--line);margin-bottom:3rem}
-.faq-pair{display:grid;grid-template-columns:1fr 1fr;gap:4rem;padding:2rem 0;border-bottom:1px solid var(--line);transition:background .2s}
-.faq-pair:hover{background:linear-gradient(90deg,var(--orange-soft),transparent 60%)}
-.faq-pair-q{font-family:var(--display);font-size:clamp(.98rem,1.6vw,1.2rem);font-weight:500;letter-spacing:-.02em;line-height:1.3;color:var(--ink)}
-.faq-pair-a{font-size:.87rem;line-height:1.74;color:var(--muted)}
-@media(max-width:640px){.faq-pair{grid-template-columns:1fr;gap:.65rem;padding:1.4rem 0}.faq-pair-q{font-size:.95rem}}
+.faq-deck{border-top:1px solid var(--line);margin-bottom:3rem}
+.faq-card{border-bottom:1px solid var(--line);transition:background .28s,border-color .28s}
+.faq-card.open{background:var(--ink);border-color:rgba(26,26,24,.22)}
+.faq-trigger{display:grid;grid-template-columns:3.2rem 1fr auto;gap:1.8rem;align-items:center;padding:1.55rem 0;cursor:pointer;width:100%;text-align:left;background:transparent;border:none}
+.faq-card.open .faq-trigger{padding-bottom:.4rem}
+.faq-n{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--orange);transition:color .25s}
+.faq-card.open .faq-n{color:rgba(247,243,236,.28)}
+.faq-q{font-family:var(--display);font-size:clamp(1.05rem,1.8vw,1.35rem);font-weight:500;letter-spacing:-.025em;line-height:1.22;color:var(--ink);transition:color .25s}
+.faq-card.open .faq-q{color:var(--cream)}
+.faq-mark{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;transition:all .32s cubic-bezier(.16,1,.3,1);flex-shrink:0;color:var(--dim);font-size:.9rem;line-height:1;font-family:var(--display)}
+.faq-card.open .faq-mark{transform:rotate(45deg);background:var(--orange);border-color:var(--orange);color:var(--cream)}
+.faq-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .52s cubic-bezier(.16,1,.3,1)}
+.faq-card.open .faq-body{grid-template-rows:1fr}
+.faq-body-in{overflow:hidden}
+.faq-body-txt{padding:.4rem 0 1.8rem calc(3.2rem + 1.8rem);font-size:.9rem;line-height:1.78;color:rgba(247,243,236,.72);max-width:52rem}
+@media(max-width:640px){.faq-trigger{grid-template-columns:2.4rem 1fr auto;gap:1rem;padding:1.2rem 0}.faq-q{font-size:.98rem}.faq-mark{width:20px;height:20px;font-size:.8rem}.faq-body-txt{padding:.4rem 0 1.4rem calc(2.4rem + 1rem);font-size:.84rem}}
 
 /* ── CONTACT — Claude composer ─────── */
 .composer-section{padding:4.5rem 0 6rem}
@@ -555,10 +573,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .why-banner{margin-top:2.4rem;padding-top:2rem}
   .why-h{font-size:1.5rem}
   .why-cards{margin-top:1.5rem;gap:.7rem}
-  .faq-q{padding:1.05rem 0;gap:.9rem}
-  .faq-q-text{font-size:1rem}
-  .faq-q-icon{width:26px;height:26px;font-size:.95rem}
-  .faq-a-text{padding-bottom:1rem;font-size:.84rem}
   .composer-section{padding:3rem 0 4.5rem}
   .composer-h{font-size:clamp(1.9rem,7vw,2.8rem);margin-bottom:1.8rem}
   .composer{padding:1rem;border-radius:18px}
@@ -906,68 +920,78 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
   </div>
 
-  <div class="wn-list r in d2">
-
-    <div class="wn-row open">
-      <button class="wn-trigger">
-        <span class="wn-n">01</span>
-        <span class="wn-fig"><span class="wn-cnt" data-to="42">42</span>%</span>
-        <span class="wn-headline">of inbound leads come in <em>after 5pm.</em></span>
-        <span class="wn-chev">▾</span>
-      </button>
-      <div class="wn-drop"><div class="wn-drop-inner">
-        <p class="wn-drop-text">Storms hit at night. Pipes burst on weekends. Homeowners scroll Google between dinner and bed. If you're not answering then, you're not in the running.</p>
-      </div></div>
+  <div class="stat-sel r in d2">
+    <div class="stat-tabs-wrap">
+      <div class="stat-tabs">
+        <button class="stat-tab is-active">
+          <div class="stat-num">42%</div>
+          <div class="stat-lbl">after hours</div>
+        </button>
+        <button class="stat-tab">
+          <div class="stat-num">78%</div>
+          <div class="stat-lbl">hire first</div>
+        </button>
+        <button class="stat-tab">
+          <div class="stat-num">3.5<small>hrs</small></div>
+          <div class="stat-lbl">industry avg</div>
+        </button>
+        <button class="stat-tab">
+          <div class="stat-num">$3.8<small>M</small></div>
+          <div class="stat-lbl">home value</div>
+        </button>
+        <button class="stat-tab">
+          <div class="stat-num grn">47<small>sec</small></div>
+          <div class="stat-lbl">our response</div>
+        </button>
+      </div>
     </div>
-
-    <div class="wn-row">
-      <button class="wn-trigger">
-        <span class="wn-n">02</span>
-        <span class="wn-fig"><span class="wn-cnt" data-to="78">78</span>%</span>
-        <span class="wn-headline">hire <em>whoever replies first.</em></span>
-        <span class="wn-chev">▾</span>
-      </button>
-      <div class="wn-drop"><div class="wn-drop-inner">
-        <p class="wn-drop-text">Not the most experienced. Not the cheapest. The fastest. The race ends in the first five minutes — long before the quote is sent.</p>
-      </div></div>
+    <div class="stat-panel-wrap">
+      <div class="stat-panel is-active">
+        <div class="stat-panel-grid">
+          <div class="stat-panel-fig">42%</div>
+          <div>
+            <div class="stat-panel-h">of inbound leads come in <em>after 5pm.</em></div>
+            <p class="stat-panel-d">Storms hit at night. Pipes burst on weekends. Homeowners scroll Google between dinner and bed. If you're not answering then, you're not in the running.</p>
+          </div>
+        </div>
+      </div>
+      <div class="stat-panel">
+        <div class="stat-panel-grid">
+          <div class="stat-panel-fig">78%</div>
+          <div>
+            <div class="stat-panel-h">hire <em>whoever replies first.</em></div>
+            <p class="stat-panel-d">Not the most experienced. Not the cheapest. The fastest. The race ends in the first five minutes — long before the quote is sent.</p>
+          </div>
+        </div>
+      </div>
+      <div class="stat-panel">
+        <div class="stat-panel-grid">
+          <div class="stat-panel-fig">3.5<span class="stat-unit">hrs</span></div>
+          <div>
+            <div class="stat-panel-h">average <em>local trades</em> response time.</div>
+            <p class="stat-panel-d">In the time you take to reply, the homeowner has texted three other contractors — and one of them already showed up.</p>
+          </div>
+        </div>
+      </div>
+      <div class="stat-panel">
+        <div class="stat-panel-grid">
+          <div class="stat-panel-fig">$3.8<span class="stat-unit">M</span></div>
+          <div>
+            <div class="stat-panel-h">median high-end <em>home value.</em></div>
+            <p class="stat-panel-d">In our market a standard roof replacement runs $40,000+. Each missed lead isn't a lost call — it's a five-figure loss, at minimum.</p>
+          </div>
+        </div>
+      </div>
+      <div class="stat-panel">
+        <div class="stat-panel-grid">
+          <div class="stat-panel-fig grn">47<span class="stat-unit">sec</span></div>
+          <div>
+            <div class="stat-panel-h"><em>Our</em> response time.</div>
+            <p class="stat-panel-d">By the time your competitor's voicemail picks up, the lead is already qualified, scheduled, or inside a 14-day nurture sequence.</p>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="wn-row">
-      <button class="wn-trigger">
-        <span class="wn-n">03</span>
-        <span class="wn-fig"><span class="wn-cnt" data-to="3.5" data-dec="1">3.5</span><small>hrs</small></span>
-        <span class="wn-headline">average <em>local trades</em> response time.</span>
-        <span class="wn-chev">▾</span>
-      </button>
-      <div class="wn-drop"><div class="wn-drop-inner">
-        <p class="wn-drop-text">In the time you take to reply, the homeowner has texted three other contractors — and one of them already showed up.</p>
-      </div></div>
-    </div>
-
-    <div class="wn-row">
-      <button class="wn-trigger">
-        <span class="wn-n">04</span>
-        <span class="wn-fig">$<span class="wn-cnt" data-to="3.8" data-dec="1">3.8</span><small>M</small></span>
-        <span class="wn-headline">median high-end <em>home value.</em></span>
-        <span class="wn-chev">▾</span>
-      </button>
-      <div class="wn-drop"><div class="wn-drop-inner">
-        <p class="wn-drop-text">In our market a standard roof replacement runs $40,000+. Each missed lead isn't a lost call — it's a five-figure loss, at minimum.</p>
-      </div></div>
-    </div>
-
-    <div class="wn-row">
-      <button class="wn-trigger">
-        <span class="wn-n">05</span>
-        <span class="wn-fig grn"><span class="wn-cnt" data-to="47">47</span><small>sec</small></span>
-        <span class="wn-headline"><em>Our</em> response time.</span>
-        <span class="wn-chev">▾</span>
-      </button>
-      <div class="wn-drop"><div class="wn-drop-inner">
-        <p class="wn-drop-text">By the time your competitor's voicemail picks up, the lead is already qualified, scheduled, or inside a 14-day nurture sequence.</p>
-      </div></div>
-    </div>
-
   </div>
 
   <div class="story-conclusion r d3">
@@ -980,38 +1004,86 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <section class="composer-section wrap" id="contact" data-screen-label="08 Contact">
   <div class="faq-label r in">Frequently Asked Questions</div>
 
-  <div class="faq-grid r in d1">
-    <div class="faq-pair">
-      <div class="faq-pair-q">What's actually included — can I pick and choose?</div>
-      <div class="faq-pair-a">No picking required. Every contractor gets the same six systems: lead response, booking, review generation, AI visibility, storm mode, and seasonal campaigns. What changes is how each one is configured — to your trade, your market, how you talk, what you work on. You're not buying a platform. You're getting a running system, live in 48 hours.</div>
+  <div class="faq-deck r in d1">
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">01</span>
+        <span class="faq-q">What's actually included — can I pick and choose?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">No picking required. Every contractor gets the same six systems: lead response, booking, review generation, AI visibility, storm mode, and seasonal campaigns. What changes is how each one is configured — to your trade, your market, how you talk, what you work on. You're not buying a platform. You're getting a running system, live in 48 hours.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">Is this another monthly software tool I have to learn?</div>
-      <div class="faq-pair-a">No. We build it. We run it. We tune it. You text us when you want something changed. The only thing you'll see is the dashboard — and that's optional.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">02</span>
+        <span class="faq-q">Is this another monthly software tool I have to learn?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">No. We build it. We run it. We tune it. You text us when you want something changed. The only thing you'll see is the dashboard — and that's optional.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">Will the AI sound like a robot?</div>
-      <div class="faq-pair-a">No. It's trained on how you and your team actually talk — tone, vocabulary, what you say "no" to. We test every conversation flow before going live. Homeowners regularly don't realize they're talking to AI until you tell them.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">03</span>
+        <span class="faq-q">Will the AI sound like a robot?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">No. It's trained on how you and your team actually talk — tone, vocabulary, what you say "no" to. We test every conversation flow before going live. Homeowners regularly don't realize they're talking to AI until you tell them.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">What if a lead asks something the AI can't handle?</div>
-      <div class="faq-pair-a">It hands off to you with full context — who they are, what they need, what's been said. You walk into the conversation already informed.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">04</span>
+        <span class="faq-q">What if a lead asks something the AI can't handle?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">It hands off to you with full context — who they are, what they need, what's been said. You walk into the conversation already informed.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">Do I have to switch off Jobber / ServiceTitan / my CRM?</div>
-      <div class="faq-pair-a">No. We sit on top of your existing stack. If you change tools later, we adjust. The AI infrastructure is yours, not a platform's.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">05</span>
+        <span class="faq-q">Do I have to switch off Jobber / ServiceTitan / my CRM?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">No. We sit on top of your existing stack. If you change tools later, we adjust. The AI infrastructure is yours, not a platform's.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">What does it cost?</div>
-      <div class="faq-pair-a">Less than a part-time office manager. Pricing depends on volume, languages, and scope — most contractors recover it inside the first month from leads that would have gone to voicemail.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">06</span>
+        <span class="faq-q">What does it cost?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">Less than a part-time office manager. Pricing depends on volume, languages, and scope — most contractors recover it inside the first month from leads that would have gone to voicemail.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">How long does deployment take?</div>
-      <div class="faq-pair-a">48 hours from signed contract to live system. We've done it faster — two days is what we promise.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">07</span>
+        <span class="faq-q">How long does deployment take?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">48 hours from signed contract to live system. We've done it faster — two days is what we promise.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">What if I want to stop?</div>
-      <div class="faq-pair-a">30-day notice, no penalty. We hand you the system or wind it down — your call. We've never had a contractor leave, but the door's not locked.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">08</span>
+        <span class="faq-q">What if I want to stop?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">30-day notice, no penalty. We hand you the system or wind it down — your call. We've never had a contractor leave, but the door's not locked.</p>
+      </div></div>
     </div>
   </div>
 
@@ -1135,38 +1207,33 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   feat.addEventListener('mouseleave',function(){paused=false;show(cur);startAuto();});
   show(0);startAuto();
 })();
-/* ── Why Now — dropdown + counters ── */
+/* ── Stat selector ── */
 (function(){
-  /* accordion */
-  var rows=document.querySelectorAll('.wn-row');
-  rows.forEach(function(row){
-    var btn=row.querySelector('.wn-trigger');
+  var tabs=document.querySelectorAll('.stat-tab');
+  var panels=document.querySelectorAll('.stat-panel');
+  if(!tabs.length)return;
+  function activate(i){
+    tabs.forEach(function(t){t.classList.remove('is-active');});
+    panels.forEach(function(p){p.classList.remove('is-active');});
+    tabs[i].classList.add('is-active');
+    panels[i].classList.add('is-active');
+  }
+  tabs.forEach(function(tab,i){
+    tab.addEventListener('click',function(){activate(i);});
+  });
+})();
+/* ── FAQ editorial cards ── */
+(function(){
+  var cards=document.querySelectorAll('.faq-card');
+  cards.forEach(function(card){
+    var btn=card.querySelector('.faq-trigger');
     if(!btn)return;
     btn.addEventListener('click',function(){
-      var wasOpen=row.classList.contains('open');
-      rows.forEach(function(r){r.classList.remove('open');});
-      if(!wasOpen)row.classList.add('open');
+      var wasOpen=card.classList.contains('open');
+      cards.forEach(function(c){c.classList.remove('open');});
+      if(!wasOpen)card.classList.add('open');
     });
   });
-  /* count-up on scroll */
-  var list=document.querySelector('.wn-list');
-  if(!list)return;
-  var cnts=list.querySelectorAll('.wn-cnt');
-  if(!cnts.length)return;
-  var fired=false;
-  var obs=new IntersectionObserver(function(e){
-    if(!e[0].isIntersecting||fired)return;
-    fired=true;
-    cnts.forEach(function(el,i){
-      setTimeout(function(){
-        var to=parseFloat(el.dataset.to),dec=parseInt(el.dataset.dec||0),start=null,dur=820;
-        function step(ts){if(!start)start=ts;var p=Math.min((ts-start)/dur,1),ease=1-Math.pow(1-p,3);el.textContent=dec?(to*ease).toFixed(dec):Math.round(to*ease);if(p<1)requestAnimationFrame(step);else el.textContent=dec?to.toFixed(dec):to;}
-        requestAnimationFrame(step);
-      },i*160);
-    });
-    obs.disconnect();
-  },{threshold:0.2});
-  obs.observe(list);
 })();
 </script>
 </body>

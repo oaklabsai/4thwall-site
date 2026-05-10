@@ -289,13 +289,23 @@ section{position:relative;z-index:2}
 .feat-pill{font-family:var(--mono);font-size:.58rem;letter-spacing:.05em;text-transform:uppercase;padding:.28rem .65rem;border:1px solid var(--line);border-radius:50px;color:var(--dim)}
 @media(max-width:760px){.feat{grid-template-columns:1fr;border-radius:14px}.feat-nav{border-right:none;border-bottom:1px solid var(--line)}.feat-btn{grid-template-columns:2.4rem 1fr .7rem;padding:.85rem 1rem}.feat-btn-label{font-size:.82rem}.feat-body{padding:1.5rem;min-height:auto}}
 .faq-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin:0 0 1.8rem;width:100%}
-/* ── FAQ — two-column grid ───── */
-.faq-grid{border-top:1px solid var(--line);margin-bottom:3rem}
-.faq-pair{display:grid;grid-template-columns:1fr 1fr;gap:4rem;padding:2rem 0;border-bottom:1px solid var(--line);transition:background .2s}
-.faq-pair:hover{background:linear-gradient(90deg,var(--orange-soft),transparent 60%)}
-.faq-pair-q{font-family:var(--display);font-size:clamp(.98rem,1.6vw,1.2rem);font-weight:500;letter-spacing:-.02em;line-height:1.3;color:var(--ink)}
-.faq-pair-a{font-size:.87rem;line-height:1.74;color:var(--muted)}
-@media(max-width:640px){.faq-pair{grid-template-columns:1fr;gap:.65rem;padding:1.4rem 0}.faq-pair-q{font-size:.95rem}}
+/* ── FAQ — editorial cards ─── */
+.faq-deck{border-top:1px solid var(--line);margin-bottom:3rem}
+.faq-card{border-bottom:1px solid var(--line);transition:background .28s,border-color .28s}
+.faq-card.open{background:var(--ink);border-color:rgba(26,26,24,.22)}
+.faq-trigger{display:grid;grid-template-columns:3.2rem 1fr auto;gap:1.8rem;align-items:center;padding:1.55rem 0;cursor:pointer;width:100%;text-align:left;background:transparent;border:none}
+.faq-card.open .faq-trigger{padding-bottom:.4rem}
+.faq-n{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--orange);transition:color .25s}
+.faq-card.open .faq-n{color:rgba(247,243,236,.28)}
+.faq-q{font-family:var(--display);font-size:clamp(1.05rem,1.8vw,1.35rem);font-weight:500;letter-spacing:-.025em;line-height:1.22;color:var(--ink);transition:color .25s}
+.faq-card.open .faq-q{color:var(--cream)}
+.faq-mark{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;transition:all .32s cubic-bezier(.16,1,.3,1);flex-shrink:0;color:var(--dim);font-size:.9rem;line-height:1;font-family:var(--display)}
+.faq-card.open .faq-mark{transform:rotate(45deg);background:var(--orange);border-color:var(--orange);color:var(--cream)}
+.faq-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .52s cubic-bezier(.16,1,.3,1)}
+.faq-card.open .faq-body{grid-template-rows:1fr}
+.faq-body-in{overflow:hidden}
+.faq-body-txt{padding:.4rem 0 1.8rem calc(3.2rem + 1.8rem);font-size:.9rem;line-height:1.78;color:rgba(247,243,236,.72);max-width:52rem}
+@media(max-width:640px){.faq-trigger{grid-template-columns:2.4rem 1fr auto;gap:1rem;padding:1.2rem 0}.faq-q{font-size:.98rem}.faq-mark{width:20px;height:20px;font-size:.8rem}.faq-body-txt{padding:.4rem 0 1.4rem calc(2.4rem + 1rem);font-size:.84rem}}
 
 /* ── CONTACT — composer ─────── */
 .composer-section{padding:4.5rem 0 6rem}
@@ -1054,30 +1064,66 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
   </div>
 
-  <div class="faq-grid">
-    <div class="faq-pair">
-      <div class="faq-pair-q">Is this a package, like most software subscriptions?</div>
-      <div class="faq-pair-a">No. There are no tiers, no bundles, no fixed feature sets you buy. We scope each engagement around your actual operation — what's breaking, what's manual, what's costing you the most. Some clients need three of the six systems. Some need all six plus things we build from scratch. Scope is determined by what your business actually needs, not by a pricing page.</div>
+  <div class="faq-deck">
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">01</span>
+        <span class="faq-q">Is this a package, like most software subscriptions?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">No. There are no tiers, no bundles, no fixed feature sets you buy. We scope each engagement around your actual operation — what's breaking, what's manual, what's costing you the most. Some clients need three of the six systems. Some need all six plus things we build from scratch. Scope is determined by what your business actually needs, not by a pricing page.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">How is this different from hiring an ops manager or a consultant?</div>
-      <div class="faq-pair-a">A consultant tells you what to build, then leaves. An ops manager needs managing themselves, and costs you time before they're useful. We build the infrastructure, deploy it, and run it permanently — no ramp-up, no management overhead, no knowledge walking out the door when someone leaves. The system improves over time instead of degrading.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">02</span>
+        <span class="faq-q">How is this different from hiring an ops manager or a consultant?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">A consultant tells you what to build, then leaves. An ops manager needs managing themselves, and costs you time before they're useful. We build the infrastructure, deploy it, and run it permanently — no ramp-up, no management overhead, no knowledge walking out the door when someone leaves. The system improves over time instead of degrading.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">Do you need access to our tools and data?</div>
-      <div class="faq-pair-a">We configure connections together in a single session. You grant access, we set up integrations, and from that point the system runs on your infrastructure. We don't maintain ongoing credential access — everything lives under your control. We work with whatever stack you're already on.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">03</span>
+        <span class="faq-q">Do you need access to our tools and data?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">We configure connections together in a single session. You grant access, we set up integrations, and from that point the system runs on your infrastructure. We don't maintain ongoing credential access — everything lives under your control. We work with whatever stack you're already on.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">How long before something is actually running?</div>
-      <div class="faq-pair-a">Most clients have their first live system within the first week. A full operational layer across client management, hiring, and outreach takes longer to build completely — but we're not waiting for a long discovery phase. We read what you share, build fast, and keep adding. The first pieces are live before the "normal" engagement would have even started.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">04</span>
+        <span class="faq-q">How long before something is actually running?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">Most clients have their first live system within the first week. A full operational layer across client management, hiring, and outreach takes longer to build completely — but we're not waiting for a long discovery phase. We read what you share, build fast, and keep adding. The first pieces are live before the "normal" engagement would have even started.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">What determines the scope — and the price?</div>
-      <div class="faq-pair-a">Scope is determined by what's actually broken or manual in your operation. We talk through it before any number is mentioned — no tiers, no guesswork. Price follows scope, not the other way around. The conversation starts with your operation, not a pricing calculator.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">05</span>
+        <span class="faq-q">What determines the scope — and the price?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">Scope is determined by what's actually broken or manual in your operation. We talk through it before any number is mentioned — no tiers, no guesswork. Price follows scope, not the other way around. The conversation starts with your operation, not a pricing calculator.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">What does ongoing management actually look like?</div>
-      <div class="faq-pair-a">One contact, everything handled. We monitor, tune, and expand the system as the business changes. The system is never "finished" — it keeps improving as your operation does. You don't manage us; we manage the infrastructure. When something breaks or the business shifts, we adjust.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">06</span>
+        <span class="faq-q">What does ongoing management actually look like?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">One contact, everything handled. We monitor, tune, and expand the system as the business changes. The system is never "finished" — it keeps improving as your operation does. You don't manage us; we manage the infrastructure. When something breaks or the business shifts, we adjust.</p>
+      </div></div>
     </div>
   </div>
 </section>
@@ -1087,30 +1133,66 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <section class="composer-section wrap" id="contact">
   <div class="faq-label r in">Frequently Asked Questions</div>
 
-  <div class="faq-grid r in d1">
-    <div class="faq-pair">
-      <div class="faq-pair-q">Is this a package, like most software subscriptions?</div>
-      <div class="faq-pair-a">No. There are no tiers, no bundles, no fixed feature sets you buy. We scope each engagement around your actual operation — what's breaking, what's manual, what's costing you the most. Some clients need three of the six systems. Some need all six plus custom builds. Scope is determined by what your business actually needs, not a pricing page.</div>
+  <div class="faq-deck r in d1">
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">01</span>
+        <span class="faq-q">Is this a package, like most software subscriptions?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">No. There are no tiers, no bundles, no fixed feature sets you buy. We scope each engagement around your actual operation — what's breaking, what's manual, what's costing you the most. Some clients need three of the six systems. Some need all six plus custom builds. Scope is determined by what your business actually needs, not a pricing page.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">How is this different from hiring an ops manager or a consultant?</div>
-      <div class="faq-pair-a">A consultant tells you what to build, then leaves. An ops manager needs managing themselves. We build the infrastructure, deploy it, and run it permanently — no ramp-up, no management overhead, no knowledge walking out the door. The system improves over time instead of degrading.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">02</span>
+        <span class="faq-q">How is this different from hiring an ops manager or a consultant?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">A consultant tells you what to build, then leaves. An ops manager needs managing themselves. We build the infrastructure, deploy it, and run it permanently — no ramp-up, no management overhead, no knowledge walking out the door. The system improves over time instead of degrading.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">How long before something is actually running?</div>
-      <div class="faq-pair-a">Most clients have their first live system within the first week. We read what you share, build fast, and keep adding. The first pieces are live before a typical engagement would have even started.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">03</span>
+        <span class="faq-q">How long before something is actually running?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">Most clients have their first live system within the first week. We read what you share, build fast, and keep adding. The first pieces are live before a typical engagement would have even started.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">What determines the scope and the price?</div>
-      <div class="faq-pair-a">Scope is determined by what's actually broken or manual in your operation. We talk through it before any number is mentioned. Price follows scope, not the other way around.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">04</span>
+        <span class="faq-q">What determines the scope and the price?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">Scope is determined by what's actually broken or manual in your operation. We talk through it before any number is mentioned. Price follows scope, not the other way around.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">What does ongoing management actually look like?</div>
-      <div class="faq-pair-a">One contact, everything handled. We monitor, tune, and expand as the business changes. You don't manage us — we manage the infrastructure.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">05</span>
+        <span class="faq-q">What does ongoing management actually look like?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">One contact, everything handled. We monitor, tune, and expand as the business changes. You don't manage us — we manage the infrastructure.</p>
+      </div></div>
     </div>
-    <div class="faq-pair">
-      <div class="faq-pair-q">Can you work with the tools we're already using?</div>
-      <div class="faq-pair-a">Yes. We configure integrations in a single session — you grant access, we set them up, and from that point the system runs under your control. We work with whatever stack you're already on, not around it.</div>
+    <div class="faq-card">
+      <button class="faq-trigger">
+        <span class="faq-n">06</span>
+        <span class="faq-q">Can you work with the tools we're already using?</span>
+        <span class="faq-mark">+</span>
+      </button>
+      <div class="faq-body"><div class="faq-body-in">
+        <p class="faq-body-txt">Yes. We configure integrations in a single session — you grant access, we set them up, and from that point the system runs under your control. We work with whatever stack you're already on, not around it.</p>
+      </div></div>
     </div>
   </div>
 
@@ -1397,6 +1479,21 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
   function resetCycle(){loop();}
   loop();
+})();
+</script>
+<script>
+/* ── FAQ editorial cards ── */
+(function(){
+  var cards=document.querySelectorAll('.faq-card');
+  cards.forEach(function(card){
+    var btn=card.querySelector('.faq-trigger');
+    if(!btn)return;
+    btn.addEventListener('click',function(){
+      var wasOpen=card.classList.contains('open');
+      cards.forEach(function(c){c.classList.remove('open');});
+      if(!wasOpen)card.classList.add('open');
+    });
+  });
 })();
 </script>
 </body>
