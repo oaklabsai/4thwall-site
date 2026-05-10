@@ -479,6 +479,23 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 @media(max-width:880px){.lap-wrap{max-width:min(420px,88vw)}}
 
+/* ── STEPS GRID ─── */
+.steps{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);margin-top:2rem}
+.step{padding:1.5rem 1.5rem 1.5rem 0;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.step:nth-child(even){border-right:none;padding-left:1.5rem;padding-right:0}
+.step:nth-child(n+3){border-bottom:none}
+.step-n{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--orange);margin-bottom:.45rem}
+.step-h{font-family:var(--display);font-size:1.05rem;font-weight:500;letter-spacing:-.02em;line-height:1.2;margin-bottom:.35rem}
+.step-h .ital{font-style:italic;color:var(--muted);font-weight:400}
+.step-d{font-size:.82rem;line-height:1.6;color:var(--muted)}
+@media(max-width:600px){
+  .steps{grid-template-columns:1fr}
+  .step{border-right:none;padding-left:0;padding-right:0}
+  .step:nth-child(even){padding-left:0}
+  .step:nth-child(n+3){border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:none}
+}
+
 /* tweaks panel z */
 #tweaks-root{z-index:1000;position:relative}
 
@@ -518,12 +535,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <button class="nav-a nav-prod-btn" id="prodBtn" aria-haspopup="true" aria-expanded="false">Products <span class="prod-chevron">▾</span></button>
       <div class="prod-drop" id="prodDrop">
         <a href="/trades.html" class="prod-drop-a">
-          <span class="prod-drop-name">4THWALL Front Of House</span>
-          <span class="prod-drop-sub">For trades contractors</span>
+          <span class="prod-drop-name">Front Of House</span>
+          <span class="prod-drop-sub">Capture · Trades contractors</span>
         </a>
         <a href="/ops.html" class="prod-drop-a">
-          <span class="prod-drop-name">4THWALL Back Of House</span>
-          <span class="prod-drop-sub">For service operations</span>
+          <span class="prod-drop-name">Back Of House</span>
+          <span class="prod-drop-sub">Operate · Service operations</span>
         </a>
       </div>
     </div>
@@ -567,12 +584,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <div class="drop-sub">
         <div class="drop-sub-inner">
           <a href="/trades.html" class="drop-sub-a">
-            <span class="drop-sub-name">4THWALL Front Of House</span>
-            <span class="drop-sub-desc">For trades contractors</span>
+            <span class="drop-sub-name">Front Of House</span>
+            <span class="drop-sub-desc">Capture · Trades</span>
           </a>
           <a href="/ops.html" class="drop-sub-a">
-            <span class="drop-sub-name">4THWALL Back Of House</span>
-            <span class="drop-sub-desc">For service operations</span>
+            <span class="drop-sub-name">Back Of House</span>
+            <span class="drop-sub-desc">Operate · Service ops</span>
           </a>
         </div>
       </div>
@@ -606,11 +623,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div>
       <h1 class="hero-h r in">
         You built the operation.<br>
-        Stop being the only one<br>
-        <span class="ital">who can run it.</span>
+        <span class="ital">It's time it ran without you.</span>
       </h1>
       <p class="hero-sub r in d2">
-        Custom AI infrastructure for operators managing serious complexity. Built around your business, run permanently by us.
+        AI infrastructure built to your operation. We run it, permanently.
       </p>
       <div class="hero-cta r in d3">
         <a href="#contact" class="hero-link">Let's talk</a>
@@ -800,30 +816,26 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
   </div>
 
-  <div class="how-list" style="margin-top:3.5rem">
-    <div class="how-row r">
-      <div class="how-n">i.</div>
-      <div class="how-h">We read <span class="ital">what you share.</span></div>
-      <div class="how-d">No intake call. Send us the proposal, the website, the brief — we extract everything we need. The system is built on your context, not a template.</div>
-      <div class="how-illo" data-illo="step1"></div>
+  <div class="steps r">
+    <div class="step">
+      <div class="step-n">01</div>
+      <div class="step-h">We read <span class="ital">what you share.</span></div>
+      <p class="step-d">Send the proposal, the website, the brief. We extract what we need — no intake call, no template.</p>
     </div>
-    <div class="how-row r d1">
-      <div class="how-n">ii.</div>
-      <div class="how-h">Built to <span class="ital">your business.</span></div>
-      <div class="how-d">Every system configured around how you actually operate. Your tools, your language, your clients. Nothing generic. Nothing to adapt.</div>
-      <div class="how-illo" data-illo="step2"></div>
+    <div class="step">
+      <div class="step-n">02</div>
+      <div class="step-h">Built to <span class="ital">your business.</span></div>
+      <p class="step-d">Your tools, your language, your clients. Every system configured around how you actually operate.</p>
     </div>
-    <div class="how-row r d2">
-      <div class="how-n">iii.</div>
-      <div class="how-h">Deployed <span class="ital">and connected.</span></div>
-      <div class="how-d">Tools integrated, systems live, team handed off in one session. You walk away with everything running.</div>
-      <div class="how-illo" data-illo="step3"></div>
+    <div class="step">
+      <div class="step-n">03</div>
+      <div class="step-h">Deployed <span class="ital">and connected.</span></div>
+      <p class="step-d">Tools integrated, systems live, handed off in one session. You walk away with everything running.</p>
     </div>
-    <div class="how-row r d3">
-      <div class="how-n">iv.</div>
-      <div class="how-h">Managed <span class="ital">permanently.</span></div>
-      <div class="how-d">We monitor, tune, and expand as the business grows. One contact. Everything handled. The system never stops improving.</div>
-      <div class="how-illo" data-illo="step4"></div>
+    <div class="step">
+      <div class="step-n">04</div>
+      <div class="step-h">Managed <span class="ital">permanently.</span></div>
+      <p class="step-d">One contact. We monitor, tune, and expand as the business grows. The system never stops improving.</p>
     </div>
   </div>
 </section>
