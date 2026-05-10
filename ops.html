@@ -418,17 +418,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lt-body span{display:block;font-size:.57rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;margin-top:1px}
 
 /* MacBook Pro — Space Gray aluminum lid */
-.lap-lid{width:100%;aspect-ratio:1.56;background:linear-gradient(168deg,#5a5754 0%,#4d4a47 22%,#3a3835 60%,#48464300 100%),linear-gradient(168deg,#48463f,#3a3835);border-radius:13px 13px 2px 2px;padding:9px 7px 0 7px;
+.lap-lid{width:100%;aspect-ratio:1.56;background:linear-gradient(180deg,#4a4845 0%,#403d3a 40%,#373431 100%);border-radius:13px 13px 3px 3px;padding:9px 9px 0 9px;
   box-shadow:
     0 60px 110px -18px rgba(0,0,0,.55),
     0 26px 52px -12px rgba(0,0,0,.38),
     0 6px 16px rgba(0,0,0,.14),
     0 0 0 1px rgba(0,0,0,.88),
-    inset 0 2px 0 rgba(255,255,255,.22),
-    inset 1.5px 0 0 rgba(255,255,255,.1),
-    inset -1.5px 0 0 rgba(255,255,255,.05),
-    inset 0 0 0 2px rgba(255,255,255,.04);
-  transform:perspective(3000px) rotateX(2deg) rotateY(-3deg);
+    inset 0 1.5px 0 rgba(255,255,255,.18),
+    inset 1.5px 0 0 rgba(255,255,255,.08),
+    inset -1.5px 0 0 rgba(255,255,255,.06);
+  transform:perspective(3000px) rotateX(2deg);
   animation:lapFloat 9s ease-in-out infinite;
   position:relative;transform-style:preserve-3d}
 /* camera notch — MacBook Pro style, extends into screen */
@@ -475,16 +474,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lp-text{flex:1;font-size:.47rem;color:rgba(247,243,236,.2);overflow:hidden;white-space:nowrap;font-family:var(--mono)}
 .lp-send{width:13px;height:13px;border-radius:50%;background:rgba(30,102,66,.38);border:none;color:rgba(247,243,236,.6);font-size:.5rem;display:flex;align-items:center;justify-content:center;cursor:default;flex-shrink:0;padding:0;font-family:var(--mono)}
 
-/* MacBook base — aluminum wedge body with keyboard deck */
-.lap-base{width:99%;margin:-1px auto 0;height:74px;
+/* MacBook base — aluminum deck viewed nearly head-on */
+.lap-base{width:99%;margin:-1px auto 0;height:58px;
   background:
-    /* keyboard + trackpad SVG overlay — dark keys with light edge on aluminum */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 80' preserveAspectRatio='none'><g fill='%230a0908' stroke='%23625e5a' stroke-width='0.4'><rect x='13' y='9' width='17' height='10' rx='1.4'/><rect x='31' y='9' width='17' height='10' rx='1.4'/><rect x='49' y='9' width='17' height='10' rx='1.4'/><rect x='67' y='9' width='17' height='10' rx='1.4'/><rect x='85' y='9' width='17' height='10' rx='1.4'/><rect x='103' y='9' width='17' height='10' rx='1.4'/><rect x='121' y='9' width='17' height='10' rx='1.4'/><rect x='139' y='9' width='17' height='10' rx='1.4'/><rect x='157' y='9' width='17' height='10' rx='1.4'/><rect x='175' y='9' width='17' height='10' rx='1.4'/><rect x='193' y='9' width='17' height='10' rx='1.4'/><rect x='211' y='9' width='17' height='10' rx='1.4'/><rect x='229' y='9' width='17' height='10' rx='1.4'/><rect x='247' y='9' width='20' height='10' rx='1.4'/><rect x='13' y='21' width='17' height='10' rx='1.4'/><rect x='31' y='21' width='17' height='10' rx='1.4'/><rect x='49' y='21' width='17' height='10' rx='1.4'/><rect x='67' y='21' width='17' height='10' rx='1.4'/><rect x='85' y='21' width='17' height='10' rx='1.4'/><rect x='103' y='21' width='17' height='10' rx='1.4'/><rect x='121' y='21' width='17' height='10' rx='1.4'/><rect x='139' y='21' width='17' height='10' rx='1.4'/><rect x='157' y='21' width='17' height='10' rx='1.4'/><rect x='175' y='21' width='17' height='10' rx='1.4'/><rect x='193' y='21' width='17' height='10' rx='1.4'/><rect x='211' y='21' width='17' height='10' rx='1.4'/><rect x='229' y='21' width='17' height='10' rx='1.4'/><rect x='247' y='21' width='20' height='10' rx='1.4'/><rect x='13' y='33' width='22' height='10' rx='1.4'/><rect x='36' y='33' width='17' height='10' rx='1.4'/><rect x='54' y='33' width='17' height='10' rx='1.4'/><rect x='72' y='33' width='17' height='10' rx='1.4'/><rect x='90' y='33' width='17' height='10' rx='1.4'/><rect x='108' y='33' width='17' height='10' rx='1.4'/><rect x='126' y='33' width='17' height='10' rx='1.4'/><rect x='144' y='33' width='17' height='10' rx='1.4'/><rect x='162' y='33' width='17' height='10' rx='1.4'/><rect x='180' y='33' width='17' height='10' rx='1.4'/><rect x='198' y='33' width='17' height='10' rx='1.4'/><rect x='216' y='33' width='17' height='10' rx='1.4'/><rect x='234' y='33' width='32' height='10' rx='1.4'/><rect x='13' y='45' width='27' height='10' rx='1.4'/><rect x='41' y='45' width='14' height='10' rx='1.4'/><rect x='56' y='45' width='14' height='10' rx='1.4'/><rect x='71' y='45' width='14' height='10' rx='1.4'/><rect x='86' y='45' width='40' height='10' rx='1.4'/><rect x='127' y='45' width='14' height='10' rx='1.4'/><rect x='142' y='45' width='14' height='10' rx='1.4'/><rect x='157' y='45' width='14' height='10' rx='1.4'/><rect x='172' y='45' width='40' height='10' rx='1.4'/><rect x='213' y='45' width='14' height='10' rx='1.4'/><rect x='228' y='45' width='14' height='10' rx='1.4'/><rect x='243' y='45' width='14' height='10' rx='1.4'/><rect x='258' y='45' width='9' height='10' rx='1.4'/></g><rect x='88' y='61' width='104' height='15' rx='2' fill='%230a0908' stroke='%23625e5a' stroke-width='0.5'/></svg>") 50% 50% / 100% 100% no-repeat,
-    /* aluminum wedge gradient */
-    linear-gradient(180deg,#3e3c39 0%,#4a4744 22%,#525049 52%,#403d3a 84%,#2a2825 100%);
-  border-radius:0 0 10px 10px;position:relative;
-  box-shadow:0 28px 60px -12px rgba(0,0,0,.6),0 8px 18px rgba(0,0,0,.26),0 0 0 1px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.07);
-  transform:perspective(3000px) rotateX(2deg) rotateY(-3deg);
+    /* keyboard well + trackpad — viewed at angle: keyboard is dark band, trackpad is clear rect */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 58' preserveAspectRatio='none'><defs><linearGradient id='well' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23050403' stop-opacity='0.92'/><stop offset='0.5' stop-color='%230d0b0a' stop-opacity='0.85'/><stop offset='1' stop-color='%23181613' stop-opacity='0.6'/></linearGradient><linearGradient id='tp' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%231d1a18'/><stop offset='1' stop-color='%23110f0d'/></linearGradient><linearGradient id='lip' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23524f4b'/><stop offset='1' stop-color='%232a2825'/></linearGradient></defs><!-- keyboard well: dark recessed band -->%3Crect x='14' y='5' width='252' height='28' rx='2' fill='url(%23well)'/><!-- inner shadow at top of well for depth -->%3Crect x='14' y='5' width='252' height='3' fill='%23000' opacity='0.6'/><!-- trackpad: silver-bordered dark rect -->%3Crect x='86' y='38' width='108' height='14' rx='2' fill='url(%23tp)' stroke='%23272421' stroke-width='0.5'/><!-- bottom front lip -->%3Crect x='0' y='53' width='280' height='5' fill='url(%23lip)'/></svg>") 50% 50% / 100% 100% no-repeat,
+    /* aluminum deck gradient */
+    linear-gradient(180deg,#4a4744 0%,#52504d 18%,#48454200 52%,#3e3b38 80%,#2a2825 100%);
+  border-radius:0 0 11px 11px;position:relative;
+  box-shadow:0 28px 60px -12px rgba(0,0,0,.6),0 8px 18px rgba(0,0,0,.26),0 0 0 1px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.1);
+  transform:perspective(3000px) rotateX(2deg);
   transform-origin:top center}
 /* hinge shadow groove */
 .lap-hinge{position:absolute;top:0;left:5%;right:5%;height:3px;background:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.45) 50%,rgba(0,0,0,.15) 100%);box-shadow:inset 0 1px 0 rgba(0,0,0,.6)}
