@@ -458,7 +458,9 @@ section{position:relative;z-index:2}
 .stat-tab.is-active .stat-num small{color:rgba(247,243,236,.45)}
 .stat-lbl{font-family:var(--mono);font-size:.55rem;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-top:.9rem;line-height:1.4;transition:color .2s}
 .stat-tab.is-active .stat-lbl{color:rgba(247,243,236,.3)}
-.stat-panel-wrap{border-radius:22px;overflow:hidden;margin-top:.75rem;background:var(--cream);box-shadow:0 4px 24px rgba(26,26,24,.08),0 1px 4px rgba(26,26,24,.04)}
+.stat-hint{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem}
+.stat-panel-wrap{border-radius:22px;overflow:hidden;margin-top:.75rem;background:var(--cream)}
+.stat-panel-wrap.has-content{box-shadow:0 4px 24px rgba(26,26,24,.08),0 1px 4px rgba(26,26,24,.04)}
 .stat-panel{display:none;padding:2.6rem 2.4rem;animation:spIn .35s cubic-bezier(.16,1,.3,1)}
 .stat-panel.is-active{display:block}
 @keyframes spIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -470,7 +472,6 @@ section{position:relative;z-index:2}
 .stat-panel-h{font-family:var(--display);font-size:clamp(1.2rem,2.2vw,1.7rem);font-weight:500;letter-spacing:-.025em;line-height:1.2;color:var(--ink);padding-top:.25rem}
 .stat-panel-h em{font-style:italic;color:var(--muted);font-weight:400}
 .stat-panel-d{font-size:.9rem;line-height:1.74;color:var(--muted);margin-top:.7rem;max-width:44rem}
-.stat-empty{display:flex;align-items:center;justify-content:center;min-height:140px;color:var(--dim);font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase}
 @media(max-width:640px){.stat-tabs{gap:7px}.stat-tab{padding:1.2rem 1rem;border-radius:14px}.stat-panel-grid{grid-template-columns:1fr;gap:1rem}.stat-panel{padding:1.6rem 1.4rem}.stat-panel-fig{font-size:clamp(2.6rem,12vw,4rem)}}
 /* ── FAQ — single dropdown ─── */
 .faq-single{margin-bottom:3rem;border:1px solid var(--line);border-radius:22px;overflow:hidden;transition:border-color .25s}
@@ -924,6 +925,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div>
 
   <div class="stat-sel r in d2">
+    <p class="stat-hint">Select a stat to see the breakdown</p>
     <div class="stat-tabs-wrap">
       <div class="stat-tabs">
         <button class="stat-tab">
@@ -949,7 +951,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </div>
     </div>
     <div class="stat-panel-wrap">
-      <div class="stat-empty">select a stat to see the breakdown</div>
       <div class="stat-panel">
         <div class="stat-panel-grid">
           <div class="stat-panel-fig">42%</div>
@@ -1173,17 +1174,27 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 (function(){
   var tabs=document.querySelectorAll('.stat-tab');
   var panels=document.querySelectorAll('.stat-panel');
-  var empty=document.querySelector('.stat-empty');
+  var wrap=document.querySelector('.stat-panel-wrap');
   if(!tabs.length)return;
-  function activate(i){
+  var locked=-1;
+  function show(i){
     tabs.forEach(function(t){t.classList.remove('is-active');});
     panels.forEach(function(p){p.classList.remove('is-active');});
     tabs[i].classList.add('is-active');
     panels[i].classList.add('is-active');
-    if(empty)empty.style.display='none';
+    if(wrap)wrap.classList.add('has-content');
+  }
+  function hide(){
+    tabs.forEach(function(t){t.classList.remove('is-active');});
+    panels.forEach(function(p){p.classList.remove('is-active');});
+    if(wrap)wrap.classList.remove('has-content');
   }
   tabs.forEach(function(tab,i){
-    tab.addEventListener('click',function(){activate(i);});
+    tab.addEventListener('mouseenter',function(){show(i);});
+    tab.addEventListener('mouseleave',function(){
+      if(locked>=0)show(locked);else hide();
+    });
+    tab.addEventListener('click',function(){locked=i;show(i);});
   });
 })();
 /* ── FAQ single dropdown ── */
