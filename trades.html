@@ -441,33 +441,25 @@ section{position:relative;z-index:2}
 .feat-pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.2rem}
 .feat-pill{font-family:var(--mono);font-size:.58rem;letter-spacing:.05em;text-transform:uppercase;padding:.28rem .65rem;border:1px solid var(--line);border-radius:50px;color:var(--dim)}
 @media(max-width:760px){.feat{grid-template-columns:1fr;border-radius:14px}.feat-nav{border-right:none;border-bottom:1px solid var(--line)}.feat-btn{grid-template-columns:2.4rem 1fr .7rem;padding:.85rem 1rem}.feat-btn-label{font-size:.82rem}.feat-body{padding:1.5rem;min-height:auto}}
-/* ── STAT SWITCHER ─────────── */
-.stat-sw{display:grid;grid-template-columns:160px 1fr;border:1px solid var(--line);border-radius:20px;overflow:hidden}
-.stat-nav{border-right:1px solid var(--line);background:var(--cream-2);display:flex;flex-direction:column}
-.stat-btn{width:100%;padding:.9rem 1.2rem;display:flex;flex-direction:column;gap:.12rem;text-align:left;cursor:pointer;border:none;border-bottom:1px solid var(--line);background:transparent;transition:background .18s}
-.stat-btn:last-of-type{border-bottom:none}
-.stat-btn:hover:not(.is-active){background:var(--cream-3)}
-.stat-btn.is-active{background:var(--ink)}
-.stat-btn-n{font-family:var(--mono);font-size:.55rem;letter-spacing:.08em;color:var(--orange);transition:color .18s}
-.stat-btn.is-active .stat-btn-n{color:rgba(247,243,236,.35)}
-.stat-btn-fig{font-family:var(--display);font-size:1.65rem;font-weight:400;font-style:italic;letter-spacing:-.04em;line-height:.95;color:var(--ink);transition:color .18s}
-.stat-btn-fig small{font-size:.38em;font-style:normal;font-family:var(--body);font-weight:500;letter-spacing:0;color:var(--muted);vertical-align:.3em;transition:color .18s}
-.stat-btn.is-active .stat-btn-fig{color:var(--cream)}
-.stat-btn.is-active .stat-btn-fig small{color:rgba(247,243,236,.45)}
-.stat-btn.last-stat .stat-btn-fig{color:var(--orange)}
-.stat-btn.is-active.last-stat .stat-btn-fig{color:var(--orange)}
-.stat-body{padding:2.6rem;background:var(--cream);min-height:300px;display:flex;align-items:center}
-.stat-pane{display:none;flex-direction:column;gap:.9rem;width:100%}
-.stat-pane.is-active{display:flex;animation:fpIn .4s cubic-bezier(.16,1,.3,1)}
-.stat-ey{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
-.stat-big{font-family:var(--display);font-size:clamp(3.8rem,7vw,6.2rem);font-weight:400;font-style:italic;letter-spacing:-.04em;line-height:.9;color:var(--ink)}
-.stat-big small{font-size:.38em;font-style:normal;font-family:var(--body);font-weight:500;letter-spacing:0;color:var(--muted);vertical-align:.28em}
-.stat-big.grn{color:var(--orange)}
-.stat-big.grn small{color:var(--orange);opacity:.7}
-.stat-pane-h{font-family:var(--display);font-size:clamp(1.15rem,1.9vw,1.55rem);font-weight:500;letter-spacing:-.02em;line-height:1.2}
-.stat-pane-h .ital{font-style:italic;color:var(--muted);font-weight:400}
-.stat-pane-d{font-size:.88rem;line-height:1.7;color:var(--muted);max-width:34rem}
-@media(max-width:760px){.stat-sw{grid-template-columns:1fr;border-radius:14px}.stat-nav{border-right:none;border-bottom:1px solid var(--line)}.stat-btn{flex-direction:row;align-items:center;gap:.8rem;padding:.75rem 1rem}.stat-btn-fig{font-size:1.25rem}.stat-body{padding:1.5rem;min-height:auto}.stat-body{min-height:auto}}
+/* ── WHY NOW — dropdown rows ─────────── */
+.wn-list{border-top:1px solid var(--line)}
+.wn-row{border-bottom:1px solid var(--line)}
+.wn-trigger{display:grid;grid-template-columns:2.8rem 8rem 1fr 1.4rem;gap:2rem;align-items:center;padding:1.75rem 0;cursor:pointer;width:100%;text-align:left;background:transparent;border:none;transition:opacity .2s}
+.wn-trigger:hover{opacity:.78}
+.wn-n{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;color:var(--orange)}
+.wn-fig{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,3rem);font-weight:400;font-style:italic;letter-spacing:-.04em;line-height:1;color:var(--ink);transition:color .25s}
+.wn-fig small{font-size:.42em;font-style:normal;font-family:var(--body);font-weight:500;letter-spacing:0;color:var(--muted);vertical-align:.26em}
+.wn-fig.grn{color:var(--orange)}
+.wn-headline{font-family:var(--display);font-size:clamp(.95rem,1.65vw,1.32rem);font-weight:500;letter-spacing:-.02em;line-height:1.2}
+.wn-headline em{font-style:italic;color:var(--muted);font-weight:400}
+.wn-chev{font-size:.68rem;color:var(--dim);line-height:1;justify-self:end;transition:transform .38s cubic-bezier(.16,1,.3,1),color .25s}
+.wn-row.open .wn-chev{transform:rotate(180deg);color:var(--orange)}
+.wn-row.open .wn-fig:not(.grn){color:var(--orange)}
+.wn-drop{display:grid;grid-template-rows:0fr;transition:grid-template-rows .52s cubic-bezier(.16,1,.3,1)}
+.wn-row.open .wn-drop{grid-template-rows:1fr}
+.wn-drop-inner{overflow:hidden}
+.wn-drop-text{padding:0 0 1.8rem calc(2.8rem + 8rem + 4rem);font-size:.9rem;line-height:1.74;color:var(--muted);max-width:56rem}
+@media(max-width:720px){.wn-trigger{grid-template-columns:2rem 5.5rem 1fr 1.2rem;gap:1rem;padding:1.3rem 0}.wn-fig{font-size:1.55rem}.wn-headline{font-size:.88rem}.wn-drop-text{padding-left:0}}
 /* ── FAQ label ─────────────────── */
 .faq-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin:0 auto 1.8rem;max-width:680px;width:100%}
 /* ── FAQ — accordion ─────────── */
@@ -918,62 +910,68 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
   </div>
 
-  <div class="stat-sw r in d2">
-    <div class="stat-nav">
-      <button class="stat-btn is-active" data-si="0">
-        <span class="stat-btn-n">01</span>
-        <span class="stat-btn-fig">42%</span>
+  <div class="wn-list r in d2">
+
+    <div class="wn-row open">
+      <button class="wn-trigger">
+        <span class="wn-n">01</span>
+        <span class="wn-fig"><span class="wn-cnt" data-to="42">42</span>%</span>
+        <span class="wn-headline">of inbound leads come in <em>after 5pm.</em></span>
+        <span class="wn-chev">▾</span>
       </button>
-      <button class="stat-btn" data-si="1">
-        <span class="stat-btn-n">02</span>
-        <span class="stat-btn-fig">78%</span>
-      </button>
-      <button class="stat-btn" data-si="2">
-        <span class="stat-btn-n">03</span>
-        <span class="stat-btn-fig">3.5<small>hrs</small></span>
-      </button>
-      <button class="stat-btn" data-si="3">
-        <span class="stat-btn-n">04</span>
-        <span class="stat-btn-fig">$3.8<small>M</small></span>
-      </button>
-      <button class="stat-btn last-stat" data-si="4">
-        <span class="stat-btn-n">05</span>
-        <span class="stat-btn-fig">47<small>sec</small></span>
-      </button>
-      <div class="feat-prog-wrap"><div class="feat-prog-bar" id="stat-bar"></div></div>
+      <div class="wn-drop"><div class="wn-drop-inner">
+        <p class="wn-drop-text">Storms hit at night. Pipes burst on weekends. Homeowners scroll Google between dinner and bed. If you're not answering then, you're not in the running.</p>
+      </div></div>
     </div>
-    <div class="stat-body">
-      <div class="stat-pane is-active" data-sp="0">
-        <div class="stat-ey">01 · After hours</div>
-        <div class="stat-big"><span class="stat-cnt" data-to="42">0</span>%</div>
-        <div class="stat-pane-h">of inbound leads come in <span class="ital">after 5pm.</span></div>
-        <p class="stat-pane-d">Storms hit at night. Pipes burst on weekends. Homeowners scroll Google between dinner and bed.</p>
-      </div>
-      <div class="stat-pane" data-sp="1">
-        <div class="stat-ey">02 · The hire decision</div>
-        <div class="stat-big"><span class="stat-cnt" data-to="78">0</span>%</div>
-        <div class="stat-pane-h">hire <span class="ital">whoever replies first.</span></div>
-        <p class="stat-pane-d">Not the most experienced. Not the cheapest. The fastest. The race ends in the first five minutes — long before the quote.</p>
-      </div>
-      <div class="stat-pane" data-sp="2">
-        <div class="stat-ey">03 · Industry average</div>
-        <div class="stat-big"><span class="stat-cnt" data-to="3.5" data-dec="1">0</span><small>hrs</small></div>
-        <div class="stat-pane-h">average <span class="ital">local trades</span> response time.</div>
-        <p class="stat-pane-d">In the time you take to reply, the homeowner has texted three other contractors and one of them already showed up.</p>
-      </div>
-      <div class="stat-pane" data-sp="3">
-        <div class="stat-ey">04 · Market context</div>
-        <div class="stat-big">$<span class="stat-cnt" data-to="3.8" data-dec="1">0</span><small>M</small></div>
-        <div class="stat-pane-h">median high-end <span class="ital">home value.</span></div>
-        <p class="stat-pane-d">In our market a standard roof replacement runs $40,000+. Each missed lead is a five-figure loss — at minimum.</p>
-      </div>
-      <div class="stat-pane" data-sp="4">
-        <div class="stat-ey">05 · Our response time</div>
-        <div class="stat-big grn"><span class="stat-cnt" data-to="47">0</span><small>sec</small></div>
-        <div class="stat-pane-h"><span class="ital">Our</span> response time.</div>
-        <p class="stat-pane-d">By the time your competitor's voicemail picks up, the lead is already qualified, scheduled, or in a 14-day nurture sequence.</p>
-      </div>
+
+    <div class="wn-row">
+      <button class="wn-trigger">
+        <span class="wn-n">02</span>
+        <span class="wn-fig"><span class="wn-cnt" data-to="78">78</span>%</span>
+        <span class="wn-headline">hire <em>whoever replies first.</em></span>
+        <span class="wn-chev">▾</span>
+      </button>
+      <div class="wn-drop"><div class="wn-drop-inner">
+        <p class="wn-drop-text">Not the most experienced. Not the cheapest. The fastest. The race ends in the first five minutes — long before the quote is sent.</p>
+      </div></div>
     </div>
+
+    <div class="wn-row">
+      <button class="wn-trigger">
+        <span class="wn-n">03</span>
+        <span class="wn-fig"><span class="wn-cnt" data-to="3.5" data-dec="1">3.5</span><small>hrs</small></span>
+        <span class="wn-headline">average <em>local trades</em> response time.</span>
+        <span class="wn-chev">▾</span>
+      </button>
+      <div class="wn-drop"><div class="wn-drop-inner">
+        <p class="wn-drop-text">In the time you take to reply, the homeowner has texted three other contractors — and one of them already showed up.</p>
+      </div></div>
+    </div>
+
+    <div class="wn-row">
+      <button class="wn-trigger">
+        <span class="wn-n">04</span>
+        <span class="wn-fig">$<span class="wn-cnt" data-to="3.8" data-dec="1">3.8</span><small>M</small></span>
+        <span class="wn-headline">median high-end <em>home value.</em></span>
+        <span class="wn-chev">▾</span>
+      </button>
+      <div class="wn-drop"><div class="wn-drop-inner">
+        <p class="wn-drop-text">In our market a standard roof replacement runs $40,000+. Each missed lead isn't a lost call — it's a five-figure loss, at minimum.</p>
+      </div></div>
+    </div>
+
+    <div class="wn-row">
+      <button class="wn-trigger">
+        <span class="wn-n">05</span>
+        <span class="wn-fig grn"><span class="wn-cnt" data-to="47">47</span><small>sec</small></span>
+        <span class="wn-headline"><em>Our</em> response time.</span>
+        <span class="wn-chev">▾</span>
+      </button>
+      <div class="wn-drop"><div class="wn-drop-inner">
+        <p class="wn-drop-text">By the time your competitor's voicemail picks up, the lead is already qualified, scheduled, or inside a 14-day nurture sequence.</p>
+      </div></div>
+    </div>
+
   </div>
 
   <div class="story-conclusion r d3">
@@ -1141,30 +1139,38 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   feat.addEventListener('mouseleave',function(){paused=false;show(cur);startAuto();});
   show(0);startAuto();
 })();
-/* ── Stat switcher ── */
+/* ── Why Now — dropdown + counters ── */
 (function(){
-  var sw=document.querySelector('.stat-sw');
-  if(!sw)return;
-  var btns=sw.querySelectorAll('.stat-btn');
-  var panes=sw.querySelectorAll('.stat-pane');
-  var bar=document.getElementById('stat-bar');
-  var cur=0,timer=null,DUR=5200,paused=false,counted=new Set();
-  function countUp(pane){
-    var el=pane.querySelector('.stat-cnt');
-    if(!el||counted.has(el))return;
-    counted.add(el);
-    var to=parseFloat(el.dataset.to),dec=parseInt(el.dataset.dec||0),start=null,dur=950;
-    function step(ts){if(!start)start=ts;var p=Math.min((ts-start)/dur,1),ease=1-Math.pow(1-p,3);el.textContent=dec?(to*ease).toFixed(dec):Math.round(to*ease);if(p<1)requestAnimationFrame(step);else el.textContent=dec?to.toFixed(dec):to;}
-    requestAnimationFrame(step);
-  }
-  function animBar(){if(!bar)return;bar.style.transition='none';bar.style.width='0%';requestAnimationFrame(function(){requestAnimationFrame(function(){bar.style.transition='width '+DUR+'ms linear';bar.style.width='100%';});});}
-  function show(i){btns[cur].classList.remove('is-active');panes[cur].classList.remove('is-active');cur=i;btns[cur].classList.add('is-active');panes[cur].classList.add('is-active');countUp(panes[cur]);animBar();}
-  function startAuto(){clearInterval(timer);timer=setInterval(function(){if(!paused)show((cur+1)%btns.length);},DUR);}
-  btns.forEach(function(b,i){b.addEventListener('click',function(){show(i);startAuto();});});
-  sw.addEventListener('mouseenter',function(){paused=true;if(bar){bar.style.transition='none';bar.style.width='0%';}});
-  sw.addEventListener('mouseleave',function(){paused=false;show(cur);startAuto();});
-  var obs=new IntersectionObserver(function(e){if(e[0].isIntersecting){countUp(panes[0]);show(0);startAuto();obs.disconnect();}},{threshold:0.3});
-  obs.observe(sw);
+  /* accordion */
+  var rows=document.querySelectorAll('.wn-row');
+  rows.forEach(function(row){
+    var btn=row.querySelector('.wn-trigger');
+    if(!btn)return;
+    btn.addEventListener('click',function(){
+      var wasOpen=row.classList.contains('open');
+      rows.forEach(function(r){r.classList.remove('open');});
+      if(!wasOpen)row.classList.add('open');
+    });
+  });
+  /* count-up on scroll */
+  var list=document.querySelector('.wn-list');
+  if(!list)return;
+  var cnts=list.querySelectorAll('.wn-cnt');
+  if(!cnts.length)return;
+  var fired=false;
+  var obs=new IntersectionObserver(function(e){
+    if(!e[0].isIntersecting||fired)return;
+    fired=true;
+    cnts.forEach(function(el,i){
+      setTimeout(function(){
+        var to=parseFloat(el.dataset.to),dec=parseInt(el.dataset.dec||0),start=null,dur=820;
+        function step(ts){if(!start)start=ts;var p=Math.min((ts-start)/dur,1),ease=1-Math.pow(1-p,3);el.textContent=dec?(to*ease).toFixed(dec):Math.round(to*ease);if(p<1)requestAnimationFrame(step);else el.textContent=dec?to.toFixed(dec):to;}
+        requestAnimationFrame(step);
+      },i*160);
+    });
+    obs.disconnect();
+  },{threshold:0.2});
+  obs.observe(list);
 })();
 </script>
 </body>
