@@ -417,13 +417,17 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lt-body strong{display:block;font-size:.75rem;font-weight:600;line-height:1.2;color:var(--ink);letter-spacing:-.005em}
 .lt-body span{display:block;font-size:.57rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;margin-top:1px}
 
-/* Screen overlay container — positioned over the screen area of the photo */
-.lap-lid{position:absolute;top:27.7%;left:22.4%;width:55.2%;height:54.9%;background:none;box-shadow:none;padding:0;border-radius:2px;transform:none;animation:none}
+/* Screen overlay container — covers the full bezel area of the macbook.png.
+   Measured by scanning pixel-perfect bezel edges: top y=121, bottom y=378,
+   left x=150, right x=545 on the 696×452 source image. Slight outward
+   padding (0.25%) on each side as a safety margin against subpixel rounding,
+   so no MacBook bezel ever bleeds through at any render scale. */
+.lap-lid{position:absolute;top:26.5%;left:21.3%;width:57.4%;height:57.6%;background:none;box-shadow:none;padding:0;border-radius:2px;transform:none;animation:none;overflow:hidden}
 .lap-lid::before,.lap-lid::after{display:none}
 .lap-screen::before{display:none}
 
 /* screen display */
-.lap-screen{width:100%;height:100%;background:#080807;border-radius:3px;overflow:hidden;display:flex;flex-direction:column;color:rgba(247,243,236,.88);font-family:var(--mono);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6);position:relative}
+.lap-screen{width:100%;height:100%;background:#080807;border-radius:2px;overflow:hidden;display:flex;flex-direction:column;color:rgba(247,243,236,.88);font-family:var(--mono);box-shadow:none;position:relative}
 .lap-bar{display:flex;align-items:center;padding:.3rem .5rem;background:rgba(0,0,0,.38);border-bottom:1px solid rgba(247,243,236,.055);flex-shrink:0;gap:.35rem}
 .lap-tl{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .lap-tl:nth-child(1){background:#ff5f57;box-shadow:0 0 0 .5px rgba(255,60,50,.4)}
