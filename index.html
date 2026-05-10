@@ -285,9 +285,9 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 
 /*
   Hide every play-button overlay variant the browser might inject
-  when autoplay is blocked, when the video is muted-paused, or when
-  the user taps the video. Different platforms inject different
-  pseudo-elements — this list covers every known variant.
+  when autoplay is blocked (iOS Low Power Mode, Android Data Saver,
+  strict-mode browsers). Each WebKit pseudo-element targets a
+  different platform's native overlay.
 */
 .hero-vid::-webkit-media-controls,
 .hero-vid::-webkit-media-controls-panel,
@@ -296,40 +296,22 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 .hero-vid::-webkit-media-controls-overlay-enclosure,
 .hero-vid::-webkit-media-controls-enclosure,
 .hero-vid::-webkit-media-controls-play-button,
-.hero-vid::-webkit-media-controls-fullscreen-button,
-.hero-vid::-webkit-media-controls-mute-button,
-.hero-vid::-webkit-media-controls-volume-slider,
-.hero-vid::-webkit-media-controls-current-time-display,
-.hero-vid::-webkit-media-controls-time-remaining-display,
-.hero-vid::-webkit-media-controls-timeline,
-.hero-vid::-webkit-media-controls-toggle-closed-captions-button,
-.hero-vid::-internal-media-controls-overlay-cast-button,
-.hero-vid::-internal-media-controls-button-panel{
+.hero-vid::-internal-media-controls-overlay-cast-button{
   display:none !important;
   -webkit-appearance:none !important;
   opacity:0 !important;
   pointer-events:none !important;
-  visibility:hidden !important;
 }
 /*
-  Make the video itself completely untappable. iOS Safari shows a
-  play-button overlay when a muted-paused video receives a tap;
-  pointer-events:none means taps fall through to the page instead
-  of hitting the video element.
-*/
-.hero-vid{
-  pointer-events:none !important;
-  -webkit-user-select:none;user-select:none;
-  -webkit-touch-callout:none;
-}
-/*
-  Belt-and-suspenders overlay: a transparent layer on top of the
-  video that absorbs any tap before it reaches the video element.
-  Sits above the video, below the .hero-vid-frame::before glass gloss.
+  Transparent tap-absorber over the video. Sits at z-index:3 (above
+  the z-index:1 video, below the z-index:2 glass gloss). pointer-events
+  is auto here — that's the whole point: taps land on this empty layer
+  instead of the video, so iOS never gets a chance to show the
+  "tap-to-play" overlay on the video element.
 */
 .hero-vid-frame::after{
   content:'';position:absolute;inset:0;z-index:3;
-  pointer-events:none;
+  pointer-events:auto;background:transparent;
 }
 
 /* Video fills the frame, bottom fades to hide watermark */
