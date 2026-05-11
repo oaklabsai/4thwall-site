@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Proposal for Honey Due Home Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#f2f1ef;color:#0a0a0a;color-scheme:light only;forced-color-adjust:none}
+body{font-family:'Inter Tight',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+.cover{background:#0a0a0a;padding:2.25rem 1.5rem;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;bottom:-80px;right:-80px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.025)}
+.cover-logo{display:flex;align-items:center;gap:.5rem;margin-bottom:1.75rem}
+.logo-name{font-weight:600;font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:#fff}
+.cover-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:.9rem}
+.cover-h{font-family:'Fraunces',Georgia,serif;font-size:2.9rem;font-weight:300;line-height:.97;letter-spacing:-.04em;color:#fff;margin-bottom:2rem}
+.cover-h em{font-style:italic;color:rgba(255,255,255,.4)}
+.cover-foot{display:flex;align-items:center;justify-content:space-between;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.08)}
+.cover-foot span{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2)}
+
+.scope{background:#e8e6e3;padding:1rem 1.5rem;border-bottom:1px solid rgba(0,0,0,.07)}
+.scope-label{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin-bottom:.3rem}
+.scope-text{font-size:.78rem;line-height:1.6;color:#777}
+
+.cards{padding:1.25rem 1.25rem 0}
+
+.card-featured{background:#0a0a0a;border-radius:16px;margin-bottom:.75rem;overflow:hidden;cursor:pointer;transition:opacity .15s}
+.card-featured:active{opacity:.9}
+.card-featured-trigger{padding:1.35rem 1.35rem 1.25rem;display:flex;align-items:flex-start;gap:1rem}
+.cf-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
+.cf-icon svg{width:17px;height:17px;color:#fff}
+.card-featured.open .cf-icon{background:rgba(255,255,255,.18)}
+.cf-body{flex:1;min-width:0}
+.cf-label{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.3rem}
+.cf-title{font-family:'Fraunces',Georgia,serif;font-size:1.2rem;font-weight:300;line-height:1.1;color:#fff;margin-bottom:.3rem}
+.cf-title em{font-style:italic;color:rgba(255,255,255,.55)}
+.cf-desc{font-size:.76rem;line-height:1.55;color:rgba(255,255,255,.45)}
+.cf-chevron{flex-shrink:0;margin-top:2px;transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.cf-chevron svg{width:16px;height:16px;color:rgba(255,255,255,.3)}
+.card-featured.open .cf-chevron{transform:rotate(180deg)}
+.card-featured.open .cf-chevron svg{color:rgba(255,255,255,.6)}
+.card-featured-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.16,1,.3,1)}
+.card-featured-body.open{max-height:5000px}
+.cf-inner{padding:0 1.35rem 1.5rem;border-top:1px solid rgba(255,255,255,.07)}
+
+.card{background:#fff;border-radius:16px;margin-bottom:.75rem;overflow:hidden;cursor:pointer;transition:opacity .15s;border:1px solid rgba(0,0,0,.06)}
+.card:active{opacity:.9}
+.card-trigger{padding:1.1rem 1.25rem;display:flex;align-items:flex-start;gap:.9rem}
+.c-icon{width:34px;height:34px;border-radius:9px;background:#f2f1ef;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(0,0,0,.07);transition:background .2s}
+.c-icon svg{width:15px;height:15px;color:#555}
+.card.open .c-icon{background:#0a0a0a;border-color:#0a0a0a}
+.card.open .c-icon svg{color:#fff}
+.c-body{flex:1;min-width:0}
+.c-label{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:#bbb;margin-bottom:.25rem}
+.card.open .c-label{color:#888}
+.c-title{font-weight:600;font-size:.92rem;color:#0a0a0a;margin-bottom:.2rem;line-height:1.2}
+.c-desc{font-size:.74rem;line-height:1.5;color:#999;transition:opacity .2s}
+.card.open .c-desc{opacity:0;height:0;margin:0}
+.c-meta{display:flex;align-items:center;gap:.4rem;margin-top:.45rem}
+.c-chip{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.06em;text-transform:uppercase;padding:.18rem .5rem;border-radius:20px;background:#f2f1ef;color:#aaa;border:1px solid rgba(0,0,0,.07)}
+.c-chevron{flex-shrink:0;margin-top:2px;transition:transform .35s cubic-bezier(.16,1,.3,1);align-self:center}
+.c-chevron svg{width:15px;height:15px;color:#ccc}
+.card.open .c-chevron{transform:rotate(180deg)}
+.card.open .c-chevron svg{color:#0a0a0a}
+.card-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.16,1,.3,1)}
+.card-body.open{max-height:6000px}
+.c-inner{border-top:1px solid rgba(0,0,0,.06)}
+
+.acc-item{border-bottom:1px solid rgba(0,0,0,.05)}
+.acc-item:last-child{border-bottom:none}
+.acc-trigger{width:100%;padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:.85rem;background:none;border:none;cursor:pointer;text-align:left;transition:background .15s}
+.acc-trigger:hover{background:rgba(0,0,0,.02)}
+.acc-trigger.open{background:rgba(0,0,0,.02)}
+.acc-left{display:flex;align-items:center;gap:.65rem;flex:1;min-width:0}
+.acc-dot{width:6px;height:6px;border-radius:50%;background:#ccc;flex-shrink:0;transition:background .2s}
+.acc-trigger.open .acc-dot{background:#0a0a0a}
+.acc-text{flex:1;min-width:0}
+.acc-title{font-weight:600;font-size:.83rem;color:#0a0a0a;line-height:1.2}
+.acc-preview{font-size:.71rem;color:#bbb;margin-top:.08rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .15s}
+.acc-trigger.open .acc-preview{opacity:0}
+.acc-chevron-sm{flex-shrink:0;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.acc-chevron-sm svg{width:12px;height:12px;color:#ddd}
+.acc-trigger.open .acc-chevron-sm{transform:rotate(180deg)}
+.acc-trigger.open .acc-chevron-sm svg{color:#888}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1)}
+.acc-body.open{max-height:3000px}
+.acc-inner{padding:.9rem 1.25rem 1.1rem;border-top:1px solid rgba(0,0,0,.04);background:#fafaf9}
+
+.ai{font-size:.83rem;line-height:1.75;color:#555;margin-bottom:.8rem}
+.ai:last-child{margin-bottom:0}
+.ai strong{color:#0a0a0a;font-weight:600}
+
+.feat-rows{display:flex;flex-direction:column;gap:0;margin:.6rem 0}
+.feat-row{padding:.75rem 0;border-bottom:1px solid rgba(0,0,0,.05);display:flex;gap:.75rem;align-items:flex-start}
+.feat-row:last-child{border-bottom:none;padding-bottom:0}
+.feat-num{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:#ccc;flex-shrink:0;width:16px;padding-top:3px}
+.feat-body{flex:1}
+.feat-title{font-weight:600;font-size:.82rem;color:#0a0a0a;margin-bottom:.12rem}
+.feat-desc{font-size:.76rem;line-height:1.6;color:#666}
+
+.flow{margin:.6rem 0;display:flex;flex-direction:column}
+.flow-item{display:flex;gap:.65rem;padding-bottom:.9rem;position:relative}
+.flow-item::after{content:'';position:absolute;left:8px;top:20px;width:1px;height:calc(100% - 8px);background:rgba(0,0,0,.08)}
+.flow-item:last-child::after{display:none}
+.flow-dot{width:17px;height:17px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.48rem;font-weight:500;position:relative;z-index:1}
+.flow-dot.dk{background:#0a0a0a;color:#fff}
+.flow-dot.lt{background:#e8e8e6;color:#999;border:1px solid #ddd}
+.flow-body{flex:1;padding-top:1px}
+.flow-label{font-family:'JetBrains Mono',monospace;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:#bbb;margin-bottom:.12rem}
+.flow-title{font-size:.82rem;font-weight:600;color:#0a0a0a;margin-bottom:.1rem}
+.flow-desc{font-size:.75rem;line-height:1.55;color:#666}
+
+.dk-callout{background:#0a0a0a;border-radius:10px;padding:1rem;margin:.6rem 0}
+.dk-callout-eye{font-family:'JetBrains Mono',monospace;font-size:.49rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:.4rem}
+.dk-callout-h{font-family:'Fraunces',Georgia,serif;font-size:.96rem;font-style:italic;font-weight:300;line-height:1.2;color:#fff;margin-bottom:.5rem}
+.dk-callout-p{font-size:.78rem;line-height:1.65;color:rgba(255,255,255,.55)}
+.dk-callout-p strong{color:#fff}
+.dk-callout-p+.dk-callout-p{margin-top:.45rem}
+
+.cf-feat-rows{display:flex;flex-direction:column;gap:0;margin:.6rem 0}
+.cf-feat-row{padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.07);display:flex;gap:.75rem;align-items:flex-start}
+.cf-feat-row:last-child{border-bottom:none;padding-bottom:0}
+.cf-feat-num{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.2);flex-shrink:0;width:16px;padding-top:3px}
+.cf-feat-title{font-weight:600;font-size:.82rem;color:#fff;margin-bottom:.12rem}
+.cf-feat-desc{font-size:.76rem;line-height:1.6;color:rgba(255,255,255,.48)}
+
+.lt-note{background:rgba(255,255,255,.06);border-radius:9px;padding:.85rem;margin:.6rem 0}
+.lt-note-p{font-size:.76rem;line-height:1.65;color:rgba(255,255,255,.45)}
+.lt-note-p em{font-style:italic;color:rgba(255,255,255,.7)}
+
+.wt-note{background:#f2f1ef;border-radius:9px;padding:.85rem;margin:.6rem 0}
+.wt-note-p{font-size:.76rem;line-height:1.65;color:#777}
+.wt-note-p em{font-style:italic;color:#0a0a0a}
+
+.ann{font-family:'Caveat',cursive;font-size:.96rem;color:#0a0a0a;line-height:1.45;padding:.65rem .9rem;background:#f2f1ef;border-radius:8px;border:1px solid rgba(0,0,0,.07);margin:.6rem 0}
+
+.final{background:#0a0a0a;padding:2.25rem 1.5rem;margin-top:1.25rem}
+.final-eye{font-family:'JetBrains Mono',monospace;font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:.65rem}
+.final-h{font-family:'Fraunces',Georgia,serif;font-size:1.55rem;font-weight:300;font-style:italic;line-height:1.05;color:#fff;margin-bottom:1.1rem;letter-spacing:-.02em}
+.final-p{font-size:.84rem;line-height:1.8;color:rgba(255,255,255,.5);margin-bottom:.85rem}
+.final-p:last-child{margin-bottom:0}
+.closer{background:#0a0a0a;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.07)}
+.closer span{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.18)}
+.bot{height:.5rem;background:#0a0a0a}
+.pb{padding-bottom:1.25rem}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-logo">
+    <svg width="14" height="14" viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="square"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
+    <span class="logo-name" style="margin-left:.35rem">4THWALL</span>
+  </div>
+  <div class="cover-eyebrow">Prepared for Honey Due Home Services</div>
+  <h1 class="cover-h">Operational support for<br><em>Blayne & Enzo.</em></h1>
+  <div class="cover-foot">
+    <span>4THWALL × Honey Due Home Services</span>
+    <span>May 2026</span>
+  </div>
+</div>
+
+<!-- SCOPE NOTE -->
+<div class="scope">
+  <div class="scope-label">A note on scope</div>
+  <p class="scope-text">Everything outlined here represents capabilities 4THWALL can build and operate for Honey Due. Not all of it needs to happen at once — or at all. These are starting points for a conversation, not a checklist. We start wherever the lead problem is most urgent.</p>
+</div>
+
+<div class="cards">
+
+  <!-- CARD 1: FOR BLAYNE & ENZO — DARK FEATURED -->
+  <div class="card-featured" id="cf-founders">
+    <div class="card-featured-trigger" onclick="toggleFeatured('founders')">
+      <div class="cf-icon" id="cfi-founders">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="cf-body">
+        <div class="cf-label">For both of you</div>
+        <div class="cf-title">Stay on the job.<br><em>Not on the phone.</em></div>
+        <div class="cf-desc">You started Honey Due to do the work — not to be your own receptionist. 4THWALL handles every inquiry so you and Enzo never have to stop mid-job to answer a homeowner's text.</div>
+      </div>
+      <div class="cf-chevron">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="card-featured-body" id="cfb-founders">
+      <div class="cf-inner" style="padding-top:1rem">
+
+        <p style="font-size:.83rem;line-height:1.75;color:rgba(255,255,255,.5);margin-bottom:.85rem">Right now every homeowner who sees your Instagram, drives past a job, or gets a referral from a neighbor — they're texting a number that two people on ladders have to answer. 4THWALL puts an AI receptionist on that number that responds in 47 seconds, asks the right questions, and books an estimate directly to your calendar. You get back to the job. They get an answer before your competitor picks up.</p>
+
+        <div class="dk-callout">
+          <div class="dk-callout-h">What you see when you get home.</div>
+          <p class="dk-callout-p">"Three leads came in while you were on the Larchmont job. One wanted roof washing — booked for Saturday at 10am. One asked about polymeric sand — booked for a Tuesday estimate. One was outside your service area — politely declined with an explanation."</p>
+          <p class="dk-callout-p"><strong>You touch nothing. The pipeline filled itself.</strong></p>
+        </div>
+
+        <div class="cf-feat-rows">
+          <div class="cf-feat-row">
+            <div class="cf-feat-num">01</div>
+            <div>
+              <div class="cf-feat-title">Morning lead summary</div>
+              <div class="cf-feat-desc">Every morning you see what came in overnight — who inquired, what service, whether they booked. No logging into anything. Comes to your phone.</div>
+            </div>
+          </div>
+          <div class="cf-feat-row">
+            <div class="cf-feat-num">02</div>
+            <div>
+              <div class="cf-feat-title">Pipeline visibility anytime</div>
+              <div class="cf-feat-desc">One app shows you every active lead, every conversation the AI had, and every booked estimate. Read-only. Takes 30 seconds to check.</div>
+            </div>
+          </div>
+          <div class="cf-feat-row">
+            <div class="cf-feat-num">03</div>
+            <div>
+              <div class="cf-feat-title">Never miss a job because you were on another one</div>
+              <div class="cf-feat-desc">The AI works when you're on the roof, in the driveway, and after hours. Westchester homeowners text at 9pm after they've been meaning to call all day. That lead gets answered tonight.</div>
+            </div>
+          </div>
+          <div class="cf-feat-row">
+            <div class="cf-feat-num">04</div>
+            <div>
+              <div class="cf-feat-title">As the crew grows, the system scales with it</div>
+              <div class="cf-feat-desc">When you hire out work, the volume of inbound will grow too. The AI handles 50 inquiries the same way it handles 5 — without you adding overhead to manage it.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lt-note">
+          <p class="lt-note-p">Your Instagram is already driving traffic — the UTM data shows it. The problem is not awareness. The problem is that every homeowner who clicks through and texts is currently landing in a queue that two people have to manage manually while they're working. <em>That is the gap 4THWALL closes first.</em></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 2: FOR THE BUSINESS -->
+  <div class="card" id="c-systems" onclick="toggleCard('systems')">
+    <div class="card-trigger">
+      <div class="c-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <div class="c-body">
+        <div class="c-label">For the business</div>
+        <div class="c-title">Six systems. All automated.</div>
+        <div class="c-desc">Lead response, booking, reviews, AI search visibility, storm mode, and seasonal campaigns — running permanently in the background.</div>
+        <div class="c-meta">
+          <span class="c-chip">Lead Response</span>
+          <span class="c-chip">Reviews</span>
+          <span class="c-chip">+4 more</span>
+        </div>
+      </div>
+      <div class="c-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body" id="cb-systems">
+      <div class="c-inner">
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-acc="leads">
+            <div class="acc-left">
+              <div class="acc-dot"></div>
+              <div class="acc-text">
+                <div class="acc-title">Lead Response</div>
+                <div class="acc-preview">Every inquiry answered in 47 seconds — SMS, web, Instagram DM</div>
+              </div>
+            </div>
+            <div class="acc-chevron-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </button>
+          <div class="acc-body" id="body-leads">
+            <div class="acc-inner">
+              <p class="ai">When a homeowner texts Honey Due's number, the AI responds within 47 seconds — in English or Spanish — introduces the business, and begins qualifying the job. What service are they looking for? What's the address? Are they in your service area? What's their timeline?</p>
+              <p class="ai">No lead sits unanswered because you're on a ladder. No inquiry goes cold because it came in after 6pm. The response happens automatically and the conversation continues until the homeowner books or opts out.</p>
+              <div class="feat-rows">
+                <div class="feat-row"><div class="feat-num">01</div><div class="feat-body"><div class="feat-title">47-second response time</div><div class="feat-desc">The industry average is 3.5 hours. The homeowner who gets an answer in 47 seconds is already in a conversation — before they've texted your competitor.</div></div></div>
+                <div class="feat-row"><div class="feat-num">02</div><div class="feat-body"><div class="feat-title">Qualifies the job before you arrive</div><div class="feat-desc">Service type, address, access, property type, preferred timing — all captured before you ever pick up the phone. You show up to informed estimates, not cold calls.</div></div></div>
+                <div class="feat-row"><div class="feat-num">03</div><div class="feat-body"><div class="feat-title">Declines gracefully outside service area</div><div class="feat-desc">If the job is outside Westchester, the AI responds professionally and explains. No awkward voicemails. No ignored texts. Your reputation stays clean.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-acc="booking">
+            <div class="acc-left">
+              <div class="acc-dot"></div>
+              <div class="acc-text">
+                <div class="acc-title">Booking & Scheduling</div>
+                <div class="acc-preview">Estimates booked directly to your calendar — no back and forth</div>
+              </div>
+            </div>
+            <div class="acc-chevron-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </button>
+          <div class="acc-body" id="body-booking">
+            <div class="acc-inner">
+              <p class="ai">Once a homeowner is qualified, the AI offers available estimate slots directly from your calendar and confirms the appointment. The homeowner gets a confirmation text. You get a calendar event. Nothing else required from either side.</p>
+              <div class="feat-rows">
+                <div class="feat-row"><div class="feat-num">01</div><div class="feat-body"><div class="feat-title">Syncs with your existing calendar</div><div class="feat-desc">Google Calendar or any standard calendar. The AI only offers slots that are genuinely available — no double-bookings, no buffer conflicts.</div></div></div>
+                <div class="feat-row"><div class="feat-num">02</div><div class="feat-body"><div class="feat-title">Confirmation + reminder sequence</div><div class="feat-desc">Homeowner gets a confirmation text immediately and a reminder the day before. No-show rate drops. Your route is planned and committed.</div></div></div>
+                <div class="feat-row"><div class="feat-num">03</div><div class="feat-body"><div class="feat-title">Reschedule handled automatically</div><div class="feat-desc">If a homeowner needs to reschedule, the AI handles it in the same conversation thread. You don't get a phone call for a calendar change.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-acc="reviews">
+            <div class="acc-left">
+              <div class="acc-dot"></div>
+              <div class="acc-text">
+                <div class="acc-title">Review Generation</div>
+                <div class="acc-preview">Every completed job triggers a Google review request automatically</div>
+              </div>
+            </div>
+            <div class="acc-chevron-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </button>
+          <div class="acc-body" id="body-reviews">
+            <div class="acc-inner">
+              <p class="ai">One hour after a job is marked complete, a personalized review request goes to the homeowner — with their name, the service performed, and a direct link to your Google Business Profile. No remembering. No awkward asks in person. It just happens.</p>
+              <p class="ai">A new business in Westchester with 50 Google reviews beats an established competitor with 12. That gap compounds every week the system runs.</p>
+              <div class="feat-rows">
+                <div class="feat-row"><div class="feat-num">01</div><div class="feat-body"><div class="feat-title">Timed for highest open rate</div><div class="feat-desc">One hour post-job — when the homeowner is still looking at your clean roof and feeling good about it. Not a week later when they've forgotten your name.</div></div></div>
+                <div class="feat-row"><div class="feat-num">02</div><div class="feat-body"><div class="feat-title">Follow-up if no response</div><div class="feat-desc">If they don't click the link, a gentle follow-up goes out 48 hours later. Tasteful. Not pushy. Captures reviews that would have been left on the table.</div></div></div>
+                <div class="feat-row"><div class="feat-num">03</div><div class="feat-body"><div class="feat-title">Builds your reputation automatically</div><div class="feat-desc">Every job becomes a review opportunity. Compounding. The 6-month version of Honey Due with this system running looks like a business that has been trusted in Westchester for years.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-acc="visibility">
+            <div class="acc-left">
+              <div class="acc-dot"></div>
+              <div class="acc-text">
+                <div class="acc-title">AI Search Visibility</div>
+                <div class="acc-preview">Appear when homeowners search in ChatGPT, Perplexity, and Google</div>
+              </div>
+            </div>
+            <div class="acc-chevron-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </button>
+          <div class="acc-body" id="body-visibility">
+            <div class="acc-inner">
+              <p class="ai">Google reviews are a ranking signal inside Google's algorithm. ChatGPT, Perplexity, and Claude run their own crawlers — they pull from directories, structured business data, citations, and schema markup. A business can sit at the top of Google Maps with 200 reviews and not exist inside the AI systems that hundreds of millions of people now use to find local services.</p>
+              <div class="dk-callout">
+                <div class="dk-callout-eye">The demo</div>
+                <div class="dk-callout-h">Open ChatGPT. Type "best roof washing company in Westchester NY."</div>
+                <p class="dk-callout-p">If Honey Due doesn't appear — and it almost certainly won't yet — that is the gap. That is where your next customer is looking. <strong>4THWALL closes it and keeps it closed as AI search evolves.</strong></p>
+              </div>
+              <div class="feat-rows">
+                <div class="feat-row"><div class="feat-num">01</div><div class="feat-body"><div class="feat-title">Consistent NAP data across every directory</div><div class="feat-desc">Name, address, phone — consistent across Yelp, Angi, Houzz, Foursquare, BBB, and the seven directories AI crawlers actually index. One inconsistency breaks visibility everywhere.</div></div></div>
+                <div class="feat-row"><div class="feat-num">02</div><div class="feat-body"><div class="feat-title">Structured schema on your website</div><div class="feat-desc">LocalBusiness and HomeAndConstructionBusiness markup that AI systems can parse and confidently cite. Currently missing from most contractor sites.</div></div></div>
+                <div class="feat-row"><div class="feat-num">03</div><div class="feat-body"><div class="feat-title">Managed monthly — not a one-time fix</div><div class="feat-desc">AI search behavior changes. New services get added. Service areas expand. 4THWALL maintains visibility as Honey Due grows — not a setup you forget about.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-acc="storm">
+            <div class="acc-left">
+              <div class="acc-dot"></div>
+              <div class="acc-text">
+                <div class="acc-title">Storm Mode</div>
+                <div class="acc-preview">Surge capacity when Westchester weather creates demand spikes</div>
+              </div>
+            </div>
+            <div class="acc-chevron-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </button>
+          <div class="acc-body" id="body-storm">
+            <div class="acc-inner">
+              <p class="ai">A storm rolls through Westchester and suddenly every homeowner with moss on their roof, clogged gutters, or ice dams is texting anyone they can find. That demand spike lasts 72 hours and then disappears. The contractors who capture it are the ones who respond first and fastest.</p>
+              <p class="ai">Storm Mode switches Honey Due's AI messaging instantly — prioritizing emergency roof washing, gutter inspection, and de-icing inquiries, extending availability messaging, and compressing the booking window. You activate it with one text. It's live in 15 minutes.</p>
+              <div class="feat-rows">
+                <div class="feat-row"><div class="feat-num">01</div><div class="feat-body"><div class="feat-title">One text to activate</div><div class="feat-desc">Text 4THWALL "storm mode on" + affected area. Live in 15 minutes. The AI switches messaging, urgency framing, and booking flow immediately.</div></div></div>
+                <div class="feat-row"><div class="feat-num">02</div><div class="feat-body"><div class="feat-title">Handles volume spikes you can't</div><div class="feat-desc">Twenty inquiries in two hours during a storm is not manageable manually. The AI handles all twenty simultaneously — qualifying, booking, and routing — while you focus on the jobs already on the schedule.</div></div></div>
+                <div class="feat-row"><div class="feat-num">03</div><div class="feat-body"><div class="feat-title">Especially relevant for roof de-icing</div><div class="feat-desc">Ice dam season in Westchester is short and intense. The window to capture those jobs is measured in days. Storm Mode ensures every homeowner who reaches out during that window gets an immediate answer.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-acc="seasonal">
+            <div class="acc-left">
+              <div class="acc-dot"></div>
+              <div class="acc-text">
+                <div class="acc-title">Seasonal Campaigns</div>
+                <div class="acc-preview">Spring soft washing. Fall gutter guards. Winter de-icing. Automated.</div>
+              </div>
+            </div>
+            <div class="acc-chevron-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </button>
+          <div class="acc-body" id="body-seasonal">
+            <div class="acc-inner">
+              <p class="ai">Honey Due's services are seasonal by nature. Spring is soft washing and polymeric sand. Fall is gutter guards before the leaves drop. Winter is roof de-icing cables before the first freeze. 4THWALL builds outbound campaigns around each season and activates them automatically — reaching past customers and new prospects at exactly the right time.</p>
+              <div class="feat-rows">
+                <div class="feat-row"><div class="feat-num">01</div><div class="feat-body"><div class="feat-title">Spring — Soft Washing & Polymeric Sand</div><div class="feat-desc">Homeowners coming out of winter see their driveways and exteriors for the first time. A timely outreach campaign captures that moment before they search for someone themselves.</div></div></div>
+                <div class="feat-row"><div class="feat-num">02</div><div class="feat-body"><div class="feat-title">Fall — Gutter Guards & Roof Inspection</div><div class="feat-desc">Before the leaves drop is when every Westchester homeowner is thinking about gutters. A campaign that goes out in September books jobs through November.</div></div></div>
+                <div class="feat-row"><div class="feat-num">03</div><div class="feat-body"><div class="feat-title">Winter — Roof De-Icing Cables</div><div class="feat-desc">Ice dams are expensive and urgent. An outreach sequence to past customers in October — before the first freeze — books the jobs before anyone else is talking about them.</div></div></div>
+                <div class="feat-row"><div class="feat-num">04</div><div class="feat-body"><div class="feat-title">Reactivates past customers automatically</div><div class="feat-desc">Every homeowner who used Honey Due last spring is a candidate for this fall. The campaign goes to them first — by name, referencing their last job. Warm outreach, not cold.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 3: IN PRACTICE -->
+  <div class="card" id="c-practice" onclick="toggleCard('practice')">
+    <div class="card-trigger">
+      <div class="c-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="c-body">
+        <div class="c-label">In practice & how it works</div>
+        <div class="c-title">What a week looks like.</div>
+        <div class="c-desc">A real picture of Honey Due with 4THWALL running — and exactly how setup, delivery, and the ongoing relationship work.</div>
+        <div class="c-meta">
+          <span class="c-chip">In Practice</span>
+          <span class="c-chip">Deployment</span>
+          <span class="c-chip">Your Data</span>
+        </div>
+      </div>
+      <div class="c-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="card-body" id="cb-practice">
+      <div class="c-inner">
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-acc="scenario">
+            <div class="acc-left">
+              <div class="acc-dot"></div>
+              <div class="acc-text">
+                <div class="acc-title">What this looks like in practice</div>
+                <div class="acc-preview">A Tuesday evening in Westchester — while Blayne and Enzo are off the clock</div>
+              </div>
+            </div>
+            <div class="acc-chevron-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </button>
+          <div class="acc-body" id="body-scenario">
+            <div class="acc-inner">
+              <div class="dk-callout">
+                <div class="dk-callout-h">A Tuesday evening. 8:47pm.</div>
+                <p class="dk-callout-p">A homeowner in Scarsdale scrolling Instagram sees Honey Due's before and after on a roof washing job. She taps the link in bio. Then she texts the number about getting her roof done before the summer.</p>
+                <p class="dk-callout-p">Blayne and Enzo are home. Nobody's monitoring anything.</p>
+                <p class="dk-callout-p">The AI responds in 47 seconds. Introduces Honey Due. Asks about the property, the roof type, the size, her timeline. She answers. The AI confirms Scarsdale is in the service area, offers two estimate slots — Saturday at 9am or Sunday at 11am. She picks Saturday.</p>
+                <p class="dk-callout-p">A calendar event appears on Blayne's calendar. She gets a confirmation text with the date, time, and what to expect. A reminder goes out Friday night.</p>
+                <p class="dk-callout-p">Saturday morning the estimate goes well. Job is booked. Two weeks later, job is done. One hour after they leave, she gets a personalized review request with a direct link to Honey Due's Google profile. She leaves a five-star review that night.</p>
+                <p class="dk-callout-p"><strong>Blayne never touched his phone once for any of it.</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-acc="deploy">
+            <div class="acc-left">
+              <div class="acc-dot"></div>
+              <div class="acc-text">
+                <div class="acc-title">How deployment works</div>
+                <div class="acc-preview">48 hours from contract to live — nothing to install, nothing to learn</div>
+              </div>
+            </div>
+            <div class="acc-chevron-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </button>
+          <div class="acc-body" id="body-deploy">
+            <div class="acc-inner">
+              <p class="ai">4THWALL Trades runs entirely on infrastructure we manage — no app to install, no system to learn, no laptop configuration required. The only thing that changes on Blayne's end is that his phone number now forwards to a system that answers for him.</p>
+              <div class="flow">
+                <div class="flow-item">
+                  <div class="flow-dot dk">1</div>
+                  <div class="flow-body">
+                    <div class="flow-label">Day 1</div>
+                    <div class="flow-title">Discovery call — 30 minutes</div>
+                    <div class="flow-desc">Services, service area, pricing, tone, calendar, what the AI should never say. 4THWALL writes down the setup plan on the same call.</div>
+                  </div>
+                </div>
+                <div class="flow-item">
+                  <div class="flow-dot dk">2</div>
+                  <div class="flow-body">
+                    <div class="flow-label">Days 2–3</div>
+                    <div class="flow-title">4THWALL builds and configures</div>
+                    <div class="flow-desc">4THWALL's infrastructure deployed and configured to Honey Due's voice, services, and service area. Calendar connected. Review link embedded. Number forwarding set up.</div>
+                  </div>
+                </div>
+                <div class="flow-item">
+                  <div class="flow-dot dk">3</div>
+                  <div class="flow-body">
+                    <div class="flow-label">Day 4</div>
+                    <div class="flow-title">Live and tested</div>
+                    <div class="flow-desc">We send a test lead through the full flow — text in, AI responds, estimate books to calendar, confirmation goes out. You approve. System goes live.</div>
+                  </div>
+                </div>
+                <div class="flow-item">
+                  <div class="flow-dot lt">∞</div>
+                  <div class="flow-body">
+                    <div class="flow-label">Ongoing</div>
+                    <div class="flow-title">Managed permanently by 4THWALL</div>
+                    <div class="flow-desc">Monthly performance report. Monthly check-in call. Seasonal campaigns activated ahead of schedule. Text us when something needs to change — updated same day.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="wt-note"><p class="wt-note-p">Your existing number, your existing calendar, your existing Google profile. Nothing about Honey Due's outward-facing presence changes — except that it starts responding faster than anyone in Westchester.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-acc="data">
+            <div class="acc-left">
+              <div class="acc-dot"></div>
+              <div class="acc-text">
+                <div class="acc-title">Your data, your business</div>
+                <div class="acc-preview">What 4THWALL touches — and what we never do</div>
+              </div>
+            </div>
+            <div class="acc-chevron-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </button>
+          <div class="acc-body" id="body-data">
+            <div class="acc-inner">
+              <div class="feat-rows">
+                <div class="feat-row"><div class="feat-num">01</div><div class="feat-body"><div class="feat-title">Your leads stay in your pipeline</div><div class="feat-desc">Every conversation, every contact, every booking lives in your account — which belongs to Honey Due. 4THWALL manages the system. The data is yours.</div></div></div>
+                <div class="feat-row"><div class="feat-num">02</div><div class="feat-body"><div class="feat-title">No lock-in</div><div class="feat-desc">30-day written notice, no penalty. The system winds down cleanly and 4THWALL provides a handoff document so nothing is undocumented on exit. No gotchas.</div></div></div>
+                <div class="feat-row"><div class="feat-num">03</div><div class="feat-body"><div class="feat-title">4THWALL never accesses your personal accounts</div><div class="feat-desc">We connect to your calendar and review platform during setup — those connections are established together in one session and then the system runs independently.</div></div></div>
+                <div class="feat-row"><div class="feat-num">04</div><div class="feat-body"><div class="feat-title">SMS compliant from day one</div><div class="feat-desc">All text messaging runs under proper commercial registration. No risk of messages being flagged or filtered before they reach homeowners.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- /cards -->
+
+<!-- FINAL NOTE -->
+<div class="final">
+  <div class="final-eye">A final note</div>
+  <h2 class="final-h">The business Honey Due is building deserves an operation to match it.</h2>
+  <p class="final-p">You built something real in less than a year — a brand, a portfolio, a niche in one of the most competitive residential markets in the country. The work speaks for itself. The before-and-after photos on the site prove it.</p>
+  <p class="final-p">The next constraint is not the quality of the work. It's that every new lead and every new job still runs through two people who are also doing the work. 4THWALL removes that ceiling. The business can grow without Blayne and Enzo becoming its bottleneck.</p>
+  <p class="final-p">These are starting points — not a commitment. We build what makes sense for where Honey Due is right now, and expand as the business grows.</p>
+</div>
+
+<div class="closer">
+  <span>4THWALL — AI Infrastructure</span>
+  <span>4thwall.solutions</span>
+</div>
+<div class="bot"></div>
+
+<script>
+function toggleFeatured(id) {
+  const card = document.getElementById('cf-' + id);
+  const body = document.getElementById('cfb-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  card.classList.toggle('open', !isOpen);
+}
+function toggleCard(id) {
+  const card = document.getElementById('c-' + id);
+  const body = document.getElementById('cb-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  card.classList.toggle('open', !isOpen);
+}
+document.querySelectorAll('.acc-trigger').forEach(trigger => {
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const id = trigger.dataset.acc;
+    const body = document.getElementById('body-' + id);
+    const isOpen = body.classList.contains('open');
+    document.querySelectorAll('.acc-body').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.acc-trigger').forEach(t => t.classList.remove('open'));
+    if (!isOpen) {
+      body.classList.add('open');
+      trigger.classList.add('open');
+    }
+  });
+});
+</script>
+</body>
+</html>
