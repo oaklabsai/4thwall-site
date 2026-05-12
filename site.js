@@ -286,17 +286,8 @@
       e.preventDefault();
       const send = document.getElementById('cm-send');
       const msg = document.getElementById('cm-msg');
-      // ── SMS consent enforcement (A2P / TCR requirement) ──────────
-      // Checkbox is also marked `required` at HTML level; this is
-      // the JS belt that handles AJAX submission paths.
+      // ── SMS consent (optional — TCPA: cannot gate submission on consent) ──────
       const consent = form.querySelector('input[name="sms_consent"]');
-      if(consent && !consent.checked){
-        const block = consent.closest('.consent-block');
-        if(block) block.classList.add('consent-error');
-        consent.focus();
-        if(msg) msg.placeholder = 'Please check the SMS consent box to continue.';
-        return;
-      }
       const originalLabel = send.textContent;
       send.textContent = '…';
       send.disabled = true;

@@ -163,9 +163,9 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
 
     <div class="consent-block" id="cf-consent-block">
       <div class="consent-check">
-        <input type="checkbox" id="cf-consent" name="sms_consent" required aria-required="true">
+        <input type="checkbox" id="cf-consent" name="sms_consent">
         <label for="cf-consent" class="consent-text">
-          By checking this box, I expressly consent to receive recurring automated marketing and transactional text messages from <strong>4th Wall Solutions</strong> at the phone number provided, including appointment reminders, lead follow-up, review requests, and service updates from <strong>4th Wall Solutions</strong>. <strong>Up to 6 messages per month.</strong> Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help. <strong>Consent is not a condition of purchase.</strong> View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.
+          By checking this box, I expressly consent to receive recurring automated marketing and transactional text messages from <strong>4th Wall Solutions / Andres Rendon</strong> at the phone number provided, including appointment reminders, lead follow-up, review requests, and service updates from <strong>4th Wall Solutions</strong>. <strong>Up to 6 messages per month.</strong> Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help. <strong>Consent is not a condition of purchase.</strong> View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.
         </label>
       </div>
     </div>
@@ -261,14 +261,7 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
 
   form.addEventListener('submit', async function(e){
     e.preventDefault();
-    // ── SMS consent enforcement (A2P / TCR required) ──
-    if(!consentBox.checked){
-      consentBlock.classList.add('consent-error');
-      setStatus('Please check the SMS consent box to continue.', 'is-error');
-      consentBox.focus();
-      return;
-    }
-
+    // ── SMS consent (optional — TCPA: cannot gate submission on consent) ──
     submit.disabled = true;
     var originalLabel = submit.textContent;
     submit.textContent = 'Sending…';
