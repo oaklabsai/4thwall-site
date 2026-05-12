@@ -286,6 +286,17 @@
       e.preventDefault();
       const send = document.getElementById('cm-send');
       const msg = document.getElementById('cm-msg');
+      // ── SMS consent enforcement (A2P / TCR requirement) ──────────
+      // Checkbox is also marked `required` at HTML level; this is
+      // the JS belt that handles AJAX submission paths.
+      const consent = form.querySelector('input[name="sms_consent"]');
+      if(consent && !consent.checked){
+        const block = consent.closest('.consent-block');
+        if(block) block.classList.add('consent-error');
+        consent.focus();
+        if(msg) msg.placeholder = 'Please check the SMS consent box to continue.';
+        return;
+      }
       const originalLabel = send.textContent;
       send.textContent = '…';
       send.disabled = true;
@@ -293,6 +304,7 @@
         const fd = new FormData(form);
         const body = {};
         fd.forEach((v, k) => { body[k] = v; });
+        body.sms_consent = consent && consent.checked ? 'true' : 'false';
         const res = await fetch('https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -303,6 +315,8 @@
         send.textContent = '✓';
         form.reset();
         document.querySelectorAll('#cm-chips .chip').forEach(c=>c.classList.remove('active'));
+        const block = form.querySelector('.consent-block');
+        if(block) block.classList.remove('consent-error');
         msg.placeholder = 'Got it — Andrew will reply within an hour during business hours.';
         setTimeout(()=>{ send.classList.remove('sent'); send.textContent = originalLabel; send.disabled = false; }, 4500);
       } catch (err) {
@@ -311,6 +325,14 @@
         msg.placeholder = "Couldn't send — email andrew@4thwall.solutions or call (203) 670-9477.";
       }
     });
+    // Clear error styling once the user checks the box
+    const consentBox = form.querySelector('input[name="sms_consent"]');
+    if(consentBox){
+      consentBox.addEventListener('change', ()=>{
+        const block = consentBox.closest('.consent-block');
+        if(block && consentBox.checked) block.classList.remove('consent-error');
+      });
+    }
   }
 
   // ── Nav dropdown ─────────────────────────────────

@@ -329,7 +329,9 @@ section{position:relative;z-index:2}
 .composer-send.sent{background:var(--orange)}
 .composer-sub{text-align:center;margin-top:1.4rem;font-size:.78rem;color:var(--muted);display:flex;justify-content:center;gap:1.6rem;flex-wrap:wrap}
 .composer-sub a:hover{color:var(--ink)}
-.consent-block{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line)}
+.consent-block{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line);transition:background .25s,border-color .25s}
+.consent-block.consent-error{background:rgba(220,80,60,.07);border-top-color:rgba(220,80,60,.45);padding:.75rem;border-radius:6px;margin-top:.5rem}
+.consent-block.consent-error .consent-text{color:#8a2a1f}
 .consent-check{display:flex;align-items:flex-start;gap:.55rem;cursor:pointer}
 .consent-check input[type="checkbox"]{width:13px;height:13px;margin-top:.18rem;flex-shrink:0;accent-color:var(--ink);cursor:pointer}
 .consent-text{font-size:.7rem;line-height:1.7;color:var(--muted)}
@@ -552,6 +554,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
     <a href="#how" class="nav-a">How it works</a>
     <a href="#faq" class="nav-a">FAQ</a>
+    <a href="/contact.html" class="nav-a">Contact</a>
     <a href="#contact" class="nav-a">Let's Talk</a>
     <a href="/login.html" class="nav-a" style="opacity:.55">Client login</a>
     <button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="navDrop">
@@ -1136,8 +1139,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
     <div class="consent-block">
       <label class="consent-check">
-        <input type="checkbox" name="sms_consent">
-        <span class="consent-text">By submitting this form, I agree to receive automated promotional and transactional SMS messages from Andres Rendon / 4th Wall Solutions regarding my inquiry, appointment scheduling, and service updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out. Reply HELP for help. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</span>
+        <input type="checkbox" name="sms_consent" required>
+        <span class="consent-text">By checking this box, I expressly consent to receive recurring automated marketing and transactional text messages from <strong>4th Wall Solutions</strong> at the phone number provided, including appointment reminders, lead follow-up, review requests, and service updates. Up to 6 messages per month. Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help. Consent is not a condition of purchase. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</span>
       </label>
     </div>
   </form>
