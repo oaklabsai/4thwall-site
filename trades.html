@@ -1072,10 +1072,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <button type="submit" class="composer-send" id="cm-send" aria-label="Send">↑</button>
     </div>
     <div class="consent-block">
-      <label class="consent-check">
-        <input type="checkbox" name="sms_consent" required>
-        <span class="consent-text">By checking this box, I expressly consent to receive recurring automated marketing and transactional text messages from <strong>4th Wall Solutions</strong> at the phone number provided, including appointment reminders, lead follow-up, review requests, and service updates. Up to 6 messages per month. Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help. Consent is not a condition of purchase. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</span>
-      </label>
+      <div class="consent-check">
+        <input type="checkbox" id="cm-sms-consent" name="sms_consent" required aria-required="true">
+        <label for="cm-sms-consent" class="consent-text">By checking this box, I expressly consent to receive recurring automated marketing and transactional text messages from <strong>4th Wall Solutions</strong> at the phone number provided, including appointment reminders, lead follow-up, review requests, and service updates from <strong>4th Wall Solutions</strong>. Up to 6 messages per month. Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help. Consent is not a condition of purchase. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</label>
+      </div>
     </div>
   </form>
 
