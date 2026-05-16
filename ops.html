@@ -428,7 +428,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lap-lid::before,.lap-lid::after{display:none}
 .lap-screen::before{display:none}
 
-/* ── Laptop screen content: Slack desktop mock (Operations workspace) ───── */
+/* ── Laptop screen content: Slack desktop mock (Operations workspace) ─────
+   Rendered at a fixed 615x400 design size, then transform:scale to fit the
+   actual lap-lid box. Keeps every element pixel-perfect proportional across
+   viewports — the whole mock shrinks/grows as one. */
 .lap-screen{
   --slk-dark:#1a1d21;--slk-darker:#19171d;
   --slk-sidebar:#3f0e40;--slk-sidebar-text:rgba(255,255,255,0.7);
@@ -439,8 +442,15 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   --slk-brand:#2a8556;--slk-brand-soft:#3ba672;
   --slk-amber:rgba(236,178,46,0.13);
   width:100%;height:100%;background:var(--slk-dark);border-radius:2px;overflow:hidden;
-  display:grid;grid-template-rows:auto 1fr;color:var(--slk-text);position:relative;
+  position:relative;color:var(--slk-text);
   font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;
+}
+.lap-screen .lap-os-inner{
+  position:absolute;top:0;left:0;
+  width:615px;height:400px;
+  transform-origin:top left;
+  display:grid;grid-template-rows:auto 1fr;
+  background:var(--slk-dark);
 }
 
 /* Top bar */
@@ -764,6 +774,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         </div>
         <div class="lap-lid">
           <div class="lap-screen">
+            <div class="lap-os-inner">
 
             <!-- Top bar -->
             <div class="topbar">
@@ -909,6 +920,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
               </div>
 
             </div>
+            </div><!-- /.lap-os-inner -->
           </div>
         </div>
         <div class="lap-base"><div class="lap-hinge"></div></div>
@@ -1457,6 +1469,28 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   feat.addEventListener('mouseenter',function(){paused=true;if(bar){bar.style.transition='none';bar.style.width='0%';}});
   feat.addEventListener('mouseleave',function(){paused=false;show(cur);startAuto();});
   show(0);startAuto();
+})();
+</script>
+<script>
+/* ── Scale the Slack desktop mock to fit the laptop bezel at any viewport ── */
+(function(){
+  var screen=document.querySelector('.lap-screen');
+  var inner=screen&&screen.querySelector('.lap-os-inner');
+  if(!screen||!inner)return;
+  var DESIGN_W=615, DESIGN_H=400;
+  function applyScale(){
+    var w=screen.clientWidth, h=screen.clientHeight;
+    if(!w||!h)return;
+    // Fit to fill the bezel — scale by the larger ratio so it covers both dims.
+    var s=Math.max(w/DESIGN_W, h/DESIGN_H);
+    inner.style.transform='scale('+s+')';
+    // Compensate width/height so the scaled inner covers the screen exactly
+    inner.style.width=(w/s)+'px';
+    inner.style.height=(h/s)+'px';
+  }
+  applyScale();
+  window.addEventListener('resize',applyScale);
+  if(window.ResizeObserver){new ResizeObserver(applyScale).observe(screen);}
 })();
 </script>
 <script>
