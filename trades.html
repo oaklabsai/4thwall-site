@@ -164,67 +164,44 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .phone-toggle-btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 @media(max-width:540px){.phone-toggle-btn{font-size:.54rem;padding:.55rem .8rem;letter-spacing:.11em}}
 
-/* ── Phone stage (single phone, both views crossfade) ── */
-/* Padding-top trick locks the aspect ratio reliably (the aspect-ratio property alone wasn't
-   strictly enforcing on mobile Safari with absolute children, so the Slack phone — which has
-   more inner content — was being stretched taller than the iPhone). */
+/* ── Unified phone shell (one phone, swappable screen content) ── */
 .phone-stage{position:relative;width:100%;max-width:320px;margin:0 auto;aspect-ratio:9/19.5}
 .phone-stage::before{content:"";display:block;padding-top:216.67%}
-.phone-view{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .4s ease,transform .55s cubic-bezier(.16,1,.3,1);transform:translateY(8px) scale(.985)}
-.phone-toggle-area[data-active="client"] .client-view,
-.phone-toggle-area[data-active="assistant"] .assistant-view{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+.phone-shell{position:absolute;inset:0}
+.phone-bezel{position:absolute;inset:0;border-radius:36px;padding:6px;background:linear-gradient(145deg,#3d3d3a 0%,#1a1a18 32%,#0a0a09 62%,#2c2c29 100%);box-shadow:0 22px 60px -22px rgba(0,0,0,.42),0 8px 20px -8px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1.5px rgba(255,255,255,.04)}
+.phone-bezel::before{content:"";position:absolute;left:-2.5px;top:14%;width:3px;height:26px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;z-index:5}
+.phone-bezel::after{content:"";position:absolute;left:-2.5px;top:30%;width:3px;height:42px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;box-shadow:0 56px 0 0 #2c2c29,0 56px 0 -1px #5d5d5a;z-index:5}
+.phone-screen{width:100%;height:100%;background:#fff;border-radius:30px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-content{flex:1;min-height:0;position:relative;overflow:hidden;background:#fff}
+.screen-view{position:absolute;inset:0;display:flex;flex-direction:column;background:#fff;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.phone-toggle-area[data-active="client"] .client-screen,
+.phone-toggle-area[data-active="assistant"] .assistant-screen{opacity:1;pointer-events:auto}
+.phone-home-indicator{width:120px;height:4px;background:#1d1c1d;border-radius:2px;margin:.35rem auto .42rem;opacity:.85;flex-shrink:0}
 
-/* Both phones lock to the same dimensions */
-.phone-view .demo-stage,.phone-view .slack-scene{width:100%;height:100%;max-width:none;min-width:0;aspect-ratio:auto;position:relative;perspective:none}
-.phone-view .slack-scene .slack-phone{position:absolute;inset:0;width:auto;height:auto;overflow:hidden;background:linear-gradient(145deg,#3d3d3a 0%,#1a1a18 32%,#0a0a09 62%,#2c2c29 100%);box-shadow:0 22px 60px -22px rgba(0,0,0,.42),0 8px 20px -8px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1.5px rgba(255,255,255,.04);border-radius:36px;padding:6px}
-.phone-view .slack-scene .slack-phone::before{width:90px;height:26px;top:14px;border-radius:16px}
-.phone-view .slack-scene .slack-screen{aspect-ratio:auto;width:100%;height:100%;min-height:0;overflow:hidden;border-radius:30px}
-.phone-view .slack-scene .slack-messages{flex:1 1 0;min-height:0;overflow:hidden}
+/* Dynamic island is shared chrome — don't let site.js expand it while assistant view is active */
+.phone-toggle-area[data-active="assistant"] .demo-island{width:104px !important;height:30px !important;border-radius:18px !important;padding:0 !important}
+.phone-toggle-area[data-active="assistant"] .demo-island > *{opacity:0 !important}
 
-/* Both bezels identical: same padding, radius, shadow, gradient — so the phones are pixel-for-pixel the same size */
-.phone-view .demo-bezel,
-.phone-view .slack-scene .slack-phone{
-  padding:6px;
-  border-radius:36px;
-  background:linear-gradient(145deg,#3d3d3a 0%,#1a1a18 32%,#0a0a09 62%,#2c2c29 100%);
-  box-shadow:0 22px 60px -22px rgba(0,0,0,.42),0 8px 20px -8px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1.5px rgba(255,255,255,.04);
-  transform:none;
-  animation:none;
-}
-.phone-view .demo-screen,
-.phone-view .slack-scene .slack-screen{
-  border-radius:30px;
-}
-/* iPhone screen: bright white to match the Slack screen brightness */
-.phone-view .demo-screen{background:#ffffff}
-/* iMessage-style incoming bubble on white background */
-.phone-view .bub.them{background:#e9e9eb;color:#0a0a0a}
-/* Hide scaffolding so the conversation reads as the focus (matches the Slack phone) */
-.phone-view .demo-channel{display:none}
-.phone-view .demo-scenario-tag{display:none}
-.phone-view .demo-dots{display:none}
+/* Status bar status-icons scoped to phone-screen (replaces .phone-view scoping) */
+.phone-screen .sb-signal{display:inline-flex;align-items:flex-end;gap:1.5px;height:9px}
+.phone-screen .sb-signal i{display:block;background:currentColor;width:2.5px;border-radius:.5px}
+.phone-screen .sb-signal i:nth-child(1){height:30%}
+.phone-screen .sb-signal i:nth-child(2){height:50%}
+.phone-screen .sb-signal i:nth-child(3){height:70%}
+.phone-screen .sb-signal i:nth-child(4){height:100%}
+.phone-screen .sb-wifi{width:13px;height:9px;display:inline-block}
+.phone-screen .sb-bat{width:24px;height:11px}
 
-/* iMessage input bar + home indicator on iPhone — matches Slack phone's bottom UI */
-.phone-view .demo-imessage-bar{flex-shrink:0;display:flex;align-items:center;gap:.45rem;padding:.5rem .65rem .55rem;background:#fff;border-top:1px solid rgba(0,0,0,.05);font-family:-apple-system,sans-serif}
-.phone-view .demo-imessage-field{flex:1;background:#f1f1f3;border:1px solid #e0e0e2;border-radius:18px;padding:.45rem .8rem;font-size:.74rem;color:#9a9aa1;min-height:30px;display:flex;align-items:center;line-height:1}
-.phone-view .demo-imessage-send{width:26px;height:26px;background:#dcdce0;color:#9a9aa1;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.phone-view .demo-imessage-send svg{width:13px;height:13px}
-.phone-view .demo-home-indicator{flex-shrink:0;width:120px;height:4px;background:#1d1c1d;border-radius:2px;margin:.35rem auto .42rem;opacity:.85}
+/* Client screen iMessage incoming bubble + scaffolding hide */
+.phone-screen .bub.them{background:#e9e9eb;color:#0a0a0a}
+.phone-screen .demo-channel{display:none}
+.phone-screen .demo-scenario-tag{display:none}
 
-/* Side rail buttons matched on both phones */
-.phone-view .demo-bezel::before{left:-2.5px;top:14%;width:3px;height:26px}
-.phone-view .demo-bezel::after{left:-2.5px;top:30%;width:3px;height:42px;box-shadow:0 56px 0 0 #2c2c29,0 56px 0 -1px #5d5d5a}
-.phone-view .slack-scene::before{content:"";position:absolute;left:-2.5px;top:14%;width:3px;height:26px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;z-index:5;pointer-events:none}
-.phone-view .slack-scene::after{content:"";position:absolute;left:-2.5px;top:30%;width:3px;height:42px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;box-shadow:0 56px 0 0 #2c2c29,0 56px 0 -1px #5d5d5a;z-index:5;pointer-events:none}
-
-/* iPhone status bar — proper signal / wifi glyphs (matching Slack) */
-.phone-view .sb-signal{display:inline-flex;align-items:flex-end;gap:1.5px;height:9px}
-.phone-view .sb-signal i{display:block;background:currentColor;width:2.5px;border-radius:.5px}
-.phone-view .sb-signal i:nth-child(1){height:30%}
-.phone-view .sb-signal i:nth-child(2){height:50%}
-.phone-view .sb-signal i:nth-child(3){height:70%}
-.phone-view .sb-signal i:nth-child(4){height:100%}
-.phone-view .sb-wifi{width:13px;height:9px;display:inline-block}
+/* iMessage input bar at bottom of client screen */
+.phone-screen .demo-imessage-bar{flex-shrink:0;display:flex;align-items:center;gap:.45rem;padding:.5rem .65rem .55rem;background:#fff;border-top:1px solid rgba(0,0,0,.05);font-family:-apple-system,sans-serif}
+.phone-screen .demo-imessage-field{flex:1;background:#f1f1f3;border:1px solid #e0e0e2;border-radius:18px;padding:.45rem .8rem;font-size:.74rem;color:#9a9aa1;min-height:30px;display:flex;align-items:center;line-height:1}
+.phone-screen .demo-imessage-send{width:26px;height:26px;background:#dcdce0;color:#9a9aa1;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phone-screen .demo-imessage-send svg{width:13px;height:13px}
 
 /* Subcaption below phone (toggles with active view) */
 .phone-subcap{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;font-weight:600;text-align:center;display:none;align-items:center;gap:.45rem;flex-wrap:wrap;justify-content:center}
@@ -1009,253 +986,191 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </div>
 
       <div class="phone-stage">
+        <div class="phone-shell">
+          <div class="phone-bezel">
+            <div class="phone-screen">
 
-        <div class="phone-view client-view" role="tabpanel" aria-label="Client experience">
-          <div id="demo-mount" style="position:relative;width:100%;height:100%">
-            <div class="demo-stage">
-            <div class="hero-vignette" id="hero-vignette" aria-hidden="true">
-              <div class="vig-illo" id="vig-illo"></div>
-              <div class="vig-caption">
-                <span class="vig-you" id="vig-you">while you sleep,</span>
-                <span class="vig-we" id="vig-we">we catch the storm.</span>
-              </div>
-            </div>
-            <div class="demo-tag t-live">
-              <span class="tag-h">Replying instantly</span>
-              <span class="tag-s">SMS · web · phone</span>
-            </div>
-            <div class="demo-bezel">
-              <div class="demo-screen">
-                <div class="demo-island" id="demo-island">
-                  <span class="di-icon" id="di-icon">R</span>
-                  <div class="di-text" id="di-text"><strong>New lead</strong><span>SMS · just now</span></div>
-                  <span class="di-pulse"></span>
-                </div>
-                <div class="demo-statusbar">
-                  <span id="demo-time">9:41</span>
-                  <span class="sb-r">
-                    <span class="sb-signal"><i></i><i></i><i></i><i></i></span>
-                    <svg class="sb-wifi" viewBox="0 0 16 12" fill="currentColor"><path d="M8 11.5a1 1 0 110-2 1 1 0 010 2zm2.2-3a3.1 3.1 0 00-4.4 0L4.4 7.1a5.1 5.1 0 017.2 0L10.2 8.5zm2.1-2.1A6.1 6.1 0 008 4.5c-1.6 0-3.1.6-4.3 1.7L2.3 4.8a8.1 8.1 0 0111.4 0l-1.4 1.6zM14.4 4A9.1 9.1 0 008 1.5C5.7 1.5 3.5 2.4 1.6 4L.2 2.6a11.1 11.1 0 0115.6 0L14.4 4z"/></svg>
-                    <span class="sb-bat"><i></i></span>
-                  </span>
-                </div>
-                <div class="demo-header">
-                  <div class="demo-avatar" id="demo-avatar">RN</div>
-                  <div>
-                    <div class="demo-name" id="demo-name">New conversation</div>
-                  </div>
-                  <span class="demo-channel" id="demo-channel">SMS</span>
-                </div>
-                <div class="demo-stream" id="demo-stream">
-                  <div class="demo-scenario-tag" id="demo-scenario-tag">Scenario 01 · Storm leak, 11:47 PM</div>
-                </div>
-                <div class="demo-imessage-bar">
-                  <div class="demo-imessage-field"><span>iMessage</span></div>
-                  <div class="demo-imessage-send" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>
-                  </div>
-                </div>
-                <div class="demo-home-indicator"></div>
-              </div>
-            </div>
-            <div class="demo-tag t-done">
-              <span class="tag-h">Auto-booked</span>
-              <span class="tag-s">handoff sent to inbox</span>
-            </div>
-            <div class="demo-dots" id="demo-dots"></div>
-          </div>
-        </div>
-      </div>
-
-        <div class="phone-view assistant-view" role="tabpanel" aria-label="Your experience">
-          <div class="slack-scene" id="slack-scene" style="width:100%;height:100%">
-          <div class="slack-phone">
-            <div class="slack-screen">
-
-              <div class="slack-status">
-                <div class="slack-status-time">9:41</div>
-                <div class="slack-status-right">
-                  <span class="slack-signal"><i></i><i></i><i></i><i></i></span>
-                  <svg class="slack-wifi-svg" viewBox="0 0 16 12" fill="currentColor"><path d="M8 11.5a1 1 0 110-2 1 1 0 010 2zm2.2-3a3.1 3.1 0 00-4.4 0L4.4 7.1a5.1 5.1 0 017.2 0L10.2 8.5zm2.1-2.1A6.1 6.1 0 008 4.5c-1.6 0-3.1.6-4.3 1.7L2.3 4.8a8.1 8.1 0 0111.4 0l-1.4 1.6zM14.4 4A9.1 9.1 0 008 1.5C5.7 1.5 3.5 2.4 1.6 4L.2 2.6a11.1 11.1 0 0115.6 0L14.4 4z"/></svg>
-                  <span class="slack-battery"><span class="slack-battery-fill"></span></span>
-                </div>
+              <!-- SHARED chrome: dynamic island (only animates in client view) -->
+              <div class="demo-island" id="demo-island">
+                <span class="di-icon" id="di-icon">R</span>
+                <div class="di-text" id="di-text"><strong>New lead</strong><span>SMS · just now</span></div>
+                <span class="di-pulse"></span>
               </div>
 
-              <div class="slack-mock-header">
-                <div class="slack-logo" id="slack-logo">
-                  <svg viewBox="0 0 122.8 122.8" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#e01e5a" d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9zM32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9z"/>
-                    <path fill="#36c5f0" d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9zM45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9z"/>
-                    <path fill="#2eb67d" d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97zM90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9z"/>
-                    <path fill="#ecb22e" d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9z"/>
-                  </svg>
-                  <div class="slack-unread" id="slack-badge">1</div>
-                </div>
-                <div class="slack-channel-info">
-                  <div class="slack-channel-info-text">
-                    <div class="slack-channel-name-row">
-                      <span class="hash">#</span>alex
-                      <svg width="11" height="11" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
+              <!-- SHARED chrome: status bar (9:41 + signal/wifi/battery) -->
+              <div class="demo-statusbar">
+                <span id="demo-time">9:41</span>
+                <span class="sb-r">
+                  <span class="sb-signal"><i></i><i></i><i></i><i></i></span>
+                  <svg class="sb-wifi" viewBox="0 0 16 12" fill="currentColor"><path d="M8 11.5a1 1 0 110-2 1 1 0 010 2zm2.2-3a3.1 3.1 0 00-4.4 0L4.4 7.1a5.1 5.1 0 017.2 0L10.2 8.5zm2.1-2.1A6.1 6.1 0 008 4.5c-1.6 0-3.1.6-4.3 1.7L2.3 4.8a8.1 8.1 0 0111.4 0l-1.4 1.6zM14.4 4A9.1 9.1 0 008 1.5C5.7 1.5 3.5 2.4 1.6 4L.2 2.6a11.1 11.1 0 0115.6 0L14.4 4z"/></svg>
+                  <span class="sb-bat"><i></i></span>
+                </span>
+              </div>
+
+              <!-- Swappable: iMessage screen ↔ Slack screen (overlay in same space) -->
+              <div class="phone-content">
+
+                <div class="screen-view client-screen" role="tabpanel" aria-label="Client experience">
+                  <div class="demo-header">
+                    <div class="demo-avatar" id="demo-avatar">RN</div>
+                    <div>
+                      <div class="demo-name" id="demo-name">New conversation</div>
                     </div>
-                    <div class="slack-channel-meta">
-                      <span class="slack-status-dot"></span>
-                      <span>4THWALL · Always on</span>
+                    <span class="demo-channel" id="demo-channel">SMS</span>
+                  </div>
+                  <div class="demo-stream" id="demo-stream">
+                    <div class="demo-scenario-tag" id="demo-scenario-tag">Scenario 01</div>
+                  </div>
+                  <div class="demo-imessage-bar">
+                    <div class="demo-imessage-field"><span>iMessage</span></div>
+                    <div class="demo-imessage-send" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>
                     </div>
                   </div>
                 </div>
-                <div class="slack-header-actions">
-                  <div class="slack-h-icon">
-                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
-                  </div>
-                  <div class="slack-h-icon">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg>
-                  </div>
-                </div>
-              </div>
 
-              <div class="slack-messages">
-                <div class="slack-messages-inner">
-
-                  <div class="slack-day-divider">
-                    <div class="line"></div>
-                    <div class="label">Today</div>
-                    <div class="line"></div>
-                  </div>
-
-                  <div class="slack-msg" id="slack-msg-brief">
-                    <div class="slack-avatar alex">A</div>
-                    <div class="slack-msg-body">
-                      <div class="slack-msg-head">
-                        <span class="slack-msg-name">alex</span>
-                        <span class="slack-msg-tag">APP</span>
-                        <span class="slack-msg-time">6:30 AM</span>
-                      </div>
-                      <div class="slack-msg-text">
-                        <strong>Good morning. Here's the rundown.</strong>
-                        <div class="slack-list">
-                          <div class="slack-list-item"><span class="b">•</span><span>3 leads overnight · 2 storm, 1 routine</span></div>
-                          <div class="slack-list-item"><span class="b">•</span><span>Westport leak → booked Tue 8 AM</span></div>
-                          <div class="slack-list-item"><span class="b">•</span><span>5-star review (Cohen, Greenwich)</span></div>
+                <div class="screen-view assistant-screen" role="tabpanel" aria-label="Your experience">
+                  <div class="slack-mock-header">
+                    <div class="slack-logo" id="slack-logo">
+                      <svg viewBox="0 0 122.8 122.8" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#e01e5a" d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9zM32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9z"/>
+                        <path fill="#36c5f0" d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9zM45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9z"/>
+                        <path fill="#2eb67d" d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97zM90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9z"/>
+                        <path fill="#ecb22e" d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9z"/>
+                      </svg>
+                      <div class="slack-unread" id="slack-badge">1</div>
+                    </div>
+                    <div class="slack-channel-info">
+                      <div class="slack-channel-info-text">
+                        <div class="slack-channel-name-row">
+                          <span class="hash">#</span>alex
+                          <svg width="11" height="11" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
                         </div>
                       </div>
                     </div>
                   </div>
-
-                  <div class="slack-msg is-hidden" id="slack-msg-lead">
-                    <div class="slack-avatar alex">A</div>
-                    <div class="slack-msg-body">
-                      <div class="slack-msg-head">
-                        <span class="slack-msg-name">alex</span>
-                        <span class="slack-msg-tag">APP</span>
-                        <span class="slack-msg-time">10:34 AM</span>
+                  <div class="slack-messages">
+                    <div class="slack-messages-inner">
+                      <div class="slack-day-divider">
+                        <div class="line"></div>
+                        <div class="label">Today</div>
+                        <div class="line"></div>
                       </div>
-                      <div class="slack-msg-text">
-                        <strong>New lead — Greenwich, CT.</strong>
-                        <div class="slack-list">
-                          <div class="slack-list-item"><span class="b">•</span><span>Storm damage · 2-story colonial</span></div>
-                          <div class="slack-list-item"><span class="b">•</span><span>Spoke with Jim · pulled photos via text</span></div>
-                          <div class="slack-list-item"><span class="b">•</span><span>Qualified $$$ · urgency high</span></div>
+                      <div class="slack-msg" id="slack-msg-brief">
+                        <div class="slack-avatar alex">A</div>
+                        <div class="slack-msg-body">
+                          <div class="slack-msg-head">
+                            <span class="slack-msg-name">alex</span>
+                            <span class="slack-msg-tag">APP</span>
+                            <span class="slack-msg-time">6:30 AM</span>
+                          </div>
+                          <div class="slack-msg-text">
+                            <strong>Good morning. Here's the rundown.</strong>
+                            <div class="slack-list">
+                              <div class="slack-list-item"><span class="b">•</span><span>3 leads overnight · 2 storm, 1 routine</span></div>
+                              <div class="slack-list-item"><span class="b">•</span><span>Westport leak → booked Tue 8 AM</span></div>
+                              <div class="slack-list-item"><span class="b">•</span><span>5-star review (Cohen, Greenwich)</span></div>
+                            </div>
+                          </div>
                         </div>
-                        <div class="slack-callout"><strong>Estimate booked:</strong> Thursday 2:00 PM</div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div class="slack-msg is-hidden" id="slack-msg-andrew">
-                    <div class="slack-avatar andrew">AR</div>
-                    <div class="slack-msg-body">
-                      <div class="slack-msg-head">
-                        <span class="slack-msg-name">Andrew</span>
-                        <span class="slack-msg-time">2:18 PM</span>
-                      </div>
-                      <div class="slack-msg-text">
-                        how many estimates did we book this week?
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="slack-typing-row is-hidden" id="slack-typing-row">
-                    <div class="slack-typing-avatar">A</div>
-                    <span>alex is typing</span>
-                    <span class="slack-dots"><i></i><i></i><i></i></span>
-                  </div>
-
-                  <div class="slack-msg is-hidden" id="slack-msg-response">
-                    <div class="slack-avatar alex">A</div>
-                    <div class="slack-msg-body">
-                      <div class="slack-msg-head">
-                        <span class="slack-msg-name">alex</span>
-                        <span class="slack-msg-tag">APP</span>
-                        <span class="slack-msg-time">2:19 PM</span>
-                      </div>
-                      <div class="slack-msg-text">
-                        <strong>7 booked this week.</strong>
-                        <div class="slack-list">
-                          <div class="slack-list-item"><span class="b">•</span><span>2 storm-related (Mon, Wed)</span></div>
-                          <div class="slack-list-item"><span class="b">•</span><span>4 standard repairs</span></div>
-                          <div class="slack-list-item"><span class="b">•</span><span>1 new build inquiry</span></div>
+                      <div class="slack-msg is-hidden" id="slack-msg-lead">
+                        <div class="slack-avatar alex">A</div>
+                        <div class="slack-msg-body">
+                          <div class="slack-msg-head">
+                            <span class="slack-msg-name">alex</span>
+                            <span class="slack-msg-tag">APP</span>
+                            <span class="slack-msg-time">10:34 AM</span>
+                          </div>
+                          <div class="slack-msg-text">
+                            <strong>New lead — Greenwich, CT.</strong>
+                            <div class="slack-list">
+                              <div class="slack-list-item"><span class="b">•</span><span>Storm damage · 2-story colonial</span></div>
+                              <div class="slack-list-item"><span class="b">•</span><span>Spoke with Jim · pulled photos via text</span></div>
+                              <div class="slack-list-item"><span class="b">•</span><span>Qualified $$$ · urgency high</span></div>
+                            </div>
+                            <div class="slack-callout"><strong>Estimate booked:</strong> Thursday 2:00 PM</div>
+                          </div>
                         </div>
-                        <div class="slack-callout">Conversion: <strong>64%</strong> · up from 51%</div>
+                      </div>
+                      <div class="slack-msg is-hidden" id="slack-msg-andrew">
+                        <div class="slack-avatar andrew">AR</div>
+                        <div class="slack-msg-body">
+                          <div class="slack-msg-head">
+                            <span class="slack-msg-name">Andrew</span>
+                            <span class="slack-msg-time">2:18 PM</span>
+                          </div>
+                          <div class="slack-msg-text">
+                            how many estimates did we book this week?
+                          </div>
+                        </div>
+                      </div>
+                      <div class="slack-typing-row is-hidden" id="slack-typing-row">
+                        <div class="slack-typing-avatar">A</div>
+                        <span>alex is typing</span>
+                        <span class="slack-dots"><i></i><i></i><i></i></span>
+                      </div>
+                      <div class="slack-msg is-hidden" id="slack-msg-response">
+                        <div class="slack-avatar alex">A</div>
+                        <div class="slack-msg-body">
+                          <div class="slack-msg-head">
+                            <span class="slack-msg-name">alex</span>
+                            <span class="slack-msg-tag">APP</span>
+                            <span class="slack-msg-time">2:19 PM</span>
+                          </div>
+                          <div class="slack-msg-text">
+                            <strong>7 booked this week.</strong>
+                            <div class="slack-list">
+                              <div class="slack-list-item"><span class="b">•</span><span>2 storm-related (Mon, Wed)</span></div>
+                              <div class="slack-list-item"><span class="b">•</span><span>4 standard repairs</span></div>
+                              <div class="slack-list-item"><span class="b">•</span><span>1 new build inquiry</span></div>
+                            </div>
+                            <div class="slack-callout">Conversion: <strong>64%</strong> · up from 51%</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                </div>
-              </div>
-
-              <div class="slack-input-bar">
-                <div class="slack-input-wrap" id="slack-input-wrap">
-                  <div class="slack-input-top"><span id="slack-input-text">Message #alex</span></div>
-                  <div class="slack-input-bottom">
-                    <div class="slack-input-tools">
-                      <div class="slack-it"><span class="slack-it-text">@</span></div>
-                      <div class="slack-it"><span class="slack-it-text">/</span></div>
-                      <div class="slack-it">
-                        <svg viewBox="0 0 24 24"><path d="M16.5 3l-12 12a4 4 0 105.66 5.66l11-11a2.5 2.5 0 00-3.54-3.54l-11 11"/></svg>
-                      </div>
-                    </div>
-                    <div class="slack-input-right">
-                      <div class="slack-it">
-                        <svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="10" rx="2"/><path d="M17 11l4-3v8l-4-3z"/></svg>
-                      </div>
-                      <div class="slack-it">
-                        <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="13" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>
-                      </div>
-                      <div class="slack-send-btn" id="slack-send-btn">
-                        <svg viewBox="0 0 24 24"><path d="M5 12l14-7-3 7 3 7z"/></svg>
+                  <div class="slack-input-bar">
+                    <div class="slack-input-wrap" id="slack-input-wrap">
+                      <div class="slack-input-top"><span id="slack-input-text">Message #alex</span></div>
+                      <div class="slack-input-bottom">
+                        <div class="slack-input-tools">
+                          <div class="slack-it"><span class="slack-it-text">@</span></div>
+                          <div class="slack-it"><span class="slack-it-text">/</span></div>
+                          <div class="slack-it"><svg viewBox="0 0 24 24"><path d="M16.5 3l-12 12a4 4 0 105.66 5.66l11-11a2.5 2.5 0 00-3.54-3.54l-11 11"/></svg></div>
+                        </div>
+                        <div class="slack-input-right">
+                          <div class="slack-it"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="10" rx="2"/><path d="M17 11l4-3v8l-4-3z"/></svg></div>
+                          <div class="slack-it"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="13" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></div>
+                          <div class="slack-send-btn" id="slack-send-btn"><svg viewBox="0 0 24 24"><path d="M5 12l14-7-3 7 3 7z"/></svg></div>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div class="slack-tab-bar">
+                    <div class="slack-tab"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2z"/></svg><span>Home</span></div>
+                    <div class="slack-tab"><svg viewBox="0 0 24 24"><path d="M21 11c0 4-4 7-9 7-1.5 0-3-.2-4.2-.7L3 19l1.4-3.7C3.5 14 3 12.5 3 11c0-4 4-7 9-7s9 3 9 7z"/></svg><span>DMs</span><span class="dot"></span></div>
+                    <div class="slack-tab active"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span>Activity</span></div>
+                    <div class="slack-tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg><span>More</span></div>
+                  </div>
                 </div>
+
               </div>
 
-              <div class="slack-tab-bar">
-                <div class="slack-tab">
-                  <svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2z"/></svg>
-                  <span>Home</span>
-                </div>
-                <div class="slack-tab">
-                  <svg viewBox="0 0 24 24"><path d="M21 11c0 4-4 7-9 7-1.5 0-3-.2-4.2-.7L3 19l1.4-3.7C3.5 14 3 12.5 3 11c0-4 4-7 9-7s9 3 9 7z"/></svg>
-                  <span>DMs</span>
-                  <span class="dot"></span>
-                </div>
-                <div class="slack-tab active">
-                  <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
-                  <span>Activity</span>
-                </div>
-                <div class="slack-tab">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>
-                  <span>More</span>
-                </div>
-              </div>
-              <div class="slack-home-indicator"></div>
+              <!-- SHARED chrome: home indicator -->
+              <div class="phone-home-indicator"></div>
 
             </div>
           </div>
         </div>
       </div>
 
-      </div><!-- /.phone-stage -->
+      <!-- Hidden elements that site.js still touches but no longer renders visually -->
+      <div hidden aria-hidden="true">
+        <div id="hero-vignette"><div id="vig-illo"></div><span id="vig-you"></span><span id="vig-we"></span></div>
+        <div id="demo-dots"></div>
+      </div>
 
       <div class="phone-subcap client-subcap">
         <span>iMessage · SMS</span>
@@ -1748,26 +1663,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   requestAnimationFrame(moveSlider);
   if(document.fonts&&document.fonts.ready){document.fonts.ready.then(moveSlider);}
   window.addEventListener('resize',moveSlider);
-
-  // ── Lock both phones to identical pixel dimensions ──
-  // CSS aspect-ratio + padding-top trick should be enough, but the assistant phone
-  // (more inner flex content) was still rendering taller on mobile Safari. Force
-  // explicit width and height in pixels so the browser cannot interpret either differently.
-  var stage=area.querySelector('.phone-stage');
-  if(stage){
-    var views=stage.querySelectorAll('.phone-view');
-    function lockPhoneSize(){
-      var w=stage.clientWidth;
-      if(!w)return;
-      var h=Math.round(w*19.5/9);
-      stage.style.height=h+'px';
-      views.forEach(function(v){v.style.width=w+'px';v.style.height=h+'px';});
-    }
-    lockPhoneSize();
-    window.addEventListener('resize',lockPhoneSize);
-    if(document.fonts&&document.fonts.ready){document.fonts.ready.then(lockPhoneSize);}
-    if(window.ResizeObserver){new ResizeObserver(lockPhoneSize).observe(stage);}
-  }
+  // (No more JS phone-size sync needed — there's literally one phone shell now;
+  //  swapping screens cannot change its dimensions.)
 })();
 /* ── "Your assistant" bubble — click to expand ── */
 (function(){
