@@ -1722,6 +1722,26 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   requestAnimationFrame(moveSlider);
   if(document.fonts&&document.fonts.ready){document.fonts.ready.then(moveSlider);}
   window.addEventListener('resize',moveSlider);
+
+  // ── Lock both phones to identical pixel dimensions ──
+  // CSS aspect-ratio + padding-top trick should be enough, but the assistant phone
+  // (more inner flex content) was still rendering taller on mobile Safari. Force
+  // explicit width and height in pixels so the browser cannot interpret either differently.
+  var stage=area.querySelector('.phone-stage');
+  if(stage){
+    var views=stage.querySelectorAll('.phone-view');
+    function lockPhoneSize(){
+      var w=stage.clientWidth;
+      if(!w)return;
+      var h=Math.round(w*19.5/9);
+      stage.style.height=h+'px';
+      views.forEach(function(v){v.style.width=w+'px';v.style.height=h+'px';});
+    }
+    lockPhoneSize();
+    window.addEventListener('resize',lockPhoneSize);
+    if(document.fonts&&document.fonts.ready){document.fonts.ready.then(lockPhoneSize);}
+    if(window.ResizeObserver){new ResizeObserver(lockPhoneSize).observe(stage);}
+  }
 })();
 /* ── Slack #alex mock — 20s animated loop ── */
 (function(){
