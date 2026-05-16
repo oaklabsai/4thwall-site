@@ -156,8 +156,9 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .hero-phone-cell{display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%;min-width:0;max-width:240px;position:relative}
 @media(max-width:760px){.hero-phone-cell{max-width:none;gap:.6rem}}
 .hero-phone-cell .demo-stage,.hero-phone-cell .slack-scene{width:100%;max-width:100%;min-width:0;aspect-ratio:9/19.5;position:relative;perspective:none}
-.hero-phone-cell .slack-phone{position:absolute;inset:0;width:auto;height:auto}
-.hero-phone-cell .slack-scene .slack-screen{aspect-ratio:auto;width:100%;height:100%}
+.hero-phone-cell .slack-scene .slack-phone{position:absolute;inset:0;width:auto;height:auto;overflow:hidden}
+.hero-phone-cell .slack-scene .slack-screen{aspect-ratio:auto;width:100%;height:100%;min-height:0;overflow:hidden}
+.hero-phone-cell .slack-scene .slack-messages{flex:1 1 0;min-height:0;overflow:hidden}
 /* Identical side rail buttons on both phones */
 .hero-phone-cell .demo-bezel::before{left:-2px;top:14%;width:2.5px;height:18px}
 .hero-phone-cell .demo-bezel::after{left:-2px;top:30%;width:2.5px;height:28px;box-shadow:0 38px 0 0 #2c2c29,0 38px 0 -1px #5d5d5a}
