@@ -38,7 +38,10 @@
   --density:0.78;
 }
 html{scroll-behavior:smooth}
-body{font-family:var(--body);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;letter-spacing:-0.011em;background:radial-gradient(ellipse 90% 55% at 50% -8%,rgba(255,255,255,.5),transparent 55%),linear-gradient(90deg,rgba(26,26,24,.05),transparent 18%,transparent 82%,rgba(26,26,24,.05)),radial-gradient(ellipse 100% 32% at 50% 108%,rgba(26,26,24,.06),transparent 70%),var(--cream);background-attachment:fixed;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+body{font-family:var(--body);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;letter-spacing:-0.011em;background:var(--cream);display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+/* Atmospheric gradient on position:fixed pseudo — same visual as
+   background-attachment:fixed, no repaint penalty on scroll/transform */
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 90% 55% at 50% -8%,rgba(255,255,255,.5),transparent 55%),linear-gradient(90deg,rgba(26,26,24,.05),transparent 18%,transparent 82%,rgba(26,26,24,.05)),radial-gradient(ellipse 100% 32% at 50% 108%,rgba(26,26,24,.06),transparent 70%)}
 .hero{flex:none}
 a{text-decoration:none;color:inherit}
 img,svg{display:block;max-width:100%}
