@@ -151,11 +151,59 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 
 .hero-row{position:relative;z-index:3;display:flex;flex-direction:column;gap:2.6rem;align-items:stretch;max-width:var(--max);margin:0 auto;width:100%}
 .hero-text{max-width:42rem}
-.hero-phones-row{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:start;justify-items:center;width:100%;max-width:560px;margin:0 auto}
+.hero-phones-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.6rem;align-items:start;justify-items:center;width:100%;max-width:560px;margin:0 auto}
 @media(max-width:880px){.hero-row{gap:1.8rem}.hero-phones-row{gap:1rem;max-width:none}}
-.hero-phone-cell{display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%;max-width:240px;position:relative}
+.hero-phone-cell{display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%;min-width:0;max-width:240px;position:relative}
 @media(max-width:760px){.hero-phone-cell{max-width:none;gap:.6rem}}
-.hero-phone-cell .demo-stage,.hero-phone-cell .slack-scene{width:100%;max-width:100%}
+.hero-phone-cell .demo-stage,.hero-phone-cell .slack-scene,.hero-phone-cell .slack-phone{width:100%;max-width:100%;min-width:0}
+/* Scale the iPhone phone proportionally for the smaller hero cell */
+.hero-phone-cell .demo-bezel{border-radius:34px;padding:6px;box-shadow:0 18px 50px -20px rgba(0,0,0,.45),0 8px 18px -8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.12)}
+.hero-phone-cell .demo-screen{border-radius:28px}
+.hero-phone-cell .demo-island{top:8px;width:72px;height:22px;border-radius:14px}
+.hero-phone-cell .demo-island .di-icon{width:14px;height:14px;font-size:7px}
+.hero-phone-cell .demo-statusbar{padding:.6rem 1rem .25rem;height:38px;font-size:.55rem}
+.hero-phone-cell .demo-header{padding:.3rem .55rem .55rem;gap:.45rem}
+.hero-phone-cell .demo-avatar{width:24px;height:24px;font-size:.62rem}
+.hero-phone-cell .demo-name{font-size:.68rem}
+.hero-phone-cell .demo-status{font-size:.5rem}
+.hero-phone-cell .demo-channel{font-size:.42rem;padding:2px 4px}
+.hero-phone-cell .demo-stream{padding:.65rem .55rem .8rem;gap:.35rem}
+.hero-phone-cell .demo-scenario-tag{font-size:.42rem;padding:2px 6px;top:.4rem}
+.hero-phone-cell .bub{padding:.4rem .55rem;font-size:.65rem;border-radius:12px;max-width:88%}
+.hero-phone-cell .bub .ts{font-size:.48rem;margin-top:.18rem}
+.hero-phone-cell .bub.typing{padding:.55rem .65rem}
+.hero-phone-cell .bub.typing span{width:4px;height:4px}
+.hero-phone-cell .sb-bat{width:18px;height:8px}
+.hero-phone-cell .demo-dots{bottom:-22px}
+.hero-phone-cell .demo-dots span{width:5px;height:5px}
+.hero-phone-cell .demo-dots span.on{width:18px}
+
+/* Tighten Slack inner padding so the screen content fits the smaller container */
+.hero-phone-cell .slack-status{padding-left:16px;padding-right:16px}
+.hero-phone-cell .slack-mock-header{padding-left:.55rem;padding-right:.55rem;gap:.45rem}
+.hero-phone-cell .slack-channel-name-row{font-size:.9rem}
+.hero-phone-cell .slack-channel-meta{font-size:.6rem}
+.hero-phone-cell .slack-h-icon{width:18px;height:18px}
+.hero-phone-cell .slack-h-icon svg{width:15px;height:15px}
+.hero-phone-cell .slack-msg{padding-left:.55rem;padding-right:.55rem;gap:.45rem}
+.hero-phone-cell .slack-avatar{width:26px;height:26px;font-size:.78rem}
+.hero-phone-cell .slack-msg-text,.hero-phone-cell .slack-list-item{font-size:.72rem}
+.hero-phone-cell .slack-msg-name{font-size:.78rem}
+.hero-phone-cell .slack-msg-tag{font-size:.5rem}
+.hero-phone-cell .slack-msg-time{font-size:.6rem}
+.hero-phone-cell .slack-callout{font-size:.68rem;padding:.4rem .5rem}
+.hero-phone-cell .slack-input-bar{padding:.4rem .5rem .3rem}
+.hero-phone-cell .slack-input-top{font-size:.72rem;padding:.45rem .65rem .35rem}
+.hero-phone-cell .slack-it{width:24px;height:24px}
+.hero-phone-cell .slack-send-btn{width:26px;height:26px}
+.hero-phone-cell .slack-tab{font-size:.52rem;padding:.1rem .3rem}
+.hero-phone-cell .slack-tab svg{width:18px;height:18px}
+.hero-phone-cell .slack-home-indicator{width:80px}
+.hero-phone-cell .slack-day-divider .label{font-size:.6rem;padding:.14rem .5rem}
+.hero-phone-cell .slack-status-time{font-size:.78rem}
+.hero-phone-cell .slack-phone{border-radius:32px;padding:6px}
+.hero-phone-cell .slack-phone::before{width:78px;height:22px;top:14px}
+.hero-phone-cell .slack-screen{border-radius:26px}
 .phone-label{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.56rem;letter-spacing:.13em;color:var(--muted);text-transform:uppercase;font-weight:600;padding:.38rem .7rem;background:rgba(247,243,236,.72);border:1px solid var(--line);border-radius:50px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap}
 .phone-label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 3px rgba(30,102,66,.16);animation:pulse 2.4s ease-in-out infinite;flex-shrink:0}
 .phone-label .accent{color:var(--orange)}
