@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>4THWALL® — AI Infrastructure</title>
-<meta name="description" content="4THWALL builds and fully manages AI infrastructure for trades contractors and service operators. Built. Operated. We never leave.">
+<meta name="description" content="4THWALL builds and fully manages AI infrastructure for trades contractors and service operators. Built and operated, permanently.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -848,7 +848,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <div class="doormat-bottom">
     <span class="bi">Built by us</span>
     <span class="bi">Operated by us</span>
-    <span class="bi">We never leave</span>
+    <span class="bi">Permanently managed</span>
   </div>
 </section>
 
@@ -1530,11 +1530,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 const HEADLINES = {
   "fully-built": {
     eyebrow: "Not a tool. The operating system.",
-    h: <>AI infrastructure,<br/><span className="accent">fully built and operated.</span><span className="signature">— we never leave.</span></>
-  },
-  "never-leave": {
-    eyebrow: "We build it. We run it. We never leave.",
-    h: <>The AI layer your business <span className="accent">runs on.</span><span className="signature">— and we run it for you.</span></>
+    h: <>AI infrastructure,<br/><span className="accent">fully built and operated.</span><span className="signature">— and we run it for you.</span></>
   },
   "operating-system": {
     eyebrow: "",
@@ -1598,7 +1594,6 @@ function HomeTweaks(){
       <TweakSelect label="Headline" value={t.headline}
         options={[
           {value:"fully-built",label:"Fully built and operated"},
-          {value:"never-leave",label:"We never leave"},
           {value:"operating-system",label:"Operating system you don't run"},
           {value:"out-of-chair",label:"Get out of the chair"},
         ]}
