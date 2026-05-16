@@ -179,6 +179,14 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 
 /* Disable iPhone bezel float in toggle stage */
 .phone-view .demo-bezel{transform:none;animation:none}
+/* iPhone screen: bright white to match the Slack screen brightness */
+.phone-view .demo-screen{background:#ffffff}
+/* iMessage-style incoming bubble on white background */
+.phone-view .bub.them{background:#e9e9eb;color:#0a0a0a}
+/* Hide scaffolding so the conversation reads as the focus (matches the Slack phone) */
+.phone-view .demo-channel{display:none}
+.phone-view .demo-scenario-tag{display:none}
+.phone-view .demo-dots{display:none}
 
 /* Side rail buttons matched on both phones */
 .phone-view .demo-bezel::before{left:-2.5px;top:14%;width:3px;height:26px}
