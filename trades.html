@@ -538,6 +538,8 @@ section{position:relative;z-index:2}
 .assist-bubble-block p strong{color:var(--ink);font-weight:600}
 .assist-bubble-pills{display:flex;flex-wrap:wrap;gap:.45rem;padding:.2rem 1.8rem 1.4rem}
 .assist-bubble-pill{font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;padding:.36rem .8rem;border:1px solid var(--line);border-radius:50px;color:var(--ink-2);background:var(--cream-2)}
+.assist-bubble-pill-name{border-color:var(--orange);color:var(--orange);background:rgba(30,102,66,.06)}
+.assist-bubble-pill-name::before{content:"+";margin-right:.35em;font-weight:700}
 .assist-bubble-closing{font-family:var(--display);font-size:clamp(1.1rem,2vw,1.5rem);line-height:1.35;letter-spacing:-.018em;text-align:center;color:var(--ink);padding:1.4rem 1.8rem 1.6rem;border-top:1px solid var(--line-2);margin:0;font-weight:400}
 .assist-bubble-closing em{font-style:italic;color:var(--orange)}
 @media(max-width:640px){.assist-bubble{border-radius:24px}.assist-bubble.open{border-radius:18px}.assist-bubble-trigger{padding:.9rem 1rem .9rem 1rem;gap:.7rem}.assist-bubble-h{font-size:1rem}.assist-bubble-lede,.assist-bubble-grid,.assist-bubble-pills,.assist-bubble-closing{padding-left:1.1rem;padding-right:1.1rem}}
@@ -1049,7 +1051,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                     <div class="slack-channel-info">
                       <div class="slack-channel-info-text">
                         <div class="slack-channel-name-row">
-                          <span class="hash">#</span>alex
+                          <span class="hash">#</span>assistant
                           <svg width="11" height="11" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
                         </div>
                       </div>
@@ -1066,7 +1068,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                         <div class="slack-avatar alex">A</div>
                         <div class="slack-msg-body">
                           <div class="slack-msg-head">
-                            <span class="slack-msg-name">alex</span>
+                            <span class="slack-msg-name">assistant</span>
                             <span class="slack-msg-tag">APP</span>
                             <span class="slack-msg-time">6:30 AM</span>
                           </div>
@@ -1084,7 +1086,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                         <div class="slack-avatar alex">A</div>
                         <div class="slack-msg-body">
                           <div class="slack-msg-head">
-                            <span class="slack-msg-name">alex</span>
+                            <span class="slack-msg-name">assistant</span>
                             <span class="slack-msg-tag">APP</span>
                             <span class="slack-msg-time">10:34 AM</span>
                           </div>
@@ -1113,14 +1115,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                       </div>
                       <div class="slack-typing-row is-hidden" id="slack-typing-row">
                         <div class="slack-typing-avatar">A</div>
-                        <span>alex is typing</span>
+                        <span>your assistant is typing</span>
                         <span class="slack-dots"><i></i><i></i><i></i></span>
                       </div>
                       <div class="slack-msg is-hidden" id="slack-msg-response">
                         <div class="slack-avatar alex">A</div>
                         <div class="slack-msg-body">
                           <div class="slack-msg-head">
-                            <span class="slack-msg-name">alex</span>
+                            <span class="slack-msg-name">assistant</span>
                             <span class="slack-msg-tag">APP</span>
                             <span class="slack-msg-time">2:19 PM</span>
                           </div>
@@ -1139,7 +1141,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                   </div>
                   <div class="slack-input-bar">
                     <div class="slack-input-wrap" id="slack-input-wrap">
-                      <div class="slack-input-top"><span id="slack-input-text">Message #alex</span></div>
+                      <div class="slack-input-top"><span id="slack-input-text">Message #assistant</span></div>
                       <div class="slack-input-bottom">
                         <div class="slack-input-tools">
                           <div class="slack-it"><span class="slack-it-text">@</span></div>
@@ -1184,7 +1186,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <span class="accent">47-second response</span>
       </div>
       <div class="phone-subcap assistant-subcap">
-        <span>Slack · #alex layer</span>
+        <span>Slack · your assistant</span>
         <span class="dot-sep">·</span>
         <span class="accent">briefing in real time</span>
       </div>
@@ -1216,7 +1218,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <span class="assist-bubble-live" title="Live"></span>
       </span>
       <span class="assist-bubble-label">
-        <span class="assist-bubble-h"><em>Meet&nbsp;#alex.</em> <span class="assist-bubble-hsub">Your assistant — now lives in Slack.</span></span>
+        <span class="assist-bubble-h"><em>Meet your assistant.</em> <span class="assist-bubble-hsub">Now lives in your Slack.</span></span>
       </span>
       <span class="assist-bubble-chev" aria-hidden="true">
         <svg viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,2 6,6 10,2"/></svg>
@@ -1225,16 +1227,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="assist-bubble-body" id="assist-bubble-body">
       <div class="assist-bubble-inner">
 
-        <p class="assist-bubble-lede">The newest layer of Front of House — and the one we're most excited about. <strong>#alex watches all six systems below</strong>, briefing you in real time through a dedicated Slack channel. Lives in your pocket. Travels with you.</p>
+        <p class="assist-bubble-lede">The newest layer of Front of House — and the one we're most excited about. <strong>An assistant that watches all six systems below</strong>, briefing you in real time through a dedicated Slack channel. Lives in your pocket. Travels with you. <em>You name it.</em></p>
 
         <div class="assist-bubble-grid">
           <div class="assist-bubble-block">
             <h4 class="assist-bubble-block-h"><em>What it is.</em></h4>
-            <p><strong>#alex</strong> is the front-of-house assistant living in your Slack — briefing you the moment a lead comes in, an estimate gets booked, or a job closes out. Works the same on the truck as it does in the office.</p>
+            <p><strong>Your assistant</strong> lives in your Slack — briefing you the moment a lead comes in, an estimate gets booked, or a job closes out. Works the same on the truck as it does in the office.</p>
           </div>
           <div class="assist-bubble-block">
             <h4 class="assist-bubble-block-h"><em>What's different.</em></h4>
-            <p>Most automation tells you something happened. <strong>#alex</strong> tells you what happened, what it means, and what's next. New lead in Greenwich, qualified, booked Thursday at 2pm — not a notification, a brief.</p>
+            <p>Most automation tells you something happened. <strong>Your assistant</strong> tells you what happened, what it means, and what's next. New lead in Greenwich, qualified, booked Thursday at 2pm — not a notification, a brief.</p>
           </div>
           <div class="assist-bubble-block">
             <h4 class="assist-bubble-block-h"><em>What you can do back.</em></h4>
@@ -1246,6 +1248,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <span class="assist-bubble-pill">Slack-native</span>
           <span class="assist-bubble-pill">Real-time briefs</span>
           <span class="assist-bubble-pill">Ask it anything</span>
+          <span class="assist-bubble-pill assist-bubble-pill-name">Yours to name</span>
         </div>
 
         <p class="assist-bubble-closing">The shop runs while you're on the roof. <em>Now you can see it running.</em></p>
@@ -1563,7 +1566,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <span>© 2026 4THWALL · ALL RIGHTS RESERVED</span>
       <span><a href="/privacy.html">PRIVACY</a> · <a href="/terms.html">TERMS</a></span>
     </div>
-    <div class="foot-version">FRONT OF HOUSE · v9.0 · <span class="accent">NOW WITH #ALEX</span></div>
+    <div class="foot-version">FRONT OF HOUSE · v9.0 · <span class="accent">NOW WITH YOUR ASSISTANT</span></div>
   </div>
 </footer>
 
@@ -1713,7 +1716,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     msgResponse.classList.add('is-hidden');msgResponse.classList.remove('fresh');
     typingRow.classList.add('is-hidden');
     badge.classList.remove('active');badge.textContent='1';
-    inputWrap.classList.remove('active');inputText.textContent='Message #alex';
+    inputWrap.classList.remove('active');inputText.textContent='Message #assistant';
     sendBtn.classList.remove('active');sendBtn.classList.remove('pressed');
   }
   function pulse(){logo.classList.remove('pulse');void logo.offsetWidth;logo.classList.add('pulse');}
@@ -1740,7 +1743,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       typeQuery(function(){
         sendBtn.classList.add('pressed');
         schedule(function(){sendBtn.classList.remove('pressed');},150);
-        inputText.textContent='Message #alex';
+        inputText.textContent='Message #assistant';
         inputWrap.classList.remove('active');
         sendBtn.classList.remove('active');
         msgAndrew.classList.remove('is-hidden');
