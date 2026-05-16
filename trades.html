@@ -785,7 +785,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .slack-scene .slack-msg.fresh > *{position:relative;z-index:1}
 .slack-scene .slack-avatar{width:36px;height:36px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:.92rem;font-family:var(--display);font-style:italic;box-shadow:0 1px 1px rgba(0,0,0,.05)}
 .slack-scene .slack-avatar.alex{background:linear-gradient(135deg,#1e6642 0%,#2a8556 100%)}
-.slack-scene .slack-avatar.andrew{background:linear-gradient(135deg,#3d3a35 0%,#5a5650 100%);font-family:-apple-system,sans-serif;font-style:normal;font-size:.78rem;font-weight:600}
+.slack-scene .slack-avatar.sam{background:linear-gradient(135deg,#3d3a35 0%,#5a5650 100%);font-family:-apple-system,sans-serif;font-style:normal;font-size:.78rem;font-weight:600}
 .slack-scene .slack-msg-body{flex:1;min-width:0}
 .slack-scene .slack-msg-head{display:flex;align-items:baseline;gap:.4rem;margin-bottom:.18rem;font-family:-apple-system,sans-serif;flex-wrap:wrap}
 .slack-scene .slack-msg-name{font-weight:700;font-size:.92rem;color:#1d1c1d;letter-spacing:-.005em}
@@ -1101,11 +1101,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                           </div>
                         </div>
                       </div>
-                      <div class="slack-msg is-hidden" id="slack-msg-andrew">
-                        <div class="slack-avatar andrew">AR</div>
+                      <div class="slack-msg is-hidden" id="slack-msg-sam">
+                        <div class="slack-avatar sam">SC</div>
                         <div class="slack-msg-body">
                           <div class="slack-msg-head">
-                            <span class="slack-msg-name">Andrew</span>
+                            <span class="slack-msg-name">Sam Carter</span>
                             <span class="slack-msg-time">2:18 PM</span>
                           </div>
                           <div class="slack-msg-text">
@@ -1726,7 +1726,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   var logo=document.getElementById('slack-logo'),
       badge=document.getElementById('slack-badge'),
       msgLead=document.getElementById('slack-msg-lead'),
-      msgAndrew=document.getElementById('slack-msg-andrew'),
+      msgSam=document.getElementById('slack-msg-sam'),
       msgResponse=document.getElementById('slack-msg-response'),
       typingRow=document.getElementById('slack-typing-row'),
       inputWrap=document.getElementById('slack-input-wrap'),
@@ -1739,7 +1739,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function clearAll(){timers.forEach(function(t){clearTimeout(t);});timers.length=0;}
   function reset(){
     msgLead.classList.add('is-hidden');msgLead.classList.remove('fresh');
-    msgAndrew.classList.add('is-hidden');
+    msgSam.classList.add('is-hidden');
     msgResponse.classList.add('is-hidden');msgResponse.classList.remove('fresh');
     typingRow.classList.add('is-hidden');
     badge.classList.remove('active');badge.textContent='1';
@@ -1773,7 +1773,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         inputText.textContent='Message #assistant';
         inputWrap.classList.remove('active');
         sendBtn.classList.remove('active');
-        msgAndrew.classList.remove('is-hidden');
+        msgSam.classList.remove('is-hidden');
       });
     },7100);
     schedule(function(){typingRow.classList.remove('is-hidden');},11500);

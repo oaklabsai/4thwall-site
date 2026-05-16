@@ -410,10 +410,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 /* ── Laptop OS demo ─────────────────────────────────────────── */
 @keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes lapFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes lapFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes lapRowIn{to{opacity:1;transform:none}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.lap-wrap{position:relative;width:100%;max-width:900px;margin:0 auto;aspect-ratio:472/287;background:url('macbook.png') center/contain no-repeat;animation:lapFloat 9s ease-in-out infinite;filter:drop-shadow(0 60px 80px rgba(0,0,0,.32)) drop-shadow(0 28px 44px rgba(0,0,0,.22)) drop-shadow(0 8px 16px rgba(0,0,0,.14)) drop-shadow(0 2px 4px rgba(0,0,0,.08))}
+@keyframes lapGround{0%,100%{transform:translateX(-50%) scaleX(1);opacity:.78}50%{transform:translateX(-50%) scaleX(.88);opacity:.5}}
+#lap-mount{position:relative}
+#lap-mount::before{content:"";position:absolute;left:50%;bottom:78px;transform:translateX(-50%);width:min(68%,520px);height:30px;background:radial-gradient(ellipse at center,rgba(20,16,12,.42) 0%,rgba(20,16,12,.18) 42%,transparent 74%);filter:blur(22px);pointer-events:none;animation:lapGround 9s ease-in-out infinite;z-index:0}
+.lap-wrap{position:relative;width:100%;max-width:760px;margin:0 auto;aspect-ratio:472/287;background:url('macbook.png') center/contain no-repeat;animation:lapFloat 9s ease-in-out infinite;filter:drop-shadow(0 1px 1px rgba(0,0,0,.10)) drop-shadow(0 3px 4px rgba(0,0,0,.08)) drop-shadow(0 10px 14px rgba(0,0,0,.10)) drop-shadow(0 28px 36px rgba(0,0,0,.14)) drop-shadow(0 60px 76px rgba(0,0,0,.18)) drop-shadow(0 110px 130px rgba(20,16,12,.16));z-index:1}
 
 /* Screen overlay container — covers the full bezel area of the macbook.png.
    Source image cropped to its non-transparent bbox (472×287). Bezel pixel
@@ -449,10 +452,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   display:grid;grid-template-rows:auto 1fr;
   background:var(--slk-dark);
 }
-/* Mobile: let the laptop break out of the hero column so the screen is big enough to actually read */
+/* Mobile: keep laptop inset from frame edges, smaller and centered */
 @media(max-width:760px){
-  #lap-mount{margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));padding-top:32px !important;padding-bottom:60px !important}
-  .lap-wrap{max-width:none;width:100%}
+  #lap-mount{padding-top:32px !important;padding-bottom:78px !important}
+  .lap-wrap{max-width:480px}
+  #lap-mount::before{bottom:62px;width:62%;height:24px;filter:blur(18px)}
 }
 
 /* Top bar */
