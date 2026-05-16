@@ -190,7 +190,8 @@
     }
     function setScenario(s, idx){
       tagEl.textContent = s.tag;
-      timeEl.textContent = s.time;
+      // Lock to iconic iPhone marketing time so both phones match (and never show military format)
+      timeEl.textContent = '9:41';
       avatarEl.textContent = s.avatar;
       avatarEl.style.background = s.avatarColor;
       nameEl.textContent = s.name;
