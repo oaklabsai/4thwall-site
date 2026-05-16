@@ -38,9 +38,28 @@
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--body);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;letter-spacing:-0.011em;background:var(--cream)}
-/* Atmospheric gradient on position:fixed pseudo — same visual as
-   background-attachment:fixed, no repaint penalty on scroll/transform */
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 90% 55% at 50% -8%,rgba(255,255,255,.5),transparent 55%),linear-gradient(90deg,rgba(26,26,24,.05),transparent 18%,transparent 82%,rgba(26,26,24,.05)),radial-gradient(ellipse 100% 32% at 50% 108%,rgba(26,26,24,.06),transparent 70%)}
+/* Body gradient at z-index:-2 so the ambient SVG layer (z-index:-1)
+   stacks above it; both sit beneath content. */
+body::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 90% 55% at 50% -8%,rgba(255,255,255,.5),transparent 55%),linear-gradient(90deg,rgba(26,26,24,.05),transparent 18%,transparent 82%,rgba(26,26,24,.05)),radial-gradient(ellipse 100% 32% at 50% 108%,rgba(26,26,24,.06),transparent 70%)}
+
+/* ── AMBIENT AUTONOMOUS SYSTEM LAYER (shared with landing + ops) ── */
+.ambient-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1;mask-image:radial-gradient(ellipse 95% 92% at 50% 50%,#000 30%,rgba(0,0,0,.4) 75%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 95% 92% at 50% 50%,#000 30%,rgba(0,0,0,.4) 75%,transparent 100%)}
+.ambient-layer::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 22% 28%,rgba(30,102,66,.05) 0%,transparent 65%),radial-gradient(ellipse 70% 55% at 78% 82%,rgba(30,102,66,.07) 0%,transparent 60%);pointer-events:none}
+.ambient-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.amb-path{fill:none;stroke:rgba(30,102,66,.32);stroke-width:1;stroke-linecap:round}
+.amb-path-b{stroke:rgba(30,102,66,.24);stroke-width:.8}
+.amb-path-c{stroke:rgba(26,26,24,.18);stroke-width:.7;stroke-dasharray:3 6}
+.amb-node{transform-origin:center;transform-box:fill-box}
+.amb-node-fill{fill:rgba(30,102,66,.78)}
+.amb-node-soft{fill:rgba(30,102,66,.5)}
+.amb-node-outline{fill:none;stroke:rgba(30,102,66,.62);stroke-width:1.1}
+.amb-node-ink{fill:rgba(26,26,24,.42)}
+.amb-pulse{animation:ambPulse 5.4s ease-in-out infinite}
+.amb-pulse-b{animation-duration:6.6s;animation-delay:-2.2s}
+.amb-pulse-c{animation-duration:4.8s;animation-delay:-3.4s}
+@keyframes ambPulse{0%,100%{opacity:.65;transform:scale(1)}50%{opacity:1;transform:scale(1.7)}}
+.amb-trav{fill:rgba(30,102,66,1);filter:drop-shadow(0 0 7px rgba(30,102,66,.7))}
+@media(prefers-reduced-motion:reduce){.amb-pulse,.amb-pulse-b,.amb-pulse-c{animation:none}.amb-trav-motion{display:none}}
 a{text-decoration:none;color:inherit}
 img,svg{display:block;max-width:100%}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;-webkit-appearance:none}
@@ -870,6 +889,38 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 </style>
 </head>
 <body>
+
+<!-- ════════ AMBIENT SYSTEM LAYER (fixed, behind everything) ════════ -->
+<div class="ambient-layer" aria-hidden="true">
+  <svg class="ambient-svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <path id="amb-p1" class="amb-path"   d="M 60 140 C 220 80, 420 240, 580 160 S 860 100, 970 180"/>
+    <path id="amb-p2" class="amb-path amb-path-b" d="M 100 440 C 280 380, 500 520, 700 430 S 900 460, 980 410"/>
+    <path id="amb-p3" class="amb-path amb-path-c" d="M 320 100 C 440 280, 600 420, 800 580"/>
+    <path id="amb-p4" class="amb-path amb-path-b" d="M 60 280 C 260 360, 480 230, 680 320 S 900 340, 980 280"/>
+    <path id="amb-p5" class="amb-path"   d="M 140 600 C 340 550, 540 640, 760 580 S 940 600, 980 560"/>
+    <circle class="amb-node amb-node-fill"                       cx="120" cy="160" r="3.4"/>
+    <circle class="amb-node amb-node-outline amb-pulse"          cx="280" cy="120" r="5.8"/>
+    <circle class="amb-node amb-node-soft"                       cx="420" cy="220" r="2.6"/>
+    <circle class="amb-node amb-node-fill amb-pulse amb-pulse-b" cx="580" cy="170" r="4.2"/>
+    <circle class="amb-node amb-node-ink"                        cx="700" cy="200" r="2.2"/>
+    <circle class="amb-node amb-node-outline"                    cx="820" cy="130" r="4.6"/>
+    <circle class="amb-node amb-node-fill amb-pulse amb-pulse-c" cx="900" cy="200" r="3.2"/>
+    <circle class="amb-node amb-node-soft"                       cx="240" cy="380" r="2.8"/>
+    <circle class="amb-node amb-node-fill"                       cx="540" cy="460" r="3.6"/>
+    <circle class="amb-node amb-node-outline amb-pulse amb-pulse-b" cx="780" cy="430" r="4.4"/>
+    <circle class="amb-node amb-node-soft amb-pulse amb-pulse-c" cx="380" cy="580" r="3"/>
+    <circle class="amb-node amb-node-ink"                        cx="680" cy="540" r="2.2"/>
+    <circle class="amb-trav" r="2.8" opacity="1">
+      <animateMotion class="amb-trav-motion" dur="11s" repeatCount="indefinite" rotate="auto"><mpath href="#amb-p1"/></animateMotion>
+    </circle>
+    <circle class="amb-trav" r="2.4" opacity=".9">
+      <animateMotion class="amb-trav-motion" dur="14s" begin="-5s" repeatCount="indefinite" rotate="auto"><mpath href="#amb-p2"/></animateMotion>
+    </circle>
+    <circle class="amb-trav" r="2" opacity=".75">
+      <animateMotion class="amb-trav-motion" dur="17s" begin="-9s" repeatCount="indefinite" rotate="auto"><mpath href="#amb-p4"/></animateMotion>
+    </circle>
+  </svg>
+</div>
 
 <nav class="topnav">
   <a href="/" class="nav-logo">
