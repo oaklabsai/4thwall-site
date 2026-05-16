@@ -648,27 +648,26 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- ════════════════════ DOORMAT — two products ════════════════════ -->
 <style>
-  .doormat{padding:calc(1.6rem * var(--density)) 0 calc(1.4rem * var(--density));display:flex;flex-direction:column;justify-content:center;position:relative}
+  .doormat{padding:calc(1.6rem * var(--density)) 0 0;display:flex;flex-direction:column;justify-content:flex-start;gap:1.4rem;position:relative}
 
   /* ────────────────────────────────────────────────────────────
      AMBIENT AUTONOMOUS SYSTEM LAYER
      Invisible operational intelligence beneath the product pair.
-     Fills the bottom whitespace of the doormat with a calm,
+     Flows naturally below the cards as the last flex child and
+     absorbs the remaining vertical space (flex:1) with a calm,
      restrained visualization: drifting nodes, ultra-thin curves,
      slow traveling pulses, and a continuous operational strip.
-     Absolutely positioned so it never disturbs card placement.
      ──────────────────────────────────────────────────────────── */
   .ambient-layer{
-    position:absolute;left:0;right:0;bottom:0;
-    height:clamp(240px,38vh,420px);
+    position:relative;
+    flex:1;
+    min-height:clamp(240px,36vh,420px);
     pointer-events:none;
     overflow:hidden;
-    z-index:0;
     /* soft top fade so the layer dissolves into the cream rather than starting on an edge */
-    mask-image:linear-gradient(180deg,transparent 0%,#000 28%,#000 100%);
-    -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 28%,#000 100%);
+    mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 100%);
+    -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 100%);
   }
-  .doormat-grid,.doormat-head{position:relative;z-index:1}
 
   /* Atmospheric ground glow — anchors the layer with depth */
   .ambient-layer::before{
@@ -718,7 +717,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .op-sep{color:rgba(26,26,24,.18);font-size:.62rem;line-height:1}
 
   @media(max-width:760px){
-    .ambient-layer{height:clamp(220px,34vh,340px)}
+    .ambient-layer{min-height:clamp(220px,32vh,340px)}
     .op-strip{font-size:.5rem;letter-spacing:.16em;gap:.4rem;bottom:1rem}
     .op-sep{font-size:.55rem}
   }
