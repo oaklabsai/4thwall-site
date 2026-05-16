@@ -162,11 +162,6 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .orbit-dot:nth-child(1){left:10%;top:55%;animation-duration:24s}
 @keyframes drift{0%{transform:translate(0,0)}25%{transform:translate(30px,-20px)}50%{transform:translate(-10px,30px)}75%{transform:translate(-25px,-15px)}100%{transform:translate(0,0)}}
 
-/* ── Perf: defer layout/paint of below-fold sections until they
-   approach the viewport. Reserves contain-intrinsic-size so scroll
-   position stays stable while the section is "virtualized". */
-.s,.composer-section,footer{content-visibility:auto;contain-intrinsic-size:1px 800px}
-
 /* ───────────────────────────────── SECTIONS ──────────────────── */
 section{position:relative;z-index:2}
 .s{padding:3rem 0;position:relative}
