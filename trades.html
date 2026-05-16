@@ -545,15 +545,19 @@ section{position:relative;z-index:2}
 .assist-bubble.open .assist-bubble-body{grid-template-rows:1fr}
 .assist-bubble-inner{overflow:hidden}
 .assist-bubble-inner > *:first-child{margin-top:.2rem}
-.assist-bubble-d{font-size:.95rem;line-height:1.7;color:var(--muted);padding:.4rem 1.6rem 1rem;max-width:48rem}
-.assist-bubble-d strong{color:var(--ink);font-weight:600}
-.assist-bubble-pills{display:flex;flex-wrap:wrap;gap:.4rem;padding:0 1.6rem 1rem}
-.assist-bubble-pill{font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;padding:.32rem .7rem;border:1px solid var(--line);border-radius:50px;color:var(--ink-2);background:var(--cream-2)}
-.assist-bubble-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.86rem;color:var(--orange);font-weight:500;padding:0 1.6rem 1.2rem;text-decoration:none;transition:gap .2s}
-.assist-bubble-link:hover{gap:.6rem}
-.assist-bubble-link .arr{font-family:var(--display);line-height:1;display:inline-block;transition:transform .25s}
-.assist-bubble-link:hover .arr{transform:translateY(2px)}
-@media(max-width:640px){.assist-bubble{border-radius:24px}.assist-bubble.open{border-radius:18px}.assist-bubble-trigger{padding:.9rem 1rem .9rem 1rem;gap:.7rem}.assist-bubble-h{font-size:1rem}.assist-bubble-d,.assist-bubble-pills,.assist-bubble-link{padding-left:1rem;padding-right:1rem}}
+.assist-bubble-lede{font-size:.98rem;line-height:1.7;color:var(--muted);padding:.4rem 1.8rem 1.5rem;max-width:52rem}
+.assist-bubble-lede strong{color:var(--ink);font-weight:600}
+.assist-bubble-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;padding:.4rem 1.8rem 1.5rem;border-top:1px solid var(--line-2)}
+@media(max-width:760px){.assist-bubble-grid{grid-template-columns:1fr;gap:1.3rem}}
+.assist-bubble-block .assist-bubble-block-h{font-family:var(--display);font-size:1.1rem;font-weight:500;line-height:1.3;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem}
+.assist-bubble-block .assist-bubble-block-h em{font-style:italic;color:var(--orange);font-weight:400}
+.assist-bubble-block p{font-size:.9rem;line-height:1.65;color:var(--muted)}
+.assist-bubble-block p strong{color:var(--ink);font-weight:600}
+.assist-bubble-pills{display:flex;flex-wrap:wrap;gap:.45rem;padding:.2rem 1.8rem 1.4rem}
+.assist-bubble-pill{font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;padding:.36rem .8rem;border:1px solid var(--line);border-radius:50px;color:var(--ink-2);background:var(--cream-2)}
+.assist-bubble-closing{font-family:var(--display);font-size:clamp(1.1rem,2vw,1.5rem);line-height:1.35;letter-spacing:-.018em;text-align:center;color:var(--ink);padding:1.4rem 1.8rem 1.6rem;border-top:1px solid var(--line-2);margin:0;font-weight:400}
+.assist-bubble-closing em{font-style:italic;color:var(--orange)}
+@media(max-width:640px){.assist-bubble{border-radius:24px}.assist-bubble.open{border-radius:18px}.assist-bubble-trigger{padding:.9rem 1rem .9rem 1rem;gap:.7rem}.assist-bubble-h{font-size:1rem}.assist-bubble-lede,.assist-bubble-grid,.assist-bubble-pills,.assist-bubble-closing{padding-left:1.1rem;padding-right:1.1rem}}
 
 /* ── MARKET — stat selector ─── */
 .stat-sel{margin-top:1.8rem}
@@ -750,15 +754,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .prod-card .pc-link:hover{gap:.7rem}
 .prod-card .pc-arr{font-family:var(--display);line-height:1}
 
-/* ── SLACK LAYER — deeper context (phone lives in hero) ─────────── */
-.slack-copy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4rem;margin-top:2.5rem}
-@media(max-width:760px){.slack-copy-grid{grid-template-columns:1fr;gap:1.7rem}}
-.slack-copy-block .slack-copy-h{font-family:var(--display);font-size:1.2rem;font-weight:500;line-height:1.3;letter-spacing:-.02em;color:var(--ink);margin-bottom:.55rem}
-.slack-copy-block .slack-copy-h em{font-style:italic;color:var(--orange);font-weight:400}
-.slack-copy-block .slack-copy-d{font-size:.92rem;line-height:1.68;color:var(--muted)}
-.slack-copy-block .slack-copy-d strong{color:var(--ink);font-weight:600}
-.slack-closing{margin:3.2rem auto 0;padding-top:2.2rem;border-top:1px solid var(--line);font-family:var(--display);font-style:italic;font-size:clamp(1.4rem,2.6vw,2rem);line-height:1.25;font-weight:400;letter-spacing:-.025em;text-align:center;color:var(--ink);max-width:46rem}
-.slack-closing em{font-style:italic;color:var(--orange)}
+/* (Standalone Slack section removed — all assistant content now lives inside the .assist-bubble dropdown) */
 
 /* ── Slack mock — scoped under .slack-scene ───────── */
 .slack-scene{position:relative}
@@ -1300,15 +1296,32 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </button>
     <div class="assist-bubble-body" id="assist-bubble-body">
       <div class="assist-bubble-inner">
-        <p class="assist-bubble-d">The newest layer of Front of House — and the one we're most excited about. <strong>#alex watches all six systems below</strong>, briefing you the moment a lead lands, an estimate gets booked, or a job closes out. Ask it anything about your business in plain English.</p>
+
+        <p class="assist-bubble-lede">The newest layer of Front of House — and the one we're most excited about. <strong>#alex watches all six systems below</strong>, briefing you in real time through a dedicated Slack channel. Lives in your pocket. Travels with you.</p>
+
+        <div class="assist-bubble-grid">
+          <div class="assist-bubble-block">
+            <h4 class="assist-bubble-block-h"><em>What it is.</em></h4>
+            <p><strong>#alex</strong> is the front-of-house assistant living in your Slack — briefing you the moment a lead comes in, an estimate gets booked, or a job closes out. Works the same on the truck as it does in the office.</p>
+          </div>
+          <div class="assist-bubble-block">
+            <h4 class="assist-bubble-block-h"><em>What's different.</em></h4>
+            <p>Most automation tells you something happened. <strong>#alex</strong> tells you what happened, what it means, and what's next. New lead in Greenwich, qualified, booked Thursday at 2pm — not a notification, a brief.</p>
+          </div>
+          <div class="assist-bubble-block">
+            <h4 class="assist-bubble-block-h"><em>What you can do back.</em></h4>
+            <p>Ask it anything. How many estimates did we book this week. What's our conversion rate. Who called yesterday and what did they say. Plain English in, plain English back.</p>
+          </div>
+        </div>
+
         <div class="assist-bubble-pills">
           <span class="assist-bubble-pill">Slack-native</span>
           <span class="assist-bubble-pill">Real-time briefs</span>
           <span class="assist-bubble-pill">Ask it anything</span>
         </div>
-        <a href="#slack-layer" class="assist-bubble-link">See it in action
-          <span class="arr">↓</span>
-        </a>
+
+        <p class="assist-bubble-closing">The shop runs while you're on the roof. <em>Now you can see it running.</em></p>
+
       </div>
     </div>
   </div>
@@ -1418,34 +1431,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </div>
     </div>
   </div>
-</section>
-
-<!-- ════════════════════════════════════════════ SLACK LAYER — v9.0, just shipped ════════════════════════════════════════════ -->
-<section class="s wrap" id="slack-layer" data-screen-label="01.5 Slack layer">
-  <div class="s-meta">
-    <div>
-      <div class="s-label r">Latest · 01.5</div>
-      <h2 class="s-h r in">An assistant<br><span class="ital">in your pocket.</span></h2>
-      <p class="s-note r in d2">The newest layer of Front of House — every lead, every booking, every job briefed in real time through a dedicated Slack channel. Lives in your pocket. Travels with you.</p>
-    </div>
-  </div>
-
-  <div class="slack-copy-grid r in d2">
-    <div class="slack-copy-block">
-      <h3 class="slack-copy-h"><em>What it is.</em></h3>
-      <p class="slack-copy-d"><strong>#alex</strong> is the front-of-house assistant living in your Slack — briefing you the moment a lead comes in, an estimate gets booked, or a job closes out. Works the same on the truck as it does in the office.</p>
-    </div>
-    <div class="slack-copy-block">
-      <h3 class="slack-copy-h"><em>What's different.</em></h3>
-      <p class="slack-copy-d">Most automation tells you something happened. <strong>#alex</strong> tells you what happened, what it means, and what's next. New lead in Greenwich, qualified, booked Thursday at 2pm — not a notification, a brief.</p>
-    </div>
-    <div class="slack-copy-block">
-      <h3 class="slack-copy-h"><em>What you can do back.</em></h3>
-      <p class="slack-copy-d">Ask it anything. How many estimates did we book this week. What's our conversion rate. Who called yesterday and what did they say. Plain English in, plain English back.</p>
-    </div>
-  </div>
-
-  <p class="slack-closing r in">The shop runs while you're on the roof. <em>Now you can see it running.</em></p>
 </section>
 
 <!-- ════════════════════════════════════════════ MARKET — why now ════════════════════════════════════════════ -->
