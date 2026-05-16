@@ -149,8 +149,17 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 /* immersive 3D perspective floor — receding into the distance */
 .hero-floor{position:absolute;left:-25%;right:-25%;top:55%;bottom:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(26,26,24,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(26,26,24,.13) 1px,transparent 1px);background-size:78px 78px;transform:perspective(820px) rotateX(58deg);transform-origin:center top;mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);opacity:.6}
 
-.hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr 1fr;gap:5rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
-@media(max-width:880px){.hero-row{grid-template-columns:1fr;gap:3rem}}
+.hero-row{position:relative;z-index:3;display:flex;flex-direction:column;gap:3rem;align-items:stretch;max-width:var(--max);margin:0 auto;width:100%}
+.hero-text{max-width:42rem}
+.hero-phones-row{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:start;justify-items:center;width:100%;margin-top:.4rem}
+@media(max-width:880px){.hero-phones-row{grid-template-columns:1fr;gap:2.8rem}.hero-row{gap:2.2rem}}
+.hero-phone-cell{display:flex;flex-direction:column;align-items:center;gap:1.3rem;width:100%;max-width:320px;position:relative}
+.phone-label{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;font-weight:600;padding:.5rem .9rem;background:rgba(247,243,236,.7);border:1px solid var(--line);border-radius:50px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.phone-label::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:pulse 2.4s ease-in-out infinite;flex-shrink:0}
+.phone-label .accent{color:var(--orange)}
+.phone-label .sep{opacity:.4;margin:0 .05rem}
+/* Hide standalone vignette + floating tags now that phones live side-by-side */
+.hero-vignette,.demo-tag{display:none !important}
 
 .hero-eyebrow{font-size:.78rem;color:var(--muted);margin-bottom:1.4rem;display:flex;align-items:center;gap:.55rem}
 .hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:pulse 2.4s ease-in-out infinite}
@@ -176,7 +185,7 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .hero-foot .feats span::before{content:"";width:5px;height:5px;background:var(--orange);border-radius:50%}
 
 /* ───── animated phone demo (iPhone 17 Pro Max — floating, premium) ───── */
-.demo-stage{position:relative;width:100%;aspect-ratio:.49;max-width:300px;margin:0 auto;perspective:1800px}
+.demo-stage{position:relative;width:100%;aspect-ratio:.49;max-width:320px;margin:0 auto;perspective:1800px}
 .demo-bezel{position:absolute;inset:0;border-radius:50px;
   background:linear-gradient(145deg,#3d3d3a 0%,#1a1a18 32%,#0a0a09 62%,#2c2c29 100%);
   padding:8px;
@@ -636,12 +645,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .prod-card .pc-link:hover{gap:.7rem}
 .prod-card .pc-arr{font-family:var(--display);line-height:1}
 
-/* ── SLACK LAYER — newest section (v9.0) ─────────── */
-.slack-section{display:grid;grid-template-columns:380px 1fr;gap:4.5rem;align-items:start;margin-top:2.5rem}
-@media(max-width:880px){.slack-section{grid-template-columns:1fr;gap:2.4rem}}
-.slack-phone-col{justify-self:center;width:100%;max-width:380px}
-.slack-copy-col{display:flex;flex-direction:column;gap:1.7rem;padding-top:.4rem}
-.slack-copy-block .slack-copy-h{font-family:var(--display);font-size:1.15rem;font-weight:500;line-height:1.3;letter-spacing:-.02em;color:var(--ink);margin-bottom:.45rem}
+/* ── SLACK LAYER — deeper context (phone lives in hero) ─────────── */
+.slack-copy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4rem;margin-top:2.5rem}
+@media(max-width:760px){.slack-copy-grid{grid-template-columns:1fr;gap:1.7rem}}
+.slack-copy-block .slack-copy-h{font-family:var(--display);font-size:1.2rem;font-weight:500;line-height:1.3;letter-spacing:-.02em;color:var(--ink);margin-bottom:.55rem}
 .slack-copy-block .slack-copy-h em{font-style:italic;color:var(--orange);font-weight:400}
 .slack-copy-block .slack-copy-d{font-size:.92rem;line-height:1.68;color:var(--muted)}
 .slack-copy-block .slack-copy-d strong{color:var(--ink);font-weight:600}
@@ -877,7 +884,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div>
 
   <div class="hero-row">
-    <div>
+    <div class="hero-text">
       <h1 class="hero-h r in">
         You're on the job.<br>
         <span class="ital orange">We handle</span> everything else.
@@ -891,49 +898,253 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </div>
     </div>
 
-    <!-- animated phone demo -->
-    <div class="r in d2" id="demo-mount" style="position:relative">
-      <div class="demo-stage">
-        <div class="hero-vignette" id="hero-vignette" aria-hidden="true">
-          <div class="vig-illo" id="vig-illo"></div>
-          <div class="vig-caption">
-            <span class="vig-you" id="vig-you">while you sleep,</span>
-            <span class="vig-we" id="vig-we">we catch the storm.</span>
-          </div>
+    <!-- Dual phone showcase: client side (iMessage) + assistant side (Slack) -->
+    <div class="hero-phones-row r in d2">
+
+      <div class="hero-phone-cell">
+        <div class="phone-label">
+          <span>Client experience</span>
+          <span class="sep">·</span>
+          <span class="accent">iMessage</span>
         </div>
-        <div class="demo-tag t-live">
-          <span class="tag-h">Replying instantly</span>
-          <span class="tag-s">SMS · web · phone</span>
-        </div>
-        <div class="demo-bezel">
-          <div class="demo-screen">
-            <div class="demo-island" id="demo-island">
-              <span class="di-icon" id="di-icon">R</span>
-              <div class="di-text" id="di-text"><strong>New lead</strong><span>SMS · just now</span></div>
-              <span class="di-pulse"></span>
-            </div>
-            <div class="demo-statusbar">
-              <span id="demo-time">11:47</span>
-              <span class="sb-r"><span>•••</span><span>📶</span><span class="sb-bat"><i></i></span></span>
-            </div>
-            <div class="demo-header">
-              <div class="demo-avatar" id="demo-avatar">RN</div>
-              <div>
-                <div class="demo-name" id="demo-name">New conversation</div>
+        <div id="demo-mount" style="position:relative;width:100%">
+          <div class="demo-stage">
+            <div class="hero-vignette" id="hero-vignette" aria-hidden="true">
+              <div class="vig-illo" id="vig-illo"></div>
+              <div class="vig-caption">
+                <span class="vig-you" id="vig-you">while you sleep,</span>
+                <span class="vig-we" id="vig-we">we catch the storm.</span>
               </div>
-              <span class="demo-channel" id="demo-channel">SMS</span>
             </div>
-            <div class="demo-stream" id="demo-stream">
-              <div class="demo-scenario-tag" id="demo-scenario-tag">Scenario 01 · Storm leak, 11:47 PM</div>
+            <div class="demo-tag t-live">
+              <span class="tag-h">Replying instantly</span>
+              <span class="tag-s">SMS · web · phone</span>
+            </div>
+            <div class="demo-bezel">
+              <div class="demo-screen">
+                <div class="demo-island" id="demo-island">
+                  <span class="di-icon" id="di-icon">R</span>
+                  <div class="di-text" id="di-text"><strong>New lead</strong><span>SMS · just now</span></div>
+                  <span class="di-pulse"></span>
+                </div>
+                <div class="demo-statusbar">
+                  <span id="demo-time">11:47</span>
+                  <span class="sb-r"><span>•••</span><span>📶</span><span class="sb-bat"><i></i></span></span>
+                </div>
+                <div class="demo-header">
+                  <div class="demo-avatar" id="demo-avatar">RN</div>
+                  <div>
+                    <div class="demo-name" id="demo-name">New conversation</div>
+                  </div>
+                  <span class="demo-channel" id="demo-channel">SMS</span>
+                </div>
+                <div class="demo-stream" id="demo-stream">
+                  <div class="demo-scenario-tag" id="demo-scenario-tag">Scenario 01 · Storm leak, 11:47 PM</div>
+                </div>
+              </div>
+            </div>
+            <div class="demo-tag t-done">
+              <span class="tag-h">Auto-booked</span>
+              <span class="tag-s">handoff sent to inbox</span>
+            </div>
+            <div class="demo-dots" id="demo-dots"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-phone-cell">
+        <div class="phone-label">
+          <span>Assistant experience</span>
+          <span class="sep">·</span>
+          <span class="accent">Slack · #alex</span>
+        </div>
+        <div class="slack-scene" id="slack-scene" style="width:100%;max-width:320px">
+          <div class="slack-phone">
+            <div class="slack-screen">
+
+              <div class="slack-status">
+                <div class="slack-status-time">9:41</div>
+                <div class="slack-status-right">
+                  <span class="slack-signal"><i></i><i></i><i></i><i></i></span>
+                  <svg class="slack-wifi-svg" viewBox="0 0 16 12" fill="currentColor"><path d="M8 11.5a1 1 0 110-2 1 1 0 010 2zm2.2-3a3.1 3.1 0 00-4.4 0L4.4 7.1a5.1 5.1 0 017.2 0L10.2 8.5zm2.1-2.1A6.1 6.1 0 008 4.5c-1.6 0-3.1.6-4.3 1.7L2.3 4.8a8.1 8.1 0 0111.4 0l-1.4 1.6zM14.4 4A9.1 9.1 0 008 1.5C5.7 1.5 3.5 2.4 1.6 4L.2 2.6a11.1 11.1 0 0115.6 0L14.4 4z"/></svg>
+                  <span class="slack-battery"><span class="slack-battery-fill"></span></span>
+                </div>
+              </div>
+
+              <div class="slack-mock-header">
+                <div class="slack-logo" id="slack-logo">
+                  <svg viewBox="0 0 122.8 122.8" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#e01e5a" d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9zM32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9z"/>
+                    <path fill="#36c5f0" d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9zM45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9z"/>
+                    <path fill="#2eb67d" d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97zM90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9z"/>
+                    <path fill="#ecb22e" d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9z"/>
+                  </svg>
+                  <div class="slack-unread" id="slack-badge">1</div>
+                </div>
+                <div class="slack-channel-info">
+                  <div class="slack-channel-info-text">
+                    <div class="slack-channel-name-row">
+                      <span class="hash">#</span>alex
+                      <svg width="11" height="11" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
+                    </div>
+                    <div class="slack-channel-meta">
+                      <span class="slack-status-dot"></span>
+                      <span>4THWALL · Always on</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="slack-header-actions">
+                  <div class="slack-h-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
+                  </div>
+                  <div class="slack-h-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="slack-messages">
+                <div class="slack-messages-inner">
+
+                  <div class="slack-day-divider">
+                    <div class="line"></div>
+                    <div class="label">Today</div>
+                    <div class="line"></div>
+                  </div>
+
+                  <div class="slack-msg" id="slack-msg-brief">
+                    <div class="slack-avatar alex">A</div>
+                    <div class="slack-msg-body">
+                      <div class="slack-msg-head">
+                        <span class="slack-msg-name">alex</span>
+                        <span class="slack-msg-tag">APP</span>
+                        <span class="slack-msg-time">6:30 AM</span>
+                      </div>
+                      <div class="slack-msg-text">
+                        <strong>Good morning. Here's the rundown.</strong>
+                        <div class="slack-list">
+                          <div class="slack-list-item"><span class="b">•</span><span>3 leads overnight · 2 storm, 1 routine</span></div>
+                          <div class="slack-list-item"><span class="b">•</span><span>Westport leak → booked Tue 8 AM</span></div>
+                          <div class="slack-list-item"><span class="b">•</span><span>5-star review (Cohen, Greenwich)</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="slack-msg is-hidden" id="slack-msg-lead">
+                    <div class="slack-avatar alex">A</div>
+                    <div class="slack-msg-body">
+                      <div class="slack-msg-head">
+                        <span class="slack-msg-name">alex</span>
+                        <span class="slack-msg-tag">APP</span>
+                        <span class="slack-msg-time">10:34 AM</span>
+                      </div>
+                      <div class="slack-msg-text">
+                        <strong>New lead — Greenwich, CT.</strong>
+                        <div class="slack-list">
+                          <div class="slack-list-item"><span class="b">•</span><span>Storm damage · 2-story colonial</span></div>
+                          <div class="slack-list-item"><span class="b">•</span><span>Spoke with Jim · pulled photos via text</span></div>
+                          <div class="slack-list-item"><span class="b">•</span><span>Qualified $$$ · urgency high</span></div>
+                        </div>
+                        <div class="slack-callout"><strong>Estimate booked:</strong> Thursday 2:00 PM</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="slack-msg is-hidden" id="slack-msg-andrew">
+                    <div class="slack-avatar andrew">AR</div>
+                    <div class="slack-msg-body">
+                      <div class="slack-msg-head">
+                        <span class="slack-msg-name">Andrew</span>
+                        <span class="slack-msg-time">2:18 PM</span>
+                      </div>
+                      <div class="slack-msg-text">
+                        how many estimates did we book this week?
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="slack-typing-row is-hidden" id="slack-typing-row">
+                    <div class="slack-typing-avatar">A</div>
+                    <span>alex is typing</span>
+                    <span class="slack-dots"><i></i><i></i><i></i></span>
+                  </div>
+
+                  <div class="slack-msg is-hidden" id="slack-msg-response">
+                    <div class="slack-avatar alex">A</div>
+                    <div class="slack-msg-body">
+                      <div class="slack-msg-head">
+                        <span class="slack-msg-name">alex</span>
+                        <span class="slack-msg-tag">APP</span>
+                        <span class="slack-msg-time">2:19 PM</span>
+                      </div>
+                      <div class="slack-msg-text">
+                        <strong>7 booked this week.</strong>
+                        <div class="slack-list">
+                          <div class="slack-list-item"><span class="b">•</span><span>2 storm-related (Mon, Wed)</span></div>
+                          <div class="slack-list-item"><span class="b">•</span><span>4 standard repairs</span></div>
+                          <div class="slack-list-item"><span class="b">•</span><span>1 new build inquiry</span></div>
+                        </div>
+                        <div class="slack-callout">Conversion: <strong>64%</strong> · up from 51%</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="slack-input-bar">
+                <div class="slack-input-wrap" id="slack-input-wrap">
+                  <div class="slack-input-top"><span id="slack-input-text">Message #alex</span></div>
+                  <div class="slack-input-bottom">
+                    <div class="slack-input-tools">
+                      <div class="slack-it"><span class="slack-it-text">@</span></div>
+                      <div class="slack-it"><span class="slack-it-text">/</span></div>
+                      <div class="slack-it">
+                        <svg viewBox="0 0 24 24"><path d="M16.5 3l-12 12a4 4 0 105.66 5.66l11-11a2.5 2.5 0 00-3.54-3.54l-11 11"/></svg>
+                      </div>
+                    </div>
+                    <div class="slack-input-right">
+                      <div class="slack-it">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="10" rx="2"/><path d="M17 11l4-3v8l-4-3z"/></svg>
+                      </div>
+                      <div class="slack-it">
+                        <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="13" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>
+                      </div>
+                      <div class="slack-send-btn" id="slack-send-btn">
+                        <svg viewBox="0 0 24 24"><path d="M5 12l14-7-3 7 3 7z"/></svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="slack-tab-bar">
+                <div class="slack-tab">
+                  <svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="slack-tab">
+                  <svg viewBox="0 0 24 24"><path d="M21 11c0 4-4 7-9 7-1.5 0-3-.2-4.2-.7L3 19l1.4-3.7C3.5 14 3 12.5 3 11c0-4 4-7 9-7s9 3 9 7z"/></svg>
+                  <span>DMs</span>
+                  <span class="dot"></span>
+                </div>
+                <div class="slack-tab active">
+                  <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+                  <span>Activity</span>
+                </div>
+                <div class="slack-tab">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>
+                  <span>More</span>
+                </div>
+              </div>
+              <div class="slack-home-indicator"></div>
+
             </div>
           </div>
         </div>
-        <div class="demo-tag t-done">
-          <span class="tag-h">Auto-booked</span>
-          <span class="tag-s">handoff sent to inbox</span>
-        </div>
-        <div class="demo-dots" id="demo-dots"></div>
       </div>
+
     </div>
   </div>
 
@@ -1081,218 +1292,18 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
   </div>
 
-  <div class="slack-section r in d2">
-    <div class="slack-phone-col">
-
-      <div class="slack-scene" id="slack-scene">
-        <div class="slack-phone">
-          <div class="slack-screen">
-
-            <div class="slack-status">
-              <div class="slack-status-time">9:41</div>
-              <div class="slack-status-right">
-                <span class="slack-signal"><i></i><i></i><i></i><i></i></span>
-                <svg class="slack-wifi-svg" viewBox="0 0 16 12" fill="currentColor"><path d="M8 11.5a1 1 0 110-2 1 1 0 010 2zm2.2-3a3.1 3.1 0 00-4.4 0L4.4 7.1a5.1 5.1 0 017.2 0L10.2 8.5zm2.1-2.1A6.1 6.1 0 008 4.5c-1.6 0-3.1.6-4.3 1.7L2.3 4.8a8.1 8.1 0 0111.4 0l-1.4 1.6zM14.4 4A9.1 9.1 0 008 1.5C5.7 1.5 3.5 2.4 1.6 4L.2 2.6a11.1 11.1 0 0115.6 0L14.4 4z"/></svg>
-                <span class="slack-battery"><span class="slack-battery-fill"></span></span>
-              </div>
-            </div>
-
-            <div class="slack-mock-header">
-              <div class="slack-logo" id="slack-logo">
-                <svg viewBox="0 0 122.8 122.8" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="#e01e5a" d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9zM32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9z"/>
-                  <path fill="#36c5f0" d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9zM45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9z"/>
-                  <path fill="#2eb67d" d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97zM90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9z"/>
-                  <path fill="#ecb22e" d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9z"/>
-                </svg>
-                <div class="slack-unread" id="slack-badge">1</div>
-              </div>
-              <div class="slack-channel-info">
-                <div class="slack-channel-info-text">
-                  <div class="slack-channel-name-row">
-                    <span class="hash">#</span>alex
-                    <svg width="11" height="11" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
-                  </div>
-                  <div class="slack-channel-meta">
-                    <span class="slack-status-dot"></span>
-                    <span>4THWALL · Always on</span>
-                  </div>
-                </div>
-              </div>
-              <div class="slack-header-actions">
-                <div class="slack-h-icon">
-                  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
-                </div>
-                <div class="slack-h-icon">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <div class="slack-messages">
-              <div class="slack-messages-inner">
-
-                <div class="slack-day-divider">
-                  <div class="line"></div>
-                  <div class="label">Today</div>
-                  <div class="line"></div>
-                </div>
-
-                <div class="slack-msg" id="slack-msg-brief">
-                  <div class="slack-avatar alex">A</div>
-                  <div class="slack-msg-body">
-                    <div class="slack-msg-head">
-                      <span class="slack-msg-name">alex</span>
-                      <span class="slack-msg-tag">APP</span>
-                      <span class="slack-msg-time">6:30 AM</span>
-                    </div>
-                    <div class="slack-msg-text">
-                      <strong>Good morning. Here's the rundown.</strong>
-                      <div class="slack-list">
-                        <div class="slack-list-item"><span class="b">•</span><span>3 leads overnight · 2 storm, 1 routine</span></div>
-                        <div class="slack-list-item"><span class="b">•</span><span>Westport leak → booked Tue 8 AM</span></div>
-                        <div class="slack-list-item"><span class="b">•</span><span>5-star review (Cohen, Greenwich)</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="slack-msg is-hidden" id="slack-msg-lead">
-                  <div class="slack-avatar alex">A</div>
-                  <div class="slack-msg-body">
-                    <div class="slack-msg-head">
-                      <span class="slack-msg-name">alex</span>
-                      <span class="slack-msg-tag">APP</span>
-                      <span class="slack-msg-time">10:34 AM</span>
-                    </div>
-                    <div class="slack-msg-text">
-                      <strong>New lead — Greenwich, CT.</strong>
-                      <div class="slack-list">
-                        <div class="slack-list-item"><span class="b">•</span><span>Storm damage · 2-story colonial</span></div>
-                        <div class="slack-list-item"><span class="b">•</span><span>Spoke with Jim · pulled photos via text</span></div>
-                        <div class="slack-list-item"><span class="b">•</span><span>Qualified $$$ · urgency high</span></div>
-                      </div>
-                      <div class="slack-callout"><strong>Estimate booked:</strong> Thursday 2:00 PM</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="slack-msg is-hidden" id="slack-msg-andrew">
-                  <div class="slack-avatar andrew">AR</div>
-                  <div class="slack-msg-body">
-                    <div class="slack-msg-head">
-                      <span class="slack-msg-name">Andrew</span>
-                      <span class="slack-msg-time">2:18 PM</span>
-                    </div>
-                    <div class="slack-msg-text">
-                      how many estimates did we book this week?
-                    </div>
-                  </div>
-                </div>
-
-                <div class="slack-typing-row is-hidden" id="slack-typing-row">
-                  <div class="slack-typing-avatar">A</div>
-                  <span>alex is typing</span>
-                  <span class="slack-dots"><i></i><i></i><i></i></span>
-                </div>
-
-                <div class="slack-msg is-hidden" id="slack-msg-response">
-                  <div class="slack-avatar alex">A</div>
-                  <div class="slack-msg-body">
-                    <div class="slack-msg-head">
-                      <span class="slack-msg-name">alex</span>
-                      <span class="slack-msg-tag">APP</span>
-                      <span class="slack-msg-time">2:19 PM</span>
-                    </div>
-                    <div class="slack-msg-text">
-                      <strong>7 booked this week.</strong>
-                      <div class="slack-list">
-                        <div class="slack-list-item"><span class="b">•</span><span>2 storm-related (Mon, Wed)</span></div>
-                        <div class="slack-list-item"><span class="b">•</span><span>4 standard repairs</span></div>
-                        <div class="slack-list-item"><span class="b">•</span><span>1 new build inquiry</span></div>
-                      </div>
-                      <div class="slack-callout">Conversion: <strong>64%</strong> · up from 51%</div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-            <div class="slack-input-bar">
-              <div class="slack-input-wrap" id="slack-input-wrap">
-                <div class="slack-input-top"><span id="slack-input-text">Message #alex</span></div>
-                <div class="slack-input-bottom">
-                  <div class="slack-input-tools">
-                    <div class="slack-it"><span class="slack-it-text">@</span></div>
-                    <div class="slack-it"><span class="slack-it-text">/</span></div>
-                    <div class="slack-it">
-                      <svg viewBox="0 0 24 24"><path d="M16.5 3l-12 12a4 4 0 105.66 5.66l11-11a2.5 2.5 0 00-3.54-3.54l-11 11"/></svg>
-                    </div>
-                  </div>
-                  <div class="slack-input-right">
-                    <div class="slack-it">
-                      <svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="10" rx="2"/><path d="M17 11l4-3v8l-4-3z"/></svg>
-                    </div>
-                    <div class="slack-it">
-                      <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="13" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>
-                    </div>
-                    <div class="slack-send-btn" id="slack-send-btn">
-                      <svg viewBox="0 0 24 24"><path d="M5 12l14-7-3 7 3 7z"/></svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="slack-tab-bar">
-              <div class="slack-tab">
-                <svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2z"/></svg>
-                <span>Home</span>
-              </div>
-              <div class="slack-tab">
-                <svg viewBox="0 0 24 24"><path d="M21 11c0 4-4 7-9 7-1.5 0-3-.2-4.2-.7L3 19l1.4-3.7C3.5 14 3 12.5 3 11c0-4 4-7 9-7s9 3 9 7z"/></svg>
-                <span>DMs</span>
-                <span class="dot"></span>
-              </div>
-              <div class="slack-tab active">
-                <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
-                <span>Activity</span>
-              </div>
-              <div class="slack-tab">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>
-                <span>More</span>
-              </div>
-            </div>
-            <div class="slack-home-indicator"></div>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="slack-subcaption">
-        <span>Front of House</span>
-        <span class="dot-sep">·</span>
-        <span class="accent">#alex layer</span>
-        <span class="dot-sep">·</span>
-        <span>v9.0</span>
-      </div>
-
+  <div class="slack-copy-grid r in d2">
+    <div class="slack-copy-block">
+      <h3 class="slack-copy-h"><em>What it is.</em></h3>
+      <p class="slack-copy-d"><strong>#alex</strong> is the front-of-house assistant living in your Slack — briefing you the moment a lead comes in, an estimate gets booked, or a job closes out. Works the same on the truck as it does in the office.</p>
     </div>
-
-    <div class="slack-copy-col">
-      <div class="slack-copy-block r in d2">
-        <h3 class="slack-copy-h"><em>What it is.</em></h3>
-        <p class="slack-copy-d"><strong>#alex</strong> is the front-of-house assistant living in your Slack — briefing you the moment a lead comes in, an estimate gets booked, or a job closes out. Works the same on the truck as it does in the office.</p>
-      </div>
-      <div class="slack-copy-block r in d3">
-        <h3 class="slack-copy-h"><em>What's different.</em></h3>
-        <p class="slack-copy-d">Most automation tells you something happened. <strong>#alex</strong> tells you what happened, what it means, and what's next. New lead in Greenwich, qualified, booked Thursday at 2pm — not a notification, a brief.</p>
-      </div>
-      <div class="slack-copy-block r in d4">
-        <h3 class="slack-copy-h"><em>What you can do back.</em></h3>
-        <p class="slack-copy-d">Ask it anything. How many estimates did we book this week. What's our conversion rate. Who called yesterday and what did they say. Plain English in, plain English back.</p>
-      </div>
+    <div class="slack-copy-block">
+      <h3 class="slack-copy-h"><em>What's different.</em></h3>
+      <p class="slack-copy-d">Most automation tells you something happened. <strong>#alex</strong> tells you what happened, what it means, and what's next. New lead in Greenwich, qualified, booked Thursday at 2pm — not a notification, a brief.</p>
+    </div>
+    <div class="slack-copy-block">
+      <h3 class="slack-copy-h"><em>What you can do back.</em></h3>
+      <p class="slack-copy-d">Ask it anything. How many estimates did we book this week. What's our conversion rate. Who called yesterday and what did they say. Plain English in, plain English back.</p>
     </div>
   </div>
 
