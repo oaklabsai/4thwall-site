@@ -165,7 +165,11 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 @media(max-width:540px){.phone-toggle-btn{font-size:.54rem;padding:.55rem .8rem;letter-spacing:.11em}}
 
 /* ── Phone stage (single phone, both views crossfade) ── */
-.phone-stage{position:relative;width:100%;max-width:320px;aspect-ratio:9/19.5;margin:0 auto}
+/* Padding-top trick locks the aspect ratio reliably (the aspect-ratio property alone wasn't
+   strictly enforcing on mobile Safari with absolute children, so the Slack phone — which has
+   more inner content — was being stretched taller than the iPhone). */
+.phone-stage{position:relative;width:100%;max-width:320px;margin:0 auto;aspect-ratio:9/19.5}
+.phone-stage::before{content:"";display:block;padding-top:216.67%}
 .phone-view{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .4s ease,transform .55s cubic-bezier(.16,1,.3,1);transform:translateY(8px) scale(.985)}
 .phone-toggle-area[data-active="client"] .client-view,
 .phone-toggle-area[data-active="assistant"] .assistant-view{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
