@@ -155,9 +155,24 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 @media(max-width:880px){.hero-row{gap:1.8rem}.hero-phones-row{gap:1rem;max-width:none}}
 .hero-phone-cell{display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%;min-width:0;max-width:240px;position:relative}
 @media(max-width:760px){.hero-phone-cell{max-width:none;gap:.6rem}}
-.hero-phone-cell .demo-stage,.hero-phone-cell .slack-scene,.hero-phone-cell .slack-phone{width:100%;max-width:100%;min-width:0}
+.hero-phone-cell .demo-stage,.hero-phone-cell .slack-scene{width:100%;max-width:100%;min-width:0;aspect-ratio:9/19.5;position:relative;perspective:none}
+.hero-phone-cell .slack-phone{position:absolute;inset:0;width:auto;height:auto}
+.hero-phone-cell .slack-scene .slack-screen{aspect-ratio:auto;width:100%;height:100%}
+/* Identical side rail buttons on both phones */
+.hero-phone-cell .demo-bezel::before{left:-2px;top:14%;width:2.5px;height:18px}
+.hero-phone-cell .demo-bezel::after{left:-2px;top:30%;width:2.5px;height:28px;box-shadow:0 38px 0 0 #2c2c29,0 38px 0 -1px #5d5d5a}
+.hero-phone-cell .slack-scene::before{content:"";position:absolute;left:-2px;top:14%;width:2.5px;height:18px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;z-index:5;pointer-events:none}
+.hero-phone-cell .slack-scene::after{content:"";position:absolute;left:-2px;top:30%;width:2.5px;height:28px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;box-shadow:0 38px 0 0 #2c2c29,0 38px 0 -1px #5d5d5a;z-index:5;pointer-events:none}
+/* iPhone status bar — proper signal / wifi glyphs (matching Slack) */
+.hero-phone-cell .sb-signal{display:inline-flex;align-items:flex-end;gap:1.5px;height:8px}
+.hero-phone-cell .sb-signal i{display:block;background:currentColor;width:2px;border-radius:.5px}
+.hero-phone-cell .sb-signal i:nth-child(1){height:30%}
+.hero-phone-cell .sb-signal i:nth-child(2){height:50%}
+.hero-phone-cell .sb-signal i:nth-child(3){height:70%}
+.hero-phone-cell .sb-signal i:nth-child(4){height:100%}
+.hero-phone-cell .sb-wifi{width:11px;height:8px;display:inline-block}
 /* Scale the iPhone phone proportionally for the smaller hero cell */
-.hero-phone-cell .demo-bezel{border-radius:30px;padding:5px;box-shadow:0 18px 50px -22px rgba(0,0,0,.42),0 6px 18px -8px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.12)}
+.hero-phone-cell .demo-bezel{border-radius:30px;padding:5px;box-shadow:0 18px 50px -22px rgba(0,0,0,.42),0 6px 18px -8px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.12);transform:none;animation:none}
 .hero-phone-cell .demo-screen{border-radius:25px}
 .hero-phone-cell .demo-island{top:7px;width:54px;height:18px;border-radius:11px;padding:0 5px}
 .hero-phone-cell .demo-island.expanded{width:82%;height:36px;border-radius:18px;padding:0 8px}
@@ -227,7 +242,7 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .hero-phone-cell .slack-scene .slack-day-divider .label{font-size:.52rem;padding:.1rem .4rem}
 .hero-phone-cell .slack-scene .slack-typing-row{padding:.22rem .55rem .35rem;font-size:.58rem}
 .hero-phone-cell .slack-scene .slack-typing-avatar{width:14px;height:14px;font-size:.46rem}
-.hero-phone-cell .slack-scene .slack-phone{border-radius:30px;padding:5px;box-shadow:0 18px 50px -22px rgba(10,10,10,.4),0 6px 18px -8px rgba(10,10,10,.22),inset 0 0 0 1.5px #2a2a2a}
+.hero-phone-cell .slack-scene .slack-phone{border-radius:30px;padding:5px;background:linear-gradient(145deg,#3d3d3a 0%,#1a1a18 32%,#0a0a09 62%,#2c2c29 100%);box-shadow:0 18px 50px -22px rgba(0,0,0,.42),0 6px 18px -8px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1.5px rgba(255,255,255,.04)}
 .hero-phone-cell .slack-scene .slack-phone::before{width:62px;height:18px;top:11px;border-radius:12px}
 .hero-phone-cell .slack-scene .slack-screen{border-radius:25px}
 .phone-label{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.56rem;letter-spacing:.13em;color:var(--muted);text-transform:uppercase;font-weight:600;padding:.38rem .7rem;background:rgba(247,243,236,.72);border:1px solid var(--line);border-radius:50px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap}
@@ -1007,7 +1022,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                 </div>
                 <div class="demo-statusbar">
                   <span id="demo-time">11:47</span>
-                  <span class="sb-r"><span>•••</span><span>📶</span><span class="sb-bat"><i></i></span></span>
+                  <span class="sb-r">
+                    <span class="sb-signal"><i></i><i></i><i></i><i></i></span>
+                    <svg class="sb-wifi" viewBox="0 0 16 12" fill="currentColor"><path d="M8 11.5a1 1 0 110-2 1 1 0 010 2zm2.2-3a3.1 3.1 0 00-4.4 0L4.4 7.1a5.1 5.1 0 017.2 0L10.2 8.5zm2.1-2.1A6.1 6.1 0 008 4.5c-1.6 0-3.1.6-4.3 1.7L2.3 4.8a8.1 8.1 0 0111.4 0l-1.4 1.6zM14.4 4A9.1 9.1 0 008 1.5C5.7 1.5 3.5 2.4 1.6 4L.2 2.6a11.1 11.1 0 0115.6 0L14.4 4z"/></svg>
+                    <span class="sb-bat"><i></i></span>
+                  </span>
                 </div>
                 <div class="demo-header">
                   <div class="demo-avatar" id="demo-avatar">RN</div>
