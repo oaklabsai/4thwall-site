@@ -200,6 +200,13 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .phone-view .demo-scenario-tag{display:none}
 .phone-view .demo-dots{display:none}
 
+/* iMessage input bar + home indicator on iPhone — matches Slack phone's bottom UI */
+.phone-view .demo-imessage-bar{flex-shrink:0;display:flex;align-items:center;gap:.45rem;padding:.5rem .65rem .55rem;background:#fff;border-top:1px solid rgba(0,0,0,.05);font-family:-apple-system,sans-serif}
+.phone-view .demo-imessage-field{flex:1;background:#f1f1f3;border:1px solid #e0e0e2;border-radius:18px;padding:.45rem .8rem;font-size:.74rem;color:#9a9aa1;min-height:30px;display:flex;align-items:center;line-height:1}
+.phone-view .demo-imessage-send{width:26px;height:26px;background:#dcdce0;color:#9a9aa1;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phone-view .demo-imessage-send svg{width:13px;height:13px}
+.phone-view .demo-home-indicator{flex-shrink:0;width:120px;height:4px;background:#1d1c1d;border-radius:2px;margin:.35rem auto .42rem;opacity:.85}
+
 /* Side rail buttons matched on both phones */
 .phone-view .demo-bezel::before{left:-2.5px;top:14%;width:3px;height:26px}
 .phone-view .demo-bezel::after{left:-2.5px;top:30%;width:3px;height:42px;box-shadow:0 56px 0 0 #2c2c29,0 56px 0 -1px #5d5d5a}
@@ -1012,6 +1019,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                 <div class="demo-stream" id="demo-stream">
                   <div class="demo-scenario-tag" id="demo-scenario-tag">Scenario 01 · Storm leak, 11:47 PM</div>
                 </div>
+                <div class="demo-imessage-bar">
+                  <div class="demo-imessage-field"><span>iMessage</span></div>
+                  <div class="demo-imessage-send" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>
+                  </div>
+                </div>
+                <div class="demo-home-indicator"></div>
               </div>
             </div>
             <div class="demo-tag t-done">
