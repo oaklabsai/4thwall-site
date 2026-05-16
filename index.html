@@ -648,73 +648,76 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- ════════════════════ DOORMAT — two products ════════════════════ -->
 <style>
-  .doormat{padding:calc(1.6rem * var(--density)) 0 0;display:flex;flex-direction:column;justify-content:flex-start;gap:1.4rem;position:relative}
+  .doormat{padding:calc(1.6rem * var(--density)) 0 0;display:flex;flex-direction:column;justify-content:center;gap:1.6rem;position:relative;min-height:62vh}
+  .doormat-head,.doormat-grid{position:relative;z-index:2}
 
   /* ────────────────────────────────────────────────────────────
      AMBIENT AUTONOMOUS SYSTEM LAYER
-     Invisible operational intelligence beneath the product pair.
-     Flows naturally below the cards as the last flex child and
-     absorbs the remaining vertical space (flex:1) with a calm,
-     restrained visualization: drifting nodes, ultra-thin curves,
-     slow traveling pulses, and a continuous operational strip.
+     Lives behind the entire products section — header, cards, and
+     all — as the quiet operational substrate. Cards sit on top with
+     their solid backgrounds; the ambient peeks through around them
+     and fills the cream beneath.
      ──────────────────────────────────────────────────────────── */
   .ambient-layer{
-    position:relative;
-    flex:1;
-    min-height:clamp(240px,36vh,420px);
+    position:absolute;
+    inset:0;
     pointer-events:none;
     overflow:hidden;
-    /* soft top fade so the layer dissolves into the cream rather than starting on an edge */
-    mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 100%);
-    -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 100%);
+    z-index:0;
+    /* soft fade top & bottom so it dissolves into the cream */
+    mask-image:linear-gradient(180deg,transparent 0%,#000 10%,#000 96%,transparent 100%);
+    -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 10%,#000 96%,transparent 100%);
   }
 
-  /* Atmospheric ground glow — anchors the layer with depth */
+  /* Atmospheric depth — two soft radials giving the layer ambient weight */
   .ambient-layer::before{
-    content:"";position:absolute;left:50%;bottom:-18%;
-    width:140%;height:120%;transform:translateX(-50%);
-    background:radial-gradient(ellipse 50% 60% at 50% 100%,rgba(30,102,66,.07) 0%,rgba(30,102,66,.025) 38%,transparent 70%);
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 60% 45% at 22% 28%,rgba(30,102,66,.05) 0%,transparent 65%),
+      radial-gradient(ellipse 70% 55% at 78% 82%,rgba(30,102,66,.07) 0%,transparent 60%);
     pointer-events:none;
   }
 
   .ambient-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 
   /* Connection paths — infrastructural, never declarative */
-  .amb-path{fill:none;stroke:rgba(30,102,66,.16);stroke-width:.7;stroke-linecap:round}
-  .amb-path-b{stroke:rgba(30,102,66,.11);stroke-width:.55}
-  .amb-path-c{stroke:rgba(26,26,24,.08);stroke-width:.5;stroke-dasharray:2 5}
+  .amb-path{fill:none;stroke:rgba(30,102,66,.32);stroke-width:1;stroke-linecap:round}
+  .amb-path-b{stroke:rgba(30,102,66,.24);stroke-width:.8}
+  .amb-path-c{stroke:rgba(26,26,24,.18);stroke-width:.7;stroke-dasharray:3 6}
 
   /* Nodes — some filled, some outlined, asymmetric weight */
   .amb-node{transform-origin:center;transform-box:fill-box}
-  .amb-node-fill{fill:rgba(30,102,66,.55)}
-  .amb-node-soft{fill:rgba(30,102,66,.28)}
-  .amb-node-outline{fill:none;stroke:rgba(30,102,66,.4);stroke-width:.8}
-  .amb-node-ink{fill:rgba(26,26,24,.25)}
+  .amb-node-fill{fill:rgba(30,102,66,.78)}
+  .amb-node-soft{fill:rgba(30,102,66,.5)}
+  .amb-node-outline{fill:none;stroke:rgba(30,102,66,.62);stroke-width:1.1}
+  .amb-node-ink{fill:rgba(26,26,24,.42)}
 
-  /* Breathing pulses — calm, asynchronous */
-  .amb-pulse{animation:ambPulse 6s ease-in-out infinite}
-  .amb-pulse-b{animation-duration:7.4s;animation-delay:-2.6s}
-  .amb-pulse-c{animation-duration:5.2s;animation-delay:-3.8s}
+  /* Breathing pulses — calm, asynchronous, more pronounced lift */
+  .amb-pulse{animation:ambPulse 5.4s ease-in-out infinite}
+  .amb-pulse-b{animation-duration:6.6s;animation-delay:-2.2s}
+  .amb-pulse-c{animation-duration:4.8s;animation-delay:-3.4s}
   @keyframes ambPulse{
-    0%,100%{opacity:.55;transform:scale(1)}
-    50%   {opacity:.95;transform:scale(1.35)}
+    0%,100%{opacity:.65;transform:scale(1)}
+    50%   {opacity:1;   transform:scale(1.7)}
   }
 
-  /* Traveling pulses — a quiet signal moving through the system */
-  .amb-trav{fill:rgba(30,102,66,.85);filter:drop-shadow(0 0 4px rgba(30,102,66,.45))}
+  /* Traveling pulses — brighter signal moving through the system */
+  .amb-trav{fill:rgba(30,102,66,1);filter:drop-shadow(0 0 7px rgba(30,102,66,.7))}
 
-  /* Operational signal strip — the business operating continuously */
+  /* Operational signal strip — the 4THWALL loop, continuously running */
   .op-strip{
     position:absolute;left:0;right:0;bottom:1.2rem;
     display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;
     gap:.55rem;padding:0 var(--pad);
     font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;
-    color:rgba(26,26,24,.32);
+    color:rgba(26,26,24,.4);
     overflow:hidden;
+    z-index:1;
   }
-  .op-step{transition:color .9s cubic-bezier(.4,0,.2,1),opacity .9s ease}
-  .op-step.is-active{color:rgba(30,102,66,.92)}
-  .op-sep{color:rgba(26,26,24,.18);font-size:.62rem;line-height:1}
+  .op-step{transition:color .9s cubic-bezier(.4,0,.2,1)}
+  .op-step.is-active{color:rgba(30,102,66,1)}
+  .op-sep{color:rgba(26,26,24,.22);font-size:.62rem;line-height:1}
+  .op-sep-loop{color:rgba(30,102,66,.55);font-size:.72rem;margin-left:.15rem}
 
   @media(max-width:760px){
     .ambient-layer{min-height:clamp(220px,32vh,340px)}
@@ -843,47 +846,60 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
        Fills the bottom whitespace with quiet operational presence.
        ───────────────────────────────────────────────────────────── -->
   <div class="ambient-layer" aria-hidden="true">
-    <svg class="ambient-svg" viewBox="0 0 1000 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
-      <!-- connection paths: asymmetric, organic curves; no grid -->
-      <path id="amb-p1" class="amb-path"   d="M 60 90  C 240 50, 380 150, 540 110 S 820 80, 960 130"/>
-      <path id="amb-p2" class="amb-path amb-path-b" d="M 140 230 C 320 180, 500 260, 680 210 S 880 240, 960 200"/>
-      <path id="amb-p3" class="amb-path amb-path-c" d="M 320 70  C 420 180, 580 230, 760 260"/>
-      <path id="amb-p4" class="amb-path amb-path-b" d="M 80 160 C 260 220, 460 110, 660 140"/>
+    <svg class="ambient-svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <!-- connection paths: asymmetric, organic curves spanning the whole section -->
+      <path id="amb-p1" class="amb-path"   d="M 60 140 C 220 80, 420 240, 580 160 S 860 100, 970 180"/>
+      <path id="amb-p2" class="amb-path amb-path-b" d="M 100 440 C 280 380, 500 520, 700 430 S 900 460, 980 410"/>
+      <path id="amb-p3" class="amb-path amb-path-c" d="M 320 100 C 440 280, 600 420, 800 580"/>
+      <path id="amb-p4" class="amb-path amb-path-b" d="M 60 280 C 260 360, 480 230, 680 320 S 900 340, 980 280"/>
+      <path id="amb-p5" class="amb-path"   d="M 140 600 C 340 550, 540 640, 760 580 S 940 600, 980 560"/>
 
-      <!-- nodes: 8, asymmetric, varied weight -->
-      <circle class="amb-node amb-node-fill"                cx="60"  cy="90"  r="2.6"/>
-      <circle class="amb-node amb-node-outline amb-pulse"   cx="280" cy="74"  r="4.2"/>
-      <circle class="amb-node amb-node-soft"                cx="380" cy="150" r="2"/>
-      <circle class="amb-node amb-node-fill amb-pulse amb-pulse-b" cx="540" cy="110" r="3"/>
-      <circle class="amb-node amb-node-ink"                 cx="660" cy="140" r="1.8"/>
-      <circle class="amb-node amb-node-outline"             cx="760" cy="200" r="3.4"/>
-      <circle class="amb-node amb-node-fill amb-pulse amb-pulse-c" cx="880" cy="100" r="2.4"/>
-      <circle class="amb-node amb-node-soft"                cx="200" cy="220" r="2.2"/>
+      <!-- nodes: 11, asymmetric, varied weight, spread across full section -->
+      <circle class="amb-node amb-node-fill"                       cx="60"  cy="140" r="3.4"/>
+      <circle class="amb-node amb-node-outline amb-pulse"          cx="280" cy="110" r="5.8"/>
+      <circle class="amb-node amb-node-soft"                       cx="420" cy="220" r="2.6"/>
+      <circle class="amb-node amb-node-fill amb-pulse amb-pulse-b" cx="580" cy="160" r="4.2"/>
+      <circle class="amb-node amb-node-ink"                        cx="700" cy="200" r="2.2"/>
+      <circle class="amb-node amb-node-outline"                    cx="860" cy="110" r="4.6"/>
+      <circle class="amb-node amb-node-fill amb-pulse amb-pulse-c" cx="970" cy="180" r="3.2"/>
+      <circle class="amb-node amb-node-soft"                       cx="200" cy="380" r="2.8"/>
+      <circle class="amb-node amb-node-fill"                       cx="540" cy="460" r="3.6"/>
+      <circle class="amb-node amb-node-outline amb-pulse amb-pulse-b" cx="800" cy="430" r="4.4"/>
+      <circle class="amb-node amb-node-soft amb-pulse amb-pulse-c" cx="380" cy="600" r="3"/>
+      <circle class="amb-node amb-node-ink"                        cx="700" cy="540" r="2.2"/>
 
-      <!-- traveling pulses: a quiet signal moving through the layer -->
-      <circle class="amb-trav" r="2"   opacity=".9">
-        <animateMotion class="amb-trav-motion" dur="16s" repeatCount="indefinite" rotate="auto">
+      <!-- traveling pulses: signals continuously moving through the layer -->
+      <circle class="amb-trav" r="2.8" opacity="1">
+        <animateMotion class="amb-trav-motion" dur="11s" repeatCount="indefinite" rotate="auto">
           <mpath href="#amb-p1"/>
         </animateMotion>
       </circle>
-      <circle class="amb-trav" r="1.6" opacity=".7">
-        <animateMotion class="amb-trav-motion" dur="22s" begin="-8s" repeatCount="indefinite" rotate="auto">
+      <circle class="amb-trav" r="2.4" opacity=".9">
+        <animateMotion class="amb-trav-motion" dur="14s" begin="-5s" repeatCount="indefinite" rotate="auto">
           <mpath href="#amb-p2"/>
+        </animateMotion>
+      </circle>
+      <circle class="amb-trav" r="2" opacity=".75">
+        <animateMotion class="amb-trav-motion" dur="17s" begin="-9s" repeatCount="indefinite" rotate="auto">
+          <mpath href="#amb-p4"/>
         </animateMotion>
       </circle>
     </svg>
 
-    <!-- Operational signal strip: the business operating continuously -->
+    <!-- Operational signal strip — the 4THWALL loop, continuously running -->
     <div class="op-strip">
-      <span class="op-step">Lead intake</span>
+      <span class="op-step">Capture</span>
       <span class="op-sep" aria-hidden="true">→</span>
-      <span class="op-step">Scheduling</span>
+      <span class="op-step">Brief</span>
       <span class="op-sep" aria-hidden="true">→</span>
       <span class="op-step">Dispatch</span>
       <span class="op-sep" aria-hidden="true">→</span>
-      <span class="op-step">Payments</span>
+      <span class="op-step">Deliver</span>
       <span class="op-sep" aria-hidden="true">→</span>
-      <span class="op-step">Retention</span>
+      <span class="op-step">Report</span>
+      <span class="op-sep" aria-hidden="true">→</span>
+      <span class="op-step">Retain</span>
+      <span class="op-sep op-sep-loop" aria-hidden="true">↻</span>
     </div>
   </div>
 </section>
