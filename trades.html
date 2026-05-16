@@ -173,7 +173,10 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .phone-bezel::after{content:"";position:absolute;left:-2.5px;top:30%;width:3px;height:42px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;box-shadow:0 56px 0 0 #2c2c29,0 56px 0 -1px #5d5d5a;z-index:5}
 .phone-screen{width:100%;height:100%;background:#fff;border-radius:30px;overflow:hidden;position:relative;display:flex;flex-direction:column}
 .phone-content{flex:1;min-height:0;position:relative;overflow:hidden;background:#fff}
-.screen-view{position:absolute;inset:0;display:flex;flex-direction:column;background:#fff;opacity:0;pointer-events:none;transition:opacity .4s ease}
+/* Higher specificity than the base .slack-scene{position:relative} rule below, so the
+   assistant-screen (which is also .slack-scene to inherit the chat styling) still gets
+   position:absolute and fills .phone-content. */
+.phone-content > .screen-view{position:absolute;inset:0;display:flex;flex-direction:column;background:#fff;opacity:0;pointer-events:none;transition:opacity .4s ease}
 .phone-toggle-area[data-active="client"] .client-screen,
 .phone-toggle-area[data-active="assistant"] .assistant-screen{opacity:1;pointer-events:auto}
 .phone-home-indicator{width:120px;height:4px;background:#1d1c1d;border-radius:2px;margin:.35rem auto .42rem;opacity:.85;flex-shrink:0}
@@ -1029,7 +1032,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                   </div>
                 </div>
 
-                <div class="screen-view assistant-screen" role="tabpanel" aria-label="Your experience">
+                <div class="screen-view assistant-screen slack-scene" role="tabpanel" aria-label="Your experience">
                   <div class="slack-mock-header">
                     <div class="slack-logo" id="slack-logo">
                       <svg viewBox="0 0 122.8 122.8" xmlns="http://www.w3.org/2000/svg">
