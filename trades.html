@@ -635,6 +635,142 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .prod-card.pc-dark .pc-link{color:rgba(247,243,236,.85)}
 .prod-card .pc-link:hover{gap:.7rem}
 .prod-card .pc-arr{font-family:var(--display);line-height:1}
+
+/* ── SLACK LAYER — newest section (v9.0) ─────────── */
+.slack-section{display:grid;grid-template-columns:380px 1fr;gap:4.5rem;align-items:start;margin-top:2.5rem}
+@media(max-width:880px){.slack-section{grid-template-columns:1fr;gap:2.4rem}}
+.slack-phone-col{justify-self:center;width:100%;max-width:380px}
+.slack-copy-col{display:flex;flex-direction:column;gap:1.7rem;padding-top:.4rem}
+.slack-copy-block .slack-copy-h{font-family:var(--display);font-size:1.15rem;font-weight:500;line-height:1.3;letter-spacing:-.02em;color:var(--ink);margin-bottom:.45rem}
+.slack-copy-block .slack-copy-h em{font-style:italic;color:var(--orange);font-weight:400}
+.slack-copy-block .slack-copy-d{font-size:.92rem;line-height:1.68;color:var(--muted)}
+.slack-copy-block .slack-copy-d strong{color:var(--ink);font-weight:600}
+.slack-closing{margin:3.2rem auto 0;padding-top:2.2rem;border-top:1px solid var(--line);font-family:var(--display);font-style:italic;font-size:clamp(1.4rem,2.6vw,2rem);line-height:1.25;font-weight:400;letter-spacing:-.025em;text-align:center;color:var(--ink);max-width:46rem}
+.slack-closing em{font-style:italic;color:var(--orange)}
+
+/* ── Slack mock — scoped under .slack-scene ───────── */
+.slack-scene{position:relative}
+.slack-scene .slack-phone{background:#1a1a1a;border-radius:46px;padding:8px;box-shadow:0 30px 70px -22px rgba(10,10,10,.4),0 12px 32px -10px rgba(10,10,10,.22),inset 0 0 0 2px #2a2a2a;position:relative}
+.slack-scene .slack-phone::before{content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:104px;height:30px;background:#000;border-radius:18px;z-index:10}
+.slack-scene .slack-screen{background:#fff;border-radius:38px;overflow:hidden;position:relative;aspect-ratio:9/19.5;display:flex;flex-direction:column;color:#1d1c1d}
+.slack-scene .slack-status{height:48px;background:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 32px 0;flex-shrink:0;font-family:-apple-system,'SF Pro Text',sans-serif}
+.slack-scene .slack-status-time{font-size:.95rem;font-weight:600;color:#1d1c1d;letter-spacing:-.01em}
+.slack-scene .slack-status-right{display:flex;align-items:center;gap:.35rem;color:#1d1c1d}
+.slack-scene .slack-signal{display:flex;align-items:flex-end;gap:1.5px;height:11px}
+.slack-scene .slack-signal i{display:block;background:#1d1c1d;width:3px;border-radius:.5px}
+.slack-scene .slack-signal i:nth-child(1){height:30%}
+.slack-scene .slack-signal i:nth-child(2){height:50%}
+.slack-scene .slack-signal i:nth-child(3){height:70%}
+.slack-scene .slack-signal i:nth-child(4){height:100%}
+.slack-scene .slack-wifi-svg{width:15px;height:11px}
+.slack-scene .slack-battery{width:24px;height:11px;border:1px solid #1d1c1d;border-radius:2.5px;position:relative;padding:1px}
+.slack-scene .slack-battery::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:#1d1c1d;border-radius:0 1px 1px 0}
+.slack-scene .slack-battery-fill{height:100%;background:#1d1c1d;border-radius:1px;width:85%}
+.slack-scene .slack-mock-header{background:#fff;padding:.6rem .85rem .7rem;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;gap:.65rem;flex-shrink:0;position:relative}
+.slack-scene .slack-logo{width:26px;height:26px;flex-shrink:0;position:relative;transform:scale(1);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.slack-scene .slack-logo.pulse{animation:slackLogoPulse .55s cubic-bezier(.34,1.56,.64,1)}
+.slack-scene .slack-logo svg{width:100%;height:100%}
+.slack-scene .slack-unread{position:absolute;top:-6px;right:-7px;min-width:18px;height:18px;background:#e01e5a;border-radius:9px;border:2px solid #fff;z-index:2;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.62rem;font-weight:700;padding:0 .3rem;font-family:-apple-system,sans-serif;opacity:0;transform:scale(0);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;line-height:1}
+.slack-scene .slack-unread.active{opacity:1;transform:scale(1)}
+.slack-scene .slack-channel-info{flex:1;min-width:0;display:flex;align-items:center;gap:.3rem;cursor:pointer}
+.slack-scene .slack-channel-info-text{flex:1;min-width:0}
+.slack-scene .slack-channel-name-row{display:flex;align-items:center;gap:.3rem;color:#1d1c1d;font-family:-apple-system,sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:-.01em;line-height:1.15}
+.slack-scene .slack-channel-name-row .hash{color:#1d1c1d;font-weight:700}
+.slack-scene .slack-channel-meta{font-size:.7rem;color:#616061;margin-top:.1rem;display:flex;align-items:center;gap:.35rem;font-family:-apple-system,sans-serif}
+.slack-scene .slack-status-dot{width:7px;height:7px;background:#2bac76;border-radius:50%;display:inline-block;flex-shrink:0}
+.slack-scene .slack-header-actions{display:flex;align-items:center;gap:.5rem;color:#454447}
+.slack-scene .slack-h-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.slack-scene .slack-h-icon svg{width:20px;height:20px;stroke:#454447;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.slack-scene .slack-messages{flex:1;overflow:hidden;background:#fff;position:relative;display:flex;flex-direction:column;justify-content:flex-end;mask-image:linear-gradient(to bottom,transparent 0,#000 6%,#000 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 6%,#000 100%)}
+.slack-scene .slack-messages-inner{display:flex;flex-direction:column;justify-content:flex-end;padding:.4rem 0}
+.slack-scene .slack-day-divider{display:flex;align-items:center;gap:.7rem;padding:.45rem 1rem;flex-shrink:0}
+.slack-scene .slack-day-divider .line{flex:1;height:1px;background:#e8e8e8}
+.slack-scene .slack-day-divider .label{font-size:.7rem;color:#616061;font-weight:700;border:1px solid #e8e8e8;padding:.18rem .6rem;border-radius:14px;background:#fff;font-family:-apple-system,sans-serif;letter-spacing:.02em}
+.slack-scene .slack-msg{padding:.5rem 1rem .55rem;display:flex;gap:.65rem;position:relative;flex-shrink:0;transition:max-height .4s ease,opacity .35s ease,transform .45s cubic-bezier(.16,1,.3,1),padding .35s ease;max-height:600px;opacity:1;transform:translateY(0)}
+.slack-scene .slack-msg.is-hidden{max-height:0;opacity:0;padding-top:0;padding-bottom:0;transform:translateY(10px);overflow:hidden;pointer-events:none}
+.slack-scene .slack-msg.fresh::before{content:"";position:absolute;inset:2px 6px;background:rgba(236,178,46,.16);border-radius:8px;z-index:0;pointer-events:none;animation:slackFreshFade 3.5s ease forwards}
+.slack-scene .slack-msg.fresh > *{position:relative;z-index:1}
+.slack-scene .slack-avatar{width:36px;height:36px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:.92rem;font-family:var(--display);font-style:italic;box-shadow:0 1px 1px rgba(0,0,0,.05)}
+.slack-scene .slack-avatar.alex{background:linear-gradient(135deg,#1e6642 0%,#2a8556 100%)}
+.slack-scene .slack-avatar.andrew{background:linear-gradient(135deg,#3d3a35 0%,#5a5650 100%);font-family:-apple-system,sans-serif;font-style:normal;font-size:.78rem;font-weight:600}
+.slack-scene .slack-msg-body{flex:1;min-width:0}
+.slack-scene .slack-msg-head{display:flex;align-items:baseline;gap:.4rem;margin-bottom:.18rem;font-family:-apple-system,sans-serif;flex-wrap:wrap}
+.slack-scene .slack-msg-name{font-weight:700;font-size:.92rem;color:#1d1c1d;letter-spacing:-.005em}
+.slack-scene .slack-msg-tag{background:#ddd;color:#454447;font-size:.58rem;font-weight:700;padding:.05rem .32rem;border-radius:3px;letter-spacing:.02em;line-height:1.3;font-family:-apple-system,sans-serif}
+.slack-scene .slack-msg-time{font-size:.7rem;color:#616061}
+.slack-scene .slack-msg-text{font-size:.88rem;color:#1d1c1d;line-height:1.45;font-family:-apple-system,sans-serif}
+.slack-scene .slack-msg-text strong{font-weight:700}
+.slack-scene .slack-list{margin-top:.35rem;display:flex;flex-direction:column;gap:.2rem}
+.slack-scene .slack-list-item{display:flex;gap:.5rem;align-items:flex-start;font-size:.86rem}
+.slack-scene .slack-list-item .b{color:#616061;flex-shrink:0;font-weight:700;line-height:1.45}
+.slack-scene .slack-callout{margin-top:.5rem;padding:.5rem .65rem;background:rgba(30,102,66,.07);border-radius:6px;border-left:3px solid #1e6642;font-family:-apple-system,sans-serif;font-size:.82rem;color:#454447;line-height:1.45}
+.slack-scene .slack-callout strong{color:#1d1c1d;font-weight:700}
+.slack-scene .slack-typing-row{padding:.3rem 1rem .45rem;display:flex;align-items:center;gap:.5rem;font-family:-apple-system,sans-serif;font-size:.7rem;color:#616061;max-height:40px;opacity:1;transition:max-height .3s ease,opacity .25s ease,padding .3s ease;flex-shrink:0}
+.slack-scene .slack-typing-row.is-hidden{max-height:0;opacity:0;padding-top:0;padding-bottom:0;overflow:hidden}
+.slack-scene .slack-typing-avatar{width:18px;height:18px;border-radius:3px;background:linear-gradient(135deg,#1e6642 0%,#2a8556 100%);color:#fff;font-family:var(--display);font-style:italic;font-size:.55rem;font-weight:600;display:flex;align-items:center;justify-content:center}
+.slack-scene .slack-dots{display:inline-flex;gap:3px;align-items:center;margin-left:.15rem}
+.slack-scene .slack-dots i{width:5px;height:5px;background:#616061;border-radius:50%;animation:slackBounce 1.2s infinite ease-in-out}
+.slack-scene .slack-dots i:nth-child(2){animation-delay:.15s}
+.slack-scene .slack-dots i:nth-child(3){animation-delay:.3s}
+.slack-scene .slack-input-bar{flex-shrink:0;background:#fff;padding:.5rem .7rem .4rem;border-top:1px solid #e8e8e8}
+.slack-scene .slack-input-wrap{background:#fff;border:1px solid #c0c0c0;border-radius:10px;overflow:hidden;transition:border-color .25s ease,box-shadow .25s ease}
+.slack-scene .slack-input-wrap.active{border-color:#1264a3;box-shadow:0 0 0 1px #1264a3}
+.slack-scene .slack-input-top{padding:.55rem .8rem .45rem;font-family:-apple-system,sans-serif;font-size:.86rem;color:#8d8d8d;min-height:2.1rem;display:flex;align-items:center}
+.slack-scene .slack-input-top .typed{color:#1d1c1d}
+.slack-scene .slack-typing-cursor{display:inline-block;width:1.5px;height:1em;background:#1d1c1d;margin-left:1px;vertical-align:middle;animation:slackBlink .9s steps(2) infinite}
+.slack-scene .slack-input-bottom{display:flex;align-items:center;justify-content:space-between;padding:.25rem .5rem .4rem}
+.slack-scene .slack-input-tools{display:flex;align-items:center;gap:.1rem}
+.slack-scene .slack-it{width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:#454447;cursor:pointer;border-radius:5px}
+.slack-scene .slack-it svg{width:18px;height:18px;stroke:#454447;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.slack-scene .slack-it-text{font-family:-apple-system,sans-serif;font-size:1rem;font-weight:600;color:#454447}
+.slack-scene .slack-input-right{display:flex;align-items:center;gap:.1rem}
+.slack-scene .slack-send-btn{background:#ddd;color:#8d8d8d;width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-left:.2rem;transition:background .2s ease,color .2s ease,transform .15s ease}
+.slack-scene .slack-send-btn.active{background:#007a5a;color:#fff}
+.slack-scene .slack-send-btn.pressed{transform:scale(.92)}
+.slack-scene .slack-send-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.slack-scene .slack-tab-bar{flex-shrink:0;background:#fff;padding:.5rem 0 .35rem;border-top:1px solid #e8e8e8;display:flex;justify-content:space-around;align-items:center}
+.slack-scene .slack-tab{display:flex;flex-direction:column;align-items:center;gap:.15rem;font-family:-apple-system,sans-serif;font-size:.62rem;color:#616061;font-weight:600;letter-spacing:.01em;padding:.15rem .5rem;position:relative;flex:1;cursor:pointer}
+.slack-scene .slack-tab.active{color:#1d1c1d;font-weight:700}
+.slack-scene .slack-tab svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.slack-scene .slack-tab.active svg{stroke-width:2.4}
+.slack-scene .slack-tab .dot{position:absolute;top:-1px;right:calc(50% - 18px);width:8px;height:8px;background:#4a154b;border-radius:50%;border:1.5px solid #fff}
+.slack-scene .slack-home-indicator{width:120px;height:4px;background:#1d1c1d;border-radius:2px;margin:.35rem auto .4rem;opacity:.85}
+.slack-subcaption{margin-top:1.4rem;text-align:center;display:flex;justify-content:center;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;font-weight:600;flex-wrap:wrap}
+.slack-subcaption span.accent{color:var(--orange)}
+.slack-subcaption .dot-sep{opacity:.4}
+
+@keyframes slackLogoPulse{0%,100%{transform:scale(1)}30%{transform:scale(1.18)}60%{transform:scale(.96)}}
+@keyframes slackFreshFade{0%,30%{opacity:1}100%{opacity:0}}
+@keyframes slackBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes slackBounce{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-4px);opacity:1}}
+
+/* Light-mode lock for the embedded Slack mock — preserves legibility on iOS dark mode */
+@media (prefers-color-scheme:dark){
+  .slack-scene .slack-screen,
+  .slack-scene .slack-messages,
+  .slack-scene .slack-mock-header,
+  .slack-scene .slack-status,
+  .slack-scene .slack-input-bar,
+  .slack-scene .slack-tab-bar{background:#fff !important}
+  .slack-scene .slack-msg-name,
+  .slack-scene .slack-msg-text,
+  .slack-scene .slack-msg-text strong,
+  .slack-scene .slack-callout strong,
+  .slack-scene .slack-channel-name-row,
+  .slack-scene .slack-tab.active{color:#1d1c1d !important}
+  .slack-scene .slack-msg-time,
+  .slack-scene .slack-day-divider .label,
+  .slack-scene .slack-input-top,
+  .slack-scene .slack-channel-meta,
+  .slack-scene .slack-callout,
+  .slack-scene .slack-list-item .b,
+  .slack-scene .slack-tab{color:#616061 !important}
+}
+
+/* ── footer version stamp (v9.0 — now with #alex) ─────── */
+.foot-version{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;color:rgba(247,243,236,.42);margin-top:1.2rem;padding-top:1.1rem;border-top:1px solid rgba(247,243,236,.08);text-align:center;text-transform:uppercase}
+.foot-version .accent{color:var(--orange);opacity:.85}
+@media(max-width:760px){.foot-version{font-size:.56rem;letter-spacing:.14em;padding-top:.9rem;margin-top:.9rem}}
 </style>
 </head>
 <body>
@@ -844,6 +980,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <span class="feat-btn-label">Seasonal Campaigns</span>
         <span class="feat-btn-dot"></span>
       </button>
+      <button class="feat-btn" data-fi="6">
+        <span class="feat-btn-n">007</span>
+        <span class="feat-btn-label">The Slack Layer</span>
+        <span class="feat-btn-dot"></span>
+      </button>
       <div class="feat-prog-wrap"><div class="feat-prog-bar" id="feat-bar"></div></div>
     </div>
 
@@ -915,8 +1056,247 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <span class="feat-pill">Automated sends</span>
         </div>
       </div>
+      <div class="feat-pane" data-fp="6">
+        <div class="feat-pane-ey">007 · The Slack Layer</div>
+        <h3 class="feat-pane-h">Real-time briefing<br>via <em>#alex.</em></h3>
+        <p class="feat-pane-d">The six capabilities above, surfaced in your pocket. Morning brief at 6:30. Every new lead announced the moment it lands. Every booked estimate, every review, every closed job. <strong>Ask it anything</strong> about your business and get an answer in seconds.</p>
+        <div class="feat-pane-cut">A new layer of Front of House. Live now — v9.0.</div>
+        <div class="feat-pills">
+          <span class="feat-pill">Slack-native</span>
+          <span class="feat-pill">#alex assistant</span>
+          <span class="feat-pill">Ask anything</span>
+        </div>
+      </div>
     </div>
   </div>
+</section>
+
+<!-- ════════════════════════════════════════════ SLACK LAYER — v9.0, just shipped ════════════════════════════════════════════ -->
+<section class="s wrap" id="slack-layer" data-screen-label="01.5 Slack layer">
+  <div class="s-meta">
+    <div>
+      <div class="s-label r">Latest · 01.5</div>
+      <h2 class="s-h r in">An assistant<br><span class="ital">in your pocket.</span></h2>
+      <p class="s-note r in d2">The newest layer of Front of House — every lead, every booking, every job briefed in real time through a dedicated Slack channel. Lives in your pocket. Travels with you.</p>
+    </div>
+  </div>
+
+  <div class="slack-section r in d2">
+    <div class="slack-phone-col">
+
+      <div class="slack-scene" id="slack-scene">
+        <div class="slack-phone">
+          <div class="slack-screen">
+
+            <div class="slack-status">
+              <div class="slack-status-time">9:41</div>
+              <div class="slack-status-right">
+                <span class="slack-signal"><i></i><i></i><i></i><i></i></span>
+                <svg class="slack-wifi-svg" viewBox="0 0 16 12" fill="currentColor"><path d="M8 11.5a1 1 0 110-2 1 1 0 010 2zm2.2-3a3.1 3.1 0 00-4.4 0L4.4 7.1a5.1 5.1 0 017.2 0L10.2 8.5zm2.1-2.1A6.1 6.1 0 008 4.5c-1.6 0-3.1.6-4.3 1.7L2.3 4.8a8.1 8.1 0 0111.4 0l-1.4 1.6zM14.4 4A9.1 9.1 0 008 1.5C5.7 1.5 3.5 2.4 1.6 4L.2 2.6a11.1 11.1 0 0115.6 0L14.4 4z"/></svg>
+                <span class="slack-battery"><span class="slack-battery-fill"></span></span>
+              </div>
+            </div>
+
+            <div class="slack-mock-header">
+              <div class="slack-logo" id="slack-logo">
+                <svg viewBox="0 0 122.8 122.8" xmlns="http://www.w3.org/2000/svg">
+                  <path fill="#e01e5a" d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9zM32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9z"/>
+                  <path fill="#36c5f0" d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9zM45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9z"/>
+                  <path fill="#2eb67d" d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97zM90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9z"/>
+                  <path fill="#ecb22e" d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9z"/>
+                </svg>
+                <div class="slack-unread" id="slack-badge">1</div>
+              </div>
+              <div class="slack-channel-info">
+                <div class="slack-channel-info-text">
+                  <div class="slack-channel-name-row">
+                    <span class="hash">#</span>alex
+                    <svg width="11" height="11" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
+                  </div>
+                  <div class="slack-channel-meta">
+                    <span class="slack-status-dot"></span>
+                    <span>4THWALL · Always on</span>
+                  </div>
+                </div>
+              </div>
+              <div class="slack-header-actions">
+                <div class="slack-h-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
+                </div>
+                <div class="slack-h-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="slack-messages">
+              <div class="slack-messages-inner">
+
+                <div class="slack-day-divider">
+                  <div class="line"></div>
+                  <div class="label">Today</div>
+                  <div class="line"></div>
+                </div>
+
+                <div class="slack-msg" id="slack-msg-brief">
+                  <div class="slack-avatar alex">A</div>
+                  <div class="slack-msg-body">
+                    <div class="slack-msg-head">
+                      <span class="slack-msg-name">alex</span>
+                      <span class="slack-msg-tag">APP</span>
+                      <span class="slack-msg-time">6:30 AM</span>
+                    </div>
+                    <div class="slack-msg-text">
+                      <strong>Good morning. Here's the rundown.</strong>
+                      <div class="slack-list">
+                        <div class="slack-list-item"><span class="b">•</span><span>3 leads overnight · 2 storm, 1 routine</span></div>
+                        <div class="slack-list-item"><span class="b">•</span><span>Westport leak → booked Tue 8 AM</span></div>
+                        <div class="slack-list-item"><span class="b">•</span><span>5-star review (Cohen, Greenwich)</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slack-msg is-hidden" id="slack-msg-lead">
+                  <div class="slack-avatar alex">A</div>
+                  <div class="slack-msg-body">
+                    <div class="slack-msg-head">
+                      <span class="slack-msg-name">alex</span>
+                      <span class="slack-msg-tag">APP</span>
+                      <span class="slack-msg-time">10:34 AM</span>
+                    </div>
+                    <div class="slack-msg-text">
+                      <strong>New lead — Greenwich, CT.</strong>
+                      <div class="slack-list">
+                        <div class="slack-list-item"><span class="b">•</span><span>Storm damage · 2-story colonial</span></div>
+                        <div class="slack-list-item"><span class="b">•</span><span>Spoke with Jim · pulled photos via text</span></div>
+                        <div class="slack-list-item"><span class="b">•</span><span>Qualified $$$ · urgency high</span></div>
+                      </div>
+                      <div class="slack-callout"><strong>Estimate booked:</strong> Thursday 2:00 PM</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slack-msg is-hidden" id="slack-msg-andrew">
+                  <div class="slack-avatar andrew">AR</div>
+                  <div class="slack-msg-body">
+                    <div class="slack-msg-head">
+                      <span class="slack-msg-name">Andrew</span>
+                      <span class="slack-msg-time">2:18 PM</span>
+                    </div>
+                    <div class="slack-msg-text">
+                      how many estimates did we book this week?
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slack-typing-row is-hidden" id="slack-typing-row">
+                  <div class="slack-typing-avatar">A</div>
+                  <span>alex is typing</span>
+                  <span class="slack-dots"><i></i><i></i><i></i></span>
+                </div>
+
+                <div class="slack-msg is-hidden" id="slack-msg-response">
+                  <div class="slack-avatar alex">A</div>
+                  <div class="slack-msg-body">
+                    <div class="slack-msg-head">
+                      <span class="slack-msg-name">alex</span>
+                      <span class="slack-msg-tag">APP</span>
+                      <span class="slack-msg-time">2:19 PM</span>
+                    </div>
+                    <div class="slack-msg-text">
+                      <strong>7 booked this week.</strong>
+                      <div class="slack-list">
+                        <div class="slack-list-item"><span class="b">•</span><span>2 storm-related (Mon, Wed)</span></div>
+                        <div class="slack-list-item"><span class="b">•</span><span>4 standard repairs</span></div>
+                        <div class="slack-list-item"><span class="b">•</span><span>1 new build inquiry</span></div>
+                      </div>
+                      <div class="slack-callout">Conversion: <strong>64%</strong> · up from 51%</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="slack-input-bar">
+              <div class="slack-input-wrap" id="slack-input-wrap">
+                <div class="slack-input-top"><span id="slack-input-text">Message #alex</span></div>
+                <div class="slack-input-bottom">
+                  <div class="slack-input-tools">
+                    <div class="slack-it"><span class="slack-it-text">@</span></div>
+                    <div class="slack-it"><span class="slack-it-text">/</span></div>
+                    <div class="slack-it">
+                      <svg viewBox="0 0 24 24"><path d="M16.5 3l-12 12a4 4 0 105.66 5.66l11-11a2.5 2.5 0 00-3.54-3.54l-11 11"/></svg>
+                    </div>
+                  </div>
+                  <div class="slack-input-right">
+                    <div class="slack-it">
+                      <svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="10" rx="2"/><path d="M17 11l4-3v8l-4-3z"/></svg>
+                    </div>
+                    <div class="slack-it">
+                      <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="13" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>
+                    </div>
+                    <div class="slack-send-btn" id="slack-send-btn">
+                      <svg viewBox="0 0 24 24"><path d="M5 12l14-7-3 7 3 7z"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="slack-tab-bar">
+              <div class="slack-tab">
+                <svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2z"/></svg>
+                <span>Home</span>
+              </div>
+              <div class="slack-tab">
+                <svg viewBox="0 0 24 24"><path d="M21 11c0 4-4 7-9 7-1.5 0-3-.2-4.2-.7L3 19l1.4-3.7C3.5 14 3 12.5 3 11c0-4 4-7 9-7s9 3 9 7z"/></svg>
+                <span>DMs</span>
+                <span class="dot"></span>
+              </div>
+              <div class="slack-tab active">
+                <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+                <span>Activity</span>
+              </div>
+              <div class="slack-tab">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>
+                <span>More</span>
+              </div>
+            </div>
+            <div class="slack-home-indicator"></div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="slack-subcaption">
+        <span>Front of House</span>
+        <span class="dot-sep">·</span>
+        <span class="accent">#alex layer</span>
+        <span class="dot-sep">·</span>
+        <span>v9.0</span>
+      </div>
+
+    </div>
+
+    <div class="slack-copy-col">
+      <div class="slack-copy-block r in d2">
+        <h3 class="slack-copy-h"><em>What it is.</em></h3>
+        <p class="slack-copy-d"><strong>#alex</strong> is the front-of-house assistant living in your Slack — briefing you the moment a lead comes in, an estimate gets booked, or a job closes out. Works the same on the truck as it does in the office.</p>
+      </div>
+      <div class="slack-copy-block r in d3">
+        <h3 class="slack-copy-h"><em>What's different.</em></h3>
+        <p class="slack-copy-d">Most automation tells you something happened. <strong>#alex</strong> tells you what happened, what it means, and what's next. New lead in Greenwich, qualified, booked Thursday at 2pm — not a notification, a brief.</p>
+      </div>
+      <div class="slack-copy-block r in d4">
+        <h3 class="slack-copy-h"><em>What you can do back.</em></h3>
+        <p class="slack-copy-d">Ask it anything. How many estimates did we book this week. What's our conversion rate. Who called yesterday and what did they say. Plain English in, plain English back.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="slack-closing r in">The shop runs while you're on the roof. <em>Now you can see it running.</em></p>
 </section>
 
 <!-- ════════════════════════════════════════════ MARKET — why now ════════════════════════════════════════════ -->
@@ -1121,6 +1501,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <span>© 2026 4THWALL · ALL RIGHTS RESERVED</span>
       <span><a href="/privacy.html">PRIVACY</a> · <a href="/terms.html">TERMS</a></span>
     </div>
+    <div class="foot-version">FRONT OF HOUSE · v9.0 · <span class="accent">NOW WITH #ALEX</span></div>
   </div>
 </footer>
 
@@ -1204,6 +1585,86 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   single.querySelector('.faq-toggle').addEventListener('click',function(){
     single.classList.toggle('open');
   });
+})();
+/* ── Slack #alex mock — 20s animated loop ── */
+(function(){
+  var scene=document.getElementById('slack-scene');
+  if(!scene)return;
+  var logo=document.getElementById('slack-logo'),
+      badge=document.getElementById('slack-badge'),
+      msgLead=document.getElementById('slack-msg-lead'),
+      msgAndrew=document.getElementById('slack-msg-andrew'),
+      msgResponse=document.getElementById('slack-msg-response'),
+      typingRow=document.getElementById('slack-typing-row'),
+      inputWrap=document.getElementById('slack-input-wrap'),
+      inputText=document.getElementById('slack-input-text'),
+      sendBtn=document.getElementById('slack-send-btn');
+
+  var queryText='how many estimates did we book this week?';
+  var timers=[];
+  function schedule(fn,ms){var t=setTimeout(fn,ms);timers.push(t);return t;}
+  function clearAll(){timers.forEach(function(t){clearTimeout(t);});timers.length=0;}
+  function reset(){
+    msgLead.classList.add('is-hidden');msgLead.classList.remove('fresh');
+    msgAndrew.classList.add('is-hidden');
+    msgResponse.classList.add('is-hidden');msgResponse.classList.remove('fresh');
+    typingRow.classList.add('is-hidden');
+    badge.classList.remove('active');badge.textContent='1';
+    inputWrap.classList.remove('active');inputText.textContent='Message #alex';
+    sendBtn.classList.remove('active');sendBtn.classList.remove('pressed');
+  }
+  function pulse(){logo.classList.remove('pulse');void logo.offsetWidth;logo.classList.add('pulse');}
+  function typeQuery(cb){
+    inputText.innerHTML='';
+    var i=0,charDelay=55;
+    function step(){
+      if(i<queryText.length){
+        inputText.innerHTML='<span class="typed">'+queryText.substring(0,i+1)+'</span><span class="slack-typing-cursor"></span>';
+        i++;schedule(step,charDelay);
+      }else{
+        schedule(function(){sendBtn.classList.add('active');schedule(cb,500);},250);
+      }
+    }
+    step();
+  }
+  function runCycle(){
+    clearAll();reset();
+    schedule(function(){pulse();badge.textContent='1';badge.classList.add('active');},1500);
+    schedule(function(){msgLead.classList.remove('is-hidden');msgLead.classList.add('fresh');},1650);
+    schedule(function(){badge.classList.remove('active');},5500);
+    schedule(function(){inputWrap.classList.add('active');},6800);
+    schedule(function(){
+      typeQuery(function(){
+        sendBtn.classList.add('pressed');
+        schedule(function(){sendBtn.classList.remove('pressed');},150);
+        inputText.textContent='Message #alex';
+        inputWrap.classList.remove('active');
+        sendBtn.classList.remove('active');
+        msgAndrew.classList.remove('is-hidden');
+      });
+    },7100);
+    schedule(function(){typingRow.classList.remove('is-hidden');},11500);
+    schedule(function(){typingRow.classList.add('is-hidden');},13500);
+    schedule(function(){
+      pulse();badge.textContent='1';badge.classList.add('active');
+      msgResponse.classList.remove('is-hidden');msgResponse.classList.add('fresh');
+    },13700);
+    schedule(function(){badge.classList.remove('active');},17500);
+    schedule(function(){runCycle();},20000);
+  }
+
+  // Start only when scrolled into view; pause when out of view to save cycles
+  var running=false;
+  function start(){if(running)return;running=true;runCycle();}
+  function stop(){if(!running)return;running=false;clearAll();}
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting)start();else stop();});
+    },{threshold:0.2});
+    io.observe(scene);
+  }else{
+    start();
+  }
 })();
 </script>
 </body>
