@@ -456,7 +456,15 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 }
 /* Mobile: let the laptop break out of the hero column so the screen is big enough to actually read */
 @media(max-width:760px){
-  #lap-mount{margin-left:-1rem;margin-right:-1rem;padding-top:16px !important;padding-bottom:60px !important}
+  #lap-mount{margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));padding-top:28px !important;padding-bottom:74px !important}
+  .lap-wrap{max-width:none;width:100%}
+  .lap-toast{top:-16px;left:5%;padding:.55rem .8rem;min-width:180px;border-radius:12px;gap:.55rem}
+  .lt-dot{width:9px;height:9px}
+  .lt-body strong{font-size:.92rem}
+  .lt-body span{font-size:.66rem;letter-spacing:.06em}
+  .lap-stat{bottom:14px;right:3%;padding:.55rem .85rem;min-width:104px;border-radius:12px}
+  .ls-num{font-size:1.7rem}
+  .ls-lbl{font-size:.6rem}
 }
 
 /* Top bar */
@@ -610,7 +618,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lap-vig-you{display:block;color:var(--ink)}
 .lap-vig-we{display:block;color:var(--orange);margin-top:.1rem}
 
-@media(max-width:880px){.lap-wrap{max-width:min(420px,88vw)}}
+@media(max-width:880px){.lap-wrap{max-width:none}}
 
 /* ── STEPS GRID ─── */
 .steps{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);margin-top:2rem}
