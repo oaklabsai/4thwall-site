@@ -7,6 +7,7 @@
 <meta name="description" content="4THWALL Ops builds and manages custom AI infrastructure for agencies, property managers, and multi-location service businesses. Not a tool. An operating layer.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="macbook.png" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
@@ -160,6 +161,11 @@ nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-it
 .orbit-dot:nth-child(5){left:65%;top:18%;animation-duration:20s;animation-delay:-12s;width:5px;height:5px}
 .orbit-dot:nth-child(1){left:10%;top:55%;animation-duration:24s}
 @keyframes drift{0%{transform:translate(0,0)}25%{transform:translate(30px,-20px)}50%{transform:translate(-10px,30px)}75%{transform:translate(-25px,-15px)}100%{transform:translate(0,0)}}
+
+/* ── Perf: defer layout/paint of below-fold sections until they
+   approach the viewport. Reserves contain-intrinsic-size so scroll
+   position stays stable while the section is "virtualized". */
+.s,.composer-section,footer{content-visibility:auto;contain-intrinsic-size:1px 800px}
 
 /* ───────────────────────────────── SECTIONS ──────────────────── */
 section{position:relative;z-index:2}
@@ -448,13 +454,17 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 /* ── Laptop OS demo ─────────────────────────────────────────── */
 @keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes lapFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes lapFloat{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-8px,0)}}
 @keyframes lapRowIn{to{opacity:1;transform:none}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-@keyframes lapGround{0%,100%{transform:translateX(-50%) scaleX(1);opacity:.78}50%{transform:translateX(-50%) scaleX(.88);opacity:.5}}
+/* Ground shadow: STATIC (was animated blur — too expensive on mobile GPU) */
 #lap-mount{position:relative}
-#lap-mount::before{content:"";position:absolute;left:50%;bottom:78px;transform:translateX(-50%);width:min(68%,520px);height:30px;background:radial-gradient(ellipse at center,rgba(20,16,12,.42) 0%,rgba(20,16,12,.18) 42%,transparent 74%);filter:blur(22px);pointer-events:none;animation:lapGround 9s ease-in-out infinite;z-index:0}
-.lap-wrap{position:relative;width:100%;max-width:760px;margin:0 auto;aspect-ratio:472/287;background:url('macbook.png') center/contain no-repeat;animation:lapFloat 9s ease-in-out infinite;filter:drop-shadow(0 1px 1px rgba(0,0,0,.10)) drop-shadow(0 3px 4px rgba(0,0,0,.08)) drop-shadow(0 10px 14px rgba(0,0,0,.10)) drop-shadow(0 28px 36px rgba(0,0,0,.14)) drop-shadow(0 60px 76px rgba(0,0,0,.18)) drop-shadow(0 110px 130px rgba(20,16,12,.16));z-index:1}
+#lap-mount::before{content:"";position:absolute;left:50%;bottom:78px;transform:translateX(-50%);width:min(68%,520px);height:30px;background:radial-gradient(ellipse at center,rgba(20,16,12,.42) 0%,rgba(20,16,12,.18) 42%,transparent 74%);filter:blur(22px);pointer-events:none;z-index:0;opacity:.7}
+/* Laptop: 2-layer drop-shadow (was 6) + will-change so the browser
+   composites the filtered bitmap once and reuses it across the float
+   keyframes. Massive perf win on mobile — drop-shadow re-rasterizes
+   per frame when stacked, this caps the cost. */
+.lap-wrap{position:relative;width:100%;max-width:760px;margin:0 auto;aspect-ratio:472/287;background:url('macbook.png') center/contain no-repeat;animation:lapFloat 9s ease-in-out infinite;filter:drop-shadow(0 14px 22px rgba(20,16,12,.16)) drop-shadow(0 56px 64px rgba(20,16,12,.18));will-change:transform;z-index:1}
 
 /* Screen overlay container — covers the full bezel area of the macbook.png.
    Source image cropped to its non-transparent bbox (472×287). Bezel pixel
