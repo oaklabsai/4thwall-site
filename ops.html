@@ -428,38 +428,147 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lap-lid::before,.lap-lid::after{display:none}
 .lap-screen::before{display:none}
 
-/* screen display */
-.lap-screen{width:100%;height:100%;background:#080807;border-radius:2px;overflow:hidden;display:flex;flex-direction:column;color:rgba(247,243,236,.88);font-family:var(--mono);box-shadow:none;position:relative}
-.lap-bar{display:flex;align-items:center;padding:.3rem .5rem;background:rgba(0,0,0,.38);border-bottom:1px solid rgba(247,243,236,.055);flex-shrink:0;gap:.35rem}
-.lap-tl{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.lap-tl:nth-child(1){background:#ff5f57;box-shadow:0 0 0 .5px rgba(255,60,50,.4)}
-.lap-tl:nth-child(2){background:#febc2e;box-shadow:0 0 0 .5px rgba(254,180,40,.3)}
-.lap-tl:nth-child(3){background:#28c840;box-shadow:0 0 0 .5px rgba(35,190,55,.3)}
-.lap-bar-label{flex:1;text-align:center;font-size:.46rem;letter-spacing:.11em;color:rgba(247,243,236,.32);text-transform:uppercase;overflow:hidden;white-space:nowrap;margin:0 .3rem}
-.lap-bar-time{font-size:.46rem;letter-spacing:.06em;color:rgba(247,243,236,.28);flex-shrink:0}
-.lap-body{flex:1;display:flex;overflow:hidden;min-height:0}
-.lap-sidebar{width:26px;flex-shrink:0;background:rgba(0,0,0,.28);border-right:1px solid rgba(247,243,236,.045);display:flex;flex-direction:column;align-items:center;padding:.35rem 0;gap:.2rem}
-.ls-icon{width:16px;height:16px;border-radius:3px;background:none;border:none;color:rgba(247,243,236,.22);font-size:.52rem;display:flex;align-items:center;justify-content:center;cursor:default;padding:0;line-height:1;font-family:var(--mono);transition:background .2s,color .2s}
-.ls-icon.ls-active{background:rgba(30,102,66,.3);color:var(--orange)}
-.lap-content{flex:1;overflow:hidden;padding:.5rem .55rem .35rem;display:flex;flex-direction:column;gap:.2rem;min-width:0}
-.lap-scene-tag{font-size:.42rem;color:rgba(247,243,236,.24);letter-spacing:.13em;text-transform:uppercase;flex-shrink:0}
-.lap-query{font-family:var(--display);font-style:italic;font-size:.75rem;line-height:1.25;color:rgba(247,243,236,.92);min-height:1.1em;padding:.08rem 0 .18rem;flex-shrink:0;position:relative}
-.lap-query::after{content:"|";color:var(--orange);animation:blink .9s ease-in-out infinite;margin-left:1px}
-.lap-query.done::after{display:none}
-.lap-output{flex:1;display:flex;flex-direction:column;gap:.2rem;overflow:hidden}
-.lap-row{display:flex;align-items:center;gap:.32rem;padding:.24rem .36rem;background:rgba(247,243,236,.038);border:1px solid rgba(247,243,236,.055);border-radius:4px;opacity:0;transform:translateY(4px);animation:lapRowIn .3s cubic-bezier(.16,1,.3,1) forwards;font-size:.58rem;flex-shrink:0}
-.lr-icon{width:12px;height:12px;border-radius:2px;background:rgba(30,102,66,.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.44rem;color:var(--orange);font-family:var(--mono)}
-.lr-main{flex:1;min-width:0;line-height:1.2;overflow:hidden}
-.lr-sub{display:block;font-size:.46rem;color:rgba(247,243,236,.3);margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lr-val{font-family:var(--display);font-style:italic;font-size:.82rem;letter-spacing:-.02em;color:rgba(247,243,236,.95);flex-shrink:0;line-height:1}
-.lr-tag{font-size:.42rem;color:rgba(247,243,236,.28);border:1px solid rgba(247,243,236,.1);border-radius:99px;padding:1px 4px;text-transform:uppercase;letter-spacing:.08em;flex-shrink:0;white-space:nowrap}
-.lap-row.lr-warn .lr-tag{border-color:rgba(255,195,0,.22);color:rgba(255,195,0,.55)}
-.lap-row.lr-alert .lr-tag{border-color:rgba(255,80,60,.22);color:rgba(255,90,70,.55)}
-.lap-row.lr-ok .lr-tag{border-color:rgba(30,102,66,.3);color:rgba(80,180,120,.65)}
-.lap-prompt{display:flex;align-items:center;gap:.3rem;padding:.26rem .42rem;background:rgba(247,243,236,.032);border-top:1px solid rgba(247,243,236,.05);flex-shrink:0}
-.lp-star{color:var(--orange);font-size:.7rem;flex-shrink:0;line-height:1}
-.lp-text{flex:1;font-size:.47rem;color:rgba(247,243,236,.2);overflow:hidden;white-space:nowrap;font-family:var(--mono)}
-.lp-send{width:13px;height:13px;border-radius:50%;background:rgba(30,102,66,.38);border:none;color:rgba(247,243,236,.6);font-size:.5rem;display:flex;align-items:center;justify-content:center;cursor:default;flex-shrink:0;padding:0;font-family:var(--mono)}
+/* ── Laptop screen content: Slack desktop mock (Operations workspace) ───── */
+.lap-screen{
+  --slk-dark:#1a1d21;--slk-darker:#19171d;
+  --slk-sidebar:#3f0e40;--slk-sidebar-text:rgba(255,255,255,0.7);
+  --slk-divider:#522653;--slk-active-bg:#1164a3;
+  --slk-text:#d1d2d3;--slk-text-2:rgba(171,171,171,0.8);--slk-text-muted:#868686;
+  --slk-border:#2c2d30;--slk-input-border:#565856;--slk-link:#1d9bd1;
+  --slk-red:#e01e5a;--slk-send-green:#007a5a;
+  --slk-brand:#2a8556;--slk-brand-soft:#3ba672;
+  --slk-amber:rgba(236,178,46,0.13);
+  width:100%;height:100%;background:var(--slk-dark);border-radius:2px;overflow:hidden;
+  display:grid;grid-template-rows:auto 1fr;color:var(--slk-text);position:relative;
+  font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;
+}
+
+/* Top bar */
+.lap-screen .topbar{background:var(--slk-darker);display:grid;grid-template-columns:18% 1fr 18%;align-items:center;padding:.18rem .3rem;border-bottom:1px solid var(--slk-border);min-height:18px}
+.lap-screen .tb-left{display:flex;align-items:center;gap:.15rem;padding-left:.15rem;color:var(--slk-text-2)}
+.lap-screen .tb-nav-arrow,.lap-screen .tb-history{width:9px;height:9px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-muted)}
+.lap-screen .tb-nav-arrow svg,.lap-screen .tb-history svg{width:7px;height:7px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lap-screen .tb-center{display:flex;justify-content:center;align-items:center}
+.lap-screen .tb-search{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:3px;padding:.08rem .25rem;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:.2rem;max-width:70%;width:auto}
+.lap-screen .tb-search svg{width:6px;height:6px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;flex-shrink:0}
+.lap-screen .tb-search-text{font-size:.4rem;overflow:hidden;white-space:nowrap}
+.lap-screen .tb-right{display:flex;justify-content:flex-end;align-items:center;gap:.2rem;padding-right:.15rem}
+.lap-screen .tb-avatar{width:11px;height:11px;border-radius:2px;background:linear-gradient(135deg,#5a5650,#3d3a35);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.36rem;font-weight:600}
+.lap-screen .tb-help{width:9px;height:9px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-muted);border:1px solid currentColor;border-radius:50%;font-size:.34rem;font-weight:700;line-height:1}
+
+/* Main grid: workspaces + sidebar + content */
+.lap-screen .main{display:grid;grid-template-columns:22px 80px 1fr;overflow:hidden;min-height:0}
+
+/* Workspace switcher */
+.lap-screen .workspaces{background:var(--slk-darker);padding:.25rem 0;display:flex;flex-direction:column;align-items:center;gap:.2rem;border-right:1px solid rgba(255,255,255,.04)}
+.lap-screen .ws-icon{width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.5rem;position:relative}
+.lap-screen .ws-icon.active{box-shadow:inset 0 0 0 1.5px var(--slk-active-bg)}
+.lap-screen .ws-icon.active::before{content:"";position:absolute;left:-5px;top:3px;width:2px;height:10px;background:#fff;border-radius:0 1px 1px 0}
+.lap-screen .ws-icon.ops{background:#1e6642;color:#fff;font-family:var(--display);font-style:italic;font-size:.62rem}
+.lap-screen .ws-icon.alt{background:#a02b5b;font-size:.5rem}
+.lap-screen .ws-icon.alt2{background:#3d3a35;color:rgba(255,255,255,.6);font-size:.7rem;font-weight:400}
+.lap-screen .ws-badge{position:absolute;top:-2px;right:-2px;min-width:8px;height:8px;background:var(--slk-red);color:#fff;border-radius:5px;border:1.5px solid var(--slk-darker);font-size:.32rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 .14rem;opacity:0;transform:scale(0);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;line-height:1}
+.lap-screen .ws-badge.active{opacity:1;transform:scale(1)}
+
+/* Sidebar */
+.lap-screen .sidebar{background:var(--slk-sidebar);color:var(--slk-sidebar-text);padding:.3rem 0 0;overflow-y:auto;font-size:.5rem;min-width:0}
+.lap-screen .sb-team{padding:0 .35rem .35rem;border-bottom:1px solid var(--slk-divider);margin-bottom:.25rem;display:flex;align-items:center;justify-content:space-between}
+.lap-screen .sb-team-name{font-weight:900;color:#fff;font-size:.56rem;display:flex;align-items:center;gap:.15rem;letter-spacing:-.01em}
+.lap-screen .sb-team-name svg{width:6px;height:6px;stroke:currentColor;stroke-width:2.5;fill:none}
+.lap-screen .sb-edit{width:11px;height:11px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--slk-sidebar)}
+.lap-screen .sb-edit svg{width:6px;height:6px;stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lap-screen .sb-section{padding:0 .25rem .1rem}
+.lap-screen .sb-item{padding:.08rem .25rem;border-radius:3px;display:flex;align-items:center;gap:.2rem;font-weight:500;font-size:.5rem}
+.lap-screen .sb-icon{width:8px;height:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lap-screen .sb-icon svg{width:8px;height:8px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lap-screen .sb-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lap-screen .sb-group{margin-top:.15rem}
+.lap-screen .sb-group-head{padding:.1rem .25rem;display:flex;align-items:center;gap:.15rem;color:var(--slk-sidebar-text);font-size:.46rem;font-weight:500}
+.lap-screen .sb-group-head svg{width:5px;height:5px;stroke:currentColor;stroke-width:2.5;fill:none;flex-shrink:0}
+.lap-screen .sb-channel{padding:.08rem .25rem .08rem .85rem;border-radius:3px;display:flex;align-items:center;gap:.15rem;font-size:.5rem;position:relative}
+.lap-screen .sb-channel .hash{color:var(--slk-sidebar-text);font-weight:500;opacity:.7}
+.lap-screen .sb-channel.active{background:var(--slk-active-bg);color:#fff;font-weight:600}
+.lap-screen .sb-channel.active .hash{opacity:1;color:#fff}
+.lap-screen .sb-channel.unread{color:#fff;font-weight:700}
+.lap-screen .sb-channel.unread .hash{color:#fff;opacity:1}
+.lap-screen .sb-unread-count{margin-left:auto;background:var(--slk-red);color:#fff;font-size:.38rem;font-weight:700;padding:0 .2rem;border-radius:5px;min-width:10px;height:10px;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s ease}
+.lap-screen .sb-unread-count.active{opacity:1;transform:scale(1)}
+.lap-screen .sb-dm-status{width:5px;height:5px;border-radius:50%;background:#2bac76;flex-shrink:0}
+
+/* Main content */
+.lap-screen .content{display:flex;flex-direction:column;background:var(--slk-dark);overflow:hidden;min-width:0}
+.lap-screen .ch-header{padding:.32rem .5rem;border-bottom:1px solid var(--slk-border);display:flex;align-items:center;gap:.3rem;flex-shrink:0}
+.lap-screen .ch-title{display:flex;align-items:center;gap:.18rem;font-weight:900;color:#fff;font-size:.62rem}
+.lap-screen .ch-title svg{width:6px;height:6px;stroke:currentColor;stroke-width:2.5;fill:none}
+.lap-screen .ch-meta{display:flex;align-items:center;gap:.3rem;font-size:.42rem;color:var(--slk-text-2)}
+.lap-screen .ch-meta .members,.lap-screen .ch-meta .pin{display:flex;align-items:center;gap:.12rem}
+.lap-screen .ch-meta .members svg{width:7px;height:7px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+.lap-screen .ch-meta .pin svg{width:6px;height:6px;fill:currentColor}
+.lap-screen .ch-meta-divider{width:1px;height:8px;background:rgba(255,255,255,.1)}
+.lap-screen .ch-meta .desc{font-style:italic;color:var(--slk-text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.lap-screen .ch-header-right{margin-left:auto;display:flex;align-items:center;gap:.2rem}
+.lap-screen .ch-header-icon{width:13px;height:13px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-2);border-radius:2px}
+.lap-screen .ch-header-icon svg{width:9px;height:9px;stroke:currentColor;stroke-width:1.8;fill:none}
+
+/* Messages */
+.lap-screen .messages-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative;min-height:0;mask-image:linear-gradient(to bottom,transparent 0,#000 4%,#000 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 4%,#000 100%)}
+.lap-screen .messages{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:.25rem 0 .3rem;min-height:0}
+.lap-screen .day-divider{display:flex;align-items:center;gap:.4rem;padding:.3rem .5rem}
+.lap-screen .day-divider .line{flex:1;height:1px;background:var(--slk-border)}
+.lap-screen .day-divider .label{font-size:.4rem;color:var(--slk-text-2);font-weight:700;border:1px solid var(--slk-border);padding:.08rem .35rem;border-radius:8px;background:var(--slk-dark)}
+.lap-screen .msg{padding:.22rem .5rem .25rem;display:flex;gap:.36rem;position:relative;transition:max-height .45s ease,opacity .4s ease,padding .4s ease,transform .5s cubic-bezier(.16,1,.3,1);max-height:300px;opacity:1;transform:translateY(0);flex-shrink:0}
+.lap-screen .msg.hidden-msg{max-height:0;opacity:0;padding-top:0;padding-bottom:0;transform:translateY(6px);overflow:hidden}
+.lap-screen .msg.fresh::before{content:"";position:absolute;inset:1px 4px;background:var(--slk-amber);border-radius:3px;z-index:0;pointer-events:none;animation:lapFreshFade 3.5s ease forwards}
+.lap-screen .msg.fresh > *{position:relative;z-index:1}
+.lap-screen .msg-avatar{width:18px;height:18px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:.55rem;font-family:var(--display);font-style:italic}
+.lap-screen .msg-avatar.assistant{background:linear-gradient(135deg,var(--slk-brand) 0%,var(--slk-brand-soft) 100%)}
+.lap-screen .msg-avatar.user{background:linear-gradient(135deg,#5a5650 0%,#3d3a35 100%);font-family:-apple-system,sans-serif;font-style:normal;font-size:.42rem}
+.lap-screen .msg-body{flex:1;min-width:0}
+.lap-screen .msg-head{display:flex;align-items:baseline;gap:.25rem;margin-bottom:.08rem;flex-wrap:wrap}
+.lap-screen .msg-name{font-weight:900;color:#fff;font-size:.56rem}
+.lap-screen .msg-tag{background:rgba(255,255,255,.1);color:var(--slk-text-2);font-size:.36rem;font-weight:700;padding:.02rem .2rem;border-radius:2px;letter-spacing:.02em;line-height:1.3}
+.lap-screen .msg-time{font-size:.42rem;color:var(--slk-text-muted)}
+.lap-screen .msg-text{font-size:.54rem;color:var(--slk-text);line-height:1.5}
+.lap-screen .msg-text strong{font-weight:700;color:#fff}
+.lap-screen .msg-text .list{margin-top:.18rem;display:flex;flex-direction:column;gap:.1rem}
+.lap-screen .msg-text .item{display:flex;gap:.3rem;align-items:flex-start;font-size:.52rem}
+.lap-screen .msg-text .item .b{color:var(--slk-text-muted);flex-shrink:0;font-weight:700;line-height:1.5}
+.lap-screen .callout{margin-top:.3rem;padding:.3rem .4rem;background:rgba(46,182,125,.08);border-left:2px solid var(--slk-brand-soft);border-radius:3px;font-size:.5rem;color:var(--slk-text);line-height:1.5}
+.lap-screen .callout strong{color:#fff;font-weight:700}
+
+/* Typing indicator */
+.lap-screen .typing-row{padding:.18rem .5rem .28rem;display:flex;align-items:center;gap:.3rem;font-size:.42rem;color:var(--slk-text-2);max-height:40px;opacity:1;transition:max-height .3s ease,opacity .25s ease,padding .3s ease;flex-shrink:0}
+.lap-screen .typing-row.hidden-msg{max-height:0;opacity:0;padding-top:0;padding-bottom:0;overflow:hidden}
+.lap-screen .typing-avatar{width:10px;height:10px;border-radius:2px;background:linear-gradient(135deg,var(--slk-brand) 0%,var(--slk-brand-soft) 100%);color:#fff;font-family:var(--display);font-style:italic;font-size:.32rem;font-weight:600;display:flex;align-items:center;justify-content:center}
+.lap-screen .dots{display:inline-flex;gap:2px;align-items:center;margin-left:.05rem}
+.lap-screen .dots i{width:3px;height:3px;background:var(--slk-text-2);border-radius:50%;animation:lapBounce 1.2s infinite ease-in-out}
+.lap-screen .dots i:nth-child(2){animation-delay:.15s}
+.lap-screen .dots i:nth-child(3){animation-delay:.3s}
+
+/* Input bar */
+.lap-screen .input-bar{padding:0 .5rem .42rem;flex-shrink:0}
+.lap-screen .input-wrap{background:var(--slk-dark);border:1px solid var(--slk-input-border);border-radius:4px;transition:border-color .25s ease,box-shadow .25s ease;overflow:hidden}
+.lap-screen .input-wrap.active{border-color:var(--slk-link);box-shadow:0 0 0 1px var(--slk-link)}
+.lap-screen .input-format{padding:.18rem .3rem 0;display:flex;align-items:center;gap:.02rem}
+.lap-screen .fmt-btn{width:14px;height:14px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-2);font-size:.46rem;font-weight:700;border-radius:2px}
+.lap-screen .fmt-btn svg{width:7px;height:7px;stroke:currentColor;stroke-width:1.9;fill:none}
+.lap-screen .fmt-divider{width:1px;height:8px;background:rgba(255,255,255,.1);margin:0 .08rem}
+.lap-screen .input-text-area{padding:.25rem .35rem .2rem;font-size:.54rem;color:var(--slk-text-muted);min-height:.9rem;display:flex;align-items:center}
+.lap-screen .input-text-area .typed{color:#fff}
+.lap-screen .typing-cursor{display:inline-block;width:1px;height:1em;background:#fff;margin-left:1px;vertical-align:middle;animation:lapBlink .9s steps(2) infinite}
+.lap-screen .input-bottom{display:flex;align-items:center;justify-content:space-between;padding:.1rem .25rem .22rem}
+.lap-screen .input-tools,.lap-screen .input-right{display:flex;align-items:center;gap:.02rem}
+.lap-screen .it{width:14px;height:14px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-2);border-radius:2px}
+.lap-screen .it svg{width:8px;height:8px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lap-screen .it-text{font-size:.55rem;font-weight:600;color:var(--slk-text-2)}
+.lap-screen .send-btn{background:rgba(255,255,255,.08);color:var(--slk-text-muted);width:15px;height:15px;border-radius:3px;display:flex;align-items:center;justify-content:center;transition:background .2s ease,color .2s ease,transform .15s ease;margin-left:.1rem}
+.lap-screen .send-btn.active{background:var(--slk-send-green);color:#fff}
+.lap-screen .send-btn.pressed{transform:scale(.92)}
+.lap-screen .send-btn svg{width:7px;height:7px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+@keyframes lapFreshFade{0%,30%{opacity:1}100%{opacity:0}}
+@keyframes lapBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes lapBounce{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-3px);opacity:1}}
 
 /* Base + hinge are now part of the macbook.jpg photo — hide CSS chassis */
 .lap-base,.lap-hinge{display:none}
@@ -655,29 +764,150 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         </div>
         <div class="lap-lid">
           <div class="lap-screen">
-            <div class="lap-bar">
-              <span class="lap-tl"></span><span class="lap-tl"></span><span class="lap-tl"></span>
-              <span class="lap-bar-label" id="lap-bar-label">BRIEFING · DAILY OVERVIEW · MON 6:58</span>
-              <span class="lap-bar-time" id="lap-bar-time">6:58 AM</span>
-            </div>
-            <div class="lap-body">
-              <div class="lap-sidebar">
-                <button class="ls-icon ls-active">B</button>
-                <button class="ls-icon">C</button>
-                <button class="ls-icon">P</button>
-                <button class="ls-icon">M</button>
-                <button class="ls-icon">H</button>
+
+            <!-- Top bar -->
+            <div class="topbar">
+              <div class="tb-left">
+                <div class="tb-nav-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+                <div class="tb-nav-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+                <div class="tb-history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></div>
               </div>
-              <div class="lap-content">
-                <div class="lap-scene-tag" id="lap-scene-tag">SCENARIO 01 · MORNING BRIEFING · MON</div>
-                <div class="lap-query" id="lap-query"></div>
-                <div class="lap-output" id="lap-output"></div>
+              <div class="tb-center">
+                <div class="tb-search">
+                  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
+                  <span class="tb-search-text">Search Operations</span>
+                </div>
+              </div>
+              <div class="tb-right">
+                <div class="tb-help">?</div>
+                <div class="tb-avatar">AR</div>
               </div>
             </div>
-            <div class="lap-prompt">
-              <span class="lp-star">✦</span>
-              <span class="lp-text" id="lp-text">Ask: today's calls, flags, priorities...</span>
-              <button class="lp-send">↑</button>
+
+            <!-- Main grid: workspaces + sidebar + content -->
+            <div class="main">
+
+              <!-- Workspace switcher -->
+              <div class="workspaces">
+                <div class="ws-icon ops active">O<div class="ws-badge" id="ws-badge">1</div></div>
+                <div class="ws-icon alt">M</div>
+                <div class="ws-icon alt2">+</div>
+              </div>
+
+              <!-- Channel sidebar -->
+              <div class="sidebar">
+                <div class="sb-team">
+                  <div class="sb-team-name">Operations <svg viewBox="0 0 10 10"><path d="M2 4l3 3 3-3"/></svg></div>
+                  <div class="sb-edit"><svg viewBox="0 0 16 16"><path d="M11 2l3 3-8 8H3v-3z"/></svg></div>
+                </div>
+                <div class="sb-section">
+                  <div class="sb-item"><div class="sb-icon"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-5v-6h-4v6H5a1 1 0 01-1-1z"/></svg></div><span class="sb-label">Home</span></div>
+                  <div class="sb-item"><div class="sb-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="6"/><path d="M13 13l4 4M9 6v6M6 9h6"/></svg></div><span class="sb-label">Threads</span></div>
+                  <div class="sb-item"><div class="sb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 4a8 8 0 110 16 8 8 0 010-16z"/></svg></div><span class="sb-label">Activity</span></div>
+                </div>
+                <div class="sb-group">
+                  <div class="sb-group-head"><svg viewBox="0 0 10 10"><path d="M2 4l3 3 3-3"/></svg><span>Channels</span></div>
+                  <div class="sb-channel active" id="ch-briefs"><span class="hash">#</span><span class="sb-label">briefs</span></div>
+                  <div class="sb-channel"><span class="hash">#</span><span class="sb-label">pipeline</span></div>
+                  <div class="sb-channel"><span class="hash">#</span><span class="sb-label">financials</span></div>
+                  <div class="sb-channel"><span class="hash">#</span><span class="sb-label">projects</span></div>
+                  <div class="sb-channel"><span class="hash">#</span><span class="sb-label">vendors</span></div>
+                </div>
+                <div class="sb-group">
+                  <div class="sb-group-head"><svg viewBox="0 0 10 10"><path d="M2 4l3 3 3-3"/></svg><span>Direct messages</span></div>
+                  <div class="sb-channel"><span class="sb-dm-status"></span><span class="sb-label">Assistant</span></div>
+                </div>
+              </div>
+
+              <!-- Channel content -->
+              <div class="content">
+                <div class="ch-header">
+                  <div class="ch-title"><span># briefs</span><svg viewBox="0 0 10 10"><path d="M2 4l3 3 3-3"/></svg></div>
+                  <div class="ch-meta">
+                    <div class="members"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><circle cx="17" cy="11" r="2.5"/><path d="M3 19c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M14 18c0-2.5 2-4.5 4.5-4.5"/></svg><span>2</span></div>
+                    <div class="ch-meta-divider"></div>
+                    <div class="pin"><svg viewBox="0 0 16 16"><path d="M10 1v5l3 3v1h-4v5l-1 1-1-1v-5H3V9l3-3V1z"/></svg><span>3</span></div>
+                    <div class="ch-meta-divider"></div>
+                    <span class="desc">Daily operational briefings from the assistant</span>
+                  </div>
+                  <div class="ch-header-right">
+                    <div class="ch-header-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.37 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.33 1.85.57 2.81.7a2 2 0 011.72 2.03z"/></svg></div>
+                    <div class="ch-header-icon"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+                  </div>
+                </div>
+                <div class="messages-wrap">
+                  <div class="messages">
+                    <div class="day-divider"><div class="line"></div><div class="label">Today</div><div class="line"></div></div>
+                    <div class="msg hidden-msg" id="msg-brief">
+                      <div class="msg-avatar assistant">A</div>
+                      <div class="msg-body">
+                        <div class="msg-head"><span class="msg-name">Assistant</span><span class="msg-tag">APP</span><span class="msg-time">6:30 AM</span></div>
+                        <div class="msg-text">
+                          <strong>Good morning. Here's the rundown.</strong>
+                          <div class="list">
+                            <div class="item"><span class="b">•</span><span>Pipeline: 12 estimates pending, 8 quotes out, 5 active jobs</span></div>
+                            <div class="item"><span class="b">•</span><span>Material alert: quartz up 8% from Smith bid</span></div>
+                            <div class="item"><span class="b">•</span><span>Cash position: $42K expected this week, $18K outgoing</span></div>
+                          </div>
+                          <div class="callout"><strong>Two priorities today:</strong> Smith quote follow-up (day 4 of 7), Hernandez returning-customer call.</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="msg hidden-msg" id="msg-query">
+                      <div class="msg-avatar user">AR</div>
+                      <div class="msg-body">
+                        <div class="msg-head"><span class="msg-name">Andrew Rendon</span><span class="msg-time">10:14 AM</span></div>
+                        <div class="msg-text">what did we charge the Patel family in Bronxville?</div>
+                      </div>
+                    </div>
+                    <div class="typing-row hidden-msg" id="typing-row">
+                      <div class="typing-avatar">A</div>
+                      <span>Assistant is typing</span>
+                      <span class="dots"><i></i><i></i><i></i></span>
+                    </div>
+                    <div class="msg hidden-msg" id="msg-response">
+                      <div class="msg-avatar assistant">A</div>
+                      <div class="msg-body">
+                        <div class="msg-head"><span class="msg-name">Assistant</span><span class="msg-tag">APP</span><span class="msg-time">10:14 AM</span></div>
+                        <div class="msg-text">
+                          <strong>Patel family — Bronxville master bath, Aug 2024.</strong>
+                          <div class="list">
+                            <div class="item"><span class="b">•</span><span>Total: $38,500</span></div>
+                            <div class="item"><span class="b">•</span><span>Materials: $14,200 (Kohler fixtures, Italian tile)</span></div>
+                            <div class="item"><span class="b">•</span><span>Labor: $19,800 · 12-day build</span></div>
+                          </div>
+                          <div class="callout">Final 5-star review. Referred the Cohen project (Greenwich, signed Apr 2025).</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-bar">
+                  <div class="input-wrap" id="input-wrap">
+                    <div class="input-format">
+                      <div class="fmt-btn" style="font-weight:900">B</div>
+                      <div class="fmt-btn" style="font-style:italic">I</div>
+                      <div class="fmt-btn" style="text-decoration:line-through">S</div>
+                      <div class="fmt-divider"></div>
+                      <div class="fmt-btn"><svg viewBox="0 0 16 16"><path d="M5 3l-3 5 3 5M11 3l3 5-3 5"/></svg></div>
+                      <div class="fmt-btn"><svg viewBox="0 0 16 16"><path d="M3 9.5l3-3M3 6.5l3 3M10 11h3M10 7h3M10 4h3"/></svg></div>
+                    </div>
+                    <div class="input-text-area"><span id="input-text">Message #briefs</span></div>
+                    <div class="input-bottom">
+                      <div class="input-tools">
+                        <div class="it"><span class="it-text">@</span></div>
+                        <div class="it"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
+                        <div class="it"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+                      </div>
+                      <div class="input-right">
+                        <div class="it"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="13" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></div>
+                        <div class="send-btn" id="send-btn"><svg viewBox="0 0 24 24"><path d="M5 12l14-7-3 7 3 7z"/></svg></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -685,14 +915,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <div class="lap-stat">
           <div class="ls-num">+47</div>
           <div class="ls-lbl">client touches today</div>
-        </div>
-        <div class="lap-dots" id="lap-dots"></div>
-        <div class="lap-vignette" id="lap-vignette" aria-hidden="true">
-          <div class="lap-vig-illo" id="lap-vig-illo"></div>
-          <div class="lap-vig-caption">
-            <span class="lap-vig-you" id="lap-vig-you">while you sleep,</span>
-            <span class="lap-vig-we" id="lap-vig-we">we prep tomorrow.</span>
-          </div>
         </div>
       </div>
     </div>
@@ -1238,167 +1460,87 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 })();
 </script>
 <script>
+/* ── Slack desktop mock animation (Operations workspace) ── */
 (function(){
-  var lapOutput=document.getElementById('lap-output');
-  if(!lapOutput)return;
-  var LAP_ILLOS={
-    sleeping:`<svg viewBox="0 0 100 100"><path d="M 16 14 a 7 7 0 1 0 5 5 a 5 5 0 0 1 -5 -5z" fill="currentColor" stroke="none"/><path d="M 12 70 L 12 56 L 88 56 L 88 70"/><line x1="8" y1="70" x2="92" y2="70"/><line x1="14" y1="70" x2="14" y2="82"/><line x1="86" y1="70" x2="86" y2="82"/><rect x="20" y="50" width="22" height="6" rx="2"/><path d="M 20 56 Q 35 44 52 52 Q 70 60 86 56"/><text x="56" y="32" font-family="serif" font-style="italic" font-size="14" stroke="none" fill="currentColor">Z</text><text x="68" y="22" font-family="serif" font-style="italic" font-size="10" stroke="none" fill="currentColor">z</text><text x="76" y="14" font-family="serif" font-style="italic" font-size="7" stroke="none" fill="currentColor">z</text></svg>`,
-    dinner:`<svg viewBox="0 0 100 100"><line x1="50" y1="4" x2="50" y2="20"/><path d="M 42 20 L 58 20 L 54 30 L 46 30 Z"/><circle cx="22" cy="50" r="5"/><path d="M 17 56 L 17 68 L 27 68 L 27 56 Z"/><circle cx="50" cy="44" r="6"/><path d="M 44 51 L 44 68 L 56 68 L 56 51 Z"/><circle cx="78" cy="50" r="5"/><path d="M 73 56 L 73 68 L 83 68 L 83 56 Z"/><rect x="8" y="68" width="84" height="5" rx="1"/><line x1="18" y1="73" x2="18" y2="92"/><line x1="82" y1="73" x2="82" y2="92"/><ellipse cx="22" cy="70" rx="4" ry="1"/><ellipse cx="50" cy="70" rx="5" ry="1.2"/><ellipse cx="78" cy="70" rx="4" ry="1"/></svg>`,
-    coffee:`<svg viewBox="0 0 100 100"><path d="M 38 28 Q 35 18 41 10"/><path d="M 50 28 Q 47 16 53 6"/><path d="M 62 28 Q 59 18 65 10"/><path d="M 26 32 L 26 70 Q 26 84 40 84 L 60 84 Q 74 84 74 70 L 74 32 Z"/><path d="M 74 44 Q 88 44 88 56 Q 88 70 74 70"/><ellipse cx="50" cy="88" rx="34" ry="3"/><ellipse cx="50" cy="34" rx="22" ry="3"/></svg>`,
-    desk:`<svg viewBox="0 0 100 100"><rect x="14" y="28" width="72" height="44" rx="4"/><line x1="14" y1="38" x2="86" y2="38"/><circle cx="20" cy="33" r="1.2" fill="currentColor"/><circle cx="25" cy="33" r="1.2" fill="currentColor"/><line x1="22" y1="48" x2="38" y2="48"/><line x1="22" y1="56" x2="50" y2="56"/><line x1="22" y1="64" x2="44" y2="64"/><rect x="54" y="44" width="22" height="18" rx="2"/><line x1="54" y1="50" x2="76" y2="50"/><line x1="62" y1="50" x2="62" y2="62"/><line x1="14" y1="72" x2="14" y2="86"/><line x1="86" y1="72" x2="86" y2="86"/></svg>`,
-    call:`<svg viewBox="0 0 100 100"><path d="M 28 22 Q 22 22 20 28 Q 18 36 22 46 Q 28 62 40 74 Q 52 86 68 90 Q 78 92 82 88 Q 86 84 84 78 L 78 68 Q 76 64 70 66 L 62 70 Q 58 72 54 68 L 42 56 Q 38 52 40 48 L 44 40 Q 46 34 42 30 L 34 24 Q 31 22 28 22Z"/></svg>`
-  };
-  var SCENARIOS=[
-    {
-      barLabel:'BRIEFING · DAILY OVERVIEW · MON 6:58',barTime:'6:58 AM',
-      sceneTag:'SCENARIO 01 · MORNING BRIEFING · MON',
-      query:"What's on my plate today?",
-      toast:{title:'Brief assembled',sub:'in 11 seconds, before 7am'},
-      prompt:"Ask: reschedule, flag, or run today's summary...",
-      sidebarIdx:0,
-      vignette:{illo:'sleeping',you:'while you sleep,',we:'we prep your morning.'},
-      rows:[
-        {icon:'◷',main:'4 calls scheduled',val:'Today',sub:'9am · 10:30 · 2pm · 4pm',tag:'CAL',cls:''},
-        {icon:'⚠',main:'2 accounts flagged',val:'Yellow',sub:'Northside · Summit',tag:'RISK',cls:'lr-warn'},
-        {icon:'$',main:'Open AR',val:'$14,200',sub:'3 invoices outstanding',tag:'AR',cls:'lr-warn'},
-        {icon:'↩',main:'Follow-ups pending',val:'3',sub:'Sent last week · no reply',tag:'OUTREACH',cls:''}
-      ]
-    },
-    {
-      barLabel:'CLIENTS · 24 ACTIVE ACCOUNTS · WED',barTime:'10:12 AM',
-      sceneTag:'SCENARIO 02 · CLIENT HEALTH SCAN · WEEKLY',
-      query:"Who's at risk this week?",
-      toast:{title:'Scan complete',sub:'24 accounts reviewed'},
-      prompt:"Ask: who's at risk, churn signals, sentiment...",
-      sidebarIdx:1,
-      vignette:{illo:'dinner',you:"while you're at dinner,",we:'we watch every account.'},
-      rows:[
-        {icon:'●',main:'Northside Collective',val:'Yellow',sub:'18 days since last call',tag:'AT RISK',cls:'lr-warn'},
-        {icon:'●',main:'Summit Partners',val:'Red',sub:'Payment overdue + silent 26d',tag:'URGENT',cls:'lr-alert'},
-        {icon:'●',main:'All other accounts',val:'22 / Green',sub:'Health confirmed this week',tag:'OK',cls:'lr-ok'}
-      ]
-    },
-    {
-      barLabel:'PRE-CALL · EASTSIDE MEDIA · 30 MIN',barTime:'9:28 AM',
-      sceneTag:'SCENARIO 03 · PRE-CALL BRIEF · TUE',
-      query:'Brief me for the Eastside call.',
-      toast:{title:'Call in 32 minutes',sub:'pre-loaded from Fathom + Stripe'},
-      prompt:'Ask: talking points, risks, history, open items...',
-      sidebarIdx:2,
-      vignette:{illo:'coffee',you:'while you have coffee,',we:'we pull the brief.'},
-      rows:[
-        {icon:'◷',main:'Last meeting',val:'47d ago',sub:'Feb 11 · Fathom transcript ready',tag:'HISTORY',cls:''},
-        {icon:'◉',main:'Sentiment',val:'Positive',sub:'Engagement up vs Q4',tag:'TONE',cls:'lr-ok'},
-        {icon:'!',main:'Open item',val:'Expansion',sub:'Timeline TBD — they asked Feb 11',tag:'TOPIC',cls:'lr-warn'},
-        {icon:'$',main:'Last invoice',val:'Paid',sub:'Jan 31 · on time',tag:'BILLING',cls:'lr-ok'}
-      ]
-    },
-    {
-      barLabel:'MONEY · AR · STRIPE · INVOICES',barTime:'7:14 AM',
-      sceneTag:'SCENARIO 04 · MONEY OPS · MON 7:14 AM',
-      query:'Walk me through AR this morning.',
-      toast:{title:'Brief assembled',sub:'in 12 seconds, before 8am'},
-      prompt:'Ask: AR, retries, top late payers...',
-      sidebarIdx:3,
-      vignette:{illo:'desk',you:'while you focus,',we:'we track the money.'},
-      rows:[
-        {icon:'✓',main:'Sources reconciled',val:'2',sub:'Stripe + QuickBooks in sync',tag:'SYNC',cls:'lr-ok'},
-        {icon:'$',main:'Outstanding AR',val:'$12,400',sub:'3 invoices · oldest 14 days',tag:'AR',cls:'lr-warn'},
-        {icon:'!',main:'Above threshold',val:'14 days',sub:'Your 10-day policy: action needed',tag:'ACTION',cls:'lr-alert'}
-      ]
-    },
-    {
-      barLabel:'HIRING · PIPELINE · REVIEW · THU',barTime:'3:44 PM',
-      sceneTag:'SCENARIO 05 · HIRING PIPELINE · THU',
-      query:'Where does hiring stand?',
-      toast:{title:'Pipeline updated',sub:'3 screened overnight'},
-      prompt:'Ask: next steps, screening status, interviews...',
-      sidebarIdx:4,
-      vignette:{illo:'call',you:"while you're on a call,",we:'we screen the pipeline.'},
-      rows:[
-        {icon:'◈',main:'Applications this week',val:'8',sub:'3 via LinkedIn · 5 via Indeed',tag:'NEW',cls:''},
-        {icon:'✓',main:'Screened + moved forward',val:'3',sub:'Auto-scored above threshold',tag:'PASS',cls:'lr-ok'},
-        {icon:'◷',main:'Interview scheduled',val:'Tue 2pm',sub:'Candidate: Marcos V. · confirmed',tag:'NEXT',cls:'lr-ok'}
-      ]
-    }
-  ];
-  var barLabelEl=document.getElementById('lap-bar-label');
-  var barTimeEl=document.getElementById('lap-bar-time');
-  var sceneTagEl=document.getElementById('lap-scene-tag');
-  var queryEl=document.getElementById('lap-query');
-  var dotsEl=document.getElementById('lap-dots');
-  var toastTitleEl=document.getElementById('lt-title');
-  var toastSubEl=document.getElementById('lt-sub');
-  var lpTextEl=document.getElementById('lp-text');
-  var vigEl=document.getElementById('lap-vignette');
-  var vigIllo=document.getElementById('lap-vig-illo');
-  var vigYou=document.getElementById('lap-vig-you');
-  var vigWe=document.getElementById('lap-vig-we');
-  var sidebarBtns=document.querySelectorAll('#lap-mount .ls-icon');
-  SCENARIOS.forEach(function(_,i){
-    var s=document.createElement('span');
-    s.addEventListener('click',function(){activeIdx=i;resetCycle();});
-    dotsEl.appendChild(s);
-  });
-  var dots=Array.from(dotsEl.children);
-  var activeIdx=0,cycleToken=0;
-  function sleep(ms){return new Promise(function(r){setTimeout(r,ms);})}
-  function swapVignette(sc){
-    if(!vigEl||!sc.vignette)return;
-    vigEl.classList.add('swap');
-    setTimeout(function(){
-      if(sc.vignette.illo&&LAP_ILLOS[sc.vignette.illo])vigIllo.innerHTML=LAP_ILLOS[sc.vignette.illo];
-      if(vigYou)vigYou.textContent=sc.vignette.you;
-      if(vigWe)vigWe.textContent=sc.vignette.we;
-      vigEl.classList.remove('swap');
-    },320);
+  var wsBadge=document.getElementById('ws-badge');
+  if(!wsBadge)return;
+  var msgBrief=document.getElementById('msg-brief'),
+      msgQuery=document.getElementById('msg-query'),
+      msgResponse=document.getElementById('msg-response'),
+      typingRow=document.getElementById('typing-row'),
+      inputWrap=document.getElementById('input-wrap'),
+      inputText=document.getElementById('input-text'),
+      sendBtn=document.getElementById('send-btn');
+
+  var queryText='what did we charge the Patel family in Bronxville?';
+  var timers=[];
+  function schedule(fn,ms){var t=setTimeout(fn,ms);timers.push(t);return t;}
+  function clearAll(){timers.forEach(clearTimeout);timers.length=0;}
+
+  function reset(){
+    msgBrief.classList.add('hidden-msg');msgBrief.classList.remove('fresh');
+    msgQuery.classList.add('hidden-msg');
+    msgResponse.classList.add('hidden-msg');msgResponse.classList.remove('fresh');
+    typingRow.classList.add('hidden-msg');
+    wsBadge.classList.remove('active');
+    inputWrap.classList.remove('active');
+    inputText.textContent='Message #briefs';
+    sendBtn.classList.remove('active','pressed');
   }
-  async function runScenario(sc,idx,token){
-    if(barLabelEl)barLabelEl.textContent=sc.barLabel;
-    if(barTimeEl)barTimeEl.textContent=sc.barTime;
-    if(sceneTagEl)sceneTagEl.textContent=sc.sceneTag;
-    if(toastTitleEl)toastTitleEl.textContent=sc.toast.title;
-    if(toastSubEl)toastSubEl.textContent=sc.toast.sub;
-    if(lpTextEl)lpTextEl.textContent=sc.prompt;
-    sidebarBtns.forEach(function(b,i){b.classList.toggle('ls-active',i===sc.sidebarIdx);});
-    dots.forEach(function(d,i){d.classList.toggle('on',i===idx);});
-    swapVignette(sc);
-    lapOutput.innerHTML='';
-    queryEl.textContent='';
-    queryEl.classList.remove('done');
-    await sleep(400);
-    if(token!==cycleToken)return;
-    var q=sc.query;
-    for(var c=0;c<q.length;c++){
-      if(token!==cycleToken)return;
-      queryEl.textContent=q.slice(0,c+1);
-      await sleep(25+Math.random()*20);
+  function typeQuery(callback){
+    inputText.innerHTML='';
+    var i=0,charDelay=38;
+    function step(){
+      if(i<queryText.length){
+        inputText.innerHTML='<span class="typed">'+queryText.substring(0,i+1)+'</span><span class="typing-cursor"></span>';
+        i++;schedule(step,charDelay);
+      }else{
+        schedule(function(){sendBtn.classList.add('active');schedule(callback,400);},200);
+      }
     }
-    queryEl.classList.add('done');
-    await sleep(320);
-    for(var r=0;r<sc.rows.length;r++){
-      if(token!==cycleToken)return;
-      var row=sc.rows[r];
-      var el=document.createElement('div');
-      el.className='lap-row'+(row.cls?' '+row.cls:'');
-      el.style.animationDelay=(r*0.07)+'s';
-      el.innerHTML='<span class="lr-icon">'+row.icon+'</span><div class="lr-main"><span>'+row.main+'</span><span class="lr-sub">'+row.sub+'</span></div><span class="lr-val">'+row.val+'</span><span class="lr-tag">'+row.tag+'</span>';
-      lapOutput.appendChild(el);
-      await sleep(160);
-      if(token!==cycleToken)return;
-    }
-    await sleep(2800);
+    step();
   }
-  async function loop(){
-    var token=++cycleToken;
-    while(token===cycleToken){
-      await runScenario(SCENARIOS[activeIdx],activeIdx,token);
-      if(token!==cycleToken)return;
-      activeIdx=(activeIdx+1)%SCENARIOS.length;
-    }
+  function runCycle(){
+    clearAll();reset();
+    schedule(function(){
+      wsBadge.textContent='1';wsBadge.classList.add('active');
+      msgBrief.classList.remove('hidden-msg');msgBrief.classList.add('fresh');
+    },1000);
+    schedule(function(){wsBadge.classList.remove('active');},5000);
+    schedule(function(){inputWrap.classList.add('active');},5800);
+    schedule(function(){
+      typeQuery(function(){
+        sendBtn.classList.add('pressed');
+        schedule(function(){sendBtn.classList.remove('pressed');},150);
+        inputText.textContent='Message #briefs';
+        inputWrap.classList.remove('active');
+        sendBtn.classList.remove('active');
+        msgQuery.classList.remove('hidden-msg');
+      });
+    },6100);
+    schedule(function(){typingRow.classList.remove('hidden-msg');},9500);
+    schedule(function(){typingRow.classList.add('hidden-msg');},11500);
+    schedule(function(){
+      wsBadge.textContent='1';wsBadge.classList.add('active');
+      msgResponse.classList.remove('hidden-msg');msgResponse.classList.add('fresh');
+    },11700);
+    schedule(function(){wsBadge.classList.remove('active');},15500);
+    schedule(function(){runCycle();},18000);
   }
-  function resetCycle(){loop();}
-  loop();
+
+  // Run only when scrolled into view; pause when out of view
+  var running=false;
+  function start(){if(running)return;running=true;runCycle();}
+  function stop(){if(!running)return;running=false;clearAll();}
+  if('IntersectionObserver' in window){
+    var screen=wsBadge.closest('.lap-screen')||wsBadge;
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting)start();else stop();});
+    },{threshold:0.2});
+    io.observe(screen);
+  }else{
+    start();
+  }
 })();
 </script>
 <script>
