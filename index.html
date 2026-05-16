@@ -142,8 +142,78 @@ nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,
 .d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.4s}.d6{transition-delay:.48s}
 
 /* ─────────────────────────────────────  HERO  ───────────────────────────── */
-.hero{padding:calc(4.5rem * var(--density)) var(--pad) calc(1.4rem * var(--density));position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
+.hero{padding:calc(4.5rem * var(--density)) var(--pad) calc(1.4rem * var(--density));position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;--hx:0;--hy:0}
 .hero-row{position:relative;z-index:3;display:block;max-width:var(--max);margin:0 auto;width:100%}
+.hero-stack{display:block;will-change:transform;transform:translate3d(var(--hx),var(--hy),0);transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+
+/* ── Cinematic ambient layer behind hero typography ───────────────────────
+   Two pieces:
+    1. .hero-sweep — a soft diagonal light wash slowly drifting across,
+       blended in lighten/soft-light for museum-grade luminance.
+    2. .hero-orbit — ultra-thin architectural curves + four nodes
+       (one breathing) + two corner coordinate markers. Reads as
+       blueprint, not HUD. */
+.hero-amb{position:absolute;inset:-6%;pointer-events:none;z-index:0;will-change:transform;transform:translate3d(calc(var(--hx) * -.35),calc(var(--hy) * -.35),0);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.hero-sweep{
+  position:absolute;inset:-30% -20%;
+  background:linear-gradient(112deg,
+    transparent 28%,
+    rgba(255,255,255,.55) 44%,
+    rgba(247,243,236,.7) 50%,
+    rgba(30,102,66,.05) 53%,
+    rgba(255,255,255,.5) 58%,
+    transparent 76%);
+  filter:blur(70px);
+  opacity:.42;
+  mix-blend-mode:lighten;
+  will-change:transform;
+  animation:heroSweep 22s cubic-bezier(.45,0,.55,1) infinite;
+}
+@keyframes heroSweep{
+  0%   {transform:translate3d(-22%,-8%,0)}
+  50%  {transform:translate3d(18%,6%,0)}
+  100% {transform:translate3d(-22%,-8%,0)}
+}
+.hero-orbit{position:absolute;inset:0;width:100%;height:100%;opacity:.7;overflow:visible}
+.ho-curve{fill:none;stroke:rgba(26,26,24,.13);stroke-width:.9;stroke-linecap:round}
+.ho-curve-b{stroke:rgba(30,102,66,.18);stroke-width:.7;stroke-dasharray:3 7}
+.ho-node{fill:rgba(30,102,66,.55)}
+.ho-node-soft{fill:rgba(26,26,24,.3)}
+.ho-node-pulse{transform-origin:center;transform-box:fill-box;animation:heroNodePulse 5.4s ease-in-out infinite}
+@keyframes heroNodePulse{
+  0%,100%{opacity:.55;transform:scale(1)}
+  50%    {opacity:1;   transform:scale(1.7)}
+}
+.ho-coord{font-family:var(--mono);font-size:9px;letter-spacing:.16em;fill:rgba(26,26,24,.28);text-transform:uppercase}
+.ho-coord-end{text-anchor:end;fill:rgba(30,102,66,.42)}
+
+/* Active system signal — tiny living proof */
+.hero-signal{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(26,26,24,.5);margin-bottom:1.8rem;opacity:0;animation:heroSignalIn .9s 1.3s cubic-bezier(.16,1,.3,1) forwards}
+.hero-signal-dot{width:7px;height:7px;border-radius:50%;background:rgba(30,102,66,.95);box-shadow:0 0 0 3px rgba(30,102,66,.16);animation:heroSignalPulse 2.6s ease-in-out infinite}
+@keyframes heroSignalPulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%    {opacity:.5;transform:scale(.82)}
+}
+@keyframes heroSignalIn{to{opacity:1}}
+
+/* Italic line on the headline gets its own slight parallax depth */
+.hero-h .ital{display:inline-block;will-change:transform;transform:translate3d(calc(var(--hx) * 1.4),calc(var(--hy) * 1.4),0);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+
+/* Reduced motion: freeze everything but keep static composition visible */
+@media (prefers-reduced-motion: reduce){
+  .hero-sweep,.ho-node-pulse,.hero-signal-dot{animation:none}
+  .hero-signal{opacity:1;animation:none}
+  .hero-stack,.hero-amb,.hero-h .ital{transform:none !important;transition:none !important}
+}
+
+/* Mobile tuning: smaller signal, lighter sweep, less aggressive orbit */
+@media (max-width:760px){
+  .hero-signal{margin-bottom:1.3rem;font-size:.54rem;gap:.45rem}
+  .hero-signal-dot{width:6px;height:6px}
+  .hero-sweep{filter:blur(46px);opacity:.32}
+  .hero-orbit{opacity:.55}
+  .ho-coord{font-size:7.5px;letter-spacing:.14em}
+}
 
 .hero-eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:1.6rem;display:flex;align-items:center;gap:.6rem}
 .hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:pulse 2.4s ease-in-out infinite}
@@ -634,9 +704,32 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <!-- ════════════════════ HERO ════════════════════ -->
 <section class="hero" id="home" data-screen-label="01 Hero">
 
+  <!-- ── Hero ambient: cinematic light sweep + architectural orbital details ── -->
+  <div class="hero-amb" aria-hidden="true">
+    <div class="hero-sweep"></div>
+    <svg class="hero-orbit" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <!-- ultra-thin orbital curves: feel like blueprint lines, not network -->
+      <path class="ho-curve"   d="M -40 110 C 220 60, 420 200, 640 130 S 940 100, 1040 160"/>
+      <path class="ho-curve ho-curve-b" d="M 80 480 C 280 420, 500 540, 720 470 S 920 500, 1040 460"/>
+      <!-- four nodes: one breathing, three static, asymmetric -->
+      <circle class="ho-node"                          cx="120" cy="120" r="2.6"/>
+      <circle class="ho-node ho-node-soft"             cx="540" cy="60"  r="1.8"/>
+      <circle class="ho-node ho-node-pulse"            cx="860" cy="180" r="3"/>
+      <circle class="ho-node ho-node-soft"             cx="220" cy="500" r="2"/>
+      <!-- corner coordinate markers — architectural restraint -->
+      <text class="ho-coord"     x="22"  y="32">N 41.05 · W 73.54</text>
+      <text class="ho-coord ho-coord-end" x="978" y="582">01 · HERO</text>
+    </svg>
+  </div>
+
   <div class="hero-row">
-    <!-- LEFT: headline + subhead -->
-    <div>
+    <div class="hero-stack">
+      <!-- Active system signal — proof the page is alive -->
+      <div class="hero-signal" aria-hidden="true">
+        <span class="hero-signal-dot"></span>
+        <span class="hero-signal-label">System active</span>
+      </div>
+
       <h1 class="hero-h hero-stage hh" id="hero-headline" data-variant="operating-system">
         The AI layer<br>
         <span class="ital">your business runs on.</span>
@@ -1583,6 +1676,61 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   };
   onScroll();
   window.addEventListener('scroll', onScroll, {passive:true});
+})();
+</script>
+
+<!-- ── Hero micro-parallax — pointer + scroll, eased via CSS variables ── -->
+<script>
+(function(){
+  var hero = document.querySelector('.hero');
+  if(!hero) return;
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion) return;
+
+  // Targets (driven by input) → currents (eased per frame) → CSS vars
+  var tx = 0, ty = 0, cx = 0, cy = 0;
+  var scrollY = 0, raf = 0;
+
+  // Max travel: 4px horizontal, 3px vertical from pointer. Imperceptible
+  // individually; cumulative depth across the parallax layers reads as motion.
+  var MAX_X = 4, MAX_Y = 3, SCROLL_DAMP = 0.06, SCROLL_MAX = 10;
+
+  function tick(){
+    // Critical damping
+    cx += (tx - cx) * 0.08;
+    cy += (ty - cy) * 0.08;
+    hero.style.setProperty('--hx', cx.toFixed(2) + 'px');
+    hero.style.setProperty('--hy', cy.toFixed(2) + 'px');
+    if (Math.abs(tx - cx) > .05 || Math.abs(ty - cy) > .05) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      raf = 0;
+    }
+  }
+
+  function kick(){ if(!raf) raf = requestAnimationFrame(tick); }
+
+  // Pointer parallax (desktop)
+  hero.addEventListener('pointermove', function(e){
+    var r = hero.getBoundingClientRect();
+    var nx = (e.clientX - r.left) / r.width  - 0.5; // -0.5 → 0.5
+    var ny = (e.clientY - r.top)  / r.height - 0.5;
+    tx = nx * MAX_X * 2;
+    ty = ny * MAX_Y * 2;
+    kick();
+  }, {passive:true});
+
+  hero.addEventListener('pointerleave', function(){
+    tx = 0; ty = 0; kick();
+  });
+
+  // Scroll parallax (mobile-friendly fallback)
+  window.addEventListener('scroll', function(){
+    scrollY = window.scrollY;
+    ty = Math.max(-SCROLL_MAX, Math.min(SCROLL_MAX, scrollY * SCROLL_DAMP));
+    kick();
+  }, {passive:true});
 })();
 </script>
 
