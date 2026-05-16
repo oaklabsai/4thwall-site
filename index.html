@@ -40,8 +40,6 @@
 html{scroll-behavior:smooth}
 body{font-family:var(--body);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;letter-spacing:-0.011em;background:radial-gradient(ellipse 90% 55% at 50% -8%,rgba(255,255,255,.5),transparent 55%),linear-gradient(90deg,rgba(26,26,24,.05),transparent 18%,transparent 82%,rgba(26,26,24,.05)),radial-gradient(ellipse 100% 32% at 50% 108%,rgba(26,26,24,.06),transparent 70%),var(--cream);background-attachment:fixed;display:flex;flex-direction:column;min-height:100vh}
 .hero{flex:none}
-.doormat{flex:1;display:flex;flex-direction:column;justify-content:flex-start}
-.doormat-grid{flex:1;align-content:stretch}
 a{text-decoration:none;color:inherit}
 img,svg{display:block;max-width:100%}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;-webkit-appearance:none}
@@ -650,16 +648,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- ════════════════════ DOORMAT — two products ════════════════════ -->
 <style>
-  .doormat{padding:calc(1.6rem * var(--density)) 0 calc(1.4rem * var(--density))}
+  .doormat{padding:calc(1.6rem * var(--density)) 0 calc(1.4rem * var(--density));display:flex;flex-direction:column;justify-content:center}
   .doormat-head{margin-bottom:1.4rem}
   .doormat-eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:.85rem;display:flex;align-items:center;gap:.6rem}
   .doormat-eyebrow::before{content:"";width:18px;height:1px;background:var(--orange)}
   .doormat-h{font-family:var(--display);font-size:clamp(2rem,4.2vw,3.4rem);font-weight:400;line-height:1.02;letter-spacing:-.035em}
   .doormat-h .ital{font-style:italic;color:var(--orange)}
 
-  .doormat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.05rem}
+  .doormat-grid{display:flex;justify-content:center;align-items:stretch;gap:1.8rem;flex-wrap:wrap}
 
-  .dm-card{position:relative;display:flex;flex-direction:column;gap:.85rem;padding:clamp(1.5rem,2.4vw,2.2rem);border-radius:22px;text-decoration:none;color:inherit;overflow:hidden;transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s cubic-bezier(.2,.8,.2,1)}
+  .dm-card{position:relative;display:flex;flex-direction:column;gap:.85rem;padding:clamp(1.25rem,2vw,1.8rem);border-radius:28px;text-decoration:none;color:inherit;overflow:hidden;width:clamp(155px,40vw,220px);flex:none;transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s cubic-bezier(.2,.8,.2,1)}
   .dm-card:hover{transform:translateY(-4px)}
   .dm-light{background:linear-gradient(180deg,#f6f1e6 0%,var(--cream-2) 62%);border:1px solid var(--line);color:var(--ink);box-shadow:0 1px 1px rgba(20,16,12,.04),0 2px 4px rgba(20,16,12,.05),0 8px 14px -6px rgba(20,16,12,.08),0 22px 34px -14px rgba(20,16,12,.12),inset 0 1px 0 rgba(255,255,255,.7)}
   .dm-light:hover{box-shadow:0 1px 1px rgba(20,16,12,.05),0 3px 6px rgba(20,16,12,.06),0 14px 22px -8px rgba(20,16,12,.10),0 38px 56px -16px rgba(20,16,12,.18),inset 0 1px 0 rgba(255,255,255,.75)}
@@ -706,19 +704,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .doormat-bottom .bi::before{content:"";width:10px;height:1px;background:var(--orange)}
 
   @media(max-width:840px){
-    .doormat-grid{gap:.85rem}
-    .dm-card{padding:1.25rem 1.15rem;gap:.6rem;border-radius:18px}
-    .dm-mark{font-size:clamp(2rem,4.5vw,3rem)}
-    .dm-line{font-size:.95rem}
+    .doormat-grid{gap:1.4rem}
+    .dm-card{padding:1.1rem 1rem;gap:.55rem;border-radius:26px}
+    .dm-mark{font-size:clamp(1.8rem,4vw,2.6rem)}
+    .dm-line{font-size:.9rem}
   }
   @media(max-width:640px){
     .doormat{padding:1rem 0 1rem}
     .doormat-h{font-size:clamp(1.65rem,6vw,2.2rem)}
-    .doormat-grid{gap:.65rem}
-    .doormat-bottom{margin-top:1.1rem;padding-top:.85rem;gap:.55rem .85rem;font-size:.58rem;letter-spacing:.12em;justify-content:center}
-    .doormat-bottom .bi{gap:.4rem}
-    .doormat-bottom .bi::before{width:8px}
-    .dm-card{padding:.95rem .85rem 1.05rem;gap:.45rem;border-radius:18px;min-height:184px}
+    .doormat-grid{gap:1.2rem}
+    .dm-card{padding:.95rem .85rem 1.05rem;gap:.45rem;border-radius:24px;min-height:auto}
     .dm-tag{font-size:8.5px;letter-spacing:.16em;gap:.4rem}
     .dm-tag::before{width:12px}
     .dm-mark{font-size:1.55rem;margin-top:.15rem;letter-spacing:-.025em;line-height:.92}
@@ -727,8 +722,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     .dm-caps{font-size:.6rem;gap:.18rem .55rem}
     .dm-caps li{padding:.1rem 0}
     .dm-foot{padding-top:.55rem;margin-top:auto;font-size:.52rem;flex-direction:column;align-items:flex-start;gap:.45rem;letter-spacing:.1em}
-    .dm-cta{align-self:flex-end;padding:.5rem .65rem .5rem .8rem;font-size:.58rem;gap:.4rem}
-    .dm-cta .arr{font-size:.9rem}
+    .dm-cta-t{display:none}
+    .dm-cta{align-self:flex-end;width:34px;height:34px;padding:0;justify-content:center;gap:0}
+    .dm-cta .arr{font-size:1rem}
   }
 </style>
 <section class="doormat wrap" id="products" data-screen-label="02 Products">
@@ -744,7 +740,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <p class="dm-line">The front of your business, <em>never off.</em></p>
       <div class="dm-foot">
         <span class="dm-for">For trades contractors</span>
-        <span class="dm-cta">See the product <span class="arr">→</span></span>
+        <span class="dm-cta"><span class="dm-cta-t">See the product</span> <span class="arr">→</span></span>
       </div>
     </a>
 
@@ -754,7 +750,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <p class="dm-line">The business runs <em>without you in it.</em></p>
       <div class="dm-foot">
         <span class="dm-for">For service operations</span>
-        <span class="dm-cta">See the product <span class="arr">→</span></span>
+        <span class="dm-cta"><span class="dm-cta-t">See the product</span> <span class="arr">→</span></span>
       </div>
     </a>
   </div>
