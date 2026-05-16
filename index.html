@@ -648,7 +648,91 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- ════════════════════ DOORMAT — two products ════════════════════ -->
 <style>
-  .doormat{padding:calc(1.6rem * var(--density)) 0 calc(1.4rem * var(--density));display:flex;flex-direction:column;justify-content:center}
+  .doormat{padding:calc(1.6rem * var(--density)) 0 calc(1.4rem * var(--density));display:flex;flex-direction:column;justify-content:center;position:relative}
+
+  /* ────────────────────────────────────────────────────────────
+     AMBIENT AUTONOMOUS SYSTEM LAYER
+     Invisible operational intelligence beneath the product pair.
+     Fills the bottom whitespace of the doormat with a calm,
+     restrained visualization: drifting nodes, ultra-thin curves,
+     slow traveling pulses, and a continuous operational strip.
+     Absolutely positioned so it never disturbs card placement.
+     ──────────────────────────────────────────────────────────── */
+  .ambient-layer{
+    position:absolute;left:0;right:0;bottom:0;
+    height:clamp(240px,38vh,420px);
+    pointer-events:none;
+    overflow:hidden;
+    z-index:0;
+    /* soft top fade so the layer dissolves into the cream rather than starting on an edge */
+    mask-image:linear-gradient(180deg,transparent 0%,#000 28%,#000 100%);
+    -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 28%,#000 100%);
+  }
+  .doormat-grid,.doormat-head{position:relative;z-index:1}
+
+  /* Atmospheric ground glow — anchors the layer with depth */
+  .ambient-layer::before{
+    content:"";position:absolute;left:50%;bottom:-18%;
+    width:140%;height:120%;transform:translateX(-50%);
+    background:radial-gradient(ellipse 50% 60% at 50% 100%,rgba(30,102,66,.07) 0%,rgba(30,102,66,.025) 38%,transparent 70%);
+    pointer-events:none;
+  }
+
+  .ambient-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+  /* Connection paths — infrastructural, never declarative */
+  .amb-path{fill:none;stroke:rgba(30,102,66,.16);stroke-width:.7;stroke-linecap:round}
+  .amb-path-b{stroke:rgba(30,102,66,.11);stroke-width:.55}
+  .amb-path-c{stroke:rgba(26,26,24,.08);stroke-width:.5;stroke-dasharray:2 5}
+
+  /* Nodes — some filled, some outlined, asymmetric weight */
+  .amb-node{transform-origin:center;transform-box:fill-box}
+  .amb-node-fill{fill:rgba(30,102,66,.55)}
+  .amb-node-soft{fill:rgba(30,102,66,.28)}
+  .amb-node-outline{fill:none;stroke:rgba(30,102,66,.4);stroke-width:.8}
+  .amb-node-ink{fill:rgba(26,26,24,.25)}
+
+  /* Breathing pulses — calm, asynchronous */
+  .amb-pulse{animation:ambPulse 6s ease-in-out infinite}
+  .amb-pulse-b{animation-duration:7.4s;animation-delay:-2.6s}
+  .amb-pulse-c{animation-duration:5.2s;animation-delay:-3.8s}
+  @keyframes ambPulse{
+    0%,100%{opacity:.55;transform:scale(1)}
+    50%   {opacity:.95;transform:scale(1.35)}
+  }
+
+  /* Traveling pulses — a quiet signal moving through the system */
+  .amb-trav{fill:rgba(30,102,66,.85);filter:drop-shadow(0 0 4px rgba(30,102,66,.45))}
+
+  /* Operational signal strip — the business operating continuously */
+  .op-strip{
+    position:absolute;left:0;right:0;bottom:1.2rem;
+    display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;
+    gap:.55rem;padding:0 var(--pad);
+    font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;
+    color:rgba(26,26,24,.32);
+    overflow:hidden;
+  }
+  .op-step{transition:color .9s cubic-bezier(.4,0,.2,1),opacity .9s ease}
+  .op-step.is-active{color:rgba(30,102,66,.92)}
+  .op-sep{color:rgba(26,26,24,.18);font-size:.62rem;line-height:1}
+
+  @media(max-width:760px){
+    .ambient-layer{height:clamp(220px,34vh,340px)}
+    .op-strip{font-size:.5rem;letter-spacing:.16em;gap:.4rem;bottom:1rem}
+    .op-sep{font-size:.55rem}
+  }
+  @media(max-width:420px){
+    .op-strip{font-size:.46rem;letter-spacing:.14em;gap:.32rem}
+  }
+
+  /* Reduced motion — freeze everything, retain the static composition */
+  @media(prefers-reduced-motion:reduce){
+    .amb-pulse,.amb-pulse-b,.amb-pulse-c{animation:none}
+    .amb-trav-motion{display:none}
+    .op-step{transition:none}
+    .op-step.is-active{color:rgba(30,102,66,.7)}
+  }
   .doormat-head{margin-bottom:1.4rem}
   .doormat-eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:.85rem;display:flex;align-items:center;gap:.6rem}
   .doormat-eyebrow::before{content:"";width:18px;height:1px;background:var(--orange)}
@@ -753,6 +837,55 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <span class="dm-cta"><span class="dm-cta-t">See the product</span> <span class="arr">→</span></span>
       </div>
     </a>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       AMBIENT AUTONOMOUS SYSTEM LAYER
+       Fills the bottom whitespace with quiet operational presence.
+       ───────────────────────────────────────────────────────────── -->
+  <div class="ambient-layer" aria-hidden="true">
+    <svg class="ambient-svg" viewBox="0 0 1000 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <!-- connection paths: asymmetric, organic curves; no grid -->
+      <path id="amb-p1" class="amb-path"   d="M 60 90  C 240 50, 380 150, 540 110 S 820 80, 960 130"/>
+      <path id="amb-p2" class="amb-path amb-path-b" d="M 140 230 C 320 180, 500 260, 680 210 S 880 240, 960 200"/>
+      <path id="amb-p3" class="amb-path amb-path-c" d="M 320 70  C 420 180, 580 230, 760 260"/>
+      <path id="amb-p4" class="amb-path amb-path-b" d="M 80 160 C 260 220, 460 110, 660 140"/>
+
+      <!-- nodes: 8, asymmetric, varied weight -->
+      <circle class="amb-node amb-node-fill"                cx="60"  cy="90"  r="2.6"/>
+      <circle class="amb-node amb-node-outline amb-pulse"   cx="280" cy="74"  r="4.2"/>
+      <circle class="amb-node amb-node-soft"                cx="380" cy="150" r="2"/>
+      <circle class="amb-node amb-node-fill amb-pulse amb-pulse-b" cx="540" cy="110" r="3"/>
+      <circle class="amb-node amb-node-ink"                 cx="660" cy="140" r="1.8"/>
+      <circle class="amb-node amb-node-outline"             cx="760" cy="200" r="3.4"/>
+      <circle class="amb-node amb-node-fill amb-pulse amb-pulse-c" cx="880" cy="100" r="2.4"/>
+      <circle class="amb-node amb-node-soft"                cx="200" cy="220" r="2.2"/>
+
+      <!-- traveling pulses: a quiet signal moving through the layer -->
+      <circle class="amb-trav" r="2"   opacity=".9">
+        <animateMotion class="amb-trav-motion" dur="16s" repeatCount="indefinite" rotate="auto">
+          <mpath href="#amb-p1"/>
+        </animateMotion>
+      </circle>
+      <circle class="amb-trav" r="1.6" opacity=".7">
+        <animateMotion class="amb-trav-motion" dur="22s" begin="-8s" repeatCount="indefinite" rotate="auto">
+          <mpath href="#amb-p2"/>
+        </animateMotion>
+      </circle>
+    </svg>
+
+    <!-- Operational signal strip: the business operating continuously -->
+    <div class="op-strip">
+      <span class="op-step">Lead intake</span>
+      <span class="op-sep" aria-hidden="true">→</span>
+      <span class="op-step">Scheduling</span>
+      <span class="op-sep" aria-hidden="true">→</span>
+      <span class="op-step">Dispatch</span>
+      <span class="op-sep" aria-hidden="true">→</span>
+      <span class="op-step">Payments</span>
+      <span class="op-sep" aria-hidden="true">→</span>
+      <span class="op-step">Retention</span>
+    </div>
   </div>
 </section>
 
@@ -1416,6 +1549,41 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   };
   onScroll();
   window.addEventListener('scroll', onScroll, {passive:true});
+})();
+</script>
+
+<!-- ── Operational signal strip — cycle one active step at a time ── -->
+<script>
+(function(){
+  const steps = document.querySelectorAll('.op-strip .op-step');
+  if(!steps.length) return;
+
+  // Reduced motion: light up every step softly, no cycling
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    steps.forEach(s => s.classList.add('is-active'));
+    return;
+  }
+
+  let i = 0;
+  steps[i].classList.add('is-active');
+
+  // Pause when the section leaves the viewport — saves battery on mobile
+  let visible = true;
+  if('IntersectionObserver' in window){
+    const strip = document.querySelector('.op-strip');
+    if(strip){
+      new IntersectionObserver(entries => {
+        visible = entries[0].isIntersecting;
+      }, {threshold: 0.01}).observe(strip);
+    }
+  }
+
+  setInterval(() => {
+    if(!visible) return;
+    steps[i].classList.remove('is-active');
+    i = (i + 1) % steps.length;
+    steps[i].classList.add('is-active');
+  }, 2400);
 })();
 </script>
 
