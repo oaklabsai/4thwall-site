@@ -1664,23 +1664,50 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     slider.style.left=active.offsetLeft+'px';
     slider.style.width=active.offsetWidth+'px';
   }
-  btns.forEach(function(btn){
-    btn.addEventListener('click',function(){
-      btns.forEach(function(b){
-        var on=b===btn;
-        b.classList.toggle('is-active',on);
-        b.setAttribute('aria-selected',on?'true':'false');
-      });
-      area.dataset.active=btn.dataset.target;
-      moveSlider();
+  function setActive(target){
+    if(target!=='client'&&target!=='assistant')return;
+    if(area.dataset.active===target)return;
+    area.dataset.active=target;
+    btns.forEach(function(b){
+      var on=b.dataset.target===target;
+      b.classList.toggle('is-active',on);
+      b.setAttribute('aria-selected',on?'true':'false');
     });
+    moveSlider();
+  }
+  btns.forEach(function(btn){
+    btn.addEventListener('click',function(){setActive(btn.dataset.target);});
   });
+
+  // ── Swipe between phones (touch + mouse via pointer events) ──
+  var stage=area.querySelector('.phone-stage');
+  if(stage){
+    var startX=0,startY=0,tracking=false;
+    var THRESHOLD=40; // px of horizontal movement needed
+    stage.addEventListener('pointerdown',function(e){
+      if(e.pointerType==='mouse'&&e.button!==0)return;
+      startX=e.clientX;startY=e.clientY;tracking=true;
+    });
+    function end(e){
+      if(!tracking)return;tracking=false;
+      var dx=e.clientX-startX, dy=e.clientY-startY;
+      if(Math.abs(dx)<THRESHOLD)return;
+      // Ignore mostly-vertical drags (page scroll)
+      if(Math.abs(dy)>Math.abs(dx))return;
+      var current=area.dataset.active;
+      if(dx<0&&current==='client') setActive('assistant');     // swipe ← reveals assistant
+      else if(dx>0&&current==='assistant') setActive('client'); // swipe → reveals client
+    }
+    stage.addEventListener('pointerup',end);
+    stage.addEventListener('pointercancel',function(){tracking=false;});
+    // Prevent the browser from interpreting horizontal drags as page-scroll on touch
+    stage.style.touchAction='pan-y';
+  }
+
   // Initial position (after fonts load so widths are correct)
   requestAnimationFrame(moveSlider);
   if(document.fonts&&document.fonts.ready){document.fonts.ready.then(moveSlider);}
   window.addEventListener('resize',moveSlider);
-  // (No more JS phone-size sync needed — there's literally one phone shell now;
-  //  swapping screens cannot change its dimensions.)
 })();
 /* ── "Your assistant" bubble — click to expand ── */
 (function(){
