@@ -5,47 +5,57 @@ export default async function handler(req, res) {
 
   const { name, business, email, industry, challenge } = req.body;
 
-  // Send to Telegram
-  const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const slackWebhook = process.env.SLACK_WEBHOOK_NEW_LEAD;
 
-  if (!botToken || !chatId) {
-    console.error('Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID');
+  if (!slackWebhook) {
+    console.error('Missing SLACK_WEBHOOK_NEW_LEAD');
     return res.status(500).json({ error: 'Server configuration error' });
   }
 
-  const text = [
-    '🔥 *NEW LEAD — 4THWALL*',
-    '',
-    `*Name:* ${name || 'N/A'}`,
-    `*Business:* ${business || 'N/A'}`,
-    `*Email:* ${email || 'N/A'}`,
-    `*Industry:* ${industry || 'N/A'}`,
-    `*Challenge:* ${challenge || 'N/A'}`,
-    '',
-    'Respond fast — this person is warm.'
-  ].join('\n');
+  const slackPayload = {
+    blocks: [
+      {
+        type: 'header',
+        text: { type: 'plain_text', text: '🔥 New Lead — 4THWALL', emoji: true }
+      },
+      {
+        type: 'section',
+        fields: [
+          { type: 'mrkdwn', text: `*Name*\n${name || 'N/A'}` },
+          { type: 'mrkdwn', text: `*Business*\n${business || 'N/A'}` },
+          { type: 'mrkdwn', text: `*Email*\n${email || 'N/A'}` },
+          { type: 'mrkdwn', text: `*Industry*\n${industry || 'N/A'}` }
+        ]
+      },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*Challenge*\n${challenge || 'N/A'}` }
+      },
+      {
+        type: 'context',
+        elements: [
+          { type: 'mrkdwn', text: 'Source: 4thwall.solutions · Respond fast — this person is warm.' }
+        ]
+      }
+    ]
+  };
 
   try {
-    const tgRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    const slackRes = await fetch(slackWebhook, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-        parse_mode: 'Markdown'
-      })
+      body: JSON.stringify(slackPayload)
     });
 
-    if (!tgRes.ok) {
-      const err = await tgRes.text();
-      console.error('Telegram API error:', err);
+    if (!slackRes.ok) {
+      const err = await slackRes.text();
+      console.error('Slack webhook error:', err);
       return res.status(502).json({ error: 'Failed to send notification' });
     }
 
     return res.status(200).json({ success: true });
   } catch (err) {
-    console.error('Error sending to Telegram:', err);
+    console.error('Error sending to Slack:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
