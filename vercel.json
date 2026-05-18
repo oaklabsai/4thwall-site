@@ -1,0 +1,6 @@
+{
+  "github": {
+    "autoAlias": true,
+    "productionBranch": "main"
+  }
+}
