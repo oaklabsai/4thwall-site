@@ -500,31 +500,36 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .lap-lid::before,.lap-lid::after{display:none}
 .lap-screen::before{display:none}
 
-/* ── Laptop screen content: Slack desktop mock (Operations workspace) ─────
-   Rendered at a fixed 615x400 design size, then transform:scale to fit the
+/* ── Laptop screen content: AI assistant interface ─────
+   Rendered at a fixed 500x325 design size, then transform:scale to fit the
    actual lap-lid box. Keeps every element pixel-perfect proportional across
    viewports — the whole mock shrinks/grows as one. */
 .lap-screen{
-  --slk-dark:#1a1d21;--slk-darker:#19171d;
-  --slk-sidebar:#3f0e40;--slk-sidebar-text:rgba(255,255,255,0.7);
-  --slk-divider:#522653;--slk-active-bg:#1164a3;
-  --slk-text:#d1d2d3;--slk-text-2:rgba(171,171,171,0.8);--slk-text-muted:#868686;
-  --slk-border:#2c2d30;--slk-input-border:#565856;--slk-link:#1d9bd1;
-  --slk-red:#e01e5a;--slk-send-green:#007a5a;
-  --slk-brand:#2a8556;--slk-brand-soft:#3ba672;
-  --slk-amber:rgba(236,178,46,0.13);
-  width:100%;height:100%;background:var(--slk-dark);border-radius:2px;overflow:hidden;
-  position:relative;color:var(--slk-text);
+  --ai-sidebar:#16161a;
+  --ai-sidebar-icon:rgba(247,243,236,0.35);
+  --ai-sidebar-icon-active:rgba(247,243,236,0.92);
+  --ai-bg:#f4f0e8;
+  --ai-bg-2:#ede8df;
+  --ai-text:#1a1a18;
+  --ai-text-2:rgba(26,26,24,0.62);
+  --ai-text-muted:rgba(26,26,24,0.38);
+  --ai-line:rgba(26,26,24,0.10);
+  --ai-accent:#1e6642;
+  --ai-accent-soft:rgba(30,102,66,0.10);
+  --ai-accent-text:rgba(30,102,66,0.85);
+  --ai-user-bg:#fff;
+  --ai-send:#1e6642;
+  width:100%;height:100%;background:var(--ai-sidebar);border-radius:2px;overflow:hidden;
+  position:relative;color:var(--ai-text);
   font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;
 }
 .lap-screen .lap-os-inner{
   position:absolute;top:0;left:0;
-  /* Bigger base font-size drives every em-based child element up — readable on mobile after scaling. */
   font-size:22px;
   width:500px;height:325px;
   transform-origin:top left;
-  display:grid;grid-template-rows:auto 1fr;
-  background:var(--slk-dark);
+  display:grid;grid-template-columns:52px 1fr;
+  background:var(--ai-sidebar);
 }
 /* Mobile: keep laptop inset from frame edges, smaller and centered */
 @media(max-width:760px){
@@ -533,128 +538,125 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   #lap-mount::before{bottom:62px;width:62%;height:24px;filter:blur(18px)}
 }
 
-/* Top bar */
-.lap-screen .topbar{background:var(--slk-darker);display:grid;grid-template-columns:18% 1fr 18%;align-items:center;padding:.18em .3em;border-bottom:1px solid var(--slk-border);min-height:18px}
-.lap-screen .tb-left{display:flex;align-items:center;gap:.15em;padding-left:.15em;color:var(--slk-text-2)}
-.lap-screen .tb-nav-arrow,.lap-screen .tb-history{width:9px;height:9px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-muted)}
-.lap-screen .tb-nav-arrow svg,.lap-screen .tb-history svg{width:7px;height:7px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.lap-screen .tb-center{display:flex;justify-content:center;align-items:center}
-.lap-screen .tb-search{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:3px;padding:.08em .25em;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:.2em;max-width:70%;width:auto}
-.lap-screen .tb-search svg{width:6px;height:6px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;flex-shrink:0}
-.lap-screen .tb-search-text{font-size:.4em;overflow:hidden;white-space:nowrap}
-.lap-screen .tb-right{display:flex;justify-content:flex-end;align-items:center;gap:.2em;padding-right:.15em}
-.lap-screen .tb-avatar{width:11px;height:11px;border-radius:2px;background:linear-gradient(135deg,#5a5650,#3d3a35);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.36em;font-weight:600}
-.lap-screen .tb-help{width:9px;height:9px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-muted);border:1px solid currentColor;border-radius:50%;font-size:.34em;font-weight:700;line-height:1}
+/* ── AI sidebar — narrow dark icon rail ── */
+.lap-screen .ai-sidebar{
+  background:var(--ai-sidebar);display:flex;flex-direction:column;align-items:center;
+  padding:.55em 0 .4em;gap:.35em;border-right:1px solid rgba(255,255,255,.05);flex-shrink:0;
+}
+.lap-screen .ai-nav-icon{
+  width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+  color:var(--ai-sidebar-icon);border-radius:5px;cursor:pointer;transition:color .2s;flex-shrink:0;
+}
+.lap-screen .ai-nav-icon svg{width:11px;height:11px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lap-screen .ai-nav-icon.active{color:var(--ai-sidebar-icon-active)}
+.lap-screen .ai-nav-icon.active svg{stroke-width:2.2}
+.lap-screen .ai-nav-divider{width:20px;height:1px;background:rgba(255,255,255,.07);margin:.1em 0}
+.lap-screen .ai-history{display:flex;flex-direction:column;gap:.28em;padding:.1em .14em;width:100%}
+.lap-screen .ai-hist-item{height:5px;border-radius:3px;background:rgba(255,255,255,.07)}
+.lap-screen .ai-hist-item:nth-child(1){width:76%}
+.lap-screen .ai-hist-item:nth-child(2){width:88%}
+.lap-screen .ai-hist-item:nth-child(3){width:62%}
+.lap-screen .ai-hist-item:nth-child(4){width:80%}
+.lap-screen .ai-hist-item:nth-child(5){width:55%}
 
-/* Main grid: workspaces + sidebar + content */
-.lap-screen .main{display:grid;grid-template-columns:22px 80px 1fr;overflow:hidden;min-height:0}
-
-/* Workspace switcher */
-.lap-screen .workspaces{background:var(--slk-darker);padding:.25em 0;display:flex;flex-direction:column;align-items:center;gap:.2em;border-right:1px solid rgba(255,255,255,.04)}
-.lap-screen .ws-icon{width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.5em;position:relative}
-.lap-screen .ws-icon.active{box-shadow:inset 0 0 0 1.5px var(--slk-active-bg)}
-.lap-screen .ws-icon.active::before{content:"";position:absolute;left:-5px;top:3px;width:2px;height:10px;background:#fff;border-radius:0 1px 1px 0}
-.lap-screen .ws-icon.ops{background:#1e6642;color:#fff;font-family:var(--display);font-style:italic;font-size:.62em}
-.lap-screen .ws-icon.alt{background:#a02b5b;font-size:.5em}
-.lap-screen .ws-icon.alt2{background:#3d3a35;color:rgba(255,255,255,.6);font-size:.7em;font-weight:400}
-.lap-screen .ws-badge{position:absolute;top:-2px;right:-2px;min-width:8px;height:8px;background:var(--slk-red);color:#fff;border-radius:5px;border:1.5px solid var(--slk-darker);font-size:.32em;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 .14em;opacity:0;transform:scale(0);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;line-height:1}
-.lap-screen .ws-badge.active{opacity:1;transform:scale(1)}
-
-/* Sidebar */
-.lap-screen .sidebar{background:var(--slk-sidebar);color:var(--slk-sidebar-text);padding:.3em 0 0;overflow-y:auto;font-size:.5em;min-width:0}
-.lap-screen .sb-team{padding:0 .35em .35em;border-bottom:1px solid var(--slk-divider);margin-bottom:.25em;display:flex;align-items:center;justify-content:space-between}
-.lap-screen .sb-team-name{font-weight:900;color:#fff;font-size:.56em;display:flex;align-items:center;gap:.15em;letter-spacing:-.01em}
-.lap-screen .sb-team-name svg{width:6px;height:6px;stroke:currentColor;stroke-width:2.5;fill:none}
-.lap-screen .sb-edit{width:11px;height:11px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--slk-sidebar)}
-.lap-screen .sb-edit svg{width:6px;height:6px;stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.lap-screen .sb-section{padding:0 .25em .1em}
-.lap-screen .sb-item{padding:.08em .25em;border-radius:3px;display:flex;align-items:center;gap:.2em;font-weight:500;font-size:.5em}
-.lap-screen .sb-icon{width:8px;height:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.lap-screen .sb-icon svg{width:8px;height:8px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.lap-screen .sb-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lap-screen .sb-group{margin-top:.15em}
-.lap-screen .sb-group-head{padding:.1em .25em;display:flex;align-items:center;gap:.15em;color:var(--slk-sidebar-text);font-size:.46em;font-weight:500}
-.lap-screen .sb-group-head svg{width:5px;height:5px;stroke:currentColor;stroke-width:2.5;fill:none;flex-shrink:0}
-.lap-screen .sb-channel{padding:.08em .25em .08em .85em;border-radius:3px;display:flex;align-items:center;gap:.15em;font-size:.5em;position:relative}
-.lap-screen .sb-channel .hash{color:var(--slk-sidebar-text);font-weight:500;opacity:.7}
-.lap-screen .sb-channel.active{background:var(--slk-active-bg);color:#fff;font-weight:600}
-.lap-screen .sb-channel.active .hash{opacity:1;color:#fff}
-.lap-screen .sb-channel.unread{color:#fff;font-weight:700}
-.lap-screen .sb-channel.unread .hash{color:#fff;opacity:1}
-.lap-screen .sb-unread-count{margin-left:auto;background:var(--slk-red);color:#fff;font-size:.38em;font-weight:700;padding:0 .2em;border-radius:5px;min-width:10px;height:10px;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s ease}
-.lap-screen .sb-unread-count.active{opacity:1;transform:scale(1)}
-.lap-screen .sb-dm-status{width:5px;height:5px;border-radius:50%;background:#2bac76;flex-shrink:0}
-
-/* Main content */
-.lap-screen .content{display:flex;flex-direction:column;background:var(--slk-dark);overflow:hidden;min-width:0}
-.lap-screen .ch-header{padding:.32em .5em;border-bottom:1px solid var(--slk-border);display:flex;align-items:center;gap:.3em;flex-shrink:0}
-.lap-screen .ch-title{display:flex;align-items:center;gap:.18em;font-weight:900;color:#fff;font-size:.62em}
-.lap-screen .ch-title svg{width:6px;height:6px;stroke:currentColor;stroke-width:2.5;fill:none}
-.lap-screen .ch-meta{display:flex;align-items:center;gap:.3em;font-size:.42em;color:var(--slk-text-2)}
-.lap-screen .ch-meta .members,.lap-screen .ch-meta .pin{display:flex;align-items:center;gap:.12em}
-.lap-screen .ch-meta .members svg{width:7px;height:7px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
-.lap-screen .ch-meta .pin svg{width:6px;height:6px;fill:currentColor}
-.lap-screen .ch-meta-divider{width:1px;height:8px;background:rgba(255,255,255,.1)}
-.lap-screen .ch-meta .desc{font-style:italic;color:var(--slk-text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
-.lap-screen .ch-header-right{margin-left:auto;display:flex;align-items:center;gap:.2em}
-.lap-screen .ch-header-icon{width:13px;height:13px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-2);border-radius:2px}
-.lap-screen .ch-header-icon svg{width:9px;height:9px;stroke:currentColor;stroke-width:1.8;fill:none}
+/* ── AI main content area ── */
+.lap-screen .ai-main{
+  display:flex;flex-direction:column;background:var(--ai-bg);overflow:hidden;min-width:0;
+}
+.lap-screen .ai-header{
+  padding:.28em .45em;border-bottom:1px solid var(--ai-line);display:flex;align-items:center;
+  gap:.3em;flex-shrink:0;background:var(--ai-bg);
+}
+.lap-screen .ai-header-name{font-size:.52em;font-weight:700;color:var(--ai-text);letter-spacing:-.01em}
+.lap-screen .ai-status-dot{width:5px;height:5px;border-radius:50%;background:#2bac76;flex-shrink:0;display:inline-block;margin-left:.2em}
+.lap-screen .ai-header-right{margin-left:auto;display:flex;gap:.18em}
+.lap-screen .ai-hdr-btn{width:12px;height:12px;display:flex;align-items:center;justify-content:center;color:var(--ai-text-muted)}
+.lap-screen .ai-hdr-btn svg{width:9px;height:9px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
 /* Messages */
-.lap-screen .messages-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative;min-height:0;mask-image:linear-gradient(to bottom,transparent 0,#000 4%,#000 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 4%,#000 100%)}
-.lap-screen .messages{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:.25em 0 .3em;min-height:0}
-.lap-screen .day-divider{display:flex;align-items:center;gap:.4em;padding:.3em .5em}
-.lap-screen .day-divider .line{flex:1;height:1px;background:var(--slk-border)}
-.lap-screen .day-divider .label{font-size:.4em;color:var(--slk-text-2);font-weight:700;border:1px solid var(--slk-border);padding:.08em .35em;border-radius:8px;background:var(--slk-dark)}
-.lap-screen .msg{padding:.22em .5em .25em;display:flex;gap:.36em;position:relative;transition:max-height .45s ease,opacity .4s ease,padding .4s ease,transform .5s cubic-bezier(.16,1,.3,1);max-height:300px;opacity:1;transform:translateY(0);flex-shrink:0}
-.lap-screen .msg.hidden-msg{max-height:0;opacity:0;padding-top:0;padding-bottom:0;transform:translateY(6px);overflow:hidden}
-.lap-screen .msg.fresh::before{content:"";position:absolute;inset:1px 4px;background:var(--slk-amber);border-radius:3px;z-index:0;pointer-events:none;animation:lapFreshFade 3.5s ease forwards}
-.lap-screen .msg.fresh > *{position:relative;z-index:1}
-.lap-screen .msg-avatar{width:18px;height:18px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:.55em;font-family:var(--display);font-style:italic}
-.lap-screen .msg-avatar.assistant{background:linear-gradient(135deg,var(--slk-brand) 0%,var(--slk-brand-soft) 100%)}
-.lap-screen .msg-avatar.user{background:linear-gradient(135deg,#5a5650 0%,#3d3a35 100%);font-family:-apple-system,sans-serif;font-style:normal;font-size:.42em}
-.lap-screen .msg-body{flex:1;min-width:0}
-.lap-screen .msg-head{display:flex;align-items:baseline;gap:.25em;margin-bottom:.08em;flex-wrap:wrap}
-.lap-screen .msg-name{font-weight:900;color:#fff;font-size:.56em}
-.lap-screen .msg-tag{background:rgba(255,255,255,.1);color:var(--slk-text-2);font-size:.36em;font-weight:700;padding:.02em .2em;border-radius:2px;letter-spacing:.02em;line-height:1.3}
-.lap-screen .msg-time{font-size:.42em;color:var(--slk-text-muted)}
-.lap-screen .msg-text{font-size:.54em;color:var(--slk-text);line-height:1.5}
-.lap-screen .msg-text strong{font-weight:700;color:#fff}
-.lap-screen .msg-text .list{margin-top:.18em;display:flex;flex-direction:column;gap:.1em}
-.lap-screen .msg-text .item{display:flex;gap:.3em;align-items:flex-start;font-size:.52em}
-.lap-screen .msg-text .item .b{color:var(--slk-text-muted);flex-shrink:0;font-weight:700;line-height:1.5}
-.lap-screen .callout{margin-top:.3em;padding:.3em .4em;background:rgba(46,182,125,.08);border-left:2px solid var(--slk-brand-soft);border-radius:3px;font-size:.5em;color:var(--slk-text);line-height:1.5}
-.lap-screen .callout strong{color:#fff;font-weight:700}
+.lap-screen .ai-messages-wrap{
+  flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;
+  mask-image:linear-gradient(to bottom,transparent 0,#000 5%,#000 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 5%,#000 100%);
+}
+.lap-screen .ai-messages{
+  flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:.3em .4em .2em;gap:.05em;min-height:0;
+}
+.lap-screen .ai-msg{
+  display:flex;gap:.28em;align-items:flex-start;
+  transition:max-height .45s ease,opacity .4s ease,padding .4s ease,transform .5s cubic-bezier(.16,1,.3,1);
+  max-height:300px;opacity:1;transform:translateY(0);flex-shrink:0;
+  padding:.18em 0;
+}
+.lap-screen .ai-msg.hidden-msg{max-height:0;opacity:0;padding:0;transform:translateY(5px);overflow:hidden}
+.lap-screen .ai-msg.fresh{animation:aiFresh .4s ease}
+@keyframes aiFresh{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.lap-screen .ai-avatar{
+  width:17px;height:17px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;font-weight:700;color:#fff;font-size:.48em;
+  font-family:var(--display);font-style:italic;margin-top:.05em;
+  background:linear-gradient(135deg,var(--ai-accent),#2bac76);
+}
+.lap-screen .ai-avatar-user{background:linear-gradient(135deg,#5a5650,#3d3a35);font-family:-apple-system,sans-serif;font-style:normal;font-size:.4em}
+.lap-screen .ai-msg-body{flex:1;min-width:0}
+.lap-screen .ai-msg-head{display:flex;align-items:baseline;gap:.22em;margin-bottom:.06em}
+.lap-screen .ai-msg-name{font-weight:700;color:var(--ai-text);font-size:.52em;letter-spacing:-.01em}
+.lap-screen .ai-msg-name-user{color:var(--ai-text-2)}
+.lap-screen .ai-msg-time{font-size:.38em;color:var(--ai-text-muted)}
+.lap-screen .ai-msg-text{font-size:.5em;color:var(--ai-text);line-height:1.55}
+.lap-screen .ai-msg-text strong{font-weight:700;color:var(--ai-text)}
+.lap-screen .ai-list{margin-top:.2em;display:flex;flex-direction:column;gap:.12em}
+.lap-screen .ai-item{display:flex;gap:.28em;align-items:flex-start;font-size:.9em;color:var(--ai-text-2)}
+.lap-screen .ai-item .b{color:var(--ai-accent-text);flex-shrink:0;font-weight:700;line-height:1.55}
+.lap-screen .ai-callout{
+  margin-top:.3em;padding:.28em .36em;
+  background:var(--ai-accent-soft);border-left:2px solid var(--ai-accent);
+  border-radius:3px;font-size:.88em;color:var(--ai-text-2);line-height:1.5;
+}
+.lap-screen .ai-callout strong{color:var(--ai-accent);font-weight:700}
 
 /* Typing indicator */
-.lap-screen .typing-row{padding:.18em .5em .28em;display:flex;align-items:center;gap:.3em;font-size:.42em;color:var(--slk-text-2);max-height:40px;opacity:1;transition:max-height .3s ease,opacity .25s ease,padding .3s ease;flex-shrink:0}
+.lap-screen .typing-row{
+  padding:.1em .4em .14em;display:flex;align-items:center;gap:.22em;
+  font-size:.38em;color:var(--ai-text-muted);
+  max-height:30px;opacity:1;
+  transition:max-height .3s ease,opacity .25s ease,padding .3s ease;flex-shrink:0;
+}
 .lap-screen .typing-row.hidden-msg{max-height:0;opacity:0;padding-top:0;padding-bottom:0;overflow:hidden}
-.lap-screen .typing-avatar{width:10px;height:10px;border-radius:2px;background:linear-gradient(135deg,var(--slk-brand) 0%,var(--slk-brand-soft) 100%);color:#fff;font-family:var(--display);font-style:italic;font-size:.32em;font-weight:600;display:flex;align-items:center;justify-content:center}
+.lap-screen .typing-avatar{
+  width:9px;height:9px;border-radius:2px;
+  background:linear-gradient(135deg,var(--ai-accent),#2bac76);
+  color:#fff;font-family:var(--display);font-style:italic;font-size:.3em;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
 .lap-screen .dots{display:inline-flex;gap:2px;align-items:center;margin-left:.05em}
-.lap-screen .dots i{width:3px;height:3px;background:var(--slk-text-2);border-radius:50%;animation:lapBounce 1.2s infinite ease-in-out}
+.lap-screen .dots i{width:2.5px;height:2.5px;background:var(--ai-text-muted);border-radius:50%;animation:lapBounce 1.2s infinite ease-in-out}
 .lap-screen .dots i:nth-child(2){animation-delay:.15s}
 .lap-screen .dots i:nth-child(3){animation-delay:.3s}
 
 /* Input bar */
-.lap-screen .input-bar{padding:0 .5em .42em;flex-shrink:0}
-.lap-screen .input-wrap{background:var(--slk-dark);border:1px solid var(--slk-input-border);border-radius:4px;transition:border-color .25s ease,box-shadow .25s ease;overflow:hidden}
-.lap-screen .input-wrap.active{border-color:var(--slk-link);box-shadow:0 0 0 1px var(--slk-link)}
-.lap-screen .input-format{padding:.18em .3em 0;display:flex;align-items:center;gap:.02em}
-.lap-screen .fmt-btn{width:14px;height:14px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-2);font-size:.46em;font-weight:700;border-radius:2px}
-.lap-screen .fmt-btn svg{width:7px;height:7px;stroke:currentColor;stroke-width:1.9;fill:none}
-.lap-screen .fmt-divider{width:1px;height:8px;background:rgba(255,255,255,.1);margin:0 .08em}
-.lap-screen .input-text-area{padding:.25em .35em .2em;font-size:.54em;color:var(--slk-text-muted);min-height:.9em;display:flex;align-items:center}
-.lap-screen .input-text-area .typed{color:#fff}
-.lap-screen .typing-cursor{display:inline-block;width:1px;height:1em;background:#fff;margin-left:1px;vertical-align:middle;animation:lapBlink .9s steps(2) infinite}
-.lap-screen .input-bottom{display:flex;align-items:center;justify-content:space-between;padding:.1em .25em .22em}
-.lap-screen .input-tools,.lap-screen .input-right{display:flex;align-items:center;gap:.02em}
-.lap-screen .it{width:14px;height:14px;display:flex;align-items:center;justify-content:center;color:var(--slk-text-2);border-radius:2px}
-.lap-screen .it svg{width:8px;height:8px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.lap-screen .it-text{font-size:.55em;font-weight:600;color:var(--slk-text-2)}
-.lap-screen .send-btn{background:rgba(255,255,255,.08);color:var(--slk-text-muted);width:15px;height:15px;border-radius:3px;display:flex;align-items:center;justify-content:center;transition:background .2s ease,color .2s ease,transform .15s ease;margin-left:.1em}
-.lap-screen .send-btn.active{background:var(--slk-send-green);color:#fff}
-.lap-screen .send-btn.pressed{transform:scale(.92)}
-.lap-screen .send-btn svg{width:7px;height:7px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lap-screen .ai-input-bar{padding:.18em .4em .32em;flex-shrink:0;background:var(--ai-bg)}
+.lap-screen .input-wrap{
+  background:var(--ai-user-bg);border:1px solid var(--ai-line);border-radius:6px;
+  display:flex;align-items:center;gap:.2em;padding:.22em .3em;
+  transition:border-color .25s,box-shadow .25s;
+}
+.lap-screen .input-wrap.active{border-color:var(--ai-accent);box-shadow:0 0 0 1.5px var(--ai-accent-soft)}
+.lap-screen .input-text-area{
+  flex:1;font-size:.48em;color:var(--ai-text-muted);display:flex;align-items:center;
+  min-height:.9em;
+}
+.lap-screen .input-text-area .typed{color:var(--ai-text)}
+.lap-screen .typing-cursor{display:inline-block;width:1px;height:1em;background:var(--ai-text);margin-left:1px;vertical-align:middle;animation:lapBlink .9s steps(2) infinite}
+.lap-screen .send-btn{
+  width:16px;height:16px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  background:rgba(30,102,66,.12);color:var(--ai-accent);flex-shrink:0;
+  transition:background .2s,transform .15s;
+}
+.lap-screen .send-btn.active{background:var(--ai-accent);color:#fff}
+.lap-screen .send-btn.pressed{transform:scale(.9)}
+.lap-screen .send-btn svg{width:7px;height:7px;stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
 @keyframes lapFreshFade{0%,30%{opacity:1}100%{opacity:0}}
 @keyframes lapBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
@@ -868,150 +870,93 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <div class="lap-screen">
             <div class="lap-os-inner">
 
-            <!-- Top bar -->
-            <div class="topbar">
-              <div class="tb-left">
-                <div class="tb-nav-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
-                <div class="tb-nav-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
-                <div class="tb-history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></div>
+            <!-- AI sidebar — icon rail -->
+            <div class="ai-sidebar">
+              <div class="ai-nav-icon active">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
               </div>
-              <div class="tb-center">
-                <div class="tb-search">
-                  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
-                  <span class="tb-search-text">Search Operations</span>
-                </div>
+              <div class="ai-nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               </div>
-              <div class="tb-right">
-                <div class="tb-help">?</div>
-                <div class="tb-avatar">SC</div>
+              <div class="ai-nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+              </div>
+              <div class="ai-nav-divider"></div>
+              <div class="ai-history">
+                <div class="ai-hist-item"></div>
+                <div class="ai-hist-item"></div>
+                <div class="ai-hist-item"></div>
+                <div class="ai-hist-item"></div>
+                <div class="ai-hist-item"></div>
               </div>
             </div>
 
-            <!-- Main grid: workspaces + sidebar + content -->
-            <div class="main">
-
-              <!-- Workspace switcher -->
-              <div class="workspaces">
-                <div class="ws-icon ops active">O<div class="ws-badge" id="ws-badge">1</div></div>
-                <div class="ws-icon alt">M</div>
-                <div class="ws-icon alt2">+</div>
-              </div>
-
-              <!-- Channel sidebar -->
-              <div class="sidebar">
-                <div class="sb-team">
-                  <div class="sb-team-name">Operations <svg viewBox="0 0 10 10"><path d="M2 4l3 3 3-3"/></svg></div>
-                  <div class="sb-edit"><svg viewBox="0 0 16 16"><path d="M11 2l3 3-8 8H3v-3z"/></svg></div>
-                </div>
-                <div class="sb-section">
-                  <div class="sb-item"><div class="sb-icon"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-5v-6h-4v6H5a1 1 0 01-1-1z"/></svg></div><span class="sb-label">Home</span></div>
-                  <div class="sb-item"><div class="sb-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="6"/><path d="M13 13l4 4M9 6v6M6 9h6"/></svg></div><span class="sb-label">Threads</span></div>
-                  <div class="sb-item"><div class="sb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 4a8 8 0 110 16 8 8 0 010-16z"/></svg></div><span class="sb-label">Activity</span></div>
-                </div>
-                <div class="sb-group">
-                  <div class="sb-group-head"><svg viewBox="0 0 10 10"><path d="M2 4l3 3 3-3"/></svg><span>Channels</span></div>
-                  <div class="sb-channel active" id="ch-briefs"><span class="hash">#</span><span class="sb-label">briefs</span></div>
-                  <div class="sb-channel"><span class="hash">#</span><span class="sb-label">pipeline</span></div>
-                  <div class="sb-channel"><span class="hash">#</span><span class="sb-label">financials</span></div>
-                  <div class="sb-channel"><span class="hash">#</span><span class="sb-label">projects</span></div>
-                  <div class="sb-channel"><span class="hash">#</span><span class="sb-label">vendors</span></div>
-                </div>
-                <div class="sb-group">
-                  <div class="sb-group-head"><svg viewBox="0 0 10 10"><path d="M2 4l3 3 3-3"/></svg><span>Direct messages</span></div>
-                  <div class="sb-channel"><span class="sb-dm-status"></span><span class="sb-label">Assistant</span></div>
+            <!-- AI main chat -->
+            <div class="ai-main">
+              <div class="ai-header">
+                <span class="ai-header-name">assistant<span class="ai-status-dot"></span></span>
+                <div class="ai-header-right">
+                  <div class="ai-hdr-btn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg></div>
+                  <div class="ai-hdr-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
                 </div>
               </div>
-
-              <!-- Channel content -->
-              <div class="content">
-                <div class="ch-header">
-                  <div class="ch-title"><span># briefs</span><svg viewBox="0 0 10 10"><path d="M2 4l3 3 3-3"/></svg></div>
-                  <div class="ch-meta">
-                    <div class="members"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><circle cx="17" cy="11" r="2.5"/><path d="M3 19c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M14 18c0-2.5 2-4.5 4.5-4.5"/></svg><span>2</span></div>
-                    <div class="ch-meta-divider"></div>
-                    <div class="pin"><svg viewBox="0 0 16 16"><path d="M10 1v5l3 3v1h-4v5l-1 1-1-1v-5H3V9l3-3V1z"/></svg><span>3</span></div>
-                    <div class="ch-meta-divider"></div>
-                    <span class="desc">Daily operational briefings from the assistant</span>
-                  </div>
-                  <div class="ch-header-right">
-                    <div class="ch-header-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.37 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.33 1.85.57 2.81.7a2 2 0 011.72 2.03z"/></svg></div>
-                    <div class="ch-header-icon"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
-                  </div>
-                </div>
-                <div class="messages-wrap">
-                  <div class="messages">
-                    <div class="day-divider"><div class="line"></div><div class="label">Today</div><div class="line"></div></div>
-                    <div class="msg hidden-msg" id="msg-brief">
-                      <div class="msg-avatar assistant">A</div>
-                      <div class="msg-body">
-                        <div class="msg-head"><span class="msg-name">Assistant</span><span class="msg-tag">APP</span><span class="msg-time">6:30 AM</span></div>
-                        <div class="msg-text">
-                          <strong>Good morning. Here's the rundown.</strong>
-                          <div class="list">
-                            <div class="item"><span class="b">•</span><span>Pipeline: 12 estimates pending, 8 quotes out, 5 active jobs</span></div>
-                            <div class="item"><span class="b">•</span><span>Material alert: quartz up 8% from Smith bid</span></div>
-                            <div class="item"><span class="b">•</span><span>Cash position: $42K expected this week, $18K outgoing</span></div>
-                          </div>
-                          <div class="callout"><strong>Two priorities today:</strong> Smith quote follow-up (day 4 of 7), Hernandez returning-customer call.</div>
-                        </div>
+              <div class="ai-messages-wrap">
+                <div class="ai-messages">
+                  <div class="ai-msg hidden-msg" id="msg-brief">
+                    <div class="ai-avatar">A</div>
+                    <div class="ai-msg-body">
+                      <div class="ai-msg-head">
+                        <span class="ai-msg-name">assistant</span>
+                        <span class="ai-msg-time">6:30 AM</span>
                       </div>
-                    </div>
-                    <div class="msg hidden-msg" id="msg-query">
-                      <div class="msg-avatar user">SC</div>
-                      <div class="msg-body">
-                        <div class="msg-head"><span class="msg-name">Sam Carter</span><span class="msg-time">10:14 AM</span></div>
-                        <div class="msg-text">what did we charge the Patel family in Bronxville?</div>
-                      </div>
-                    </div>
-                    <div class="typing-row hidden-msg" id="typing-row">
-                      <div class="typing-avatar">A</div>
-                      <span>Assistant is typing</span>
-                      <span class="dots"><i></i><i></i><i></i></span>
-                    </div>
-                    <div class="msg hidden-msg" id="msg-response">
-                      <div class="msg-avatar assistant">A</div>
-                      <div class="msg-body">
-                        <div class="msg-head"><span class="msg-name">Assistant</span><span class="msg-tag">APP</span><span class="msg-time">10:14 AM</span></div>
-                        <div class="msg-text">
-                          <strong>Patel family — Bronxville master bath, Aug 2024.</strong>
-                          <div class="list">
-                            <div class="item"><span class="b">•</span><span>Total: $38,500</span></div>
-                            <div class="item"><span class="b">•</span><span>Materials: $14,200 (Kohler fixtures, Italian tile)</span></div>
-                            <div class="item"><span class="b">•</span><span>Labor: $19,800 · 12-day build</span></div>
-                          </div>
-                          <div class="callout">Final 5-star review. Referred the Cohen project (Greenwich, signed Apr 2025).</div>
+                      <div class="ai-msg-text">
+                        <strong>Good morning. Here's the rundown.</strong>
+                        <div class="ai-list">
+                          <div class="ai-item"><span class="b">•</span><span>3 proposals pending — Smith at day 4 of 7</span></div>
+                          <div class="ai-item"><span class="b">•</span><span>Cash: $42K in · $18K out this week</span></div>
+                          <div class="ai-item"><span class="b">•</span><span>Flag: Hernandez call today, Harrison close by Friday</span></div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="input-bar">
-                  <div class="input-wrap" id="input-wrap">
-                    <div class="input-format">
-                      <div class="fmt-btn" style="font-weight:900">B</div>
-                      <div class="fmt-btn" style="font-style:italic">I</div>
-                      <div class="fmt-btn" style="text-decoration:line-through">S</div>
-                      <div class="fmt-divider"></div>
-                      <div class="fmt-btn"><svg viewBox="0 0 16 16"><path d="M5 3l-3 5 3 5M11 3l3 5-3 5"/></svg></div>
-                      <div class="fmt-btn"><svg viewBox="0 0 16 16"><path d="M3 9.5l3-3M3 6.5l3 3M10 11h3M10 7h3M10 4h3"/></svg></div>
-                    </div>
-                    <div class="input-text-area"><span id="input-text">Message #briefs</span></div>
-                    <div class="input-bottom">
-                      <div class="input-tools">
-                        <div class="it"><span class="it-text">@</span></div>
-                        <div class="it"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
-                        <div class="it"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+                  <div class="ai-msg hidden-msg" id="msg-query">
+                    <div class="ai-avatar ai-avatar-user">SC</div>
+                    <div class="ai-msg-body">
+                      <div class="ai-msg-head">
+                        <span class="ai-msg-name ai-msg-name-user">Sam Carter</span>
+                        <span class="ai-msg-time">10:14 AM</span>
                       </div>
-                      <div class="input-right">
-                        <div class="it"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="13" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></div>
-                        <div class="send-btn" id="send-btn"><svg viewBox="0 0 24 24"><path d="M5 12l14-7-3 7 3 7z"/></svg></div>
+                      <div class="ai-msg-text" style="color:var(--ai-text-2)">what should I focus on first?</div>
+                    </div>
+                  </div>
+                  <div class="typing-row hidden-msg" id="typing-row">
+                    <div class="typing-avatar">A</div>
+                    <span>assistant is thinking</span>
+                    <span class="dots"><i></i><i></i><i></i></span>
+                  </div>
+                  <div class="ai-msg hidden-msg" id="msg-response">
+                    <div class="ai-avatar">A</div>
+                    <div class="ai-msg-body">
+                      <div class="ai-msg-head">
+                        <span class="ai-msg-name">assistant</span>
+                        <span class="ai-msg-time">10:14 AM</span>
+                      </div>
+                      <div class="ai-msg-text">
+                        <strong>Harrison Group.</strong> Day 6 of a 7-day window — the revised scope hasn't had a reply. One call today either closes it or tells you to move on.
+                        <div class="ai-callout">After that — Hernandez. <strong>Returning client</strong>, higher LTV than anything open in the pipeline.</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-
+              <div class="ai-input-bar">
+                <div class="input-wrap" id="input-wrap">
+                  <div class="input-text-area"><span id="input-text">Ask anything…</span></div>
+                  <div class="send-btn" id="send-btn"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+                </div>
+              </div>
             </div>
+
             </div><!-- /.lap-os-inner -->
           </div>
         </div>
@@ -1632,19 +1577,18 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 })();
 </script>
 <script>
-/* ── Slack desktop mock animation (Operations workspace) ── */
+/* ── AI assistant demo animation ── */
 (function(){
-  var wsBadge=document.getElementById('ws-badge');
-  if(!wsBadge)return;
-  var msgBrief=document.getElementById('msg-brief'),
-      msgQuery=document.getElementById('msg-query'),
+  var msgBrief=document.getElementById('msg-brief');
+  if(!msgBrief)return;
+  var msgQuery=document.getElementById('msg-query'),
       msgResponse=document.getElementById('msg-response'),
       typingRow=document.getElementById('typing-row'),
       inputWrap=document.getElementById('input-wrap'),
       inputText=document.getElementById('input-text'),
       sendBtn=document.getElementById('send-btn');
 
-  var queryText='what did we charge the Patel family in Bronxville?';
+  var queryText='what should I focus on first?';
   var timers=[];
   function schedule(fn,ms){var t=setTimeout(fn,ms);timers.push(t);return t;}
   function clearAll(){timers.forEach(clearTimeout);timers.length=0;}
@@ -1654,14 +1598,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     msgQuery.classList.add('hidden-msg');
     msgResponse.classList.add('hidden-msg');msgResponse.classList.remove('fresh');
     typingRow.classList.add('hidden-msg');
-    wsBadge.classList.remove('active');
     inputWrap.classList.remove('active');
-    inputText.textContent='Message #briefs';
+    inputText.textContent='Ask anything…';
     sendBtn.classList.remove('active','pressed');
   }
   function typeQuery(callback){
     inputText.innerHTML='';
-    var i=0,charDelay=38;
+    var i=0,charDelay=42;
     function step(){
       if(i<queryText.length){
         inputText.innerHTML='<span class="typed">'+queryText.substring(0,i+1)+'</span><span class="typing-cursor"></span>';
@@ -1674,42 +1617,41 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
   function runCycle(){
     clearAll();reset();
+    // Morning brief arrives
     schedule(function(){
-      wsBadge.textContent='1';wsBadge.classList.add('active');
       msgBrief.classList.remove('hidden-msg');msgBrief.classList.add('fresh');
     },1000);
-    schedule(function(){wsBadge.classList.remove('active');},5000);
-    schedule(function(){inputWrap.classList.add('active');},5800);
+    // Founder types question
+    schedule(function(){inputWrap.classList.add('active');},5500);
     schedule(function(){
       typeQuery(function(){
         sendBtn.classList.add('pressed');
         schedule(function(){sendBtn.classList.remove('pressed');},150);
-        inputText.textContent='Message #briefs';
+        inputText.textContent='Ask anything…';
         inputWrap.classList.remove('active');
         sendBtn.classList.remove('active');
         msgQuery.classList.remove('hidden-msg');
       });
-    },6100);
-    schedule(function(){typingRow.classList.remove('hidden-msg');},9500);
-    schedule(function(){typingRow.classList.add('hidden-msg');},11500);
+    },5800);
+    // Thinking
+    schedule(function(){typingRow.classList.remove('hidden-msg');},9000);
+    schedule(function(){typingRow.classList.add('hidden-msg');},10800);
+    // Response
     schedule(function(){
-      wsBadge.textContent='1';wsBadge.classList.add('active');
       msgResponse.classList.remove('hidden-msg');msgResponse.classList.add('fresh');
-    },11700);
-    schedule(function(){wsBadge.classList.remove('active');},15500);
+    },11000);
     schedule(function(){runCycle();},18000);
   }
 
-  // Run only when scrolled into view; pause when out of view
   var running=false;
   function start(){if(running)return;running=true;runCycle();}
   function stop(){if(!running)return;running=false;clearAll();}
   if('IntersectionObserver' in window){
-    var screen=wsBadge.closest('.lap-screen')||wsBadge;
+    var lapScreen=msgBrief.closest('.lap-screen')||msgBrief;
     var io=new IntersectionObserver(function(entries){
       entries.forEach(function(e){if(e.isIntersecting)start();else stop();});
     },{threshold:0.2});
-    io.observe(screen);
+    io.observe(lapScreen);
   }else{
     start();
   }
