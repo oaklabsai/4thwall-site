@@ -528,8 +528,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   font-size:22px;
   width:500px;height:325px;
   transform-origin:top left;
-  display:grid;grid-template-columns:52px 1fr;
-  background:var(--ai-sidebar);
+  display:grid;grid-template-columns:58px 1fr;grid-template-rows:1fr;
+  background:var(--ai-sidebar);overflow:hidden;
 }
 /* Mobile: keep laptop inset from frame edges, smaller and centered */
 @media(max-width:760px){
@@ -541,7 +541,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 /* ── AI sidebar — narrow dark icon rail ── */
 .lap-screen .ai-sidebar{
   background:var(--ai-sidebar);display:flex;flex-direction:column;align-items:center;
-  padding:.55em 0 .4em;gap:.35em;border-right:1px solid rgba(255,255,255,.05);flex-shrink:0;
+  padding:.55em 0 .4em;gap:.35em;border-right:1px solid rgba(255,255,255,.05);
+  flex-shrink:0;height:100%;overflow:hidden;
 }
 .lap-screen .ai-nav-icon{
   width:20px;height:20px;display:flex;align-items:center;justify-content:center;
@@ -562,6 +563,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 /* ── AI main content area ── */
 .lap-screen .ai-main{
   display:flex;flex-direction:column;background:var(--ai-bg);overflow:hidden;min-width:0;
+  height:100%;
 }
 .lap-screen .ai-header{
   padding:.28em .45em;border-bottom:1px solid var(--ai-line);display:flex;align-items:center;
@@ -977,57 +979,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div>
 
   <!-- Slack integration — collapsible launch announcement, ops-flavored -->
-  <div class="assist-bubble r in d2" id="assist-bubble">
-    <button class="assist-bubble-trigger" type="button" aria-expanded="false" aria-controls="assist-bubble-body">
-      <span class="assist-bubble-brand" aria-hidden="true">
-        <svg class="assist-bubble-slack" viewBox="0 0 122.8 122.8" xmlns="http://www.w3.org/2000/svg">
-          <path fill="#e01e5a" d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9zM32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9z"/>
-          <path fill="#36c5f0" d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9zM45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9z"/>
-          <path fill="#2eb67d" d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97zM90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9z"/>
-          <path fill="#ecb22e" d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9z"/>
-        </svg>
-        <span class="assist-bubble-live" title="Live"></span>
-      </span>
-      <span class="assist-bubble-label">
-        <span class="assist-bubble-h"><em>Meet your operator.</em> <span class="assist-bubble-hsub">Now lives in your Slack.</span></span>
-      </span>
-      <span class="assist-bubble-chev" aria-hidden="true">
-        <svg viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,2 6,6 10,2"/></svg>
-      </span>
-    </button>
-    <div class="assist-bubble-body" id="assist-bubble-body">
-      <div class="assist-bubble-inner">
-
-        <p class="assist-bubble-lede">The control layer of Back of House — and where every system reports back. <strong>An assistant that watches the operation end-to-end</strong>, surfacing what's running, what's stalled, and what needs a human eye. Quiet when the work is flowing. <em>Loud the moment it isn't.</em> Every deployment ships the modules your operation actually uses — built from what your business does, not from a template.</p>
-
-        <div class="assist-bubble-grid">
-          <div class="assist-bubble-block">
-            <h4 class="assist-bubble-block-h"><em>What it is.</em></h4>
-            <p><strong>Your operator</strong> lives in your Slack — surfacing the back-office in real time. Exceptions, SLA risk, vendor delays, weekly rollups. The dashboard you never have to open.</p>
-          </div>
-          <div class="assist-bubble-block">
-            <h4 class="assist-bubble-block-h"><em>What's different.</em></h4>
-            <p>Front of House briefs you on the wins. <strong>Back of House escalates the friction.</strong> A ticket missed its SLA, a vendor's three days late, AR crossed 60 — caught the moment it happens, not at month-end.</p>
-          </div>
-          <div class="assist-bubble-block">
-            <h4 class="assist-bubble-block-h"><em>What you can do back.</em></h4>
-            <p>Query anything in-thread. How many exceptions this week. Which jobs are at risk. Who's behind on inventory. The answer comes back in the thread. Deep actions — approvals, rollups — happen where the full context lives: Claude Desktop.</p>
-          </div>
-        </div>
-
-        <div class="assist-bubble-pills">
-          <span class="assist-bubble-pill">Slack-native</span>
-          <span class="assist-bubble-pill">Exception surfacing</span>
-          <span class="assist-bubble-pill">Ops queries</span>
-          <span class="assist-bubble-pill assist-bubble-pill-name">Yours to name</span>
-        </div>
-
-        <p class="assist-bubble-closing">The operation runs without you in it. <em>Now you can see it running.</em></p>
-
-      </div>
-    </div>
-  </div>
-
   <div class="feat r in d2">
     <div class="feat-nav">
       <button class="feat-btn is-active" data-fi="0">
@@ -1679,16 +1630,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     single.querySelector('.faq-toggle').addEventListener('click',function(){
       single.classList.toggle('open');
     });
-  });
-})();
-/* ── Slack integration bubble — click to expand ── */
-(function(){
-  var bubble=document.getElementById('assist-bubble');
-  if(!bubble)return;
-  var trigger=bubble.querySelector('.assist-bubble-trigger');
-  trigger.addEventListener('click',function(){
-    var open=bubble.classList.toggle('open');
-    trigger.setAttribute('aria-expanded',open?'true':'false');
   });
 })();
 </script>
