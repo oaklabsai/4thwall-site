@@ -545,6 +545,18 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
       </div>
 
       <div class="form-row">
+        <label class="form-label" for="f-slack-foh">Slack webhook — leads &amp; dispatch <span class="opt">optional</span></label>
+        <input class="form-input" id="f-slack-foh" name="slack_webhook_foh" type="url" placeholder="https://hooks.slack.com/services/...">
+        <p class="form-hint">Paste your Slack incoming webhook URL. New leads, bookings, and escalations post here — your dispatcher's channel.</p>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-slack-boh">Slack webhook — owner updates <span class="opt">optional</span></label>
+        <input class="form-input" id="f-slack-boh" name="slack_webhook_boh" type="url" placeholder="https://hooks.slack.com/services/...">
+        <p class="form-hint">Morning briefs, performance reports, and wins post here — your owner channel.</p>
+      </div>
+
+      <div class="form-row">
         <label class="form-label" for="f-voice">Voice &amp; tone <span class="req">REQ</span></label>
         <textarea class="form-textarea" id="f-voice" name="bot_custom_instructions" style="min-height:140px" placeholder="Describe how you talk to customers in 1–2 sentences. Examples:&#10;• 'Warm, local, direct — short messages, Connecticut-friendly. We don't oversell.'&#10;• 'Professional, polished, slightly formal — never slangy. Always reference the homeowner by first name.'&#10;• 'Friendly but no-nonsense. Quick to qualify, quick to hand off if it's a real job.'" required></textarea>
         <p class="form-hint">This becomes your bot's personality — the more you say, the more it sounds like your shop.</p>
@@ -912,6 +924,8 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
       bilingual:                  bilingual,
       bot_language:               bilingual === 'english_spanish' ? 'en+es' : 'en',
       bot_name:                   v('bot_name'),
+      slack_webhook_foh:          v('slack_webhook_foh'),
+      slack_webhook_boh:          v('slack_webhook_boh'),
       bot_custom_instructions:    v('bot_custom_instructions'),
 
       // Booking + reviews
