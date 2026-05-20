@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4THWALL® — Client Onboarding</title>
+<meta name="description" content="Configure your 4THWALL AI receptionist. Tell us about your business, your trade, and your voice — we'll have your bot live in 60 seconds.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#f7f3ec;
+  --cream-2:#efe9df;
+  --cream-3:#e8e0d2;
+  --ink:#1a1a18;
+  --ink-2:#2a2a26;
+  --muted:rgba(26,26,24,0.62);
+  --dim:rgba(26,26,24,0.38);
+  --faint:rgba(26,26,24,0.16);
+  --line:rgba(26,26,24,0.12);
+  --line-2:rgba(26,26,24,0.06);
+  --orange:#1e6642;
+  --orange-2:#165535;
+  --orange-soft:rgba(30,102,66,0.10);
+  --display:'Fraunces',Georgia,serif;
+  --body:'Inter Tight','Inter',-apple-system,sans-serif;
+  --hand:'Caveat',cursive;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --pad:clamp(1.25rem,4.5vw,4rem);
+  --max:1100px;
+  --err:#8a2a1f;
+  --err-soft:rgba(220,80,60,.07);
+  --err-line:rgba(220,80,60,.45);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--cream);-webkit-font-smoothing:antialiased;letter-spacing:-0.011em;line-height:1.55;min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;-webkit-appearance:none}
+img,svg{display:block;max-width:100%}
+
+/* grain overlay — matches site */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.35;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+/* soft gradient floor */
+body::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 90% 55% at 50% -8%,rgba(255,255,255,.5),transparent 55%),linear-gradient(90deg,rgba(26,26,24,.05),transparent 18%,transparent 82%,rgba(26,26,24,.05)),radial-gradient(ellipse 100% 32% at 50% 108%,rgba(26,26,24,.06),transparent 70%)}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.hand{font-family:var(--hand);font-weight:500}
+.serif{font-family:var(--display)}
+.ital{font-style:italic}
+
+/* ── NAV ─────────────────────────── */
+nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1.1rem var(--pad);background:rgba(247,243,236,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-logo{display:flex;align-items:center;gap:.7rem;line-height:1;color:var(--ink)}
+.nav-logo .brand-mark{height:22px;width:auto;color:var(--ink)}
+.nav-logo .brand-name{font-family:var(--body);font-weight:600;font-size:.82rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);line-height:1}
+.nav-meta{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:.5rem}
+.nav-meta .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@media(max-width:520px){.nav-meta .label{display:none}}
+
+/* ── HERO ─────────────────────────── */
+.hero{padding:4.5rem var(--pad) 1.5rem;max-width:var(--max);margin:0 auto;position:relative}
+.eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:1.2rem;display:inline-flex;align-items:center;gap:.55rem}
+.eyebrow .step-of{color:var(--muted)}
+.hero-h{font-family:var(--display);font-size:clamp(2.1rem,5vw,3.6rem);font-weight:500;line-height:1.04;letter-spacing:-.032em;max-width:22ch;position:relative}
+.hero-h em{font-style:italic;color:var(--orange);font-weight:400}
+.hero-sub{font-size:1rem;line-height:1.65;color:var(--muted);margin-top:1.2rem;max-width:54ch}
+.hero-sub strong{color:var(--ink);font-weight:500}
+.hero-greeting{font-family:var(--hand);color:var(--orange);font-size:1.55rem;line-height:1;display:inline-block;transform:rotate(-2deg);margin-bottom:.6rem}
+
+/* ── PROGRESS ─────────────────── */
+.progress{max-width:var(--max);margin:1.6rem auto 0;padding:0 var(--pad)}
+.prog-meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:.55rem}
+.prog-meta .accent{color:var(--orange)}
+.prog-track{height:2px;background:var(--line);border-radius:1px;overflow:hidden;position:relative}
+.prog-bar{height:100%;width:0%;background:var(--orange);border-radius:1px;transition:width .55s cubic-bezier(.16,1,.3,1)}
+
+/* ── FORM ─────────────────── */
+.form-section{padding:2rem var(--pad) 3rem;max-width:var(--max);margin:0 auto}
+.form-card{background:var(--cream-2);border:1px solid var(--line);border-radius:18px;padding:clamp(1.6rem,3.2vw,2.6rem);max-width:780px;position:relative;box-shadow:0 14px 40px -22px rgba(26,26,24,.18),0 2px 8px -4px rgba(26,26,24,.08)}
+
+.step{display:none;animation:fadeIn .35s cubic-bezier(.16,1,.3,1)}
+.step.is-active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.step-head{margin-bottom:1.5rem;position:relative}
+.step-tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);margin-bottom:.55rem;display:flex;align-items:center;gap:.55rem}
+.step-tag .num{color:var(--ink);font-weight:600}
+.step-title{font-family:var(--display);font-size:clamp(1.45rem,3vw,1.95rem);font-weight:500;letter-spacing:-.025em;line-height:1.1}
+.step-title em{font-style:italic;color:var(--orange);font-weight:400}
+.step-sub{font-size:.92rem;color:var(--muted);margin-top:.5rem;max-width:48ch;line-height:1.6}
+
+.form-row{margin-bottom:1.1rem}
+.form-row.row-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-row.row-triple{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem}
+@media(max-width:640px){
+  .form-row.row-pair,.form-row.row-triple{grid-template-columns:1fr}
+}
+
+.form-label{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:.4rem}
+.form-label .req{color:var(--orange);font-size:.55rem}
+.form-label .opt{color:var(--dim);font-size:.55rem;text-transform:none;letter-spacing:.05em;font-style:italic;font-family:var(--body)}
+.form-hint{font-size:.74rem;color:var(--muted);margin-top:.4rem;line-height:1.5}
+.form-hint a{color:var(--orange);text-decoration:underline;text-underline-offset:2px}
+.form-hint a:hover{color:var(--ink)}
+
+.form-input,.form-textarea,.form-select{width:100%;padding:.85rem 1rem;background:var(--cream);border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:.94rem;color:var(--ink);transition:border-color .2s,background .2s,box-shadow .2s;letter-spacing:inherit;line-height:1.5}
+.form-textarea{min-height:90px;resize:vertical;line-height:1.55}
+.form-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 9' fill='none' stroke='%231a1a18' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='1,1.5 7,7.5 13,1.5'/></svg>");background-repeat:no-repeat;background-position:right 1rem center;background-size:11px 7px;padding-right:2.3rem;cursor:pointer}
+.form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;border-color:var(--ink);background:#fff;box-shadow:0 0 0 3px rgba(30,102,66,.08)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--dim)}
+.form-input.is-invalid,.form-textarea.is-invalid,.form-select.is-invalid{border-color:var(--err-line);background:var(--err-soft)}
+
+/* ── radio group ──────────── */
+.radio-group{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.55rem;margin-top:.1rem}
+.radio-opt{position:relative;display:flex;align-items:flex-start;gap:.6rem;padding:.85rem .95rem;background:var(--cream);border:1px solid var(--line);border-radius:9px;cursor:pointer;transition:border-color .15s,background .15s}
+.radio-opt:hover{border-color:rgba(26,26,24,.28)}
+.radio-opt input[type="radio"]{position:absolute;opacity:0;pointer-events:none}
+.radio-opt .radio-dot{flex-shrink:0;width:15px;height:15px;border:1.5px solid var(--line);border-radius:50%;margin-top:2px;position:relative;transition:border-color .15s}
+.radio-opt .radio-dot::after{content:"";position:absolute;inset:2.5px;border-radius:50%;background:var(--orange);transform:scale(0);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.radio-opt input[type="radio"]:checked + .radio-dot{border-color:var(--orange)}
+.radio-opt input[type="radio"]:checked + .radio-dot::after{transform:scale(1)}
+.radio-opt input[type="radio"]:checked ~ .radio-text .radio-title{color:var(--ink)}
+.radio-opt:has(input:checked){border-color:var(--orange);background:#fff}
+.radio-text{display:flex;flex-direction:column;gap:.15rem;font-size:.86rem;line-height:1.4}
+.radio-title{color:var(--ink);font-weight:500}
+.radio-sub{color:var(--muted);font-size:.74rem}
+
+/* ── nav buttons ──────────── */
+.step-nav{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:1.8rem;padding-top:1.4rem;border-top:1px solid var(--line)}
+.btn{padding:.85rem 1.8rem;border-radius:50px;font-size:.86rem;font-weight:500;letter-spacing:.005em;display:inline-flex;align-items:center;gap:.55rem;transition:background .2s,color .2s,opacity .2s,transform .2s;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn .arr{font-family:var(--display);line-height:1;transition:transform .25s}
+.btn:hover:not(:disabled) .arr{transform:translateX(2px)}
+.btn-ink{background:var(--ink);color:var(--cream)}
+.btn-ink:hover:not(:disabled){background:var(--ink-2)}
+.btn-orange{background:var(--orange);color:var(--cream)}
+.btn-orange:hover:not(:disabled){background:var(--orange-2)}
+.btn-ghost{background:transparent;color:var(--muted);padding:.85rem 1.2rem}
+.btn-ghost:hover{color:var(--ink)}
+.btn-ghost .arr-back{font-family:var(--display);transition:transform .25s}
+.btn-ghost:hover .arr-back{transform:translateX(-2px)}
+.btn:disabled{opacity:.5;cursor:wait}
+
+/* ── stepper rail (above card on desktop) ──────────── */
+.stepper{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.4rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;text-transform:uppercase}
+.stepper-pip{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .65rem;border:1px solid var(--line);border-radius:50px;color:var(--dim);transition:color .2s,border-color .2s,background .2s;background:transparent;cursor:pointer;font-family:inherit;font-size:inherit;letter-spacing:inherit;text-transform:inherit}
+.stepper-pip:hover{color:var(--ink);border-color:rgba(26,26,24,.32)}
+.stepper-pip.is-current{color:var(--ink);border-color:var(--ink);background:#fff}
+.stepper-pip.is-done{color:var(--orange);border-color:rgba(30,102,66,.45);background:var(--orange-soft)}
+.stepper-pip .pip-num{font-weight:600}
+
+/* ── error / loc-missing ──────────── */
+.loc-missing{display:none;background:var(--err-soft);border:1px solid var(--err-line);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:1.4rem;font-size:.88rem;color:var(--err);line-height:1.55}
+.loc-missing.is-on{display:block}
+.loc-missing strong{font-weight:600}
+.loc-missing a{color:var(--err);text-decoration:underline;text-underline-offset:2px}
+
+/* ── submit + status ──────────── */
+.submit-status{font-size:.74rem;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-left:.4rem}
+.submit-status.is-error{color:var(--err)}
+.submit-status.is-success{color:var(--orange)}
+
+/* ── SUCCESS STATE ──────────── */
+.success-card{display:none;background:var(--cream-2);border:1px solid var(--line);border-radius:18px;padding:clamp(2rem,4vw,3rem) clamp(1.6rem,3.2vw,2.6rem);max-width:780px;position:relative;text-align:left;box-shadow:0 14px 40px -22px rgba(26,26,24,.18),0 2px 8px -4px rgba(26,26,24,.08)}
+.success-card.is-on{display:block;animation:fadeIn .5s cubic-bezier(.16,1,.3,1)}
+.success-tag{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:1.2rem;display:inline-flex;align-items:center;gap:.55rem}
+.success-tag .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.2);animation:pulse 2.4s ease-in-out infinite}
+.success-h{font-family:var(--display);font-size:clamp(1.8rem,4.2vw,2.8rem);font-weight:500;line-height:1.04;letter-spacing:-.028em;position:relative;max-width:22ch}
+.success-h em{font-style:italic;color:var(--orange);font-weight:400}
+.success-scribble{position:absolute;font-family:var(--hand);color:var(--orange);font-size:1.6rem;font-weight:500;line-height:1;transform:rotate(-3deg);right:-.2rem;top:-1.6rem;pointer-events:none}
+@media(max-width:600px){.success-scribble{position:static;display:block;transform:rotate(-2deg);margin-bottom:.4rem}}
+.success-sub{font-size:1rem;color:var(--muted);margin-top:1.2rem;line-height:1.65;max-width:54ch}
+.success-sub strong{color:var(--ink);font-weight:500}
+.success-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.2rem;margin-top:2rem;padding:1.3rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.success-meta .item{display:flex;flex-direction:column;gap:.3rem}
+.success-meta .k{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.success-meta .v{font-size:.92rem;color:var(--ink);font-weight:500;letter-spacing:-.01em}
+.success-meta .v.mono{font-family:var(--mono);font-size:.84rem}
+.success-checklist{margin-top:1.5rem;display:flex;flex-direction:column;gap:.7rem}
+.success-checklist .ck{display:flex;gap:.7rem;font-size:.92rem;color:var(--ink);line-height:1.55}
+.success-checklist .ck-dot{flex-shrink:0;width:18px;height:18px;border-radius:50%;background:var(--orange);color:var(--cream);display:flex;align-items:center;justify-content:center;margin-top:2px;font-size:11px;font-weight:600}
+.success-checklist .ck-text strong{color:var(--ink);font-weight:600}
+.success-foot{margin-top:1.8rem;font-size:.84rem;color:var(--muted);line-height:1.6}
+.success-foot a{color:var(--orange);text-decoration:underline;text-underline-offset:2px}
+
+/* ── INTERNAL toggle ─────── */
+.internal-band{display:none;background:var(--ink);color:var(--cream);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:1.4rem;font-family:var(--mono);font-size:.64rem;letter-spacing:.13em;text-transform:uppercase}
+.internal-band.is-on{display:block}
+.internal-band .label{color:var(--orange);margin-right:.55rem}
+.internal-fields{display:none}
+.internal-fields.is-on{display:block;margin-top:.8rem;padding-top:.8rem;border-top:1px dashed var(--line)}
+
+/* ── FOOTER ─────────────────── */
+footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var(--cream-2);margin-top:3rem}
+.foot-row{max-width:var(--max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.foot-brand{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);font-weight:500}
+.foot-links{display:flex;gap:1.2rem;font-size:.72rem;color:var(--muted);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.foot-links a{transition:color .2s}
+.foot-links a:hover{color:var(--ink)}
+@media(max-width:520px){.foot-row{justify-content:center;text-align:center}}
+
+/* ── reduced motion ── */
+@media(prefers-reduced-motion:reduce){
+  .step,.success-card.is-on{animation:none}
+  *{transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg class="brand-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    <span class="brand-name">4THWALL</span>
+  </a>
+  <div class="nav-meta">
+    <span class="dot"></span>
+    <span class="label">Client onboarding</span>
+  </div>
+</nav>
+
+<!-- ═════════════════ HERO ═════════════════ -->
+<section class="hero" id="hero">
+  <div class="eyebrow"><span>Onboarding · v1</span> <span class="step-of">Step <span id="heroStepNum">1</span> of 6</span></div>
+  <span class="hero-greeting" id="heroGreeting">Welcome.</span>
+  <h1 class="hero-h" id="heroH">Let's lock in your <em>AI receptionist.</em></h1>
+  <p class="hero-sub" id="heroSub">Six short sections. Most contractors finish in <strong>under ten minutes</strong>. When you submit, your configuration is locked in — Andrew verifies your setup and activates within <strong>24 hours</strong>.</p>
+</section>
+
+<!-- ═════════════════ PROGRESS ═════════════════ -->
+<div class="progress" id="progress">
+  <div class="prog-meta">
+    <span><span class="accent" id="progPct">0%</span> complete</span>
+    <span id="progLabel">Business basics</span>
+  </div>
+  <div class="prog-track"><div class="prog-bar" id="progBar"></div></div>
+</div>
+
+<!-- ═════════════════ FORM ═════════════════ -->
+<section class="form-section">
+
+  <!-- Missing location_id banner -->
+  <div class="loc-missing" id="locMissing">
+    <strong>This onboarding link is missing a location ID.</strong> Please request a fresh link from your 4THWALL operator — email <a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a> or text <a href="tel:+12036709477">(203) 670-9477</a>.
+  </div>
+
+  <!-- Internal mode banner (toggled via ?internal=1) -->
+  <div class="internal-band" id="internalBand">
+    <span class="label">Internal mode</span><span>Plan tier + notes visible · viewable only to operators</span>
+  </div>
+
+  <!-- Stepper rail -->
+  <div class="stepper" id="stepper" role="tablist" aria-label="Onboarding steps"></div>
+
+  <form class="form-card" id="onboardForm" novalidate>
+
+    <!-- ── STEP 1 — BUSINESS BASICS ── -->
+    <section class="step is-active" data-step="1" data-label="Business basics">
+      <div class="step-head">
+        <div class="step-tag"><span class="num">01</span> <span>The business</span></div>
+        <h2 class="step-title">Tell us about your <em>shop.</em></h2>
+        <p class="step-sub">The basics — exactly how your business shows up on paperwork, on the truck, and on the phone.</p>
+      </div>
+
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-legal">Business legal name <span class="req">REQ</span></label>
+          <input class="form-input" id="f-legal" name="business_legal_name" type="text" placeholder="Your Business LLC" autocomplete="organization" required>
+        </div>
+        <div>
+          <label class="form-label" for="f-name">Business display name <span class="req">REQ</span></label>
+          <input class="form-input" id="f-name" name="business_name" type="text" placeholder="Your Business" required>
+          <p class="form-hint">Short, friendly name — how the bot will refer to you in messages.</p>
+        </div>
+      </div>
+
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-fname">Owner first name <span class="req">REQ</span></label>
+          <input class="form-input" id="f-fname" name="owner_first_name" type="text" placeholder="First name" autocomplete="given-name" required>
+        </div>
+        <div>
+          <label class="form-label" for="f-lname">Owner last name <span class="req">REQ</span></label>
+          <input class="form-input" id="f-lname" name="owner_last_name" type="text" placeholder="Last name" autocomplete="family-name" required>
+        </div>
+      </div>
+
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-ocell">Owner cell <span class="req">REQ</span></label>
+          <input class="form-input" id="f-ocell" name="owner_cell_phone" type="tel" placeholder="(555) 000-0100" autocomplete="tel" required>
+          <p class="form-hint">For escalation + handoff SMS — kept private.</p>
+        </div>
+        <div>
+          <label class="form-label" for="f-bphone">Business main phone <span class="req">REQ</span></label>
+          <input class="form-input" id="f-bphone" name="business_phone" type="tel" placeholder="(555) 000-0199" required>
+        </div>
+      </div>
+
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-bemail">Business email <span class="req">REQ</span></label>
+          <input class="form-input" id="f-bemail" name="business_email" type="email" placeholder="owner@yourbusiness.com" autocomplete="email" required>
+        </div>
+        <div>
+          <label class="form-label" for="f-yrs">Years in business <span class="opt">optional</span></label>
+          <input class="form-input" id="f-yrs" name="years_in_business" type="number" min="0" max="200" inputmode="numeric" placeholder="12">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-street">Street address <span class="req">REQ</span></label>
+        <input class="form-input" id="f-street" name="business_address_street" type="text" placeholder="123 Main Street" autocomplete="street-address" required>
+      </div>
+      <div class="form-row row-triple">
+        <div>
+          <label class="form-label" for="f-city">City <span class="req">REQ</span></label>
+          <input class="form-input" id="f-city" name="business_address_city" type="text" placeholder="Your City" autocomplete="address-level2" required>
+        </div>
+        <div>
+          <label class="form-label" for="f-state">State <span class="req">REQ</span></label>
+          <input class="form-input" id="f-state" name="business_address_state" type="text" placeholder="CT" maxlength="2" autocomplete="address-level1" required>
+        </div>
+        <div>
+          <label class="form-label" for="f-zip">ZIP <span class="req">REQ</span></label>
+          <input class="form-input" id="f-zip" name="business_address_zip" type="text" inputmode="numeric" pattern="\d{5}(-\d{4})?" maxlength="10" placeholder="00000" autocomplete="postal-code" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-website">Website URL <span class="opt">optional</span></label>
+        <input class="form-input" id="f-website" name="website_url" type="url" placeholder="https://yourbusiness.com" autocomplete="url">
+      </div>
+
+      <div class="step-nav">
+        <span></span>
+        <button type="button" class="btn btn-ink" data-action="next">Next <span class="arr">→</span></button>
+      </div>
+    </section>
+
+    <!-- ── STEP 2 — TRADE & SERVICES ── -->
+    <section class="step" data-step="2" data-label="Trade & services">
+      <div class="step-head">
+        <div class="step-tag"><span class="num">02</span> <span>The work</span></div>
+        <h2 class="step-title">What you <em>actually sell.</em></h2>
+        <p class="step-sub">This shapes how the bot qualifies inbound leads. Be specific about what you do — and what you don't.</p>
+      </div>
+
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-trade">Trade type <span class="req">REQ</span></label>
+          <select class="form-select" id="f-trade" name="trade_type" required>
+            <option value="" disabled selected>Choose your trade…</option>
+            <option value="roofing">Roofing</option>
+            <option value="hvac">HVAC</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="electrical">Electrical</option>
+            <option value="remodeling">Remodeling</option>
+            <option value="general_contractor">General Contractor</option>
+            <option value="landscaping">Landscaping</option>
+            <option value="painting">Painting</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="f-primary">Primary service <span class="req">REQ</span></label>
+          <input class="form-input" id="f-primary" name="primary_service" type="text" placeholder="Roof replacement" required>
+          <p class="form-hint">The #1 service you sell — what pays the bills.</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-services">All services offered <span class="req">REQ</span></label>
+        <textarea class="form-textarea" id="f-services" name="services_offered" placeholder="Roof replacement, roof repair, gutter installation, skylights, siding, storm damage, insurance claims…" required></textarea>
+        <p class="form-hint">Comma-separated. The more specific, the better the bot qualifies.</p>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-not">Services <em>NOT</em> offered <span class="opt">optional but recommended</span></label>
+        <textarea class="form-textarea" id="f-not" name="services_not_offered" placeholder="Commercial flat roofs, solar installation, metal roofing…"></textarea>
+        <p class="form-hint">Prevents the bot from booking work you can't do. Saves everyone a phone call.</p>
+      </div>
+
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-turn">Estimate turnaround <span class="req">REQ</span></label>
+          <input class="form-input" id="f-turn" name="estimate_turnaround" type="text" placeholder="24–48 hours" required>
+        </div>
+        <div>
+          <label class="form-label" for="f-jobsize">Typical job size <span class="req">REQ</span></label>
+          <input class="form-input" id="f-jobsize" name="typical_job_size" type="text" placeholder="$8,000 – $45,000" required>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-action="back"><span class="arr-back">←</span> Back</button>
+        <button type="button" class="btn btn-ink" data-action="next">Next <span class="arr">→</span></button>
+      </div>
+    </section>
+
+    <!-- ── STEP 3 — SERVICE AREA ── -->
+    <section class="step" data-step="3" data-label="Service area">
+      <div class="step-head">
+        <div class="step-tag"><span class="num">03</span> <span>Service area</span></div>
+        <h2 class="step-title">Where you <em>actually drive.</em></h2>
+        <p class="step-sub">The bot uses this to qualify out-of-area leads early — and to monitor storms in your primary ZIP.</p>
+      </div>
+
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-area-city">Primary city served <span class="req">REQ</span></label>
+          <input class="form-input" id="f-area-city" name="service_area_primary" type="text" placeholder="Your City" required>
+        </div>
+        <div>
+          <label class="form-label" for="f-area-zip">Primary ZIP code <span class="req">REQ</span></label>
+          <input class="form-input" id="f-area-zip" name="service_area_zip" type="text" inputmode="numeric" pattern="\d{5}" maxlength="5" placeholder="00000" required>
+          <p class="form-hint">Used for storm-mode weather monitoring.</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-area-towns">All towns / areas served <span class="req">REQ</span></label>
+        <textarea class="form-textarea" id="f-area-towns" name="service_area_towns" placeholder="City, nearby towns, surrounding areas…" required></textarea>
+        <p class="form-hint">Comma-separated. Cast the net wide enough to capture good leads, narrow enough to filter junk.</p>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-area-desc">Short area description <span class="req">REQ</span></label>
+        <input class="form-input" id="f-area-desc" name="service_area_description" type="text" placeholder="Fairfield County, CT" required>
+        <p class="form-hint">How the bot will reference your area naturally — e.g., "We're all over Fairfield County."</p>
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-action="back"><span class="arr-back">←</span> Back</button>
+        <button type="button" class="btn btn-ink" data-action="next">Next <span class="arr">→</span></button>
+      </div>
+    </section>
+
+    <!-- ── STEP 4 — CREDENTIALS & PRICING ── -->
+    <section class="step" data-step="4" data-label="Credentials & pricing">
+      <div class="step-head">
+        <div class="step-tag"><span class="num">04</span> <span>Credentials &amp; pricing</span></div>
+        <h2 class="step-title">The <em>trust signals.</em></h2>
+        <p class="step-sub">License, insurance work, financing, current offers — what the bot drops when a customer asks why they should choose you.</p>
+      </div>
+
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-license">License number <span class="opt">optional</span></label>
+          <input class="form-input" id="f-license" name="license_number" type="text" placeholder="HIC.0123456">
+        </div>
+        <div>
+          <label class="form-label" for="f-offer">Current offer / hook <span class="opt">optional</span></label>
+          <input class="form-input" id="f-offer" name="current_offer" type="text" placeholder="Free roof inspection — no obligation">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Insurance claims handled? <span class="req">REQ</span></label>
+        <div class="radio-group" role="radiogroup">
+          <label class="radio-opt">
+            <input type="radio" name="insurance_claims" value="full" required>
+            <span class="radio-dot"></span>
+            <span class="radio-text"><span class="radio-title">Yes — full process</span><span class="radio-sub">We manage adjusters, paperwork, the works.</span></span>
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="insurance_claims" value="limited">
+            <span class="radio-dot"></span>
+            <span class="radio-text"><span class="radio-title">Yes — limited</span><span class="radio-sub">Some claims, depends on the carrier.</span></span>
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="insurance_claims" value="no">
+            <span class="radio-dot"></span>
+            <span class="radio-text"><span class="radio-title">No</span><span class="radio-sub">Cash / financing only.</span></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Financing offered? <span class="req">REQ</span></label>
+        <div class="radio-group" role="radiogroup">
+          <label class="radio-opt">
+            <input type="radio" name="financing_offered" value="yes" required>
+            <span class="radio-dot"></span>
+            <span class="radio-text"><span class="radio-title">Yes</span><span class="radio-sub">Add the details below.</span></span>
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="financing_offered" value="no">
+            <span class="radio-dot"></span>
+            <span class="radio-text"><span class="radio-title">No</span><span class="radio-sub">No financing programs.</span></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-row" id="financing-details-wrap" style="display:none">
+        <label class="form-label" for="f-fin-det">Financing details</label>
+        <input class="form-input" id="f-fin-det" name="financing_details" type="text" placeholder="0% APR for 12 months through GreenSky">
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-action="back"><span class="arr-back">←</span> Back</button>
+        <button type="button" class="btn btn-ink" data-action="next">Next <span class="arr">→</span></button>
+      </div>
+    </section>
+
+    <!-- ── STEP 5 — BOT PERSONALITY ── -->
+    <section class="step" data-step="5" data-label="Bot personality">
+      <div class="step-head">
+        <div class="step-tag"><span class="num">05</span> <span>The voice</span></div>
+        <h2 class="step-title">How your bot <em>actually talks.</em></h2>
+        <p class="step-sub">This is the part most contractors get wrong with other tools. We're going to get it right — the bot sounds like you, not like a robot.</p>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Bilingual? <span class="req">REQ</span></label>
+        <div class="radio-group" role="radiogroup">
+          <label class="radio-opt">
+            <input type="radio" name="bilingual" value="english_only" required>
+            <span class="radio-dot"></span>
+            <span class="radio-text"><span class="radio-title">English only</span><span class="radio-sub">Respond in English regardless of customer language.</span></span>
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="bilingual" value="english_spanish">
+            <span class="radio-dot"></span>
+            <span class="radio-text"><span class="radio-title">English + Spanish</span><span class="radio-sub">Mirror the customer's language automatically.</span></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-botname">Bot name <span class="opt">optional</span></label>
+        <input class="form-input" id="f-botname" name="bot_name" type="text" placeholder="Alex" maxlength="32">
+        <p class="form-hint">What your AI receptionist goes by when customers ask. Defaults to Alex if left blank.</p>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-voice">Voice &amp; tone <span class="req">REQ</span></label>
+        <textarea class="form-textarea" id="f-voice" name="bot_custom_instructions" style="min-height:140px" placeholder="Describe how you talk to customers in 1–2 sentences. Examples:&#10;• 'Warm, local, direct — short messages, Connecticut-friendly. We don't oversell.'&#10;• 'Professional, polished, slightly formal — never slangy. Always reference the homeowner by first name.'&#10;• 'Friendly but no-nonsense. Quick to qualify, quick to hand off if it's a real job.'" required></textarea>
+        <p class="form-hint">This becomes your bot's personality — the more you say, the more it sounds like your shop.</p>
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-action="back"><span class="arr-back">←</span> Back</button>
+        <button type="button" class="btn btn-ink" data-action="next">Next <span class="arr">→</span></button>
+      </div>
+    </section>
+
+    <!-- ── STEP 6 — BOOKING & REVIEWS ── -->
+    <section class="step" data-step="6" data-label="Booking & reviews">
+      <div class="step-head">
+        <div class="step-tag"><span class="num">06</span> <span>Last step</span></div>
+        <h2 class="step-title">Where leads <em>land.</em></h2>
+        <p class="step-sub">Two links — your booking page and your Google review URL. Both come straight from your tools.</p>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-booking">Booking link <span class="req">REQ</span></label>
+        <input class="form-input" id="f-booking" name="booking_link" type="url" placeholder="https://calendly.com/yourname/estimate" required>
+        <p class="form-hint">Paste your Calendly link or GHL booking URL — wherever customers self-schedule.</p>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-review">Google review link <span class="req">REQ</span></label>
+        <input class="form-input" id="f-review" name="google_review_link" type="url" placeholder="https://g.page/r/Cabc.../review" required>
+        <p class="form-hint">From your Google Business Profile → <strong>Customers → Reviews → Get more reviews → Copy link</strong>.</p>
+      </div>
+
+      <!-- Internal-only fields (toggled by ?internal=1) -->
+      <div class="internal-fields" id="internalFields">
+        <div class="form-row">
+          <label class="form-label" for="f-plan">Plan tier <span class="opt">internal</span></label>
+          <select class="form-select" id="f-plan" name="plan_tier">
+            <option value="">— not set —</option>
+            <option value="Foundation">Foundation</option>
+            <option value="Growth">Growth</option>
+            <option value="Dominance">Dominance</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="f-notes">Internal notes <span class="opt">internal</span></label>
+          <textarea class="form-textarea" id="f-notes" name="internal_notes" placeholder="Anything Drew should remember about this client…"></textarea>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-action="back"><span class="arr-back">←</span> Back</button>
+        <div style="display:flex;align-items:center;gap:.8rem">
+          <span class="submit-status" id="submitStatus"></span>
+          <button type="submit" class="btn btn-orange" id="submitBtn">Activate my AI <span class="arr">→</span></button>
+        </div>
+      </div>
+    </section>
+
+  </form>
+
+  <!-- ═════════════════ SUCCESS STATE ═════════════════ -->
+  <div class="success-card" id="successCard" aria-live="polite">
+    <span class="success-scribble" id="successScribble">Welcome to&nbsp;the wall.</span>
+    <div class="success-tag"><span class="dot"></span> <span>Configuration saved</span></div>
+    <h2 class="success-h">Your AI is <em>configured.</em></h2>
+    <p class="success-sub">Your setup is locked in. <strong>Andrew will verify your system and run a test SMS</strong> to confirm your line is active — usually within a few hours. Once confirmed, your bot handles every inbound lead, day or night, in your voice.</p>
+
+    <div class="success-meta">
+      <div class="item">
+        <span class="k">Business</span>
+        <span class="v" id="sxBusiness">—</span>
+      </div>
+      <div class="item">
+        <span class="k">Trade</span>
+        <span class="v" id="sxTrade">—</span>
+      </div>
+      <div class="item">
+        <span class="k">Bot voice</span>
+        <span class="v" id="sxVoice">—</span>
+      </div>
+      <div class="item">
+        <span class="k">Registered at</span>
+        <span class="v mono" id="sxAt">—</span>
+      </div>
+    </div>
+
+    <div class="success-checklist">
+      <div class="ck">
+        <span class="ck-dot">1</span>
+        <span class="ck-text"><strong>Activation check</strong> — Andrew reviews your config and runs a test SMS to your owner cell before anything goes live. You'll know when you're on.</span>
+      </div>
+      <div class="ck">
+        <span class="ck-dot">2</span>
+        <span class="ck-text"><strong>Go-live within 24 hours</strong> — we verify the full system, then flip the switch. Most contractors are live by the next business day.</span>
+      </div>
+      <div class="ck">
+        <span class="ck-dot">3</span>
+        <span class="ck-text"><strong>30-day check-in</strong> — Andrew follows up with your first month's report. Tune-ups are included.</span>
+      </div>
+    </div>
+
+    <p class="success-foot">Questions in the meantime? Text Drew at <a href="tel:+12036709477">(203) 670-9477</a> or email <a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a>.</p>
+  </div>
+
+</section>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  // ── Constants ────────────────────────────────────────
+  var WORKER_URL = 'https://fourthwall-bot.4thwalldevelopment.workers.dev/register-client';
+  var TOTAL_STEPS = 6;
+
+  // ── DOM refs ─────────────────────────────────────────
+  var form         = document.getElementById('onboardForm');
+  var steps        = Array.prototype.slice.call(form.querySelectorAll('.step'));
+  var stepper      = document.getElementById('stepper');
+  var progBar      = document.getElementById('progBar');
+  var progPct      = document.getElementById('progPct');
+  var progLabel    = document.getElementById('progLabel');
+  var heroStepNum  = document.getElementById('heroStepNum');
+  var heroGreeting = document.getElementById('heroGreeting');
+  var heroH        = document.getElementById('heroH');
+  var locMissing   = document.getElementById('locMissing');
+  var internalBand = document.getElementById('internalBand');
+  var internalFields = document.getElementById('internalFields');
+  var submitBtn    = document.getElementById('submitBtn');
+  var submitStatus = document.getElementById('submitStatus');
+  var successCard  = document.getElementById('successCard');
+  var formSection  = document.querySelector('.form-section');
+  var finDetails   = document.getElementById('financing-details-wrap');
+
+  var currentStep  = 1;
+  var locationId   = null;
+
+  // ── URL params ───────────────────────────────────────
+  var url = new URL(window.location.href);
+  locationId = url.searchParams.get('loc') || url.searchParams.get('location_id') || '';
+  var preBusiness = url.searchParams.get('business') || '';
+  var preOwner    = url.searchParams.get('owner') || '';
+  var isInternal  = url.searchParams.get('internal') === '1';
+
+  if (!locationId) {
+    locMissing.classList.add('is-on');
+    submitBtn.disabled = true;
+  }
+  if (isInternal) {
+    internalBand.classList.add('is-on');
+    internalFields.classList.add('is-on');
+  }
+  if (preBusiness) {
+    document.getElementById('f-name').value = preBusiness;
+    heroGreeting.textContent = 'Welcome, ' + preBusiness + '.';
+  }
+  if (preOwner) {
+    document.getElementById('f-fname').value = preOwner;
+    heroGreeting.textContent = (preBusiness ? 'Welcome, ' + preBusiness + '.' : 'Welcome, ' + preOwner + '.');
+  }
+
+  // ── Build stepper rail ───────────────────────────────
+  steps.forEach(function(stepEl, i){
+    var n = i + 1;
+    var label = stepEl.getAttribute('data-label') || ('Step ' + n);
+    var pip = document.createElement('button');
+    pip.type = 'button';
+    pip.className = 'stepper-pip' + (n === 1 ? ' is-current' : '');
+    pip.setAttribute('data-step', String(n));
+    pip.setAttribute('role', 'tab');
+    pip.innerHTML = '<span class="pip-num">0' + n + '</span><span class="pip-label">' + label + '</span>';
+    pip.addEventListener('click', function(){ goToStep(n, true); });
+    stepper.appendChild(pip);
+  });
+
+  // ── Step navigation ──────────────────────────────────
+  function goToStep(n, skipValidation){
+    if (n < 1 || n > TOTAL_STEPS) return;
+    // Forward-only validation: when moving forward, validate the current step.
+    if (!skipValidation && n > currentStep) {
+      if (!validateStep(currentStep)) return;
+    }
+    steps.forEach(function(s){
+      s.classList.toggle('is-active', Number(s.getAttribute('data-step')) === n);
+    });
+    Array.prototype.forEach.call(stepper.children, function(pip, i){
+      var pn = i + 1;
+      pip.classList.toggle('is-current', pn === n);
+      pip.classList.toggle('is-done', pn < n);
+    });
+    currentStep = n;
+    var label = steps[n - 1].getAttribute('data-label') || '';
+    var pct = Math.round(((n - 1) / TOTAL_STEPS) * 100);
+    progBar.style.width = pct + '%';
+    progPct.textContent = pct + '%';
+    progLabel.textContent = label;
+    heroStepNum.textContent = String(n);
+    // Smooth-scroll to form top on step change for mobile.
+    window.scrollTo({ top: formSection.offsetTop - 20, behavior: 'smooth' });
+  }
+
+  form.addEventListener('click', function(e){
+    var target = e.target.closest('[data-action]');
+    if (!target) return;
+    var action = target.getAttribute('data-action');
+    if (action === 'next') goToStep(currentStep + 1);
+    if (action === 'back') goToStep(currentStep - 1, true);
+  });
+
+  // ── Inline validation ────────────────────────────────
+  function validateStep(stepNum){
+    var stepEl = steps[stepNum - 1];
+    var fields = stepEl.querySelectorAll('input[required], textarea[required], select[required]');
+    var firstInvalid = null;
+    fields.forEach(function(f){
+      var ok = true;
+      var val = (f.value || '').trim();
+      if (!val) ok = false;
+      if (ok && f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) ok = false;
+      if (ok && f.type === 'url' && !/^https?:\/\/\S+/i.test(val)) ok = false;
+      if (ok && f.type === 'tel' && val.replace(/\D/g,'').length < 10) ok = false;
+      if (ok && f.pattern) {
+        try {
+          var re = new RegExp('^(?:' + f.pattern + ')$');
+          if (!re.test(val)) ok = false;
+        } catch(_){}
+      }
+      f.classList.toggle('is-invalid', !ok);
+      if (!ok && !firstInvalid) firstInvalid = f;
+    });
+    // Radio groups
+    var radios = stepEl.querySelectorAll('input[type="radio"][required]');
+    var radioNames = {};
+    radios.forEach(function(r){ radioNames[r.name] = true; });
+    Object.keys(radioNames).forEach(function(name){
+      var group = stepEl.querySelectorAll('input[type="radio"][name="' + name + '"]');
+      var checked = Array.prototype.some.call(group, function(r){ return r.checked; });
+      group.forEach(function(r){
+        var opt = r.closest('.radio-opt');
+        if (opt) opt.style.borderColor = checked ? '' : 'var(--err-line)';
+      });
+      if (!checked && !firstInvalid) firstInvalid = group[0];
+    });
+    if (firstInvalid) {
+      firstInvalid.focus({ preventScroll: false });
+    }
+    return !firstInvalid;
+  }
+
+  // Clear invalid state on input
+  form.addEventListener('input', function(e){
+    if (e.target.classList && e.target.classList.contains('is-invalid')) {
+      e.target.classList.remove('is-invalid');
+    }
+  });
+  form.addEventListener('change', function(e){
+    if (e.target.type === 'radio') {
+      var group = form.querySelectorAll('input[type="radio"][name="' + e.target.name + '"]');
+      group.forEach(function(r){
+        var opt = r.closest('.radio-opt');
+        if (opt) opt.style.borderColor = '';
+      });
+    }
+  });
+
+  // ── Phone formatting hint ────────────────────────────
+  function formatPhone(value){
+    var d = value.replace(/\D/g, '').slice(0, 10);
+    if (d.length < 4) return d;
+    if (d.length < 7) return '(' + d.slice(0,3) + ') ' + d.slice(3);
+    return '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+  }
+  Array.prototype.forEach.call(form.querySelectorAll('input[type="tel"]'), function(input){
+    input.addEventListener('input', function(){
+      var cursorEnd = (input.selectionStart === input.value.length);
+      input.value = formatPhone(input.value);
+      if (cursorEnd) input.setSelectionRange(input.value.length, input.value.length);
+    });
+  });
+
+  // ── State auto-uppercase ─────────────────────────────
+  var stateInput = document.getElementById('f-state');
+  stateInput.addEventListener('input', function(){
+    stateInput.value = stateInput.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2);
+  });
+
+  // ── Financing-details conditional ───────────────────
+  Array.prototype.forEach.call(form.querySelectorAll('input[name="financing_offered"]'), function(r){
+    r.addEventListener('change', function(){
+      finDetails.style.display = (r.value === 'yes' && r.checked) ? 'block' : 'none';
+    });
+  });
+
+  // ── Build config payload ─────────────────────────────
+  function buildConfig(){
+    function v(name){
+      var el = form.querySelector('[name="' + name + '"]');
+      if (!el) return '';
+      if (el.type === 'radio') {
+        var checked = form.querySelector('input[name="' + name + '"]:checked');
+        return checked ? checked.value : '';
+      }
+      return (el.value || '').trim();
+    }
+    function radio(name){ return v(name); }
+
+    var businessName  = v('business_name') || v('business_legal_name');
+    var bilingual     = radio('bilingual');
+
+    var config = {
+      // Identity — what the bot uses to refer to the business
+      business_name:        businessName,
+      business_name_short:  v('business_name') || businessName,
+      business_legal_name:  v('business_legal_name'),
+
+      // Owner
+      owner_first_name:     v('owner_first_name'),
+      owner_last_name:      v('owner_last_name'),
+      owner_cell_phone:     v('owner_cell_phone'),
+
+      // Contact channels
+      business_phone:       v('business_phone'),
+      business_email:       v('business_email'),
+      website_url:          v('website_url'),
+
+      // Address
+      business_address_street: v('business_address_street'),
+      business_address_city:   v('business_address_city'),
+      business_address_state:  v('business_address_state'),
+      business_address_zip:    v('business_address_zip'),
+
+      // Profile
+      years_in_business:    v('years_in_business'),
+
+      // Trade + services
+      trade_type:           v('trade_type'),
+      primary_service:      v('primary_service'),
+      services_offered:     v('services_offered'),
+      services_not_offered: v('services_not_offered'),
+      estimate_turnaround:  v('estimate_turnaround'),
+      typical_job_size:     v('typical_job_size'),
+
+      // Service area
+      service_area_primary:     v('service_area_primary'),
+      service_area_zip:         v('service_area_zip'),
+      service_area_towns:       v('service_area_towns'),
+      service_area_description: v('service_area_description'),
+
+      // Credentials + pricing
+      license_number:       v('license_number'),
+      insurance_claims:     radio('insurance_claims'),
+      financing_offered:    radio('financing_offered'),
+      financing_details:    v('financing_details'),
+      current_offer:        v('current_offer'),
+
+      // Bot persona
+      bilingual:                  bilingual,
+      bot_language:               bilingual === 'english_spanish' ? 'en+es' : 'en',
+      bot_name:                   v('bot_name'),
+      bot_custom_instructions:    v('bot_custom_instructions'),
+
+      // Booking + reviews
+      booking_link:         v('booking_link'),
+      google_review_link:   v('google_review_link'),
+
+      // Internal (only present when ?internal=1)
+      plan_tier:            v('plan_tier'),
+      internal_notes:       v('internal_notes'),
+    };
+
+    // Strip empty strings — keeps the payload clean and the worker's fields_count honest.
+    Object.keys(config).forEach(function(k){
+      if (config[k] === '' || config[k] == null) delete config[k];
+    });
+
+    return config;
+  }
+
+  // ── Submit ───────────────────────────────────────────
+  function setStatus(text, cls){
+    submitStatus.textContent = text || '';
+    submitStatus.className = 'submit-status' + (cls ? ' ' + cls : '');
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    if (!locationId) {
+      setStatus('Missing location ID — see banner above.', 'is-error');
+      return;
+    }
+    // Validate all required steps before submit.
+    for (var i = 1; i <= TOTAL_STEPS; i++) {
+      if (!validateStep(i)) {
+        goToStep(i, true);
+        setStatus('Check the highlighted fields.', 'is-error');
+        return;
+      }
+    }
+
+    var config = buildConfig();
+    var originalLabel = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Saving…';
+    setStatus('Locking in your configuration…');
+
+    try {
+      var res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ location_id: locationId, config: config })
+      });
+      var data = await res.json().catch(function(){ return {}; });
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || ('HTTP ' + res.status));
+      }
+
+      // ── Success state ────────────────────────────────
+      document.getElementById('sxBusiness').textContent = config.business_name || '—';
+      document.getElementById('sxTrade').textContent =
+        (config.trade_type || '—').replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+      var voice = config.bot_custom_instructions || '';
+      document.getElementById('sxVoice').textContent = voice.length > 80 ? voice.slice(0, 80).trim() + '…' : (voice || '—');
+      document.getElementById('sxAt').textContent = (data.registered_at || new Date().toISOString()).replace('T', ' ').replace(/\.\d+Z$/, ' UTC');
+
+      // Hide form, show success.
+      form.style.display = 'none';
+      stepper.style.display = 'none';
+      document.getElementById('progress').style.display = 'none';
+      heroH.innerHTML = "You're <em>configured.</em>";
+      heroGreeting.textContent = (config.business_name ? config.business_name + ',' : 'Done,') + ' Andrew takes it from here.';
+      successCard.classList.add('is-on');
+      window.scrollTo({ top: formSection.offsetTop - 20, behavior: 'smooth' });
+    } catch (err) {
+      console.error('Onboarding submit failed:', err);
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalLabel;
+      setStatus("Couldn't activate — try again or email andrew@4thwall.solutions", 'is-error');
+    }
+  });
+
+  // ── Initial paint ────────────────────────────────────
+  goToStep(1, true);
+})();
+</script>
+
+</body>
+</html>
