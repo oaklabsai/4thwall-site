@@ -1148,38 +1148,20 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
                         </div>
                       </div>
                       <div class="slack-msg is-hidden" id="slack-msg-sam">
-                        <div class="slack-avatar sam">SC</div>
-                        <div class="slack-msg-body">
-                          <div class="slack-msg-head">
-                            <span class="slack-msg-name">Sam Carter</span>
-                            <span class="slack-msg-time">2:18 PM</span>
-                          </div>
-                          <div class="slack-msg-text">
-                            how many estimates did we book this week?
-                          </div>
-                        </div>
-                      </div>
-                      <div class="slack-typing-row is-hidden" id="slack-typing-row">
-                        <div class="slack-typing-avatar">A</div>
-                        <span>your assistant is typing</span>
-                        <span class="slack-dots"><i></i><i></i><i></i></span>
-                      </div>
-                      <div class="slack-msg is-hidden" id="slack-msg-response">
                         <div class="slack-avatar alex">A</div>
                         <div class="slack-msg-body">
                           <div class="slack-msg-head">
                             <span class="slack-msg-name">assistant</span>
                             <span class="slack-msg-tag">APP</span>
-                            <span class="slack-msg-time">2:19 PM</span>
+                            <span class="slack-msg-time">3:12 PM</span>
                           </div>
                           <div class="slack-msg-text">
-                            <strong>7 booked this week.</strong>
+                            <strong>⚡ Storm alert — your market.</strong>
                             <div class="slack-list">
-                              <div class="slack-list-item"><span class="b">•</span><span>2 storm-related (Mon, Wed)</span></div>
-                              <div class="slack-list-item"><span class="b">•</span><span>4 standard repairs</span></div>
-                              <div class="slack-list-item"><span class="b">•</span><span>1 new build inquiry</span></div>
+                              <div class="slack-list-item"><span class="b">•</span><span>NWS: severe cells tonight through Thu AM</span></div>
+                              <div class="slack-list-item"><span class="b">•</span><span>4 zip codes in your service area</span></div>
+                              <div class="slack-list-item"><span class="b">•</span><span>Thu 2PM estimate (Jim Cohen) — weather window is tight</span></div>
                             </div>
-                            <div class="slack-callout">Conversion: <strong>64%</strong> · up from 51%</div>
                           </div>
                         </div>
                       </div>
@@ -1273,7 +1255,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="assist-bubble-body" id="assist-bubble-body">
       <div class="assist-bubble-inner">
 
-        <p class="assist-bubble-lede">The newest layer of Front of House — and the one we're most excited about. <strong>An assistant that watches all six systems below</strong>, briefing you in real time through a dedicated Slack channel. Lives in your pocket. Travels with you. <em>You name it.</em></p>
+        <p class="assist-bubble-lede"><strong>An assistant that watches all six systems and speaks up when something matters.</strong> Briefing you in real time through a dedicated Slack channel. Lives in your pocket. Travels with you. <em>You name it.</em></p>
 
         <div class="assist-bubble-grid">
           <div class="assist-bubble-block">
@@ -1285,19 +1267,19 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
             <p>Most automation tells you something happened. <strong>Your assistant</strong> tells you what happened, what it means, and what's next. New lead in Greenwich, qualified, booked Thursday at 2pm — not a notification, a brief.</p>
           </div>
           <div class="assist-bubble-block">
-            <h4 class="assist-bubble-block-h"><em>What you can do back.</em></h4>
-            <p>Ask it anything. How many estimates did we book this week. What's our conversion rate. Who called yesterday and what did they say. Plain English in, plain English back.</p>
+            <h4 class="assist-bubble-block-h"><em>Doesn't wait to be asked.</em></h4>
+            <p>Watches for storm threats in your market. Knows when a lead goes quiet. Counts your week before you think to look. It's not waiting for a question — it's already thinking about your business.</p>
           </div>
         </div>
 
         <div class="assist-bubble-pills">
           <span class="assist-bubble-pill">Slack-native</span>
           <span class="assist-bubble-pill">Real-time briefs</span>
-          <span class="assist-bubble-pill">Ask it anything</span>
+          <span class="assist-bubble-pill">Always watching</span>
           <span class="assist-bubble-pill assist-bubble-pill-name">Yours to name</span>
         </div>
 
-        <p class="assist-bubble-closing">The shop runs while you're on the roof. <em>Now you can see it running.</em></p>
+        <p class="assist-bubble-closing">The shop runs while you're on the roof. <em>You'll know everything that happened before you pull back in.</em></p>
 
       </div>
     </div>
@@ -1770,64 +1752,28 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   var logo=document.getElementById('slack-logo'),
       badge=document.getElementById('slack-badge'),
       msgLead=document.getElementById('slack-msg-lead'),
-      msgSam=document.getElementById('slack-msg-sam'),
-      msgResponse=document.getElementById('slack-msg-response'),
-      typingRow=document.getElementById('slack-typing-row'),
-      inputWrap=document.getElementById('slack-input-wrap'),
-      inputText=document.getElementById('slack-input-text'),
-      sendBtn=document.getElementById('slack-send-btn');
+      msgSam=document.getElementById('slack-msg-sam');
 
-  var queryText='how many estimates did we book this week?';
   var timers=[];
   function schedule(fn,ms){var t=setTimeout(fn,ms);timers.push(t);return t;}
   function clearAll(){timers.forEach(function(t){clearTimeout(t);});timers.length=0;}
   function reset(){
     msgLead.classList.add('is-hidden');msgLead.classList.remove('fresh');
-    msgSam.classList.add('is-hidden');
-    msgResponse.classList.add('is-hidden');msgResponse.classList.remove('fresh');
-    typingRow.classList.add('is-hidden');
+    msgSam.classList.add('is-hidden');msgSam.classList.remove('fresh');
     badge.classList.remove('active');badge.textContent='1';
-    inputWrap.classList.remove('active');inputText.textContent='Message #assistant';
-    sendBtn.classList.remove('active');sendBtn.classList.remove('pressed');
   }
   function pulse(){logo.classList.remove('pulse');void logo.offsetWidth;logo.classList.add('pulse');}
-  function typeQuery(cb){
-    inputText.innerHTML='';
-    var i=0,charDelay=55;
-    function step(){
-      if(i<queryText.length){
-        inputText.innerHTML='<span class="typed">'+queryText.substring(0,i+1)+'</span><span class="slack-typing-cursor"></span>';
-        i++;schedule(step,charDelay);
-      }else{
-        schedule(function(){sendBtn.classList.add('active');schedule(cb,500);},250);
-      }
-    }
-    step();
-  }
   function runCycle(){
     clearAll();reset();
+    // Act 1 — new lead brief
     schedule(function(){pulse();badge.textContent='1';badge.classList.add('active');},1500);
     schedule(function(){msgLead.classList.remove('is-hidden');msgLead.classList.add('fresh');},1650);
     schedule(function(){badge.classList.remove('active');},5500);
-    schedule(function(){inputWrap.classList.add('active');},6800);
-    schedule(function(){
-      typeQuery(function(){
-        sendBtn.classList.add('pressed');
-        schedule(function(){sendBtn.classList.remove('pressed');},150);
-        inputText.textContent='Message #assistant';
-        inputWrap.classList.remove('active');
-        sendBtn.classList.remove('active');
-        msgSam.classList.remove('is-hidden');
-      });
-    },7100);
-    schedule(function(){typingRow.classList.remove('is-hidden');},11500);
-    schedule(function(){typingRow.classList.add('is-hidden');},13500);
-    schedule(function(){
-      pulse();badge.textContent='1';badge.classList.add('active');
-      msgResponse.classList.remove('is-hidden');msgResponse.classList.add('fresh');
-    },13700);
-    schedule(function(){badge.classList.remove('active');},17500);
-    schedule(function(){runCycle();},20000);
+    // Act 2 — storm alert fires unprompted
+    schedule(function(){pulse();badge.textContent='1';badge.classList.add('active');},9000);
+    schedule(function(){msgSam.classList.remove('is-hidden');msgSam.classList.add('fresh');},9150);
+    schedule(function(){badge.classList.remove('active');},13000);
+    schedule(function(){runCycle();},18000);
   }
 
   // Start only when scrolled into view; pause when out of view to save cycles
