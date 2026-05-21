@@ -133,7 +133,7 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
 
 <!-- ════════════════════════════════════════════ FORM ════════════════════════════════════════════ -->
 <section class="form-section" id="contact">
-  <form class="form-card" id="contact-form" method="POST" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website">
+  <form class="form-card" id="contact-form" method="POST" action="/api/lead">
     <div class="form-row">
       <label class="form-label" for="cf-message">What's happening?</label>
       <textarea class="form-textarea" id="cf-message" name="challenge" placeholder="Missing after-hours leads? Operations stuck on manual work? Tell us what's on fire — texting style is fine." required></textarea>
@@ -163,9 +163,15 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
 
     <div class="consent-block" id="cf-consent-block">
       <div class="consent-check">
-        <input type="checkbox" id="cf-consent" name="sms_consent">
-        <label for="cf-consent" class="consent-text">
-          By checking this box, I expressly consent to receive recurring automated marketing and transactional text messages from <strong>4th Wall Solutions / Andrew Rendon</strong> at the phone number provided, including appointment reminders, lead follow-up, review requests, and service updates from <strong>4th Wall Solutions</strong>. <strong>Up to 6 messages per month.</strong> Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help. <strong>Consent is not a condition of purchase.</strong> View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.
+        <input type="checkbox" id="cf-sms-marketing" name="sms_marketing_consent">
+        <label for="cf-sms-marketing" class="consent-text">
+          I consent to receive <strong>marketing</strong> text messages from <strong>4th Wall Solutions / Andrew Rendon</strong> including promotional offers, lead follow-up, and service updates. <strong>Up to 4 messages per month.</strong> Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help. <strong>Consent is not a condition of purchase.</strong> View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.
+        </label>
+      </div>
+      <div class="consent-check" style="margin-top:.6rem">
+        <input type="checkbox" id="cf-sms-transactional" name="sms_transactional_consent">
+        <label for="cf-sms-transactional" class="consent-text">
+          I consent to receive <strong>transactional</strong> text messages from <strong>4th Wall Solutions / Andrew Rendon</strong> including appointment reminders, job status updates, and review requests. <strong>Up to 4 messages per month.</strong> Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help. <strong>Consent is not a condition of purchase.</strong> View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.
         </label>
       </div>
     </div>
@@ -244,7 +250,8 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
 (function(){
   var form = document.getElementById('contact-form');
   if(!form) return;
-  var consentBox = document.getElementById('cf-consent');
+  var consentMarketing = document.getElementById('cf-sms-marketing');
+  var consentTransactional = document.getElementById('cf-sms-transactional');
   var consentBlock = document.getElementById('cf-consent-block');
   var submit = document.getElementById('cf-submit');
   var status = document.getElementById('cf-status');
@@ -254,9 +261,11 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
     status.className = 'submit-status' + (cls ? ' '+cls : '');
   }
 
-  // Clear consent error styling as soon as box is checked
-  consentBox.addEventListener('change', function(){
-    if(consentBox.checked) consentBlock.classList.remove('consent-error');
+  // Clear consent error styling as soon as either box is checked
+  [consentMarketing, consentTransactional].forEach(function(box){
+    if(box) box.addEventListener('change', function(){
+      consentBlock.classList.remove('consent-error');
+    });
   });
 
   form.addEventListener('submit', async function(e){
@@ -271,8 +280,9 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
       var fd = new FormData(form);
       var body = {};
       fd.forEach(function(v,k){ body[k] = v; });
-      body.sms_consent = consentBox.checked ? 'true' : 'false';
-      var res = await fetch('https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website', {
+      body.sms_marketing_consent = consentMarketing && consentMarketing.checked ? 'true' : 'false';
+      body.sms_transactional_consent = consentTransactional && consentTransactional.checked ? 'true' : 'false';
+      var res = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(body)

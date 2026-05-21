@@ -288,7 +288,8 @@
       const send = document.getElementById('cm-send');
       const msg = document.getElementById('cm-msg');
       // ── SMS consent (optional — TCPA: cannot gate submission on consent) ──────
-      const consent = form.querySelector('input[name="sms_consent"]');
+      const consentMarketing = form.querySelector('input[name="sms_marketing_consent"]');
+      const consentTransactional = form.querySelector('input[name="sms_transactional_consent"]');
       const originalLabel = send.textContent;
       send.textContent = '…';
       send.disabled = true;
@@ -296,7 +297,8 @@
         const fd = new FormData(form);
         const body = {};
         fd.forEach((v, k) => { body[k] = v; });
-        body.sms_consent = consent && consent.checked ? 'true' : 'false';
+        body.sms_marketing_consent = consentMarketing && consentMarketing.checked ? 'true' : 'false';
+        body.sms_transactional_consent = consentTransactional && consentTransactional.checked ? 'true' : 'false';
         const res = await fetch('https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -317,14 +319,13 @@
         msg.placeholder = "Couldn't send — email andrew@4thwall.solutions or call (203) 670-9477.";
       }
     });
-    // Clear error styling once the user checks the box
-    const consentBox = form.querySelector('input[name="sms_consent"]');
-    if(consentBox){
-      consentBox.addEventListener('change', ()=>{
-        const block = consentBox.closest('.consent-block');
-        if(block && consentBox.checked) block.classList.remove('consent-error');
+    // Clear error styling once either consent box is checked
+    form.querySelectorAll('input[name="sms_marketing_consent"], input[name="sms_transactional_consent"]').forEach(box => {
+      box.addEventListener('change', () => {
+        const block = box.closest('.consent-block');
+        if(block) block.classList.remove('consent-error');
       });
-    }
+    });
   }
 
   // ── Nav dropdown ─────────────────────────────────

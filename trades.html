@@ -1518,7 +1518,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   <h2 class="composer-h r in">Tell us what's <span class="ital">on fire.</span></h2>
 
-  <form class="composer r in d1" id="composer-form" action="https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website" method="POST">
+  <form class="composer r in d1" id="composer-form" action="/api/lead" method="POST">
     <div class="composer-prompt"><span class="star">✦</span><span>Talk to us like you'd text a colleague.</span></div>
     <textarea class="composer-input" id="cm-msg" name="challenge" placeholder="Missing after-hours leads? Not enough reviews? Invisible on AI search? Tell us what's happening..." required></textarea>
 
@@ -1539,8 +1539,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
     <div class="consent-block">
       <div class="consent-check">
-        <input type="checkbox" id="cm-sms-consent" name="sms_consent">
-        <label for="cm-sms-consent" class="consent-text">By checking this box, I expressly consent to receive recurring automated marketing and transactional text messages from <strong>4th Wall Solutions / Andrew Rendon</strong> at the phone number provided, including appointment reminders, lead follow-up, review requests, and service updates from <strong>4th Wall Solutions</strong>. Up to 6 messages per month. Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help. Consent is not a condition of purchase. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</label>
+        <input type="checkbox" id="cm-sms-marketing" name="sms_marketing_consent">
+        <label for="cm-sms-marketing" class="consent-text">I consent to receive <strong>marketing</strong> text messages from <strong>4th Wall Solutions / Andrew Rendon</strong> including promotional offers, lead follow-up, and service updates. Up to 4 messages per month. Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out. Reply <strong>HELP</strong> for help. Consent is not a condition of purchase. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</label>
+      </div>
+      <div class="consent-check" style="margin-top:.5rem">
+        <input type="checkbox" id="cm-sms-transactional" name="sms_transactional_consent">
+        <label for="cm-sms-transactional" class="consent-text">I consent to receive <strong>transactional</strong> text messages from <strong>4th Wall Solutions / Andrew Rendon</strong> including appointment reminders, job status updates, and review requests. Up to 4 messages per month. Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out. Reply <strong>HELP</strong> for help. Consent is not a condition of purchase. View our <a href="/privacy.html">Privacy Policy</a> and <a href="/terms.html">Terms of Service</a>.</label>
       </div>
     </div>
   </form>

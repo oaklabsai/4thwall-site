@@ -677,7 +677,10 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
   'use strict';
 
   // ── Constants ────────────────────────────────────────
-  var WORKER_URL = 'https://fourthwall-bot.4thwalldevelopment.workers.dev/register-client';
+  // POST to a Vercel function (api/register-client.js) which injects the
+  // WORKER_SECRET server-side and forwards to the worker. The browser must
+  // never hold WORKER_SECRET directly.
+  var WORKER_URL = '/api/register-client';
   var TOTAL_STEPS = 6;
 
   // ── DOM refs ─────────────────────────────────────────
