@@ -1,0 +1,6 @@
+Contact: mailto:security@4thwall.solutions
+Contact: https://4thwall.solutions/contact.html
+Expires: 2027-05-21T00:00:00Z
+Preferred-Languages: en
+Canonical: https://4thwall.solutions/.well-known/security.txt
+Policy: https://4thwall.solutions/privacy.html

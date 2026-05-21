@@ -1,0 +1,17 @@
+{
+  "name": "4THWALL",
+  "short_name": "4THWALL",
+  "description": "AI infrastructure for trades contractors and service operators.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f3ec",
+  "theme_color": "#1e6642",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

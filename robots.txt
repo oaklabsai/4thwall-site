@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /onboard.html
+Disallow: /api/
+Disallow: /case-study-
+
+Sitemap: https://4thwall.solutions/sitemap.xml
