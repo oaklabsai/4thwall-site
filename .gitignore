@@ -2,3 +2,8 @@ hero.original.mp4
 node_modules/
 package.json
 package-lock.json
+.vercel
+.claude/
+.DS_Store
+*.env
+.env*
