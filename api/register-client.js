@@ -51,12 +51,18 @@ export default async function handler(req, res) {
     return res.status(413).json({ error: 'Payload too large (max 32 KB outer body; inner config max 16 KB)' });
   }
 
+  // Forward the original caller's IP for the worker rate-limit.
+  const clientIp = req.headers['x-real-ip'] ||
+                   (req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+                   req.socket?.remoteAddress || '';
+
   try {
     const workerRes = await fetch(`${WORKER_URL}/register-client`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-4THWALL-Secret': WORKER_SECRET,
+        ...(clientIp ? { 'X-Real-Client-IP': clientIp } : {}),
       },
       body: payload,
     });

@@ -48,12 +48,21 @@ export default async function handler(req, res) {
     return res.status(413).json({ error: 'Payload too large' });
   }
 
+  // Forward the original caller's IP so the worker's per-IP rate-limit operates
+  // on real clients (not Vercel's edge IP). Worker reads X-Real-Client-IP first,
+  // falls back to cf-connecting-ip. Vercel headers vary by deploy target;
+  // x-real-ip is set by Vercel's edge, x-forwarded-for chains hops.
+  const clientIp = req.headers['x-real-ip'] ||
+                   (req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+                   req.socket?.remoteAddress || '';
+
   try {
     const workerRes = await fetch(`${WORKER_URL}/marketing-lead`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-4THWALL-Secret': WORKER_SECRET,
+        ...(clientIp ? { 'X-Real-Client-IP': clientIp } : {}),
       },
       body: payload,
     });
