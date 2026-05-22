@@ -507,11 +507,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 @keyframes lapFallbackFade{to{opacity:1}}
 .lap-wrap{animation:lapFloat 9s ease-in-out infinite,lapFallbackFade 1s 1.4s linear forwards}
 
-/* Screen overlay container — covers the full bezel area of the macbook.png.
-   Source image cropped to its non-transparent bbox (472×287). Bezel pixel
-   positions in the cropped image: top y=6, bottom y=263, left x=38,
-   right x=433. Padded 0.25% outward to hide any subpixel bezel bleed. */
-.lap-lid{position:absolute;top:1.84%;left:7.80%;width:84.19%;height:90.05%;background:none;box-shadow:none;padding:0;border-radius:2px;transform:none;animation:none;overflow:hidden}
+/* Screen overlay container — covers the full macOS content area of macbook.png.
+   Source image (472×287): macOS content starts at y=2 (0.70%), x=36 (7.63%).
+   Overlay extends to x=436 and y=264 to cover all content, border-radius:0 since
+   screen glass corners are square (verified via pixel scan). */
+.lap-lid{position:absolute;top:0.70%;left:9.11%;width:81.57%;height:91.29%;background:none;box-shadow:none;padding:0;border-radius:1.04% 1.04% 0 0/2.67% 2.67% 0 0;transform:none;animation:none;overflow:hidden}
 .lap-lid::before,.lap-lid::after{display:none}
 .lap-screen::before{display:none}
 
@@ -534,7 +534,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   --ai-accent-text:rgba(30,102,66,0.85);
   --ai-user-bg:#fff;
   --ai-send:#1e6642;
-  width:100%;height:100%;background:var(--ai-sidebar);border-radius:2px;overflow:hidden;
+  width:100%;height:100%;background:var(--ai-sidebar);overflow:hidden;
   position:relative;color:var(--ai-text);
   font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;
 }
