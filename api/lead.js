@@ -11,9 +11,27 @@
 
 const DEFAULT_WORKER_URL = 'https://fourthwall-bot.4thwalldevelopment.workers.dev';
 
+// Allow-list of origins permitted to call this proxy. Blocks curl/Postman/
+// attacker bots from spending Anthropic credits via the marketing-lead chain.
+// Vercel preview branches match the regex.
+const ALLOWED_ORIGIN_REGEX = /^https:\/\/(4thwall\.solutions|4thwall-site(-[a-z0-9-]+)?\.vercel\.app)$/;
+
+function isAllowedOrigin(req) {
+  const origin = req.headers.origin || req.headers.referer || '';
+  if (!origin) return false;
+  // Referer is a full URL; extract scheme+host.
+  let host;
+  try { host = new URL(origin).origin; } catch { return false; }
+  return ALLOWED_ORIGIN_REGEX.test(host);
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!isAllowedOrigin(req)) {
+    return res.status(403).json({ error: 'Forbidden' });
   }
 
   const WORKER_URL    = process.env.WORKER_URL || DEFAULT_WORKER_URL;

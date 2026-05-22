@@ -705,17 +705,22 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
   var formSection  = document.querySelector('.form-section');
   var finDetails   = document.getElementById('financing-details-wrap');
 
-  var currentStep  = 1;
-  var locationId   = null;
+  var currentStep    = 1;
+  var locationId     = null;
+  var onboardingToken = null;
 
   // ── URL params ───────────────────────────────────────
+  // Preferred: ?token=… (single-use, server-resolves to location_id, replaces ?loc=).
+  // Legacy:    ?loc=…   (still works for old onboarding links pre-token migration).
   var url = new URL(window.location.href);
-  locationId = url.searchParams.get('loc') || url.searchParams.get('location_id') || '';
+  onboardingToken = url.searchParams.get('token') || '';
+  locationId      = url.searchParams.get('loc') || url.searchParams.get('location_id') || '';
   var preBusiness = url.searchParams.get('business') || '';
   var preOwner    = url.searchParams.get('owner') || '';
   var isInternal  = url.searchParams.get('internal') === '1';
 
-  if (!locationId) {
+  // We need either a token (preferred) or a direct locationId (legacy).
+  if (!onboardingToken && !locationId) {
     locMissing.classList.add('is-on');
     submitBtn.disabled = true;
   }
@@ -979,10 +984,16 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
     setStatus('Locking in your configuration…');
 
     try {
+      // Prefer token-based auth — the server consumes the token, resolves it
+      // to location_id, and writes the config. Falls back to direct location_id
+      // for legacy onboarding links.
+      var payload = onboardingToken
+        ? { onboarding_token: onboardingToken, config: config }
+        : { location_id: locationId, config: config };
       var res = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ location_id: locationId, config: config })
+        body: JSON.stringify(payload)
       });
       var data = await res.json().catch(function(){ return {}; });
       if (!res.ok || data.ok === false) {

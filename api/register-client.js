@@ -14,9 +14,25 @@
 
 const DEFAULT_WORKER_URL = 'https://fourthwall-bot.4thwalldevelopment.workers.dev';
 
+// Allow-list of origins permitted to call this proxy. Blocks curl/Postman/
+// attacker bots from registering bogus clients.
+const ALLOWED_ORIGIN_REGEX = /^https:\/\/(4thwall\.solutions|4thwall-site(-[a-z0-9-]+)?\.vercel\.app)$/;
+
+function isAllowedOrigin(req) {
+  const origin = req.headers.origin || req.headers.referer || '';
+  if (!origin) return false;
+  let host;
+  try { host = new URL(origin).origin; } catch { return false; }
+  return ALLOWED_ORIGIN_REGEX.test(host);
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!isAllowedOrigin(req)) {
+    return res.status(403).json({ error: 'Forbidden' });
   }
 
   const WORKER_URL    = process.env.WORKER_URL || DEFAULT_WORKER_URL;
@@ -27,9 +43,12 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server configuration error' });
   }
 
+  // 32 KB outer body cap. Inner config payload is independently capped at
+  // 16 KB by the worker's validateConfig (MAX_CONFIG_BYTES). The 32 KB
+  // outer cap leaves room for token + envelope keys without touching config.
   const payload = JSON.stringify(req.body || {});
   if (payload.length > 32 * 1024) {
-    return res.status(413).json({ error: 'Payload too large' });
+    return res.status(413).json({ error: 'Payload too large (max 32 KB outer body; inner config max 16 KB)' });
   }
 
   try {

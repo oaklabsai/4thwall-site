@@ -299,7 +299,9 @@
         fd.forEach((v, k) => { body[k] = v; });
         body.sms_marketing_consent = consentMarketing && consentMarketing.checked ? 'true' : 'false';
         body.sms_transactional_consent = consentTransactional && consentTransactional.checked ? 'true' : 'false';
-        const res = await fetch('https://fourthwall-bot.4thwalldevelopment.workers.dev/intake-website', {
+        // Route via Vercel proxy /api/lead → worker /marketing-lead.
+        // Direct worker calls would 401 (no WORKER_SECRET) and 400 (no location_id).
+        const res = await fetch('/api/lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify(body)
