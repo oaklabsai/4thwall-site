@@ -9,6 +9,11 @@
 //   WORKER_SECRET  — must match the worker's WORKER_SECRET secret
 //   WORKER_URL     — defaults to production worker URL (override for staging)
 
+// WARNING — DEFAULT_WORKER_URL points at production. If you deploy a preview
+// branch on Vercel WITHOUT overriding WORKER_URL in the preview env, it will
+// write to production D1. Vercel preview env vars are per-environment in the
+// Vercel dashboard: Settings → Environment Variables → "Preview" scope.
+// Set WORKER_URL there to the staging worker URL once one exists.
 const DEFAULT_WORKER_URL = 'https://fourthwall-bot.4thwalldevelopment.workers.dev';
 
 // Origin/Referer check — a low-friction CSRF guard, NOT an authentication

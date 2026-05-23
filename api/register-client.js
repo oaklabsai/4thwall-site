@@ -12,6 +12,8 @@
 //   WORKER_SECRET  — must match the worker's WORKER_SECRET secret
 //   WORKER_URL     — defaults to production worker URL (override for staging)
 
+// WARNING — see api/lead.js for the same caveat. Preview deploys without
+// an overriding WORKER_URL write to production D1.
 const DEFAULT_WORKER_URL = 'https://fourthwall-bot.4thwalldevelopment.workers.dev';
 
 // Origin/Referer check — a low-friction CSRF guard, NOT an authentication
