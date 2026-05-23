@@ -14,8 +14,9 @@
 
 const DEFAULT_WORKER_URL = 'https://fourthwall-bot.4thwalldevelopment.workers.dev';
 
-// Allow-list of origins permitted to call this proxy. Blocks curl/Postman/
-// attacker bots from registering bogus clients.
+// Origin/Referer check — a low-friction CSRF guard, NOT an authentication
+// boundary (see api/lead.js for the full rationale). WORKER_SECRET is the
+// real auth; this just filters casual bots from the registration endpoint.
 const ALLOWED_ORIGIN_REGEX = /^https:\/\/(4thwall\.solutions|4thwall-site(-[a-z0-9-]+)?\.vercel\.app)$/;
 
 function isAllowedOrigin(req) {

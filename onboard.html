@@ -645,6 +645,18 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
       </div>
     </div>
 
+    <!-- Payment block (only visible when the registration response includes
+         a payment_link — set dynamically by the success handler in JS). -->
+    <div class="success-payment" id="sxPaymentBlock" style="display:none;margin-top:1.4rem;padding:1.2rem 1.4rem;border:1px solid var(--accent-line);border-radius:12px;background:var(--accent-soft);">
+      <div style="font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;">Next step</div>
+      <div style="font-weight:600;margin-bottom:.6rem;">Complete your payment to activate</div>
+      <a id="sxPaymentLink" href="#" target="_blank" rel="noopener noreferrer"
+         style="display:inline-block;background:#111;color:#fff;padding:.7rem 1.2rem;border-radius:8px;text-decoration:none;font-weight:600;">
+        Pay setup + first month →
+      </a>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:.6rem;">Secure Stripe checkout. Link is valid for 24 hours.</div>
+    </div>
+
     <div class="success-checklist">
       <div class="ck">
         <span class="ck-dot">1</span>
@@ -1007,6 +1019,20 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
       var voice = config.bot_custom_instructions || '';
       document.getElementById('sxVoice').textContent = voice.length > 80 ? voice.slice(0, 80).trim() + '…' : (voice || '—');
       document.getElementById('sxAt').textContent = (data.registered_at || new Date().toISOString()).replace('T', ' ').replace(/\.\d+Z$/, ' UTC');
+
+      // Show payment link if the worker returned one (Phase G provisioning
+      // includes a Stripe checkout URL in the register-client response).
+      // Without this, the client sees "configured" but no payment CTA;
+      // the only payment path is the original Resend email, which may have
+      // landed in spam or expired (24h Stripe TTL).
+      if (data.payment_link) {
+        var paymentLink  = document.getElementById('sxPaymentLink');
+        var paymentBlock = document.getElementById('sxPaymentBlock');
+        if (paymentLink && paymentBlock) {
+          paymentLink.href = data.payment_link;
+          paymentBlock.style.display = 'block';
+        }
+      }
 
       // Hide form, show success.
       form.style.display = 'none';
