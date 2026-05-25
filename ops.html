@@ -507,11 +507,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 @keyframes lapFallbackFade{to{opacity:1}}
 .lap-wrap{animation:lapFloat 9s ease-in-out infinite,lapFallbackFade 1s 1.4s linear forwards}
 
-/* Screen overlay container — covers the full macOS content area of macbook.png.
-   Source image (472×287): macOS content starts at y=2 (0.70%), x=36 (7.63%).
-   Overlay extends to x=436 and y=264 to cover all content, border-radius:0 since
-   screen glass corners are square (verified via pixel scan). */
-.lap-lid{position:absolute;top:0.70%;left:9.11%;width:81.57%;height:91.29%;background:none;box-shadow:none;padding:0;border-radius:1.04% 1.04% 0 0/2.67% 2.67% 0 0;transform:none;animation:none;overflow:hidden}
+/* Screen overlay container — aligns precisely with the actual display glass of
+   macbook.png (472×287). Pixel scan: screen content spans x=43..428 (9.11%..90.68%)
+   and y=8..258 (2.79%..89.90%). Earlier values bled into the top/bottom bezels
+   so the chat header rendered above the screen and the input bar overlapped the
+   chin — visibly mis-fit while the laptop floats. The aspect ratio of this
+   bounding box (≈1.536) also matches the 500×325 design (≈1.538) so the
+   cover-mode scaler no longer crops horizontal content on narrow viewports. */
+.lap-lid{position:absolute;top:2.79%;left:9.11%;width:81.57%;height:87.11%;background:none;box-shadow:none;padding:0;border-radius:1.04% 1.04% 0 0/2.67% 2.67% 0 0;transform:none;animation:none;overflow:hidden}
 .lap-lid::before,.lap-lid::after{display:none}
 .lap-screen::before{display:none}
 
