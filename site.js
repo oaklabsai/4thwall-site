@@ -287,9 +287,16 @@
       e.preventDefault();
       const send = document.getElementById('cm-send');
       const msg = document.getElementById('cm-msg');
-      // ── SMS consent (optional — TCPA: cannot gate submission on consent) ──────
-      const consentMarketing = form.querySelector('input[name="sms_marketing_consent"]');
+      const consentMarketing    = form.querySelector('input[name="sms_marketing_consent"]');
       const consentTransactional = form.querySelector('input[name="sms_transactional_consent"]');
+
+      // ── Require at least one SMS consent box before submitting ────────────
+      if(!(consentMarketing && consentMarketing.checked) && !(consentTransactional && consentTransactional.checked)){
+        const block = form.querySelector('.consent-block');
+        if(block){ block.classList.add('consent-error'); block.scrollIntoView({behavior:'smooth',block:'center'}); }
+        return;
+      }
+
       const originalLabel = send.textContent;
       send.textContent = '…';
       send.disabled = true;

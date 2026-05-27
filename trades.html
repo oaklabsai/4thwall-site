@@ -657,6 +657,8 @@ section{position:relative;z-index:2}
 .consent-block{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line);transition:background .25s,border-color .25s}
 .consent-block.consent-error{background:rgba(220,80,60,.07);border-top-color:rgba(220,80,60,.45);padding:.75rem;border-radius:6px;margin-top:.5rem}
 .consent-block.consent-error .consent-text{color:#8a2a1f}
+.consent-error-msg{display:none;font-size:.68rem;color:#8a2a1f;margin-top:.4rem}
+.consent-block.consent-error .consent-error-msg{display:block}
 .consent-check{display:flex;align-items:flex-start;gap:.55rem;cursor:pointer}
 .consent-check input[type="checkbox"]{width:13px;height:13px;margin-top:.18rem;flex-shrink:0;accent-color:var(--ink);cursor:pointer}
 .consent-text{font-size:.7rem;line-height:1.7;color:var(--muted)}
@@ -1561,6 +1563,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <label for="cm-sms-transactional" class="consent-text">I consent to receive <strong>transactional</strong> text messages from <strong>4th Wall Solutions / Andres Rendon</strong> about appointment reminders, job status updates, and review requests, at the phone number provided. Message frequency may vary. Message &amp; data rates may apply. Text <strong>HELP</strong> for assistance, reply <strong>STOP</strong> to opt out. Consent is not a condition of purchase. SMS opt-in data will not be shared with or sold to any third parties.</label>
       </div>
       <p class="consent-text" style="margin-top:.75rem;text-align:center"><a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Service</a></p>
+      <p class="consent-error-msg">Please check at least one option above to continue.</p>
     </div>
   </form>
 
