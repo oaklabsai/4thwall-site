@@ -976,7 +976,7 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
 
   form.addEventListener('submit', async function(e){
     e.preventDefault();
-    if (!locationId) {
+    if (!locationId && !onboardingToken) {
       setStatus('Missing location ID — see banner above.', 'is-error');
       return;
     }
