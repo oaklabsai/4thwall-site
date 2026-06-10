@@ -412,6 +412,23 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
       if (res.status === 401){ throw new Error('Operator key rejected.'); }
       if (!res.ok || data.ok === false){ throw new Error(data.error || ('HTTP '+res.status)); }
 
+      // Idempotent re-fire of an existing client (already provisioned). The
+      // worker didn't re-run the chain; it merged the fields (or, in the rare
+      // mid-provisioning window, asks you to re-submit shortly).
+      if (data.status === 'already_provisioned' || data.status === 'duplicate_skipped'){
+        document.getElementById('resHeadWord').textContent = 'already up.';
+        document.getElementById('resSub').textContent = data.prefill_deferred
+          ? 'This client is still provisioning — your fields weren’t saved yet. Re-submit once you see the ✅ provisioning card in #system.'
+          : 'This client already exists — no double-provision. Your fields were merged onto their record.';
+        document.getElementById('resLoc').textContent = data.location_id || '—';
+        setLink('resOnboard', null); setLink('resPay', null);
+        renderSteps(null);
+        resultEl.classList.add('is-on');
+        setStatus(data.prefill_deferred ? 'Re-submit shortly.' : 'Fields merged.', data.prefill_deferred ? 'is-error' : 'is-ok');
+        resultEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+        return;
+      }
+
       // Result
       document.getElementById('resHeadWord').textContent = dry ? 'simulated.' : 'fired.';
       document.getElementById('resSub').textContent = dry
