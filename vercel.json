@@ -28,6 +28,12 @@
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
       ]
+    },
+    {
+      "source": "/(close|onboard).html",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
+      ]
     }
   ]
 }
