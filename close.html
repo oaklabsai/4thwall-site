@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4THWALL® — Close · Provision Client</title>
+<meta name="description" content="Internal — fire a new client's provisioning chain at close.">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#f7f3ec; --cream-2:#efe9df; --cream-3:#e8e0d2;
+  --ink:#1a1a18; --ink-2:#2a2a26;
+  --muted:rgba(26,26,24,0.62); --dim:rgba(26,26,24,0.38); --faint:rgba(26,26,24,0.16);
+  --line:rgba(26,26,24,0.12); --line-2:rgba(26,26,24,0.06);
+  --orange:#1e6642; --orange-2:#165535; --orange-soft:rgba(30,102,66,0.10);
+  --display:'Fraunces',Georgia,serif; --body:'Inter Tight','Inter',-apple-system,sans-serif;
+  --hand:'Caveat',cursive; --mono:'JetBrains Mono',ui-monospace,monospace;
+  --pad:clamp(1.25rem,4.5vw,4rem); --max:880px;
+  --err:#8a2a1f; --err-soft:rgba(220,80,60,.07); --err-line:rgba(220,80,60,.45);
+  --ok:#1e6642; --ok-soft:rgba(30,102,66,.08);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--cream);-webkit-font-smoothing:antialiased;letter-spacing:-0.011em;line-height:1.55;min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;-webkit-appearance:none}
+img,svg{display:block;max-width:100%}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.35;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.serif{font-family:var(--display)} .ital{font-style:italic}
+
+nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1.1rem var(--pad);background:rgba(247,243,236,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-logo{display:flex;align-items:center;gap:.7rem;line-height:1;color:var(--ink)}
+.nav-logo .brand-name{font-family:var(--body);font-weight:600;font-size:.82rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink)}
+.nav-meta{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
+
+.hero{padding:3.2rem var(--pad) .5rem;max-width:var(--max);margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:1rem}
+.hero-h{font-family:var(--display);font-size:clamp(1.9rem,4.4vw,2.9rem);font-weight:500;line-height:1.05;letter-spacing:-.03em}
+.hero-h em{font-style:italic;color:var(--orange);font-weight:400}
+.hero-sub{font-size:.96rem;line-height:1.6;color:var(--muted);margin-top:.9rem;max-width:58ch}
+.hero-sub strong{color:var(--ink);font-weight:500}
+
+.form-section{padding:1.8rem var(--pad) 3rem;max-width:var(--max);margin:0 auto}
+.form-card{background:var(--cream-2);border:1px solid var(--line);border-radius:18px;padding:clamp(1.5rem,3.2vw,2.4rem);position:relative;box-shadow:0 14px 40px -22px rgba(26,26,24,.18),0 2px 8px -4px rgba(26,26,24,.08)}
+
+.group{margin-bottom:1.8rem}
+.group-tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);margin-bottom:1rem;display:flex;align-items:center;gap:.55rem;border-bottom:1px solid var(--line-2);padding-bottom:.5rem}
+.group-tag .num{color:var(--ink);font-weight:600}
+
+.form-row{margin-bottom:1.05rem}
+.form-row.row-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-row.row-triple{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:1rem}
+@media(max-width:640px){.form-row.row-pair,.form-row.row-triple{grid-template-columns:1fr}}
+
+.form-label{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:.4rem}
+.form-label .req{color:var(--orange);font-size:.55rem}
+.form-label .opt{color:var(--dim);font-size:.55rem;text-transform:none;letter-spacing:.05em;font-style:italic;font-family:var(--body)}
+.form-hint{font-size:.74rem;color:var(--muted);margin-top:.38rem;line-height:1.5}
+.form-hint.warn{color:var(--err)}
+
+.form-input,.form-textarea,.form-select{width:100%;padding:.82rem 1rem;background:var(--cream);border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:.94rem;color:var(--ink);transition:border-color .2s,background .2s,box-shadow .2s;line-height:1.5}
+.form-textarea{min-height:80px;resize:vertical}
+.form-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 9' fill='none' stroke='%231a1a18' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='1,1.5 7,7.5 13,1.5'/></svg>");background-repeat:no-repeat;background-position:right 1rem center;background-size:11px 7px;padding-right:2.3rem;cursor:pointer}
+.form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;border-color:var(--ink);background:#fff;box-shadow:0 0 0 3px rgba(30,102,66,.08)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--dim)}
+.form-input.is-invalid,.form-select.is-invalid,.form-textarea.is-invalid{border-color:var(--err-line);background:var(--err-soft)}
+
+.radio-group{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.55rem}
+.radio-opt{position:relative;display:flex;align-items:center;gap:.55rem;padding:.7rem .85rem;background:var(--cream);border:1px solid var(--line);border-radius:9px;cursor:pointer;transition:border-color .15s,background .15s;font-size:.88rem}
+.radio-opt:hover{border-color:rgba(26,26,24,.28)}
+.radio-opt input{position:absolute;opacity:0;pointer-events:none}
+.radio-opt .dot{flex-shrink:0;width:14px;height:14px;border:1.5px solid var(--line);border-radius:50%;position:relative;transition:border-color .15s}
+.radio-opt input:checked ~ .dot{border-color:var(--orange)}
+.radio-opt input:checked ~ .dot::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--orange)}
+.radio-opt input:checked ~ .txt{color:var(--ink);font-weight:500}
+
+.more-toggle{font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);display:inline-flex;align-items:center;gap:.45rem;padding:.5rem 0;cursor:pointer}
+.more-toggle::before{content:"+";font-size:.9rem;line-height:1}
+.more-toggle.is-open::before{content:"–"}
+.more-fields{display:none}
+.more-fields.is-open{display:block;margin-top:.8rem;padding-top:1rem;border-top:1px dashed var(--line)}
+
+.keybar{background:var(--ink);color:var(--cream);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.6rem}
+.keybar .klabel{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:.5rem}
+.keybar input{width:100%;padding:.7rem .9rem;background:rgba(247,243,236,.07);border:1px solid rgba(247,243,236,.18);border-radius:8px;color:var(--cream);font-family:var(--mono);font-size:.85rem}
+.keybar input:focus{outline:none;border-color:var(--orange)}
+.keybar .khint{font-size:.72rem;color:rgba(247,243,236,.55);margin-top:.5rem}
+
+.actions{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1.6rem;flex-wrap:wrap}
+.dry-toggle{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+.dry-toggle input{width:15px;height:15px;accent-color:var(--orange)}
+.btn{display:inline-flex;align-items:center;gap:.55rem;padding:.85rem 1.6rem;border-radius:10px;font-weight:600;font-size:.92rem;transition:transform .15s,background .15s,opacity .15s}
+.btn-go{background:var(--orange);color:#fff}
+.btn-go:hover{background:var(--orange-2)}
+.btn-go:disabled{opacity:.55;cursor:not-allowed}
+.status{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em}
+.status.is-error{color:var(--err)} .status.is-ok{color:var(--ok)}
+
+.result{display:none;margin-top:1.6rem;background:var(--ok-soft);border:1px solid rgba(30,102,66,.25);border-radius:12px;padding:1.3rem 1.4rem}
+.result.is-on{display:block}
+.result h3{font-family:var(--display);font-size:1.25rem;font-weight:500;margin-bottom:.3rem}
+.result h3 em{font-style:italic;color:var(--orange)}
+.result .sub{font-size:.86rem;color:var(--muted);margin-bottom:1rem}
+.linkrow{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;flex-wrap:wrap}
+.linkrow .lk-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);min-width:108px}
+.linkrow .lk-val{flex:1;min-width:200px;font-family:var(--mono);font-size:.78rem;background:var(--cream);border:1px solid var(--line);border-radius:7px;padding:.5rem .7rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.linkrow .lk-val.empty{color:var(--dim)}
+.copybtn{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);border:1px solid var(--orange);border-radius:6px;padding:.4rem .7rem}
+.copybtn:hover{background:var(--orange);color:#fff}
+.steps{margin-top:1rem;font-family:var(--mono);font-size:.72rem;color:var(--muted);line-height:1.7}
+.steps .s-ok{color:var(--ok)} .steps .s-bad{color:var(--err)}
+.again{margin-top:1.2rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);cursor:pointer}
+
+footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-logo"><span class="brand-name">4THWALL</span></div>
+  <div class="nav-meta">Internal · Close</div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Provisioning trigger · Drew-only</div>
+  <h1 class="hero-h">Client signed. <em>Fire the chain.</em></h1>
+  <p class="hero-sub">The 7–9 things you know from the close. Submit once — this mints the GHL sub-account, the Stripe checkout, the Slack channel, and the onboarding link. The client's form only asks for what <strong>they</strong> uniquely hold; everything here merges underneath it and survives their submit.</p>
+</header>
+
+<section class="form-section">
+  <form class="form-card" id="closeForm" autocomplete="off" novalidate>
+
+    <!-- Operator key -->
+    <div class="keybar">
+      <div class="klabel">Operator key</div>
+      <input type="password" id="closeKey" placeholder="paste your close-form key" autocomplete="off">
+      <div class="khint">Stored only in this browser. Gates this trigger — not your WORKER_SECRET (that lives server-side).</div>
+    </div>
+
+    <!-- ── Trigger ─────────────────────────── -->
+    <div class="group">
+      <div class="group-tag"><span class="num">01</span> The trigger — fires provisioning</div>
+
+      <div class="form-row">
+        <label class="form-label" for="f-biz">Business name <span class="req">REQ</span></label>
+        <input class="form-input" id="f-biz" name="business_name" type="text" placeholder="Ridgeline Roofing" required>
+      </div>
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-email">Owner email <span class="req">REQ</span></label>
+          <input class="form-input" id="f-email" name="owner_email" type="email" placeholder="owner@ridgeline.com" required>
+          <p class="form-hint">Keys provisioning + the onboarding link. Re-firing the same email is safe — it won't double-provision.</p>
+        </div>
+        <div>
+          <label class="form-label" for="f-phone">Owner cell <span class="opt">recommended</span></label>
+          <input class="form-input" id="f-phone" name="owner_cell_phone" type="tel" placeholder="(203) 555-0142">
+        </div>
+      </div>
+      <div class="form-row row-triple">
+        <div>
+          <label class="form-label" for="f-trade">Trade <span class="req">REQ</span></label>
+          <select class="form-select" id="f-trade" name="trade_type" required>
+            <option value="" disabled selected>Trade…</option>
+            <option value="roofing">Roofing</option>
+            <option value="hvac">HVAC</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="electrical">Electrical</option>
+            <option value="remodeling">Remodeling</option>
+            <option value="general_contractor">General Contractor</option>
+            <option value="landscaping">Landscaping</option>
+            <option value="painting">Painting</option>
+          </select>
+          <p class="form-hint" id="trade-warn" style="display:none"></p>
+        </div>
+        <div>
+          <label class="form-label" for="f-zip">Service ZIP <span class="req">REQ</span></label>
+          <input class="form-input" id="f-zip" name="service_area_zip" type="text" inputmode="numeric" pattern="\d{5}" maxlength="5" placeholder="06830" required>
+          <p class="form-hint">One representative ZIP → timezone + storm mode.</p>
+        </div>
+        <div>
+          <label class="form-label" for="f-plan">Plan <span class="req">REQ</span></label>
+          <select class="form-select" id="f-plan" name="plan_tier" required>
+            <option value="" disabled selected>Tier…</option>
+            <option value="Foundation">Foundation</option>
+            <option value="Growth">Growth</option>
+            <option value="Dominance">Dominance</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Pre-fill from the call ───────────── -->
+    <div class="group">
+      <div class="group-tag"><span class="num">02</span> What you learned on the call</div>
+      <p class="form-hint" style="margin:-.5rem 0 1rem">You're often the <em>safer</em> source for these — you won't over-list services or paste a weak link. Leave any blank you're unsure of; the owner fills the rest.</p>
+
+      <div class="form-row">
+        <label class="form-label" for="f-primary">Primary service <span class="opt">optional</span></label>
+        <input class="form-input" id="f-primary" name="primary_service" type="text" placeholder="Roof replacement">
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="f-services">Services offered <span class="opt">optional</span></label>
+        <textarea class="form-textarea" id="f-services" name="services_offered" placeholder="Roof replacement, repair, gutters, storm damage, insurance claims…"></textarea>
+        <p class="form-hint">List only what you're sure they do — under-listing is safe; over-listing can book a job they can't deliver.</p>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="f-area">Service area <span class="opt">optional</span></label>
+        <input class="form-input" id="f-area" name="service_area_description" type="text" placeholder="Fairfield County, CT + eastern Westchester">
+        <p class="form-hint">Plain description — no town-by-town matching downstream.</p>
+      </div>
+
+      <div class="more-toggle" id="moreToggle">More from the call</div>
+      <div class="more-fields" id="moreFields">
+        <div class="form-row">
+          <label class="form-label" for="f-not">Services NOT offered <span class="opt">optional</span></label>
+          <input class="form-input" id="f-not" name="services_not_offered" type="text" placeholder="Commercial flat roofs, solar">
+        </div>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-turn">Estimate turnaround <span class="opt">optional</span></label>
+            <input class="form-input" id="f-turn" name="estimate_turnaround" type="text" placeholder="24–48 hours">
+          </div>
+          <div>
+            <label class="form-label" for="f-job">Typical job size <span class="opt">optional</span></label>
+            <input class="form-input" id="f-job" name="typical_job_size" type="text" placeholder="$8k–$45k">
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Insurance claims <span class="opt">optional</span></label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="insurance_claims" value="full"><span class="dot"></span><span class="txt">Full</span></label>
+            <label class="radio-opt"><input type="radio" name="insurance_claims" value="limited"><span class="dot"></span><span class="txt">Limited</span></label>
+            <label class="radio-opt"><input type="radio" name="insurance_claims" value="no"><span class="dot"></span><span class="txt">No</span></label>
+          </div>
+          <p class="form-hint">Unsure full-vs-limited? Leave blank — the owner sets it.</p>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Financing offered <span class="opt">optional</span></label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="financing_offered" value="yes"><span class="dot"></span><span class="txt">Yes</span></label>
+            <label class="radio-opt"><input type="radio" name="financing_offered" value="no"><span class="dot"></span><span class="txt">No</span></label>
+          </div>
+          <p class="form-hint">The live <em>terms</em> stay on the client form — only the owner knows the current program.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <label class="dry-toggle"><input type="checkbox" id="dryRun"> Dry run (no live GHL / Stripe)</label>
+      <div style="display:flex;align-items:center;gap:1rem">
+        <span class="status" id="status"></span>
+        <button type="submit" class="btn btn-go" id="goBtn">Provision client →</button>
+      </div>
+    </div>
+
+    <!-- ── Result ──────────────────────────── -->
+    <div class="result" id="result">
+      <h3>Chain <em id="resHeadWord">fired.</em></h3>
+      <p class="sub" id="resSub">Send these two links to the client. The onboarding link opens their slim form.</p>
+      <div class="linkrow">
+        <span class="lk-label">Location ID</span>
+        <span class="lk-val mono" id="resLoc">—</span>
+      </div>
+      <div class="linkrow">
+        <span class="lk-label">Onboarding link</span>
+        <span class="lk-val mono empty" id="resOnboard">—</span>
+        <button type="button" class="copybtn" data-copy="resOnboard">Copy</button>
+      </div>
+      <div class="linkrow">
+        <span class="lk-label">Payment link</span>
+        <span class="lk-val mono empty" id="resPay">—</span>
+        <button type="button" class="copybtn" data-copy="resPay">Copy</button>
+      </div>
+      <div class="steps" id="resSteps"></div>
+      <div class="again" id="resAgain">+ Provision another</div>
+    </div>
+
+  </form>
+</section>
+
+<footer>4TH WALL SOLUTIONS · INTERNAL · STAMFORD CT</footer>
+
+<script>
+(function(){
+  'use strict';
+  var PROXY = '/api/client-signed';
+  var form = document.getElementById('closeForm');
+  var keyEl = document.getElementById('closeKey');
+  var goBtn = document.getElementById('goBtn');
+  var statusEl = document.getElementById('status');
+  var resultEl = document.getElementById('result');
+  var dryRun = document.getElementById('dryRun');
+
+  // ── Operator key persistence (this browser only) ──
+  var KEY_STORE = '4tw_close_key';
+  try { keyEl.value = localStorage.getItem(KEY_STORE) || ''; } catch(_){}
+  keyEl.addEventListener('change', function(){
+    try { keyEl.value ? localStorage.setItem(KEY_STORE, keyEl.value) : localStorage.removeItem(KEY_STORE); } catch(_){}
+  });
+
+  // ── "More" toggle ──
+  var moreToggle = document.getElementById('moreToggle');
+  var moreFields = document.getElementById('moreFields');
+  moreToggle.addEventListener('click', function(){
+    moreToggle.classList.toggle('is-open');
+    moreFields.classList.toggle('is-open');
+  });
+
+  // ── trade keyword warning ──
+  var tradeEl = document.getElementById('f-trade');
+  var tradeWarn = document.getElementById('trade-warn');
+  tradeEl.addEventListener('change', function(){
+    if (tradeEl.value === 'general_contractor') {
+      tradeWarn.textContent = 'Broad — matches several campaign types loosely. Use a specific trade if you can.';
+      tradeWarn.classList.add('warn'); tradeWarn.style.display = 'block';
+    } else { tradeWarn.style.display = 'none'; }
+  });
+
+  // ── phone format ──
+  var phoneEl = document.getElementById('f-phone');
+  phoneEl.addEventListener('input', function(){
+    var d = phoneEl.value.replace(/\D/g,'').slice(0,10);
+    phoneEl.value = d.length<4 ? d : d.length<7 ? '('+d.slice(0,3)+') '+d.slice(3) : '('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6);
+  });
+
+  function val(name){
+    var el = form.querySelector('[name="'+name+'"]');
+    if (!el) return '';
+    if (el.type === 'radio'){ var c = form.querySelector('input[name="'+name+'"]:checked'); return c ? c.value : ''; }
+    return (el.value||'').trim();
+  }
+  function setStatus(t, cls){ statusEl.textContent = t||''; statusEl.className = 'status' + (cls?' '+cls:''); }
+
+  function markInvalid(name){ var el = form.querySelector('[name="'+name+'"]'); if (el) el.classList.add('is-invalid'); }
+  form.addEventListener('input', function(e){ if (e.target.classList) e.target.classList.remove('is-invalid'); });
+
+  // ── copy buttons ──
+  form.addEventListener('click', function(e){
+    var b = e.target.closest('.copybtn'); if (!b) return;
+    var v = document.getElementById(b.getAttribute('data-copy')).textContent;
+    if (!v || v === '—') return;
+    navigator.clipboard.writeText(v).then(function(){ var o=b.textContent; b.textContent='Copied'; setTimeout(function(){b.textContent=o;},1200); });
+  });
+  document.getElementById('resAgain').addEventListener('click', function(){
+    resultEl.classList.remove('is-on'); form.reset();
+    try { keyEl.value = localStorage.getItem(KEY_STORE) || ''; } catch(_){}
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  function buildConfig(){
+    var c = {
+      business_name: val('business_name'),
+      trade_type: val('trade_type'),
+      service_area_zip: val('service_area_zip'),
+      plan_tier: val('plan_tier'),
+      owner_email: val('owner_email'),
+      owner_cell_phone: val('owner_cell_phone'),
+      primary_service: val('primary_service'),
+      services_offered: val('services_offered'),
+      service_area_description: val('service_area_description'),
+      services_not_offered: val('services_not_offered'),
+      estimate_turnaround: val('estimate_turnaround'),
+      typical_job_size: val('typical_job_size'),
+      insurance_claims: val('insurance_claims'),
+      financing_offered: val('financing_offered')
+    };
+    Object.keys(c).forEach(function(k){ if (!c[k]) delete c[k]; });
+    return c;
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    setStatus('');
+    if (!keyEl.value.trim()){ setStatus('Operator key required.', 'is-error'); keyEl.focus(); return; }
+
+    var required = ['business_name','owner_email','trade_type','service_area_zip','plan_tier'];
+    var bad = required.filter(function(n){ return !val(n); });
+    var zip = val('service_area_zip');
+    if (zip && !/^\d{5}$/.test(zip)) bad.push('service_area_zip');
+    var email = val('owner_email');
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) bad.push('owner_email');
+    if (bad.length){ bad.forEach(markInvalid); setStatus('Check the highlighted fields.', 'is-error'); return; }
+
+    var dry = dryRun.checked;
+    var body = {
+      business_name: val('business_name'),
+      email: val('owner_email'),
+      phone: val('owner_cell_phone'),
+      service_zip: zip,
+      trade_type: val('trade_type'),
+      config: buildConfig()
+    };
+    if (dry) body.test_mode = true;
+
+    var orig = goBtn.innerHTML;
+    goBtn.disabled = true; goBtn.innerHTML = dry ? 'Dry running…' : 'Provisioning…';
+    setStatus(dry ? 'Simulating the full chain…' : 'Minting sub-account, Stripe, channel…');
+
+    try {
+      var res = await fetch(PROXY, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'X-Close-Key': keyEl.value.trim() },
+        body: JSON.stringify(body)
+      });
+      var data = await res.json().catch(function(){ return {}; });
+      if (res.status === 401){ throw new Error('Operator key rejected.'); }
+      if (!res.ok || data.ok === false){ throw new Error(data.error || ('HTTP '+res.status)); }
+
+      // Result
+      document.getElementById('resHeadWord').textContent = dry ? 'simulated.' : 'fired.';
+      document.getElementById('resSub').textContent = dry
+        ? 'Dry run — no live GHL/Stripe. Below is what a real run would produce.'
+        : 'Send these two links to the client. The onboarding link opens their slim form.';
+      document.getElementById('resLoc').textContent = data.location_id || '—';
+      setLink('resOnboard', data.onboarding_url);
+      setLink('resPay', data.payment_link);
+      renderSteps(data.steps);
+      resultEl.classList.add('is-on');
+      setStatus(dry ? 'Dry run complete.' : 'Provisioned.', 'is-ok');
+      resultEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+    } catch(err){
+      setStatus(err.message || 'Failed — check the worker logs.', 'is-error');
+    } finally {
+      goBtn.disabled = false; goBtn.innerHTML = orig;
+    }
+  });
+
+  function setLink(id, url){
+    var el = document.getElementById(id);
+    if (url){ el.textContent = url; el.classList.remove('empty'); }
+    else { el.textContent = '— (emailed to the client)'; el.classList.add('empty'); }
+  }
+  function renderSteps(steps){
+    var box = document.getElementById('resSteps');
+    if (!Array.isArray(steps) || !steps.length){ box.innerHTML = ''; return; }
+    box.innerHTML = steps.map(function(s){
+      var good = /ok|simulated|partial/.test(s.status||'');
+      return '<div><span class="'+(good?'s-ok':'s-bad')+'">'+(good?'✓':'✗')+'</span> '+esc(s.step)+' — '+esc(s.status)+'</div>';
+    }).join('');
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+})();
+</script>
+</body>
+</html>
