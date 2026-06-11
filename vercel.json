@@ -4,7 +4,11 @@
     "productionBranch": "main"
   },
   "rewrites": [
+    { "source": "/atlas",         "destination": "/atlas.html" },
+    { "source": "/vesta",         "destination": "/vesta.html" },
     { "source": "/find",          "destination": "/find.html" },
+    { "source": "/address",       "destination": "/address.html" },
+    { "source": "/myhome",        "destination": "/myhome.html" },
     { "source": "/signin",        "destination": "/signin.html" },
     { "source": "/request",       "destination": "/request.html" },
     { "source": "/auth/confirm",  "destination": "/auth-confirm.html" },
@@ -13,6 +17,10 @@
     { "source": "/c/:placeId",    "destination": "/contractor.html" }
   ],
   "redirects": [
+    { "source": "/trades.html",           "destination": "/atlas",                              "permanent": true },
+    { "source": "/trades",                "destination": "/atlas",                              "permanent": true },
+    { "source": "/ops.html",              "destination": "/atlas",                              "permanent": true },
+    { "source": "/ops",                   "destination": "/atlas",                              "permanent": true },
     { "source": "/aga-case-study.html",   "destination": "/case-study-wealth-management.html", "permanent": true },
     { "source": "/bluecrest-am.html",     "destination": "/case-study-amenity-management.html", "permanent": true },
     { "source": "/honey-due.html",        "destination": "/case-study-home-services.html",      "permanent": true },
@@ -52,6 +60,12 @@
     },
     {
       "source": "/(c|pro)/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex" }
+      ]
+    },
+    {
+      "source": "/myhome",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex" }
       ]

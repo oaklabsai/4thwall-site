@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check an Address — Vesta</title>
+<meta name="description" content="Check any address for a Vesta record — verified jobs, the years they happened, the trades involved. The Carfax moment, for a house.">
+<link rel="canonical" href="https://4thwall.solutions/address">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">VESTA</span>
+  </a>
+  <div class="nav-links">
+    <a href="/find" class="nav-a">Find a pro</a>
+    <a href="/address" class="nav-a is-current">Check an address</a>
+    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero">
+  <div class="eyebrow">The record check · like a Carfax, for a house</div>
+  <h1 class="page-h">Does this home have a <em>history?</em></h1>
+  <p class="page-sub">Buying, selling, or just curious — check whether an address has a Vesta file. You'll see whether verified work exists, how much, and in which trades. Never the details, never the owner — those belong to the home's record holder.</p>
+</section>
+
+<section class="section">
+  <div class="card-block" style="max-width:560px">
+    <form id="addr-form">
+      <div class="form-row"><label class="form-label" for="line1">Street address *</label><input class="form-input" type="text" id="line1" name="line1" required maxlength="120" placeholder="42 Oakwood Ave" autocomplete="street-address"></div>
+      <div class="form-row row-pair">
+        <div><label class="form-label" for="city">City</label><input class="form-input" type="text" id="city" name="city" maxlength="60" autocomplete="address-level2"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div><label class="form-label" for="state">State</label><input class="form-input" type="text" id="state" name="state" maxlength="2" autocomplete="address-level1"></div>
+          <div><label class="form-label" for="zip">ZIP *</label><input class="form-input" type="text" id="zip" name="zip" required maxlength="10" inputmode="numeric" autocomplete="postal-code"></div>
+        </div>
+      </div>
+      <button class="pill pill-orange" type="submit">Check this address <span class="arr">→</span></button>
+      <span class="form-status" id="addr-status"></span>
+      <p class="fine">The address is checked against the registry and not stored. No account needed.</p>
+    </form>
+  </div>
+  <div id="addr-result"></div>
+</section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  HOME.navAccount();
+  const esc = HOME.esc;
+  const form = document.getElementById('addr-form');
+  const out = document.getElementById('addr-result');
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const st = document.getElementById('addr-status');
+    const btn = form.querySelector('button');
+    btn.disabled = true; st.className = 'form-status'; st.textContent = '…';
+    out.innerHTML = '';
+    const { data } = await HOME.api('/address', { method:'POST', body:{
+      line1: form.line1.value, city: form.city.value, state: form.state.value, zip: form.zip.value,
+    }});
+    btn.disabled = false;
+    if (!data.ok){
+      st.className = 'form-status is-error';
+      st.textContent = data.error === 'address_required' ? 'Enter the street address and a 5-digit ZIP.'
+        : data.error === 'rate_limited' ? 'Too many checks — try again in a bit.'
+        : 'Couldn\'t check — try again.';
+      return;
+    }
+    st.textContent = '';
+
+    if (data.found){
+      const s = data.summary;
+      const years = s.first_year ? (s.first_year === s.last_year ? s.first_year : s.first_year + '–' + s.last_year) : null;
+      out.innerHTML = '<div class="card-block" style="max-width:560px;border-color:rgba(30,102,66,.35)">' +
+        '<div class="eyebrow">✓ This home has a Vesta file</div>' +
+        '<div class="kv"><span>Verified jobs</span><b>' + esc(s.verified_jobs) + '</b></div>' +
+        (s.trades && s.trades.length ? '<div class="kv"><span>Trades</span><b>' + esc(s.trades.map(HOME.tradeLabel).join(', ')) + '</b></div>' : '') +
+        (years ? '<div class="kv"><span>Verified work span</span><b>' + esc(years) + '</b></div>' : '') +
+        (s.last_activity_month ? '<div class="kv"><span>Last activity</span><b>' + esc(HOME.fmtMonth(s.last_activity_month)) + '</b></div>' : '') +
+        '<div class="kv"><span>Owner confirmed</span><b>' + (s.owner_confirmed ? 'Yes' : 'Not yet') + '</b></div>' +
+        '<p class="note" style="margin-top:1rem"><b>Buying this home?</b> Ask the seller for the Vesta Resale Report — one read-only link with the full verified history. <b>Own this home?</b> Your record link is on any receipt from a verified job.</p>' +
+        '</div>';
+    } else {
+      out.innerHTML = '<div class="card-block" style="max-width:560px">' +
+        '<div class="eyebrow" style="color:var(--dim)">No Vesta file yet</div>' +
+        '<p style="font-size:.92rem;line-height:1.65">No verified record exists for that address. That\'s most homes today — records mint when a pro in the verified network completes a job there, so absence means <b>undocumented</b>, not bad.</p>' +
+        '<p style="font-size:.92rem;line-height:1.65;margin-top:.7rem">Want this home\'s history to start existing? Hire from the verified network — the record starts with the first job.</p>' +
+        '<div style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap"><a class="pill pill-orange pill-sm" href="/find">Find a verified pro <span class="arr">→</span></a>' +
+        '<a class="pill pill-ghost pill-sm" href="/myhome">Start your Home File</a></div>' +
+        '</div>';
+    }
+  });
+});
+</script>
+</body>
+</html>

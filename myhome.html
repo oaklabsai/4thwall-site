@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Home — Vesta</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">VESTA</span>
+  </a>
+  <div class="nav-links">
+    <a href="/find" class="nav-a">Find a pro</a>
+    <a href="/address" class="nav-a">Check an address</a>
+    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero" id="hero">
+  <div class="loading">Opening your Home File…</div>
+</section>
+<section class="section" id="body"></section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function(){
+  const account = await HOME.navAccount();
+  const esc = HOME.esc;
+  const hero = document.getElementById('hero');
+  const body = document.getElementById('body');
+
+  if (!HOME.token() || !account){
+    hero.innerHTML = '<div class="eyebrow">The Home File</div>' +
+      '<h1 class="page-h">One folder for the <em>whole house.</em></h1>' +
+      '<p class="page-sub">Your home\'s verified records, every warranty with its paperwork, the pros you\'ve saved, and the requests you\'ve made — in one place that\'s ready for resale, insurance, and "wait, who did our furnace?"</p>' +
+      '<div style="margin-top:1.6rem"><a class="pill pill-orange" href="' + HOME.signinHref('/myhome') + '">Sign in with one email <span class="arr">→</span></a>' +
+      '<span class="fine" style="margin-left:.9rem">Free. No password, no phone number.</span></div>';
+    return;
+  }
+
+  const WALLET_EXTS = ['pdf','jpg','jpeg','png','webp','heic'];
+
+  function warrantyStatus(w){
+    if (!w.expires_on) return '<span class="wpill ok">No expiry set</span>';
+    const days = Math.floor((new Date(w.expires_on) - new Date()) / 86400000);
+    if (days < 0) return '<span class="wpill gone">Expired ' + esc(HOME.fmtDate(w.expires_on)) + '</span>';
+    if (days <= 45) return '<span class="wpill soon">Expires in ' + days + 'd</span>';
+    return '<span class="wpill ok">Until ' + esc(HOME.fmtDate(w.expires_on)) + '</span>';
+  }
+
+  function walletRow(w){
+    return '<div class="wrow" data-wid="' + esc(w.id) + '">' +
+      '<div class="wmain"><div class="wname">' + esc(w.item) + '</div>' +
+      '<div class="wmeta">' + [w.contractor_name ? esc(w.contractor_name) : '', w.trade ? esc(HOME.tradeLabel(w.trade)) : '', w.notes ? esc(w.notes) : ''].filter(Boolean).join(' · ') + '</div></div>' +
+      '<div class="wacts">' + warrantyStatus(w) +
+      (w.has_doc ? '<button class="linkish" data-doc="' + esc(w.id) + '">Document</button>' : '') +
+      '<button class="linkish danger" data-del="' + esc(w.id) + '">Remove</button></div></div>';
+  }
+
+  async function load(){
+    const { data } = await HOME.api('/file');
+    if (!data.ok){
+      hero.innerHTML = '<h1 class="page-h">Couldn\'t open your file.</h1><p class="page-sub">Try refreshing — if it keeps happening, sign in again.</p>';
+      return;
+    }
+    render(data);
+  }
+
+  function render(f){
+    hero.innerHTML = '<div class="eyebrow">The Home File · ' + esc(f.account.email || '') + '</div>' +
+      '<h1 class="page-h">Everything the house <em>can prove.</em></h1>' +
+      '<p class="page-sub">Records, warranties, saved pros, requests. Free, forever — and ready the day you need it.</p>';
+
+    let html = '';
+
+    // ── Your homes ──
+    html += '<h2 class="section-h">Your homes</h2>';
+    if (f.homes.length){
+      html += '<div class="grid">' + f.homes.map(h =>
+        '<div class="card lift">' +
+        '<a class="cardlink" href="/record/' + esc(h.token) + '"><h3>' + esc(h.address_line1 || 'Your home') + '</h3></a>' +
+        '<div class="sub">' + esc([h.city, h.state, h.zip].filter(Boolean).join(', ')) + '</div>' +
+        '<div class="badges"><span class="badge">✓ ' + esc(h.verified_jobs) + ' verified job' + (h.verified_jobs === 1 ? '' : 's') + '</span>' +
+        '<span class="badge plain">' + esc(h.total_events) + ' entries</span></div>' +
+        '<div class="spacer"></div>' +
+        (h.token ? '<div><a class="pill pill-orange pill-sm" href="/record/' + esc(h.token) + '">Open the record <span class="arr">→</span></a></div>' : '') +
+        '</div>').join('') + '</div>';
+    } else {
+      html += '<div class="empty">No home is linked to this account yet. Claimed a record before? Open it from the link on your receipt while signed in and it files itself here. New to Vesta? The record starts with your first verified job — or start the wallet below right now.</div>';
+    }
+
+    // ── Warranty Wallet ──
+    html += '<h2 class="section-h">Warranty Wallet</h2>' +
+      '<p class="note" style="margin-top:0">Every warranty in the house, with the paperwork attached — water heater, roof, appliances, anything. Works even before your first verified job.</p>';
+    if (f.warranties.length){
+      html += '<div class="card-block" style="max-width:680px;padding-top:.6rem;padding-bottom:.6rem">' + f.warranties.map(walletRow).join('') + '</div>';
+    }
+    html += '<div class="card-block" style="max-width:680px"><form id="w-form">' +
+      '<div class="form-row row-pair">' +
+      '<div><label class="form-label" for="w-item">What\'s covered *</label><input class="form-input" id="w-item" name="item" required maxlength="120" placeholder="Water heater — 6yr tank warranty"></div>' +
+      '<div><label class="form-label" for="w-contractor">Installer / brand</label><input class="form-input" id="w-contractor" name="contractor_name" maxlength="120" placeholder="Who stands behind it"></div></div>' +
+      '<div class="form-row row-pair">' +
+      '<div><label class="form-label" for="w-starts">Work / purchase date</label><input class="form-input" id="w-starts" name="starts_on" type="date"></div>' +
+      '<div><label class="form-label" for="w-expires">Expires</label><input class="form-input" id="w-expires" name="expires_on" type="date"></div></div>' +
+      '<div class="form-row"><label class="form-label" for="w-doc">Paperwork (PDF or photo, up to 10MB)</label><input class="form-input" id="w-doc" name="doc" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.heic"></div>' +
+      '<button class="pill pill-orange" type="submit">Add to wallet</button>' +
+      '<span class="form-status" id="w-status"></span>' +
+      '</form></div>';
+
+    // ── Saved pros ──
+    html += '<h2 class="section-h">Saved pros</h2>';
+    if (f.saved_pros.length){
+      html += '<div class="grid">' + f.saved_pros.map(p =>
+        '<div class="card lift">' +
+        '<a class="cardlink" href="/c/' + encodeURIComponent(p.place_id) + (p.zip ? '?zip=' + esc(p.zip) : '') + '"><h3>' + esc(p.name) + '</h3></a>' +
+        '<div class="sub">' + esc(p.address || '') + '</div>' +
+        '<div class="badges"><span class="badge plain">Contact unlocked ' + esc(HOME.fmtDate(p.unlocked_at)) + '</span></div>' +
+        '<div class="spacer"></div>' +
+        '<div><a class="pill pill-ghost pill-sm" href="/c/' + encodeURIComponent(p.place_id) + '">Open profile</a></div></div>').join('') + '</div>';
+    } else {
+      html += '<div class="empty">Pros you unlock on <a href="/find" style="color:var(--orange)">Find a pro</a> get saved here — their contact info stays one click away.</div>';
+    }
+
+    // ── Requests ──
+    if (f.requests.length){
+      html += '<h2 class="section-h">Your requests</h2><div class="card-block" style="max-width:680px;padding-top:.4rem;padding-bottom:.4rem">' +
+        f.requests.map(r => '<div class="kv"><span>' + esc(HOME.tradeLabel(r.trade)) + (r.zip ? ' · ' + esc(r.zip) : '') + ' · ' + esc(HOME.fmtDate(r.created_at)) + '</span><b>' + esc(String(r.status || '').replace(/_/g,' ')) + '</b></div>').join('') + '</div>';
+    }
+
+    body.innerHTML = html;
+    wire();
+  }
+
+  function wire(){
+    // Warranty add (+ optional doc upload via signed URL)
+    const wf = document.getElementById('w-form');
+    if (wf) wf.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const st = document.getElementById('w-status');
+      const btn = wf.querySelector('button');
+      const file = wf.doc.files[0] || null;
+      let ext = '';
+      if (file){
+        ext = (file.name.split('.').pop() || '').toLowerCase();
+        if (!WALLET_EXTS.includes(ext)){ st.className = 'form-status is-error'; st.textContent = 'PDF or photo files only.'; return; }
+        if (file.size > 10 * 1024 * 1024){ st.className = 'form-status is-error'; st.textContent = 'That file is over 10MB.'; return; }
+      }
+      btn.disabled = true; st.className = 'form-status'; st.textContent = file ? 'Saving + uploading…' : 'Saving…';
+      const { data } = await HOME.api('/wallet', { method:'POST', body:{
+        item: wf.item.value, contractor_name: wf.contractor_name.value,
+        starts_on: wf.starts_on.value, expires_on: wf.expires_on.value,
+        file_ext: ext,
+      }});
+      if (!data.ok){
+        btn.disabled = false;
+        st.className = 'form-status is-error';
+        st.textContent = data.error === 'item_required' ? 'Say what\'s covered.' : 'Couldn\'t save — try again.';
+        return;
+      }
+      if (file && data.upload){
+        try {
+          const up = await fetch(data.upload.url, { method:'PUT', headers:{ 'Content-Type': data.upload.content_type }, body: file });
+          if (!up.ok) throw new Error('upload failed');
+        } catch(_){
+          st.className = 'form-status is-error';
+          st.textContent = 'Saved, but the document didn\'t upload — you can remove and retry.';
+          setTimeout(load, 1400);
+          return;
+        }
+      }
+      load();
+    });
+
+    // Doc view + remove
+    body.querySelectorAll('[data-doc]').forEach(b => b.addEventListener('click', async () => {
+      b.disabled = true;
+      const { data } = await HOME.api('/wallet/' + b.dataset.doc + '/doc');
+      b.disabled = false;
+      if (data.ok && data.url) window.open(data.url, '_blank', 'noopener');
+    }));
+    body.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
+      if (!confirm('Remove this warranty from your wallet?')) return;
+      b.disabled = true;
+      const { data } = await HOME.api('/wallet/' + b.dataset.del + '/delete', { method:'POST' });
+      if (data.ok) load(); else b.disabled = false;
+    }));
+  }
+
+  load();
+});
+</script>
+</body>
+</html>

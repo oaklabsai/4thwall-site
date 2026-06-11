@@ -1,4 +1,4 @@
-// 4THWALL — homeowner surface shared client.
+// VESTA (4THWALL) — homeowner surface shared client.
 // Pages are plain HTML on Vercel; data comes from the Supabase Edge Function
 // (JSON only). Sessions are bearer tokens in localStorage — never cookies
 // (cross-site cookies die in Safari, and the API lives on supabase.co).
@@ -50,8 +50,12 @@
     },
 
     fmtDate(iso){
-      const d = new Date(String(iso || ''));
-      if (isNaN(d)) return String(iso || '').slice(0,10);
+      const s = String(iso || '');
+      // Date-only strings parse as UTC midnight and shift a day in US zones —
+      // pin them to local time.
+      const ymd = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      const d = ymd ? new Date(Number(ymd[1]), Number(ymd[2]) - 1, Number(ymd[3])) : new Date(s);
+      if (isNaN(d)) return s.slice(0,10);
       return d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
     },
 
@@ -108,8 +112,8 @@
       }
       const { data } = await HOME.api('/me');
       if (data && data.ok && data.account){
-        slot.innerHTML = '<span class="nav-who">' + HOME.esc(data.account.email || 'signed in') + '</span>' +
-          '<a class="nav-a" href="#" id="nav-signout">Sign out</a>';
+        slot.innerHTML = '<a class="nav-a" href="/myhome">My home</a>' +
+          '<a class="nav-a" href="#" id="nav-signout" title="' + HOME.esc(data.account.email || '') + '">Sign out</a>';
         const out = document.getElementById('nav-signout');
         if (out) out.addEventListener('click', async (e) => {
           e.preventDefault();
@@ -126,6 +130,27 @@
 
     signinHref(next){
       return '/signin?next=' + encodeURIComponent(next || (location.pathname + location.search));
+    },
+
+    // Month label for the verified-activity feed ("2026-06" → "Jun 2026").
+    fmtMonth(ym){
+      const m = String(ym || '').match(/^(\d{4})-(\d{2})$/);
+      if (!m) return String(ym || '');
+      const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return (names[Number(m[2]) - 1] || m[2]) + ' ' + m[1];
+    },
+
+    // Verified-activity feed: documented jobs, not reviews. Renders ONLY what
+    // the ledger sent — month-coarse, city-level, no addresses.
+    feedHtml(items){
+      const esc = HOME.esc;
+      if (!items || !items.length) return '';
+      return '<ul class="feed">' + items.map(i =>
+        '<li><span class="mo">' + esc(HOME.fmtMonth(i.month)) + '</span>' +
+        '<span><b>' + esc(i.service || HOME.tradeLabel(i.trade) + ' job') + '</b>' +
+        ' — verified work by ' + esc(i.pro_name || 'a verified pro') +
+        (i.city ? ' in ' + esc(i.city) : '') + '</span></li>'
+      ).join('') + '</ul>';
     }
   };
 

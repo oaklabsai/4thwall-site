@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vesta — Every job your home has ever had. Verified. | 4THWALL</title>
+<meta name="description" content="Vesta is the verified record your home keeps. Find pros with proof, look up a contractor before you hire, check any address's history, and keep every warranty in one place — free.">
+<link rel="canonical" href="https://4thwall.solutions/vesta">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<meta property="og:title" content="Vesta — Every job your home has ever had. Verified.">
+<meta property="og:description" content="Find pros with proof. Check any address. Keep every warranty. Free.">
+<meta property="og:url" content="https://4thwall.solutions/vesta">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+<style>
+.usegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin:1.2rem 0}
+.use{background:#fff;border:1px solid var(--line);border-radius:18px;padding:1.3rem 1.4rem;display:flex;flex-direction:column;gap:.45rem;transition:box-shadow .2s,transform .2s}
+.use:hover{box-shadow:0 18px 44px -22px rgba(26,26,24,.28);transform:translateY(-2px)}
+.use .n{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
+.use h3{font-family:var(--display);font-size:1.12rem;font-weight:500;letter-spacing:-.02em}
+.use p{font-size:.82rem;color:var(--muted);line-height:1.6}
+.use .go{margin-top:auto;padding-top:.8rem;font-size:.84rem;font-weight:600;color:var(--orange-2)}
+.recmock{background:#fff;border:1px solid var(--line);border-radius:22px;padding:clamp(1.4rem,3vw,2.2rem);max-width:620px;box-shadow:0 24px 60px -38px rgba(26,26,24,.3)}
+.recmock .demo-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem}
+.recmock .addr{font-family:var(--display);font-size:1.4rem;font-weight:500;letter-spacing:-.02em;margin-bottom:1rem}
+.acct{background:linear-gradient(180deg,var(--orange-soft),rgba(255,255,255,.4));border:1px solid rgba(30,102,66,.2);border-radius:26px;padding:clamp(1.8rem,4vw,2.6rem);margin:1.4rem 0}
+.acct h2{font-family:var(--display);font-size:clamp(1.4rem,2.8vw,2rem);font-weight:500;letter-spacing:-.025em}
+.acct .usegrid{margin-top:1.2rem}
+.endcta{text-align:center;padding:3rem var(--pad) 4rem}
+.endcta h2{font-family:var(--display);font-size:clamp(1.6rem,3.4vw,2.4rem);font-weight:500;letter-spacing:-.025em}
+.endcta p{color:var(--muted);font-size:.9rem;margin:.8rem auto 1.2rem;max-width:46ch}
+.endcta .searchbar{margin:1.2rem auto .4rem}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">VESTA</span>
+  </a>
+  <div class="nav-links">
+    <a href="/atlas" class="nav-a">Atlas</a>
+    <a href="/vesta" class="nav-a is-current">Vesta</a>
+    <a href="/find" class="nav-a">Find a pro</a>
+    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero">
+  <div class="eyebrow">Vesta · for the home</div>
+  <h1 class="page-h">Every job your home has ever had. <em>Verified.</em></h1>
+  <p class="page-sub">Your car has a Carfax. Your home — the biggest thing you own — has a junk drawer of receipts and a contractor whose number you lost. Vesta is the record your home keeps: verified work, warranties, and the pros who did it. Free, forever.</p>
+
+  <form class="searchbar" method="GET" action="/find">
+    <input class="q" type="text" name="q" maxlength="60" placeholder="What does your home need?" autocomplete="off">
+    <input class="zip" type="text" name="zip" maxlength="5" inputmode="numeric" pattern="\d{5}" placeholder="ZIP" autocomplete="postal-code">
+    <button class="pill pill-ink" type="submit">Search</button>
+  </form>
+  <p class="fine" style="margin-top:.5rem">No account needed to look. Search any ZIP in the country.</p>
+</section>
+
+<section class="section">
+  <h2 class="section-h">Useful the minute you land</h2>
+  <div class="usegrid">
+    <a class="use" href="/find">
+      <span class="n">The lens</span>
+      <h3>Find a pro</h3>
+      <p>Search any ZIP. Pros in the verified network carry badges earned from real operational records — answered calls, completed jobs, kept promises. Everyone else is listed honestly, with no history invented.</p>
+      <span class="go">Search your ZIP →</span>
+    </a>
+    <a class="use" href="/find?mode=name">
+      <span class="n">The lookup</span>
+      <h3>Look up a contractor</h3>
+      <p>Got a name from a neighbor, a yard sign, a quote? Look them up before you hire — verified history if they have it, and an honest "no verified jobs on Vesta" if they don't. That's signal, not an accusation.</p>
+      <span class="go">Look up a name →</span>
+    </a>
+    <a class="use" href="/address">
+      <span class="n">The record check</span>
+      <h3>Check an address</h3>
+      <p>Buying a home? Selling one? Check whether an address has a Vesta file — verified jobs, the years they happened, the trades involved. The Carfax moment, for a house.</p>
+      <span class="go">Check an address →</span>
+    </a>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-h">The record itself</h2>
+  <p class="note" style="margin-bottom:1rem">When a verified pro finishes a job at your address, the work writes itself into your home's permanent record — the moment it happens, from the contractor's own operational system. Not self-reported. Not reviewed-by-strangers. Recorded.</p>
+  <div class="recmock">
+    <div class="demo-tag">Sample record · what yours looks like</div>
+    <div class="addr">42 Oakwood Avenue</div>
+    <ul class="timeline">
+      <li><span class="src">✓ Verified work</span><div class="ev-title">Full roof replacement — architectural shingle</div><div class="ev-meta">June 2026 · 24-month workmanship warranty</div></li>
+      <li><span class="src">✓ Verified work</span><div class="ev-title">Driveway repave + apron</div><div class="ev-meta">June 2026 · 12-month warranty</div></li>
+      <li><span class="src">Reported by homeowner</span><div class="ev-title">Water heater installed</div><div class="ev-meta">2021 · always labeled, never mixed with verified work</div></li>
+    </ul>
+    <div class="kv"><span>Roofing warranty until</span><b>June 2028</b></div>
+    <div class="kv"><span>Next driveway sealcoat due</span><b>~Dec 2028</b></div>
+  </div>
+  <p class="note">The record stays with the home — like a deed. Sell the house, and the proof of every roof, furnace, and repipe goes with it.</p>
+</section>
+
+<section class="section">
+  <div class="acct">
+    <div class="eyebrow">One email. Ten seconds. Free.</div>
+    <h2>An account turns looking into keeping.</h2>
+    <div class="usegrid">
+      <div class="use"><span class="n">Unlock</span><h3>Contact info, revealed</h3><p>Sign in and pull any listed contractor's phone, website, and socials — gathered live, not warehoused.</p></div>
+      <div class="use"><span class="n">Warranty wallet</span><h3>Every warranty, one place</h3><p>Add any warranty — the new water heater, the roof, the appliance — with its paperwork attached. Works from day one, even with zero jobs on Vesta.</p></div>
+      <div class="use"><span class="n">The home file</span><h3>Your home's one folder</h3><p>Records, warranties, saved pros, and requests — the file you'll wish you had at resale, insurance time, and "wait, who did our furnace?"</p></div>
+      <div class="use"><span class="n">The resale report</span><h3>Proof you can hand a buyer</h3><p>One link, read-only, shareable: the home's full verified history. Agents put square footage in listings. You can put proof.</p></div>
+    </div>
+    <div style="margin-top:1.2rem"><a class="pill pill-orange" href="/signin">Sign in with one email <span class="arr">→</span></a><span class="fine" style="margin-left:.9rem">No password. No phone number. No spam.</span></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-h">Plainly</h2>
+  <div class="rec-promises" style="margin-top:.6rem;border-top:none;padding-top:0"><ul>
+    <li>Your record is free, forever.</li>
+    <li>We never sell your data or your contact info.</li>
+    <li>Verified means verified — written by the pro's own operational system as the work happens, never self-reported, never invented.</li>
+    <li>What homeowners tell us is always labeled "reported by homeowner."</li>
+    <li>Delete your identity anytime — the home's history stays with the home, like a deed.</li>
+  </ul></div>
+</section>
+
+<section class="endcta">
+  <h2>Start with your ZIP.</h2>
+  <p>See who's verified near you, look up that contractor from the yard sign, or check the address you're about to buy.</p>
+  <form class="searchbar" method="GET" action="/find">
+    <input class="q" type="text" name="q" maxlength="60" placeholder="Roof, driveway, furnace…" autocomplete="off">
+    <input class="zip" type="text" name="zip" maxlength="5" inputmode="numeric" pattern="\d{5}" placeholder="ZIP" autocomplete="postal-code">
+    <button class="pill pill-orange" type="submit">Search</button>
+  </form>
+</section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/atlas">Atlas</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>document.addEventListener('DOMContentLoaded', function(){ if (window.HOME) HOME.navAccount(); });</script>
+</body>
+</html>

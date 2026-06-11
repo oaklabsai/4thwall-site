@@ -37,6 +37,8 @@ nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;just
 .nav-a{font-size:.84rem;color:var(--muted);transition:color .2s}
 .nav-a:hover,.nav-a.is-current{color:var(--ink)}
 .nav-who{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;color:var(--dim);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nav-acct{display:inline-flex;gap:1.6rem;align-items:center}
+@media(max-width:560px){#nav-acct{gap:1rem}}
 @media(max-width:560px){.nav-links{gap:1rem}.nav-who{display:none}}
 
 /* ── PAGE HERO ─────────────────────────────────────────────── */
@@ -148,3 +150,42 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
 /* ── LOADING / SKELETON ───────────────────────────────────── */
 .loading{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:1.6rem 0;animation:homePulse 1.4s ease-in-out infinite}
 @keyframes homePulse{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* ── VERIFIED-ACTIVITY FEED (documented jobs, not reviews) ── */
+.feed{list-style:none;margin:.8rem 0;max-width:680px}
+.feed li{display:flex;gap:.9rem;align-items:baseline;padding:.65rem 0;border-bottom:1px dashed var(--line);font-size:.88rem;line-height:1.55}
+.feed li:last-child{border-bottom:none}
+.feed .mo{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);flex:0 0 76px}
+.feed b{font-weight:600}
+
+/* ── SEARCH MODE TOGGLE (by trade ↔ by name) ───────────────── */
+.modes{display:inline-flex;gap:0;margin-top:1.3rem;border:1px solid var(--line);border-radius:50px;padding:3px;background:#fff}
+.modes button,.modes a{font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;border-radius:50px;padding:.45rem .95rem;color:var(--muted);cursor:pointer;transition:all .15s}
+.modes .on{background:var(--ink);color:var(--cream)}
+
+/* ── WARRANTY WALLET ───────────────────────────────────────── */
+.wrow{display:flex;gap:.9rem;align-items:flex-start;padding:.85rem 0;border-bottom:1px dashed var(--line)}
+.wrow:last-child{border-bottom:none}
+.wrow .wmain{flex:1;min-width:0}
+.wrow .wname{font-weight:600;font-size:.92rem}
+.wrow .wmeta{font-size:.78rem;color:var(--muted);margin-top:.15rem;line-height:1.5}
+.wrow .wacts{display:flex;gap:.5rem;flex-shrink:0;align-items:center}
+.wpill{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;border-radius:50px;padding:.3rem .7rem;white-space:nowrap}
+.wpill.ok{background:var(--orange-soft);color:var(--orange-2)}
+.wpill.soon{background:rgba(176,138,40,.12);color:#6e5616}
+.wpill.gone{background:rgba(138,42,31,.1);color:#8a2a1f}
+.linkish{font-size:.78rem;color:var(--orange);cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
+.linkish:hover{color:var(--ink)}
+.linkish.danger{color:#8a2a1f}
+
+/* ── SHARE / RESALE REPORT BOX ─────────────────────────────── */
+.sharebox{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.9rem}
+.sharebox input{flex:1;min-width:220px;font-family:var(--mono);font-size:.74rem;padding:.7rem .9rem;border:1px solid var(--line);border-radius:8px;background:var(--cream);color:var(--ink)}
+.report-banner{background:var(--orange-soft);border:1px solid rgba(30,102,66,.2);border-radius:12px;padding:.8rem 1.1rem;font-size:.84rem;color:var(--orange-2);margin:.9rem 0}
+
+/* ── PRINT (the Resale Report on paper) ────────────────────── */
+@media print{
+  nav.topnav,footer,.pill,.sharebox,form,.rec-promises,.no-print{display:none !important}
+  body{background:#fff}
+  .page-hero,.section{padding-top:.4rem;padding-bottom:.4rem}
+}

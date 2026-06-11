@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Home's Record — 4THWALL Home</title>
+<title>Your Home's Record — Vesta</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/logo.png" type="image/png">
 <meta name="theme-color" content="#f7f3ec">
@@ -21,11 +21,11 @@
       <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
       <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
     </svg>
-    4THWALL<span class="home-tag">HOME</span>
+    4THWALL<span class="home-tag">VESTA</span>
   </a>
   <div class="nav-links">
     <a href="/find" class="nav-a">Find a pro</a>
-    <a href="/request" class="nav-a">Request service</a>
+    <a href="/address" class="nav-a">Check an address</a>
     <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
   </div>
 </nav>
@@ -87,15 +87,20 @@ document.addEventListener('DOMContentLoaded', async function(){
 
   function render(v){
     const isSession = v.scope === 'session';
+    const isReport = v.scope === 'report' || !!v.read_only;
     const hidden = v.total_events - v.events.length;
     const addr = (v.home.address_confirmed || v.home.address_line1)
       ? (v.home.address_line1 || '') + (v.home.city ? ', ' + v.home.city : '') : null;
 
-    hero.innerHTML = '<div class="eyebrow">The Home Record · permanent &amp; verified</div>' +
+    hero.innerHTML = '<div class="eyebrow">' + (isReport ? 'The Vesta Resale Report · verified, read-only' : 'The Home Record · permanent &amp; verified') + '</div>' +
       '<h1 class="page-h">' + (addr ? esc(addr) : 'Your home\'s service record') + '</h1>' +
       '<p class="page-sub">' + (v.total_events === 1 ? 'Entry #1 in this home\'s permanent record.' : v.total_events + ' entries in this home\'s permanent record.') + '</p>';
 
     let html = '';
+    if (isReport){
+      html += '<div class="report-banner">This is a <b>Resale Report</b> — a shareable, read-only copy of this home\'s verified record. Every "verified work" entry below was written by the pro\'s own operational system as the job happened; nothing here is self-reported or editable.' +
+        '<span class="no-print"> &nbsp;<button class="linkish" onclick="window.print()">Print / save as PDF</button></span></div>';
+    }
     if (v.issuer_pro){
       html += '<div class="card" style="max-width:560px"><div class="sub" style="font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase">Performed by</div>' +
         '<h3>' + esc(v.issuer_pro.business_name) + '</h3>' + HOME.badgeChips(v.issuer_pro) + '</div>';
@@ -119,8 +124,9 @@ document.addEventListener('DOMContentLoaded', async function(){
     }
 
     // Claiming IS the step-up: confirm the address → full history. No OTP,
-    // no app, no platform SMS.
-    if (!v.claimed){
+    // no app, no platform SMS. (Never on a report — read-only by definition,
+    // and the server rejects it anyway.)
+    if (!v.claimed && !isReport){
       html += '<h2 class="section-h">Is this your home?</h2><div class="card-block">' +
         '<p style="font-size:.9rem;margin-bottom:1rem">Claim the record to keep it' + (hidden > 0 ? ' — and see all <b>' + v.total_events + ' entries</b>' : '') + '. It grows with every verified job, transfers with the house, and backs you up for insurance, warranty, and resale.</p>' +
         '<form id="claim-form">' +
@@ -139,7 +145,7 @@ document.addEventListener('DOMContentLoaded', async function(){
         '</form></div>';
     }
 
-    if (v.claimed && v.opted_in === null){
+    if (v.claimed && v.opted_in === null && !isReport){
       html += '<h2 class="section-h">Want a heads-up when it matters?</h2><div class="card-block">';
       if (account){
         html += '<p style="font-size:.9rem">Storms that hit your roof, warranty windows closing, maintenance coming due — grounded in this home\'s record, sent to your email. A handful a year. Never spam, and silence when there\'s nothing true to say.</p>' +
@@ -151,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async function(){
           '<div style="margin-top:.9rem"><a class="pill pill-ghost pill-sm" href="' + HOME.signinHref('/record/' + token) + '">Sign in to enable alerts</a></div>';
       }
       html += '</div>';
-    } else if (v.claimed && v.opted_in === true){
+    } else if (v.claimed && v.opted_in === true && !isReport){
       html += '<p class="note">✓ Home alerts are on. Every email has an unsubscribe link.</p>';
     }
 
@@ -169,16 +175,56 @@ document.addEventListener('DOMContentLoaded', async function(){
         '<span class="form-status" id="fact-status"></span></form></div>';
     }
 
-    html += '<div style="margin-top:1.6rem"><a class="pill pill-ghost pill-sm" href="/find">Find a pro for something else</a></div>';
-    html += '<div class="rec-promises"><b>Your record, plainly:</b><ul>' +
-      '<li>Your record is free, forever.</li>' +
-      '<li>We never sell your data or your contact info.</li>' +
-      '<li>Pros see your home\'s details only when you share them on a request.</li>' +
-      '<li>Texts stop the moment you say stop.</li>' +
-      '<li>Delete your identity anytime — the home\'s work history stays with the home, like a deed.</li>' +
-      '</ul></div>';
+    // The Resale Report: one read-only link for buyers, agents, adjusters.
+    if (isSession){
+      html += '<h2 class="section-h">The Resale Report</h2><div class="card-block" id="share-block">' +
+        '<p style="font-size:.9rem">One link, read-only, shareable: this home\'s full verified history. Hand it to a buyer, an agent, or an insurance adjuster — they see the proof, and only the proof. Nothing on the record can be changed through it.</p>' +
+        '<div style="margin-top:.9rem"><button class="pill pill-ghost pill-sm" id="share-btn">Create the report link <span class="arr">→</span></button></div>' +
+        '<div id="share-out"></div></div>';
+    }
+
+    if (isReport){
+      html += '<div style="margin-top:1.6rem" class="no-print"><a class="pill pill-ghost pill-sm" href="/find">Find a verified pro</a> <a class="pill pill-ghost pill-sm" href="/address" style="margin-left:.4rem">Check another address</a></div>';
+      html += '<div class="rec-promises"><b>About this report:</b><ul>' +
+        '<li>Issued by Vesta from the home\'s permanent record.</li>' +
+        '<li>Verified entries are written by the contractor\'s operational system as work happens — never typed in after the fact.</li>' +
+        '<li>Anything a homeowner reported themselves is labeled exactly that.</li>' +
+        '</ul></div>';
+    } else {
+      html += '<div style="margin-top:1.6rem"><a class="pill pill-ghost pill-sm" href="/find">Find a pro for something else</a></div>';
+      html += '<div class="rec-promises"><b>Your record, plainly:</b><ul>' +
+        '<li>Your record is free, forever.</li>' +
+        '<li>We never sell your data or your contact info.</li>' +
+        '<li>Pros see your home\'s details only when you share them on a request.</li>' +
+        '<li>Texts stop the moment you say stop.</li>' +
+        '<li>Delete your identity anytime — the home\'s work history stays with the home, like a deed.</li>' +
+        '</ul></div>';
+    }
 
     body.innerHTML = html;
+
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) shareBtn.addEventListener('click', async () => {
+      shareBtn.disabled = true;
+      const { data: r } = await HOME.api('/record/' + token + '/share', { method:'POST' });
+      const out = document.getElementById('share-out');
+      if (r.ok && r.token){
+        const url = location.origin + '/record/' + r.token;
+        out.innerHTML = '<div class="sharebox"><input type="text" readonly value="' + esc(url) + '" id="share-url">' +
+          '<button class="pill pill-orange pill-sm" id="share-copy">Copy link</button>' +
+          '<a class="pill pill-ghost pill-sm" href="' + esc(url) + '" target="_blank" rel="noopener">Preview</a></div>' +
+          '<p class="fine">The link is read-only and lasts a year. Anyone with it sees the verified history — and nothing else.</p>';
+        shareBtn.style.display = 'none';
+        document.getElementById('share-copy').addEventListener('click', async (ev) => {
+          try { await navigator.clipboard.writeText(url); ev.target.textContent = 'Copied ✓'; } catch(_) {
+            document.getElementById('share-url').select(); document.execCommand('copy'); ev.target.textContent = 'Copied ✓';
+          }
+        });
+      } else {
+        shareBtn.disabled = false;
+        out.innerHTML = '<p class="fine" style="color:#8a2a1f">Couldn\'t create the link — try again.</p>';
+      }
+    });
 
     const claimForm = document.getElementById('claim-form');
     if (claimForm) claimForm.addEventListener('submit', async (e) => {
