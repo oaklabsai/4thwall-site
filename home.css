@@ -5,6 +5,7 @@
    green, Fraunces display, Inter Tight body. No framework, no build.
    ════════════════════════════════════════════════════════════════════ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
 :root{
   --cream:#f7f3ec;
   --cream-2:#efe9df;
@@ -333,3 +334,29 @@ body.v-dark .vpaper .note b{color:var(--ink)}
   .vzip.show{animation:none}
   .vtile,.card,.pill{transition:none}
 }
+
+/* ── ZIP-GATE (location-first entry — "Where to?" moment) ────── */
+.vzip-hero-form{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:1.4rem 0 .5rem;max-width:500px}
+.vzip-gate-input{font-family:var(--body);font-size:1.5rem;font-weight:500;letter-spacing:.2em;padding:.6rem .85rem .6rem 1rem;width:145px;background:var(--vk-2);border:1.5px solid var(--vline-2);border-radius:12px;color:var(--vcream);outline:none;text-align:center;transition:border-color .2s,box-shadow .2s}
+.vzip-gate-input::placeholder{color:var(--vdim);letter-spacing:.06em;font-size:1rem}
+.vzip-gate-input:focus{border-color:var(--vgreen);box-shadow:0 0 0 3px rgba(103,198,148,.15)}
+
+/* ── NEIGHBORHOOD PULSE ────────────────────────────────────────── */
+.vpulse{display:flex;align-items:flex-start;gap:.9rem;background:var(--vk-2);border:1px solid rgba(103,198,148,.22);border-radius:14px;padding:1rem 1.2rem;margin:.6rem 0 1.4rem;max-width:560px;animation:vUp .3s ease both}
+.vpulse .pdot{width:8px;height:8px;border-radius:50%;background:var(--vgreen);flex-shrink:0;margin-top:.42rem;box-shadow:0 0 10px rgba(103,198,148,.6);animation:vpulse-dot 2s ease-in-out infinite}
+@keyframes vpulse-dot{0%,100%{opacity:1}50%{opacity:.28}}
+.vpulse .ptext{font-size:.88rem;color:var(--vcream);line-height:1.6}
+.vpulse .pzip{display:block;font-family:var(--mono);font-size:.6rem;color:var(--vgreen);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.18rem}
+.vpulse .pdim{color:var(--vmut)}
+
+/* ── TRADE TILE BADGE (per-tile supply count) ─────────────────── */
+.vtile .tbadge{margin-top:.38rem;font-family:var(--mono);font-size:.55rem;letter-spacing:.09em;text-transform:uppercase;color:var(--vgreen-2)}
+.vtile .tbadge.none{color:var(--vdim)}
+.vtile .tbadge.loading{color:var(--vdim);opacity:.5}
+
+/* ── TRADES GATE HEADER ────────────────────────────────────────── */
+.vzip-display{display:flex;align-items:baseline;gap:.9rem;margin-bottom:.55rem}
+.vzd-zip{font-family:var(--display);font-size:1.55rem;font-weight:500;letter-spacing:-.02em}
+.vzd-change{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.vzd-change:hover{color:var(--vcream)}
+.vtrades-lab{font-family:var(--mono);font-size:.63rem;letter-spacing:.18em;text-transform:uppercase;color:var(--vgreen);margin-bottom:.45rem}
