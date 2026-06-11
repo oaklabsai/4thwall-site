@@ -189,3 +189,147 @@ footer{border-top:1px solid var(--line);padding:1.8rem var(--pad);background:var
   body{background:#fff}
   .page-hero,.section{padding-top:.4rem;padding-bottom:.4rem}
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   VESTA — product surfaces (vesta.html + find.html ONLY).
+   Scoped entirely under body.v-dark: the lens is a dark instrument; the
+   records it opens stay paper-cream. Append-only — nothing above this
+   line changed, so the wired pages (record/signin/myhome/…) are inert.
+   ════════════════════════════════════════════════════════════════════ */
+body.v-dark{
+  --vk:#0f1310;--vk-2:#151b16;--vk-3:#1b221c;
+  --vcream:#f2eee5;
+  --vmut:rgba(242,238,229,.64);
+  --vdim:rgba(242,238,229,.38);
+  --vline:rgba(242,238,229,.1);
+  --vline-2:rgba(242,238,229,.22);
+  --vgreen:#67c694;
+  --vgreen-2:#8fdcb2;
+  --vgreen-soft:rgba(103,198,148,.12);
+  background:
+    radial-gradient(1100px 540px at 78% -180px,rgba(103,198,148,.14),transparent 62%),
+    radial-gradient(900px 520px at -140px 36%,rgba(103,198,148,.05),transparent 55%),
+    var(--vk);
+  color:var(--vcream);
+}
+body.v-dark::after{ /* film grain */
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+body.v-dark nav.topnav{background:rgba(15,19,16,.82);border-bottom-color:var(--vline)}
+body.v-dark .nav-logo{color:var(--vcream)}
+body.v-dark .nav-logo .home-tag{color:var(--vgreen);border-color:rgba(103,198,148,.28);background:var(--vgreen-soft)}
+body.v-dark .nav-a{color:var(--vmut)}
+body.v-dark .nav-a:hover,body.v-dark .nav-a.is-current{color:var(--vcream)}
+body.v-dark .eyebrow{color:var(--vgreen)}
+body.v-dark .page-h em{color:var(--vgreen-2)}
+body.v-dark .page-sub,body.v-dark .note{color:var(--vmut)}
+body.v-dark .note b,body.v-dark .note strong{color:var(--vcream)}
+body.v-dark .loading{color:var(--vdim)}
+body.v-dark .fine{color:var(--vdim)}
+body.v-dark .searchbar{background:var(--vk-3);border-color:var(--vline-2);box-shadow:0 24px 60px -30px rgba(0,0,0,.8)}
+body.v-dark .searchbar input{color:var(--vcream)}
+body.v-dark .searchbar input::placeholder{color:var(--vdim)}
+body.v-dark .searchbar .zip{border-left-color:var(--vline)}
+@media(max-width:560px){body.v-dark .searchbar .q{border-bottom-color:var(--vline)}}
+body.v-dark .pill-ink{background:var(--vcream);color:#12150f}
+body.v-dark .pill-ink:hover{background:#fff;box-shadow:0 12px 30px -14px rgba(0,0,0,.7)}
+body.v-dark .pill-ghost{color:var(--vcream);border-color:var(--vline-2)}
+body.v-dark .pill-ghost:hover{border-color:var(--vcream);background:rgba(255,255,255,.05)}
+body.v-dark .chips a,body.v-dark .chips button{border-color:var(--vline-2);color:var(--vmut)}
+body.v-dark .chips a:hover,body.v-dark .chips button:hover{border-color:var(--vcream);color:var(--vcream)}
+body.v-dark .chips a.on,body.v-dark .chips button.on{background:var(--vcream);border-color:var(--vcream);color:#12150f}
+body.v-dark .modes{background:var(--vk-3);border-color:var(--vline-2)}
+body.v-dark .modes button,body.v-dark .modes a{color:var(--vmut)}
+body.v-dark .modes .on{background:var(--vcream);color:#12150f}
+body.v-dark .card{background:var(--vk-2);border-color:var(--vline)}
+body.v-dark .card.lift:hover{box-shadow:0 24px 60px -24px rgba(0,0,0,.85);border-color:var(--vline-2)}
+body.v-dark .card .sub{color:var(--vmut)}
+body.v-dark a.cardlink:hover h3{color:var(--vgreen-2)}
+body.v-dark .badge{background:var(--vgreen-soft);color:var(--vgreen-2);border-color:rgba(103,198,148,.26)}
+body.v-dark .badge.plain{background:transparent;border-color:var(--vline-2);color:var(--vmut)}
+body.v-dark .card-block{background:var(--vk-2);border-color:var(--vline)}
+body.v-dark .empty{background:var(--vk-2);border-color:var(--vline-2);color:var(--vmut)}
+body.v-dark .warn{background:rgba(217,185,106,.08);border-color:rgba(217,185,106,.32);color:#d9b96a}
+body.v-dark .feed li{border-bottom-color:var(--vline)}
+body.v-dark .feed .mo{color:var(--vdim)}
+body.v-dark footer{background:#0c0f0d;border-top-color:var(--vline)}
+body.v-dark .foot-brand{color:var(--vcream)}
+body.v-dark .foot-links{color:var(--vmut)}
+
+/* ── VESTA HERO (oversize, editorial) ──────────────────────── */
+.vhero{padding:4.2rem var(--pad) 1.6rem;max-width:var(--max);margin:0 auto;width:100%;position:relative}
+.vhero h1{font-family:var(--display);font-size:clamp(2.5rem,6.4vw,4.6rem);font-weight:500;line-height:1.03;letter-spacing:-.035em;max-width:17ch}
+.vhero h1 em{font-style:italic;color:var(--vgreen-2);font-weight:400}
+.vhero .sub{font-size:clamp(.95rem,1.7vw,1.1rem);color:var(--vmut);line-height:1.7;margin-top:1.3rem;max-width:54ch}
+.vlab{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--vgreen);margin-bottom:.9rem}
+.vh2{font-family:var(--display);font-size:clamp(1.6rem,3.6vw,2.5rem);font-weight:500;letter-spacing:-.03em;line-height:1.12;max-width:28ch}
+.vh2 em{font-style:italic;color:var(--vgreen-2);font-weight:400}
+
+/* ── TRADE TILES (the guided entry) ────────────────────────── */
+.vtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:.7rem;margin:1.5rem 0 .4rem;max-width:920px}
+.vtile{position:relative;display:flex;flex-direction:column;gap:.55rem;align-items:flex-start;text-align:left;background:var(--vk-2);border:1px solid var(--vline);border-radius:16px;padding:1.05rem 1rem .95rem;cursor:pointer;transition:transform .18s,border-color .18s,background .18s,box-shadow .18s}
+.vtile svg{width:26px;height:26px;stroke:var(--vgreen);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.vtile .tl{font-family:var(--display);font-size:1.04rem;font-weight:500;letter-spacing:-.015em;color:var(--vcream)}
+.vtile .ts{font-size:.69rem;color:var(--vdim);line-height:1.45}
+.vtile:hover{transform:translateY(-2px);border-color:rgba(103,198,148,.42);box-shadow:0 18px 44px -20px rgba(0,0,0,.75)}
+.vtile.on{border-color:var(--vgreen);background:var(--vgreen-soft)}
+.vtile.on::after{content:"✓";position:absolute;top:.65rem;right:.85rem;color:var(--vgreen-2);font-size:.85rem}
+.vzip{display:none;margin:1.3rem 0 .4rem;max-width:600px}
+.vzip.show{display:block;animation:vUp .35s ease both}
+.vzip .lab{font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--vgreen);margin-bottom:.2rem}
+@keyframes vUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.vdoors{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
+
+/* ── RICH VERIFIED CARD + FINGERPRINT ──────────────────────── */
+body.v-dark .card.vcard{background:linear-gradient(180deg,rgba(103,198,148,.08),rgba(103,198,148,.02)),var(--vk-2);border-color:rgba(103,198,148,.34)}
+body.v-dark .card.vcard:hover{border-color:rgba(103,198,148,.6)}
+.vrib{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--vgreen-2)}
+.vfp{font-size:.78rem;color:var(--vmut);line-height:1.55;border-top:1px dashed var(--vline);padding-top:.6rem;margin-top:.2rem}
+.vfp b{color:var(--vcream);font-weight:600}
+
+/* ── WHY / EDITORIAL BANDS ─────────────────────────────────── */
+.vwhy{display:grid;grid-template-columns:repeat(auto-fit,minmax(236px,1fr));gap:1rem;margin:1.4rem 0}
+.vwhy .w{background:var(--vk-2);border:1px solid var(--vline);border-radius:18px;padding:1.3rem 1.4rem}
+.vwhy .w .k{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--vdim);margin-bottom:.55rem}
+.vwhy .w h3{font-family:var(--display);font-size:1.1rem;font-weight:500;letter-spacing:-.02em;margin-bottom:.4rem}
+.vwhy .w p{font-size:.82rem;color:var(--vmut);line-height:1.65}
+.vturn{border-left:2px solid var(--vgreen);padding:.35rem 0 .35rem 1.2rem;margin:1.8rem 0 .4rem;max-width:62ch}
+.vturn p{font-family:var(--display);font-size:clamp(1.05rem,2vw,1.3rem);line-height:1.5;letter-spacing:-.015em}
+.vturn p em{font-style:italic;color:var(--vgreen-2)}
+.vangles{margin:1.4rem 0;border-top:1px solid var(--vline)}
+.vangle{display:grid;grid-template-columns:88px 1fr;gap:1.2rem;padding:1.45rem 0;border-bottom:1px solid var(--vline)}
+.vangle .no{font-family:var(--mono);font-size:.7rem;color:var(--vgreen);letter-spacing:.14em;padding-top:.35rem}
+.vangle h3{font-family:var(--display);font-size:clamp(1.15rem,2.2vw,1.5rem);font-weight:500;letter-spacing:-.02em;margin-bottom:.35rem}
+.vangle p{font-size:.88rem;color:var(--vmut);line-height:1.65;max-width:58ch}
+.vangle .ga{margin-top:.55rem;font-size:.8rem;color:var(--vgreen-2);font-weight:600;display:inline-block}
+.vangle .ga:hover{color:var(--vcream)}
+@media(max-width:560px){.vangle{grid-template-columns:1fr;gap:.3rem}}
+
+/* ── PAPER ARTIFACT (the record stays cream on the dark desk) ─ */
+.vpaper{background:var(--cream);color:var(--ink);border:1px solid rgba(0,0,0,.2);border-radius:22px;padding:clamp(1.4rem,3.2vw,2.3rem);max-width:640px;box-shadow:0 50px 110px -45px rgba(0,0,0,.85);position:relative}
+body.v-dark .vpaper .note{color:rgba(26,26,24,.62)}
+body.v-dark .vpaper .note b{color:var(--ink)}
+.vpaper .demo-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(26,26,24,.38);margin-bottom:1rem}
+.vpaper .addr{font-family:var(--display);font-size:1.4rem;font-weight:500;letter-spacing:-.02em;margin-bottom:1rem}
+
+/* ── ACCOUNT BAND + END CTA ────────────────────────────────── */
+.vacct{background:var(--vk-2);border:1px solid var(--vline);border-radius:26px;padding:clamp(1.8rem,4vw,2.6rem);margin:1.4rem 0}
+.vacct .usegrid .use{background:var(--vk-3);border-color:var(--vline)}
+.vacct .use h3{color:var(--vcream)}
+.vacct .use p{color:var(--vmut)}
+.vacct .use .n{color:var(--vgreen)}
+.vcta{text-align:center;padding:3.6rem var(--pad) 5rem;max-width:var(--max);margin:0 auto;width:100%}
+.vcta .searchbar{margin-left:auto;margin-right:auto}
+.vpromises{margin-top:.6rem;font-size:.84rem;color:var(--vmut)}
+.vpromises li{margin:.3rem 0 .3rem 1.1rem;line-height:1.65}
+.vpromises b{color:var(--vcream)}
+
+/* ── REVEAL ON SCROLL ──────────────────────────────────────── */
+.vr{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.vr.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  .vr{opacity:1;transform:none;transition:none}
+  .vzip.show{animation:none}
+  .vtile,.card,.pill{transition:none}
+}
