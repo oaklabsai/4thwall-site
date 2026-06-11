@@ -1401,87 +1401,160 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════ MARKET — why now ════════════════════════════════════════════ -->
-<section class="s wrap" id="market">
-  <div class="s-meta">
-    <div>
-      <div class="s-label r">Why now · 02</div>
-      <h2 class="s-h r in">The math has<br><span class="ital">already decided.</span></h2>
+<!-- ════════════════════════════════════════════ REVENUE INTELLIGENCE — calculators ════════════════════════════════════════════ -->
+<style>
+.ri-module{
+  --green:#1e6642;--green-2:#165535;--green-glow:rgba(30,102,66,.15);
+  --line:rgba(26,26,24,.1);--line-2:rgba(26,26,24,.05);--muted:rgba(26,26,24,.52);
+  --pad-ri:clamp(1.2rem,4vw,2.8rem);--r:18px;--r-lg:24px;
+  max-width:960px;margin:0 auto;padding:4.5rem var(--pad-ri) 4rem;color:var(--ink);
+}
+.ri-module .mod-head{margin-bottom:2.8rem}
+.ri-module .eyebrow{display:inline-flex;align-items:center;gap:.48rem;font-family:var(--mono);font-size:.57rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:1.1rem}
+.ri-module .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-glow);animation:ri-pulse 2.4s ease-in-out infinite}
+@keyframes ri-pulse{0%,100%{box-shadow:0 0 0 3px var(--green-glow)}50%{box-shadow:0 0 0 7px transparent}}
+.ri-module .mod-head h2{font-family:var(--display);font-weight:400;font-size:clamp(1.95rem,4.6vw,3.4rem);line-height:.96;letter-spacing:-.032em;color:var(--ink);margin-bottom:.85rem}
+.ri-module .mod-head h2 em{font-style:italic;color:var(--green)}
+.ri-module .mod-head p{font-size:.93rem;line-height:1.64;color:var(--muted);max-width:35rem}
+.ri-module .pill-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.6rem;align-items:center}
+.ri-module .pill-tab{display:inline-flex;align-items:center;gap:.38rem;padding:.38rem .9rem;border-radius:50px;border:1px solid var(--line);background:transparent;font-family:var(--body);font-size:.76rem;font-weight:500;letter-spacing:-.01em;color:var(--muted);cursor:pointer;transition:background .18s,border-color .18s,color .18s,box-shadow .18s,transform .15s;white-space:nowrap;-webkit-appearance:none}
+.ri-module .pill-tab .pnum{font-family:var(--mono);font-size:.56rem;font-weight:600;letter-spacing:.08em;opacity:.55;transition:opacity .18s}
+.ri-module .pill-tab:hover{background:rgba(26,26,24,.05);border-color:rgba(26,26,24,.18);color:var(--ink);transform:translateY(-1px)}
+.ri-module .pill-tab.active{background:var(--ink);border-color:var(--ink);color:var(--cream);box-shadow:0 4px 14px -3px rgba(26,26,24,.25);transform:translateY(-1px)}
+.ri-module .pill-tab.active .pnum{opacity:.4;color:rgba(247,243,236,.6)}
+.ri-module .calc-panel{display:none}
+.ri-module .calc-panel.active{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 2px 24px -8px rgba(26,26,24,.08);animation:ri-fadeUp .28s cubic-bezier(.16,1,.3,1) both}
+@media(max-width:640px){.ri-module .calc-panel.active{grid-template-columns:1fr}}
+@keyframes ri-fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ri-module .inp{padding:2rem 1.9rem;background:var(--cream-2);border-right:1px solid var(--line);display:flex;flex-direction:column}
+@media(max-width:640px){.ri-module .inp{border-right:none;border-bottom:1px solid var(--line)}}
+.ri-module .inp-head{margin-bottom:1.7rem}
+.ri-module .inp-head h3{font-family:var(--display);font-weight:400;font-size:1.32rem;line-height:1.1;letter-spacing:-.026em;color:var(--ink);margin-bottom:.26rem}
+.ri-module .inp-head h3 em{font-style:italic;color:var(--green)}
+.ri-module .inp-head p{font-size:.79rem;line-height:1.56;color:var(--muted)}
+.ri-module .field{margin-bottom:1.15rem}
+.ri-module .field:last-child{margin-bottom:0}
+.ri-module .field-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+.ri-module .field-label{font-family:var(--mono);font-size:.54rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.ri-module .field-val{font-family:var(--mono);font-size:.73rem;font-weight:600;color:var(--ink);background:rgba(26,26,24,.05);border:1px solid rgba(26,26,24,.09);border-radius:6px;padding:.17rem .5rem;min-width:5.2rem;text-align:center;transition:background .15s}
+.ri-module input[type=range]{width:100%;-webkit-appearance:none;height:2px;background:rgba(26,26,24,.14);border-radius:1px;outline:none;cursor:pointer}
+.ri-module input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--ink);cursor:pointer;border:2.5px solid var(--cream-2);box-shadow:0 0 0 1.5px var(--ink);transition:transform .12s}
+.ri-module input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.ri-module input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--ink);border:2.5px solid var(--cream-2);cursor:pointer}
+.ri-module .res{padding:2rem 1.9rem;background:var(--ink);display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.ri-module .res::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 62% 44% at 14% 14%,rgba(30,102,66,.22),transparent 54%),radial-gradient(ellipse 52% 38% at 86% 86%,rgba(30,102,66,.14),transparent 50%)}
+.ri-module .res-top{position:relative;z-index:1}
+.ri-module .res-eyebrow{font-family:var(--mono);font-size:.5rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(247,243,236,.22);margin-bottom:1.75rem}
+.ri-module .res-label{font-family:var(--mono);font-size:.52rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:rgba(247,243,236,.34);margin-bottom:.36rem}
+.ri-module .res-big{font-family:var(--display);font-weight:400;font-size:clamp(2.1rem,4.2vw,3.1rem);color:#f7f3ec;letter-spacing:-.04em;line-height:1;margin-bottom:1.7rem;transition:color .3s}
+.ri-module .res-big.pop{color:#5DCAA5}
+.ri-module .res-rows{display:flex;flex-direction:column;border-top:1px solid rgba(247,243,236,.07);margin-bottom:1.75rem}
+.ri-module .res-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid rgba(247,243,236,.055)}
+.ri-module .rrl{font-size:.77rem;color:rgba(247,243,236,.4);letter-spacing:-.004em}
+.ri-module .rrv{font-family:var(--mono);font-size:.73rem;font-weight:600;color:rgba(247,243,236,.72);transition:color .25s}
+.ri-module .rrv.g{color:#5DCAA5}
+.ri-module .res-cta{position:relative;z-index:1;display:inline-flex;align-items:center;gap:.42rem;background:var(--green);color:var(--cream);font-family:var(--body);font-size:.8rem;font-weight:600;letter-spacing:-.01em;padding:.65rem 1.25rem;border-radius:50px;border:none;cursor:pointer;text-decoration:none;transition:background .2s,transform .16s;align-self:flex-start}
+.ri-module .res-cta:hover{background:var(--green-2);transform:translateY(-1px)}
+.ri-module .arr{font-family:var(--display);font-size:.92rem;line-height:1}
+@media(max-width:460px){.ri-module .pill-tab{font-size:.7rem;padding:.34rem .78rem}.ri-module .res-big{font-size:1.9rem}}
+</style>
+
+<section class="ri-module" id="revenue-intelligence" data-screen-label="07 Revenue Intelligence">
+  <div class="mod-head">
+    <div class="eyebrow"><span class="dot"></span>Revenue intelligence · 4THWALL</div>
+    <h2>The math your<br>business is <em>ignoring.</em></h2>
+    <p>Three calculators. One number that changes the conversation. Run the real cost of slow replies, storm seasons, and unnecessary hires.</p>
+  </div>
+
+  <div class="pill-tabs" role="tablist">
+    <button class="pill-tab active" onclick="riSwitchTab('missed',this)" role="tab"><span class="pnum">01</span> Missed leads</button>
+    <button class="pill-tab" onclick="riSwitchTab('storm',this)" role="tab"><span class="pnum">02</span> Storm season</button>
+    <button class="pill-tab" onclick="riSwitchTab('office',this)" role="tab"><span class="pnum">03</span> Office manager</button>
+  </div>
+
+  <!-- 01 MISSED LEADS -->
+  <div class="calc-panel active" id="ri-panel-missed">
+    <div class="inp">
+      <div class="inp-head">
+        <h3>What slow replies<br>are <em>costing you</em></h3>
+        <p>Adjust the sliders. The number on the right is what you're leaving behind every month.</p>
+      </div>
+      <div class="field"><div class="field-top"><span class="field-label">Average job value</span><span class="field-val" id="ml-jv-d">$12,000</span></div><input type="range" id="ml-jv" min="1000" max="60000" step="500" value="12000" oninput="riCalcMissed()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">Leads per week</span><span class="field-val" id="ml-lw-d">12 leads</span></div><input type="range" id="ml-lw" min="2" max="60" step="1" value="12" oninput="riCalcMissed()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">Your response time</span><span class="field-val" id="ml-rt-d">3 hrs</span></div><input type="range" id="ml-rt" min="5" max="480" step="5" value="180" oninput="riCalcMissed()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">Close rate</span><span class="field-val" id="ml-cr-d">30%</span></div><input type="range" id="ml-cr" min="5" max="70" step="1" value="30" oninput="riCalcMissed()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">After-hours leads</span><span class="field-val" id="ml-ah-d">42%</span></div><input type="range" id="ml-ah" min="10" max="70" step="1" value="42" oninput="riCalcMissed()"></div>
+    </div>
+    <div class="res">
+      <div class="res-top">
+        <div class="res-eyebrow">Missed lead calculator · 01</div>
+        <div class="res-label">Monthly revenue lost</div>
+        <div class="res-big" id="ml-big">—</div>
+        <div class="res-rows">
+          <div class="res-row"><span class="rrl">Leads lost to slow response</span><span class="rrv" id="ml-r1">—</span></div>
+          <div class="res-row"><span class="rrl">After-hours leads unanswered</span><span class="rrv" id="ml-r2">—</span></div>
+          <div class="res-row"><span class="rrl">Annual revenue gap</span><span class="rrv" id="ml-r3">—</span></div>
+          <div class="res-row"><span class="rrl">4THWALL recovery / month</span><span class="rrv g" id="ml-r4">—</span></div>
+        </div>
+      </div>
+      <a href="#contact" class="res-cta">Close this gap <span class="arr">→</span></a>
     </div>
   </div>
 
-  <div class="stat-sel r in d2">
-    <p class="stat-hint">Select a stat to see the breakdown</p>
-    <div class="stat-tabs-wrap">
-      <div class="stat-tabs">
-        <button class="stat-tab">
-          <div class="stat-num">42%</div>
-          <div class="stat-lbl">after hours</div>
-        </button>
-        <button class="stat-tab">
-          <div class="stat-num">78%</div>
-          <div class="stat-lbl">hire first</div>
-        </button>
-        <button class="stat-tab">
-          <div class="stat-num">3.5<small>hrs</small></div>
-          <div class="stat-lbl">industry avg</div>
-        </button>
-        <button class="stat-tab">
-          <div class="stat-num">$3.8<small>M</small></div>
-          <div class="stat-lbl">home value</div>
-        </button>
-        <button class="stat-tab">
-          <div class="stat-num grn">47<small>sec</small></div>
-          <div class="stat-lbl">our response</div>
-        </button>
+  <!-- 02 STORM SEASON -->
+  <div class="calc-panel" id="ri-panel-storm">
+    <div class="inp">
+      <div class="inp-head">
+        <h3>Your storm season<br><em>revenue potential</em></h3>
+        <p>Storm Mode absorbs 10× volume without dropping a lead. Here's what that's worth.</p>
       </div>
+      <div class="field"><div class="field-top"><span class="field-label">Storm events per year</span><span class="field-val" id="st-ev-d">6 events</span></div><input type="range" id="st-ev" min="1" max="20" step="1" value="6" oninput="riCalcStorm()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">Leads per storm event</span><span class="field-val" id="st-lp-d">30 leads</span></div><input type="range" id="st-lp" min="5" max="100" step="5" value="30" oninput="riCalcStorm()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">Average repair job value</span><span class="field-val" id="st-jv-d">$8,000</span></div><input type="range" id="st-jv" min="500" max="30000" step="500" value="8000" oninput="riCalcStorm()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">Storm close rate</span><span class="field-val" id="st-cr-d">20%</span></div><input type="range" id="st-cr" min="5" max="60" step="1" value="20" oninput="riCalcStorm()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">Leads dropped in volume spike</span><span class="field-val" id="st-dr-d">50%</span></div><input type="range" id="st-dr" min="10" max="80" step="5" value="50" oninput="riCalcStorm()"></div>
     </div>
-    <div class="stat-panel-wrap">
-      <div class="stat-panel">
-        <div class="stat-panel-grid">
-          <div class="stat-panel-fig">42%</div>
-          <div>
-            <div class="stat-panel-h">of inbound leads come in <em>after 5pm.</em></div>
-            <p class="stat-panel-d">Storms hit at night. Pipes burst on weekends. Nearly half of all inbound leads come in outside of business hours.</p>
-          </div>
+    <div class="res">
+      <div class="res-top">
+        <div class="res-eyebrow">Storm season estimator · 02</div>
+        <div class="res-label">Revenue currently captured</div>
+        <div class="res-big" id="st-big">—</div>
+        <div class="res-rows">
+          <div class="res-row"><span class="rrl">Total storm leads / year</span><span class="rrv" id="st-r1">—</span></div>
+          <div class="res-row"><span class="rrl">Leads lost to volume overflow</span><span class="rrv" id="st-r2">—</span></div>
+          <div class="res-row"><span class="rrl">Revenue left on the table</span><span class="rrv" id="st-r3">—</span></div>
+          <div class="res-row"><span class="rrl">With 4THWALL storm mode</span><span class="rrv g" id="st-r4">—</span></div>
         </div>
       </div>
-      <div class="stat-panel">
-        <div class="stat-panel-grid">
-          <div class="stat-panel-fig">78%</div>
-          <div>
-            <div class="stat-panel-h">hire <em>whoever replies first.</em></div>
-            <p class="stat-panel-d">Speed determines the job more often than price or experience. Most hiring decisions are made within the first response.</p>
-          </div>
+      <a href="#contact" class="res-cta">Activate storm mode <span class="arr">→</span></a>
+    </div>
+  </div>
+
+  <!-- 03 OFFICE MANAGER -->
+  <div class="calc-panel" id="ri-panel-office">
+    <div class="inp">
+      <div class="inp-head">
+        <h3>You don't need<br>a hire. You need <em>this.</em></h3>
+        <p>The real cost of a local hire includes benefits, management overhead, and zero after-hours coverage.</p>
+      </div>
+      <div class="field"><div class="field-top"><span class="field-label">Leads per week</span><span class="field-val" id="om-lw-d">15 leads</span></div><input type="range" id="om-lw" min="2" max="80" step="1" value="15" oninput="riCalcOffice()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">Hourly wage</span><span class="field-val" id="om-wg-d">$28/hr</span></div><input type="range" id="om-wg" min="18" max="55" step="1" value="28" oninput="riCalcOffice()"></div>
+      <div class="field"><div class="field-top"><span class="field-label">Hours per week</span><span class="field-val" id="om-hr-d">32 hrs</span></div><input type="range" id="om-hr" min="10" max="45" step="1" value="32" oninput="riCalcOffice()"></div>
+    </div>
+    <div class="res">
+      <div class="res-top">
+        <div class="res-eyebrow">Office manager comparison · 03</div>
+        <div class="res-label">Monthly cost of a local hire</div>
+        <div class="res-big" id="om-big">—</div>
+        <div class="res-rows">
+          <div class="res-row"><span class="rrl">Base salary</span><span class="rrv" id="om-r1">—</span></div>
+          <div class="res-row"><span class="rrl">Benefits + overhead (~28%)</span><span class="rrv" id="om-r2">—</span></div>
+          <div class="res-row"><span class="rrl">Hours covered / week</span><span class="rrv" id="om-r3">—</span></div>
+          <div class="res-row"><span class="rrl">After-hours + storm coverage</span><span class="rrv" id="om-r4">—</span></div>
+          <div class="res-row"><span class="rrl">4THWALL — 24/7, bilingual</span><span class="rrv g" id="om-r5">—</span></div>
         </div>
       </div>
-      <div class="stat-panel">
-        <div class="stat-panel-grid">
-          <div class="stat-panel-fig">3.5<span class="stat-unit">hrs</span></div>
-          <div>
-            <div class="stat-panel-h">average <em>local trades</em> response time.</div>
-            <p class="stat-panel-d">The average time a local trades contractor takes to respond to a new lead. Long enough for a homeowner to have already moved on.</p>
-          </div>
-        </div>
-      </div>
-      <div class="stat-panel">
-        <div class="stat-panel-grid">
-          <div class="stat-panel-fig">$3.8<span class="stat-unit">M</span></div>
-          <div>
-            <div class="stat-panel-h">median high-end <em>home value.</em></div>
-            <p class="stat-panel-d">Median home value in our primary market. Work at this tier starts in the five figures. The dollar value of each lead is not small.</p>
-          </div>
-        </div>
-      </div>
-      <div class="stat-panel">
-        <div class="stat-panel-grid">
-          <div class="stat-panel-fig grn">47<span class="stat-unit">sec</span></div>
-          <div>
-            <div class="stat-panel-h"><em>Our</em> response time.</div>
-            <p class="stat-panel-d">Our average response time across all inbound channels. Day or night, every lead is responded to and qualified before most contractors have seen the notification.</p>
-          </div>
-        </div>
-      </div>
+      <a href="#contact" class="res-cta">Replace the hire <span class="arr">→</span></a>
     </div>
   </div>
 
@@ -1801,6 +1874,67 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     start();
   }
 })();
+</script>
+<script>
+/* ── Revenue intelligence calculators ── */
+function fmt(n){return n>=1000000?'$'+(n/1000000).toFixed(1)+'M':n>=1000?'$'+(n/1000).toFixed(0)+'k':'$'+Math.round(n);}
+function riSwitchTab(id,btn){
+  document.querySelectorAll('.ri-module .calc-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.ri-module .pill-tab').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('ri-panel-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='missed')riCalcMissed();else if(id==='storm')riCalcStorm();else riCalcOffice();
+}
+function riCalcMissed(){
+  var jv=+document.getElementById('ml-jv').value,lw=+document.getElementById('ml-lw').value,
+      rt=+document.getElementById('ml-rt').value,cr=+document.getElementById('ml-cr').value/100,
+      ah=+document.getElementById('ml-ah').value/100;
+  document.getElementById('ml-jv-d').textContent='$'+jv.toLocaleString();
+  document.getElementById('ml-lw-d').textContent=lw+' leads';
+  document.getElementById('ml-rt-d').textContent=rt<60?rt+' min':Math.round(rt/60)+' hrs';
+  document.getElementById('ml-cr-d').textContent=Math.round(cr*100)+'%';
+  document.getElementById('ml-ah-d').textContent=Math.round(ah*100)+'%';
+  var slowLoss=rt>30?lw*4*0.25*cr*jv:lw*4*0.1*cr*jv;
+  var ahLoss=lw*4*ah*0.6*cr*jv;
+  var total=slowLoss+ahLoss;
+  document.getElementById('ml-big').textContent=fmt(total);
+  document.getElementById('ml-r1').textContent=fmt(slowLoss);
+  document.getElementById('ml-r2').textContent=fmt(ahLoss);
+  document.getElementById('ml-r3').textContent=fmt(total*12);
+  document.getElementById('ml-r4').textContent=fmt(total*0.72);
+}
+function riCalcStorm(){
+  var ev=+document.getElementById('st-ev').value,lp=+document.getElementById('st-lp').value,
+      jv=+document.getElementById('st-jv').value,cr=+document.getElementById('st-cr').value/100,
+      dr=+document.getElementById('st-dr').value/100;
+  document.getElementById('st-ev-d').textContent=ev+' events';
+  document.getElementById('st-lp-d').textContent=lp+' leads';
+  document.getElementById('st-jv-d').textContent='$'+jv.toLocaleString();
+  document.getElementById('st-cr-d').textContent=Math.round(cr*100)+'%';
+  document.getElementById('st-dr-d').textContent=Math.round(dr*100)+'%';
+  var total=ev*lp,dropped=Math.round(total*dr),captured=total-dropped;
+  var rev=captured*cr*jv,lost=dropped*cr*jv,withAtlas=total*cr*jv;
+  document.getElementById('st-big').textContent=fmt(rev);
+  document.getElementById('st-r1').textContent=total+' leads';
+  document.getElementById('st-r2').textContent=dropped+' leads';
+  document.getElementById('st-r3').textContent=fmt(lost);
+  document.getElementById('st-r4').textContent=fmt(withAtlas);
+}
+function riCalcOffice(){
+  var lw=+document.getElementById('om-lw').value,wg=+document.getElementById('om-wg').value,
+      hr=+document.getElementById('om-hr').value;
+  document.getElementById('om-lw-d').textContent=lw+' leads';
+  document.getElementById('om-wg-d').textContent='$'+wg+'/hr';
+  document.getElementById('om-hr-d').textContent=hr+' hrs';
+  var base=wg*hr*52/12,overhead=base*0.28,total=base+overhead;
+  document.getElementById('om-big').textContent=fmt(total);
+  document.getElementById('om-r1').textContent=fmt(base);
+  document.getElementById('om-r2').textContent=fmt(overhead);
+  document.getElementById('om-r3').textContent=hr+' hrs/week';
+  document.getElementById('om-r4').textContent='0 hrs';
+  document.getElementById('om-r5').textContent='24/7 · bilingual';
+}
+window.addEventListener('DOMContentLoaded',function(){riCalcMissed();riCalcStorm();riCalcOffice();});
 </script>
 </body>
 </html>
