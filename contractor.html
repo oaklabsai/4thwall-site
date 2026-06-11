@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contractor Profile — 4THWALL Home</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">HOME</span>
+  </a>
+  <div class="nav-links">
+    <a href="/find" class="nav-a">Find a pro</a>
+    <a href="/request" class="nav-a">Request service</a>
+    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero" id="hero">
+  <div class="loading">Loading profile…</div>
+</section>
+<section class="section" id="body"></section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function(){
+  const account = await HOME.navAccount();
+  const esc = HOME.esc;
+  const hero = document.getElementById('hero');
+  const body = document.getElementById('body');
+
+  const m = location.pathname.match(/^\/c\/([A-Za-z0-9_-]{8,200})$/);
+  if (!m){ hero.innerHTML = '<h1 class="page-h">Profile not found.</h1><p class="page-sub">Try <a href="/find" style="color:var(--orange)">searching again</a>.</p>'; return; }
+  const placeId = m[1];
+  const zipParam = new URLSearchParams(location.search).get('zip') || '';
+  const back = /^\d{5}$/.test(zipParam) ? '/find?zip=' + zipParam : '/find';
+
+  const { data } = await HOME.api('/c/' + encodeURIComponent(placeId) + (/^\d{5}$/.test(zipParam) ? '?zip=' + zipParam : ''));
+  if (!data.ok){
+    hero.innerHTML = '<a class="crumb" href="' + back + '">← Back to results</a>' +
+      '<h1 class="page-h">We couldn\'t load that profile.</h1><p class="page-sub">It may have moved — try <a href="/find" style="color:var(--orange)">searching again</a>.</p>';
+    return;
+  }
+  const p = data.place, zip = data.zip;
+
+  hero.innerHTML = '<a class="crumb" href="' + back + '">← Back to results</a>' +
+    '<h1 class="page-h">' + esc(p.name) + '</h1>' +
+    '<p class="page-sub">' + esc(p.address) + '</p>' +
+    '<div class="badges"><span class="badge plain">Listed — not yet verified</span></div>' +
+    '<p class="note">This pro isn\'t in the 4THWALL verified network, so there\'s no operational record to show — no measured response times, no verified job history. They may still be excellent; we just can\'t prove it.</p>';
+
+  function contactRows(u){
+    const rows = [];
+    if (u.phone) rows.push('<div class="contactrow"><b>Phone</b><a href="tel:' + esc(String(u.phone).replace(/[^\d+]/g,'')) + '">' + esc(u.phone) + '</a></div>');
+    if (u.website) rows.push('<div class="contactrow"><b>Website</b><a href="' + esc(u.website) + '" rel="nofollow noopener" target="_blank">' + esc(String(u.website).replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'')) + '</a></div>');
+    for (const k in (u.socials || {})){
+      rows.push('<div class="contactrow"><b>' + esc(HOME.tradeLabel(k)) + '</b><a href="' + esc(u.socials[k]) + '" rel="nofollow noopener" target="_blank">' + esc(String(u.socials[k]).replace(/^https?:\/\/(www\.)?/,'')) + '</a></div>');
+    }
+    return rows.length ? rows.join('') : '<p class="note">No public contact details surfaced for this pro — they may be phone-unlisted. Try the request flow instead.</p>';
+  }
+
+  function render(){
+    let contactBlock;
+    if (window.__unlocked){
+      contactBlock = '<h2 class="section-h">Contact</h2><div class="card-block">' + contactRows(window.__unlocked) + '</div>';
+    } else if (account){
+      contactBlock = '<h2 class="section-h">Contact</h2><div class="card-block">' +
+        '<p style="font-size:.9rem;margin-bottom:.8rem">Phone, website, and social profiles — everything public we can find.</p>' +
+        '<button class="pill pill-orange" id="unlock-btn">Show contact info</button>' +
+        '<span class="form-status" id="unlock-status"></span></div>';
+    } else {
+      contactBlock = '<h2 class="section-h">Contact</h2><div class="lockbox">' +
+        '<div class="blur">(516) 555-0000 · example-website.com · facebook.com/example</div>' +
+        '<p style="font-size:.9rem;margin-bottom:.9rem"><b>Contact info is free — it just needs an account.</b><br><span style="color:var(--muted);font-size:.82rem">One email, no password, ten seconds. Phone, website, socials — everything public we can find.</span></p>' +
+        '<a class="pill pill-orange" href="' + HOME.signinHref() + '">Create free account / sign in</a></div>';
+    }
+
+    const claimBlock = data.claimed
+      ? '<p class="note">✓ This profile has been claimed by the business.</p>'
+      : '<h2 class="section-h">Is this your business?</h2><div class="card-block">' +
+        '<p style="font-size:.9rem;margin-bottom:1rem">Claim this profile. Homeowners in your area are already looking — claiming takes a minute and costs nothing.</p>' +
+        '<form id="claim-form">' +
+        '<div class="form-row"><label class="form-label" for="cn">Your name *</label><input class="form-input" type="text" id="cn" name="name" required maxlength="80"></div>' +
+        '<div class="form-row row-pair">' +
+        '<div><label class="form-label" for="cp">Phone *</label><input class="form-input" type="tel" id="cp" name="phone" required maxlength="20"></div>' +
+        '<div><label class="form-label" for="ce">Email</label><input class="form-input" type="email" id="ce" name="email" maxlength="120"></div></div>' +
+        '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
+        '<span class="form-status" id="claim-status"></span></form></div>';
+
+    body.innerHTML = contactBlock + claimBlock +
+      '<div class="card-block" style="margin-top:1.6rem">' +
+      '<p style="font-size:.9rem"><b>Prefer a pro whose work is proven?</b> Verified pros carry ledger-backed badges and your job lands in your home\'s permanent record.</p>' +
+      '<div style="margin-top:.8rem"><a class="pill pill-ghost pill-sm" href="/request">Request a verified pro <span class="arr">→</span></a></div></div>';
+
+    const unlockBtn = document.getElementById('unlock-btn');
+    if (unlockBtn) unlockBtn.addEventListener('click', async () => {
+      unlockBtn.disabled = true;
+      const st = document.getElementById('unlock-status');
+      const { status, data: r } = await HOME.api('/c/' + encodeURIComponent(placeId) + '/unlock', { method:'POST', body:{ zip: zip || '' } });
+      if (r.ok){ window.__unlocked = r.unlocked; render(); }
+      else {
+        unlockBtn.disabled = false;
+        st.className = 'form-status is-error';
+        st.textContent = status === 429 ? 'A lot of unlocks this hour — try again in a bit.' : 'Couldn\'t unlock — try again.';
+      }
+    });
+
+    const claimForm = document.getElementById('claim-form');
+    if (claimForm) claimForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const st = document.getElementById('claim-status');
+      const btn = claimForm.querySelector('button');
+      btn.disabled = true; st.className = 'form-status'; st.textContent = '…';
+      const { data: r } = await HOME.api('/c/' + encodeURIComponent(placeId) + '/claim', {
+        method:'POST',
+        body:{ name: claimForm.name.value, phone: claimForm.phone.value, email: claimForm.email.value, zip: zip || '' }
+      });
+      if (r.ok){
+        claimForm.outerHTML = '<p class="note">✓ Thanks, ' + esc(r.first_name) + ' — we have your claim on ' + esc(r.business) + '. We\'ll reach out to verify it\'s you, then the profile is yours.</p>';
+      } else {
+        btn.disabled = false;
+        st.className = 'form-status is-error';
+        st.textContent = r.error === 'missing_fields' ? 'Name + valid phone needed.' : r.error === 'rate_limited' ? 'Too many attempts — try later.' : 'Couldn\'t send — try again.';
+      }
+    });
+  }
+
+  window.__unlocked = data.unlocked || null;
+  render();
+});
+</script>
+</body>
+</html>

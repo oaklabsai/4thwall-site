@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — 4THWALL Home</title>
+<meta name="description" content="One email. No password. Your free account unlocks contact info for every local pro.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">HOME</span>
+  </a>
+  <div class="nav-links">
+    <a href="/find" class="nav-a">Find a pro</a>
+    <a href="/request" class="nav-a">Request service</a>
+    <span id="nav-acct"></span>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero">
+  <div class="eyebrow">Free account · ten seconds</div>
+  <h1 class="page-h" id="signin-h">One email. <em>No password.</em></h1>
+  <p class="page-sub" id="signin-sub">We'll send you a sign-in link. Click it and you're in — free, ten seconds, done. Your account unlocks contact info for every local pro.</p>
+</section>
+
+<section class="section">
+  <div class="card-block" style="max-width:480px" id="signin-card">
+    <form id="signin-form">
+      <div class="form-row">
+        <label class="form-label" for="em">Email address</label>
+        <input class="form-input" type="email" id="em" name="email" required maxlength="254" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <button class="pill pill-orange" type="submit">Email me a sign-in link</button>
+      <span class="form-status" id="signin-status"></span>
+      <p class="fine">No spam, no newsletter, no selling your address — the email is a key, not a subscription.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function(){
+  const account = await HOME.navAccount();
+
+  // Remember where to land after the magic link round-trip. The confirm page
+  // (same browser) picks this up from sessionStorage.
+  const next = new URLSearchParams(location.search).get('next') || '';
+  if (next && next.startsWith('/') && !next.startsWith('//')) HOME.setNext(next);
+
+  if (account){
+    const safe = (next && next.startsWith('/') && !next.startsWith('//')) ? next : '/find';
+    location.replace(safe);
+    return;
+  }
+
+  const form = document.getElementById('signin-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const st = document.getElementById('signin-status');
+    const btn = form.querySelector('button');
+    btn.disabled = true; st.className = 'form-status'; st.textContent = 'sending…';
+    const { data: r } = await HOME.api('/signin', { method:'POST', body:{ email: form.email.value } });
+    if (r.ok){
+      document.getElementById('signin-h').innerHTML = 'Check your <em>email.</em>';
+      document.getElementById('signin-sub').innerHTML = 'We sent a sign-in link to <b>' + HOME.esc(form.email.value) + '</b>. Open it on this device and you\'re in. The link expires in an hour.';
+      document.getElementById('signin-card').innerHTML = '<p class="note">Nothing arriving? Check spam, or <a href="/signin" style="color:var(--orange)">try again</a>.</p>';
+    } else {
+      btn.disabled = false;
+      st.className = 'form-status is-error';
+      st.textContent = r.error === 'invalid_email' ? 'That email doesn\'t look right.'
+        : r.error === 'rate_limited' ? 'Too many attempts — try again in a bit.'
+        : r.error === 'mail_rate_limited' ? 'Mail service is briefly rate-limited — try in a few minutes.'
+        : 'Couldn\'t send — try again in a moment.';
+    }
+  });
+});
+</script>
+</body>
+</html>

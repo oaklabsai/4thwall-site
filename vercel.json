@@ -3,6 +3,15 @@
     "autoAlias": true,
     "productionBranch": "main"
   },
+  "rewrites": [
+    { "source": "/find",          "destination": "/find.html" },
+    { "source": "/signin",        "destination": "/signin.html" },
+    { "source": "/request",       "destination": "/request.html" },
+    { "source": "/auth/confirm",  "destination": "/auth-confirm.html" },
+    { "source": "/record/:token", "destination": "/record.html" },
+    { "source": "/pro/:id",       "destination": "/pro.html" },
+    { "source": "/c/:placeId",    "destination": "/contractor.html" }
+  ],
   "redirects": [
     { "source": "/aga-case-study.html",   "destination": "/case-study-wealth-management.html", "permanent": true },
     { "source": "/bluecrest-am.html",     "destination": "/case-study-amenity-management.html", "permanent": true },
@@ -31,6 +40,24 @@
     },
     {
       "source": "/(close|onboard).html",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
+      ]
+    },
+    {
+      "source": "/record/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
+      ]
+    },
+    {
+      "source": "/(c|pro)/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex" }
+      ]
+    },
+    {
+      "source": "/auth/(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
       ]

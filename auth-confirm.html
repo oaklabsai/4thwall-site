@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signing You In — 4THWALL Home</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">HOME</span>
+  </a>
+  <div class="nav-links">
+    <a href="/find" class="nav-a">Find a pro</a>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero">
+  <h1 class="page-h" id="confirm-h">Signing you in…</h1>
+  <p class="page-sub" id="confirm-sub">One moment.</p>
+  <div id="confirm-action" style="margin-top:1.4rem"></div>
+</section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const h = document.getElementById('confirm-h');
+  const sub = document.getElementById('confirm-sub');
+  const action = document.getElementById('confirm-action');
+
+  function fail(msg){
+    h.innerHTML = 'That link didn\'t <em>work.</em>';
+    sub.textContent = msg || 'The sign-in link isn\'t valid anymore — request a fresh one.';
+    action.innerHTML = '<a class="pill pill-orange" href="/signin">Send a new link</a>';
+  }
+
+  async function establish(body){
+    const { data } = await HOME.api('/auth/session', { method: 'POST', body });
+    if (data.ok && data.session_token){
+      HOME.setToken(data.session_token);
+      // scrub the one-time credential from the address bar / history
+      history.replaceState(null, '', '/auth/confirm');
+      h.innerHTML = 'You\'re <em>in.</em>';
+      sub.textContent = 'Signed in as ' + (data.email || 'you') + '. Taking you back…';
+      setTimeout(() => { location.replace(HOME.takeNext() || '/find'); }, 600);
+    } else {
+      fail();
+    }
+  }
+
+  const params = new URLSearchParams(location.search);
+  const tokenHash = params.get('token_hash');
+  const fragMatch = (location.hash || '').match(/access_token=([^&]+)/);
+
+  if (tokenHash){
+    // Custom-SMTP template flow (?token_hash=...&type=email). The verify is a
+    // POST from this page — a click-to-confirm step would go here if link
+    // scanners ever start consuming these too.
+    establish({ token_hash: tokenHash });
+  } else if (fragMatch){
+    // Default GoTrue template flow: tokens arrive in the URL fragment.
+    establish({ access_token: decodeURIComponent(fragMatch[1]) });
+  } else if ((location.hash || '').includes('error=')){
+    const desc = ((location.hash.match(/error_description=([^&]+)/) || [])[1] || '').replace(/\+/g, ' ');
+    fail(decodeURIComponent(desc || '') || 'The sign-in link expired or was already used — request a fresh one.');
+  } else {
+    fail('That sign-in link didn\'t carry a session — request a fresh one.');
+  }
+});
+</script>
+</body>
+</html>

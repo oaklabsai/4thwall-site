@@ -938,6 +938,28 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     .dm-cta{align-self:flex-end;width:34px;height:34px;padding:0;justify-content:center;gap:0}
     .dm-cta .arr{font-size:1rem}
   }
+
+  /* ── C · the homeowner layer, underneath both products ── */
+  .dm-home{align-self:center;justify-self:center;width:100%;max-width:calc(2 * clamp(155px,40vw,300px) + 1.8rem);display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;justify-content:space-between;padding:1.05rem 1.4rem;border:1px solid var(--line);border-radius:22px;background:linear-gradient(90deg,rgba(30,102,66,.07),transparent 58%),#fbf8f2;box-shadow:0 1px 2px rgba(20,16,12,.04),0 12px 24px -16px rgba(20,16,12,.14),inset 0 1px 0 rgba(255,255,255,.7)}
+  .dm-home-copy{display:flex;flex-direction:column;gap:.25rem;min-width:200px}
+  .dm-home-tag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);display:flex;align-items:center;gap:.55rem}
+  .dm-home-tag::before{content:"";width:18px;height:1px;background:currentColor;opacity:.7}
+  .dm-home-line{font-family:var(--display);font-size:clamp(1.02rem,1.6vw,1.35rem);font-weight:400;letter-spacing:-.02em;line-height:1.25}
+  .dm-home-line em{font-style:italic;color:var(--orange)}
+  .dm-home-act{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+  .dm-home-form{display:flex;align-items:center;gap:.35rem;background:#fff;border:1px solid var(--line);border-radius:50px;padding:.28rem .28rem .28rem .9rem}
+  .dm-home-form input{border:none;background:none;outline:none;font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;width:88px;color:var(--ink)}
+  .dm-home-form input::placeholder{color:var(--dim)}
+  .dm-home-go{display:inline-flex;align-items:center;gap:.4rem;background:var(--ink);color:var(--cream);border-radius:50px;padding:8px 16px;font-size:.78rem;font-weight:500;cursor:pointer;transition:background .2s}
+  .dm-home-go:hover{background:var(--orange)}
+  .dm-home-go .arr{font-family:var(--display);line-height:1;transition:transform .25s}
+  .dm-home-go:hover .arr{transform:translateX(2px)}
+  .dm-home-signin{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s;padding-bottom:1px;border-bottom:1px solid transparent}
+  .dm-home-signin:hover{color:var(--ink);border-bottom-color:var(--orange)}
+  @media(max-width:640px){
+    .dm-home{padding:.9rem 1rem;gap:.8rem}
+    .dm-home-act{width:100%;justify-content:space-between}
+  }
 </style>
 <section class="doormat wrap" id="products" data-screen-label="02 Products">
   <div class="doormat-head">
@@ -964,6 +986,22 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <span class="dm-cta"><span class="dm-cta-t">See the product</span> <span class="arr">→</span></span>
       </div>
     </a>
+  </div>
+
+  <!-- ── C · Underneath both products: the homeowner layer.
+       Search any ZIP, or sign in to unlock contractor contact info. ── -->
+  <div class="dm-home">
+    <div class="dm-home-copy">
+      <div class="dm-home-tag">C · Underneath</div>
+      <p class="dm-home-line">For homeowners — <em>find a pro you can prove.</em></p>
+    </div>
+    <div class="dm-home-act">
+      <form class="dm-home-form" action="/find" method="GET">
+        <input type="text" name="zip" maxlength="5" inputmode="numeric" pattern="\d{5}" placeholder="Your ZIP" aria-label="ZIP code" required>
+        <button type="submit" class="dm-home-go">Search <span class="arr">→</span></button>
+      </form>
+      <a class="dm-home-signin" href="/signin">Sign in</a>
+    </div>
   </div>
 
   <!-- ─────────────────────────────────────────────────────────────

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Home's Record — 4THWALL Home</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">HOME</span>
+  </a>
+  <div class="nav-links">
+    <a href="/find" class="nav-a">Find a pro</a>
+    <a href="/request" class="nav-a">Request service</a>
+    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero" id="hero">
+  <div class="loading">Opening your home's record…</div>
+</section>
+<section class="section" id="body"></section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function(){
+  const account = await HOME.navAccount();
+  const esc = HOME.esc;
+  const hero = document.getElementById('hero');
+  const body = document.getElementById('body');
+
+  const m = location.pathname.match(/^\/record\/([0-9a-f]{32})$/);
+  if (!m){
+    hero.innerHTML = '<h1 class="page-h">Link expired.</h1><p class="page-sub">That record link isn\'t valid anymore. The most recent text from your contractor has a fresh one.</p>';
+    return;
+  }
+  const token = m[1];
+
+  async function load(){
+    const { data } = await HOME.api('/record/' + token);
+    if (!data.ok){
+      hero.innerHTML = '<h1 class="page-h">Link expired.</h1><p class="page-sub">That record link isn\'t valid anymore. The most recent text from your contractor has a fresh one.</p>';
+      body.innerHTML = '';
+      return;
+    }
+    render(data.record);
+  }
+
+  function eventLi(e, proNames){
+    const date = HOME.fmtDate(e.occurred_at);
+    const who = e.location_id ? (proNames[e.location_id] || 'a 4THWALL-verified pro') : null;
+    const verified = e.source_class === 'verified_job';
+    if (e.event_type === 'job_completed'){
+      return '<li><span class="src">' + (verified ? '✓ Verified work' : esc(String(e.source_class || '').replace(/_/g,' '))) + '</span>' +
+        '<div class="ev-title">' + esc(e.service || HOME.tradeLabel(e.trade) + ' service') + '</div>' +
+        '<div class="ev-meta">' + esc(date) + (who ? ' · ' + esc(who) : '') + (e.warranty_months ? ' · ' + esc(e.warranty_months) + '-month warranty' : '') + '</div></li>';
+    }
+    if (e.event_type === 'record_claimed') return '<li><span class="src">Record</span><div class="ev-title">Record claimed</div><div class="ev-meta">' + esc(date) + '</div></li>';
+    if (e.event_type === 'fact_stated') return '<li><span class="src">Reported by homeowner</span><div class="ev-title">' + esc(String(e.ref_id || 'Home fact').replace(/_/g,' ')) + '</div><div class="ev-meta">' + esc(date) + '</div></li>';
+    return '<li><div class="ev-title">' + esc(String(e.event_type || '').replace(/_/g,' ')) + '</div><div class="ev-meta">' + esc(date) + '</div></li>';
+  }
+
+  function render(v){
+    const isSession = v.scope === 'session';
+    const hidden = v.total_events - v.events.length;
+    const addr = (v.home.address_confirmed || v.home.address_line1)
+      ? (v.home.address_line1 || '') + (v.home.city ? ', ' + v.home.city : '') : null;
+
+    hero.innerHTML = '<div class="eyebrow">The Home Record · permanent &amp; verified</div>' +
+      '<h1 class="page-h">' + (addr ? esc(addr) : 'Your home\'s service record') + '</h1>' +
+      '<p class="page-sub">' + (v.total_events === 1 ? 'Entry #1 in this home\'s permanent record.' : v.total_events + ' entries in this home\'s permanent record.') + '</p>';
+
+    let html = '';
+    if (v.issuer_pro){
+      html += '<div class="card" style="max-width:560px"><div class="sub" style="font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase">Performed by</div>' +
+        '<h3>' + esc(v.issuer_pro.business_name) + '</h3>' + HOME.badgeChips(v.issuer_pro) + '</div>';
+    }
+    html += '<ul class="timeline">' + v.events.map(e => eventLi(e, v.pro_names || {})).join('') + '</ul>';
+
+    if (!isSession && v.claimed && hidden > 0){
+      html += '<p class="note">' + hidden + ' more ' + (hidden === 1 ? 'entry' : 'entries') + ' on this record. It\'s already claimed — the full history lives at the link issued when it was claimed. Lost it? Reply to your contractor\'s text.</p>';
+    }
+
+    const clocks = (v.facts || []).filter(f => /(_warranty_until|_last_service)$/.test(f.fact_key));
+    if (clocks.length){
+      html += '<h2 class="section-h">Warranty &amp; maintenance</h2><div class="card-block" style="max-width:560px">' +
+        clocks.map(f => {
+          const key = String(f.fact_key);
+          const label = key.endsWith('_warranty_until')
+            ? HOME.tradeLabel(key.replace('_warranty_until','')) + ' warranty until'
+            : HOME.tradeLabel(key.replace('_last_service','')) + ' last serviced';
+          return '<div class="kv"><span>' + esc(label) + '</span><b>' + esc(f.fact_value) + '</b></div>';
+        }).join('') + '</div>';
+    }
+
+    // Claiming IS the step-up: confirm the address → full history. No OTP,
+    // no app, no platform SMS.
+    if (!v.claimed){
+      html += '<h2 class="section-h">Is this your home?</h2><div class="card-block">' +
+        '<p style="font-size:.9rem;margin-bottom:1rem">Claim the record to keep it' + (hidden > 0 ? ' — and see all <b>' + v.total_events + ' entries</b>' : '') + '. It grows with every verified job, transfers with the house, and backs you up for insurance, warranty, and resale.</p>' +
+        '<form id="claim-form">' +
+        '<div class="form-row"><label class="form-label" for="cname">Your name</label><input class="form-input" type="text" id="cname" name="name" maxlength="80"></div>' +
+        (!v.home.address_confirmed ?
+          '<div class="form-row"><label class="form-label" for="line1">Street address *</label><input class="form-input" type="text" id="line1" name="address_line1" required maxlength="120" value="' + esc(v.home.address_line1 || '') + '"></div>' +
+          '<div class="form-row row-pair">' +
+          '<div><label class="form-label" for="city">City</label><input class="form-input" type="text" id="city" name="city" maxlength="60" value="' + esc(v.home.city || '') + '"></div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">' +
+          '<div><label class="form-label" for="state">State</label><input class="form-input" type="text" id="state" name="state" maxlength="2" value="' + esc(v.home.state || '') + '"></div>' +
+          '<div><label class="form-label" for="zip">ZIP *</label><input class="form-input" type="text" id="zip" name="zip" required maxlength="10" inputmode="numeric" value="' + esc(v.home.zip || '') + '"></div></div></div>'
+          : '') +
+        '<button class="pill pill-orange" type="submit">This is my home</button>' +
+        '<span class="form-status" id="claim-status"></span>' +
+        '<p class="fine">Claiming confirms your address and unlocks the full record. It does not subscribe you to anything.</p>' +
+        '</form></div>';
+    }
+
+    if (v.claimed && v.opted_in === null){
+      html += '<h2 class="section-h">Want a heads-up when it matters?</h2><div class="card-block">';
+      if (account){
+        html += '<p style="font-size:.9rem">Storms that hit your roof, warranty windows closing, maintenance coming due — grounded in this home\'s record, sent to your email. A handful a year. Never spam, and silence when there\'s nothing true to say.</p>' +
+          '<div style="margin-top:.9rem;display:flex;gap:.6rem;flex-wrap:wrap">' +
+          '<button class="pill pill-orange pill-sm" data-optin="yes">Yes, email me</button>' +
+          '<button class="pill pill-ghost pill-sm" data-optin="no">No thanks</button></div>';
+      } else {
+        html += '<p style="font-size:.9rem">Storms that hit your roof, warranty windows closing, maintenance coming due — sent to your email, a handful a year. Sign in with one email to turn it on (free, ten seconds).</p>' +
+          '<div style="margin-top:.9rem"><a class="pill pill-ghost pill-sm" href="' + HOME.signinHref('/record/' + token) + '">Sign in to enable alerts</a></div>';
+      }
+      html += '</div>';
+    } else if (v.claimed && v.opted_in === true){
+      html += '<p class="note">✓ Home alerts are on. Every email has an unsubscribe link.</p>';
+    }
+
+    if (isSession){
+      html += '<h2 class="section-h">Complete your record</h2><div class="card-block">' +
+        '<p style="font-size:.9rem;margin-bottom:1rem">Three facts make your record useful for the whole house. Shown as "reported by homeowner" — never as verified.</p>' +
+        '<form id="fact-form">' +
+        '<div class="form-row"><label class="form-label" for="fk">What do you know?</label>' +
+        '<select class="form-select" id="fk" name="fact_key">' +
+        '<option value="roof_installed_year">Year the roof was installed</option>' +
+        '<option value="hvac_installed_year">Year the furnace/AC was installed</option>' +
+        '<option value="water_heater_installed_year">Year the water heater was installed</option></select></div>' +
+        '<div class="form-row"><label class="form-label" for="fv">Year</label><input class="form-input" type="text" id="fv" name="fact_value" maxlength="4" inputmode="numeric" placeholder="2019" style="max-width:140px"></div>' +
+        '<button class="pill pill-ghost" type="submit">Add to record</button>' +
+        '<span class="form-status" id="fact-status"></span></form></div>';
+    }
+
+    html += '<div style="margin-top:1.6rem"><a class="pill pill-ghost pill-sm" href="/find">Find a pro for something else</a></div>';
+    html += '<div class="rec-promises"><b>Your record, plainly:</b><ul>' +
+      '<li>Your record is free, forever.</li>' +
+      '<li>We never sell your data or your contact info.</li>' +
+      '<li>Pros see your home\'s details only when you share them on a request.</li>' +
+      '<li>Texts stop the moment you say stop.</li>' +
+      '<li>Delete your identity anytime — the home\'s work history stays with the home, like a deed.</li>' +
+      '</ul></div>';
+
+    body.innerHTML = html;
+
+    const claimForm = document.getElementById('claim-form');
+    if (claimForm) claimForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const st = document.getElementById('claim-status');
+      const btn = claimForm.querySelector('button');
+      btn.disabled = true; st.className = 'form-status'; st.textContent = '…';
+      const payload = { name: claimForm.name.value };
+      if (claimForm.address_line1){
+        payload.address_line1 = claimForm.address_line1.value;
+        payload.city = claimForm.city.value;
+        payload.state = claimForm.state.value;
+        payload.zip = claimForm.zip.value;
+      }
+      const { data: r } = await HOME.api('/record/' + token + '/claim', { method:'POST', body: payload });
+      if (r.ok){
+        if (r.token && r.token !== token){ location.href = '/record/' + r.token; return; }
+        load();
+      } else {
+        btn.disabled = false;
+        st.className = 'form-status is-error';
+        st.textContent = r.error === 'address_required' ? 'Enter the street address and ZIP.'
+          : r.error === 'address_mismatch' ? 'That address doesn\'t match this record.'
+          : r.error === 'rate_limited' ? 'Too many attempts — try later.'
+          : 'Couldn\'t claim — try again.';
+      }
+    });
+
+    body.querySelectorAll('[data-optin]').forEach(b => b.addEventListener('click', async () => {
+      b.disabled = true;
+      const { data: r } = await HOME.api('/record/' + token + '/optin', { method:'POST', body:{ granted: b.dataset.optin } });
+      if (r.ok) load(); else b.disabled = false;
+    }));
+
+    const factForm = document.getElementById('fact-form');
+    if (factForm) factForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const st = document.getElementById('fact-status');
+      const btn = factForm.querySelector('button');
+      btn.disabled = true; st.className = 'form-status'; st.textContent = '…';
+      const { data: r } = await HOME.api('/record/' + token + '/fact', { method:'POST', body:{
+        fact_key: factForm.fact_key.value, fact_value: factForm.fact_value.value,
+      }});
+      if (r.ok) load();
+      else {
+        btn.disabled = false;
+        st.className = 'form-status is-error';
+        st.textContent = r.error === 'invalid_year' ? 'Enter a four-digit year.' : 'Couldn\'t save — try again.';
+      }
+    });
+  }
+
+  load();
+});
+</script>
+</body>
+</html>

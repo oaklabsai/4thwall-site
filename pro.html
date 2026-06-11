@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verified Pro — 4THWALL Home</title>
+<meta name="description" content="A 4THWALL verified pro — operational proof from a tamper-evident ledger, not star ratings.">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">HOME</span>
+  </a>
+  <div class="nav-links">
+    <a href="/find" class="nav-a">Find a pro</a>
+    <a href="/request" class="nav-a">Request service</a>
+    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero" id="hero">
+  <div class="loading">Loading verified record…</div>
+</section>
+<section class="section" id="body"></section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function(){
+  HOME.navAccount();
+  const esc = HOME.esc;
+  const hero = document.getElementById('hero');
+  const body = document.getElementById('body');
+
+  const m = location.pathname.match(/^\/pro\/([A-Za-z0-9_-]{1,40})$/);
+  if (!m){ hero.innerHTML = '<h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/find" style="color:var(--orange)">Back to search</a>.</p>'; return; }
+
+  const { data } = await HOME.api('/pro/' + encodeURIComponent(m[1]));
+  if (!data.ok){
+    hero.innerHTML = '<a class="crumb" href="/find">← Find a pro</a><h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/find" style="color:var(--orange)">Back to search</a>.</p>';
+    return;
+  }
+  const pro = data.pro;
+  document.title = esc(pro.business_name) + ' — 4THWALL Home';
+
+  hero.innerHTML = '<a class="crumb" href="/find">← Find a pro</a>' +
+    '<h1 class="page-h">' + esc(pro.business_name) + '</h1>' +
+    '<p class="page-sub">' + esc(HOME.tradeLabel(pro.trade)) + ' · ' + (Number(pro.ledger_entries) || 0) + ' entries in their operational ledger</p>' +
+    '<div class="badges"><span class="badge">✓ Verified network</span></div>' +
+    (data.stale ? '<div class="warn">Live verification briefly unavailable — last verified snapshot shown.</div>' : '') +
+    HOME.badgeChips(pro) +
+    '<p class="note">Verified numbers come from a tamper-evident operational ledger written as work happens — answered calls, booked jobs, completed work. Never self-reported, never star ratings from strangers. Rates only show once there\'s enough data to be honest.</p>';
+
+  body.innerHTML = '<h2 class="section-h">Request service</h2><div class="card-block">' +
+    '<form id="req-form">' +
+    '<div class="form-row"><label class="form-label" for="rname">Your name</label><input class="form-input" type="text" id="rname" name="name" maxlength="80"></div>' +
+    '<div class="form-row row-pair">' +
+    '<div><label class="form-label" for="rphone">Mobile number *</label><input class="form-input" type="tel" id="rphone" name="phone" required maxlength="20" placeholder="(516) 555-0142"></div>' +
+    '<div><label class="form-label" for="rzip">ZIP code</label><input class="form-input" type="text" id="rzip" name="zip" maxlength="10" inputmode="numeric"></div></div>' +
+    '<div class="form-row"><label class="form-label" for="rsummary">What do you need done?</label><textarea class="form-textarea" id="rsummary" name="summary" maxlength="500"></textarea></div>' +
+    '<div class="form-row"><label class="form-label" for="rurgency">How soon?</label>' +
+    '<select class="form-select" id="rurgency" name="urgency">' +
+    '<option value="planning">Planning ahead</option>' +
+    '<option value="soon" selected>In the next few weeks</option>' +
+    '<option value="emergency">It\'s urgent</option></select></div>' +
+    '<button class="pill pill-orange" type="submit">Send request</button>' +
+    '<span class="form-status" id="req-status"></span>' +
+    '<p class="fine">By sending, you agree ' + esc(pro.business_name) + ' may text or call you about this request. Your info goes only to the pro you chose — never sold, never broadcast. Reply STOP to any text to opt out.</p>' +
+    '</form></div>';
+
+  const form = document.getElementById('req-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const st = document.getElementById('req-status');
+    const btn = form.querySelector('button');
+    btn.disabled = true; st.className = 'form-status'; st.textContent = '…';
+    const { data: r } = await HOME.api('/request', { method:'POST', body:{
+      location_id: pro.location_id, trade: pro.trade,
+      name: form.name.value, phone: form.phone.value, zip: form.zip.value,
+      summary: form.summary.value, urgency: form.urgency.value,
+    }});
+    if (r.ok && (r.status === 'matched' || r.status === 'waitlist')){
+      body.innerHTML = '<h2 class="section-h">Request sent. ✓</h2>' +
+        '<div class="card-block"><p style="font-size:.92rem;line-height:1.65">' + esc(pro.business_name) + ' has your request and will text or call you shortly. When the job completes, it\'s added to your home\'s permanent record automatically.</p>' +
+        '<div style="margin-top:.9rem"><a class="pill pill-ghost pill-sm" href="/find">Back to search</a></div></div>';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      btn.disabled = false;
+      st.className = 'form-status is-error';
+      st.textContent = r.error === 'invalid_phone' ? 'Check the mobile number.' : r.error === 'rate_limited' ? 'Too many requests — try later.' : 'Couldn\'t send — try again.';
+    }
+  });
+});
+</script>
+</body>
+</html>

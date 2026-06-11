@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find a Pro — 4THWALL Home</title>
+<meta name="description" content="Search contractors in any ZIP code. Pros in the 4THWALL verified network carry badges earned from real operational records — answered calls, completed jobs, kept promises — not star ratings.">
+<link rel="canonical" href="https://4thwall.solutions/find">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#f7f3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">HOME</span>
+  </a>
+  <div class="nav-links">
+    <a href="/find" class="nav-a is-current">Find a pro</a>
+    <a href="/request" class="nav-a">Request service</a>
+    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero">
+  <div class="eyebrow">The directory · proof, not stars</div>
+  <h1 class="page-h" id="find-h">Every pro near you. <em>The proven ones, marked.</em></h1>
+  <p class="page-sub">Search any ZIP code. Pros in the 4THWALL verified network carry badges earned from real operational records — answered calls, completed jobs, kept promises — not star ratings from strangers.</p>
+
+  <form class="searchbar" id="search-form" method="GET" action="/find">
+    <input class="q" type="text" name="q" maxlength="60" placeholder="What does your home need?" autocomplete="off">
+    <input class="zip" type="text" name="zip" maxlength="5" inputmode="numeric" pattern="\d{5}" placeholder="ZIP" autocomplete="postal-code">
+    <input type="hidden" name="trade" value="">
+    <button class="pill pill-ink" type="submit">Search</button>
+  </form>
+  <div class="chips" id="trade-chips"></div>
+</section>
+
+<section class="section" id="results">
+  <div class="loading" id="find-loading">Loading the network…</div>
+</section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function(){
+  HOME.navAccount();
+
+  const params = new URLSearchParams(location.search);
+  const zip   = /^\d{5}$/.test(params.get('zip') || '') ? params.get('zip') : '';
+  const q     = (params.get('q') || '').slice(0, 60);
+  const trade = (params.get('trade') || '').toLowerCase().replace(/[^a-z_]/g, '');
+
+  const form = document.getElementById('search-form');
+  form.q.value = q;
+  form.zip.value = zip;
+  form.trade.value = trade;
+
+  // Trade chips: in search mode they re-run the search; on the landing state
+  // they prefill the trade and put the cursor in the ZIP box.
+  const chipsEl = document.getElementById('trade-chips');
+  const chip = (t, label, on) => zip
+    ? '<a class="' + (on ? 'on' : '') + '" href="/find?zip=' + zip + (t ? '&trade=' + t : '') + '">' + label + '</a>'
+    : '<button type="button" class="' + (on ? 'on' : '') + '" data-trade="' + t + '">' + label + '</button>';
+  chipsEl.innerHTML = (zip ? chip('', 'All', !trade) : '') +
+    HOME.TRADES.map(t => chip(t, HOME.tradeLabel(t), trade === t)).join('');
+  chipsEl.querySelectorAll('button[data-trade]').forEach(b => b.addEventListener('click', () => {
+    chipsEl.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    form.trade.value = b.dataset.trade;
+    form.zip.focus();
+  }));
+
+  const results = document.getElementById('results');
+  const esc = HOME.esc;
+
+  function requestCta(){
+    return '<div class="card-block" style="margin-top:1.6rem">' +
+      '<p style="font-size:.9rem"><b>Want us to do the legwork?</b> Tell us the job — a verified pro takes it, or we tell you honestly there isn\'t one yet.</p>' +
+      '<div style="margin-top:.8rem"><a class="pill pill-ghost pill-sm" href="/request' + (trade ? '?trade=' + trade : '') + '">Request service <span class="arr">→</span></a></div></div>';
+  }
+  const HOW = '<p class="note">Verified numbers come from a tamper-evident operational ledger written as work happens — answered calls, booked jobs, completed work. Never self-reported, never star ratings from strangers.</p>';
+
+  if (zip){
+    document.getElementById('find-h').innerHTML =
+      esc(q || (trade ? HOME.tradeLabel(trade) : 'Local pros')) + ' <em>in ' + esc(zip) + '</em>';
+    const { data } = await HOME.api('/search?zip=' + zip + '&q=' + encodeURIComponent(q) + '&trade=' + trade);
+    if (!data.ok){
+      results.innerHTML = '<div class="warn">Search is briefly unavailable — try again in a moment.</div>';
+      return;
+    }
+    let html = '';
+    if (data.stale) html += '<div class="warn">Live verification briefly unavailable — last verified snapshot shown.</div>';
+    if (data.verified.length) html += '<h2 class="section-h">Verified network</h2><div class="grid">' + data.verified.map(HOME.verifiedCard).join('') + '</div>';
+    html += '<h2 class="section-h">' + (data.verified.length ? 'Also nearby (listed)' : 'Nearby pros (listed)') + '</h2>';
+    if (!data.lens_configured){
+      html += '<div class="warn">Live local search is coming online — verified network results are shown. Check back soon.</div>';
+    } else if (data.listed === null){
+      html += '<div class="warn">Local search is briefly unavailable — try again in a moment.</div>';
+    } else if (!data.listed.length){
+      html += '<div class="empty">No listed pros came back for that search — try a broader keyword or a nearby ZIP.</div>';
+    } else {
+      html += '<div class="grid">' + data.listed.map(p => HOME.listedCard(p, zip)).join('') + '</div>';
+    }
+    html += '<p class="note">Listed pros come from public local data. <b>Verified</b> pros run their operations on 4THWALL — their badges are measured from real work and verified by a tamper-evident ledger.</p>';
+    html += requestCta();
+    results.innerHTML = html;
+  } else {
+    const { data } = await HOME.api('/roster');
+    let html = '';
+    if (data.ok && data.stale) html += '<div class="warn">Live verification is briefly unavailable — showing the last verified snapshot.</div>';
+    if (data.ok && data.pros.length){
+      html += '<h2 class="section-h">The verified network</h2><div class="grid">' + data.pros.map(HOME.verifiedCard).join('') + '</div>';
+    }
+    html += '<h2 class="section-h">How your home keeps score</h2>' +
+      '<div class="card-block"><p style="font-size:.9rem;line-height:1.65">When a verified pro finishes a job at your address, the work lands in your home\'s <b>permanent service record</b> — warranty windows, maintenance clocks, proof for insurance and resale. It arrives by text when the job\'s done. Free, forever.</p></div>' +
+      HOW + requestCta();
+    results.innerHTML = html;
+  }
+});
+</script>
+</body>
+</html>
