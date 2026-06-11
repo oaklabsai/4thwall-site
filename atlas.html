@@ -17,7 +17,166 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
 <link rel="stylesheet" href="/home.css">
 <style>
-.hero-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.8rem}
+/* ── Hero layout ── */
+:root{--line-2:rgba(26,26,24,.05)}
+.hero{min-height:auto;padding:5.5rem var(--pad) 3rem;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.hero-grid{position:absolute;inset:0;bottom:55%;opacity:.45;pointer-events:none;background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);background-size:60px 60px;mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%)}
+.hero-floor{position:absolute;left:-25%;right:-25%;top:55%;bottom:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(26,26,24,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(26,26,24,.13) 1px,transparent 1px);background-size:78px 78px;transform:perspective(820px) rotateX(58deg);transform-origin:center top;mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 35%,transparent 95%);opacity:.6}
+.hero-row{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr 1fr;gap:4.5rem;align-items:center;max-width:var(--max);margin:0 auto;width:100%}
+@media(max-width:880px){.hero-row{grid-template-columns:1fr;gap:2.6rem}}
+.hero-text{max-width:42rem}
+.hero-eyebrow{font-size:.78rem;color:var(--muted);margin-bottom:1.4rem;display:flex;align-items:center;gap:.55rem}
+.hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:atl-pulse 2.4s ease-in-out infinite}
+@keyframes atl-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.hero-h{font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,5.6vw,5rem);line-height:.98;letter-spacing:-0.035em;color:var(--ink)}
+.hero-h .ital{font-style:italic;font-weight:400}
+.hero-h .orange{color:var(--orange)}
+.hero-sub{margin-top:1.6rem;font-size:1rem;line-height:1.6;color:var(--muted);max-width:32rem}
+.hero-cta{margin-top:1.9rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+.hero-link{font-size:.9rem;color:var(--muted);display:inline-flex;align-items:center;gap:.4rem;transition:color .2s}
+.hero-link:hover{color:var(--ink)}
+.orbit{position:absolute;inset:0;pointer-events:none;z-index:2}
+.orbit-dot{position:absolute;width:6px;height:6px;background:var(--orange);border-radius:50%;opacity:.35;animation:atl-drift 14s linear infinite}
+.orbit-dot:nth-child(1){left:10%;top:55%;animation-duration:24s}
+.orbit-dot:nth-child(2){left:18%;top:30%;animation-duration:18s;animation-delay:-3s;background:var(--ink);opacity:.18}
+.orbit-dot:nth-child(3){left:80%;top:60%;animation-duration:22s;animation-delay:-7s;width:4px;height:4px}
+.orbit-dot:nth-child(4){left:45%;top:80%;animation-duration:16s;background:var(--ink);opacity:.18;width:3px;height:3px}
+.orbit-dot:nth-child(5){left:65%;top:18%;animation-duration:20s;animation-delay:-12s;width:5px;height:5px}
+@keyframes atl-drift{0%{transform:translate(0,0)}25%{transform:translate(30px,-20px)}50%{transform:translate(-10px,30px)}75%{transform:translate(-25px,-15px)}100%{transform:translate(0,0)}}
+/* ── Phone toggle ── */
+.phone-toggle-area{display:flex;flex-direction:column;align-items:center;gap:1.3rem;position:relative;width:100%}
+.phone-toggle{display:inline-flex;position:relative;background:rgba(247,243,236,.78);border:1px solid var(--line);border-radius:50px;padding:4px;backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);box-shadow:0 4px 14px rgba(26,26,24,.06);z-index:6}
+.phone-toggle-slider{position:absolute;top:4px;bottom:4px;background:var(--ink);border-radius:50px;transition:left .42s cubic-bezier(.16,1,.3,1),width .42s cubic-bezier(.16,1,.3,1);z-index:1;left:0;width:0}
+.phone-toggle-btn{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;font-weight:600;color:var(--muted);padding:.6rem 1rem;border:none;background:none;cursor:pointer;border-radius:50px;transition:color .3s ease;position:relative;z-index:2;white-space:nowrap;line-height:1}
+.phone-toggle-btn:hover{color:var(--ink)}
+.phone-toggle-btn.is-active{color:var(--cream)}
+@media(max-width:540px){.phone-toggle-btn{font-size:.54rem;padding:.55rem .8rem;letter-spacing:.11em}}
+/* ── Phone shell ── */
+.phone-stage{position:relative;width:100%;max-width:300px;margin:0 auto;aspect-ratio:9/19.5}
+.phone-stage::before{content:"";display:block;padding-top:216.67%}
+.phone-shell{position:absolute;inset:0}
+.phone-bezel{position:absolute;inset:0;border-radius:36px;padding:6px;background:linear-gradient(145deg,#3d3d3a 0%,#1a1a18 32%,#0a0a09 62%,#2c2c29 100%);box-shadow:0 22px 60px -22px rgba(0,0,0,.42),0 8px 20px -8px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1.5px rgba(255,255,255,.04)}
+.phone-bezel::before{content:"";position:absolute;left:-2.5px;top:14%;width:3px;height:26px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;z-index:5}
+.phone-bezel::after{content:"";position:absolute;left:-2.5px;top:30%;width:3px;height:42px;background:linear-gradient(180deg,#5d5d5a,#2c2c29);border-radius:0 2px 2px 0;box-shadow:0 56px 0 0 #2c2c29,0 56px 0 -1px #5d5d5a;z-index:5}
+.phone-screen{width:100%;height:100%;background:#fff;border-radius:30px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.phone-content{flex:1;min-height:0;position:relative;overflow:hidden;background:#fff}
+.phone-content > .screen-view{position:absolute;inset:0;display:flex;flex-direction:column;background:#fff;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.phone-toggle-area[data-active="client"] .client-screen,.phone-toggle-area[data-active="assistant"] .assistant-screen{opacity:1;pointer-events:auto}
+.phone-home-indicator{width:120px;height:4px;background:#1d1c1d;border-radius:2px;margin:.35rem auto .42rem;opacity:.85;flex-shrink:0}
+.phone-toggle-area[data-active="assistant"] .demo-island{width:104px!important;height:30px!important;border-radius:18px!important;padding:0!important}
+.phone-toggle-area[data-active="assistant"] .demo-island > *{opacity:0!important}
+.phone-subcap{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;font-weight:600;text-align:center;display:none;align-items:center;gap:.45rem;flex-wrap:wrap;justify-content:center}
+.phone-subcap .accent{color:var(--orange)}
+.phone-subcap .dot-sep{opacity:.4}
+.phone-toggle-area[data-active="client"] .client-subcap,.phone-toggle-area[data-active="assistant"] .assistant-subcap{display:inline-flex}
+.hero-vignette,.demo-tag{display:none!important}
+/* ── Demo chrome (status bar, island, stream, bubbles) ── */
+.phone-screen .sb-signal{display:inline-flex;align-items:flex-end;gap:1.5px;height:9px}
+.phone-screen .sb-signal i{display:block;background:currentColor;width:2.5px;border-radius:.5px}
+.phone-screen .sb-signal i:nth-child(1){height:30%}
+.phone-screen .sb-signal i:nth-child(2){height:50%}
+.phone-screen .sb-signal i:nth-child(3){height:70%}
+.phone-screen .sb-signal i:nth-child(4){height:100%}
+.phone-screen .sb-wifi{width:13px;height:9px;display:inline-block}
+.phone-screen .sb-bat{width:24px;height:11px;border:1px solid var(--ink);border-radius:3px;position:relative;padding:1px;display:inline-block}
+.phone-screen .sb-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--ink);border-radius:0 2px 2px 0}
+.phone-screen .sb-bat i{display:block;height:100%;width:78%;background:var(--ink);border-radius:1px}
+.phone-screen .bub.them{background:#e9e9eb;color:#0a0a0a}
+.phone-screen .demo-channel{display:none}
+.phone-screen .demo-scenario-tag{display:none}
+.phone-screen .demo-imessage-bar{flex-shrink:0;display:flex;align-items:center;gap:.45rem;padding:.5rem .65rem .55rem;background:#fff;border-top:1px solid rgba(0,0,0,.05);font-family:-apple-system,sans-serif}
+.phone-screen .demo-imessage-field{flex:1;background:#f1f1f3;border:1px solid #e0e0e2;border-radius:18px;padding:.45rem .8rem;font-size:.74rem;color:#9a9aa1;min-height:30px;display:flex;align-items:center;line-height:1}
+.phone-screen .demo-imessage-send{width:26px;height:26px;background:#dcdce0;color:#9a9aa1;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phone-screen .demo-imessage-send svg{width:13px;height:13px}
+.demo-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:104px;height:30px;background:#0a0a09;border-radius:20px;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:0 9px;transition:width .55s cubic-bezier(.34,1.56,.64,1),height .55s cubic-bezier(.34,1.56,.64,1)}
+.demo-island.expanded{width:86%;height:54px;border-radius:26px;padding:0 14px}
+.demo-island .di-icon{width:18px;height:18px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono);font-size:9px;color:#fff;font-weight:700}
+.demo-island.expanded .di-icon{width:30px;height:30px;font-size:11px}
+.demo-island .di-text{flex:1;color:#fff;font-size:.6rem;font-family:-apple-system,sans-serif;margin-left:8px;opacity:0;transition:opacity .25s ease .2s;overflow:hidden;white-space:nowrap}
+.demo-island.expanded .di-text{opacity:1}
+.demo-island .di-text strong{display:block;font-weight:600;font-size:.7rem;letter-spacing:-.005em}
+.demo-island .di-text span{display:block;font-size:.55rem;color:rgba(255,255,255,.6);margin-top:1px}
+.demo-island .di-pulse{width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 0 rgba(30,102,66,.65);animation:atl-diPulse 1.6s ease-in-out infinite;flex-shrink:0;opacity:0;transition:opacity .25s ease .2s}
+.demo-island.expanded .di-pulse{opacity:1}
+@keyframes atl-diPulse{0%,100%{box-shadow:0 0 0 0 rgba(30,102,66,.65)}50%{box-shadow:0 0 0 7px rgba(30,102,66,0)}}
+.demo-statusbar{display:flex;justify-content:space-between;align-items:center;padding:.95rem 1.5rem .35rem;font-family:-apple-system,sans-serif;font-size:.66rem;font-weight:600;color:var(--ink);height:54px;flex-shrink:0}
+.demo-statusbar .sb-r{display:flex;align-items:center;gap:5px}
+.demo-header{display:flex;align-items:center;gap:.7rem;padding:.4rem 1rem .8rem;border-bottom:1px solid rgba(26,26,24,.07);flex-shrink:0}
+.demo-avatar{width:34px;height:34px;border-radius:50%;background:var(--orange);color:var(--cream);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.78rem;font-family:var(--display);flex-shrink:0;transition:background .4s ease}
+.demo-name{font-size:.86rem;font-weight:500;line-height:1}
+.demo-channel{margin-left:auto;font-family:var(--mono);font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:rgba(26,26,24,.04);border:1px solid rgba(26,26,24,.08);padding:3px 6px;border-radius:7px;flex-shrink:0;white-space:nowrap}
+.demo-stream{flex:1;padding:.95rem .85rem 1.1rem;display:flex;flex-direction:column;gap:.5rem;overflow:hidden;position:relative}
+.demo-scenario-tag{position:absolute;top:.55rem;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;background:var(--cream);padding:3px 9px;border:1px solid rgba(26,26,24,.1);border-radius:99px;z-index:5;white-space:nowrap}
+.bub{padding:.55rem .8rem;border-radius:16px;font-size:.78rem;line-height:1.4;max-width:80%;opacity:0;transform:translateY(8px);animation:atl-pop .45s cubic-bezier(.16,1,.3,1) forwards}
+.bub.them{background:var(--cream-2);color:var(--ink);border-bottom-left-radius:5px;align-self:flex-start}
+.bub.us{background:var(--ink);color:var(--cream);border-bottom-right-radius:5px;align-self:flex-end}
+.bub .ts{display:block;font-family:var(--mono);font-size:.56rem;color:var(--dim);margin-top:.25rem;letter-spacing:.04em}
+.bub.us .ts{color:rgba(247,243,236,.55)}
+.bub.typing{background:var(--cream-2);color:var(--muted);align-self:flex-start;border-bottom-left-radius:5px;display:inline-flex;gap:3px;padding:.7rem .85rem}
+.bub.typing span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:atl-bounce 1s ease-in-out infinite}
+.bub.typing span:nth-child(2){animation-delay:.15s}
+.bub.typing span:nth-child(3){animation-delay:.3s}
+@keyframes atl-bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+@keyframes atl-pop{to{opacity:1;transform:translateY(0)}}
+.demo-dots{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
+.demo-dots span{width:6px;height:6px;border-radius:99px;background:rgba(26,26,24,.18);transition:all .4s ease;cursor:pointer}
+.demo-dots span.on{background:var(--orange);width:22px}
+/* ── Slack mock ── */
+.slack-scene{position:relative}
+.slack-scene .slack-mock-header{background:#fff;padding:.6rem .85rem .7rem;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;gap:.65rem;flex-shrink:0;position:relative}
+.slack-scene .slack-logo{width:26px;height:26px;flex-shrink:0;position:relative;transform:scale(1);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.slack-scene .slack-logo.pulse{animation:atl-slackPulse .55s cubic-bezier(.34,1.56,.64,1)}
+.slack-scene .slack-logo svg{width:100%;height:100%}
+.slack-scene .slack-unread{position:absolute;top:-6px;right:-7px;min-width:18px;height:18px;background:#e01e5a;border-radius:9px;border:2px solid #fff;z-index:2;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.62rem;font-weight:700;padding:0 .3rem;font-family:-apple-system,sans-serif;opacity:0;transform:scale(0);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;line-height:1}
+.slack-scene .slack-unread.active{opacity:1;transform:scale(1)}
+.slack-scene .slack-channel-info{flex:1;min-width:0;display:flex;align-items:center;gap:.3rem}
+.slack-scene .slack-channel-info-text{flex:1;min-width:0}
+.slack-scene .slack-channel-name-row{display:flex;align-items:center;gap:.3rem;color:#1d1c1d;font-family:-apple-system,sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:-.01em;line-height:1.15}
+.slack-scene .slack-messages{flex:1;overflow:hidden;background:#fff;position:relative;display:flex;flex-direction:column;justify-content:flex-end;mask-image:linear-gradient(to bottom,transparent 0,#000 6%,#000 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 6%,#000 100%)}
+.slack-scene .slack-messages-inner{display:flex;flex-direction:column;justify-content:flex-end;padding:.4rem 0}
+.slack-scene .slack-day-divider{display:flex;align-items:center;gap:.7rem;padding:.45rem 1rem;flex-shrink:0}
+.slack-scene .slack-day-divider .line{flex:1;height:1px;background:#e8e8e8}
+.slack-scene .slack-day-divider .label{font-size:.7rem;color:#616061;font-weight:700;border:1px solid #e8e8e8;padding:.18rem .6rem;border-radius:14px;background:#fff;font-family:-apple-system,sans-serif;letter-spacing:.02em}
+.slack-scene .slack-msg{padding:.5rem 1rem .55rem;display:flex;gap:.65rem;position:relative;flex-shrink:0;transition:max-height .4s ease,opacity .35s ease,transform .45s cubic-bezier(.16,1,.3,1),padding .35s ease;max-height:600px;opacity:1;transform:translateY(0)}
+.slack-scene .slack-msg.is-hidden{max-height:0;opacity:0;padding-top:0;padding-bottom:0;transform:translateY(10px);overflow:hidden;pointer-events:none}
+.slack-scene .slack-msg.fresh::before{content:"";position:absolute;inset:2px 6px;background:rgba(236,178,46,.16);border-radius:8px;z-index:0;pointer-events:none;animation:atl-freshFade 3.5s ease forwards}
+.slack-scene .slack-msg.fresh > *{position:relative;z-index:1}
+.slack-scene .slack-avatar{width:36px;height:36px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:.92rem;font-family:var(--display);font-style:italic;box-shadow:0 1px 1px rgba(0,0,0,.05)}
+.slack-scene .slack-avatar.alex{background:linear-gradient(135deg,#1e6642 0%,#2a8556 100%)}
+.slack-scene .slack-msg-body{flex:1;min-width:0}
+.slack-scene .slack-msg-head{display:flex;align-items:baseline;gap:.4rem;margin-bottom:.18rem;font-family:-apple-system,sans-serif;flex-wrap:wrap}
+.slack-scene .slack-msg-name{font-weight:700;font-size:.92rem;color:#1d1c1d;letter-spacing:-.005em}
+.slack-scene .slack-msg-tag{background:#ddd;color:#454447;font-size:.58rem;font-weight:700;padding:.05rem .32rem;border-radius:3px;letter-spacing:.02em;line-height:1.3;font-family:-apple-system,sans-serif}
+.slack-scene .slack-msg-time{font-size:.7rem;color:#616061}
+.slack-scene .slack-msg-text{font-size:.88rem;color:#1d1c1d;line-height:1.45;font-family:-apple-system,sans-serif}
+.slack-scene .slack-msg-text strong{font-weight:700}
+.slack-scene .slack-list{margin-top:.35rem;display:flex;flex-direction:column;gap:.2rem}
+.slack-scene .slack-list-item{display:flex;gap:.5rem;align-items:flex-start;font-size:.86rem}
+.slack-scene .slack-list-item .b{color:#616061;flex-shrink:0;font-weight:700;line-height:1.45}
+.slack-scene .slack-callout{margin-top:.5rem;padding:.5rem .65rem;background:rgba(30,102,66,.07);border-radius:6px;border-left:3px solid #1e6642;font-family:-apple-system,sans-serif;font-size:.82rem;color:#454447;line-height:1.45}
+.slack-scene .slack-callout strong{color:#1d1c1d;font-weight:700}
+.slack-scene .slack-input-bar{flex-shrink:0;background:#fff;padding:.5rem .7rem .4rem;border-top:1px solid #e8e8e8}
+.slack-scene .slack-input-wrap{background:#fff;border:1px solid #c0c0c0;border-radius:10px;overflow:hidden}
+.slack-scene .slack-input-top{padding:.55rem .8rem .45rem;font-family:-apple-system,sans-serif;font-size:.86rem;color:#8d8d8d;min-height:2.1rem;display:flex;align-items:center}
+.slack-scene .slack-input-bottom{display:flex;align-items:center;justify-content:space-between;padding:.25rem .5rem .4rem}
+.slack-scene .slack-input-tools{display:flex;align-items:center;gap:.1rem}
+.slack-scene .slack-it{width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:#454447;border-radius:5px}
+.slack-scene .slack-it svg{width:18px;height:18px;stroke:#454447;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.slack-scene .slack-it-text{font-family:-apple-system,sans-serif;font-size:1rem;font-weight:600;color:#454447}
+.slack-scene .slack-input-right{display:flex;align-items:center;gap:.1rem}
+.slack-scene .slack-send-btn{background:#ddd;color:#8d8d8d;width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-left:.2rem}
+.slack-scene .slack-send-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.slack-scene .slack-tab-bar{flex-shrink:0;background:#fff;padding:.5rem 0 .35rem;border-top:1px solid #e8e8e8;display:flex;justify-content:space-around;align-items:center}
+.slack-scene .slack-tab{display:flex;flex-direction:column;align-items:center;gap:.15rem;font-family:-apple-system,sans-serif;font-size:.62rem;color:#616061;font-weight:600;padding:.15rem .5rem;position:relative;flex:1}
+.slack-scene .slack-tab.active{color:#1d1c1d;font-weight:700}
+.slack-scene .slack-tab svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.slack-scene .slack-tab.active svg{stroke-width:2.4}
+.slack-scene .slack-tab .dot{position:absolute;top:-1px;right:calc(50% - 18px);width:8px;height:8px;background:#4a154b;border-radius:50%;border:1.5px solid #fff}
+.slack-scene .slack-home-indicator{width:120px;height:4px;background:#1d1c1d;border-radius:2px;margin:.35rem auto .4rem;opacity:.85}
+@keyframes atl-slackPulse{0%,100%{transform:scale(1)}30%{transform:scale(1.18)}60%{transform:scale(.96)}}
+@keyframes atl-freshFade{0%,30%{opacity:1}100%{opacity:0}}
+@media(prefers-color-scheme:dark){.slack-scene .slack-mock-header,.slack-scene .slack-messages,.slack-scene .slack-input-bar,.slack-scene .slack-tab-bar{background:#fff!important}.slack-scene .slack-msg-name,.slack-scene .slack-msg-text,.slack-scene .slack-msg-text strong,.slack-scene .slack-tab.active{color:#1d1c1d!important}.slack-scene .slack-msg-time,.slack-scene .slack-input-top,.slack-scene .slack-tab{color:#616061!important}}
+/* ── Rest of page ── */
 .daygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.2rem 0}
 .day{background:#fff;border:1px solid var(--line);border-radius:18px;padding:1.3rem 1.4rem}
 .day .n{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;color:var(--orange);margin-bottom:.6rem}
@@ -52,14 +211,200 @@
 </nav>
 
 <main>
-<section class="page-hero">
-  <div class="eyebrow">Atlas · for the trades</div>
-  <h1 class="page-h">Never miss a call. <em>Never lose a lead.</em></h1>
-  <p class="page-sub">You're on a roof, in a crawlspace, halfway through a pour — and the next customer is texting someone. Atlas answers in seconds, books the job, chases the quote, and asks for the review. Your phone stops being the bottleneck.</p>
-  <div class="hero-cta">
-    <a class="pill pill-orange" href="/contact.html">Book a walkthrough <span class="arr">→</span></a>
-    <a class="pill pill-ghost" href="/vesta">For homeowners — see Vesta</a>
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-floor"></div>
+  <div class="orbit">
+    <div class="orbit-dot"></div>
+    <div class="orbit-dot"></div>
+    <div class="orbit-dot"></div>
+    <div class="orbit-dot"></div>
+    <div class="orbit-dot"></div>
   </div>
+  <div class="hero-row">
+
+    <!-- LEFT: text -->
+    <div class="hero-text">
+      <div class="hero-eyebrow"><span class="dot"></span>Atlas · for the trades</div>
+      <h1 class="hero-h">Never miss a call.<br><span class="ital">Never lose a lead.</span></h1>
+      <p class="hero-sub">You're on a roof, in a crawlspace, halfway through a pour — and the next customer is texting someone. Atlas answers in seconds, books the job, chases the quote, and asks for the review.</p>
+      <div class="hero-cta">
+        <a class="pill pill-orange" href="/contact.html">Book a walkthrough <span class="arr">→</span></a>
+        <a class="hero-link" href="/vesta">For homeowners — Vesta →</a>
+      </div>
+    </div>
+
+    <!-- RIGHT: phone toggle -->
+    <div class="phone-toggle-area" id="phone-toggle-area" data-active="client">
+
+      <!-- Toggle pill -->
+      <div class="phone-toggle" id="phone-toggle" role="group" aria-label="View toggle">
+        <div class="phone-toggle-slider" id="toggle-slider"></div>
+        <button class="phone-toggle-btn is-active" data-target="client" onclick="atlSetActive('client')">Client experience</button>
+        <button class="phone-toggle-btn" data-target="assistant" onclick="atlSetActive('assistant')">Your experience</button>
+      </div>
+
+      <!-- Phone shell -->
+      <div class="phone-stage">
+        <div class="phone-shell">
+          <div class="phone-bezel">
+            <div class="phone-screen">
+
+              <!-- Status bar -->
+              <div class="demo-statusbar">
+                <span id="demo-time">9:41</span>
+                <div class="sb-r">
+                  <span class="sb-signal"><i></i><i></i><i></i><i></i></span>
+                  <svg class="sb-wifi" viewBox="0 0 24 18" fill="none">
+                    <path d="M2 7c2.7-2.7 6.3-4.3 10-4.3s7.3 1.6 10 4.3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                    <path d="M5.5 10.5c1.8-1.8 4.2-2.9 6.5-2.9s4.7 1.1 6.5 2.9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                    <path d="M9 14c.9-.9 2.1-1.5 3-1.5s2.1.6 3 1.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                    <circle cx="12" cy="17" r="1.4" fill="currentColor"/>
+                  </svg>
+                  <span class="sb-bat"><i></i></span>
+                </div>
+              </div>
+
+              <!-- Dynamic island -->
+              <div class="demo-island" id="demo-island">
+                <div class="di-icon" id="di-icon">4W</div>
+                <div class="di-text" id="di-text">
+                  <strong>Atlas answered</strong>
+                  <span>New lead incoming</span>
+                </div>
+                <div class="di-pulse"></div>
+              </div>
+
+              <!-- Phone content -->
+              <div class="phone-content">
+
+                <!-- CLIENT screen: iMessage -->
+                <div class="screen-view client-screen">
+                  <div class="demo-header">
+                    <div class="demo-avatar" id="demo-avatar">JM</div>
+                    <div>
+                      <div class="demo-name" id="demo-name">Jake M.</div>
+                      <div style="font-size:.64rem;color:var(--muted);line-height:1;margin-top:.1rem">iMessage</div>
+                    </div>
+                    <div class="demo-channel" id="demo-channel"></div>
+                  </div>
+                  <div class="demo-stream" id="demo-stream">
+                    <div class="demo-scenario-tag" id="demo-scenario-tag"></div>
+                  </div>
+                  <div class="demo-imessage-bar">
+                    <div class="demo-imessage-field">iMessage</div>
+                    <div class="demo-imessage-send">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ASSISTANT screen: Slack #assistant -->
+                <div class="screen-view assistant-screen slack-scene" id="slack-scene">
+                  <div class="slack-mock-header">
+                    <div class="slack-logo" id="slack-logo">
+                      <span class="slack-unread" id="slack-badge"></span>
+                      <svg viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.98 33.5a5.01 5.01 0 0 1-5 5.01 5.01 5.01 0 0 1-5.01-5.01 5.01 5.01 0 0 1 5.01-5h5v5Zm2.52 0a5.01 5.01 0 0 1 5.01-5 5.01 5.01 0 0 1 5 5.01v12.52a5.01 5.01 0 0 1-5 5.01 5.01 5.01 0 0 1-5.01-5.01V33.5Z" fill="#E01E5A"/>
+                        <path d="M21.5 18.98a5.01 5.01 0 0 1-5.01-5 5.01 5.01 0 0 1 5.01-5.01 5.01 5.01 0 0 1 5 5.01v5h-5Zm0 2.52a5.01 5.01 0 0 1 5 5.01 5.01 5.01 0 0 1-5.01 5h-12.52a5.01 5.01 0 0 1-5.01-5 5.01 5.01 0 0 1 5.01-5.01H21.5Z" fill="#36C5F0"/>
+                        <path d="M35.02 21.5a5.01 5.01 0 0 1 5.01-5 5.01 5.01 0 0 1 5 5.01 5.01 5.01 0 0 1-5 5h-5v-5Zm-2.52 0a5.01 5.01 0 0 1-5-5.01 5.01 5.01 0 0 1 5.01-5h12.51a5.01 5.01 0 0 1 5.01 5 5.01 5.01 0 0 1-5.01 5.01H32.5Z" fill="#2EB67D"/>
+                        <path d="M32.5 35.02a5.01 5.01 0 0 1 5 5.01 5.01 5.01 0 0 1-5.01 5 5.01 5.01 0 0 1-5-5.01v-5h5Zm0-2.52a5.01 5.01 0 0 1-5.01-5 5.01 5.01 0 0 1 5.01-5.01h12.51a5.01 5.01 0 0 1 5.01 5.01 5.01 5.01 0 0 1-5.01 5H32.5Z" fill="#ECB22E"/>
+                      </svg>
+                    </div>
+                    <div class="slack-channel-info">
+                      <div class="slack-channel-info-text">
+                        <div class="slack-channel-name-row">
+                          <span style="font-size:.82rem;color:#616061;font-weight:400">#</span>assistant
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slack-messages">
+                    <div class="slack-messages-inner">
+                      <div class="slack-day-divider"><div class="line"></div><span class="label">Today</span><div class="line"></div></div>
+                      <div class="slack-msg" id="slack-msg-lead">
+                        <div class="slack-avatar alex">A</div>
+                        <div class="slack-msg-body">
+                          <div class="slack-msg-head">
+                            <span class="slack-msg-name">Atlas</span>
+                            <span class="slack-msg-tag">APP</span>
+                            <span class="slack-msg-time">9:41 AM</span>
+                          </div>
+                          <div class="slack-msg-text">
+                            <strong>New lead — Jake M.</strong><br>
+                            Roof repair · 3-tab shingle. Asking for a quote.
+                          </div>
+                          <div class="slack-callout"><strong>Already replied:</strong> Intro sent, job details captured. Estimate window offered.</div>
+                        </div>
+                      </div>
+                      <div class="slack-msg is-hidden" id="slack-msg-sam">
+                        <div class="slack-avatar" style="background:linear-gradient(135deg,#0066cc,#0055aa)">S</div>
+                        <div class="slack-msg-body">
+                          <div class="slack-msg-head">
+                            <span class="slack-msg-name">Sam</span>
+                            <span class="slack-msg-time">9:43 AM</span>
+                          </div>
+                          <div class="slack-msg-text">Looks solid. Did it capture a callback number?</div>
+                        </div>
+                      </div>
+                      <div class="slack-msg is-hidden" id="slack-msg-brief">
+                        <div class="slack-avatar alex">A</div>
+                        <div class="slack-msg-body">
+                          <div class="slack-msg-head">
+                            <span class="slack-msg-name">Atlas</span>
+                            <span class="slack-msg-tag">APP</span>
+                            <span class="slack-msg-time">9:43 AM</span>
+                          </div>
+                          <div class="slack-msg-text">Yes — (203) 555-0182. Prefers texts. Flagged for Tuesday follow-up.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slack-input-bar">
+                    <div class="slack-input-wrap">
+                      <div class="slack-input-top">Message #assistant</div>
+                      <div class="slack-input-bottom">
+                        <div class="slack-input-tools">
+                          <div class="slack-it"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+                          <div class="slack-it"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+                          <div class="slack-it"><svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></div>
+                        </div>
+                        <div class="slack-input-right">
+                          <div class="slack-send-btn"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slack-tab-bar">
+                    <div class="slack-tab"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
+                    <div class="slack-tab active"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="dot"></span>DMs</div>
+                    <div class="slack-tab"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Channels</div>
+                    <div class="slack-tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>You</div>
+                  </div>
+                  <div class="slack-home-indicator"></div>
+                </div>
+
+              </div><!-- /phone-content -->
+
+              <div class="phone-home-indicator"></div>
+            </div><!-- /phone-screen -->
+          </div><!-- /phone-bezel -->
+        </div><!-- /phone-shell -->
+      </div><!-- /phone-stage -->
+
+      <!-- Scenario dots (below phone, for site.js SMS demo) -->
+      <div class="demo-dots" id="demo-dots"></div>
+
+      <!-- Subcaptions -->
+      <div class="phone-subcap client-subcap">
+        <span>Client texts in</span><span class="dot-sep">·</span><span class="accent">Atlas answers in seconds</span>
+      </div>
+      <div class="phone-subcap assistant-subcap">
+        <span>Your Slack</span><span class="dot-sep">·</span><span class="accent">#assistant</span><span class="dot-sep">·</span><span>every lead, logged</span>
+      </div>
+
+    </div><!-- /phone-toggle-area -->
+  </div><!-- /hero-row -->
 </section>
 
 <section class="section">
@@ -455,5 +800,129 @@
   </div>
 </footer>
 
+<script src="/site.js"></script>
+<script>
+/* ── Atlas phone toggle ── */
+(function(){
+  var area=document.getElementById('phone-toggle-area');
+  var slider=document.getElementById('toggle-slider');
+  var btns=document.querySelectorAll('#phone-toggle .phone-toggle-btn');
+  function pos(btn){
+    var tog=document.getElementById('phone-toggle');
+    var r=btn.getBoundingClientRect(),tr=tog.getBoundingClientRect();
+    slider.style.left=(r.left-tr.left)+'px';
+    slider.style.width=r.width+'px';
+  }
+  window.atlSetActive=function(target){
+    area.dataset.active=target;
+    btns.forEach(function(b){
+      if(b.dataset.target===target){b.classList.add('is-active');pos(b);}
+      else{b.classList.remove('is-active');}
+    });
+  };
+  window.addEventListener('load',function(){
+    var a=document.querySelector('#phone-toggle .phone-toggle-btn.is-active');
+    if(a)pos(a);
+  });
+  var startX=0,stage=document.querySelector('.phone-stage');
+  if(stage){
+    stage.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;},{passive:true});
+    stage.addEventListener('touchend',function(e){
+      var dx=e.changedTouches[0].clientX-startX;
+      if(Math.abs(dx)>40)atlSetActive(area.dataset.active==='client'?'assistant':'client');
+    },{passive:true});
+  }
+})();
+
+/* ── Atlas Slack 20s loop ── */
+(function(){
+  var scene=document.getElementById('slack-scene');
+  if(!scene)return;
+  var logo=document.getElementById('slack-logo');
+  var badge=document.getElementById('slack-badge');
+  var msgLead=document.getElementById('slack-msg-lead');
+  var msgSam=document.getElementById('slack-msg-sam');
+  var msgBrief=document.getElementById('slack-msg-brief');
+  var timers=[],running=false;
+  function clearAll(){timers.forEach(clearTimeout);timers=[];}
+  function schedule(fn,d){timers.push(setTimeout(fn,d));}
+  function pulse(){if(!logo)return;logo.classList.add('pulse');setTimeout(function(){logo.classList.remove('pulse');},600);}
+  function showBadge(n){if(!badge)return;badge.textContent=n;badge.classList.add('active');}
+  function hideBadge(){if(badge)badge.classList.remove('active');}
+  function showMsg(el){if(!el)return;el.classList.remove('is-hidden');el.classList.add('fresh');setTimeout(function(){el.classList.remove('fresh');},3500);}
+  function hideMsg(el){if(el)el.classList.add('is-hidden');}
+  function reset(){hideBadge();hideMsg(msgSam);hideMsg(msgBrief);if(msgLead)msgLead.classList.remove('is-hidden');}
+  function runCycle(){
+    reset();
+    schedule(function(){pulse();showBadge(1);},2000);
+    schedule(function(){showMsg(msgSam);showBadge(2);pulse();},5000);
+    schedule(function(){showMsg(msgBrief);showBadge(3);pulse();},9000);
+    schedule(function(){hideBadge();},13000);
+    schedule(function(){runCycle();},20000);
+  }
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting&&!running){running=true;runCycle();}
+      else if(!e.isIntersecting&&running){running=false;clearAll();}
+    });
+  },{threshold:0.3});
+  obs.observe(scene);
+  document.querySelectorAll('#phone-toggle .phone-toggle-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      if(btn.dataset.target==='assistant'&&!running){running=true;runCycle();}
+    });
+  });
+})();
+
+/* ── Revenue intelligence calculators ── */
+function fmt(n){return n>=1000000?'$'+(n/1000000).toFixed(1)+'M':n>=1000?'$'+(n/1000).toFixed(0)+'k':'$'+Math.round(n);}
+function riSwitchTab(id,btn){document.querySelectorAll('.ri-module .calc-panel').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.ri-module .pill-tab').forEach(function(b){b.classList.remove('active');});document.getElementById('ri-panel-'+id).classList.add('active');btn.classList.add('active');if(id==='missed')riCalcMissed();else if(id==='storm')riCalcStorm();else riCalcOffice();}
+function riCalcMissed(){
+  var jv=+document.getElementById('ml-jv').value,lw=+document.getElementById('ml-lw').value,rt=+document.getElementById('ml-rt').value,cr=+document.getElementById('ml-cr').value/100,ah=+document.getElementById('ml-ah').value/100;
+  document.getElementById('ml-jv-d').textContent='$'+jv.toLocaleString();
+  document.getElementById('ml-lw-d').textContent=lw+' leads';
+  document.getElementById('ml-rt-d').textContent=rt<60?rt+' min':Math.round(rt/60)+' hrs';
+  document.getElementById('ml-cr-d').textContent=cr*100+'%';
+  document.getElementById('ml-ah-d').textContent=Math.round(ah*100)+'%';
+  var slowLoss=rt>30?lw*4*0.25*cr*jv:lw*4*0.1*cr*jv;
+  var ahLoss=lw*4*ah*0.6*cr*jv;
+  var total=slowLoss+ahLoss;
+  var recovery=total*0.72;
+  document.getElementById('ml-big').textContent=fmt(total);
+  document.getElementById('ml-r1').textContent=fmt(slowLoss);
+  document.getElementById('ml-r2').textContent=fmt(ahLoss);
+  document.getElementById('ml-r3').textContent=fmt(total*12);
+  document.getElementById('ml-r4').textContent=fmt(recovery);
+}
+function riCalcStorm(){
+  var ev=+document.getElementById('st-ev').value,lp=+document.getElementById('st-lp').value,jv=+document.getElementById('st-jv').value,cr=+document.getElementById('st-cr').value/100,dr=+document.getElementById('st-dr').value/100;
+  document.getElementById('st-ev-d').textContent=ev+' events';
+  document.getElementById('st-lp-d').textContent=lp+' leads';
+  document.getElementById('st-jv-d').textContent='$'+jv.toLocaleString();
+  document.getElementById('st-cr-d').textContent=Math.round(cr*100)+'%';
+  document.getElementById('st-dr-d').textContent=Math.round(dr*100)+'%';
+  var total=ev*lp;var dropped=Math.round(total*dr);var captured=total-dropped;
+  var rev=captured*cr*jv;var lost=(dropped*cr*jv);var withAtlas=(total*cr*jv);
+  document.getElementById('st-big').textContent=fmt(rev);
+  document.getElementById('st-r1').textContent=total+' leads';
+  document.getElementById('st-r2').textContent=dropped+' leads';
+  document.getElementById('st-r3').textContent=fmt(lost);
+  document.getElementById('st-r4').textContent=fmt(withAtlas);
+}
+function riCalcOffice(){
+  var lw=+document.getElementById('om-lw').value,wg=+document.getElementById('om-wg').value,hr=+document.getElementById('om-hr').value;
+  document.getElementById('om-lw-d').textContent=lw+' leads';
+  document.getElementById('om-wg-d').textContent='$'+wg+'/hr';
+  document.getElementById('om-hr-d').textContent=hr+' hrs';
+  var base=wg*hr*52/12;var overhead=base*0.28;var total=base+overhead;
+  document.getElementById('om-big').textContent=fmt(total);
+  document.getElementById('om-r1').textContent=fmt(base);
+  document.getElementById('om-r2').textContent=fmt(overhead);
+  document.getElementById('om-r3').textContent=hr+' hrs/week';
+  document.getElementById('om-r4').textContent='0 hrs';
+  document.getElementById('om-r5').textContent='24/7 · bilingual';
+}
+window.addEventListener('DOMContentLoaded',function(){riCalcMissed();riCalcStorm();riCalcOffice();});
+</script>
 </body>
 </html>
