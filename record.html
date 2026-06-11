@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   const hero = document.getElementById('hero');
   const body = document.getElementById('body');
 
-  const m = location.pathname.match(/^\/record\/([0-9a-f]{32})$/);
+  const m = location.pathname.match(/^\/record\/([0-9a-f]{32})\/?$/);
   if (!m){
     hero.innerHTML = '<h1 class="page-h">Link expired.</h1><p class="page-sub">That record link isn\'t valid anymore. The most recent text from your contractor has a fresh one.</p>';
     return;

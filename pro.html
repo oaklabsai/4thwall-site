@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   const hero = document.getElementById('hero');
   const body = document.getElementById('body');
 
-  const m = location.pathname.match(/^\/pro\/([A-Za-z0-9_-]{1,40})$/);
+  const m = location.pathname.match(/^\/pro\/([A-Za-z0-9_-]{1,40})\/?$/);
   if (!m){ hero.innerHTML = '<h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/find" style="color:var(--orange)">Back to search</a>.</p>'; return; }
 
   const { data } = await HOME.api('/pro/' + encodeURIComponent(m[1]));

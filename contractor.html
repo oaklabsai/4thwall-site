@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   const hero = document.getElementById('hero');
   const body = document.getElementById('body');
 
-  const m = location.pathname.match(/^\/c\/([A-Za-z0-9_-]{8,200})$/);
+  const m = location.pathname.match(/^\/c\/([A-Za-z0-9_-]{8,200})\/?$/);
   if (!m){ hero.innerHTML = '<h1 class="page-h">Profile not found.</h1><p class="page-sub">Try <a href="/find" style="color:var(--orange)">searching again</a>.</p>'; return; }
   const placeId = m[1];
   const zipParam = new URLSearchParams(location.search).get('zip') || '';
