@@ -77,10 +77,21 @@ document.addEventListener('DOMContentLoaded', function(){
   const fragMatch = (location.hash || '').match(/access_token=([^&]+)/);
 
   if (tokenHash){
-    // Custom-SMTP template flow (?token_hash=...&type=email). The verify is a
-    // POST from this page — a click-to-confirm step would go here if link
-    // scanners ever start consuming these too.
-    establish({ token_hash: tokenHash });
+    // Scanner-proof: show a button so the token only exchanges on human click.
+    // Scanners open the link but don't click — token survives.
+    h.innerHTML = 'Click to <em>sign in.</em>';
+    sub.textContent = 'Your link arrived safely. One click and you\'re in.';
+    const btn = document.createElement('button');
+    btn.className = 'pill pill-orange';
+    btn.textContent = 'Sign in to 4THWALL';
+    btn.addEventListener('click', function(){
+      btn.disabled = true;
+      h.innerHTML = 'Signing you <em>in…</em>';
+      sub.textContent = 'One moment.';
+      action.innerHTML = '';
+      establish({ token_hash: tokenHash });
+    });
+    action.appendChild(btn);
   } else if (fragMatch){
     // Default GoTrue template flow: tokens arrive in the URL fragment.
     establish({ access_token: decodeURIComponent(fragMatch[1]) });
