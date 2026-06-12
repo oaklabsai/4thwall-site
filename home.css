@@ -556,6 +556,15 @@ body.v-dark .form-status.is-error{color:#e0917e}
 body.v-dark .form-status.is-success{color:var(--vgreen-2)}
 body.v-dark .kv{border-bottom-color:var(--vline)}
 
+/* ── Request targets (the one-ask form) ── */
+.rq-t{display:flex;align-items:flex-start;gap:.65rem;padding:.55rem 0;border-bottom:1px dashed var(--vline);cursor:pointer}
+.rq-t:last-child{border-bottom:none}
+.rq-t input{margin-top:.3rem;accent-color:var(--vgreen);flex-shrink:0}
+.rq-t .tmain{flex:1;min-width:0}
+.rq-t .tname{font-size:.9rem;font-weight:600;color:var(--vcream)}
+.rq-t .tmeta{font-size:.74rem;color:var(--vmut);line-height:1.45}
+.rq-t .tinst{font-family:var(--mono);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vgreen-2)}
+
 /* ── Rail shortlist (live compare picks) ── */
 .va-short-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem 0;border-bottom:1px dashed var(--vline);font-size:.82rem;color:var(--vcream)}
 .va-short-row:last-of-type{border-bottom:none}

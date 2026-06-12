@@ -118,6 +118,7 @@
     <div id="va-app" hidden>
       <div class="va-head">
         <h1 id="va-h1">Near <em></em></h1>
+        <button type="button" class="pill pill-orange pill-sm" id="va-req-btn">Get it done <span class="arr">→</span></button>
       </div>
       <p class="va-sub" id="va-sub">Reading the area…</p>
 
@@ -275,6 +276,7 @@ document.addEventListener('DOMContentLoaded', async function(){
       '</div>' +
       '<div class="spacer"></div>' +
       '<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">' +
+        '<button type="button" class="pill pill-orange pill-sm" data-req="' + esc(p.place_id) + '">Request <span class="arr">→</span></button>' +
         '<a class="pill pill-ghost pill-sm" href="' + href + '">View profile</a>' +
         cmpBtn(key) +
       '</div></div>';
@@ -306,9 +308,14 @@ document.addEventListener('DOMContentLoaded', async function(){
       return '<div class="va-short-row"><span>' + esc(o.name || '') + '</span>' +
         '<button type="button" class="x" data-cmp="' + esc(k) + '">remove</button></div>';
     }).join('') +
-    '<div style="margin-top:.7rem"><button type="button" class="pill pill-orange pill-sm" id="short-open">Compare the proof <span class="arr">→</span></button></div>';
+    '<div style="margin-top:.7rem;display:flex;gap:.5rem;flex-wrap:wrap">' +
+      '<button type="button" class="pill pill-orange pill-sm" id="short-open">Compare <span class="arr">→</span></button>' +
+      '<button type="button" class="pill pill-ghost pill-sm" id="short-req">Request these</button>' +
+    '</div>';
     const so = $('short-open');
     if (so) so.addEventListener('click', openCompare);
+    const sr = $('short-req');
+    if (sr) sr.addEventListener('click', () => enterRequest({ fromShortlist: true }));
   }
   function toggleCmp(key){
     if (S.cmp.has(key)) S.cmp.delete(key);
@@ -323,7 +330,9 @@ document.addEventListener('DOMContentLoaded', async function(){
   }
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-cmp]');
-    if (b) toggleCmp(b.dataset.cmp);
+    if (b){ toggleCmp(b.dataset.cmp); return; }
+    const r = e.target.closest('[data-req]');
+    if (r) enterRequest({ placeId: r.dataset.req, trade: S.trade });
   });
   $('cmp-clear').addEventListener('click', () => {
     S.cmp.clear();
@@ -700,6 +709,163 @@ document.addEventListener('DOMContentLoaded', async function(){
     renderCmpBar();
   }
 
+  // ── Request mode: the one-ask highway ──
+  // Say it once; Vesta carries it. Verified pros = instant relay (their own
+  // line). Listed pros = a one-time intro email with Reply-To = the homeowner.
+  async function enterRequest(opts){
+    opts = opts || {};
+    S.mode = 'request';
+    if (!opts.noPush) pushUrl(opts.replace);
+    showApp(); applyModeUi();
+    document.title = 'Get it done — Vesta | 4THWALL';
+    $('va-h1').innerHTML = 'Get it <em>done.</em>';
+    $('va-sub').innerHTML = 'Say it once — Vesta carries it to the pros you pick. Replies come straight to you.';
+    const c = $('va-center');
+    c.innerHTML =
+      '<form id="rq-form" class="card-block" style="max-width:640px;margin-top:.2rem">' +
+        '<div class="form-row row-pair">' +
+          '<div><label class="form-label" for="rq-trade">What kind of work</label><select class="form-select" id="rq-trade">' +
+            HOME.TRADES.map(t => '<option value="' + t + '"' + (t === (opts.trade || S.trade) ? ' selected' : '') + '>' + esc(tLabel(t)) + '</option>').join('') +
+          '</select></div>' +
+          '<div><label class="form-label" for="rq-urg">How soon</label><select class="form-select" id="rq-urg">' +
+            '<option value="planning">Planning ahead</option>' +
+            '<option value="soon" selected>In the next few weeks</option>' +
+            '<option value="emergency">It’s urgent</option>' +
+          '</select></div>' +
+        '</div>' +
+        '<div class="form-row"><label class="form-label" for="rq-sum">What’s going on? *</label>' +
+          '<textarea class="form-textarea" id="rq-sum" maxlength="500" placeholder="Roof leak over the garage — two new ceiling stains after last week’s rain."></textarea></div>' +
+        '<div class="form-row row-pair">' +
+          '<div><label class="form-label" for="rq-name">Your name</label><input class="form-input" id="rq-name" maxlength="80" autocomplete="name"></div>' +
+          '<div><label class="form-label" for="rq-email">Email — replies land here *</label><input class="form-input" id="rq-email" type="email" maxlength="254" autocomplete="email"></div>' +
+        '</div>' +
+        '<div class="form-row" id="rq-phone-row" hidden>' +
+          '<label class="form-label" for="rq-phone">Mobile — the verified pro texts you here *</label>' +
+          '<input class="form-input" id="rq-phone" type="tel" maxlength="20" autocomplete="tel" style="max-width:240px"></div>' +
+        '<div class="form-row"><label class="form-label">Who should hear about it</label><div id="rq-targets"><p class="va-short-empty">Loading nearby pros…</p></div></div>' +
+        '<button class="pill pill-orange" type="submit">Send it <span class="arr">→</span></button>' +
+        '<span class="form-status" id="rq-status"></span>' +
+        '<p class="fine" style="margin-top:.8rem">Verified pros get your request instantly on their own line. Listed pros get a one-time email from Vesta with reply-to you — your email goes only to the pros you pick. Never sold, never a mailing list.</p>' +
+      '</form><div id="rq-result"></div>';
+
+    let targetData = { verified: [], listed: [] };
+
+    async function loadTargets(){
+      const t = $('rq-trade').value;
+      const box = $('rq-targets');
+      if (!S.zip){
+        box.innerHTML =
+          '<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">' +
+            '<input class="form-input" id="rq-zip" maxlength="5" inputmode="numeric" pattern="\\d{5}" placeholder="ZIP" style="max-width:120px">' +
+            '<button type="button" class="pill pill-ghost pill-sm" id="rq-zip-go">Find pros</button>' +
+          '</div>';
+        $('rq-zip-go').addEventListener('click', () => {
+          const z = $('rq-zip').value.trim();
+          if (!/^\d{5}$/.test(z)) return;
+          S.zip = z; saveZip(z);
+          $('sb-zip').classList.add('show'); $('sb-zip-val').textContent = z;
+          loadTargets();
+        });
+        return;
+      }
+      box.innerHTML = '<p class="va-short-empty">Loading nearby pros…</p>';
+      const d = await fetchSearch(S.zip, t, '');
+      if (!d || !d.ok){ box.innerHTML = '<p class="va-short-empty">Couldn’t load nearby pros — try again in a moment.</p>'; return; }
+      targetData = { verified: d.verified || [], listed: Array.isArray(d.listed) ? d.listed : [] };
+      const pre = new Set();
+      if (opts.placeId) pre.add(opts.placeId);
+      else if (opts.fromShortlist) [...S.cmp.keys()].filter(k => k.startsWith('l:')).forEach(k => pre.add(k.slice(2)));
+      let html = '';
+      if (targetData.verified.length){
+        html += targetData.verified.map((p, i) =>
+          '<label class="rq-t"><input type="radio" name="rq-v" value="' + esc(p.location_id) + '"' + (i === 0 && !pre.size ? ' checked' : '') + '>' +
+          '<span class="tmain"><span class="tname">' + esc(p.business_name) + '</span>' +
+          '<span class="tmeta" style="display:block">' + esc(tLabel(p.trade)) + '</span>' +
+          '<span class="tinst">✓ verified · instant</span></span></label>').join('') +
+          '<label class="rq-t"><input type="radio" name="rq-v" value=""' + (pre.size ? ' checked' : '') + '>' +
+          '<span class="tmain"><span class="tmeta">Skip the verified network this time</span></span></label>';
+      }
+      if (targetData.listed.length){
+        const anyPre = [...pre].some(id => targetData.listed.some(p => p.place_id === id));
+        html += targetData.listed.slice(0, 8).map((p, i) => {
+          const on = anyPre ? pre.has(p.place_id) : i < 3;
+          return '<label class="rq-t"><input type="checkbox" name="rq-l" value="' + esc(p.place_id) + '"' + (on ? ' checked' : '') + '>' +
+            '<span class="tmain"><span class="tname">' + esc(p.name) + '</span>' +
+            '<span class="tmeta" style="display:block">' + [p.primary_type ? esc(p.primary_type) : '', p.rating != null && p.rating_count ? esc(p.rating) + '★ (' + fmtCount(p.rating_count) + ')' : ''].filter(Boolean).join(' · ') + '</span></span></label>';
+        }).join('') + '<p class="fine" style="margin-top:.4rem">Pick up to 5.</p>';
+      }
+      if (!html) html = '<p class="va-short-empty">No pros came back for that trade near ' + esc(S.zip) + ' — try another trade.</p>';
+      box.innerHTML = html;
+      syncPhoneRow();
+      box.addEventListener('change', syncPhoneRow);
+    }
+    function syncPhoneRow(){
+      const v = document.querySelector('input[name="rq-v"]:checked');
+      $('rq-phone-row').hidden = !(v && v.value);
+    }
+    $('rq-trade').addEventListener('change', loadTargets);
+    loadTargets();
+
+    $('rq-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const st = $('rq-status'), out = $('rq-result');
+      const btn = e.target.querySelector('button[type=submit]');
+      const fail = (msg) => { st.className = 'form-status is-error'; st.textContent = msg; btn.disabled = false; };
+      const trade = $('rq-trade').value, urgency = $('rq-urg').value;
+      const summary = $('rq-sum').value.trim().slice(0, 500);
+      const name = $('rq-name').value.trim().slice(0, 80);
+      const email = $('rq-email').value.trim();
+      const vPick = (document.querySelector('input[name="rq-v"]:checked') || {}).value || '';
+      const lPicks = [...document.querySelectorAll('input[name="rq-l"]:checked')].map(i => i.value).slice(0, 5);
+      if (!summary) return fail('Say what’s going on first.');
+      if (!vPick && !lPicks.length) return fail('Pick at least one pro.');
+      if (!email) return fail('Email needed — replies land there.');
+      const phone = $('rq-phone').value.trim();
+      if (vPick && !phone) return fail('The verified pro texts you — mobile needed.');
+      btn.disabled = true; st.className = 'form-status'; st.textContent = 'Sending…';
+
+      const lines = [];
+      if (vPick){
+        const { data: r } = await HOME.api('/request', { method:'POST', body:{
+          location_id: vPick, trade, zip: S.zip || '', summary, urgency, name, phone,
+        }});
+        const vName = esc(((targetData.verified.find(p => p.location_id === vPick)) || {}).business_name || 'The verified pro');
+        if (r.ok && (r.status === 'matched' || r.status === 'waitlist')){
+          lines.push('<div class="kv"><span>' + vName + '</span><b style="color:var(--vgreen-2)">✓ has it now — expect a text</b></div>');
+        } else {
+          lines.push('<div class="kv"><span>' + vName + '</span><b>couldn’t deliver — try again shortly</b></div>');
+        }
+      }
+      if (lPicks.length){
+        const { data: r } = await HOME.api('/request', { method:'POST', body:{
+          trade, zip: S.zip || '', summary, urgency, name, email, place_ids: lPicks,
+        }});
+        if (r.ok){
+          for (const t of (r.targets || [])){
+            const n = esc(t.name || 'Unknown');
+            const link = '<a href="/c/' + esc(t.place_id) + (S.zip ? '?zip=' + S.zip : '') + '" style="color:var(--vgreen-2)">profile</a>';
+            if (t.emailed) lines.push('<div class="kv"><span>' + n + '</span><b style="color:var(--vgreen-2)">✓ intro sent — reply lands at your email</b></div>');
+            else if (!r.email_configured) lines.push('<div class="kv"><span>' + n + '</span><b>logged — direct delivery coming online · ' + link + '</b></div>');
+            else lines.push('<div class="kv"><span>' + n + '</span><b>no public inbox found · ' + link + '</b></div>');
+          }
+        } else {
+          lines.push('<div class="kv"><span>Listed pros</span><b>' + (r.error === 'rate_limited' ? 'daily send limit reached — try tomorrow' : 'couldn’t send — try again shortly') + '</b></div>');
+        }
+      }
+      $('rq-form').hidden = true;
+      out.innerHTML = '<div class="card-block" style="max-width:640px;margin-top:.2rem">' +
+        '<h3 style="font-family:var(--display);font-weight:500;font-size:1.2rem;margin-bottom:.6rem">Request on its way. ✓</h3>' +
+        lines.join('') +
+        '<p class="note" style="margin-top:.8rem">Whoever answers, you talk to them directly — Vesta steps out of the conversation. Want more options? Widen the net any time.</p>' +
+        '<div style="margin-top:.9rem;display:flex;gap:.5rem;flex-wrap:wrap">' +
+          '<button type="button" class="pill pill-ghost pill-sm" id="rq-again">Send another request</button>' +
+          '<button type="button" class="pill pill-ghost pill-sm" id="rq-back">Back to browsing</button>' +
+        '</div></div>';
+      $('rq-again').addEventListener('click', () => enterRequest({ trade }));
+      $('rq-back').addEventListener('click', () => S.zip ? enterZip(S.zip) : showGate());
+    });
+  }
+
   // ── Wiring ──
   $('gate-form').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -707,6 +873,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (!/^\d{5}$/.test(z)){ $('gate-zip').focus(); return; }
     enterZip(z);
   });
+  $('va-req-btn').addEventListener('click', () => enterRequest({ trade: S.trade }));
   $('gate-lookup').addEventListener('click', () => enterLookup(''));
   $('sb-lookup').addEventListener('click', () => enterLookup(S.mode === 'name' ? S.q : ''));
   $('sb-address').addEventListener('click', () => enterAddress());
@@ -744,6 +911,10 @@ document.addEventListener('DOMContentLoaded', async function(){
     } else if (mode === 'myhome'){
       S.zip = zip || savedZip();
       enterMyHome({ noPush: true });
+    } else if (mode === 'request'){
+      S.zip = zip || savedZip();
+      S.trade = HOME.TRADES.includes(trade) ? trade : '';
+      enterRequest({ noPush: true, trade: S.trade });
     } else if (zip){
       enterZip(zip, { trade: HOME.TRADES.includes(trade) ? trade : '', q, noPush: true });
     } else if (savedZip()){
