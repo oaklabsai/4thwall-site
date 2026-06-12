@@ -17,18 +17,12 @@
 <body>
 
 <nav class="topnav">
-  <a href="/" class="nav-logo">
+  <a href="/vesta" class="nav-logo">
     <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
       <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
       <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
     </svg>
-    4THWALL<span class="home-tag">VESTA</span>
   </a>
-  <div class="nav-links">
-    <a href="/find" class="nav-a">Find a pro</a>
-    <a href="/address" class="nav-a">Check an address</a>
-    <span id="nav-acct"></span>
-  </div>
 </nav>
 
 <main>
@@ -73,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   if (next && next.startsWith('/') && !next.startsWith('//')) HOME.setNext(next);
 
   if (account){
-    const safe = (next && next.startsWith('/') && !next.startsWith('//')) ? next : '/find';
+    const safe = (next && next.startsWith('/') && !next.startsWith('//')) ? next : '/vesta';
     location.replace(safe);
     return;
   }
