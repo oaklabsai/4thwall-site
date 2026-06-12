@@ -1040,16 +1040,20 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 @media(max-width:960px){
   .pill-card{grid-template-columns:1fr;min-height:auto}
-  .pill-device{min-height:240px;background:inherit}
-  .mock-phone{width:40%;max-width:160px}
-  .mock-laptop{width:88%}
+  .pill-device{min-height:260px;background:inherit}
+  /* center mocks in the device row */
+  .pill-mock{right:auto;left:50%;bottom:0;transform:translateX(-50%);width:88%;max-width:500px}
+  .pill-mock-phone{right:auto;left:50%;top:auto;bottom:0;width:40%;max-width:165px;transform:translateX(-50%)}
+  .pill-card:hover .pill-mock{transform:translateX(-50%) scale(1.06) translateY(-28px)}
 }
 @media(max-width:600px){
-  .pill-copy{padding:1.4rem}
+  .pill-copy{padding:1.4rem 1.4rem 1.2rem}
   .pill-name{font-size:2.2rem}
   .pill-features li{font-size:.82rem}
   .pill-btn{padding:11px 20px;font-size:.82rem;margin-top:1.2rem}
-  .pill-device{min-height:180px}
+  .pill-device{min-height:200px}
+  .pill-mock{width:92%}
+  .pill-mock-phone{width:38%;max-width:140px}
 }
 
 /* ── Industry trust bar ── */
@@ -1094,7 +1098,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     </div>
     <div class="pill-device"></div>
     <div class="pill-mock" style="transition:transform .75s cubic-bezier(.22,1,.36,1);transform-origin:center 88%">
-      <svg viewBox="0 0 580 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;filter:drop-shadow(0 20px 50px rgba(0,0,0,.18))">
+      <svg viewBox="0 0 580 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
         <!-- MacBook lid -->
         <rect x="0" y="0" width="580" height="350" rx="14" fill="#c8c4bc"/>
         <rect x="6" y="6" width="568" height="338" rx="10" fill="#1c1c1e"/>
