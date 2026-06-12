@@ -56,6 +56,12 @@
         </svg>
         Find a pro
       </button>
+      <button type="button" class="vsb-item" id="sb-myhome">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+        Profile
+      </button>
 
     </nav>
 
@@ -481,6 +487,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   function applyModeUi(){
     const inFind = !S.mode;
     $('sb-find').classList.toggle('vsb-active', !S.mode);
+    $('sb-myhome').classList.toggle('vsb-active', S.mode === 'myhome');
     $('va-strip').style.display = inFind ? '' : 'none';
     $('va-qform').hidden = !inFind;
   }
@@ -848,6 +855,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (!/^\d{5}$/.test(z)){ $('gate-zip').focus(); return; }
     enterZip(z);
   });
+  $('sb-myhome').addEventListener('click', () => enterMyHome());
   $('sb-find').addEventListener('click', () => {
     if (S.zip) enterZip(S.zip);
     else { S.mode = ''; applyModeUi(); showGate(); pushUrl(); }
@@ -867,7 +875,10 @@ document.addEventListener('DOMContentLoaded', async function(){
     const trade = (p.get('trade') || '').toLowerCase().replace(/[^a-z_]/g, '');
     const q = (p.get('q') || '').slice(0, 80);
     const mode = p.get('mode');
-    if (mode === 'request'){
+    if (mode === 'myhome'){
+      S.zip = zip || savedZip();
+      enterMyHome({ noPush: true });
+    } else if (mode === 'request'){
       S.zip = zip || savedZip();
       S.trade = HOME.TRADES.includes(trade) ? trade : '';
       const place = (p.get('place') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 200);
