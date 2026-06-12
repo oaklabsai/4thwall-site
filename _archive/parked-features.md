@@ -119,3 +119,51 @@ $('va-req-btn').addEventListener('click', () => enterRequest({ trade: S.trade })
 ```js
 const HONEST = '<p class="note"><b>"No verified jobs on Vesta yet"</b> isn\'t an accusation — most pros have never been asked to prove their work this way. It means exactly what it says: nothing here is verified, so ask for references like you always would.</p>';
 ```
+
+---
+
+## Sign in / Profile (`mode=myhome`)
+
+**What it did:** Homeowner signs in via email magic link (no password). Unlocks a personal home file — claimed records, saved pros, tracked warranties. Sign-in happens inline inside Vesta (no separate page flow). Session stored as `hw_session` in localStorage.
+
+**Where the code is:** `signinPanelHtml()`, `hookSignin()`, `enterMyHome()` in `vesta.html` — fully functional. Routes `POST /signin` and `GET /file` on the Supabase edge fn.
+
+**Sidebar button to restore:**
+```html
+<button type="button" class="vsb-item" id="sb-myhome">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+  </svg>
+  Profile
+</button>
+```
+
+**Event listeners to restore:**
+```js
+$('sb-myhome').addEventListener('click', () => enterMyHome());
+// Sign in intercept on the foot link:
+$('nav-acct').addEventListener('click', (e) => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  const href = a.getAttribute('href') || '';
+  if (href.startsWith('/signin')){ e.preventDefault(); enterMyHome(); }
+});
+```
+
+**applyModeUi to restore:**
+```js
+$('sb-myhome').classList.toggle('vsb-active', S.mode === 'myhome');
+```
+
+**Boot handler to restore (in `boot()`):**
+```js
+if (mode === 'myhome'){
+  S.zip = zip || savedZip();
+  enterMyHome({ noPush: true });
+} else if ...
+```
+
+**ZIP persistence to restore (currently guest-only):** When sign-in is live, `saveZip` / `savedZip` already gate on `HOME.token()` — no changes needed there.
+
+**`signin.html`:** Kept as a minimal redirect shell for magic-link round-trips. When restoring, add back the nav links and remove `noindex` if the page should be discoverable.
+
