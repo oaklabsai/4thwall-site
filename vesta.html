@@ -914,7 +914,8 @@ document.addEventListener('DOMContentLoaded', async function(){
     } else if (mode === 'request'){
       S.zip = zip || savedZip();
       S.trade = HOME.TRADES.includes(trade) ? trade : '';
-      enterRequest({ noPush: true, trade: S.trade });
+      const place = (p.get('place') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 200);
+      enterRequest({ noPush: true, trade: S.trade, placeId: place.length >= 8 ? place : undefined });
     } else if (zip){
       enterZip(zip, { trade: HOME.TRADES.includes(trade) ? trade : '', q, noPush: true });
     } else if (savedZip()){
