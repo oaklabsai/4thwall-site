@@ -178,8 +178,8 @@ document.addEventListener('DOMContentLoaded', async function(){
   };
 
   function tLabel(t){ return t === 'hvac' ? 'HVAC' : HOME.tradeLabel(t); }
-  function savedZip(){ try { const z = localStorage.getItem(ZIP_KEY); return /^\d{5}$/.test(z||'') ? z : ''; } catch(_){ return ''; } }
-  function saveZip(z){ try { localStorage.setItem(ZIP_KEY, z); } catch(_){} }
+  function savedZip(){ if (!HOME.token()) return ''; try { const z = localStorage.getItem(ZIP_KEY); return /^\d{5}$/.test(z||'') ? z : ''; } catch(_){ return ''; } }
+  function saveZip(z){ if (!HOME.token()) return; try { localStorage.setItem(ZIP_KEY, z); } catch(_){} }
 
   function urlFor(){
     const p = new URLSearchParams();
