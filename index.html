@@ -974,48 +974,243 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     .dm-home-act{width:100%;justify-content:space-between}
   }
 </style>
-<section class="doormat wrap" id="products" data-screen-label="02 Products">
-  <div class="doormat-head" style="display:none" aria-hidden="true"></div>
+<!-- product pills styles -->
+<style>
+.pills-wrap{max-width:var(--max);margin:0 auto;padding:2.4rem var(--pad) 0;display:flex;flex-direction:column;gap:1.4rem}
 
-  <div class="doormat-grid">
-    <a class="dm-card dm-light dm-enter-l" href="/atlas">
-      <div class="dm-tag">For Contractors</div>
-      <div class="dm-mark"><span class="w">Atlas</span><span class="d">.</span></div>
-      <p class="dm-line">Run your operations.<br><em>We handle the busywork.</em></p>
-      <ul class="dm-caps">
-        <li>Inbound Lead Response</li>
+/* each pill is a wide horizontal card */
+.pill-card{display:grid;grid-template-columns:1fr 1fr;border-radius:28px;overflow:hidden;text-decoration:none;color:inherit;min-height:400px;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.pill-card:hover{transform:translateY(-3px)}
+
+/* LEFT — Atlas (cream) */
+.pill-atlas{background:linear-gradient(160deg,#f6f1e6 0%,#ede8dc 100%);border:1px solid rgba(26,26,24,.10);box-shadow:0 2px 4px rgba(20,16,12,.04),0 12px 32px -10px rgba(20,16,12,.12),inset 0 1px 0 rgba(255,255,255,.7)}
+/* RIGHT — Vesta (dark) */
+.pill-vesta{background:linear-gradient(160deg,#1a2e22 0%,#0e1a12 100%);border:1px solid rgba(255,255,255,.07);box-shadow:0 2px 4px rgba(0,0,0,.18),0 16px 40px -10px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.05)}
+.pill-vesta::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 100% 100%,rgba(30,102,66,.35),transparent 58%);pointer-events:none;border-radius:28px}
+.pill-vesta{position:relative}
+
+/* left col: copy */
+.pill-copy{padding:clamp(1.8rem,3vw,2.6rem);display:flex;flex-direction:column;gap:0;position:relative;z-index:1}
+.pill-tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);display:flex;align-items:center;gap:.55rem;margin-bottom:1.1rem}
+.pill-tag::before{content:"";width:22px;height:1px;background:currentColor;opacity:.7}
+.pill-vesta .pill-tag{color:rgba(100,200,140,.9)}
+.pill-name{font-family:var(--display);font-size:clamp(2.4rem,4vw,3.4rem);font-weight:300;letter-spacing:-.045em;line-height:.9;margin-bottom:1rem}
+.pill-name .dot{color:var(--orange)}
+.pill-vesta .pill-name{color:var(--cream)}
+.pill-vesta .pill-name .dot{color:rgba(100,200,140,.95)}
+.pill-tagline{font-family:var(--display);font-size:clamp(.95rem,1.4vw,1.2rem);font-weight:400;line-height:1.4;color:var(--muted);margin-bottom:1.4rem}
+.pill-vesta .pill-tagline{color:rgba(245,243,238,.75)}
+.pill-rule{width:100%;height:1px;background:rgba(26,26,24,.12);margin-bottom:1.2rem;flex-shrink:0}
+.pill-vesta .pill-rule{background:rgba(255,255,255,.12)}
+.pill-features{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.6rem;flex:1}
+.pill-features li{display:flex;align-items:center;gap:.65rem;font-size:.9rem;font-weight:450;color:var(--ink)}
+.pill-features li::before{content:"✓";color:var(--orange);font-size:.8rem;font-weight:700;flex-shrink:0;line-height:1}
+.pill-vesta .pill-features li{color:rgba(245,243,238,.88)}
+.pill-vesta .pill-features li::before{color:rgba(100,200,140,.9)}
+.pill-btn{display:inline-flex;align-items:center;gap:.6rem;background:var(--ink);color:var(--cream);border-radius:50px;padding:14px 26px;font-size:.9rem;font-weight:500;margin-top:1.8rem;align-self:flex-start;transition:background .2s,transform .2s;cursor:pointer;text-decoration:none}
+.pill-btn:hover{background:#2a2a26;transform:translateX(2px)}
+.pill-vesta .pill-btn{background:rgba(30,102,66,.85);border:1px solid rgba(100,200,140,.2)}
+.pill-vesta .pill-btn:hover{background:rgba(30,102,66,1)}
+.pill-btn .arr{font-family:var(--display);font-size:1.1rem;transition:transform .25s}
+.pill-btn:hover .arr{transform:translateX(3px)}
+
+/* right col: device mockup */
+.pill-device{position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+
+/* laptop mock (Atlas) */
+.mock-laptop{width:95%;max-width:440px;position:relative;margin-bottom:-2px;filter:drop-shadow(0 24px 48px rgba(0,0,0,.22));align-self:flex-end}
+.mock-laptop img{width:100%;display:block}
+
+/* phone mock (Vesta) */
+.mock-phone-wrap{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0}
+.mock-phone{width:52%;max-width:200px;position:relative;filter:drop-shadow(0 20px 44px rgba(0,0,0,.5));align-self:flex-end;margin-bottom:-4px}
+.mock-phone-body{background:#0a0a09;border-radius:32px;padding:10px;border:1.5px solid rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(0,0,0,.8)}
+.mock-phone-screen{background:#f2faf5;border-radius:24px;overflow:hidden;aspect-ratio:9/19.5}
+.mock-phone-notch{background:#0a0a09;width:36%;height:24px;border-radius:0 0 14px 14px;margin:0 auto -4px;position:relative;z-index:2}
+.mock-screen-content{padding:18px 14px 14px;font-size:11px;line-height:1.4;color:#1a1a18}
+.mock-screen-greeting{font-family:var(--display);font-size:13px;font-weight:500;margin-bottom:12px;line-height:1.3}
+.mock-screen-search{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:20px;padding:7px 12px;font-size:10px;color:rgba(0,0,0,.4);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.mock-screen-search::before{content:"⌕";font-size:12px;color:rgba(0,0,0,.3)}
+.mock-screen-label{font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(0,0,0,.5);margin-bottom:8px}
+.mock-screen-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.mock-screen-tile{background:#fff;border-radius:10px;padding:8px 4px 6px;text-align:center;font-size:8px;color:rgba(0,0,0,.6);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.mock-screen-tile .ico{font-size:14px;margin-bottom:3px}
+
+@media(max-width:900px){
+  .pill-card{grid-template-columns:1fr;min-height:auto}
+  .pill-device{min-height:220px}
+  .mock-phone{width:38%;max-width:140px}
+  .mock-laptop{width:90%}
+}
+@media(max-width:600px){
+  .pill-copy{padding:1.4rem}
+  .pill-name{font-size:2.2rem}
+  .pill-features li{font-size:.82rem}
+  .pill-btn{padding:11px 20px;font-size:.82rem;margin-top:1.2rem}
+  .pill-device{min-height:180px}
+}
+
+/* ── Industry trust bar ── */
+.trust-bar{padding:2.8rem var(--pad);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:2.8rem}
+.trust-bar-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);text-align:center;margin-bottom:1.6rem}
+.trust-bar-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}
+.trust-item{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:.6rem 1.8rem;border-right:1px solid var(--line);font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.trust-item:last-child{border-right:none}
+.trust-item svg{width:28px;height:28px;color:var(--ink);opacity:.55}
+@media(max-width:640px){.trust-item{padding:.5rem 1rem;font-size:.55rem}.trust-item svg{width:22px;height:22px}}
+
+/* ── Bottom value props ── */
+.value-strip{background:var(--ink);color:var(--cream);padding:3.6rem var(--pad)}
+.value-strip-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:3rem}
+@media(max-width:760px){.value-strip-inner{grid-template-columns:1fr;gap:2rem}}
+.vs-item{display:flex;align-items:flex-start;gap:1.1rem}
+.vs-icon{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vs-icon svg{width:22px;height:22px;color:rgba(255,255,255,.7)}
+.vs-body{}
+.vs-h{font-family:var(--display);font-size:1.25rem;font-weight:400;letter-spacing:-.02em;margin-bottom:.4rem}
+.vs-d{font-size:.86rem;line-height:1.65;color:rgba(245,243,238,.6)}
+</style>
+
+<!-- ── Product Pills ── -->
+<div class="pills-wrap" id="products">
+
+  <!-- Atlas -->
+  <a class="pill-card pill-atlas dm-enter-l" href="/atlas">
+    <div class="pill-copy">
+      <div class="pill-tag">For Contractors</div>
+      <div class="pill-name">Atlas<span class="dot">.</span></div>
+      <p class="pill-tagline">Run your operations.<br>We handle the busywork.</p>
+      <div class="pill-rule"></div>
+      <ul class="pill-features">
+        <li>Lead Management</li>
         <li>Scheduling &amp; Dispatch</li>
         <li>Estimates &amp; Proposals</li>
         <li>AI Follow-Ups</li>
-        <li>Review Campaigns</li>
         <li>Reporting &amp; Insights</li>
       </ul>
-      <div class="dm-foot">
-        <span class="dm-for">For trades contractors</span>
-        <span class="dm-cta"><span class="dm-cta-t">Explore Atlas</span> <span class="arr">→</span></span>
+      <span class="pill-btn">Explore Atlas <span class="arr">→</span></span>
+    </div>
+    <div class="pill-device">
+      <div class="mock-laptop">
+        <img src="/macbook.png" alt="Atlas dashboard on laptop" loading="lazy">
       </div>
-    </a>
+    </div>
+  </a>
 
-    <a class="dm-card dm-dark dm-enter-r" href="/vesta">
-      <div class="dm-tag">For Homeowners</div>
-      <div class="dm-mark"><span class="w">Vesta</span><span class="d">.</span></div>
-      <p class="dm-line">Find trusted pros.<br><em>Get the job done.</em></p>
-      <ul class="dm-caps">
+  <!-- Vesta -->
+  <a class="pill-card pill-vesta dm-enter-r" href="/vesta">
+    <div class="pill-copy">
+      <div class="pill-tag">For Homeowners</div>
+      <div class="pill-name">Vesta<span class="dot">.</span></div>
+      <p class="pill-tagline">Find trusted pros.<br>Get the job done.</p>
+      <div class="pill-rule"></div>
+      <ul class="pill-features">
         <li>Find Local Contractors</li>
         <li>Verified Work Records</li>
         <li>Search by Trade &amp; ZIP</li>
         <li>No Ads, No Pay-to-Play</li>
-        <li>Honest Public Record</li>
         <li>Free to Search</li>
       </ul>
-      <div class="dm-foot">
-        <span class="dm-for">For homeowners</span>
-        <span class="dm-cta"><span class="dm-cta-t">Explore Vesta</span> <span class="arr">→</span></span>
+      <span class="pill-btn">Explore Vesta <span class="arr">→</span></span>
+    </div>
+    <div class="pill-device">
+      <div class="mock-phone-wrap">
+        <div class="mock-phone">
+          <div class="mock-phone-body">
+            <div class="mock-phone-notch"></div>
+            <div class="mock-phone-screen">
+              <div class="mock-screen-content">
+                <div class="mock-screen-greeting">Good morning,<br>Sarah 👋<br><span style="font-size:11px;font-style:italic;color:rgba(0,0,0,.55)">How can we help you today?</span></div>
+                <div class="mock-screen-search">What service do you need?</div>
+                <div class="mock-screen-label">Popular Services</div>
+                <div class="mock-screen-grid">
+                  <div class="mock-screen-tile"><div class="ico">🌿</div>Landscaping</div>
+                  <div class="mock-screen-tile"><div class="ico">🔧</div>Plumbing</div>
+                  <div class="mock-screen-tile"><div class="ico">🖌️</div>Painting</div>
+                  <div class="mock-screen-tile"><div class="ico">🧹</div>Cleaning</div>
+                  <div class="mock-screen-tile"><div class="ico">❄️</div>HVAC</div>
+                  <div class="mock-screen-tile"><div class="ico">⚡</div>Electrical</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </a>
-  </div>
+    </div>
+  </a>
 
-</section>
+</div>
+
+<!-- ── Trusted by service businesses ── -->
+<div class="trust-bar wrap">
+  <div class="trust-bar-label">Trusted by service businesses across industries</div>
+  <div class="trust-bar-row">
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.5 2 3 6 3 10c0 2.4 1.2 4.5 3 6l6 6 6-6c1.8-1.5 3-3.6 3-6 0-4-3.5-8-9-8z"/><circle cx="12" cy="10" r="3"/></svg>
+      Landscaping
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      Plumbing
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M2 20h20"/></svg>
+      Painting
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+      Cleaning
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 16H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/><rect x="8" y="10" width="12" height="10" rx="2"/></svg>
+      HVAC
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Electrical
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+      &amp; More
+    </div>
+  </div>
+</div>
+
+<!-- ── Value strip ── -->
+<div class="value-strip">
+  <div class="value-strip-inner">
+    <div class="vs-item">
+      <div class="vs-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="vs-body">
+        <div class="vs-h">Respond Faster</div>
+        <p class="vs-d">AI-powered follow-ups and automations keep your pipeline moving.</p>
+      </div>
+    </div>
+    <div class="vs-item">
+      <div class="vs-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><polyline points="14 8 18 4 22 8"/></svg>
+      </div>
+      <div class="vs-body">
+        <div class="vs-h">Quote Faster</div>
+        <p class="vs-d">Accurate estimates in minutes, not hours.</p>
+      </div>
+    </div>
+    <div class="vs-item">
+      <div class="vs-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v2m0 8v2M9 9.5A2.5 2.5 0 0 1 12 8a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 0 0 5 2.5 2.5 0 0 0 3-2.5"/></svg>
+      </div>
+      <div class="vs-body">
+        <div class="vs-h">Win More Work</div>
+        <p class="vs-d">Better experience. Happier customers. More jobs won.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- legacy section anchor kept for scroll links -->
+<section id="products-legacy" style="display:none" aria-hidden="true"></section>
 
 
 
