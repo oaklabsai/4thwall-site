@@ -116,7 +116,7 @@ body::before{
 }
 
 /* ── nav (kept) ─────────────────────────────────── */
-nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:1.1rem var(--pad);backdrop-filter:saturate(140%) blur(6px);background:rgba(247,243,236,.55);border-bottom:1px solid transparent;transition:border-color .3s,background .3s}
+nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.4rem;backdrop-filter:saturate(140%) blur(6px);background:rgba(247,243,236,.55);border-bottom:1px solid transparent;transition:border-color .3s,background .3s}
 nav.topnav.scrolled{border-bottom-color:var(--line);background:rgba(247,243,236,.82)}
 .nav-logo{display:flex;align-items:center;gap:.7rem;line-height:1;color:var(--ink);text-decoration:none}
 .nav-logo:hover{color:var(--ink)}
@@ -813,8 +813,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         The AI layer<br>
         <span class="ital">your business runs on.</span>
       </h1>
-      <p class="hero-sub r d2">Two products. <em style="font-style:italic;color:var(--orange)">One operating system.</em></p>
-      <p class="hero-sub r d3" style="margin-top:.6rem;font-size:.94rem">4THWALL connects your operations and your customers<br>so you can run a smarter, faster, more profitable business.</p>
+      <p class="hero-sub r d2" style="font-size:1.15rem;font-family:var(--display);font-style:italic;color:var(--ink);font-weight:400">Two products. <em style="color:var(--orange)">One operating system.</em></p>
+      <p class="hero-sub r d3" style="margin-top:.75rem;font-size:.97rem;max-width:34rem">For contractors: Atlas handles every lead, follow-up, and job from first call to final review. For homeowners: Vesta finds you a verified local pro — fast, honest, no ads.</p>
       <div class="hero-vals r d4">
         <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Save Time</span>
         <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><polyline points="14 8 18 4 22 8"/></svg>Win More Jobs</span>
@@ -1017,30 +1017,29 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 /* right col: device mockup */
 .pill-device{position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
 
-/* laptop mock (Atlas) */
-.mock-laptop{width:95%;max-width:440px;position:relative;margin-bottom:-2px;filter:drop-shadow(0 24px 48px rgba(0,0,0,.22));align-self:flex-end}
-.mock-laptop img{width:100%;display:block}
+/* ── MacBook mockup (Atlas) ── */
+.mock-laptop-wrap{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;padding:1rem 0 0}
+.mock-laptop{position:relative;width:92%;max-width:460px;align-self:flex-end}
+/* Screen content sits behind the frame */
+.mock-laptop-screen{position:absolute;top:4.2%;left:8.2%;right:8.2%;bottom:18%;border-radius:3px;overflow:hidden}
+.mock-laptop-screen img{width:100%;height:100%;object-fit:cover;object-position:top left;display:block}
+/* Frame on top */
+.mock-laptop-frame{position:relative;z-index:2;width:100%;display:block;pointer-events:none}
 
-/* phone mock (Vesta) */
-.mock-phone-wrap{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0}
-.mock-phone{width:52%;max-width:200px;position:relative;filter:drop-shadow(0 20px 44px rgba(0,0,0,.5));align-self:flex-end;margin-bottom:-4px}
-.mock-phone-body{background:#0a0a09;border-radius:32px;padding:10px;border:1.5px solid rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(0,0,0,.8)}
-.mock-phone-screen{background:#f2faf5;border-radius:24px;overflow:hidden;aspect-ratio:9/19.5}
-.mock-phone-notch{background:#0a0a09;width:36%;height:24px;border-radius:0 0 14px 14px;margin:0 auto -4px;position:relative;z-index:2}
-.mock-screen-content{padding:18px 14px 14px;font-size:11px;line-height:1.4;color:#1a1a18}
-.mock-screen-greeting{font-family:var(--display);font-size:13px;font-weight:500;margin-bottom:12px;line-height:1.3}
-.mock-screen-search{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:20px;padding:7px 12px;font-size:10px;color:rgba(0,0,0,.4);margin-bottom:14px;display:flex;align-items:center;gap:6px}
-.mock-screen-search::before{content:"⌕";font-size:12px;color:rgba(0,0,0,.3)}
-.mock-screen-label{font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:rgba(0,0,0,.5);margin-bottom:8px}
-.mock-screen-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-.mock-screen-tile{background:#fff;border-radius:10px;padding:8px 4px 6px;text-align:center;font-size:8px;color:rgba(0,0,0,.6);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.mock-screen-tile .ico{font-size:14px;margin-bottom:3px}
+/* ── iPhone mockup (Vesta) ── */
+.mock-phone-wrap{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;padding-top:1.5rem}
+.mock-phone{position:relative;width:48%;max-width:210px;align-self:flex-end;filter:drop-shadow(0 24px 48px rgba(0,0,0,.55))}
+/* Screen content behind the frame */
+.mock-phone-screen{position:absolute;top:2.4%;left:4%;right:4%;bottom:2.4%;border-radius:42px;overflow:hidden}
+.mock-phone-screen img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+/* Frame on top */
+.mock-phone-frame{position:relative;z-index:2;width:100%;display:block;pointer-events:none}
 
-@media(max-width:900px){
+@media(max-width:960px){
   .pill-card{grid-template-columns:1fr;min-height:auto}
-  .pill-device{min-height:220px}
-  .mock-phone{width:38%;max-width:140px}
-  .mock-laptop{width:90%}
+  .pill-device{min-height:240px;background:inherit}
+  .mock-phone{width:40%;max-width:160px}
+  .mock-laptop{width:88%}
 }
 @media(max-width:600px){
   .pill-copy{padding:1.4rem}
@@ -1091,8 +1090,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <span class="pill-btn">Explore Atlas <span class="arr">→</span></span>
     </div>
     <div class="pill-device">
-      <div class="mock-laptop">
-        <img src="/macbook.png" alt="Atlas dashboard on laptop" loading="lazy">
+      <div class="mock-laptop-wrap">
+        <div class="mock-laptop">
+          <div class="mock-laptop-screen">
+            <img src="/atlas-screen.png" alt="Atlas — lead notification in Slack" loading="lazy">
+          </div>
+          <img class="mock-laptop-frame" src="/macbook-frame.png" alt="" aria-hidden="true" loading="lazy">
+        </div>
       </div>
     </div>
   </a>
@@ -1116,24 +1120,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="pill-device">
       <div class="mock-phone-wrap">
         <div class="mock-phone">
-          <div class="mock-phone-body">
-            <div class="mock-phone-notch"></div>
-            <div class="mock-phone-screen">
-              <div class="mock-screen-content">
-                <div class="mock-screen-greeting">Good morning,<br>Sarah 👋<br><span style="font-size:11px;font-style:italic;color:rgba(0,0,0,.55)">How can we help you today?</span></div>
-                <div class="mock-screen-search">What service do you need?</div>
-                <div class="mock-screen-label">Popular Services</div>
-                <div class="mock-screen-grid">
-                  <div class="mock-screen-tile"><div class="ico">🌿</div>Landscaping</div>
-                  <div class="mock-screen-tile"><div class="ico">🔧</div>Plumbing</div>
-                  <div class="mock-screen-tile"><div class="ico">🖌️</div>Painting</div>
-                  <div class="mock-screen-tile"><div class="ico">🧹</div>Cleaning</div>
-                  <div class="mock-screen-tile"><div class="ico">❄️</div>HVAC</div>
-                  <div class="mock-screen-tile"><div class="ico">⚡</div>Electrical</div>
-                </div>
-              </div>
-            </div>
+          <div class="mock-phone-screen">
+            <img src="/vesta-screen.png" alt="Vesta — find a contractor near you" loading="lazy">
           </div>
+          <img class="mock-phone-frame" src="/iphone-frame.png" alt="" aria-hidden="true" loading="lazy">
         </div>
       </div>
     </div>
