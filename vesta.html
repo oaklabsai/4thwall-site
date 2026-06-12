@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vesta — Stop hiring on faith. | 4THWALL</title>
-<meta name="description" content="When your home needs work, Vesta is where you start: every pro near you, the ones with proven work marked — and the proof itself, job by job. No ads. No pay-to-play. No stars from strangers.">
+<title>Vesta — Find local contractors. | 4THWALL</title>
+<meta name="description" content="Every contractor near you, the ones with proven work marked first. No ads, no pay-to-play. Free to join.">
 <link rel="canonical" href="https://4thwall.solutions/vesta">
 <link rel="icon" href="/logo.png" type="image/png">
 <meta name="theme-color" content="#0f1310">
-<meta property="og:title" content="Vesta — Stop hiring on faith.">
-<meta property="og:description" content="Every pro near you, the proven ones marked. No ads, no pay-to-play, no stars from strangers.">
+<meta property="og:title" content="Vesta — Find local contractors.">
+<meta property="og:description" content="Every pro near you, the proven ones marked. No ads, no pay-to-play. Free to join.">
 <meta property="og:url" content="https://4thwall.solutions/vesta">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,18 +18,162 @@
 <link rel="stylesheet" href="/home.css">
 <script src="/home.js" defer></script>
 <style>
-/* Page-local layout for the account grid (colors come from home.css .vacct). */
-.usegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:1rem;margin:1.2rem 0 0}
-.use{border:1px solid var(--vline);border-radius:18px;padding:1.25rem 1.35rem;display:flex;flex-direction:column;gap:.45rem}
-.use .n{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase}
-.use h3{font-family:var(--display);font-size:1.1rem;font-weight:500;letter-spacing:-.02em}
-.use p{font-size:.81rem;line-height:1.6}
-.vsplit{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center}
-@media(max-width:840px){.vsplit{grid-template-columns:1fr}}
+/* ── VESTA MARKETPLACE PAGE (vesta.html only) ─────────────── */
+
+/* Hero: compact dark band, search front and center */
+.vm-hero{
+  background:
+    radial-gradient(900px 420px at 80% -100px,rgba(103,198,148,.13),transparent 60%),
+    #0f1310;
+  color:#f2eee5;
+  padding:clamp(2.8rem,6vw,5rem) var(--pad) clamp(2.4rem,5vw,4rem);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.vm-hero::after{ /* grain */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+.vm-hero-inner{position:relative;z-index:1;max-width:680px;margin:0 auto}
+.vm-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#67c694;margin-bottom:1rem}
+.vm-h1{font-family:var(--display);font-size:clamp(2.4rem,6vw,4rem);font-weight:500;line-height:1.04;letter-spacing:-.035em;color:#f2eee5;margin-bottom:.9rem}
+.vm-tagline{font-size:clamp(.9rem,1.6vw,1.05rem);color:rgba(242,238,229,.64);line-height:1.65;margin-bottom:1.8rem;max-width:50ch;margin-left:auto;margin-right:auto}
+.vm-search{display:flex;gap:.45rem;background:rgba(242,238,229,.07);border:1px solid rgba(242,238,229,.22);border-radius:50px;padding:.35rem .35rem .35rem 1.2rem;max-width:460px;margin:0 auto}
+.vm-search input{flex:1;background:transparent;border:none;font-family:var(--body);font-size:1rem;color:#f2eee5;outline:none;padding:.55rem .2rem;letter-spacing:.12em;font-weight:500;min-width:0}
+.vm-search input::placeholder{color:rgba(242,238,229,.38);letter-spacing:.04em;font-weight:400;font-size:.94rem}
+.vm-search input:focus{outline:none}
+
+/* Market body: 3-column layout */
+.vm-market{
+  display:grid;
+  grid-template-columns:218px 1fr 252px;
+  gap:1rem;
+  padding:1.2rem var(--pad) 0;
+  max-width:1340px;
+  margin:0 auto;
+  width:100%;
+  align-items:start;
+}
+@media(max-width:1060px){.vm-market{grid-template-columns:200px 1fr}}
+@media(max-width:760px){.vm-market{grid-template-columns:1fr}.vm-right{display:none}}
+
+/* Shared panel card */
+.vm-panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:1.2rem 1.25rem;
+  margin-bottom:.85rem;
+}
+.vm-panel:last-child{margin-bottom:0}
+.vm-phead{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:.9rem}
+
+/* Left column */
+.vm-left{display:flex;flex-direction:column}
+
+.vm-stats-row{display:flex;gap:1rem;margin:.5rem 0 1rem}
+.vm-stat{flex:1}
+.vm-stat .sn{font-family:var(--display);font-size:1.9rem;font-weight:500;letter-spacing:-.03em;line-height:1}
+.vm-stat .sl{font-size:.72rem;color:var(--muted);margin-top:.2rem}
+
+.vm-trades{display:flex;flex-direction:column;gap:.28rem;margin-top:.6rem}
+.vm-trade{display:flex;align-items:center;gap:.6rem;padding:.48rem .65rem;border-radius:8px;font-size:.82rem;color:var(--muted);cursor:pointer;border:none;background:transparent;text-align:left;font-family:inherit;transition:background .13s,color .13s}
+.vm-trade svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.6}
+.vm-trade:hover{background:var(--cream-2);color:var(--ink)}
+.vm-trade.vm-on{background:var(--ink);color:var(--cream)}
+.vm-trade.vm-on svg{opacity:1}
+
+.vm-acct-list{list-style:none;margin:.2rem 0 1rem}
+.vm-acct-list li{display:flex;align-items:flex-start;gap:.5rem;font-size:.82rem;color:var(--muted);padding:.3rem 0;border-bottom:1px dashed var(--line);line-height:1.4}
+.vm-acct-list li:last-child{border-bottom:none}
+.vm-acct-list li::before{content:"✓";color:var(--orange);font-size:.7rem;margin-top:.15rem;flex-shrink:0}
+
+/* Center column */
+.vm-center{min-width:0}
+
+.vm-filterbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.85rem}
+.vm-filter-chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.vm-chip{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;border-radius:50px;padding:.38rem .8rem;border:1px solid var(--line);color:var(--muted);background:transparent;cursor:pointer;transition:all .13s;font-family:var(--mono)}
+.vm-chip:hover{border-color:var(--ink);color:var(--ink)}
+.vm-chip.vm-on{background:var(--ink);border-color:var(--ink);color:var(--cream)}
+.vm-name-link{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;transition:color .15s}
+.vm-name-link:hover{color:var(--ink)}
+
+.vm-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.85rem}
+
+/* contractor card in marketplace style */
+.vm-card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:1.1rem 1.15rem;display:flex;flex-direction:column;gap:.4rem;
+  transition:box-shadow .2s,transform .18s,border-color .18s;
+  cursor:pointer;
+}
+.vm-card:hover{box-shadow:0 14px 36px -18px rgba(26,26,24,.22);transform:translateY(-1px);border-color:rgba(26,26,24,.22)}
+.vm-card .vc-badge{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:.2rem}
+.vm-card h3{font-family:var(--display);font-size:1.05rem;font-weight:500;letter-spacing:-.018em;line-height:1.2}
+.vm-card .vc-trade{font-size:.78rem;color:var(--muted)}
+.vm-card .vc-fp{font-size:.74rem;color:var(--muted);line-height:1.5;border-top:1px dashed var(--line);padding-top:.5rem;margin-top:.3rem}
+.vm-card .vc-fp b{color:var(--ink)}
+.vm-card .spacer{flex:1}
+.vm-card .vc-cta{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-top:.5rem;transition:color .15s}
+.vm-card .vc-cta:hover{color:var(--ink)}
+
+/* listed (unverified) card in marketplace */
+.vm-card.vm-listed{border-style:dashed}
+.vm-card.vm-listed h3{color:var(--ink)}
+.vm-card.vm-listed .vc-badge{color:var(--dim)}
+
+/* empty / loading states */
+.vm-empty{background:var(--cream-2);border:1px dashed var(--line);border-radius:14px;padding:2rem 1.4rem;text-align:center;color:var(--muted);font-size:.88rem;grid-column:1/-1;line-height:1.65}
+.vm-loading{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:1.2rem 0;animation:homePulse 1.4s ease-in-out infinite;grid-column:1/-1}
+
+/* Right column */
+.vm-right{display:flex;flex-direction:column}
+.vm-feed-list{list-style:none;margin:0}
+.vm-feed-list li{display:flex;flex-direction:column;gap:.15rem;padding:.65rem 0;border-bottom:1px dashed var(--line);font-size:.82rem;line-height:1.5}
+.vm-feed-list li:last-child{border-bottom:none}
+.vm-feed-list .fi-mo{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.vm-feed-list .fi-job{font-weight:600;color:var(--ink)}
+.vm-feed-list .fi-where{font-size:.75rem;color:var(--muted)}
+
+/* ── BELOW-FOLD: compressed editorial ─────────────────────── */
+.vm-below{
+  background:var(--cream);
+  border-top:1px solid var(--line);
+  margin-top:2rem;
+  padding:clamp(2rem,5vw,4rem) var(--pad);
+}
+.vm-why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.2rem 0 2.4rem}
+.vm-why-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.3rem}
+.vm-why-card .wk{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:.5rem}
+.vm-why-card h3{font-family:var(--display);font-size:1.05rem;font-weight:500;letter-spacing:-.018em;margin-bottom:.4rem}
+.vm-why-card p{font-size:.8rem;color:var(--muted);line-height:1.65}
+
+.vm-proof-split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3rem);align-items:center;margin:2.4rem 0}
+@media(max-width:760px){.vm-proof-split{grid-template-columns:1fr}}
+
+.vm-section-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:.8rem}
+.vm-h2{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.2rem);font-weight:500;letter-spacing:-.028em;line-height:1.1;max-width:28ch}
+.vm-h2 em{font-style:italic;color:var(--orange);font-weight:400}
+.vm-note{font-size:.88rem;line-height:1.7;color:var(--muted);margin-top:.9rem;max-width:52ch}
+.vm-note b{color:var(--ink)}
+
+.vm-promises{list-style:none;margin:1rem 0 2rem}
+.vm-promises li{display:flex;gap:.6rem;font-size:.86rem;color:var(--muted);padding:.4rem 0;border-bottom:1px dashed var(--line);line-height:1.55}
+.vm-promises li:last-child{border-bottom:none}
+.vm-promises li::before{content:"·";color:var(--orange);font-weight:700;flex-shrink:0}
+.vm-promises b{color:var(--ink)}
+
+.vm-cta-band{background:var(--ink);border-radius:20px;padding:clamp(1.8rem,4vw,2.8rem) clamp(1.5rem,4vw,2.8rem);display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-top:.4rem}
+.vm-cta-copy h3{font-family:var(--display);font-size:clamp(1.3rem,2.8vw,1.9rem);font-weight:500;letter-spacing:-.025em;color:var(--cream)}
+.vm-cta-copy p{font-size:.86rem;color:rgba(245,243,238,.62);margin-top:.35rem}
+.vm-cta-actions{display:flex;gap:.7rem;flex-wrap:wrap;flex-shrink:0}
 </style>
 </head>
-<body class="v-dark">
+<body>
 
+<!-- ── Nav ── -->
 <nav class="topnav">
   <a href="/" class="nav-logo">
     <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
@@ -47,62 +191,132 @@
 </nav>
 
 <main>
-<!-- ── HERO: the problem, then the product — immediately usable ── -->
-<section class="vhero">
-  <div class="eyebrow">Vesta · for the home</div>
-  <h1>Stop hiring on <em>faith.</em></h1>
-  <p class="sub">Letting someone work on your home is one of the biggest checks you'll ever write to a stranger. Vesta is where you start: every pro near you, the ones with <b style="color:var(--vcream)">proven work</b> marked — and the proof itself, job by job. No ads. No pay-to-play. No stars from strangers.</p>
 
-  <div class="vlab" style="margin-top:2.2rem">What do you need done?</div>
-  <div class="vtiles">
-    <a class="vtile" href="/find?trade=roofing"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"><path d="M2.5 11.5 12 3.5l9.5 8"/><path d="M5.5 9.4V20h13V9.4"/><path d="M15.5 6.6V4.5h2.5v4.1"/></svg><span class="tl">Roofing</span><span class="ts">Leaks, replacement, storm checks</span></a>
-    <a class="vtile" href="/find?trade=paving"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"><path d="M7.5 4 4.5 20"/><path d="M16.5 4l3 16"/><path d="M12 5.5v2.6"/><path d="M12 11.2v2.6"/><path d="M12 16.9v2.6"/></svg><span class="tl">Paving</span><span class="ts">Driveways, aprons, sealcoat</span></a>
-    <a class="vtile" href="/find?trade=hvac"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"><circle cx="12" cy="13" r="7.5"/><path d="M12 13l3.2-3.2"/><path d="M12 5.5V4"/><path d="M4.5 13H3"/><path d="M21 13h-1.5"/></svg><span class="tl">HVAC</span><span class="ts">Heat, AC, tune-ups</span></a>
-    <a class="vtile" href="/find?trade=plumbing"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"><path d="M12 3.5s6 6.4 6 10.2a6 6 0 0 1-12 0C6 9.9 12 3.5 12 3.5Z"/></svg><span class="tl">Plumbing</span><span class="ts">Repairs, water heaters, repipes</span></a>
-    <a class="vtile" href="/find?trade=electrical"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z"/></svg><span class="tl">Electrical</span><span class="ts">Panels, wiring, fixtures</span></a>
-    <a class="vtile" href="/find?trade=lawn_care"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"><path d="M12 20.5V13"/><path d="M12 14.5C12 10.5 9 8.5 5 8.5c0 4 3 6 7 6Z"/><path d="M12 12.5c0-4 3-6 7-6 0 4-3 6-7 6Z"/></svg><span class="tl">Lawn care</span><span class="ts">Cleanups, seasonal upkeep</span></a>
-    <a class="vtile" href="/find"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"><path d="M12 4.5v15"/><path d="M5.5 8.25l13 7.5"/><path d="M18.5 8.25l-13 7.5"/></svg><span class="tl">Something else</span><span class="ts">Tell us what’s going on</span></a>
-  </div>
-  <div class="vdoors">
-    <a class="pill pill-ghost pill-sm" href="/find?mode=name">Look up a contractor by name</a>
-    <a class="pill pill-ghost pill-sm" href="/address">Check an address</a>
-  </div>
-  <p class="fine">No account needed to look. Any ZIP in the country.</p>
-</section>
-
-<!-- ── WHY: the industry sells you. Vesta shows you. ── -->
-<section class="section vr">
-  <div class="vlab">Why this exists</div>
-  <h2 class="vh2">Everywhere else, the contractor you see is the contractor who <em>paid.</em></h2>
-  <div class="vwhy">
-    <div class="w"><div class="k">Lead sites</div><h3>Your request is the product</h3><p>The same job gets sold to several contractors at once — and the cost of those leads comes back to you, baked into the quote.</p></div>
-    <div class="w"><div class="k">Review platforms</div><h3>Stars are marketing</h3><p>Reviews can be begged, bought, and buried. A five-star wall tells you who asked loudest — not who shows up, on time, twice.</p></div>
-    <div class="w"><div class="k">Badges &amp; certifications</div><h3>&ldquo;Certified&rdquo; means &ldquo;subscribed&rdquo;</h3><p>Most badges are paid placements, not inspections. Nobody went and checked the work.</p></div>
-  </div>
-  <div class="vturn"><p>Vesta's signal can't be bought: <em>a verified job record</em>, written by the pro's own operational system the moment the work completes. Pros don't pay to appear here — and money never changes what you see.</p></div>
-</section>
-
-<!-- ── THE FIVE ANGLES ── -->
-<section class="section vr">
-  <div class="vlab">What it does for you</div>
-  <h2 class="vh2">Every angle of the decision, <em>covered.</em></h2>
-  <div class="vangles">
-    <div class="vangle"><div class="no">01 · Discovery</div><div><h3>Find who actually does this work near you</h3><p>Tap a trade, give a ZIP. Vesta lays out every pro nearby — local pros resolved live, with the verified ones rising first. Guided from the first tap; never a blank search box.</p><a class="ga" href="/find">Search your ZIP →</a></div></div>
-    <div class="vangle"><div class="no">02 · Verification</div><div><h3>See what's proven before anyone steps on your property</h3><p>Got a name from a neighbor, a yard sign, a quote? Look them up. Verified history shows exactly what's documented — real jobs, the towns they happened in, how recently. If there's nothing, Vesta says so plainly.</p><a class="ga" href="/find?mode=name">Look up a name →</a></div></div>
-    <div class="vangle"><div class="no">03 · Comparison</div><div><h3>The same honest yardstick for everyone</h3><p>Verified pros carry measured numbers — answered calls, completed jobs, kept promises — earned from real operations, computed the same way for every pro. When one stands out, it's for reasons you can check.</p></div></div>
-    <div class="vangle"><div class="no">04 · Confidence</div><div><h3>Know what's proven — and what isn't</h3><p>&ldquo;No verified jobs on Vesta yet&rdquo; isn't an accusation; it's the truth, stated. You walk into every estimate knowing which claims are documented and which to ask about. An informed decision, not a gamble.</p></div></div>
-    <div class="vangle"><div class="no">05 · Protection</div><div><h3>The decision stays documented</h3><p>When work happens, it's written into the home's permanent file — what was done, by whom, with what warranty. Proof for insurance, for resale, for &ldquo;wait, who did our furnace?&rdquo; The record stays with the home, like a deed.</p><a class="ga" href="/address">Check any address →</a></div></div>
+<!-- ── Hero: compact dark search band ── -->
+<section class="vm-hero v-dark">
+  <div class="vm-hero-inner">
+    <div class="vm-label">Vesta · for the home</div>
+    <h1 class="vm-h1">Find local contractors.</h1>
+    <p class="vm-tagline">Every pro near you. The ones with proven work, marked first. No ads, no pay-to-play — just the verified record.</p>
+    <form class="vm-search" method="GET" action="/find">
+      <input type="text" name="zip" id="hero-zip" maxlength="5" inputmode="numeric" pattern="\d{5}" placeholder="Your ZIP code" autocomplete="postal-code">
+      <button class="pill pill-orange" type="submit">Find pros →</button>
+    </form>
+    <p class="fine" style="margin-top:.9rem;color:rgba(242,238,229,.42)">No account needed. Any ZIP in the country.</p>
   </div>
 </section>
 
-<!-- ── THE ARTIFACT: paper proof on the dark desk ── -->
-<section class="section vr">
-  <div class="vsplit">
+<!-- ── Marketplace body ── -->
+<div class="vm-market" id="vm-market">
+
+  <!-- Left: context + filters + account pitch -->
+  <aside class="vm-left">
+    <div class="vm-panel">
+      <div class="vm-phead">The verified network</div>
+      <div class="vm-stats-row" id="vm-stats">
+        <div class="vm-stat"><div class="sn" id="vm-stat-pros">—</div><div class="sl">Verified pros</div></div>
+        <div class="vm-stat"><div class="sn" id="vm-stat-jobs">—</div><div class="sl">Verified jobs</div></div>
+      </div>
+      <div class="vm-phead" style="margin-top:.4rem">Filter by trade</div>
+      <div class="vm-trades" id="vm-trades">
+        <button class="vm-trade vm-on" data-trade="">
+          <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          All trades
+        </button>
+        <button class="vm-trade" data-trade="roofing">
+          <svg viewBox="0 0 24 24"><path d="M2.5 11.5 12 3.5l9.5 8"/><path d="M5.5 9.4V20h13V9.4"/></svg>
+          Roofing
+        </button>
+        <button class="vm-trade" data-trade="paving">
+          <svg viewBox="0 0 24 24"><path d="M7.5 4 4.5 20"/><path d="M16.5 4l3 16"/><path d="M12 5.5v2.6"/><path d="M12 11.2v2.6"/></svg>
+          Paving
+        </button>
+        <button class="vm-trade" data-trade="hvac">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.5"/><path d="M12 13l3.2-3.2"/><path d="M12 5.5V4"/></svg>
+          HVAC
+        </button>
+        <button class="vm-trade" data-trade="plumbing">
+          <svg viewBox="0 0 24 24"><path d="M12 3.5s6 6.4 6 10.2a6 6 0 0 1-12 0C6 9.9 12 3.5 12 3.5Z"/></svg>
+          Plumbing
+        </button>
+        <button class="vm-trade" data-trade="electrical">
+          <svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z"/></svg>
+          Electrical
+        </button>
+        <button class="vm-trade" data-trade="lawn_care">
+          <svg viewBox="0 0 24 24"><path d="M12 20.5V13"/><path d="M12 14.5C12 10.5 9 8.5 5 8.5c0 4 3 6 7 6Z"/><path d="M12 12.5c0-4 3-6 7-6 0 4-3 6-7 6Z"/></svg>
+          Lawn care
+        </button>
+      </div>
+    </div>
+
+    <div class="vm-panel">
+      <div class="vm-phead">Free account</div>
+      <ul class="vm-acct-list">
+        <li>Unlock contact info for any listed pro</li>
+        <li>Warranty wallet — every warranty, one place</li>
+        <li>Your home's permanent file</li>
+        <li>Resale report you can hand a buyer</li>
+      </ul>
+      <a class="pill pill-orange pill-sm" href="/signin">Join free — one email <span class="arr">→</span></a>
+      <p class="fine" style="margin-top:.5rem">No password. No phone number.</p>
+    </div>
+  </aside>
+
+  <!-- Center: contractor cards -->
+  <div class="vm-center">
+    <div class="vm-filterbar">
+      <div class="vm-filter-chips" id="vm-chips">
+        <!-- chips mirror trade filter buttons for quick-scan -->
+      </div>
+      <a class="vm-name-link" href="/find?mode=name">Look up by name →</a>
+    </div>
+    <div class="vm-cards" id="vm-cards">
+      <div class="vm-loading">Loading the network…</div>
+    </div>
+    <p class="note" style="margin-top:1.2rem;font-size:.78rem" id="vm-how"></p>
+  </div>
+
+  <!-- Right: activity feed + address check -->
+  <div class="vm-right">
+    <div class="vm-panel">
+      <div class="vm-phead">Recent verified work</div>
+      <ul class="vm-feed-list" id="vm-feed">
+        <li style="color:var(--dim);font-size:.78rem;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase">Loading…</li>
+      </ul>
+      <p class="fine" style="margin-top:.6rem">Documented jobs, month + town only. Never an address.</p>
+    </div>
+    <div class="vm-panel">
+      <div class="vm-phead">Check any address</div>
+      <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:.9rem">See the verified work history for any home — useful before you buy, before you hire, or to check your own record.</p>
+      <a class="pill pill-ghost pill-sm" href="/address">Check an address <span class="arr">→</span></a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Below fold: compressed editorial ── -->
+<div class="vm-below">
+
+  <!-- Why it exists -->
+  <div class="vm-section-label">Why this exists</div>
+  <h2 class="vm-h2">Everywhere else, the contractor you see is the one who <em>paid.</em></h2>
+  <div class="vm-why-grid">
+    <div class="vm-why-card"><div class="wk">Lead sites</div><h3>Your request is the product</h3><p>The same job gets sold to several contractors at once — and the cost of those leads comes back to you, baked into the quote.</p></div>
+    <div class="vm-why-card"><div class="wk">Review platforms</div><h3>Stars are marketing</h3><p>Reviews can be begged, bought, and buried. A five-star wall tells you who asked loudest — not who shows up, on time, twice.</p></div>
+    <div class="vm-why-card"><div class="wk">Badges &amp; certifications</div><h3>"Certified" means "subscribed"</h3><p>Most badges are paid placements, not inspections. Nobody went and checked the work.</p></div>
+  </div>
+
+  <!-- Sample record -->
+  <div class="vm-proof-split">
     <div>
-      <div class="vlab">The proof itself</div>
-      <h2 class="vh2">Not reviewed. Not self-reported. <em>Recorded.</em></h2>
-      <p class="note" style="margin-top:1rem">When a verified pro finishes a job, the work writes itself into that home's permanent record — at the moment it happens, from the pro's own operational system. Nobody typed it in later. Nobody got to edit it.</p>
-      <p class="note">Anything a homeowner adds themselves is always labeled &ldquo;reported by homeowner&rdquo; — never mixed with verified work.</p>
+      <div class="vm-section-label">The proof itself</div>
+      <h2 class="vm-h2">Not reviewed. Not self-reported. <em>Recorded.</em></h2>
+      <p class="vm-note">When a verified pro finishes a job, the work writes itself into that home's permanent record — at the moment it happens, from the pro's own operational system. Nobody typed it in later.</p>
+      <p class="vm-note" style="margin-top:.6rem">Anything a homeowner adds themselves is always labeled "reported by homeowner" — never mixed with verified work.</p>
+      <div style="margin-top:1.2rem">
+        <a class="pill pill-ink pill-sm" href="/address">Check any address <span class="arr">→</span></a>
+      </div>
     </div>
     <div class="vpaper">
       <div class="demo-tag">Sample record · every verified job writes one</div>
@@ -113,50 +327,33 @@
         <li><span class="src">Reported by homeowner</span><div class="ev-title">Water heater installed</div><div class="ev-meta">2021 · always labeled, never mixed with verified work</div></li>
       </ul>
       <div class="kv"><span>Roofing warranty until</span><b>June 2028</b></div>
-      <div class="kv"><span>Next driveway sealcoat due</span><b>~Dec 2028</b></div>
     </div>
   </div>
-</section>
 
-<!-- ── ACCOUNT: looking → keeping ── -->
-<section class="section vr">
-  <div class="vacct">
-    <div class="vlab">One email · ten seconds · free</div>
-    <h2 class="vh2">An account turns looking into <em>keeping.</em></h2>
-    <div class="usegrid">
-      <div class="use"><span class="n">Unlock</span><h3>Contact info, revealed</h3><p>Sign in and pull any listed pro's phone, website, and socials — gathered live, the moment you ask.</p></div>
-      <div class="use"><span class="n">Warranty wallet</span><h3>Every warranty, one place</h3><p>Add any warranty — the water heater, the roof, the appliance — paperwork attached, expiry windows watched. Works from day one.</p></div>
-      <div class="use"><span class="n">The home file</span><h3>Your home's one folder</h3><p>Records, warranties, saved pros, requests — the folder you'll wish you had at resale, insurance time, and every &ldquo;who did our furnace?&rdquo;</p></div>
-      <div class="use"><span class="n">The resale report</span><h3>Proof you can hand a buyer</h3><p>One read-only link: the home's full verified history. Agents put square footage in listings. You can put proof.</p></div>
-    </div>
-    <div style="margin-top:1.4rem"><a class="pill pill-orange" href="/signin">Sign in with one email <span class="arr">→</span></a><span class="fine" style="margin-left:.9rem">No password. No phone number. No spam.</span></div>
-  </div>
-</section>
-
-<!-- ── PLAINLY ── -->
-<section class="section vr">
-  <div class="vlab">Plainly</div>
-  <ul class="vpromises">
-    <li>Vesta is <b>free for homeowners, forever</b>.</li>
+  <!-- Plainly -->
+  <div class="vm-section-label" style="margin-top:1rem">Plainly</div>
+  <ul class="vm-promises">
+    <li>Vesta is <b>free for homeowners, forever.</b></li>
     <li>We never sell your data or your contact info.</li>
     <li>Pros can't pay to appear, rank higher, or look better. There are no ads.</li>
     <li><b>Verified means verified</b> — written as the work happens, never self-reported, never invented.</li>
     <li>No record isn't a black mark. It means undocumented — and now you know to ask.</li>
-    <li>Delete your identity anytime; a home's work history stays with the home, like a deed.</li>
   </ul>
-</section>
 
-<!-- ── END CTA ── -->
-<section class="vcta vr">
-  <h2 class="vh2" style="margin:0 auto">Your ZIP is <em>enough.</em></h2>
-  <p class="note" style="max-width:46ch;margin:1rem auto 0;text-align:center">See who's proven near you, look up the name on the quote, or check the address you're about to buy.</p>
-  <form class="searchbar" method="GET" action="/find" style="margin-top:1.6rem">
-    <input class="q" type="text" name="q" maxlength="60" placeholder="Roof, driveway, furnace…" autocomplete="off">
-    <input class="zip" type="text" name="zip" maxlength="5" inputmode="numeric" pattern="\d{5}" placeholder="ZIP" autocomplete="postal-code">
-    <button class="pill pill-orange" type="submit">Search</button>
-  </form>
-  <p class="fine">No account needed to look.</p>
-</section>
+  <!-- End CTA band -->
+  <div class="vm-cta-band">
+    <div class="vm-cta-copy">
+      <h3>Your ZIP is enough to start.</h3>
+      <p>See who's proven near you, look up the name on a quote, or check an address.</p>
+    </div>
+    <div class="vm-cta-actions">
+      <a class="pill pill-orange" href="/find">Find a pro <span class="arr">→</span></a>
+      <a class="pill" style="background:rgba(245,243,238,.1);color:var(--cream);border:1px solid rgba(245,243,238,.18)" href="/signin">Join free</a>
+    </div>
+  </div>
+
+</div>
+
 </main>
 
 <footer>
@@ -171,17 +368,106 @@
 </footer>
 
 <script>
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', async function(){
   if (window.HOME) HOME.navAccount();
-  // Reveal-on-scroll; reduced-motion users get everything instantly (CSS).
-  var io = ('IntersectionObserver' in window)
-    ? new IntersectionObserver(function(es){
-        es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-      }, { rootMargin: '0px 0px -8% 0px' })
-    : null;
-  document.querySelectorAll('.vr').forEach(function(el){
-    if (io) io.observe(el); else el.classList.add('in');
+  const esc = HOME.esc;
+
+  // ── Load roster → populate center cards + left stats ──
+  let allPros = [];
+  let activeTrade = '';
+
+  const cardsEl  = document.getElementById('vm-cards');
+  const statsN   = document.getElementById('vm-stat-pros');
+  const statsJ   = document.getElementById('vm-stat-jobs');
+  const howEl    = document.getElementById('vm-how');
+
+  function fpHtml(reg){
+    if (!reg || !reg.jobs) return '';
+    const bits = [];
+    if (reg.cities && reg.cities.length){
+      const cs = reg.cities.slice(0,3).map(esc).join(', ');
+      bits.push('Work in <b>' + cs + (reg.cities.length > 3 ? ' +' + (reg.cities.length-3) + ' more' : '') + '</b>');
+    }
+    if (reg.last_month) bits.push('last job <b>' + esc(HOME.fmtMonth(reg.last_month)) + '</b>');
+    return bits.length ? '<div class="vc-fp">' + bits.join(' · ') + '</div>' : '';
+  }
+
+  function renderCards(pros){
+    if (!pros.length){
+      cardsEl.innerHTML = '<div class="vm-empty">No verified contractors in this trade yet — the network is growing. <a href="/find" style="color:var(--orange)">Search your ZIP</a> to see everyone nearby, verified or not.</div>';
+      return;
+    }
+    cardsEl.innerHTML = pros.map(p => {
+      const href = '/pro/' + encodeURIComponent(p.location_id);
+      return '<a class="vm-card" href="' + href + '">' +
+        '<div class="vc-badge">✓ Verified network</div>' +
+        '<h3>' + esc(p.business_name) + '</h3>' +
+        '<div class="vc-trade">' + esc(HOME.tradeLabel(p.trade)) + '</div>' +
+        HOME.badgeChips(p) +
+        fpHtml(p.registry) +
+        '<div class="spacer"></div>' +
+        '<span class="vc-cta">See the record →</span>' +
+      '</a>';
+    }).join('');
+  }
+
+  function applyFilter(trade){
+    activeTrade = trade;
+    document.querySelectorAll('.vm-trade').forEach(b => b.classList.toggle('vm-on', b.dataset.trade === trade));
+    const filtered = trade ? allPros.filter(p => p.trade === trade) : allPros;
+    renderCards(filtered);
+  }
+
+  document.querySelectorAll('.vm-trade').forEach(b => {
+    b.addEventListener('click', () => applyFilter(b.dataset.trade));
   });
+
+  const { data } = await HOME.api('/roster');
+  if (data.ok){
+    allPros = data.pros || [];
+    statsN.textContent = allPros.length || '—';
+    const jobs = allPros.reduce((sum, p) => sum + (p.registry && p.registry.jobs ? p.registry.jobs : 0), 0);
+    statsJ.textContent = jobs || '—';
+    renderCards(allPros);
+    if (allPros.length){
+      howEl.textContent = 'Verified numbers come from a tamper-evident operational ledger written as work happens — answered calls, booked jobs, completed work. Never self-reported, no one can pay to change what you see.';
+    }
+    if (data.stale){
+      cardsEl.insertAdjacentHTML('beforebegin','<div class="warn" style="margin-bottom:.8rem">Live verification briefly unavailable — showing last verified snapshot.</div>');
+    }
+  } else {
+    cardsEl.innerHTML = '<div class="vm-empty">Network data is briefly unavailable — try again in a moment.</div>';
+  }
+
+  // ── Load feed for the right panel ──
+  // Try to get a default ZIP from the roster cities, or use a broad recent feed
+  const feedEl = document.getElementById('vm-feed');
+  // Use the first pro's zip if available, else try a known active market
+  let feedZip = '';
+  if (allPros.length && allPros[0].zip) feedZip = allPros[0].zip;
+  if (!feedZip && allPros.length){
+    // look for any zip in registry data
+    for (const p of allPros){
+      if (p.zip){ feedZip = p.zip; break; }
+    }
+  }
+  if (feedZip){
+    const { data: fd } = await HOME.api('/feed?zip=' + feedZip);
+    if (fd.ok && fd.items && fd.items.length){
+      feedEl.innerHTML = fd.items.slice(0,8).map(item => {
+        const trade = item.trade ? HOME.tradeLabel(item.trade) : '';
+        return '<li>' +
+          '<span class="fi-mo">' + esc(HOME.fmtMonth(item.month)) + '</span>' +
+          '<span class="fi-job">' + esc(item.service || trade || 'Verified job') + '</span>' +
+          '<span class="fi-where">' + esc(item.city || '') + (trade && item.service ? ' · ' + trade : '') + '</span>' +
+        '</li>';
+      }).join('');
+    } else {
+      feedEl.innerHTML = '<li style="color:var(--dim);font-size:.78rem">No recent activity yet — the network is growing.</li>';
+    }
+  } else {
+    feedEl.innerHTML = '<li style="color:var(--dim);font-size:.78rem;line-height:1.6">Activity posts as verified jobs are completed. Enter a ZIP on <a href="/find" style="color:var(--orange)">Find a pro</a> to see what\'s happening near you.</li>';
+  }
 });
 </script>
 </body>
