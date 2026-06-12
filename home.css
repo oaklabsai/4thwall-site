@@ -545,3 +545,20 @@ body.v-shell .searchbar{max-width:600px}
 .va-q input{flex:1;border:none;background:transparent;font-family:inherit;font-size:.88rem;color:var(--vcream);outline:none;padding:.45rem .2rem;min-width:0}
 .va-q input::placeholder{color:var(--vdim)}
 .va-q button{flex-shrink:0}
+
+/* ── Dark-scope forms (in-shell address check + sign-in) ── */
+body.v-dark .form-label{color:var(--vdim)}
+body.v-dark .form-input,body.v-dark .form-textarea,body.v-dark .form-select{background:var(--vk-3);border-color:var(--vline-2);color:var(--vcream)}
+body.v-dark .form-input:focus,body.v-dark .form-textarea:focus,body.v-dark .form-select:focus{border-color:var(--vgreen);background:var(--vk-2)}
+body.v-dark .form-input::placeholder,body.v-dark .form-textarea::placeholder{color:var(--vdim)}
+body.v-dark .form-status{color:var(--vmut)}
+body.v-dark .form-status.is-error{color:#e0917e}
+body.v-dark .form-status.is-success{color:var(--vgreen-2)}
+body.v-dark .kv{border-bottom-color:var(--vline)}
+
+/* ── Rail shortlist (live compare picks) ── */
+.va-short-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem 0;border-bottom:1px dashed var(--vline);font-size:.82rem;color:var(--vcream)}
+.va-short-row:last-of-type{border-bottom:none}
+.va-short-row .x{font-family:var(--mono);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim);cursor:pointer;flex-shrink:0;background:none;border:none}
+.va-short-row .x:hover{color:var(--vcream)}
+.va-short-empty{font-size:.78rem;color:var(--vmut);line-height:1.6}
