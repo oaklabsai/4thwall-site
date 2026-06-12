@@ -1039,21 +1039,22 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .mock-phone-frame{position:relative;z-index:2;width:100%;display:block;pointer-events:none}
 
 @media(max-width:960px){
-  .pill-card{grid-template-columns:1fr;min-height:auto}
-  .pill-device{min-height:260px;background:inherit}
-  /* center mocks in the device row */
-  .pill-mock{right:auto;left:50%;bottom:0;transform:translateX(-50%);width:88%;max-width:500px}
-  .pill-mock-phone{right:auto;left:50%;top:auto;bottom:0;width:40%;max-width:165px;transform:translateX(-50%)}
-  .pill-card:hover .pill-mock{transform:translateX(-50%) scale(1.06) translateY(-28px)}
-}
-@media(max-width:600px){
-  .pill-copy{padding:1.4rem 1.4rem 1.2rem}
-  .pill-name{font-size:2.2rem}
-  .pill-features li{font-size:.82rem}
-  .pill-btn{padding:11px 20px;font-size:.82rem;margin-top:1.2rem}
-  .pill-device{min-height:200px}
-  .pill-mock{width:92%}
-  .pill-mock-phone{width:38%;max-width:140px}
+  /* Side-by-side compact pills */
+  .pills-wrap{flex-direction:row;align-items:stretch;gap:.75rem;padding-left:1rem;padding-right:1rem}
+  .pill-card{grid-template-columns:1fr;min-height:0;flex:1;min-width:0}
+  /* Hide device mockups — too cluttered at narrow width */
+  .pill-device{display:none}
+  .pill-mock{display:none}
+  /* Compact copy */
+  .pill-copy{padding:1.5rem 1.2rem 1.6rem}
+  .pill-tag{font-size:.58rem;letter-spacing:.1em;margin-bottom:.75rem}
+  .pill-tag::before{width:14px}
+  .pill-name{font-size:1.95rem;margin-bottom:.6rem}
+  .pill-tagline{font-size:.84rem;line-height:1.4;margin-bottom:1rem}
+  .pill-rule{display:none}
+  .pill-features{display:none}
+  .pill-btn{padding:10px 14px;font-size:.75rem;margin-top:1.4rem;width:100%;justify-content:center;white-space:nowrap}
+  .pill-tagline{font-size:.82rem}
 }
 
 /* ── Industry trust bar ── */
