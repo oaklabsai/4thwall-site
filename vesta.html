@@ -46,16 +46,7 @@
           <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
           <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
         </svg>
-        <div class="vsb-wordmark">
-          <span class="vsb-name">4THWALL</span>
-          <span class="vsb-product">VESTA</span>
-        </div>
       </a>
-    </div>
-
-    <div class="vsb-zip" id="sb-zip">
-      <div><span class="zlab">Your area</span><span class="z" id="sb-zip-val"></span></div>
-      <button type="button" class="zchg" id="sb-zip-chg">change</button>
     </div>
 
     <nav class="vsb-nav">
@@ -67,9 +58,9 @@
       </button>
       <button type="button" class="vsb-item" id="sb-myhome">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5Z"/><path d="M9 21V12h6v9"/>
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
         </svg>
-        My Home
+        Profile
       </button>
     </nav>
 
@@ -173,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 
   // ── State ──
   const ZIP_KEY = 'vesta_zip';
-  const S = { zip:'', trade:'', q:'', mode:'', base:null, cur:null, feed:null, cmp:new Map() };
+  const S = { zip:'', city:'', trade:'', q:'', mode:'', base:null, cur:null, feed:null, cmp:new Map() };
 
   const I = {
     all:        '<path d="M3 12h18M3 6h18M3 18h18"/>',
@@ -402,7 +393,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   function renderHead(){
     const v = S.base && S.base.ok ? (S.base.verified || []).length : null;
     const l = S.cur && S.cur.ok && Array.isArray(S.cur.listed) ? S.cur.listed.length : null;
-    $('va-h1').innerHTML = (S.trade ? esc(tLabel(S.trade)) + ' near' : 'Near') + ' <em>' + esc(S.zip) + '</em>';
+    $('va-h1').innerHTML = (S.trade ? esc(tLabel(S.trade)) + ' near' : 'Near') + ' <em>' + esc(S.city || S.zip) + '</em>';
     let sub;
     if (v === null) sub = 'Reading the area…';
     else if (v > 0) sub = '<b>' + v + ' verified pro' + (v === 1 ? '' : 's') + '</b> work near you' + (l ? ' · <b>' + l + '</b> listed in this view' : '') + ' — proof first, the rest honestly labeled.';
@@ -439,7 +430,6 @@ document.addEventListener('DOMContentLoaded', async function(){
   function showGate(){
     $('va-gate').hidden = false;
     $('va-app').hidden = true;
-    $('sb-zip').classList.remove('show');
     document.title = 'Vesta — Find local contractors. | 4THWALL';
     const g = $('gate-zip');
     if (g) setTimeout(() => g.focus(), 50);
@@ -447,12 +437,13 @@ document.addEventListener('DOMContentLoaded', async function(){
 
   async function enterZip(zip, opts){
     opts = opts || {};
-    S.zip = zip; S.mode = ''; S.trade = opts.trade || ''; S.q = opts.q || '';
+    S.zip = zip; S.city = ''; S.mode = ''; S.trade = opts.trade || ''; S.q = opts.q || '';
     saveZip(zip);
     if (!opts.noPush) pushUrl(opts.replace);
     showApp(); applyModeUi();
     $('va-qin').value = S.q;
     document.title = 'Pros near ' + zip + ' — Vesta | 4THWALL';
+    cityName(zip).then(c => { if (c){ S.city = c; renderHead(); document.title = 'Pros near ' + c + ' — Vesta | 4THWALL'; } });
     S.base = null; S.cur = null; S.feed = null;
     renderHead(); renderStrip(); renderCenter(); renderRail();
 
@@ -511,11 +502,6 @@ document.addEventListener('DOMContentLoaded', async function(){
   function showApp(){
     $('va-gate').hidden = true;
     $('va-app').hidden = false;
-    if (S.zip){
-      $('sb-zip').classList.add('show');
-      $('sb-zip-val').textContent = S.zip;
-      cityName(S.zip).then(c => { if (c) $('sb-zip-val').textContent = c; });
-    }
     renderCmpBar();
   }
   async function enterLookup(q, opts){
@@ -759,7 +745,6 @@ document.addEventListener('DOMContentLoaded', async function(){
           const z = $('rq-zip').value.trim();
           if (!/^\d{5}$/.test(z)) return;
           S.zip = z; saveZip(z);
-          $('sb-zip').classList.add('show'); $('sb-zip-val').textContent = z;
           loadTargets();
         });
         return;
@@ -880,11 +865,6 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (!a) return;
     const href = a.getAttribute('href') || '';
     if (href.startsWith('/signin') || href === '/myhome'){ e.preventDefault(); enterMyHome(); }
-  });
-  $('sb-zip-chg').addEventListener('click', () => {
-    try { localStorage.removeItem(ZIP_KEY); } catch(_){}
-    S.zip = ''; S.trade = ''; S.q = ''; S.mode = '';
-    pushUrl(); showGate();
   });
 
   // ── Boot (URL is the source of truth; localStorage is the welcome mat) ──
