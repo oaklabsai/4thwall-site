@@ -24,7 +24,7 @@
     4THWALL<span class="home-tag">VESTA</span>
   </a>
   <div class="nav-links">
-    <a href="/find" class="nav-a">Find a pro</a>
+    <a href="/vesta" class="nav-a">Find a pro</a>
     <a href="/address" class="nav-a">Check an address</a>
     <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
   </div>
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   if (!m){ hero.innerHTML = '<h1 class="page-h">Profile not found.</h1><p class="page-sub">Try <a href="/find" style="color:var(--orange)">searching again</a>.</p>'; return; }
   const placeId = m[1];
   const zipParam = new URLSearchParams(location.search).get('zip') || '';
-  const back = /^\d{5}$/.test(zipParam) ? '/find?zip=' + zipParam : '/find';
+  const back = /^\d{5}$/.test(zipParam) ? '/vesta?zip=' + zipParam : '/vesta';
 
   const { data } = await HOME.api('/c/' + encodeURIComponent(placeId) + (/^\d{5}$/.test(zipParam) ? '?zip=' + zipParam : ''));
   if (!data.ok){
@@ -70,9 +70,42 @@ document.addEventListener('DOMContentLoaded', async function(){
 
   hero.innerHTML = '<a class="crumb" href="' + back + '">← Back to results</a>' +
     '<h1 class="page-h">' + esc(p.name) + '</h1>' +
-    '<p class="page-sub">' + esc(p.address) + '</p>' +
-    '<div class="badges"><span class="badge plain">Listed — not yet verified</span></div>' +
-    '<p class="note">This pro isn\'t in the 4THWALL verified network, so there\'s no operational record to show — no measured response times, no verified job history. They may still be excellent; we just can\'t prove it.</p>';
+    '<p class="page-sub">' + (p.primary_type ? esc(p.primary_type) + ' · ' : '') + esc(p.address) + '</p>' +
+    '<div class="badges"><span class="badge plain">Listed — not yet verified</span>' +
+    (data.claimed ? '<span class="badge">Profile claimed</span>' : '') +
+    (p.business_status === 'CLOSED_TEMPORARILY' ? '<span class="badge plain">Temporarily closed</span>' : '') +
+    '</div>' +
+    '<p class="note">This pro isn\'t in the 4THWALL verified network, so there\'s no operational record to show — no measured response times, no verified job history. They may still be excellent; we just can\'t prove it. Here\'s everything the public record says, and exactly what it doesn\'t.</p>';
+
+  const pubBlock = (() => {
+    const rows = [];
+    rows.push('<div class="kv"><span>Google rating</span><b>' +
+      (p.rating != null && p.rating_count
+        ? esc(p.rating) + '★ across ' + Number(p.rating_count).toLocaleString('en-US') + ' reviews'
+        : 'None found') + '</b></div>');
+    if (p.primary_type) rows.push('<div class="kv"><span>Listed category</span><b>' + esc(p.primary_type) + '</b></div>');
+    rows.push('<div class="kv"><span>Business status</span><b>' +
+      (p.business_status === 'CLOSED_TEMPORARILY' ? 'Temporarily closed' : 'Operational') + '</b></div>');
+    return '<h2 class="section-h">The public record</h2><div class="card-block">' + rows.join('') +
+      (p.maps_uri ? '<div style="margin-top:1rem"><a class="pill pill-ghost pill-sm" href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow">See on Google Maps ↗</a></div>' : '') +
+      '<p class="fine" style="margin-top:.8rem">Pulled live from Google the moment you opened this page — Vesta never stores it. Star ratings are marketing-grade signal: reviews can be begged, bought, and buried. Useful context, not proof.</p></div>';
+  })();
+
+  const proveBlock = '<h2 class="section-h">What nobody has proven</h2><div class="card-block">' +
+    '<div class="kv"><span>Verified jobs on Vesta</span><b style="color:var(--dim)">—</b></div>' +
+    '<div class="kv"><span>Measured response time</span><b style="color:var(--dim)">—</b></div>' +
+    '<div class="kv"><span>Booking follow-through</span><b style="color:var(--dim)">—</b></div>' +
+    '<div class="kv"><span>Documented work history</span><b style="color:var(--dim)">—</b></div>' +
+    '<p class="note" style="margin-top:.8rem">A dash isn\'t an accusation — most pros have never been asked to prove their work this way. It means exactly what it says: nothing verified exists, so ask. The questions below are where to start.</p></div>';
+
+  const checklist = '<h2 class="section-h">Before you hire — ask these</h2><div class="card-block">' +
+    '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--muted)">' +
+    '<li>Can you give me <b style="color:var(--ink)">three jobs like mine</b> from the past year I could drive past or call about?</li>' +
+    '<li>Who actually does the work — <b style="color:var(--ink)">your crew, or a subcontractor</b>?</li>' +
+    '<li>Are you <b style="color:var(--ink)">licensed and insured</b> for this trade in this town — and can I see the certificates?</li>' +
+    '<li>What\'s the <b style="color:var(--ink)">written warranty</b>, and who honors it if the company changes hands?</li>' +
+    '<li>If you open it up and find something worse, <b style="color:var(--ink)">what happens to the quote</b>?</li>' +
+    '</ul><p class="fine" style="margin-top:.8rem">A good pro answers all five without flinching. Verified pros on Vesta answer the first one with a ledger.</p></div>';
 
   function contactRows(u){
     const rows = [];
@@ -112,7 +145,7 @@ document.addEventListener('DOMContentLoaded', async function(){
         '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
         '<span class="form-status" id="claim-status"></span></form></div>';
 
-    body.innerHTML = contactBlock + claimBlock +
+    body.innerHTML = pubBlock + contactBlock + proveBlock + checklist + claimBlock +
       '<div class="card-block" style="margin-top:1.6rem">' +
       '<p style="font-size:.9rem"><b>Prefer a pro whose work is proven?</b> Verified pros carry ledger-backed badges and your job lands in your home\'s permanent record.</p>' +
       '<div style="margin-top:.8rem"><a class="pill pill-ghost pill-sm" href="/request">Request a verified pro <span class="arr">→</span></a></div></div>';

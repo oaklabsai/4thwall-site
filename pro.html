@@ -24,7 +24,7 @@
     4THWALL<span class="home-tag">VESTA</span>
   </a>
   <div class="nav-links">
-    <a href="/find" class="nav-a">Find a pro</a>
+    <a href="/vesta" class="nav-a">Find a pro</a>
     <a href="/address" class="nav-a">Check an address</a>
     <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
   </div>
@@ -57,23 +57,61 @@ document.addEventListener('DOMContentLoaded', async function(){
   const m = location.pathname.match(/^\/pro\/([A-Za-z0-9_-]{1,40})\/?$/);
   if (!m){ hero.innerHTML = '<h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/find" style="color:var(--orange)">Back to search</a>.</p>'; return; }
 
-  const { data } = await HOME.api('/pro/' + encodeURIComponent(m[1]));
+  // The pro's signals + the roster (which carries registry fingerprints), in parallel.
+  const [{ data }, rosterRes] = await Promise.all([
+    HOME.api('/pro/' + encodeURIComponent(m[1])),
+    HOME.api('/roster').catch(() => ({ data: null })),
+  ]);
   if (!data.ok){
-    hero.innerHTML = '<a class="crumb" href="/find">← Find a pro</a><h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/find" style="color:var(--orange)">Back to search</a>.</p>';
+    hero.innerHTML = '<a class="crumb" href="/vesta">← Find a pro</a><h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/vesta" style="color:var(--orange)">Back to search</a>.</p>';
     return;
   }
   const pro = data.pro;
   document.title = esc(pro.business_name) + ' — Vesta';
 
-  hero.innerHTML = '<a class="crumb" href="/find">← Find a pro</a>' +
+  // Fingerprint: where & when their verified work shows up (fail-soft).
+  let reg = null;
+  if (rosterRes && rosterRes.data && rosterRes.data.ok){
+    const row = (rosterRes.data.pros || []).find(x => x.location_id === pro.location_id);
+    if (row && row.registry && row.registry.jobs) reg = row.registry;
+  }
+  const fpBits = [];
+  if (reg && reg.cities && reg.cities.length) fpBits.push('Verified work in <b>' + reg.cities.slice(0,4).map(esc).join(', ') + (reg.cities.length > 4 ? ' +' + (reg.cities.length-4) + ' more' : '') + '</b>');
+  if (reg && reg.last_month) fpBits.push('last documented job <b>' + esc(HOME.fmtMonth(reg.last_month)) + '</b>');
+  if (reg && reg.first_year) fpBits.push('on the record since <b>' + esc(reg.first_year) + '</b>');
+
+  hero.innerHTML = '<a class="crumb" href="/vesta">← Find a pro</a>' +
     '<h1 class="page-h">' + esc(pro.business_name) + '</h1>' +
     '<p class="page-sub">' + esc(HOME.tradeLabel(pro.trade)) + ' · ' + (Number(pro.ledger_entries) || 0) + ' entries in their operational ledger</p>' +
     '<div class="badges"><span class="badge">✓ Verified network</span></div>' +
     (data.stale ? '<div class="warn">Live verification briefly unavailable — last verified snapshot shown.</div>' : '') +
     HOME.badgeChips(pro) +
+    (fpBits.length ? '<p class="note" style="margin-top:.5rem">' + fpBits.join(' · ') + ' — town-level only, never an address.</p>' : '') +
     '<p class="note">Verified numbers come from a tamper-evident operational ledger written as work happens — answered calls, booked jobs, completed work. Never self-reported, never star ratings from strangers. Rates only show once there\'s enough data to be honest.</p>';
 
-  body.innerHTML = '<h2 class="section-h">Request service</h2><div class="card-block">' +
+  // "What the badges mean" — plain-English rows, only for badges that exist.
+  const b = pro.badges || {};
+  const meanRows = [];
+  meanRows.push(['<b>' + (Number(b.verified_jobs) || 0) + ' verified jobs</b>',
+    'Each one is a completed job the system wrote into the ledger as it happened, with a real home on the other side. Not self-reported, not editable, not purchasable.']);
+  if (b.response_ms_median_90d != null){
+    const ms = Number(b.response_ms_median_90d);
+    meanRows.push(['<b>Answers in ' + (ms < 1000 ? 'under a second' : Math.round(ms/1000) + ' seconds') + '</b>',
+      'The median across every inbound call and text in the last 90 days. A measurement, not a promise.']);
+  }
+  if (b.booking_reliability_365d != null){
+    meanRows.push(['<b>' + esc(b.booking_reliability_365d) + '% booking follow-through</b>',
+      'Of the appointments this pro booked in the last year, the share that actually happened.']);
+  }
+  if (Number(b.reviews_earned) > 0){
+    meanRows.push(['<b>' + esc(b.reviews_earned) + ' reviews earned</b>',
+      '“Earned” means the request went out only after a documented, completed job — never bought, never begged.']);
+  }
+  const meaningBlock = '<h2 class="section-h">What these numbers mean</h2><div class="card-block">' +
+    meanRows.map(r => '<div style="padding:.55rem 0;border-bottom:1px dashed var(--line);font-size:.88rem;line-height:1.6"><div>' + r[0] + '</div><div style="color:var(--muted);font-size:.82rem;margin-top:.15rem">' + r[1] + '</div></div>').join('') +
+    '<p class="fine" style="margin-top:.8rem">Every row is written by the operational system this pro runs their business on. No one — including the pro, including 4THWALL sales — can edit it.</p></div>';
+
+  body.innerHTML = meaningBlock + '<h2 class="section-h">Request service</h2><div class="card-block">' +
     '<form id="req-form">' +
     '<div class="form-row"><label class="form-label" for="rname">Your name</label><input class="form-input" type="text" id="rname" name="name" maxlength="80"></div>' +
     '<div class="form-row row-pair">' +
@@ -104,7 +142,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (r.ok && (r.status === 'matched' || r.status === 'waitlist')){
       body.innerHTML = '<h2 class="section-h">Request sent. ✓</h2>' +
         '<div class="card-block"><p style="font-size:.92rem;line-height:1.65">' + esc(pro.business_name) + ' has your request and will text or call you shortly. When the job completes, it\'s added to your home\'s permanent record automatically.</p>' +
-        '<div style="margin-top:.9rem"><a class="pill pill-ghost pill-sm" href="/find">Back to search</a></div></div>';
+        '<div style="margin-top:.9rem"><a class="pill pill-ghost pill-sm" href="/vesta">Back to search</a></div></div>';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       btn.disabled = false;

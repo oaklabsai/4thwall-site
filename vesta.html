@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vesta — Find local contractors. | 4THWALL</title>
-<meta name="description" content="Every contractor near you, the ones with proven work marked first. No ads, no pay-to-play. Free to join.">
+<meta name="description" content="Enter your ZIP and see every contractor near you — verified work marked first, the public record on everyone else. No ads, no pay-to-play.">
 <link rel="canonical" href="https://4thwall.solutions/vesta">
 <link rel="icon" href="/logo.png" type="image/png">
 <meta name="theme-color" content="#0f1310">
 <meta property="og:title" content="Vesta — Find local contractors.">
-<meta property="og:description" content="Every pro near you, the proven ones marked. No ads, no pay-to-play. Free to join.">
+<meta property="og:description" content="Your ZIP is the key. Every pro near you, the proven ones marked. No ads, no pay-to-play.">
 <meta property="og:url" content="https://4thwall.solutions/vesta">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,164 +17,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
 <link rel="stylesheet" href="/home.css">
 <script src="/home.js" defer></script>
-<style>
-/* ── VESTA MARKETPLACE PAGE (vesta.html only) ─────────────── */
-
-/* Hero: compact dark band, search front and center */
-.vm-hero{
-  background:
-    radial-gradient(900px 420px at 80% -100px,rgba(103,198,148,.13),transparent 60%),
-    #0f1310;
-  color:#f2eee5;
-  padding:clamp(2.8rem,6vw,5rem) var(--pad) clamp(2.4rem,5vw,4rem);
-  text-align:center;
-  position:relative;
-  overflow:hidden;
-}
-.vm-hero::after{ /* grain */
-  content:"";position:absolute;inset:0;pointer-events:none;opacity:.04;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-}
-.vm-hero-inner{position:relative;z-index:1;max-width:680px;margin:0 auto}
-.vm-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#67c694;margin-bottom:1rem}
-.vm-h1{font-family:var(--display);font-size:clamp(2.4rem,6vw,4rem);font-weight:500;line-height:1.04;letter-spacing:-.035em;color:#f2eee5;margin-bottom:.9rem}
-.vm-tagline{font-size:clamp(.9rem,1.6vw,1.05rem);color:rgba(242,238,229,.64);line-height:1.65;margin-bottom:1.8rem;max-width:50ch;margin-left:auto;margin-right:auto}
-.vm-search{display:flex;gap:.45rem;background:rgba(242,238,229,.07);border:1px solid rgba(242,238,229,.22);border-radius:50px;padding:.35rem .35rem .35rem 1.2rem;max-width:460px;margin:0 auto}
-.vm-search input{flex:1;background:transparent;border:none;font-family:var(--body);font-size:1rem;color:#f2eee5;outline:none;padding:.55rem .2rem;letter-spacing:.12em;font-weight:500;min-width:0}
-.vm-search input::placeholder{color:rgba(242,238,229,.38);letter-spacing:.04em;font-weight:400;font-size:.94rem}
-.vm-search input:focus{outline:none}
-
-/* Market body: 3-column layout */
-.vm-market{
-  display:grid;
-  grid-template-columns:218px 1fr 252px;
-  gap:1rem;
-  padding:1.2rem var(--pad) 0;
-  max-width:1340px;
-  margin:0 auto;
-  width:100%;
-  align-items:start;
-}
-@media(max-width:1060px){.vm-market{grid-template-columns:200px 1fr}}
-@media(max-width:760px){.vm-market{grid-template-columns:1fr}.vm-right{display:none}}
-
-/* Shared panel card */
-.vm-panel{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:1.2rem 1.25rem;
-  margin-bottom:.85rem;
-}
-.vm-panel:last-child{margin-bottom:0}
-.vm-phead{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:.9rem}
-
-/* Left column */
-.vm-left{display:flex;flex-direction:column}
-
-.vm-stats-row{display:flex;gap:1rem;margin:.5rem 0 1rem}
-.vm-stat{flex:1}
-.vm-stat .sn{font-family:var(--display);font-size:1.9rem;font-weight:500;letter-spacing:-.03em;line-height:1}
-.vm-stat .sl{font-size:.72rem;color:var(--muted);margin-top:.2rem}
-
-.vm-trades{display:flex;flex-direction:column;gap:.28rem;margin-top:.6rem}
-.vm-trade{display:flex;align-items:center;gap:.6rem;padding:.48rem .65rem;border-radius:8px;font-size:.82rem;color:var(--muted);cursor:pointer;border:none;background:transparent;text-align:left;font-family:inherit;transition:background .13s,color .13s}
-.vm-trade svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.6}
-.vm-trade:hover{background:var(--cream-2);color:var(--ink)}
-.vm-trade.vm-on{background:var(--ink);color:var(--cream)}
-.vm-trade.vm-on svg{opacity:1}
-
-.vm-acct-list{list-style:none;margin:.2rem 0 1rem}
-.vm-acct-list li{display:flex;align-items:flex-start;gap:.5rem;font-size:.82rem;color:var(--muted);padding:.3rem 0;border-bottom:1px dashed var(--line);line-height:1.4}
-.vm-acct-list li:last-child{border-bottom:none}
-.vm-acct-list li::before{content:"✓";color:var(--orange);font-size:.7rem;margin-top:.15rem;flex-shrink:0}
-
-/* Center column */
-.vm-center{min-width:0}
-
-.vm-filterbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.85rem}
-.vm-filter-chips{display:flex;flex-wrap:wrap;gap:.35rem}
-.vm-chip{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;border-radius:50px;padding:.38rem .8rem;border:1px solid var(--line);color:var(--muted);background:transparent;cursor:pointer;transition:all .13s;font-family:var(--mono)}
-.vm-chip:hover{border-color:var(--ink);color:var(--ink)}
-.vm-chip.vm-on{background:var(--ink);border-color:var(--ink);color:var(--cream)}
-.vm-name-link{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;transition:color .15s}
-.vm-name-link:hover{color:var(--ink)}
-
-.vm-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.85rem}
-
-/* contractor card in marketplace style */
-.vm-card{
-  background:#fff;border:1px solid var(--line);border-radius:14px;
-  padding:1.1rem 1.15rem;display:flex;flex-direction:column;gap:.4rem;
-  transition:box-shadow .2s,transform .18s,border-color .18s;
-  cursor:pointer;
-}
-.vm-card:hover{box-shadow:0 14px 36px -18px rgba(26,26,24,.22);transform:translateY(-1px);border-color:rgba(26,26,24,.22)}
-.vm-card .vc-badge{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:.2rem}
-.vm-card h3{font-family:var(--display);font-size:1.05rem;font-weight:500;letter-spacing:-.018em;line-height:1.2}
-.vm-card .vc-trade{font-size:.78rem;color:var(--muted)}
-.vm-card .vc-fp{font-size:.74rem;color:var(--muted);line-height:1.5;border-top:1px dashed var(--line);padding-top:.5rem;margin-top:.3rem}
-.vm-card .vc-fp b{color:var(--ink)}
-.vm-card .spacer{flex:1}
-.vm-card .vc-cta{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-top:.5rem;transition:color .15s}
-.vm-card .vc-cta:hover{color:var(--ink)}
-
-/* listed (unverified) card in marketplace */
-.vm-card.vm-listed{border-style:dashed}
-.vm-card.vm-listed h3{color:var(--ink)}
-.vm-card.vm-listed .vc-badge{color:var(--dim)}
-
-/* empty / loading states */
-.vm-empty{background:var(--cream-2);border:1px dashed var(--line);border-radius:14px;padding:2rem 1.4rem;text-align:center;color:var(--muted);font-size:.88rem;grid-column:1/-1;line-height:1.65}
-.vm-loading{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:1.2rem 0;animation:homePulse 1.4s ease-in-out infinite;grid-column:1/-1}
-
-/* Right column */
-.vm-right{display:flex;flex-direction:column}
-.vm-feed-list{list-style:none;margin:0}
-.vm-feed-list li{display:flex;flex-direction:column;gap:.15rem;padding:.65rem 0;border-bottom:1px dashed var(--line);font-size:.82rem;line-height:1.5}
-.vm-feed-list li:last-child{border-bottom:none}
-.vm-feed-list .fi-mo{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
-.vm-feed-list .fi-job{font-weight:600;color:var(--ink)}
-.vm-feed-list .fi-where{font-size:.75rem;color:var(--muted)}
-
-/* ── BELOW-FOLD: compressed editorial ─────────────────────── */
-.vm-below{
-  background:var(--cream);
-  border-top:1px solid var(--line);
-  margin-top:2rem;
-  padding:clamp(2rem,5vw,4rem) var(--pad);
-}
-.vm-why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.2rem 0 2.4rem}
-.vm-why-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.3rem}
-.vm-why-card .wk{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:.5rem}
-.vm-why-card h3{font-family:var(--display);font-size:1.05rem;font-weight:500;letter-spacing:-.018em;margin-bottom:.4rem}
-.vm-why-card p{font-size:.8rem;color:var(--muted);line-height:1.65}
-
-.vm-proof-split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3rem);align-items:center;margin:2.4rem 0}
-@media(max-width:760px){.vm-proof-split{grid-template-columns:1fr}}
-
-.vm-section-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:.8rem}
-.vm-h2{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.2rem);font-weight:500;letter-spacing:-.028em;line-height:1.1;max-width:28ch}
-.vm-h2 em{font-style:italic;color:var(--orange);font-weight:400}
-.vm-note{font-size:.88rem;line-height:1.7;color:var(--muted);margin-top:.9rem;max-width:52ch}
-.vm-note b{color:var(--ink)}
-
-.vm-promises{list-style:none;margin:1rem 0 2rem}
-.vm-promises li{display:flex;gap:.6rem;font-size:.86rem;color:var(--muted);padding:.4rem 0;border-bottom:1px dashed var(--line);line-height:1.55}
-.vm-promises li:last-child{border-bottom:none}
-.vm-promises li::before{content:"·";color:var(--orange);font-weight:700;flex-shrink:0}
-.vm-promises b{color:var(--ink)}
-
-.vm-cta-band{background:var(--ink);border-radius:20px;padding:clamp(1.8rem,4vw,2.8rem) clamp(1.5rem,4vw,2.8rem);display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-top:.4rem}
-.vm-cta-copy h3{font-family:var(--display);font-size:clamp(1.3rem,2.8vw,1.9rem);font-weight:500;letter-spacing:-.025em;color:var(--cream)}
-.vm-cta-copy p{font-size:.86rem;color:rgba(245,243,238,.62);margin-top:.35rem}
-.vm-cta-actions{display:flex;gap:.7rem;flex-wrap:wrap;flex-shrink:0}
-</style>
 </head>
-<body>
+<body class="v-dark v-shell">
 
-<!-- ── Nav ── -->
-<nav class="topnav">
+<!-- Mobile-only topnav (sidebar takes over on desktop) -->
+<nav class="topnav vsn-mob">
   <a href="/" class="nav-logo">
     <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
       <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
@@ -183,263 +30,571 @@
     4THWALL<span class="home-tag">VESTA</span>
   </a>
   <div class="nav-links">
-    <a href="/atlas" class="nav-a">Atlas</a>
-    <a href="/vesta" class="nav-a is-current">Vesta</a>
-    <a href="/find" class="nav-a">Find a pro</a>
-    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
+    <a href="/vesta" class="nav-a is-current">Find</a>
+    <a href="/address" class="nav-a">Address</a>
+    <span id="nav-acct-mob"><a class="nav-a" href="/signin">Sign in</a></span>
   </div>
 </nav>
 
-<main>
+<div class="vshell-wrap">
 
-<!-- ── Hero: compact dark search band ── -->
-<section class="vm-hero v-dark">
-  <div class="vm-hero-inner">
-    <div class="vm-label">Vesta · for the home</div>
-    <h1 class="vm-h1">Find local contractors.</h1>
-    <p class="vm-tagline">Every pro near you. The ones with proven work, marked first. No ads, no pay-to-play — just the verified record.</p>
-    <form class="vm-search" method="GET" action="/find">
-      <input type="text" name="zip" id="hero-zip" maxlength="5" inputmode="numeric" pattern="\d{5}" placeholder="Your ZIP code" autocomplete="postal-code">
-      <button class="pill pill-orange" type="submit">Find pros →</button>
-    </form>
-    <p class="fine" style="margin-top:.9rem;color:rgba(242,238,229,.42)">No account needed. Any ZIP in the country.</p>
-  </div>
-</section>
-
-<!-- ── Marketplace body ── -->
-<div class="vm-market" id="vm-market">
-
-  <!-- Left: context + filters + account pitch -->
-  <aside class="vm-left">
-    <div class="vm-panel">
-      <div class="vm-phead">The verified network</div>
-      <div class="vm-stats-row" id="vm-stats">
-        <div class="vm-stat"><div class="sn" id="vm-stat-pros">—</div><div class="sl">Verified pros</div></div>
-        <div class="vm-stat"><div class="sn" id="vm-stat-jobs">—</div><div class="sl">Verified jobs</div></div>
-      </div>
-      <div class="vm-phead" style="margin-top:.4rem">Filter by trade</div>
-      <div class="vm-trades" id="vm-trades">
-        <button class="vm-trade vm-on" data-trade="">
-          <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-          All trades
-        </button>
-        <button class="vm-trade" data-trade="roofing">
-          <svg viewBox="0 0 24 24"><path d="M2.5 11.5 12 3.5l9.5 8"/><path d="M5.5 9.4V20h13V9.4"/></svg>
-          Roofing
-        </button>
-        <button class="vm-trade" data-trade="paving">
-          <svg viewBox="0 0 24 24"><path d="M7.5 4 4.5 20"/><path d="M16.5 4l3 16"/><path d="M12 5.5v2.6"/><path d="M12 11.2v2.6"/></svg>
-          Paving
-        </button>
-        <button class="vm-trade" data-trade="hvac">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.5"/><path d="M12 13l3.2-3.2"/><path d="M12 5.5V4"/></svg>
-          HVAC
-        </button>
-        <button class="vm-trade" data-trade="plumbing">
-          <svg viewBox="0 0 24 24"><path d="M12 3.5s6 6.4 6 10.2a6 6 0 0 1-12 0C6 9.9 12 3.5 12 3.5Z"/></svg>
-          Plumbing
-        </button>
-        <button class="vm-trade" data-trade="electrical">
-          <svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z"/></svg>
-          Electrical
-        </button>
-        <button class="vm-trade" data-trade="lawn_care">
-          <svg viewBox="0 0 24 24"><path d="M12 20.5V13"/><path d="M12 14.5C12 10.5 9 8.5 5 8.5c0 4 3 6 7 6Z"/><path d="M12 12.5c0-4 3-6 7-6 0 4-3 6-7 6Z"/></svg>
-          Lawn care
-        </button>
-      </div>
+  <!-- ── Sidebar ── -->
+  <aside class="vsb">
+    <div class="vsb-brand">
+      <a href="/" class="vsb-logo-link">
+        <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+          <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+          <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+        </svg>
+        <div class="vsb-wordmark">
+          <span class="vsb-name">4THWALL</span>
+          <span class="vsb-product">VESTA</span>
+        </div>
+      </a>
     </div>
 
-    <div class="vm-panel">
-      <div class="vm-phead">See contact info</div>
-      <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:.9rem">Sign in free to unlock any listed contractor's phone number, website, and socials — gathered live, the moment you ask.</p>
-      <a class="pill pill-orange pill-sm" href="/signin">Sign in — one email <span class="arr">→</span></a>
-      <p class="fine" style="margin-top:.5rem">No password. No phone number.</p>
+    <div class="vsb-zip" id="sb-zip">
+      <div><span class="zlab">Your area</span><span class="z" id="sb-zip-val"></span></div>
+      <button type="button" class="zchg" id="sb-zip-chg">change</button>
+    </div>
+
+    <nav class="vsb-nav">
+      <button type="button" class="vsb-item vsb-active" id="sb-find">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><line x1="17" y1="17" x2="22" y2="22"/>
+        </svg>
+        Find a pro
+      </button>
+      <button type="button" class="vsb-item" id="sb-lookup">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h7"/><circle cx="18.5" cy="16.5" r="3"/><line x1="20.8" y1="18.8" x2="23" y2="21"/>
+        </svg>
+        Look up a name
+      </button>
+      <a href="/address" class="vsb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z"/><circle cx="12" cy="9" r="2.5"/>
+        </svg>
+        Check an address
+      </a>
+      <a href="/myhome" class="vsb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5Z"/><path d="M9 21V12h6v9"/>
+        </svg>
+        My Home
+      </a>
+    </nav>
+
+    <div class="vsb-foot">
+      <span id="nav-acct"><a class="vsb-signin" href="/signin">Sign in →</a></span>
     </div>
   </aside>
 
-  <!-- Center: contractor cards -->
-  <div class="vm-center">
-    <div class="vm-filterbar">
-      <div class="vm-filter-chips" id="vm-chips">
-        <!-- chips mirror trade filter buttons for quick-scan -->
+  <!-- ── Main scroll area ── -->
+  <main class="vsm">
+
+    <!-- STATE 1: the gate -->
+    <div class="va-gate" id="va-gate" hidden>
+      <div class="va-gate-eyebrow">Vesta · contractor discovery</div>
+      <h1 class="va-gate-h">Who's proven <em>near you?</em></h1>
+      <p class="va-gate-sub">Your ZIP is the key. Behind it: every contractor in your area — the ones with verified work marked first, the public record on everyone else, and the receipts to back it all up.</p>
+      <form class="vzip-hero-form" id="gate-form">
+        <input class="vzip-gate-input" id="gate-zip" type="text" maxlength="5" inputmode="numeric" pattern="\d{5}" placeholder="ZIP" autocomplete="postal-code" aria-label="ZIP code">
+        <button class="pill pill-orange" type="submit">Enter <span class="arr">→</span></button>
+      </form>
+      <p class="fine">Any ZIP in the country. No account needed to look.</p>
+      <div class="vdoors">
+        <button type="button" class="pill pill-ghost pill-sm" id="gate-lookup">Look up a name instead</button>
+        <a class="pill pill-ghost pill-sm" href="/address">Check an address</a>
       </div>
-      <a class="vm-name-link" href="/find?mode=name">Look up by name →</a>
+      <div class="va-gate-why">
+        <div class="gw"><b>No ads, no pay-to-play</b><span>Pros can't pay to appear, rank higher, or look better. Verified work sorts first — always.</span></div>
+        <div class="gw"><b>Proof, not stars</b><span>Verified records are written by an operational ledger as work happens. Never self-reported.</span></div>
+        <div class="gw"><b>Everyone, honestly</b><span>Unverified pros are still shown — with the public record, labeled as exactly that.</span></div>
+      </div>
     </div>
-    <div class="vm-cards" id="vm-cards">
-      <div class="vm-loading">Loading the network…</div>
-    </div>
-    <p class="note" style="margin-top:1.2rem;font-size:.78rem" id="vm-how"></p>
-  </div>
 
-  <!-- Right: verified work feed -->
-  <div class="vm-right">
-    <div class="vm-panel">
-      <div class="vm-phead">Recent verified work</div>
-      <ul class="vm-feed-list" id="vm-feed">
-        <li style="color:var(--dim);font-size:.78rem;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase">Loading…</li>
-      </ul>
-      <p class="fine" style="margin-top:.6rem">Documented jobs from the verified network — month and town only.</p>
+    <!-- STATE 2: inside -->
+    <div id="va-app" hidden>
+      <div class="va-head">
+        <h1 id="va-h1">Near <em></em></h1>
+      </div>
+      <p class="va-sub" id="va-sub">Reading the area…</p>
+
+      <div class="va-strip" id="va-strip"></div>
+
+      <form class="va-q" id="va-qform" hidden>
+        <input type="text" id="va-qin" maxlength="60" placeholder="Search by keyword — “water heater”, “flat roof”…" autocomplete="off">
+        <button class="pill pill-ink pill-sm" type="submit">Search</button>
+      </form>
+
+      <div class="vmain-grid">
+        <div id="va-center"><div class="va-skel"></div><div class="va-skel" style="margin-top:.8rem"></div></div>
+
+        <aside class="va-rail" id="va-rail">
+          <div class="va-panel" id="va-vitals-panel">
+            <div class="va-ph">Your area, lately</div>
+            <div class="va-vitals" id="va-vitals"></div>
+            <ul class="feed" id="va-feed"></ul>
+            <p class="fine" id="va-feed-fine"></p>
+          </div>
+          <div class="va-panel">
+            <div class="va-ph">Got a name already?</div>
+            <p style="font-size:.8rem;color:var(--vmut);line-height:1.6;margin-bottom:.8rem">From a neighbor, a yard sign, a quote — look them up. Verified history if they have it, an honest nothing if they don't.</p>
+            <button type="button" class="pill pill-ghost pill-sm" id="rail-lookup">Look up by name <span class="arr">→</span></button>
+          </div>
+          <div class="va-panel">
+            <div class="va-ph">How Vesta decides</div>
+            <p style="font-size:.78rem;color:var(--vmut);line-height:1.65">Verified numbers come from a tamper-evident operational ledger written as work happens — answered calls, booked jobs, completed work. No one can pay to change what you see here.</p>
+          </div>
+        </aside>
+      </div>
     </div>
-    <div class="vm-panel">
-      <div class="vm-phead">Look up a name</div>
-      <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:.9rem">Got a name from a neighbor, a yard sign, a quote? Look them up — verified history if they have it, an honest nothing if they don't.</p>
-      <a class="pill pill-ghost pill-sm" href="/find?mode=name">Look up by name <span class="arr">→</span></a>
-    </div>
-  </div>
+
+    <footer class="vsm-foot">
+      <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+      <div class="foot-links">
+        <a href="/atlas">Atlas</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+    </footer>
+  </main>
 
 </div>
 
-<!-- ── Below fold: compressed editorial ── -->
-<div class="vm-below">
-
-  <!-- Why it exists -->
-  <div class="vm-section-label">Why this exists</div>
-  <h2 class="vm-h2">Everywhere else, the contractor you see is the one who <em>paid.</em></h2>
-  <div class="vm-why-grid">
-    <div class="vm-why-card"><div class="wk">Lead sites</div><h3>Your request is the product</h3><p>The same job gets sold to several contractors at once — and the cost of those leads comes back to you, baked into the quote.</p></div>
-    <div class="vm-why-card"><div class="wk">Review platforms</div><h3>Stars are marketing</h3><p>Reviews can be begged, bought, and buried. A five-star wall tells you who asked loudest — not who shows up, on time, twice.</p></div>
-    <div class="vm-why-card"><div class="wk">Badges &amp; certifications</div><h3>"Certified" means "subscribed"</h3><p>Most badges are paid placements, not inspections. Nobody went and checked the work.</p></div>
-  </div>
-
-  <!-- Plainly -->
-  <div class="vm-section-label" style="margin-top:1rem">Plainly</div>
-  <ul class="vm-promises">
-    <li>Vesta is <b>free to use, free to join.</b></li>
-    <li>We never sell your data or your contact info.</li>
-    <li>Pros can't pay to appear, rank higher, or look better. There are no ads.</li>
-    <li><b>Verified means verified</b> — written as the work happens, never self-reported, never invented.</li>
-    <li>"No verified jobs yet" isn't a black mark. It means undocumented — and now you know to ask.</li>
-  </ul>
-
-  <!-- End CTA band -->
-  <div class="vm-cta-band">
-    <div class="vm-cta-copy">
-      <h3>Your ZIP is enough to start.</h3>
-      <p>See who's proven near you, or look up the name on a quote.</p>
-    </div>
-    <div class="vm-cta-actions">
-      <a class="pill pill-orange" href="/find">Find a contractor <span class="arr">→</span></a>
-      <a class="pill" style="background:rgba(245,243,238,.1);color:var(--cream);border:1px solid rgba(245,243,238,.18)" href="/signin">Sign in free</a>
-    </div>
-  </div>
-
+<!-- Compare-the-proof tray + overlay -->
+<div class="va-cmp-bar" id="cmp-bar" hidden>
+  <span class="names" id="cmp-names"></span>
+  <button type="button" class="pill pill-orange pill-sm" id="cmp-open">Compare the proof <span class="arr">→</span></button>
+  <button type="button" class="clr" id="cmp-clear">clear</button>
 </div>
-
-</main>
-
-<footer>
-  <div class="foot-row">
-    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
-    <div class="foot-links">
-      <a href="/atlas">Atlas</a>
-      <a href="/privacy.html">Privacy</a>
-      <a href="/terms.html">Terms</a>
-    </div>
+<div class="va-cmp-ov" id="cmp-ov" hidden>
+  <div class="va-cmp" role="dialog" aria-label="Compare contractors">
+    <h2>Side by side — proof only.</h2>
+    <p class="cmp-sub">Every row below is either written by the 4THWALL ledger or pulled live from the public record. Nothing self-reported, nothing invented. A dash means: no proof exists.</p>
+    <div id="cmp-table"></div>
+    <p class="cmp-note"><b>Ledger rows</b> are recorded by the system as work happens — they can't be purchased, edited, or inflated. <b>Public rows</b> come from Google's public record: useful context, but marketing-grade. Vesta shows you both and tells you which is which.</p>
+    <button type="button" class="pill pill-ghost pill-sm cmp-close" id="cmp-close">Close</button>
   </div>
-</footer>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', async function(){
-  if (window.HOME) HOME.navAccount();
   const esc = HOME.esc;
+  const $ = (id) => document.getElementById(id);
 
-  // ── Load roster → populate center cards + left stats ──
-  let allPros = [];
-  let activeTrade = '';
+  // ── Account state (sidebar slot + mobile mirror) ──
+  HOME.navAccount().then(acct => {
+    const mob = $('nav-acct-mob');
+    if (mob) mob.innerHTML = acct
+      ? '<a class="nav-a" href="/myhome">My home</a>'
+      : '<a class="nav-a" href="/signin">Sign in</a>';
+  });
 
-  const cardsEl  = document.getElementById('vm-cards');
-  const statsN   = document.getElementById('vm-stat-pros');
-  const statsJ   = document.getElementById('vm-stat-jobs');
-  const howEl    = document.getElementById('vm-how');
+  // ── State ──
+  const ZIP_KEY = 'vesta_zip';
+  const S = { zip:'', trade:'', q:'', mode:'', base:null, cur:null, feed:null, cmp:new Map() };
+
+  const I = {
+    all:        '<path d="M3 12h18M3 6h18M3 18h18"/>',
+    roofing:    '<path d="M2.5 11.5 12 3.5l9.5 8"/><path d="M5.5 9.4V20h13V9.4"/><path d="M15.5 6.6V4.5h2.5v4.1"/>',
+    paving:     '<path d="M7.5 4 4.5 20"/><path d="M16.5 4l3 16"/><path d="M12 5.5v2.6"/><path d="M12 11.2v2.6"/><path d="M12 16.9v2.6"/>',
+    hvac:       '<circle cx="12" cy="13" r="7.5"/><path d="M12 13l3.2-3.2"/><path d="M12 5.5V4"/><path d="M4.5 13H3"/><path d="M21 13h-1.5"/>',
+    plumbing:   '<path d="M12 3.5s6 6.4 6 10.2a6 6 0 0 1-12 0C6 9.9 12 3.5 12 3.5Z"/>',
+    electrical: '<path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z"/>',
+    lawn_care:  '<path d="M12 20.5V13"/><path d="M12 14.5C12 10.5 9 8.5 5 8.5c0 4 3 6 7 6Z"/><path d="M12 12.5c0-4 3-6 7-6 0 4-3 6-7 6Z"/>'
+  };
+
+  function tLabel(t){ return t === 'hvac' ? 'HVAC' : HOME.tradeLabel(t); }
+  function savedZip(){ try { const z = localStorage.getItem(ZIP_KEY); return /^\d{5}$/.test(z||'') ? z : ''; } catch(_){ return ''; } }
+  function saveZip(z){ try { localStorage.setItem(ZIP_KEY, z); } catch(_){} }
+
+  function urlFor(){
+    const p = new URLSearchParams();
+    if (S.mode === 'name'){ p.set('mode','name'); if (S.q) p.set('q', S.q); if (S.zip) p.set('zip', S.zip); }
+    else { if (S.zip) p.set('zip', S.zip); if (S.trade) p.set('trade', S.trade); if (S.q) p.set('q', S.q); }
+    const qs = p.toString();
+    return location.pathname + (qs ? '?' + qs : '');
+  }
+  function pushUrl(replace){
+    try { history[replace ? 'replaceState' : 'pushState'](null, '', urlFor()); } catch(_){}
+  }
+
+  // ── Shared renderers ──
+  function fmtCount(n){ return Number(n).toLocaleString('en-US'); }
+  function shortAddr(a){ return String(a||'').replace(/, USA$/,''); }
 
   function fpHtml(reg){
     if (!reg || !reg.jobs) return '';
     const bits = [];
     if (reg.cities && reg.cities.length){
       const cs = reg.cities.slice(0,3).map(esc).join(', ');
-      bits.push('Work in <b>' + cs + (reg.cities.length > 3 ? ' +' + (reg.cities.length-3) + ' more' : '') + '</b>');
+      bits.push('Verified work in <b>' + cs + (reg.cities.length > 3 ? ' +' + (reg.cities.length-3) + ' more' : '') + '</b>');
     }
     if (reg.last_month) bits.push('last job <b>' + esc(HOME.fmtMonth(reg.last_month)) + '</b>');
-    return bits.length ? '<div class="vc-fp">' + bits.join(' · ') + '</div>' : '';
+    return bits.length ? '<div class="vfp">' + bits.join(' · ') + '</div>' : '';
   }
-
-  function renderCards(pros){
-    if (!pros.length){
-      cardsEl.innerHTML = '<div class="vm-empty">No verified contractors in this trade yet — the network is growing. <a href="/find" style="color:var(--orange)">Search your ZIP</a> to see everyone nearby, verified or not.</div>';
-      return;
+  function pubHtml(p){
+    if (p.rating != null && p.rating_count){
+      return '<div class="vpub">Public footprint: <b>' + esc(p.rating) + '★</b> across <b>' + fmtCount(p.rating_count) + '</b> reviews <span class="gsrc">via Google</span></div>';
     }
-    cardsEl.innerHTML = pros.map(p => {
-      const href = '/pro/' + encodeURIComponent(p.location_id);
-      return '<a class="vm-card" href="' + href + '">' +
-        '<div class="vc-badge">✓ Verified network</div>' +
-        '<h3>' + esc(p.business_name) + '</h3>' +
-        '<div class="vc-trade">' + esc(HOME.tradeLabel(p.trade)) + '</div>' +
-        HOME.badgeChips(p) +
-        fpHtml(p.registry) +
-        '<div class="spacer"></div>' +
-        '<span class="vc-cta">See the record →</span>' +
-      '</a>';
-    }).join('');
+    return '<div class="vpub">No public rating on record <span class="gsrc">via Google</span></div>';
   }
-
-  function applyFilter(trade){
-    activeTrade = trade;
-    document.querySelectorAll('.vm-trade').forEach(b => b.classList.toggle('vm-on', b.dataset.trade === trade));
-    const filtered = trade ? allPros.filter(p => p.trade === trade) : allPros;
-    renderCards(filtered);
+  function cmpBtn(key){
+    const on = S.cmp.has(key);
+    return '<button type="button" class="vcmp-btn' + (on ? ' on' : '') + '" data-cmp="' + esc(key) + '">' + (on ? '✓ Comparing' : '+ Compare') + '</button>';
   }
+  function vCard(p){
+    const href = '/pro/' + encodeURIComponent(p.location_id);
+    const key = 'v:' + p.location_id;
+    return '<div class="card vcard lift">' +
+      '<span class="vrib">✓ Verified network</span>' +
+      '<a class="cardlink" href="' + href + '"><h3>' + esc(p.business_name) + '</h3></a>' +
+      '<div class="sub">' + esc(HOME.tradeLabel(p.trade)) + '</div>' +
+      HOME.badgeChips(p) + fpHtml(p.registry) +
+      '<div class="spacer"></div>' +
+      '<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">' +
+        '<a class="pill pill-orange pill-sm" href="' + href + '">See the record <span class="arr">→</span></a>' +
+        cmpBtn(key) +
+      '</div></div>';
+  }
+  function listedCard(p){
+    const href = '/c/' + encodeURIComponent(p.place_id) + (S.zip ? '?zip=' + encodeURIComponent(S.zip) : '');
+    const key = 'l:' + p.place_id;
+    const subBits = [p.primary_type ? esc(p.primary_type) : '', esc(shortAddr(p.address))].filter(Boolean);
+    return '<div class="card lift">' +
+      '<a class="cardlink" href="' + href + '"><h3>' + esc(p.name) + '</h3></a>' +
+      '<div class="sub">' + subBits.join(' · ') + '</div>' +
+      pubHtml(p) +
+      '<div class="badges"><span class="badge plain">No verified jobs on Vesta yet</span>' +
+      (p.claimed ? '<span class="badge">Profile claimed</span>' : '') +
+      (p.business_status === 'CLOSED_TEMPORARILY' ? '<span class="badge plain">Temporarily closed</span>' : '') +
+      '</div>' +
+      '<div class="spacer"></div>' +
+      '<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">' +
+        '<a class="pill pill-ghost pill-sm" href="' + href + '">View profile</a>' +
+        cmpBtn(key) +
+      '</div></div>';
+  }
+  const HONEST = '<p class="note"><b>“No verified jobs on Vesta yet”</b> isn’t an accusation — most pros have never been asked to prove their work this way. It means exactly what it says: nothing here is verified, so ask for references like you always would.</p>';
+  const ATTR = '<p class="vattr">Listings &amp; public ratings via Google · resolved live at search time, never stored</p>';
 
-  document.querySelectorAll('.vm-trade').forEach(b => {
-    b.addEventListener('click', () => applyFilter(b.dataset.trade));
+  // ── Compare ──
+  function cmpRegister(key, obj){ cmpData[key] = obj; }
+  const cmpData = {};
+
+  function renderCmpBar(){
+    const bar = $('cmp-bar');
+    if (!S.cmp.size){ bar.hidden = true; return; }
+    bar.hidden = false;
+    $('cmp-names').innerHTML = '<b>' + S.cmp.size + '</b> selected — ' +
+      [...S.cmp.keys()].map(k => esc((cmpData[k] || {}).name || '')).filter(Boolean).join(' · ');
+  }
+  function toggleCmp(key){
+    if (S.cmp.has(key)) S.cmp.delete(key);
+    else if (S.cmp.size >= 3) return;
+    else S.cmp.set(key, true);
+    document.querySelectorAll('[data-cmp]').forEach(b => {
+      const on = S.cmp.has(b.dataset.cmp);
+      b.classList.toggle('on', on);
+      b.textContent = on ? '✓ Comparing' : '+ Compare';
+    });
+    renderCmpBar();
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-cmp]');
+    if (b) toggleCmp(b.dataset.cmp);
+  });
+  $('cmp-clear').addEventListener('click', () => {
+    S.cmp.clear();
+    document.querySelectorAll('[data-cmp]').forEach(b => { b.classList.remove('on'); b.textContent = '+ Compare'; });
+    renderCmpBar();
+  });
+  $('cmp-close').addEventListener('click', () => { $('cmp-ov').hidden = true; });
+  $('cmp-ov').addEventListener('click', (e) => { if (e.target === $('cmp-ov')) $('cmp-ov').hidden = true; });
+  $('cmp-open').addEventListener('click', () => {
+    const picks = [...S.cmp.keys()].map(k => cmpData[k]).filter(Boolean);
+    if (!picks.length) return;
+    const dash = '<span class="dash">—</span>';
+    const row = (label, fn) => '<tr><td class="k">' + label + '</td>' + picks.map(p => '<td>' + (fn(p) || dash) + '</td>').join('') + '</tr>';
+    const ms = (v) => v == null ? '' : (Number(v) < 1000 ? '&lt;1s' : Math.round(Number(v)/1000) + 's') + ' median, 90d';
+    let html = '<table><tr><td class="k"></td>' + picks.map(p =>
+      '<th>' + (p.kind === 'v' ? '<span class="vrib">✓ Verified network</span>' : '<span class="lrib">Listed only</span>') + esc(p.name) + '</th>').join('') + '</tr>';
+    html += row('Verified jobs', p => p.kind === 'v' && p.badges ? '<span class="yes">' + (Number(p.badges.verified_jobs) || 0) + '</span>' : '');
+    html += row('Last documented job', p => p.registry && p.registry.last_month ? esc(HOME.fmtMonth(p.registry.last_month)) : '');
+    html += row('Towns covered (verified)', p => p.registry && p.registry.cities && p.registry.cities.length ? esc(p.registry.cities.slice(0,4).join(', ')) : '');
+    html += row('Answers calls', p => p.badges && p.badges.response_ms_median_90d != null ? ms(p.badges.response_ms_median_90d) : '');
+    html += row('Booking follow-through', p => p.badges && p.badges.booking_reliability_365d != null ? esc(p.badges.booking_reliability_365d) + '%' : '');
+    html += row('Public rating (Google)', p => p.rating != null && p.rating_count ? esc(p.rating) + '★ · ' + fmtCount(p.rating_count) + ' reviews' : '');
+    html += row('Category', p => p.kind === 'v' ? esc(HOME.tradeLabel(p.trade)) : (p.primary_type ? esc(p.primary_type) : ''));
+    html += '</table>';
+    $('cmp-table').innerHTML = html;
+    $('cmp-ov').hidden = false;
   });
 
-  const { data } = await HOME.api('/roster');
-  if (data.ok){
-    allPros = data.pros || [];
-    statsN.textContent = allPros.length || '—';
-    const jobs = allPros.reduce((sum, p) => sum + (p.registry && p.registry.jobs ? p.registry.jobs : 0), 0);
-    statsJ.textContent = jobs || '—';
-    renderCards(allPros);
-    if (allPros.length){
-      howEl.textContent = 'Verified numbers come from a tamper-evident operational ledger written as work happens — answered calls, booked jobs, completed work. Never self-reported, no one can pay to change what you see.';
+  // ── Trade strip ──
+  const TRADE_TILES = [{t:'',l:'All trades'}].concat(HOME.TRADES.map(t => ({ t, l: t === 'hvac' ? 'HVAC' : HOME.tradeLabel(t) })));
+  function renderStrip(){
+    const counts = {};
+    let total = 0;
+    if (S.base && S.base.ok){
+      (S.base.verified || []).forEach(p => { counts[p.trade] = (counts[p.trade] || 0) + 1; total++; });
     }
-    if (data.stale){
-      cardsEl.insertAdjacentHTML('beforebegin','<div class="warn" style="margin-bottom:.8rem">Live verification briefly unavailable — showing last verified snapshot.</div>');
-    }
-  } else {
-    cardsEl.innerHTML = '<div class="vm-empty">Network data is briefly unavailable — try again in a moment.</div>';
+    $('va-strip').innerHTML = TRADE_TILES.map(x => {
+      const n = x.t === '' ? total : (counts[x.t] || 0);
+      const cline = S.base === null ? '…' : (n > 0 ? '<span class="tc has">' + n + ' verified</span>' : '<span class="tc">browse</span>');
+      return '<button type="button" class="va-tile' + (S.trade === x.t ? ' on' : '') + '" data-trade="' + x.t + '">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' + (I[x.t] || I.all) + '</svg>' +
+        '<span class="tn">' + x.l + '</span>' +
+        (S.base === null ? '<span class="tc">…</span>' : cline) +
+      '</button>';
+    }).join('');
+    document.querySelectorAll('.va-tile').forEach(b => b.addEventListener('click', () => setTrade(b.dataset.trade)));
   }
 
-  // ── Load feed for the right panel ──
-  // Try to get a default ZIP from the roster cities, or use a broad recent feed
-  const feedEl = document.getElementById('vm-feed');
-  // Use the first pro's zip if available, else try a known active market
-  let feedZip = '';
-  if (allPros.length && allPros[0].zip) feedZip = allPros[0].zip;
-  if (!feedZip && allPros.length){
-    // look for any zip in registry data
-    for (const p of allPros){
-      if (p.zip){ feedZip = p.zip; break; }
-    }
-  }
-  if (feedZip){
-    const { data: fd } = await HOME.api('/feed?zip=' + feedZip);
-    if (fd.ok && fd.items && fd.items.length){
-      feedEl.innerHTML = fd.items.slice(0,8).map(item => {
-        const trade = item.trade ? HOME.tradeLabel(item.trade) : '';
-        return '<li>' +
-          '<span class="fi-mo">' + esc(HOME.fmtMonth(item.month)) + '</span>' +
-          '<span class="fi-job">' + esc(item.service || trade || 'Verified job') + '</span>' +
-          '<span class="fi-where">' + esc(item.city || '') + (trade && item.service ? ' · ' + trade : '') + '</span>' +
-        '</li>';
-      }).join('');
+  // ── Center: search results ──
+  function renderCenter(){
+    const c = $('va-center');
+    const d = S.cur;
+    if (!d){ c.innerHTML = '<div class="va-skel"></div><div class="va-skel" style="margin-top:.8rem"></div>'; return; }
+    if (!d.ok){ c.innerHTML = '<div class="warn">Search is briefly unavailable — try again in a moment.</div>'; return; }
+    let html = '';
+    if (d.stale) html += '<div class="warn">Live verification briefly unavailable — last verified snapshot shown.</div>';
+    const tl = S.trade ? HOME.tradeLabel(S.trade).toLowerCase() : '';
+    if ((d.verified || []).length){
+      html += '<h2 class="section-h" style="margin-top:.2rem">Proven near you</h2><div class="grid">' + d.verified.map(p => {
+        cmpRegister('v:' + p.location_id, { kind:'v', name:p.business_name, trade:p.trade, badges:p.badges, registry:p.registry });
+        return vCard(p);
+      }).join('') + '</div>';
     } else {
-      feedEl.innerHTML = '<li style="color:var(--dim);font-size:.78rem">No recent activity yet — the network is growing.</li>';
+      html += '<div class="card-block" style="margin-top:.2rem"><p style="font-size:.9rem;line-height:1.65"><b>Vesta only marks what it can prove.</b> No verified ' +
+        (tl ? esc(tl) + ' ' : '') + 'pros cover ' + esc(S.zip) +
+        ' yet — the verified network grows town by town, and the moment a pro completes a documented job here, you’ll see it. Below: everyone nearby, with their public record shown honestly.</p></div>';
     }
-  } else {
-    feedEl.innerHTML = '<li style="color:var(--dim);font-size:.78rem;line-height:1.6">Activity posts as verified jobs are completed. Enter a ZIP on <a href="/find" style="color:var(--orange)">Find a pro</a> to see what\'s happening near you.</li>';
+    html += '<h2 class="section-h">' + ((d.verified || []).length ? 'Also nearby — the public record' : 'Nearby pros — the public record') + '</h2>';
+    if (!d.lens_configured){
+      html += '<div class="warn">Live local search is coming online — verified network results are shown. Check back soon.</div>';
+    } else if (d.listed === null){
+      html += '<div class="warn">Local search is briefly unavailable — try again in a moment.</div>';
+    } else if (!d.listed.length){
+      html += '<div class="empty">No listed pros came back for that search — try a broader keyword or a different trade.</div>';
+    } else {
+      html += '<div class="grid">' + d.listed.map(p => {
+        cmpRegister('l:' + p.place_id, { kind:'l', name:p.name, primary_type:p.primary_type, rating:p.rating, rating_count:p.rating_count });
+        return listedCard(p);
+      }).join('') + '</div>' + HONEST + ATTR;
+    }
+    c.innerHTML = html;
+    renderCmpBar();
   }
+
+  function renderHead(){
+    const v = S.base && S.base.ok ? (S.base.verified || []).length : null;
+    const l = S.cur && S.cur.ok && Array.isArray(S.cur.listed) ? S.cur.listed.length : null;
+    $('va-h1').innerHTML = (S.trade ? esc(tLabel(S.trade)) + ' near' : 'Near') + ' <em>' + esc(S.zip) + '</em>';
+    let sub;
+    if (v === null) sub = 'Reading the area…';
+    else if (v > 0) sub = '<b>' + v + ' verified pro' + (v === 1 ? '' : 's') + '</b> work near you' + (l ? ' · <b>' + l + '</b> listed in this view' : '') + ' — proof first, the rest honestly labeled.';
+    else sub = 'No verified pros here yet — Vesta won’t pretend otherwise. <b>' + (l || 'The') + ' nearby pros</b> are below with their public record, labeled as exactly that.';
+    $('va-sub').innerHTML = sub;
+  }
+
+  // ── Rail: feed + vitals ──
+  function renderRail(){
+    const f = S.feed;
+    const vit = $('va-vitals'), feedEl = $('va-feed'), fine = $('va-feed-fine');
+    if (!f){ vit.innerHTML = ''; feedEl.innerHTML = '<li style="color:var(--vdim);font-size:.74rem">Loading…</li>'; fine.textContent = ''; return; }
+    const items = (f.ok && f.items) ? f.items : [];
+    if (items.length){
+      const towns = [...new Set(items.map(i => i.city).filter(Boolean))];
+      vit.innerHTML =
+        '<div class="va-vital"><div class="n">' + (items.length >= 30 ? '30+' : items.length) + '</div><div class="l">verified jobs documented</div></div>' +
+        '<div class="va-vital"><div class="n">' + towns.length + '</div><div class="l">town' + (towns.length === 1 ? '' : 's') + ' covered</div></div>' +
+        '<div class="va-vital"><div class="n" style="font-size:1.15rem;padding-top:.3rem">' + esc(HOME.fmtMonth(items[0].month)) + '</div><div class="l">latest verified job</div></div>';
+      feedEl.innerHTML = items.slice(0, 7).map(i =>
+        '<li><span class="mo">' + esc(HOME.fmtMonth(i.month)) + '</span>' +
+        '<span><b>' + esc(i.service || HOME.tradeLabel(i.trade) + ' job') + '</b>' +
+        (i.city ? ' — ' + esc(i.city) : '') + '</span></li>').join('');
+      fine.textContent = 'Documented jobs from the verified network — month and town only, never an address.';
+    } else {
+      vit.innerHTML = '';
+      feedEl.innerHTML = '';
+      fine.textContent = '';
+      $('va-vitals-panel').querySelector('.va-ph').textContent = 'Your area, lately';
+      feedEl.innerHTML = '<li style="color:var(--vmut);font-size:.78rem;line-height:1.6;border-bottom:none">No verified jobs documented near ' + esc(S.zip) + ' yet. Vesta only logs what it can prove — the public listings are still live, and the first documented job here will appear the moment it happens.</li>';
+    }
+  }
+
+  // ── Fetch + state transitions ──
+  async function fetchSearch(zip, trade, q){
+    const { data } = await HOME.api('/search?zip=' + zip + '&trade=' + encodeURIComponent(trade || '') + '&q=' + encodeURIComponent(q || ''));
+    return data;
+  }
+
+  function showGate(){
+    $('va-gate').hidden = false;
+    $('va-app').hidden = true;
+    $('sb-zip').classList.remove('show');
+    document.title = 'Vesta — Find local contractors. | 4THWALL';
+    const g = $('gate-zip');
+    if (g) setTimeout(() => g.focus(), 50);
+  }
+
+  async function enterZip(zip, opts){
+    opts = opts || {};
+    S.zip = zip; S.mode = ''; S.trade = opts.trade || ''; S.q = opts.q || '';
+    saveZip(zip);
+    if (!opts.noPush) pushUrl(opts.replace);
+    $('va-gate').hidden = true;
+    $('va-app').hidden = false;
+    $('sb-zip').classList.add('show');
+    $('sb-zip-val').textContent = zip;
+    $('va-qform').hidden = false;
+    $('va-qin').value = S.q;
+    $('va-strip').style.display = '';
+    document.title = 'Pros near ' + zip + ' — Vesta | 4THWALL';
+    S.base = null; S.cur = null; S.feed = null;
+    renderHead(); renderStrip(); renderCenter(); renderRail();
+
+    // Base search (all trades — powers the strip) + feed, in parallel.
+    const basePromise = fetchSearch(zip, '', '');
+    const feedPromise = HOME.api('/feed?zip=' + zip).then(r => r.data).catch(() => null);
+    if (S.trade || S.q){
+      // Deep-linked filter: fetch it directly alongside the base.
+      fetchSearch(zip, S.trade, S.q).then(d => { S.cur = d; renderCenter(); renderHead(); });
+      S.base = await basePromise;
+    } else {
+      S.base = await basePromise;
+      S.cur = S.base;
+    }
+    renderStrip(); renderHead(); renderCenter();
+    S.feed = await feedPromise;
+    renderRail();
+  }
+
+  async function setTrade(t){
+    if (S.mode === 'name'){ S.mode = ''; applyModeUi(); }
+    S.trade = t;
+    pushUrl();
+    renderStrip();
+    S.cur = null; renderCenter();
+    S.cur = (t === '' && !S.q) ? S.base : await fetchSearch(S.zip, t, S.q);
+    renderCenter(); renderHead();
+  }
+
+  $('va-qform').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    S.q = $('va-qin').value.trim().slice(0, 60);
+    pushUrl();
+    S.cur = null; renderCenter();
+    S.cur = (S.trade === '' && !S.q) ? S.base : await fetchSearch(S.zip, S.trade, S.q);
+    renderCenter(); renderHead();
+  });
+
+  // ── Name-lookup mode ──
+  function applyModeUi(){
+    const name = S.mode === 'name';
+    $('sb-find').classList.toggle('vsb-active', !name);
+    $('sb-lookup').classList.toggle('vsb-active', name);
+    $('va-strip').style.display = name ? 'none' : '';
+    $('va-qform').hidden = name;
+  }
+  async function enterLookup(q, opts){
+    opts = opts || {};
+    S.mode = 'name'; S.q = q || '';
+    if (!opts.noPush) pushUrl(opts.replace);
+    $('va-gate').hidden = true;
+    $('va-app').hidden = false;
+    if (S.zip){ $('sb-zip').classList.add('show'); $('sb-zip-val').textContent = S.zip; }
+    applyModeUi();
+    document.title = 'Look up a contractor — Vesta | 4THWALL';
+    $('va-h1').innerHTML = 'Look them up <em>before you hire.</em>';
+    $('va-sub').innerHTML = 'A name from a neighbor, a yard sign, a quote — type it in. Verified history if they have it; an honest nothing if they don’t.';
+    const c = $('va-center');
+    c.innerHTML =
+      '<form class="va-q" id="lk-form" style="max-width:520px">' +
+        '<input type="text" id="lk-q" maxlength="80" placeholder="Contractor’s business name" autocomplete="off" value="' + esc(S.q) + '">' +
+        '<button class="pill pill-orange pill-sm" type="submit">Look up</button>' +
+      '</form><div id="lk-results"></div>';
+    $('lk-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q2 = $('lk-q').value.trim().slice(0, 80);
+      if (q2.length < 2) return;
+      S.q = q2; pushUrl(); runLookup();
+    });
+    if (S.q && S.q.length >= 2) runLookup();
+    else setTimeout(() => $('lk-q').focus(), 50);
+    if (S.zip && !S.feed){ HOME.api('/feed?zip=' + S.zip).then(r => { S.feed = r.data; renderRail(); }); }
+  }
+  async function runLookup(){
+    const out = $('lk-results');
+    out.innerHTML = '<div class="va-skel" style="margin-top:1rem"></div>';
+    const { data } = await HOME.api('/lookup?q=' + encodeURIComponent(S.q) + (S.zip ? '&zip=' + S.zip : ''));
+    if (!data.ok){ out.innerHTML = '<div class="warn">Lookup is briefly unavailable — try again in a moment.</div>'; return; }
+    let html = '';
+    if (data.stale) html += '<div class="warn">Live verification briefly unavailable — last verified snapshot shown.</div>';
+    if ((data.verified || []).length){
+      html += '<h2 class="section-h">In the verified network</h2><div class="grid">' + data.verified.map(p => {
+        cmpRegister('v:' + p.location_id, { kind:'v', name:p.business_name, trade:p.trade, badges:p.badges, registry:p.registry });
+        return vCard(p);
+      }).join('') + '</div>';
+    }
+    if ((data.listed || []).length){
+      html += '<h2 class="section-h">' + ((data.verified || []).length ? 'Also matching — the public record' : 'Matching businesses — the public record') + '</h2>' +
+        '<div class="grid">' + data.listed.map(p => {
+          cmpRegister('l:' + p.place_id, { kind:'l', name:p.name, primary_type:p.primary_type, rating:p.rating, rating_count:p.rating_count });
+          return listedCard(p);
+        }).join('') + '</div>' + HONEST + ATTR;
+    }
+    if (!(data.verified || []).length && !(data.listed || []).length){
+      html += data.lens_configured
+        ? '<div class="empty" style="margin-top:1rem">Nothing came back for “' + esc(S.q) + '”' + (S.zip ? ' near ' + esc(S.zip) : '') + '. Check the spelling, or try without a ZIP.</div>'
+        : '<div class="warn">Name lookup is coming online — check back soon.</div>';
+    }
+    out.innerHTML = html;
+    renderCmpBar();
+  }
+
+  // ── Wiring ──
+  $('gate-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const z = $('gate-zip').value.trim();
+    if (!/^\d{5}$/.test(z)){ $('gate-zip').focus(); return; }
+    enterZip(z);
+  });
+  $('gate-lookup').addEventListener('click', () => enterLookup(''));
+  $('sb-lookup').addEventListener('click', () => enterLookup(S.mode === 'name' ? S.q : ''));
+  $('rail-lookup').addEventListener('click', () => enterLookup(''));
+  $('sb-find').addEventListener('click', () => {
+    if (S.zip) enterZip(S.zip);
+    else { S.mode = ''; applyModeUi(); showGate(); pushUrl(); }
+  });
+  $('sb-zip-chg').addEventListener('click', () => {
+    try { localStorage.removeItem(ZIP_KEY); } catch(_){}
+    S.zip = ''; S.trade = ''; S.q = ''; S.mode = '';
+    pushUrl(); showGate();
+  });
+
+  // ── Boot (URL is the source of truth; localStorage is the welcome mat) ──
+  function boot(replace){
+    const p = new URLSearchParams(location.search);
+    const zip = /^\d{5}$/.test(p.get('zip') || '') ? p.get('zip') : '';
+    const trade = (p.get('trade') || '').toLowerCase().replace(/[^a-z_]/g, '');
+    const q = (p.get('q') || '').slice(0, 80);
+    if (p.get('mode') === 'name'){
+      S.zip = zip || savedZip();
+      enterLookup(q, { noPush: true });
+    } else if (zip){
+      enterZip(zip, { trade: HOME.TRADES.includes(trade) ? trade : '', q, noPush: true });
+    } else if (savedZip()){
+      enterZip(savedZip(), { trade: HOME.TRADES.includes(trade) ? trade : '', q, replace: true });
+    } else {
+      showGate();
+    }
+  }
+  window.addEventListener('popstate', () => boot(true));
+  boot();
 });
 </script>
 </body>

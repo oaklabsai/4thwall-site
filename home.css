@@ -445,3 +445,103 @@ body.v-shell .searchbar{max-width:600px}
   .vsb{display:none}
   .vsm{padding:1.8rem var(--pad) 0;overflow-y:visible}
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   VESTA APP (va-) — the ZIP-gated contractor haven (vesta.html).
+   Three-column shell: sidebar (v-shell) + center + sticky right rail.
+   Append-only, dark-scope only.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── ZIP module in the sidebar (your location is a first-class object) ── */
+.vsb-zip{margin:0 1.2rem 1.1rem;padding:.8rem .95rem;background:var(--vk-2);border:1px solid var(--vline);border-radius:12px;display:none;align-items:center;justify-content:space-between;gap:.6rem}
+.vsb-zip.show{display:flex}
+.vsb-zip .zlab{font-family:var(--mono);font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--vdim);display:block;margin-bottom:.15rem}
+.vsb-zip .z{font-family:var(--display);font-size:1.2rem;font-weight:500;letter-spacing:.04em;line-height:1;color:var(--vcream)}
+.vsb-zip .zchg{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim);text-decoration:underline;text-underline-offset:3px;cursor:pointer;flex-shrink:0}
+.vsb-zip .zchg:hover{color:var(--vcream)}
+
+/* ── The gate (state 1: full-height entry moment) ── */
+.va-gate{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:720px;margin:0 auto;width:100%;padding:2.5rem 0 4rem}
+.va-gate-eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--vgreen);margin-bottom:1rem}
+.va-gate-h{font-family:var(--display);font-size:clamp(2.3rem,5.4vw,3.9rem);font-weight:500;line-height:1.04;letter-spacing:-.034em}
+.va-gate-h em{font-style:italic;color:var(--vgreen-2);font-weight:400}
+.va-gate-sub{font-size:clamp(.92rem,1.6vw,1.05rem);color:var(--vmut);line-height:1.7;margin-top:1rem;max-width:50ch}
+.va-gate .vzip-hero-form{justify-content:center;margin:1.8rem auto .4rem}
+.va-gate .vdoors{justify-content:center}
+.va-gate-why{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem;margin-top:3rem;width:100%}
+.va-gate-why .gw{background:var(--vk-2);border:1px solid var(--vline);border-radius:14px;padding:1rem 1.1rem;text-align:left}
+.va-gate-why .gw b{display:block;font-family:var(--display);font-weight:500;font-size:.95rem;letter-spacing:-.015em;margin-bottom:.3rem;color:var(--vcream)}
+.va-gate-why .gw span{font-size:.74rem;color:var(--vmut);line-height:1.55}
+
+/* ── App header (state 2) ── */
+.va-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.4rem}
+.va-head h1{font-family:var(--display);font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:500;line-height:1.07;letter-spacing:-.03em}
+.va-head h1 em{font-style:italic;color:var(--vgreen-2);font-weight:400}
+.va-sub{font-size:.88rem;line-height:1.6;color:var(--vmut);max-width:64ch;margin-bottom:.4rem}
+.va-sub b{color:var(--vcream);font-weight:600}
+
+/* ── Trade strip (the Coursue stat-card row, as live filters) ── */
+.va-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:.6rem;margin:1.1rem 0 1.5rem}
+.va-tile{display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;text-align:left;background:var(--vk-2);border:1px solid var(--vline);border-radius:14px;padding:.85rem .9rem .8rem;cursor:pointer;transition:transform .16s,border-color .16s,background .16s}
+.va-tile svg{width:19px;height:19px;stroke:var(--vgreen);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.va-tile .tn{font-family:var(--display);font-size:.94rem;font-weight:500;letter-spacing:-.012em;color:var(--vcream);line-height:1.1}
+.va-tile .tc{font-family:var(--mono);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim);line-height:1.4}
+.va-tile .tc.has{color:var(--vgreen-2)}
+.va-tile:hover{transform:translateY(-1px);border-color:rgba(103,198,148,.4)}
+.va-tile.on{border-color:var(--vgreen);background:var(--vgreen-soft)}
+
+/* ── Main grid: center + sticky rail ── */
+.vmain-grid{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:1.5rem;align-items:start}
+.va-rail{position:sticky;top:0;display:flex;flex-direction:column;gap:.85rem;min-width:0}
+@media(max-width:1120px){.vmain-grid{grid-template-columns:1fr}.va-rail{position:static;margin-top:1.6rem}}
+
+/* ── Rail panels ── */
+.va-panel{background:var(--vk-2);border:1px solid var(--vline);border-radius:16px;padding:1.1rem 1.2rem}
+.va-ph{font-family:var(--mono);font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--vdim);margin-bottom:.8rem}
+.va-vitals{display:flex;gap:1.1rem;margin-bottom:.4rem}
+.va-vital .n{font-family:var(--display);font-size:1.7rem;font-weight:500;letter-spacing:-.03em;line-height:1;color:var(--vcream)}
+.va-vital .l{font-size:.68rem;color:var(--vmut);margin-top:.25rem;line-height:1.35}
+.va-rail .feed{margin:.2rem 0;max-width:none}
+.va-rail .feed li{font-size:.8rem;padding:.55rem 0}
+.va-rail .feed .mo{flex:0 0 64px;font-size:.56rem}
+
+/* ── Public-footprint line on listed cards (Places, honestly framed) ── */
+.vpub{font-size:.78rem;color:var(--vmut);line-height:1.55;border-top:1px dashed var(--vline);padding-top:.55rem;margin-top:.2rem}
+.vpub b{color:var(--vcream);font-weight:600}
+.vpub .gsrc{font-family:var(--mono);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim)}
+.vattr{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim);margin:.7rem 0 0}
+
+/* ── Compare-the-proof ── */
+.vcmp-btn{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim);border:1px solid var(--vline);border-radius:50px;padding:.32rem .7rem;cursor:pointer;transition:all .15s;background:transparent}
+.vcmp-btn:hover{border-color:var(--vcream);color:var(--vcream)}
+.vcmp-btn.on{background:var(--vgreen);border-color:var(--vgreen);color:#12150f}
+.va-cmp-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:1.1rem;z-index:70;background:var(--vk-3);border:1px solid rgba(103,198,148,.45);border-radius:50px;padding:.5rem .55rem .5rem 1.15rem;display:flex;align-items:center;gap:.9rem;box-shadow:0 28px 70px -22px rgba(0,0,0,.95);max-width:min(94vw,640px)}
+.va-cmp-bar .names{font-size:.8rem;color:var(--vcream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.va-cmp-bar .names b{color:var(--vgreen-2);font-weight:600}
+.va-cmp-bar .clr{font-family:var(--mono);font-size:.54rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim);cursor:pointer;flex-shrink:0}
+.va-cmp-bar .clr:hover{color:var(--vcream)}
+.va-cmp-ov{position:fixed;inset:0;z-index:80;background:rgba(8,11,9,.8);backdrop-filter:blur(7px);display:flex;align-items:center;justify-content:center;padding:1.2rem}
+.va-cmp{background:var(--vk-2);border:1px solid var(--vline-2);border-radius:20px;max-width:880px;width:100%;max-height:88vh;overflow:auto;padding:clamp(1.2rem,3vw,1.9rem)}
+.va-cmp h2{font-family:var(--display);font-size:1.4rem;font-weight:500;letter-spacing:-.02em;margin-bottom:.2rem}
+.va-cmp .cmp-sub{font-size:.78rem;color:var(--vmut);margin-bottom:1rem;line-height:1.55}
+.va-cmp table{width:100%;border-collapse:collapse;font-size:.84rem}
+.va-cmp th{font-family:var(--display);font-size:.98rem;font-weight:500;letter-spacing:-.015em;text-align:left;padding:.6rem .7rem;border-bottom:1px solid var(--vline-2);vertical-align:bottom;color:var(--vcream)}
+.va-cmp th .vrib{display:block;margin-bottom:.3rem}
+.va-cmp th .lrib{display:block;font-family:var(--mono);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--vdim);margin-bottom:.3rem}
+.va-cmp td{padding:.55rem .7rem;border-bottom:1px dashed var(--vline);color:var(--vcream);vertical-align:top;line-height:1.5}
+.va-cmp td.k{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim);white-space:nowrap;padding-top:.7rem}
+.va-cmp td .dash{color:var(--vdim)}
+.va-cmp td .yes{color:var(--vgreen-2);font-weight:600}
+.va-cmp .cmp-close{margin-top:1.1rem}
+.va-cmp .cmp-note{font-size:.72rem;color:var(--vdim);line-height:1.6;margin-top:.9rem;border-top:1px solid var(--vline);padding-top:.8rem}
+
+/* ── Loading shimmer ── */
+.va-skel{height:104px;border-radius:14px;background:linear-gradient(100deg,var(--vk-2) 35%,var(--vk-3) 50%,var(--vk-2) 65%);background-size:200% 100%;animation:vaShimmer 1.2s linear infinite;border:1px solid var(--vline)}
+@keyframes vaShimmer{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){.va-skel{animation:none}}
+
+/* ── Center keyword bar (compact) ── */
+.va-q{display:flex;gap:.45rem;background:var(--vk-3);border:1px solid var(--vline-2);border-radius:50px;padding:.28rem .3rem .28rem 1rem;max-width:430px;margin:.2rem 0 1rem;align-items:center}
+.va-q input{flex:1;border:none;background:transparent;font-family:inherit;font-size:.88rem;color:var(--vcream);outline:none;padding:.45rem .2rem;min-width:0}
+.va-q input::placeholder{color:var(--vdim)}
+.va-q button{flex-shrink:0}
