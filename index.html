@@ -976,10 +976,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 </style>
 <!-- product pills styles -->
 <style>
-.pills-wrap{max-width:var(--max);margin:0 auto;padding:2.4rem var(--pad) 0;display:flex;flex-direction:column;gap:1.4rem;width:100%}
+.pills-wrap{max-width:var(--max);margin:0 auto;padding:2.4rem var(--pad) 0;display:flex;flex-direction:row;gap:1.4rem;width:100%;align-items:stretch}
 
-/* each pill is a wide horizontal card */
-.pill-card{display:grid;grid-template-columns:1fr 1fr;border-radius:28px;overflow:hidden;text-decoration:none;color:inherit;min-height:400px;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+/* each pill is a vertical card — copy on top, device below */
+.pill-card{display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;border-radius:28px;overflow:hidden;text-decoration:none;color:inherit;min-height:540px;flex:1;min-width:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
 .pill-card:hover{transform:translateY(-3px)}
 .pill-card:hover .pill-mock{transform:scale(1.06) translateY(-28px)}
 .pill-mock{position:absolute;right:-24px;bottom:-8px;width:56%;z-index:1;pointer-events:none}
@@ -1305,8 +1305,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><polyline points="14 8 18 4 22 8"/></svg>
       </div>
       <div class="vs-body">
-        <div class="vs-h">Quote Faster</div>
-        <p class="vs-d">Accurate estimates in minutes, not hours.</p>
+        <div class="vs-h">Book on Autopilot</div>
+        <p class="vs-d">Every lead gets a reply, a booking confirmed, and a reminder sent — zero manual steps.</p>
       </div>
     </div>
     <div class="vs-item">
