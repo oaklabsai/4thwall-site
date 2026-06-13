@@ -984,6 +984,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .pill-card:hover .pill-mock{transform:scale(1.06) translateY(-28px)}
 .pill-mock{position:absolute;right:-24px;bottom:-8px;width:56%;z-index:1;pointer-events:none}
 .pill-mock-phone{right:20px;top:22px;bottom:auto;width:44%}
+.pill-mock-laptop{right:-16px;bottom:-8px;width:64%;filter:drop-shadow(0 20px 40px rgba(0,0,0,.18))}
 
 /* LEFT — Atlas (cream) */
 .pill-atlas{background:linear-gradient(160deg,#f6f1e6 0%,#ede8dc 100%);border:1px solid rgba(26,26,24,.10);box-shadow:0 2px 4px rgba(20,16,12,.04),0 12px 32px -10px rgba(20,16,12,.12),inset 0 1px 0 rgba(255,255,255,.7);position:relative}
@@ -1097,9 +1098,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </ul>
       <span class="pill-btn">Explore Atlas <span class="arr">→</span></span>
     </div>
-    <div class="pill-device" style="transition:transform .75s cubic-bezier(.22,1,.36,1);transform-origin:center 88%">
-      <div class="mock-laptop-wrap">
-        <div class="mock-laptop">
+    <div class="pill-device"></div>
+    <div class="pill-mock pill-mock-laptop" style="transition:transform .75s cubic-bezier(.22,1,.36,1);transform-origin:center 88%">
+      <div class="mock-laptop">
           <div class="mock-laptop-screen">
             <svg viewBox="0 0 470 264" preserveAspectRatio="xMinYMin slice" xmlns="http://www.w3.org/2000/svg">
               <rect width="470" height="264" fill="#f0f0f0"/>
@@ -1158,7 +1159,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           </div>
           <img src="/macbook-air.png" class="mock-laptop-frame" alt="">
         </div>
-      </div>
     </div>
   </a>
 
