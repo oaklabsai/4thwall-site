@@ -83,6 +83,11 @@ document.addEventListener('DOMContentLoaded', async function(){
   const reqHref = '/vesta?mode=request&place=' + encodeURIComponent(placeId) +
     (zip ? '&zip=' + encodeURIComponent(zip) : '') + (tradeGuess ? '&trade=' + tradeGuess : '');
 
+  // Vesta enrichment (public view; silent on absence — render nothing for null fields).
+  const enrRows = await HOME.db('/profile_enrichment_public?place_id=eq.' + encodeURIComponent(placeId) +
+    '&limit=1&select=registered,trade_license,synthesis,synthesis_review_count');
+  const enr = Array.isArray(enrRows) && enrRows[0] ? enrRows[0] : null;
+
   hero.innerHTML = '<a class="crumb" href="' + back + '">← Back to results</a>' +
     '<h1 class="page-h">' + esc(p.name) + '</h1>' +
     '<p class="page-sub">' + (p.primary_type ? esc(p.primary_type) + ' · ' : '') + esc(p.address) + '</p>' +
@@ -118,6 +123,23 @@ document.addEventListener('DOMContentLoaded', async function(){
     return rows.length ? rows.join('') : '<p class="note">No public contact details surfaced for this pro — they may be phone-unlisted. Try the request flow instead.</p>';
   }
 
+  // Vouch chips (positive-only) + "What homeowners say" synthesis. Renders nothing if unenriched.
+  function enrichBlock(){
+    if (!enr) return '';
+    const chips = [];
+    if (enr.registered) chips.push('<span class="badge">Registered CT contractor ✓</span>');
+    if (Array.isArray(enr.trade_license) && enr.trade_license.length) chips.push('<span class="badge">Licensed ' + esc(tradeGuess || 'trade') + ' ✓</span>');
+    const chipRow = chips.length ? '<div class="badges" style="margin:0 0 1.3rem">' + chips.join('') + '</div>' : '';
+    const syn = enr.synthesis
+      ? '<h2 class="section-h">What homeowners say</h2><div class="card-block">' +
+        '<p style="font-size:.95rem;line-height:1.65">' + esc(enr.synthesis) + '</p>' +
+        '<p class="fine" style="margin-top:.85rem">Summarized by Vesta from ' +
+        (enr.synthesis_review_count ? esc(enr.synthesis_review_count) + ' ' : '') +
+        'public reviews — not written by the business.</p></div>'
+      : '';
+    return chipRow + syn;
+  }
+
   function render(){
     let contactBlock;
     if (window.__unlocked){
@@ -146,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async function(){
         '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
         '<span class="form-status" id="claim-status"></span></form></div>';
 
-    body.innerHTML = pubBlock + contactBlock + claimBlock;
+    body.innerHTML = enrichBlock() + pubBlock + contactBlock + claimBlock;
 
     const unlockBtn = document.getElementById('unlock-btn');
     if (unlockBtn) unlockBtn.addEventListener('click', async () => {

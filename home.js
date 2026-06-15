@@ -4,6 +4,10 @@
 // (cross-site cookies die in Safari, and the API lives on supabase.co).
 (function(){
   const API = 'https://vinytnzzgryodyrftabg.supabase.co/functions/v1/home';
+  // Read-only PostgREST base for PUBLIC views (Vesta enrichment/directory). RLS-protected;
+  // the publishable key is anon-scoped and safe in the client. Distinct from the auth'd edge fn.
+  const DB = 'https://vinytnzzgryodyrftabg.supabase.co/rest/v1';
+  const DB_KEY = 'sb_publishable_IEQcNbThGZblpzqNnEeDeg_r5LXSyzt';
   const TOKEN_KEY = 'hw_session';
   const NEXT_KEY = 'hw_next';
 
@@ -36,6 +40,16 @@
       let data = null;
       try { data = await res.json(); } catch(_){}
       return { status: res.status, data: data || { ok:false, error:'bad_response' } };
+    },
+
+    // Read-only PostgREST against public views (anon key, RLS-protected) — the Vesta
+    // enrichment/directory read surface. Returns the parsed array, or null on any error.
+    async db(path){
+      try {
+        const res = await fetch(DB + path, { headers: { apikey: DB_KEY, Authorization: 'Bearer ' + DB_KEY, Accept: 'application/json' } });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch(_) { return null; }
     },
 
     esc(s){
