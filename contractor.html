@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     '</div>' +
     '<div style="margin:1rem 0 .2rem"><a class="pill pill-orange" href="' + reqHref + '">Request through Vesta <span class="arr">→</span></a></div>' +
     '<p class="fine">One form — Vesta carries your request to them, replies come straight to you.</p>' +
-    '<p class="note">This pro isn\'t in the 4THWALL verified network, so there\'s no operational record to show — no measured response times, no verified job history. They may still be excellent; we just can\'t prove it. Here\'s everything the public record says, and exactly what it doesn\'t.</p>';
+    '<p class="note">This business hasn\'t joined Vesta\'s verified network yet, so there\'s no verified work record to show — just the public listing below.</p>';
 
   const pubBlock = (() => {
     const rows = [];
@@ -105,54 +105,8 @@ document.addEventListener('DOMContentLoaded', async function(){
       (p.business_status === 'CLOSED_TEMPORARILY' ? 'Temporarily closed' : 'Operational') + '</b></div>');
     return '<h2 class="section-h">The public record</h2><div class="card-block">' + rows.join('') +
       (p.maps_uri ? '<div style="margin-top:1rem"><a class="pill pill-ghost pill-sm" href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow">See on Google Maps ↗</a></div>' : '') +
-      '<p class="fine" style="margin-top:.8rem">Pulled live from Google the moment you opened this page — Vesta never stores it. Star ratings are marketing-grade signal: reviews can be begged, bought, and buried. Useful context, not proof.</p></div>';
+      '<p class="fine" style="margin-top:.8rem">Pulled live from Google — Vesta never stores it. Star ratings are marketing signal, not proof.</p></div>';
   })();
-
-  const proveBlock = '<h2 class="section-h">What nobody has proven</h2><div class="card-block">' +
-    '<div class="kv"><span>Verified jobs on Vesta</span><b style="color:var(--vdim)">—</b></div>' +
-    '<div class="kv"><span>Measured response time</span><b style="color:var(--vdim)">—</b></div>' +
-    '<div class="kv"><span>Booking follow-through</span><b style="color:var(--vdim)">—</b></div>' +
-    '<div class="kv"><span>Documented work history</span><b style="color:var(--vdim)">—</b></div>' +
-    '<p class="note" style="margin-top:.8rem">A dash isn\'t an accusation — most pros have never been asked to prove their work this way. It means exactly what it says: nothing verified exists, so ask. The questions below are where to start.</p></div>';
-
-  const verifyToolkit = (() => {
-    const state = (p.address.match(/,\s*([A-Z]{2})\s+\d{5}/) || [])[1] || '';
-    const bbb = 'https://www.bbb.org/search?find_text=' + encodeURIComponent(p.name) + (zip ? '&find_loc=' + encodeURIComponent(zip) : '');
-    const lic = state === 'CT'
-      ? 'Connecticut keeps a free registry — <a href="https://www.elicense.ct.gov/lookup/licenselookup.aspx" target="_blank" rel="noopener nofollow" style="color:var(--vgreen-2)">CT eLicense lookup ↗</a>. Home improvement contractors must be registered.'
-      : 'Most states and counties keep a free registry — search “' + esc(state || 'your state') + ' home improvement contractor license lookup” and check the name matches exactly.';
-    return '<h2 class="section-h">Verify it yourself — two minutes</h2><div class="card-block">' +
-      '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--vmut)">' +
-      '<li><b style="color:var(--vcream)">License:</b> ' + lic + '</li>' +
-      '<li><b style="color:var(--vcream)">Complaint history:</b> <a href="' + esc(bbb) + '" target="_blank" rel="noopener nofollow" style="color:var(--vgreen-2)">BBB lookup ↗</a> — what matters is less the grade than how they responded.</li>' +
-      (p.maps_uri ? '<li><b style="color:var(--vcream)">Every public review:</b> <a href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow" style="color:var(--vgreen-2)">on Google Maps ↗</a> — read the 1-star ones first; patterns matter, one-offs don\'t.</li>' : '') +
-      '<li><b style="color:var(--vcream)">Insurance:</b> ask for a certificate of insurance — a real one comes directly from their agent, not as a photocopy.</li>' +
-      '</ul></div>';
-  })();
-
-  const GUIDES = {
-    roofing: ['A real quote separates tear-off vs. overlay — “roof over” is cheaper now and costs you at resale.', 'Materials should be named (shingle line, underlayment, ice &amp; water shield) — “architectural shingles” alone is not a spec.', 'Permits are the contractor\'s job to pull, not yours.', 'Two warranties exist: manufacturer (materials) and workmanship (labor). Get the labor one in writing with a number of years.'],
-    hvac: ['A quote without a load calculation (Manual J or equivalent) is a guess — oversized units short-cycle and die early.', 'Ask whether the quote includes the line set, pad, electrical, and permit — these are the classic “that\'s extra” items.', 'SEER ratings matter less than correct sizing and a clean install.', 'Maintenance plans are fine, but the first year should be included.'],
-    plumbing: ['Water heaters: the quote should say tank vs. tankless, capacity, and whether code upgrades (expansion tank, pan, venting) are included.', 'Permits are required for more than you\'d think — if they say “no permit needed” for a repipe, that\'s a flag.', 'Hourly vs. flat-rate is fine either way — what matters is which one it is, in writing.', 'Ask what happens to the quote if they open the wall and find more.'],
-    electrical: ['Panel work and new circuits are permit work, full stop.', 'The quote should name the panel brand and amperage — “200A upgrade” without a brand is not a spec.', 'Ask if the price includes patching the drywall they open.', 'A licensed electrician\'s license number should appear on the contract.'],
-    paving: ['Thickness is the spec: asphalt driveways live or die on base depth and compaction — get both numbers in writing.', '“Sealcoating included” usually means a quick spray — ask when, and what product.', 'Drainage is the difference between 5 years and 20 — the quote should say where water goes.', 'One-day “leftover asphalt” door-knock deals are the classic scam in this trade.'],
-    lawn_care: ['Per-visit vs. seasonal contract — get which one it is, and what a “visit” includes, in writing.', 'Chemical applications should be itemized — what, when, and is it pet-safe.', 'Spring/fall cleanups are usually separate line items, not included.', 'Ask who actually shows up — owner crew or a sub.']
-  };
-  const guideBlock = tradeGuess && GUIDES[tradeGuess]
-    ? '<h2 class="section-h">Know before you hire — ' + esc(HOME.tradeLabel(tradeGuess).toLowerCase()) + '</h2><div class="card-block">' +
-      '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--vmut)">' +
-      GUIDES[tradeGuess].map(g => '<li>' + g + '</li>').join('') +
-      '</ul><p class="fine" style="margin-top:.8rem">General guidance for this trade — not a claim about this business.</p></div>'
-    : '';
-
-  const checklist = '<h2 class="section-h">Before you hire — ask these</h2><div class="card-block">' +
-    '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--vmut)">' +
-    '<li>Can you give me <b style="color:var(--vcream)">three jobs like mine</b> from the past year I could drive past or call about?</li>' +
-    '<li>Who actually does the work — <b style="color:var(--vcream)">your crew, or a subcontractor</b>?</li>' +
-    '<li>Are you <b style="color:var(--vcream)">licensed and insured</b> for this trade in this town — and can I see the certificates?</li>' +
-    '<li>What\'s the <b style="color:var(--vcream)">written warranty</b>, and who honors it if the company changes hands?</li>' +
-    '<li>If you open it up and find something worse, <b style="color:var(--vcream)">what happens to the quote</b>?</li>' +
-    '</ul><p class="fine" style="margin-top:.8rem">A good pro answers all five without flinching. Verified pros on Vesta answer the first one with a ledger.</p></div>';
 
   function contactRows(u){
     const rows = [];
@@ -192,10 +146,7 @@ document.addEventListener('DOMContentLoaded', async function(){
         '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
         '<span class="form-status" id="claim-status"></span></form></div>';
 
-    body.innerHTML = pubBlock + contactBlock + proveBlock + verifyToolkit + guideBlock + checklist + claimBlock +
-      '<div class="card-block" style="margin-top:1.6rem">' +
-      '<p style="font-size:.9rem"><b>Prefer a pro whose work is proven?</b> Verified pros carry ledger-backed badges and your job lands in your home\'s permanent record.</p>' +
-      '<div style="margin-top:.8rem"><a class="pill pill-ghost pill-sm" href="/request">Request a verified pro <span class="arr">→</span></a></div></div>';
+    body.innerHTML = pubBlock + contactBlock + claimBlock;
 
     const unlockBtn = document.getElementById('unlock-btn');
     if (unlockBtn) unlockBtn.addEventListener('click', async () => {
