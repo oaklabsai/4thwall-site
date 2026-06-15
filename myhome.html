@@ -6,14 +6,14 @@
 <title>My Home — Vesta</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="/logo.png" type="image/png">
-<meta name="theme-color" content="#f7f3ec">
+<meta name="theme-color" content="#0f1310">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
 <link rel="stylesheet" href="/home.css">
 <script src="/home.js" defer></script>
 </head>
-<body>
+<body class="v-dark">
 
 <nav class="topnav">
   <a href="/" class="nav-logo">
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async function(){
         '<div class="spacer"></div>' +
         '<div><a class="pill pill-ghost pill-sm" href="/c/' + encodeURIComponent(p.place_id) + '">Open profile</a></div></div>').join('') + '</div>';
     } else {
-      html += '<div class="empty">Pros you unlock on <a href="/find" style="color:var(--orange)">Find a pro</a> get saved here — their contact info stays one click away.</div>';
+      html += '<div class="empty">Pros you unlock on <a href="/find" style="color:var(--vgreen-2)">Find a pro</a> get saved here — their contact info stays one click away.</div>';
     }
 
     // ── Requests ──

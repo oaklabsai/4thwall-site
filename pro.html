@@ -6,14 +6,14 @@
 <title>Verified Pro — Vesta</title>
 <meta name="description" content="A 4THWALL verified pro — operational proof from a tamper-evident ledger, not star ratings.">
 <link rel="icon" href="/logo.png" type="image/png">
-<meta name="theme-color" content="#f7f3ec">
+<meta name="theme-color" content="#0f1310">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
 <link rel="stylesheet" href="/home.css">
 <script src="/home.js" defer></script>
 </head>
-<body>
+<body class="v-dark">
 
 <nav class="topnav">
   <a href="/" class="nav-logo">
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   const body = document.getElementById('body');
 
   const m = location.pathname.match(/^\/pro\/([A-Za-z0-9_-]{1,40})\/?$/);
-  if (!m){ hero.innerHTML = '<h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/find" style="color:var(--orange)">Back to search</a>.</p>'; return; }
+  if (!m){ hero.innerHTML = '<h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/find" style="color:var(--vgreen-2)">Back to search</a>.</p>'; return; }
 
   // The pro's signals + the roster (which carries registry fingerprints), in parallel.
   const [{ data }, rosterRes] = await Promise.all([
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     HOME.api('/roster').catch(() => ({ data: null })),
   ]);
   if (!data.ok){
-    hero.innerHTML = '<a class="crumb" href="/vesta">← Find a pro</a><h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/vesta" style="color:var(--orange)">Back to search</a>.</p>';
+    hero.innerHTML = '<a class="crumb" href="/vesta">← Find a pro</a><h1 class="page-h">Pro not found.</h1><p class="page-sub">That pro isn\'t in the verified network. <a href="/vesta" style="color:var(--vgreen-2)">Back to search</a>.</p>';
     return;
   }
   const pro = data.pro;
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async function(){
       '“Earned” means the request went out only after a documented, completed job — never bought, never begged.']);
   }
   const meaningBlock = '<h2 class="section-h">What these numbers mean</h2><div class="card-block">' +
-    meanRows.map(r => '<div style="padding:.55rem 0;border-bottom:1px dashed var(--line);font-size:.88rem;line-height:1.6"><div>' + r[0] + '</div><div style="color:var(--muted);font-size:.82rem;margin-top:.15rem">' + r[1] + '</div></div>').join('') +
+    meanRows.map(r => '<div style="padding:.55rem 0;border-bottom:1px dashed var(--vline);font-size:.88rem;line-height:1.6"><div>' + r[0] + '</div><div style="color:var(--vmut);font-size:.82rem;margin-top:.15rem">' + r[1] + '</div></div>').join('') +
     '<p class="fine" style="margin-top:.8rem">Every row is written by the operational system this pro runs their business on. No one — including the pro, including 4THWALL sales — can edit it.</p></div>';
 
   body.innerHTML = meaningBlock + '<h2 class="section-h">Request service</h2><div class="card-block">' +

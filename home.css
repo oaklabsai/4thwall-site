@@ -258,6 +258,36 @@ body.v-dark footer{background:#0c0f0d;border-top-color:var(--vline)}
 body.v-dark .foot-brand{color:var(--vcream)}
 body.v-dark .foot-links{color:var(--vmut)}
 
+/* ── DARK PROFILE SURFACES (/c listed pro on the dark desk) ─── */
+body.v-dark .crumb{color:var(--vdim)}
+body.v-dark .crumb:hover{color:var(--vcream)}
+body.v-dark .lockbox{border-color:rgba(103,198,148,.34);background:linear-gradient(180deg,var(--vgreen-soft),rgba(242,238,229,.02))}
+body.v-dark .lockbox .blur{color:var(--vmut)}
+body.v-dark .contactrow{border-bottom-color:var(--vline)}
+body.v-dark .contactrow b{color:var(--vdim)}
+body.v-dark .contactrow a{color:var(--vgreen-2)}
+body.v-dark .contactrow a:hover{color:var(--vcream)}
+body.v-dark .form-status{color:var(--vmut)}
+body.v-dark .form-status.is-error{color:#e6a08f}
+body.v-dark .form-status.is-success{color:var(--vgreen-2)}
+
+/* record timeline / warranty wallet / share — dark variants */
+body.v-dark .timeline li{border-left-color:var(--vgreen)}
+body.v-dark .timeline li::before{background:var(--vgreen)}
+body.v-dark .timeline .src,body.v-dark .timeline .ev-meta{color:var(--vmut)}
+body.v-dark .rec-promises{border-top-color:var(--vline);color:var(--vmut)}
+body.v-dark .rec-promises b{color:var(--vcream)}
+body.v-dark .wrow{border-bottom-color:var(--vline)}
+body.v-dark .wrow .wmeta{color:var(--vmut)}
+body.v-dark .wpill.ok{background:var(--vgreen-soft);color:var(--vgreen-2)}
+body.v-dark .wpill.soon{background:rgba(217,185,106,.12);color:#d9b96a}
+body.v-dark .wpill.gone{background:rgba(230,160,143,.12);color:#e6a08f}
+body.v-dark .linkish{color:var(--vgreen-2)}
+body.v-dark .linkish:hover{color:var(--vcream)}
+body.v-dark .linkish.danger{color:#e6a08f}
+body.v-dark .sharebox input{border-color:var(--vline-2);background:var(--vk-3);color:var(--vcream)}
+body.v-dark .report-banner{background:var(--vgreen-soft);border-color:rgba(103,198,148,.28);color:var(--vgreen-2)}
+
 /* ── VESTA HERO (oversize, editorial) ──────────────────────── */
 .vhero{padding:4.2rem var(--pad) 1.6rem;max-width:var(--max);margin:0 auto;width:100%;position:relative}
 .vhero h1{font-family:var(--display);font-size:clamp(2.5rem,6.4vw,4.6rem);font-weight:500;line-height:1.03;letter-spacing:-.035em;max-width:17ch}

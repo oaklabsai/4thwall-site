@@ -6,14 +6,14 @@
 <title>Contractor Profile — Vesta</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="/logo.png" type="image/png">
-<meta name="theme-color" content="#f7f3ec">
+<meta name="theme-color" content="#0f1310">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
 <link rel="stylesheet" href="/home.css">
 <script src="/home.js" defer></script>
 </head>
-<body>
+<body class="v-dark">
 
 <nav class="topnav">
   <a href="/" class="nav-logo">
@@ -57,14 +57,14 @@ document.addEventListener('DOMContentLoaded', async function(){
   const m = location.pathname.match(/^\/c\/([A-Za-z0-9_-]{8,200})\/?$/);
   const placeParam = (new URLSearchParams(location.search).get('place') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 200);
   const placeId = m ? m[1] : (placeParam.length >= 8 ? placeParam : null);
-  if (!placeId){ hero.innerHTML = '<h1 class="page-h">Profile not found.</h1><p class="page-sub">Try <a href="/vesta" style="color:var(--orange)">searching again</a>.</p>'; return; }
+  if (!placeId){ hero.innerHTML = '<h1 class="page-h">Profile not found.</h1><p class="page-sub">Try <a href="/vesta" style="color:var(--vgreen-2)">searching again</a>.</p>'; return; }
   const zipParam = new URLSearchParams(location.search).get('zip') || '';
   const back = /^\d{5}$/.test(zipParam) ? '/vesta?zip=' + zipParam : '/vesta';
 
   const { data } = await HOME.api('/c/' + encodeURIComponent(placeId) + (/^\d{5}$/.test(zipParam) ? '?zip=' + zipParam : ''));
   if (!data.ok){
     hero.innerHTML = '<a class="crumb" href="' + back + '">← Back to results</a>' +
-      '<h1 class="page-h">We couldn\'t load that profile.</h1><p class="page-sub">It may have moved — try <a href="/find" style="color:var(--orange)">searching again</a>.</p>';
+      '<h1 class="page-h">We couldn\'t load that profile.</h1><p class="page-sub">It may have moved — try <a href="/find" style="color:var(--vgreen-2)">searching again</a>.</p>';
     return;
   }
   const p = data.place, zip = data.zip;
@@ -109,24 +109,24 @@ document.addEventListener('DOMContentLoaded', async function(){
   })();
 
   const proveBlock = '<h2 class="section-h">What nobody has proven</h2><div class="card-block">' +
-    '<div class="kv"><span>Verified jobs on Vesta</span><b style="color:var(--dim)">—</b></div>' +
-    '<div class="kv"><span>Measured response time</span><b style="color:var(--dim)">—</b></div>' +
-    '<div class="kv"><span>Booking follow-through</span><b style="color:var(--dim)">—</b></div>' +
-    '<div class="kv"><span>Documented work history</span><b style="color:var(--dim)">—</b></div>' +
+    '<div class="kv"><span>Verified jobs on Vesta</span><b style="color:var(--vdim)">—</b></div>' +
+    '<div class="kv"><span>Measured response time</span><b style="color:var(--vdim)">—</b></div>' +
+    '<div class="kv"><span>Booking follow-through</span><b style="color:var(--vdim)">—</b></div>' +
+    '<div class="kv"><span>Documented work history</span><b style="color:var(--vdim)">—</b></div>' +
     '<p class="note" style="margin-top:.8rem">A dash isn\'t an accusation — most pros have never been asked to prove their work this way. It means exactly what it says: nothing verified exists, so ask. The questions below are where to start.</p></div>';
 
   const verifyToolkit = (() => {
     const state = (p.address.match(/,\s*([A-Z]{2})\s+\d{5}/) || [])[1] || '';
     const bbb = 'https://www.bbb.org/search?find_text=' + encodeURIComponent(p.name) + (zip ? '&find_loc=' + encodeURIComponent(zip) : '');
     const lic = state === 'CT'
-      ? 'Connecticut keeps a free registry — <a href="https://www.elicense.ct.gov/lookup/licenselookup.aspx" target="_blank" rel="noopener nofollow" style="color:var(--orange)">CT eLicense lookup ↗</a>. Home improvement contractors must be registered.'
+      ? 'Connecticut keeps a free registry — <a href="https://www.elicense.ct.gov/lookup/licenselookup.aspx" target="_blank" rel="noopener nofollow" style="color:var(--vgreen-2)">CT eLicense lookup ↗</a>. Home improvement contractors must be registered.'
       : 'Most states and counties keep a free registry — search “' + esc(state || 'your state') + ' home improvement contractor license lookup” and check the name matches exactly.';
     return '<h2 class="section-h">Verify it yourself — two minutes</h2><div class="card-block">' +
-      '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--muted)">' +
-      '<li><b style="color:var(--ink)">License:</b> ' + lic + '</li>' +
-      '<li><b style="color:var(--ink)">Complaint history:</b> <a href="' + esc(bbb) + '" target="_blank" rel="noopener nofollow" style="color:var(--orange)">BBB lookup ↗</a> — what matters is less the grade than how they responded.</li>' +
-      (p.maps_uri ? '<li><b style="color:var(--ink)">Every public review:</b> <a href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow" style="color:var(--orange)">on Google Maps ↗</a> — read the 1-star ones first; patterns matter, one-offs don\'t.</li>' : '') +
-      '<li><b style="color:var(--ink)">Insurance:</b> ask for a certificate of insurance — a real one comes directly from their agent, not as a photocopy.</li>' +
+      '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--vmut)">' +
+      '<li><b style="color:var(--vcream)">License:</b> ' + lic + '</li>' +
+      '<li><b style="color:var(--vcream)">Complaint history:</b> <a href="' + esc(bbb) + '" target="_blank" rel="noopener nofollow" style="color:var(--vgreen-2)">BBB lookup ↗</a> — what matters is less the grade than how they responded.</li>' +
+      (p.maps_uri ? '<li><b style="color:var(--vcream)">Every public review:</b> <a href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow" style="color:var(--vgreen-2)">on Google Maps ↗</a> — read the 1-star ones first; patterns matter, one-offs don\'t.</li>' : '') +
+      '<li><b style="color:var(--vcream)">Insurance:</b> ask for a certificate of insurance — a real one comes directly from their agent, not as a photocopy.</li>' +
       '</ul></div>';
   })();
 
@@ -140,18 +140,18 @@ document.addEventListener('DOMContentLoaded', async function(){
   };
   const guideBlock = tradeGuess && GUIDES[tradeGuess]
     ? '<h2 class="section-h">Know before you hire — ' + esc(HOME.tradeLabel(tradeGuess).toLowerCase()) + '</h2><div class="card-block">' +
-      '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--muted)">' +
+      '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--vmut)">' +
       GUIDES[tradeGuess].map(g => '<li>' + g + '</li>').join('') +
       '</ul><p class="fine" style="margin-top:.8rem">General guidance for this trade — not a claim about this business.</p></div>'
     : '';
 
   const checklist = '<h2 class="section-h">Before you hire — ask these</h2><div class="card-block">' +
-    '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--muted)">' +
-    '<li>Can you give me <b style="color:var(--ink)">three jobs like mine</b> from the past year I could drive past or call about?</li>' +
-    '<li>Who actually does the work — <b style="color:var(--ink)">your crew, or a subcontractor</b>?</li>' +
-    '<li>Are you <b style="color:var(--ink)">licensed and insured</b> for this trade in this town — and can I see the certificates?</li>' +
-    '<li>What\'s the <b style="color:var(--ink)">written warranty</b>, and who honors it if the company changes hands?</li>' +
-    '<li>If you open it up and find something worse, <b style="color:var(--ink)">what happens to the quote</b>?</li>' +
+    '<ul style="margin:0 0 0 1.1rem;font-size:.88rem;line-height:1.8;color:var(--vmut)">' +
+    '<li>Can you give me <b style="color:var(--vcream)">three jobs like mine</b> from the past year I could drive past or call about?</li>' +
+    '<li>Who actually does the work — <b style="color:var(--vcream)">your crew, or a subcontractor</b>?</li>' +
+    '<li>Are you <b style="color:var(--vcream)">licensed and insured</b> for this trade in this town — and can I see the certificates?</li>' +
+    '<li>What\'s the <b style="color:var(--vcream)">written warranty</b>, and who honors it if the company changes hands?</li>' +
+    '<li>If you open it up and find something worse, <b style="color:var(--vcream)">what happens to the quote</b>?</li>' +
     '</ul><p class="fine" style="margin-top:.8rem">A good pro answers all five without flinching. Verified pros on Vesta answer the first one with a ledger.</p></div>';
 
   function contactRows(u){
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     } else {
       contactBlock = '<h2 class="section-h">Contact</h2><div class="lockbox">' +
         '<div class="blur">(516) 555-0000 · example-website.com · facebook.com/example</div>' +
-        '<p style="font-size:.9rem;margin-bottom:.9rem"><b>Contact info is free — it just needs an account.</b><br><span style="color:var(--muted);font-size:.82rem">One email, no password, ten seconds. Phone, website, socials — everything public we can find.</span></p>' +
+        '<p style="font-size:.9rem;margin-bottom:.9rem"><b>Contact info is free — it just needs an account.</b><br><span style="color:var(--vmut);font-size:.82rem">One email, no password, ten seconds. Phone, website, socials — everything public we can find.</span></p>' +
         '<a class="pill pill-orange" href="' + HOME.signinHref() + '">Create free account / sign in</a></div>';
     }
 
