@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async function(){
 
   // Vesta enrichment (public view; silent on absence — render nothing for null fields).
   const enrRows = await HOME.db('/profile_enrichment_public?place_id=eq.' + encodeURIComponent(placeId) +
-    '&limit=1&select=registered,trade_license,synthesis,synthesis_review_count');
+    '&limit=1&select=registered,hic_issue_date,trade_license,certifications,synthesis,synthesis_review_count');
   const enr = Array.isArray(enrRows) && enrRows[0] ? enrRows[0] : null;
 
   hero.innerHTML = '<a class="crumb" href="' + back + '">← Back to results</a>' +
@@ -127,9 +127,14 @@ document.addEventListener('DOMContentLoaded', async function(){
   function enrichBlock(){
     if (!enr) return '';
     const chips = [];
-    if (enr.registered) chips.push('<span class="badge">Registered CT contractor ✓</span>');
+    if (enr.registered){
+      const yr = enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0,4) : 0;
+      chips.push('<span class="badge">Registered CT contractor' + (yr && yr !== 1999 ? ' · since ' + yr : '') + ' ✓</span>');
+    }
     if (Array.isArray(enr.trade_license) && enr.trade_license.length) chips.push('<span class="badge">Licensed ' + esc(tradeGuess || 'trade') + ' ✓</span>');
-    const chipRow = chips.length ? '<div class="badges" style="margin:0 0 1.3rem">' + chips.join('') + '</div>' : '';
+    if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if (c && c.issuer && c.level) chips.push('<span class="badge">' + esc(c.issuer + ' ' + c.level) + ' ✓</span>'); }
+    const chipRow = chips.length ? '<div class="badges" style="margin:0 0 .5rem">' + chips.join('') + '</div>' +
+      '<p class="fine" style="margin:0 0 1.3rem">Verified against public state and manufacturer directories · June 2026</p>' : '';
     const syn = enr.synthesis
       ? '<h2 class="section-h">What homeowners say</h2><div class="card-block">' +
         '<p style="font-size:.95rem;line-height:1.65">' + esc(enr.synthesis) + '</p>' +

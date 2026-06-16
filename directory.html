@@ -103,19 +103,22 @@ document.addEventListener('DOMContentLoaded', async function(){
   document.title = label + ' Contractors in Fairfield County, CT — by public record | Vesta';
   const canon = document.querySelector('link[rel=canonical]'); if (canon) canon.href = 'https://4thwall.solutions/fairfield-county/' + trade;
   const desc = document.querySelector('meta[name=description]');
-  if (desc) desc.content = 'The most-established ' + tLower(trade) + ' contractors in Fairfield County, CT — vouched by state registration, with a plain read of what homeowners actually say. Compiled by Vesta from public records. No ads, no pay-to-play.';
+  if (desc) desc.content = 'The top ' + tLower(trade) + ' contractors in Fairfield County, CT — ranked by what homeowners actually say, weighted by how many said it, with a plain-English read of each. Compiled by Vesta from public records. No ads, no pay-to-play.';
 
   hero.innerHTML =
     '<a class="crumb" href="/vesta">← Vesta</a>' +
     '<h1 class="page-h">' + esc(label) + ' Contractors in ' + COUNTY + ', CT</h1>' +
-    '<p class="page-sub">The most-established ' + esc(tLower(trade)) + ' contractors across ' + COUNTY +
-    ' — each vouched by Connecticut state registration, with a plain-English read of what homeowners actually say. No ads, no pay-to-play. Listed most-established first.</p>';
+    '<p class="page-sub">The top ' + esc(tLower(trade)) + ' contractors across ' + COUNTY +
+    ' — ranked by what homeowners actually say, weighted by how many said it, with a plain-English read of each. ' +
+    'Connecticut registration and licensing are shown where they apply. No ads, no pay-to-play.</p>';
 
   // Read the public enrichment view directly (PostgREST, anon). The store is Fairfield-only
   // by construction, so trade + established-first ordering is the whole query.
+  // Best-first: Bayesian homeowner-consensus score (volume-weighted rating), computed in
+  // the view. Raw stars never leave the DB. Unrated rows -> null score -> the tail.
   const rows = await HOME.db('/profile_enrichment_public?trade=eq.' + encodeURIComponent(trade) +
-    '&order=hic_issue_date.asc.nullslast&limit=50' +
-    '&select=place_id,name:business_name,city,registered,trade_license,synthesis');
+    '&order=rank_score.desc.nullslast&limit=50' +
+    '&select=place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,synthesis');
 
   if (!Array.isArray(rows) || !rows.length){
     body.innerHTML = stripHtml(trade) +
@@ -127,16 +130,20 @@ document.addEventListener('DOMContentLoaded', async function(){
 
   body.innerHTML =
     stripHtml(trade) +
-    '<h2 class="section-h">' + rows.length + ' established ' + esc(tLower(trade)) + ' contractors</h2>' +
-    '<p class="dir-count">Vouched by CT registration · ordered most-established first</p>' +
+    '<h2 class="section-h">' + rows.length + ' ' + esc(tLower(trade)) + ' contractors</h2>' +
+    '<p class="dir-count">Ranked by homeowner consensus · no ads, no pay-to-play</p>' +
     '<div class="grid" style="margin-top:1rem">' + rows.map(card).join('') + '</div>' +
     disclosure();
 
   function card(p){
     const href = '/c/' + encodeURIComponent(p.place_id);
     const chips = [];
-    if (p.registered) chips.push('<span class="badge">Registered CT contractor ✓</span>');
+    if (p.registered){
+      const yr = p.hic_issue_date ? +String(p.hic_issue_date).slice(0,4) : 0;
+      chips.push('<span class="badge">Registered CT contractor' + (yr && yr !== 1999 ? ' · since ' + yr : '') + ' ✓</span>');
+    }
     if (Array.isArray(p.trade_license) && p.trade_license.length) chips.push('<span class="badge">Licensed ' + esc(tLower(trade)) + ' ✓</span>');
+    if (Array.isArray(p.certifications)) for (const c of p.certifications){ if (c && c.issuer && c.level) chips.push('<span class="badge">' + esc(c.issuer + ' ' + c.level) + ' ✓</span>'); }
     const chipsHtml = chips.length ? '<div class="badges">' + chips.join('') + '</div>' : '';
     const syn = p.synthesis
       ? '<p class="card-syn"><span class="syn-lbl">What homeowners say</span>' + esc(p.synthesis) + '</p>'
