@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async function(){
       (p.business_status === 'CLOSED_TEMPORARILY' ? 'Temporarily closed' : 'Operational') + '</b></div>');
     return '<h2 class="section-h">The public record</h2><div class="card-block">' + rows.join('') +
       (p.maps_uri ? '<div style="margin-top:1rem"><a class="pill pill-ghost pill-sm" href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow">See on Google Maps ↗</a></div>' : '') +
-      '<p class="fine" style="margin-top:.8rem">Pulled live from Google — Vesta never stores it. Star ratings are marketing signal, not proof.</p></div>';
+      '<p class="fine" style="margin-top:.8rem">Ratings, reviews, and category shown here are from Google, pulled live — Vesta never stores them. Star ratings are a marketing signal, not proof.</p></div>';
   })();
 
   function contactRows(u){
@@ -168,7 +168,12 @@ document.addEventListener('DOMContentLoaded', async function(){
         '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
         '<span class="form-status" id="claim-status"></span></form></div>';
 
-    body.innerHTML = enrichBlock() + pubBlock + contactBlock + claimBlock;
+    const removalNote = '<p class="fine" style="margin-top:1.2rem;max-width:560px">' +
+      'This is a public-record listing compiled by Vesta — not an endorsement, and not written by the business. ' +
+      'To remove or correct it, email <a href="mailto:andrew@4thwall.solutions?subject=Vesta%20listing%20removal" style="color:var(--vgreen-2)">andrew@4thwall.solutions</a> ' +
+      '(<a href="/terms.html#directory" style="color:var(--vgreen-2)">how this works ›</a>).</p>';
+
+    body.innerHTML = enrichBlock() + pubBlock + contactBlock + claimBlock + removalNote;
 
     const unlockBtn = document.getElementById('unlock-btn');
     if (unlockBtn) unlockBtn.addEventListener('click', async () => {

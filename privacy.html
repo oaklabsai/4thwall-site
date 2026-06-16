@@ -84,11 +84,11 @@ footer { border-top:1px solid var(--line); padding:1.5rem var(--pad); display:fl
 
   <div class="section">
     <h2>Who we are</h2>
-    <p>This Privacy Policy applies to 4th Wall Solutions LLC, operating as 4THWALL ("4THWALL," "we," "our," or "us"). We build AI infrastructure for trades contractors and service operators, and we operate that infrastructure on our clients' behalf. You can reach us at:</p>
+    <p>This Privacy Policy applies to 4th Wall Solutions, operating as 4THWALL ("4THWALL," "we," "our," or "us"). We build AI infrastructure for trades contractors and service operators, and we operate that infrastructure on our clients' behalf. You can reach us at:</p>
     <br>
     <p>
-      4th Wall Solutions LLC<br>
-      119 Towne Street, Stamford, CT 06902<br>
+      4th Wall Solutions<br>
+      Stamford, CT<br>
       <a href="tel:+12036709477">(203) 670-9477</a><br>
       <a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a><br>
       Security and privacy contact: <a href="mailto:security@4thwall.solutions">security@4thwall.solutions</a>
@@ -115,6 +115,11 @@ footer { border-top:1px solid var(--line); padding:1.5rem var(--pad); display:fl
   </div>
 
   <div class="section">
+    <h2>Vesta public contractor directory</h2>
+    <p>Vesta publishes a public directory of Connecticut contractors compiled from public records and publicly posted reviews. For listed businesses, we hold business name, city, trade, public registration status, and a short Vesta-written summary of public reviews — sourced from publicly available information, not collected from the businesses themselves. Any listed business may request removal, correction, or a copy of what we hold, at any time and at no cost, by emailing <a href="mailto:andrew@4thwall.solutions?subject=Vesta%20listing">andrew@4thwall.solutions</a>; we honor requests within 5 business days. Full directory terms (sources, what the registration badge means, and how the summaries are written) are in our <a href="/terms.html#directory">Terms of Service</a>.</p>
+  </div>
+
+  <div class="section">
     <h2>SMS messaging</h2>
     <p>By providing your phone number and checking the SMS consent box on our contact form, you expressly consent to receive recurring automated marketing and transactional text messages from <strong>4th Wall Solutions</strong> at the phone number provided. These messages may include:</p>
     <br>
@@ -136,28 +141,18 @@ footer { border-top:1px solid var(--line); padding:1.5rem var(--pad); display:fl
 
   <div class="section">
     <h2>Subprocessors</h2>
-    <p>We use the following service providers to operate the 4THWALL platform. Each is contractually bound by confidentiality and data-protection terms. If a client adds an integration we don't list here (e.g., their own scheduling tool), we'll let the client know in writing.</p>
+    <p>We work with third-party service providers to operate the platform. Each is bound by confidentiality and data-protection obligations, and we share only the data needed for the service it provides. By category:</p>
     <br>
-    <table class="sub-tbl">
-      <thead>
-        <tr><th>Provider</th><th>Purpose</th><th>Data</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Cloudflare (US)</td><td>Worker runtime, database (D1), KV cache, cron, DNS</td><td>All operational data — client configs, conversation history, events, request logs</td></tr>
-        <tr><td>Vercel (US)</td><td>Marketing site + serverless API proxies</td><td>Inbound form submissions, server-side request logs</td></tr>
-        <tr><td>Anthropic (US)</td><td>Claude AI — drafts SMS replies, briefings, lead summaries, campaign copy</td><td>Conversation content, business context, customer messages (transient — Anthropic does not train on our API traffic)</td></tr>
-        <tr><td>GoHighLevel (US)</td><td>CRM, SMS/email delivery to end customers</td><td>End-customer contact info, conversation content, automation workflow state</td></tr>
-        <tr><td>SMS carriers via GHL (Twilio, US)</td><td>Delivers the actual SMS messages</td><td>Phone number, message body, delivery status</td></tr>
-        <tr><td>Slack (US)</td><td>Operator-facing notifications and team coordination</td><td>Operational notifications about leads, alerts, briefings; no raw end-customer PII in default messages</td></tr>
-        <tr><td>Google Workspace (US)</td><td>Email and calendar for the 4THWALL team</td><td>Email correspondence</td></tr>
-        <tr><td>Stripe (US)</td><td>Billing</td><td>Client billing contact, payment instrument tokens (we never see card numbers)</td></tr>
-        <tr><td>US Census ACS5 (US)</td><td>Optional ZIP-level demographic enrichment of inbound leads</td><td>ZIP code only — no PII sent to Census</td></tr>
-        <tr><td>OpenStreetMap Nominatim (EU/intl.)</td><td>Optional geocoding of inbound leads</td><td>Address fields only</td></tr>
-        <tr><td>US National Weather Service (US)</td><td>Storm-mode triggering</td><td>Lat/lon only — no PII</td></tr>
-      </tbody>
-    </table>
+    <ul>
+      <li><strong>Cloud hosting, database, and authentication</strong> — runs the application and website and stores operational and account data.</li>
+      <li><strong>AI / language-model processing</strong> — drafts SMS replies, briefings, and summaries (transient; our AI providers do not train on our traffic).</li>
+      <li><strong>SMS and email delivery</strong> — sends messages to your customers.</li>
+      <li><strong>Payment processing</strong> — handles billing (we never see full card numbers).</li>
+      <li><strong>Operational tooling</strong> — team email, calendar, and internal notifications.</li>
+      <li><strong>Optional lead-enrichment sources</strong> — demographic, geocoding, and weather lookups that receive only non-identifying fields (such as a ZIP, address, or coordinates), never full customer records.</li>
+    </ul>
     <br>
-    <p>If you'd like a Data Processing Addendum (DPA), email <a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a>.</p>
+    <p>Most of these providers are based in the United States; some optional geocoding lookups are international. A current list of the specific subprocessors we use — and a Data Processing Addendum (DPA) — is available to clients on request: email <a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a>.</p>
   </div>
 
   <div class="section">
@@ -173,7 +168,7 @@ footer { border-top:1px solid var(--line); padding:1.5rem var(--pad); display:fl
 
   <div class="section">
     <h2>Automated decision-making and AI</h2>
-    <p>Several parts of our platform use AI (Claude by Anthropic) to draft messages and summaries. AI-generated SMS replies are intended to qualify leads, schedule appointments, and answer routine questions. The AI is configured to escalate complex, sensitive, or high-stakes questions to a human operator at the contractor's business. Pricing, contractual commitments, and final decisions are made by humans, not the AI. If you believe an automated response harmed you, contact us at <a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a> and we will review.</p>
+    <p>Several parts of our platform use AI to draft messages and summaries. AI-generated SMS replies are intended to qualify leads, schedule appointments, and answer routine questions. The AI is configured to escalate complex, sensitive, or high-stakes questions to a human operator at the contractor's business. Pricing, contractual commitments, and final decisions are made by humans, not the AI. If you believe an automated response harmed you, contact us at <a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a> and we will review.</p>
   </div>
 
   <div class="section">
