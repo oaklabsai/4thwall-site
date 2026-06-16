@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async function(){
       (p.business_status === 'CLOSED_TEMPORARILY' ? 'Temporarily closed' : 'Operational') + '</b></div>');
     return '<h2 class="section-h">The public record</h2><div class="card-block">' + rows.join('') +
       (p.maps_uri ? '<div style="margin-top:1rem"><a class="pill pill-ghost pill-sm" href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow">See on Google Maps ↗</a></div>' : '') +
-      '<p class="fine" style="margin-top:.8rem">Ratings, reviews, and category shown here are from Google, pulled live — Vesta never stores them. Star ratings are a marketing signal, not proof.</p></div>';
+      '<p class="fine" style="margin-top:.8rem">This rating and category come from Google, shown live and unaltered — Vesta does not generate or stand behind them. A star rating is a marketing signal, not proof.</p></div>';
   })();
 
   function contactRows(u){
