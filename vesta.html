@@ -161,6 +161,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   };
 
   function tLabel(t){ return t === 'hvac' ? 'HVAC' : HOME.tradeLabel(t); }
+  function tLower(t){ return t === 'hvac' ? 'HVAC' : HOME.tradeLabel(t).toLowerCase(); }
   function savedZip(){ if (!HOME.token()) return ''; try { const z = localStorage.getItem(ZIP_KEY); return /^\d{5}$/.test(z||'') ? z : ''; } catch(_){ return ''; } }
   function saveZip(z){ if (!HOME.token()) return; try { localStorage.setItem(ZIP_KEY, z); } catch(_){} }
 
@@ -220,10 +221,45 @@ document.addEventListener('DOMContentLoaded', async function(){
         cmpBtn(key) +
       '</div></div>';
   }
+  // Chips from a public-record enrichment row (registration · license · prestige certs).
+  // Same vocabulary as the Fairfield County directory — one source of truth.
+  function enrChips(e){
+    const chips = [];
+    if (e.registered){
+      const yr = e.hic_issue_date ? +String(e.hic_issue_date).slice(0,4) : 0;
+      chips.push('<span class="badge">Registered CT contractor' + (yr && yr !== 1999 ? ' · since ' + yr : '') + ' ✓</span>');
+    }
+    if (Array.isArray(e.trade_license) && e.trade_license.length) chips.push('<span class="badge">Licensed ' + esc(tLower(e.trade || S.trade)) + ' ✓</span>');
+    if (Array.isArray(e.certifications)) for (const c of e.certifications){ if (c && c.issuer && c.level) chips.push('<span class="badge">' + esc(c.issuer + ' ' + c.level) + ' ✓</span>'); }
+    return chips.length ? '<div class="badges">' + chips.join('') + '</div>' : '';
+  }
   function listedCard(p){
     const href = '/c/' + encodeURIComponent(p.place_id) + (S.zip ? '?zip=' + encodeURIComponent(S.zip) : '');
     const key = 'l:' + p.place_id;
     const subBits = [p.primary_type ? esc(p.primary_type) : '', esc(shortAddr(p.address))].filter(Boolean);
+    const e = p._enr;
+    const actions =
+      '<div class="spacer"></div>' +
+      '<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">' +
+        '<button type="button" class="pill pill-orange pill-sm" data-req="' + esc(p.place_id) + '">Request <span class="arr">→</span></button>' +
+        '<a class="pill pill-ghost pill-sm" href="' + href + '">View profile</a>' +
+        cmpBtn(key) +
+      '</div></div>';
+
+    // Enriched: this listing carries a Vesta public-record analysis. Surface the
+    // registration/license/cert chips + the plain read of the reviews, instead of
+    // the bare "no jobs yet" line.
+    if (e){
+      const syn = e.synthesis ? '<p class="card-syn"><span class="syn-lbl">What homeowners say</span>' + esc(e.synthesis) + '</p>' : '';
+      return '<div class="card lift">' +
+        '<span class="vtag">✓ Vesta-analyzed</span>' +
+        '<a class="cardlink" href="' + href + '"><h3>' + esc(p.name) + '</h3></a>' +
+        '<div class="sub">' + subBits.join(' · ') + '</div>' +
+        enrChips(e) + syn + pubHtml(p) +
+        actions;
+    }
+
+    // Un-analyzed: the honest public-record-only card.
     return '<div class="card lift">' +
       '<a class="cardlink" href="' + href + '"><h3>' + esc(p.name) + '</h3></a>' +
       '<div class="sub">' + subBits.join(' · ') + '</div>' +
@@ -232,12 +268,7 @@ document.addEventListener('DOMContentLoaded', async function(){
       (p.claimed ? '<span class="badge">Profile claimed</span>' : '') +
       (p.business_status === 'CLOSED_TEMPORARILY' ? '<span class="badge plain">Temporarily closed</span>' : '') +
       '</div>' +
-      '<div class="spacer"></div>' +
-      '<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">' +
-        '<button type="button" class="pill pill-orange pill-sm" data-req="' + esc(p.place_id) + '">Request <span class="arr">→</span></button>' +
-        '<a class="pill pill-ghost pill-sm" href="' + href + '">View profile</a>' +
-        cmpBtn(key) +
-      '</div></div>';
+      actions;
   }
   const HONEST = '';
   const ATTR = '<p class="vattr">Listings &amp; public ratings via Google · resolved live at search time, never stored</p>';
@@ -348,27 +379,42 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (!d.ok){ c.innerHTML = '<div class="warn">Search is briefly unavailable — try again in a moment.</div>'; return; }
     let html = '';
     if (d.stale) html += '<div class="warn">Live verification briefly unavailable — last verified snapshot shown.</div>';
-    if ((d.verified || []).length){
+    const hasV = (d.verified || []).length;
+    const listed = Array.isArray(d.listed) ? d.listed : null;
+    // fetchSearch already floated analyzed pros to the front — partition them out.
+    const analyzed = listed ? listed.filter(p => p._enr) : [];
+    const rest = listed ? listed.filter(p => !p._enr) : [];
+
+    if (hasV){
       html += '<h2 class="section-h" style="margin-top:.2rem">Proven near you</h2><div class="grid">' + d.verified.map(p => {
         cmpRegister('v:' + p.location_id, { kind:'v', name:p.business_name, trade:p.trade, badges:p.badges, registry:p.registry });
         return vCard(p);
       }).join('') + '</div>';
-      html += '<h2 class="section-h">Also nearby — the public record</h2>';
-    } else {
-      // No verified supply here yet: don't dwell on it — lead with the pros.
-      html += '<h2 class="section-h" style="margin-top:.2rem">Pros near you — the public record</h2>';
     }
+    // Lead the public-record section with whichever tier we actually have.
+    const pubLead = analyzed.length ? 'Vesta-analyzed near you' : (hasV ? 'Also nearby — the public record' : 'Pros near you — the public record');
+    html += '<h2 class="section-h"' + (hasV ? '' : ' style="margin-top:.2rem"') + '>' + pubLead + '</h2>';
+
+    const reg = (p) => {
+      cmpRegister('l:' + p.place_id, { kind:'l', name:p.name, primary_type:p.primary_type, rating:p.rating, rating_count:p.rating_count });
+      return listedCard(p);
+    };
     if (!d.lens_configured){
       html += '<div class="warn">Live local search is coming online — verified network results are shown. Check back soon.</div>';
-    } else if (d.listed === null){
+    } else if (listed === null){
       html += '<div class="warn">Local search is briefly unavailable — try again in a moment.</div>';
-    } else if (!d.listed.length){
+    } else if (!listed.length){
       html += '<div class="empty">No listed pros came back for that search — try a broader keyword or a different trade.</div>';
     } else {
-      html += '<div class="grid">' + d.listed.map(p => {
-        cmpRegister('l:' + p.place_id, { kind:'l', name:p.name, primary_type:p.primary_type, rating:p.rating, rating_count:p.rating_count });
-        return listedCard(p);
-      }).join('') + '</div>' + HONEST + ATTR;
+      if (analyzed.length){
+        html += '<div class="grid">' + analyzed.map(reg).join('') + '</div>';
+        if (S.trade) html += '<p class="vdir-link"><a href="/fairfield-county/' + esc(S.trade) + '">See every Vesta-analyzed ' + esc(tLower(S.trade)) + ' in Fairfield County →</a></p>';
+      }
+      if (rest.length){
+        if (analyzed.length) html += '<h3 class="section-h sub">More nearby — listed only</h3>';
+        html += '<div class="grid">' + rest.map(reg).join('') + '</div>';
+      }
+      html += HONEST + ATTR;
     }
     c.innerHTML = html;
     renderCmpBar();
@@ -406,8 +452,31 @@ document.addEventListener('DOMContentLoaded', async function(){
   }
 
   // ── Fetch + state transitions ──
+  // Live Places results carry no analysis. Cross-reference their place_ids against
+  // Vesta's public-record view (registration · licensing · certs · review synthesis),
+  // attach what we hold, and float analyzed pros to the top of the public list.
+  async function enrichListed(listed){
+    if (!Array.isArray(listed) || !listed.length) return listed;
+    const ids = [...new Set(listed.map(p => p.place_id).filter(Boolean))];
+    if (!ids.length) return listed;
+    const inVal = ids.map(id => '"' + id + '"').join(',');
+    const rows = await HOME.db('/profile_enrichment_public?place_id=in.(' + encodeURIComponent(inVal) + ')' +
+      '&select=place_id,registered,hic_issue_date,trade_license,certifications,synthesis,rank_score,trade');
+    const map = {};
+    if (Array.isArray(rows)) for (const r of rows) map[r.place_id] = r;
+    for (const p of listed) p._enr = map[p.place_id] || null;
+    listed.sort((a, b) => {
+      const ae = !!a._enr, be = !!b._enr;
+      if (ae !== be) return ae ? -1 : 1;                         // analyzed pros lead
+      const as = a._enr && a._enr.rank_score != null ? a._enr.rank_score : -1;
+      const bs = b._enr && b._enr.rank_score != null ? b._enr.rank_score : -1;
+      return bs - as;                                            // then by homeowner-consensus score
+    });
+    return listed;
+  }
   async function fetchSearch(zip, trade, q){
     const { data } = await HOME.api('/search?zip=' + zip + '&trade=' + encodeURIComponent(trade || '') + '&q=' + encodeURIComponent(q || ''));
+    if (data && data.ok && Array.isArray(data.listed)) await enrichListed(data.listed);
     return data;
   }
 
@@ -650,6 +719,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     out.innerHTML = '<div class="va-skel" style="margin-top:1rem"></div>';
     const { data } = await HOME.api('/lookup?q=' + encodeURIComponent(S.q) + (S.zip ? '&zip=' + S.zip : ''));
     if (!data.ok){ out.innerHTML = '<div class="warn">Lookup is briefly unavailable — try again in a moment.</div>'; return; }
+    if (Array.isArray(data.listed)) await enrichListed(data.listed);
     let html = '';
     if (data.stale) html += '<div class="warn">Live verification briefly unavailable — last verified snapshot shown.</div>';
     if ((data.verified || []).length){

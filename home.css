@@ -541,6 +541,18 @@ body.v-shell .searchbar{max-width:600px}
 .vpub .gsrc{font-family:var(--mono);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim)}
 .vattr{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim);margin:.7rem 0 0}
 
+/* ── Vesta-analyzed tier (search + directory) ──
+   A public-record analysis: state registration, licensing, manufacturer certs,
+   and a plain read of the reviews. Deliberately cream/muted — a step BELOW the
+   green "✓ Verified network" ribbon, which is reserved for ledger-backed clients. */
+.vtag{display:inline-flex;align-items:center;gap:.35rem;width:fit-content;font-family:var(--mono);font-size:.57rem;letter-spacing:.13em;text-transform:uppercase;color:var(--vmut);background:rgba(242,238,229,.05);border:1px solid var(--vline-2);border-radius:50px;padding:.2rem .6rem;margin-bottom:.5rem}
+.card-syn{font-size:.86rem;line-height:1.55;color:var(--vmut);margin:.2rem 0 .1rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-syn .syn-lbl{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;color:var(--vdim);margin-bottom:.25rem}
+.section-h.sub{font-family:var(--display);font-size:1.02rem;font-weight:500;color:var(--vmut);margin:1.7rem 0 .5rem}
+.vdir-link{margin:1rem 0 .2rem}
+.vdir-link a{font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--vgreen-2);text-decoration:none}
+.vdir-link a:hover{text-decoration:underline}
+
 /* ── Compare-the-proof ── */
 .vcmp-btn{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim);border:1px solid var(--vline);border-radius:50px;padding:.32rem .7rem;cursor:pointer;transition:all .15s;background:transparent}
 .vcmp-btn:hover{border-color:var(--vcream);color:var(--vcream)}
