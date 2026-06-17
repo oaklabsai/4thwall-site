@@ -133,7 +133,6 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .act-rewind { width:46px; height:46px; color:var(--ebony); }
 .act-rewind:disabled { opacity:.32; cursor:default; box-shadow:var(--sh-row); transform:none; }
 .act-pass { width:60px; height:60px; color:var(--ebony); }
-.act-info { width:46px; height:46px; color:var(--olive); }
 .act-save { width:60px; height:60px; color:var(--white); background:var(--olive); box-shadow:0 4px 14px -2px rgba(74,75,47,.5), 0 14px 32px -6px rgba(74,75,47,.4); }
 .deck-meta { text-align:center; font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:rgba(74,75,47,.5); padding:6px 0 0; }
 
@@ -300,7 +299,6 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .deckwrap { align-items:center; justify-content:center; padding:8px 0 28px; }
   .deck { width:min(440px,46vw); max-width:440px; flex:0 0 auto; height:min(560px,70vh); min-height:0; margin:0; }
   .deck-actions { padding:26px 0 4px; }
-  .act-info { display:none; }
   .favwrap { padding:24px 40px 48px; }
 
   .vpanel { display:block; width:392px; flex-shrink:0; height:100vh; overflow-y:auto; background:var(--white); border-left:1px solid rgba(74,75,47,.1); padding:34px 32px 48px; box-shadow:var(--sh-panel); }
@@ -354,7 +352,6 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
           <div class="deck-actions" id="deck-actions">
             <button class="act act-rewind" id="act-rewind" aria-label="Bring back the last pro" disabled><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5v6h6"/><path d="M3.5 11a8 8 0 113 8.5"/></svg></button>
             <button class="act act-pass" id="act-pass" aria-label="Skip this pro"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="18.5" y2="12"/><polyline points="12.5 6 19 12 12.5 18"/></svg></button>
-            <button class="act act-info" id="act-info" aria-label="See full analysis"><svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8.5"/><line x1="11" y1="10" x2="11" y2="15"/><circle cx="11" cy="6.7" r="0.6" fill="currentColor"/></svg></button>
             <button class="act act-save" id="act-save" aria-label="Save this pro"><svg width="23" height="23" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M6 3.5h10a1 1 0 011 1V19l-6-4-6 4V4.5a1 1 0 011-1z"/></svg></button>
           </div>
           <div class="deck-meta" id="deck-meta"></div>
@@ -946,7 +943,6 @@ function updateNavState(){
   $('act-rewind').addEventListener('click', rewindDeck);
   $('act-pass').addEventListener('click', () => { const c=topCon(); if(c) commit('pass', c); });
   $('act-save').addEventListener('click', () => { const c=topCon(); if(c) commit('save', c); });
-  $('act-info').addEventListener('click', () => { const c=topCon(); if(c) openSheet(c); });
   $('pscrim').addEventListener('click', closeSheet);
   $('psheet-x').addEventListener('click', closeSheet);
   ['nav-search','ds-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
