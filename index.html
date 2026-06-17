@@ -119,8 +119,8 @@ body::before{
 }
 
 /* ── nav ─────────────────────────────────── */
-nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(255,255,255,0.96);border-bottom:1px solid rgba(18,16,14,0.08);transition:background .3s}
-nav.topnav.scrolled{background:rgba(255,255,255,0.98)}
+nav.topnav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(244,242,238,0.94);border-bottom:1px solid rgba(18,16,14,0.06);transition:background .3s}
+nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 .nav-logo{display:flex;align-items:center;gap:.55rem;line-height:1;color:#12100E;text-decoration:none;font-family:var(--body);font-weight:600;font-size:.82rem;letter-spacing:.22em;text-transform:uppercase}
 .nav-logo:hover{color:#12100E}
 .nav-logo .brand-mark{height:20px;width:auto;display:block;flex-shrink:0;color:#12100E}
@@ -332,60 +332,97 @@ nav.topnav.scrolled{background:rgba(255,255,255,0.98)}
 .hc-foot-txt{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
 
 /* ══════════════════════════════════════════════════
-   NEW HERO — tea green card + device mockups
+   HERO — Open triptych: Atlas | Headline | Vesta
+   Style: Dimensional Layering (UI/UX Pro Max)
    ══════════════════════════════════════════════════ */
-.hero-new{background:#fff;padding:calc(4.5rem + 12px) var(--pad) 0;min-height:0}
-.hero-card{background:#D4DF9E;border-radius:22px;padding:clamp(2.5rem,4.5vw,3.8rem) clamp(1.5rem,4vw,3.2rem);display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center;max-width:var(--max);margin:0 auto;position:relative;overflow:hidden;min-height:520px}
-/* Left */
-.hn-headline{font-family:var(--display);font-size:clamp(2.8rem,5.5vw,4.8rem);font-weight:700;line-height:.95;letter-spacing:-.035em;color:#12100E;margin-bottom:1.5rem}
-.hn-headline em{font-style:italic;font-weight:700}
-.hn-sparkle{display:inline-block;font-size:.42em;vertical-align:super;margin-left:.18em;line-height:1}
-.hn-sub{font-size:.98rem;line-height:1.7;color:rgba(18,16,14,.68);margin-bottom:1.75rem}
+.hero-new{background:#F4F2EE;padding:calc(4.5rem + 48px) var(--pad) 0;overflow:visible}
+.hero-card{background:transparent;border-radius:0;display:grid;grid-template-columns:1fr 1.3fr 1fr;max-width:var(--max);margin:0 auto;position:relative;min-height:700px;overflow:visible}
+/* Headline */
+.hn-headline{font-family:var(--display);font-size:clamp(2.6rem,5.2vw,5.2rem);font-weight:700;line-height:.9;letter-spacing:-.04em;color:#12100E;margin-bottom:1rem}
+.hn-headline em{font-style:italic;font-weight:700;color:#4A4B2F}
+.hn-sparkle{display:inline-block;font-size:.38em;vertical-align:super;margin-left:.18em;line-height:1;color:#4A4B2F}
+.hn-sub{font-size:.9rem;line-height:1.75;color:rgba(18,16,14,.56);margin-bottom:1.6rem}
 .hn-sub em{font-style:italic;color:#12100E;font-weight:500}
-.hn-cta{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap}
-.hn-btn{background:#12100E;color:#fff;border-radius:50px;padding:.66rem 1.45rem;font-size:.9rem;font-weight:500;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;transition:opacity .2s}
-.hn-btn:hover{opacity:.82;color:#fff}
-.hn-link{color:#12100E;font-size:.9rem;font-weight:500;text-decoration:none;opacity:.7;display:inline-flex;align-items:center;gap:.3rem;transition:opacity .2s}
-.hn-link:hover{opacity:1}
-/* Product callouts */
-.hn-prods{display:flex;gap:1.5rem;flex-wrap:wrap}
-.hn-prod{display:flex;gap:.7rem;align-items:flex-start;flex:1;min-width:130px}
-.hn-prod-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
-.hn-prod-atlas .hn-prod-icon{background:#12100E;color:#D4DF9E}
-.hn-prod-vesta .hn-prod-icon{background:rgba(18,16,14,.13);color:#12100E}
-.hn-prod-name{font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#12100E}
-.hn-prod-role{font-size:.73rem;color:rgba(18,16,14,.58);margin-bottom:.22rem}
-.hn-prod-desc{font-size:.81rem;color:rgba(18,16,14,.72);line-height:1.45}
-/* Right — devices */
-.hn-right{position:relative;height:430px}
-/* MacBook */
-.hn-mac{position:absolute;left:0;right:15%;bottom:0;z-index:1}
-.hn-mac-lid{background:#2a2824;border-radius:8px 8px 3px 3px;padding:7px 7px 0;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 16px 48px rgba(0,0,0,.38)}
-.hn-mac-screen{background:#12100E;border-radius:3px 3px 1px 1px;overflow:hidden;width:100%;aspect-ratio:16/10}
-.hn-mac-screen svg{display:block;width:100%;height:100%}
-.hn-mac-base{background:#3a3830;height:9px;width:106%;margin-left:-3%;border-radius:0 0 4px 4px;border-top:1px solid rgba(255,255,255,.05)}
-.hn-mac-foot{width:44%;margin:0 auto;height:3px;background:#2e2c28;border-radius:0 0 5px 5px}
-/* iPhone */
-.hn-iph{position:absolute;right:0;bottom:0;width:36%;min-width:120px;max-width:165px;z-index:3}
-.hn-iph-frame{background:#1e1c1a;border-radius:28px;padding:8px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 20px 56px rgba(0,0,0,.45);position:relative}
-.hn-iph-cam{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:34%;height:16px;background:#1e1c1a;border-radius:0 0 11px 11px;z-index:2}
-.hn-iph-screen{border-radius:20px;overflow:hidden;background:#fff}
-.hn-iph-screen svg{display:block;width:100%}
-/* Stat strip */
-.stat-strip-new{display:flex;align-items:center;justify-content:center;padding:1.1rem var(--pad);background:#f5f4f1;border-top:1px solid rgba(18,16,14,.07)}
-.stat-si{display:flex;align-items:center;gap:.65rem;font-size:.88rem;color:rgba(18,16,14,.68);padding:0 2rem}
-.stat-si-icon{width:30px;height:30px;border-radius:50%;background:#D4DF9E;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
-.stat-sep{width:1px;height:22px;background:rgba(18,16,14,.13)}
-/* Brand bar */
-.brand-bar-new{display:flex;align-items:center;justify-content:center;gap:clamp(1.2rem,3vw,2.8rem);flex-wrap:wrap;padding:1.4rem var(--pad);background:#fff;border-top:1px solid rgba(18,16,14,.06)}
-.bb-logo{font-family:var(--body);font-size:.78rem;font-weight:600;color:rgba(18,16,14,.35);letter-spacing:.02em;white-space:nowrap}
-.bb-logo strong{font-size:.6rem;display:block;font-weight:400;letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
-@media(max-width:900px){
-  .hero-card{grid-template-columns:1fr}
-  .hn-right{display:none}
+.hn-cta{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap}
+.hn-btn{background:#12100E;color:#fff;border-radius:50px;padding:.82rem 1.85rem;font-size:.92rem;font-weight:500;min-height:48px;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;transition:opacity .2s ease,transform .2s ease;letter-spacing:-.01em;cursor:pointer}
+.hn-btn:hover{opacity:.84;color:#fff;transform:translateY(-2px)}
+/* Center column */
+.hero-center{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:5rem clamp(.8rem,1.5vw,1.6rem) 3rem clamp(3rem,13vw,9rem);position:relative;z-index:5}
+/* Product panels */
+.hero-prod{display:flex;flex-direction:column;text-decoration:none;color:#12100E;position:relative;overflow:visible;cursor:pointer;z-index:6}
+.hero-prod:hover .hp-link{opacity:1}
+.hero-prod:hover .hp-arr{transform:translateX(4px)}
+/* Product text */
+.hp-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(18,16,14,.4);display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.hp-tag::before{content:"";width:10px;height:1px;background:rgba(18,16,14,.28)}
+.hp-link{font-size:.82rem;font-weight:500;color:#12100E;display:inline-flex;align-items:center;gap:.4rem;opacity:.5;transition:opacity .25s ease}
+.hp-below{padding:1.6rem clamp(1.4rem,2.5vw,2.6rem) 2rem}
+.hp-arr{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+/* Device area — overflow visible for dimensional layering */
+.hp-device{flex:1;position:relative;display:flex;align-items:flex-end;overflow:visible;min-height:420px}
+/* MacBook — overflows into center (spring-physics, Dimensional Layering) */
+.hp-mac{position:relative;width:140%;flex-shrink:0;margin-left:-2%;align-self:flex-end;transform:perspective(1400px) rotateY(7deg) rotateX(2deg) translateY(12px);transform-origin:left bottom;transition:transform .6s cubic-bezier(.16,1,.3,1),filter .6s;filter:drop-shadow(0 24px 48px rgba(0,0,0,.15)) drop-shadow(0 6px 14px rgba(0,0,0,.09));z-index:2}
+.hero-prod:hover .hp-mac{transform:perspective(1400px) rotateY(0deg) rotateX(0deg) translateY(-22px) scale(1.02);filter:drop-shadow(0 44px 88px rgba(0,0,0,.21)) drop-shadow(0 14px 34px rgba(0,0,0,.12))}
+.hp-mac-screen{position:absolute;top:15.5%;left:10.3%;right:10.6%;bottom:12.9%;overflow:hidden}
+.hp-mac-screen svg{width:100%;height:100%;display:block}
+.hp-mac-frame{position:relative;z-index:2;width:100%;display:block;pointer-events:none}
+/* iPhone — two devices for depth */
+.hp-iph-wrap{position:relative;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.hp-iph{position:relative;width:65%;align-self:flex-end;transform:perspective(1400px) rotateY(-7deg) rotateX(2deg) translateY(12px);transform-origin:right bottom;transition:transform .6s cubic-bezier(.16,1,.3,1),filter .6s;filter:drop-shadow(0 22px 44px rgba(0,0,0,.18)) drop-shadow(0 6px 14px rgba(0,0,0,.1));z-index:3}
+.hero-prod:hover .hp-iph{transform:perspective(1400px) rotateY(0deg) rotateX(0deg) translateY(-18px) scale(1.03);filter:drop-shadow(0 38px 76px rgba(0,0,0,.24)) drop-shadow(0 12px 30px rgba(0,0,0,.13))}
+.hp-iph-2{position:absolute;right:-8%;bottom:8%;width:50%;z-index:2;transform:perspective(1400px) rotateY(-5deg) rotateX(1.5deg);filter:drop-shadow(0 14px 28px rgba(0,0,0,.14));opacity:.85;transition:opacity .4s ease,transform .6s cubic-bezier(.16,1,.3,1)}
+.hero-prod:hover .hp-iph-2{opacity:.94;transform:perspective(1400px) rotateY(-3deg) rotateX(.5deg) translateY(-8px)}
+.hp-iph-screen{position:absolute;top:2.1%;left:4.4%;right:4.4%;bottom:2.1%;overflow:hidden;background:#ECEDE6}
+.hp-iph-screen svg{width:100%;height:100%;display:block}
+.hp-iph-frame{position:relative;z-index:2;width:100%;display:block;pointer-events:none}
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){
+  .hp-mac,.hp-iph,.hp-iph-2,.hn-btn{transition:filter .25s,opacity .25s}
+  .hero-prod:hover .hp-mac{transform:translateY(-6px)}
+  .hero-prod:hover .hp-iph{transform:translateY(-6px) scale(1.015)}
+  .hero-prod:hover .hp-iph-2{transform:translateY(-3px)}
+  .hn-btn:hover{transform:none}
+}
+/* Hide removed sections */
+.trust-bar,.doormat{display:none}
+/* Stat strip — floating elevation card */
+.stat-strip-new{background:#F4F2EE;padding:2.6rem var(--pad) 0}
+.stat-card{display:flex;align-items:stretch;background:#fff;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);max-width:900px;margin:0 auto;overflow:hidden}
+.stat-si{display:flex;align-items:center;gap:.9rem;padding:1.4rem 2rem;flex:1}
+.stat-si+.stat-si{border-left:1px solid rgba(18,16,14,.07)}
+.stat-sep{display:none}
+.stat-si-icon{width:34px;height:34px;border-radius:50%;background:#D4DF9E;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat-si-body{display:flex;flex-direction:column;gap:.1rem}
+.stat-si-label{font-size:.88rem;font-weight:600;color:#12100E;line-height:1.25}
+.stat-si-sub{font-size:.75rem;color:rgba(18,16,14,.46);line-height:1.3}
+/* Trade bar */
+.brand-bar-new{display:flex;align-items:center;justify-content:center;gap:clamp(.5rem,1.2vw,1rem);flex-wrap:wrap;padding:1.4rem var(--pad);background:#F4F2EE;border-top:1px solid rgba(18,16,14,.07)}
+.bb-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,16,14,.38);white-space:nowrap;margin-right:.4rem}
+.bb-trade{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:rgba(18,16,14,.62);white-space:nowrap}
+.bb-dot{color:rgba(18,16,14,.22);font-size:.72rem}
+.bb-more{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(18,16,14,.32);font-style:italic}
+/* Secondary CTA link */
+.hn-link-secondary{font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;color:rgba(18,16,14,.48);text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;transition:color .2s}
+.hn-link-secondary:hover{color:#12100E}
+.hn-cta{display:flex;flex-direction:column;align-items:center;gap:.85rem}
+@media(max-width:1000px){
+  .hero-card{grid-template-columns:1fr;min-height:0;overflow:hidden}
+  .hero-center{order:-1}
+  .hero-prod{overflow:hidden}
+  .hp-device{overflow:hidden;min-height:220px}
+  .hp-mac{width:88%;margin:0 auto;transform:none}
+  .hp-iph{width:52%;transform:none}
+  .hp-iph-2{display:none}
+  .hero-center{padding:2.2rem 1.5rem 2rem}
+  .hn-headline{font-size:clamp(2.4rem,7vw,4rem)}
+  .stat-card{border-radius:16px}
+  .stat-si{padding:1.1rem 1.4rem}
 }
 @media(max-width:640px){
-  .stat-si{padding:0 1rem;font-size:.8rem}
+  .stat-si{padding:.9rem 1rem;gap:.6rem}
+  .stat-si-sub{display:none}
+  .stat-si-icon{width:28px;height:28px}
+  .stat-si-label{font-size:.78rem}
 }
 
 /* ── HERO CLOSED-LOOP DIAGRAM ─────────────── */
@@ -968,161 +1005,142 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <section class="hero-new" id="home">
   <div class="hero-card">
 
-    <!-- Left column -->
-    <div class="hero-left">
+    <!-- LEFT: Atlas -->
+    <a class="hero-prod" href="/atlas" aria-label="Explore Atlas">
+      <div class="hp-device" aria-hidden="true">
+        <div class="hp-mac">
+          <div class="hp-mac-screen">
+            <svg viewBox="0 0 520 325" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin slice">
+              <rect width="520" height="325" fill="#FFFFFF"/>
+              <rect x="0" y="0" width="130" height="325" fill="#F4F2EE"/>
+              <text x="14" y="27" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="700" fill="#12100E" letter-spacing=".05em">4THWALL</text>
+              <line x1="0" y1="39" x2="130" y2="39" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
+              <path d="M12 53 L16.5 48.5 L21 53 L21 58 L18.5 58 L18.5 54.5 L14.5 54.5 L14.5 58 L12 58 Z" fill="none" stroke="rgba(18,16,14,.3)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+              <text x="28" y="57" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Home</text>
+              <path d="M12 68 L21 68 L21 75 L18 75 L16.5 78 L15 75 L12 75 Z" fill="none" stroke="rgba(18,16,14,.3)" stroke-width="1.2" stroke-linejoin="round"/>
+              <text x="28" y="74" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Messages</text>
+              <rect x="0" y="82" width="130" height="19" fill="rgba(74,75,47,.08)"/>
+              <rect x="0" y="82" width="2.5" height="19" fill="#4A4B2F"/>
+              <circle cx="16.5" cy="88.5" r="3" fill="#4A4B2F"/>
+              <path d="M10 98 Q13 94 16.5 94 Q20 94 23 98" fill="none" stroke="#4A4B2F" stroke-width="1.2" stroke-linecap="round"/>
+              <text x="28" y="95" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#4A4B2F">Leads</text>
+              <rect x="12" y="108" width="9" height="9" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
+              <line x1="14.5" y1="106.5" x2="14.5" y2="109.5" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="18.5" y1="106.5" x2="18.5" y2="109.5" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="12" y1="112" x2="21" y2="112" stroke="rgba(18,16,14,.14)" stroke-width="1"/>
+              <text x="28" y="116" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Calendar</text>
+              <rect x="12" y="126" width="9" height="9" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
+              <rect x="14.5" y="124.5" width="4" height="3" rx="1" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1"/>
+              <text x="28" y="134" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Jobs</text>
+              <line x1="12" y1="142" x2="21" y2="142" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="12" y1="146" x2="21" y2="146" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="12" y1="150" x2="18" y2="150" stroke="rgba(18,16,14,.18)" stroke-width="1.2" stroke-linecap="round"/>
+              <text x="28" y="149" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Dispatch</text>
+              <rect x="12" y="160" width="9" height="11" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
+              <line x1="14" y1="165" x2="19" y2="165" stroke="rgba(18,16,14,.18)" stroke-width="1"/>
+              <line x1="14" y1="168" x2="19" y2="168" stroke="rgba(18,16,14,.18)" stroke-width="1"/>
+              <text x="28" y="168" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Invoices</text>
+              <line x1="12" y1="186" x2="12" y2="179" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
+              <line x1="16" y1="186" x2="16" y2="176" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
+              <line x1="20" y1="186" x2="20" y2="180" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
+              <text x="28" y="185" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Analytics</text>
+              <line x1="0" y1="197" x2="130" y2="197" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
+              <circle cx="16.5" cy="208" r="4.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
+              <circle cx="16.5" cy="208" r="1.5" fill="rgba(18,16,14,.28)"/>
+              <text x="28" y="211" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Settings</text>
+              <line x1="130" y1="0" x2="130" y2="325" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
+              <text x="148" y="24" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" font-weight="600" fill="#12100E"># leads</text>
+              <line x1="130" y1="36" x2="520" y2="36" stroke="rgba(18,16,14,.07)" stroke-width="1"/>
+              <circle cx="148" cy="60" r="11" fill="#6B654B"/>
+              <text x="148" y="65" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
+              <text x="166" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Homeowner</text>
+              <text x="248" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:41 AM</text>
+              <text x="166" y="69" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Hi, I have a roof leak in my living room.</text>
+              <text x="166" y="84" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Can someone take a look?</text>
+              <circle cx="148" cy="113" r="11" fill="#D4DF9E"/>
+              <text x="148" y="118" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#30321C" text-anchor="middle" font-weight="700">A</text>
+              <text x="166" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Atlas</text>
+              <rect x="206" y="100" width="26" height="12" rx="3" fill="rgba(74,75,47,.1)"/>
+              <text x="219" y="110" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#4A4B2F" text-anchor="middle">APP</text>
+              <text x="238" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:41 AM</text>
+              <text x="166" y="122" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Thanks for reaching out. We can help.</text>
+              <text x="166" y="137" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">How does Thursday between 2–4pm look</text>
+              <text x="166" y="152" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">for a roof inspection?</text>
+              <circle cx="148" cy="178" r="11" fill="#6B654B"/>
+              <text x="148" y="183" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
+              <text x="166" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Homeowner</text>
+              <text x="248" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:42 AM</text>
+              <text x="166" y="187" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Thursday 2–4pm works. Thanks!</text>
+              <circle cx="148" cy="215" r="11" fill="#D4DF9E"/>
+              <text x="148" y="220" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#30321C" text-anchor="middle" font-weight="700">A</text>
+              <text x="166" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Atlas</text>
+              <rect x="206" y="202" width="26" height="12" rx="3" fill="rgba(74,75,47,.1)"/>
+              <text x="219" y="212" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#4A4B2F" text-anchor="middle">APP</text>
+              <text x="238" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:42 AM</text>
+              <rect x="166" y="222" width="216" height="32" rx="7" fill="#D4DF9E"/>
+              <text x="172" y="242" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="#12100E" font-weight="600">✓ Booked: Thu, 2–4pm in 47 seconds</text>
+            </svg>
+          </div>
+          <img src="/macbook-air.png" class="hp-mac-frame" alt="">
+        </div>
+      </div>
+      <div class="hp-below">
+        <div class="hp-tag">Atlas · For Contractors</div>
+        <span class="hp-link">Explore Atlas <span class="hp-arr">→</span></span>
+      </div>
+    </a>
+
+    <!-- CENTER: Headline + CTA -->
+    <div class="hero-center">
       <h1 class="hn-headline">AI infrastructure <span class="hn-sparkle">✦</span><br><em>for the trades.</em></h1>
-      <p class="hn-sub">Atlas powers the business.<br>Vesta powers the discovery.<br><em>Together, they power growth.</em></p>
+      <p class="hn-sub">Leads answered. Jobs booked. Reviews collected — <em>all on autopilot.</em></p>
       <div class="hn-cta">
         <a href="#contact" class="hn-btn">Book a call →</a>
-        <a href="#products" class="hn-link">See the products →</a>
-      </div>
-      <div class="hn-prods">
-        <div class="hn-prod hn-prod-atlas">
-          <div class="hn-prod-icon">✦</div>
-          <div>
-            <div class="hn-prod-name">Atlas</div>
-            <div class="hn-prod-role">For Contractors</div>
-            <div class="hn-prod-desc">Run your operations.<br>We handle the busywork.</div>
-          </div>
-        </div>
-        <div class="hn-prod hn-prod-vesta">
-          <div class="hn-prod-icon">✦</div>
-          <div>
-            <div class="hn-prod-name">Vesta</div>
-            <div class="hn-prod-role">For Homeowners</div>
-            <div class="hn-prod-desc">Find trusted pros.<br>Get the job done.</div>
-          </div>
-        </div>
+        <a href="#products" class="hn-link-secondary">See the products <span style="font-family:var(--display)">↓</span></a>
       </div>
     </div>
 
-    <!-- Right column: MacBook + iPhone -->
-    <div class="hn-right" aria-hidden="true">
-
-      <!-- MacBook -->
-      <div class="hn-mac">
-        <div class="hn-mac-lid">
-          <div class="hn-mac-screen">
-            <svg viewBox="0 0 520 325" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin slice">
-              <rect width="520" height="325" fill="#12100E"/>
-              <!-- Sidebar -->
-              <rect x="0" y="0" width="158" height="325" fill="#1d1b16"/>
-              <text x="16" y="26" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="600" fill="rgba(255,255,255,.88)">4THWALL</text>
-              <line x1="0" y1="38" x2="158" y2="38" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
-              <text x="16" y="58" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.42)">Threads</text>
-              <text x="16" y="74" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.42)">DMs</text>
-              <text x="16" y="90" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.42)">Mentions &amp; reactions</text>
-              <text x="16" y="106" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.42)">Saved items</text>
-              <text x="16" y="122" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.42)">— More</text>
-              <line x1="0" y1="136" x2="158" y2="136" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
-              <text x="16" y="155" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,.32)" letter-spacing="1.2">Channels</text>
-              <!-- Active channel -->
-              <rect x="0" y="162" width="158" height="19" fill="rgba(212,223,158,.14)"/>
-              <text x="16" y="175" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="rgba(212,223,158,.95)" font-weight="500"># leads</text>
-              <text x="16" y="195" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,.42)"># jobs</text>
-              <text x="16" y="212" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,.42)"># dispatch</text>
-              <text x="16" y="229" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,.42)"># reviews</text>
-              <line x1="0" y1="244" x2="158" y2="244" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
-              <text x="16" y="262" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,.32)" letter-spacing="1.2">Apps</text>
-              <text x="16" y="280" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,.42)">+ Atlas</text>
-              <!-- Main area header -->
-              <text x="176" y="24" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" font-weight="600" fill="rgba(255,255,255,.9)"># leads</text>
-              <line x1="158" y1="36" x2="520" y2="36" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
-              <!-- Msg 1: Homeowner -->
-              <circle cx="174" cy="60" r="11" fill="#6B654B"/>
-              <text x="174" y="65" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
-              <text x="194" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="rgba(255,255,255,.85)">Homeowner</text>
-              <text x="276" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,.32)">9:41 AM</text>
-              <text x="194" y="69" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">Hi, I have a roof leak in my living room.</text>
-              <text x="194" y="84" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">Can someone take a look?</text>
-              <!-- Msg 2: Atlas -->
-              <circle cx="174" cy="113" r="11" fill="#30321C"/>
-              <text x="174" y="118" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#D4DF9E" text-anchor="middle" font-weight="700">A</text>
-              <text x="194" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="rgba(255,255,255,.85)">Atlas</text>
-              <rect x="234" y="100" width="26" height="12" rx="3" fill="rgba(212,223,158,.22)"/>
-              <text x="247" y="110" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#D4DF9E" text-anchor="middle">APP</text>
-              <text x="266" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,.32)">9:41 AM</text>
-              <text x="194" y="122" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">Thanks for reaching out. We can help.</text>
-              <text x="194" y="137" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">How does Thursday between 2–4pm look</text>
-              <text x="194" y="152" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">for a roof inspection?</text>
-              <!-- Msg 3: Homeowner -->
-              <circle cx="174" cy="178" r="11" fill="#6B654B"/>
-              <text x="174" y="183" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
-              <text x="194" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="rgba(255,255,255,.85)">Homeowner</text>
-              <text x="276" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,.32)">9:42 AM</text>
-              <text x="194" y="187" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">Thursday 2–4pm works. Thanks!</text>
-              <!-- Msg 4: Atlas booked -->
-              <circle cx="174" cy="215" r="11" fill="#30321C"/>
-              <text x="174" y="220" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#D4DF9E" text-anchor="middle" font-weight="700">A</text>
-              <text x="194" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="rgba(255,255,255,.85)">Atlas</text>
-              <rect x="234" y="202" width="26" height="12" rx="3" fill="rgba(212,223,158,.22)"/>
-              <text x="247" y="212" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#D4DF9E" text-anchor="middle">APP</text>
-              <text x="266" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,.32)">9:42 AM</text>
-              <!-- Booked badge -->
-              <rect x="194" y="222" width="210" height="32" rx="7" fill="#D4DF9E"/>
-              <text x="200" y="242" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="#12100E" font-weight="600">✓ Booked: Thu, 2–4pm in 47 seconds</text>
-            </svg>
-          </div>
-        </div>
-        <div class="hn-mac-base"></div>
-        <div class="hn-mac-foot"></div>
-      </div>
-
-      <!-- iPhone -->
-      <div class="hn-iph">
-        <div class="hn-iph-frame">
-          <div class="hn-iph-cam"></div>
-          <div class="hn-iph-screen">
+    <!-- RIGHT: Vesta -->
+    <a class="hero-prod" href="/vesta" aria-label="Explore Vesta">
+      <div class="hp-device" aria-hidden="true">
+        <div class="hp-iph-wrap">
+        <div class="hp-iph">
+          <div class="hp-iph-screen">
             <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin slice">
               <defs>
-                <filter id="vshadow" x="-8%" y="-4%" width="116%" height="120%">
+                <filter id="vshadow2" x="-8%" y="-4%" width="116%" height="120%">
                   <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(18,16,14,.13)"/>
                 </filter>
               </defs>
-              <!-- Background -->
               <rect width="200" height="400" fill="#ECEDE6"/>
-              <!-- Status bar -->
               <text x="14" y="17" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">9:41</text>
-              <!-- Nav: back + VESTA badge -->
               <text x="14" y="35" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9.5" fill="rgba(18,16,14,.52)">← 4THWALL</text>
               <rect x="154" y="25" width="36" height="14" rx="7" fill="#D4DF9E"/>
               <text x="172" y="36" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#30321C" text-anchor="middle" font-weight="700" letter-spacing="0.6">VESTA</text>
-              <!-- Title -->
               <text x="14" y="58" font-family="ui-sans-serif,system-ui,sans-serif" font-size="19" font-weight="700" fill="#12100E">Browse roofers</text>
               <text x="14" y="71" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="rgba(18,16,14,.42)">50 vetted · swipe to save the ones you like</text>
-              <!-- Filter tabs -->
               <rect x="14" y="79" width="52" height="19" rx="9.5" fill="#D4DF9E"/>
               <text x="40" y="92" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#12100E" font-weight="600" text-anchor="middle">Roofing</text>
               <rect x="70" y="79" width="40" height="19" rx="9.5" fill="rgba(255,255,255,.55)" stroke="rgba(18,16,14,.14)" stroke-width="1"/>
               <text x="90" y="92" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.6)" text-anchor="middle">HVAC</text>
               <rect x="114" y="79" width="50" height="19" rx="9.5" fill="rgba(255,255,255,.55)" stroke="rgba(18,16,14,.14)" stroke-width="1"/>
               <text x="139" y="92" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.6)" text-anchor="middle">Plumbing</text>
-              <!-- Info card: vetting explanation -->
               <rect x="14" y="104" width="172" height="32" rx="8" fill="rgba(212,223,158,.5)" stroke="rgba(212,223,158,.8)" stroke-width="1"/>
               <text x="24" y="118" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#30321C">✦  We weigh ratings, reviews + state records.</text>
               <text x="24" y="129" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#30321C" font-weight="600">Swipe right to save, left to pass.</text>
-              <!-- Main contractor card (white) -->
-              <rect x="12" y="142" width="176" height="144" rx="14" fill="white" filter="url(#vshadow)"/>
-              <!-- Avatar: GC -->
+              <rect x="12" y="142" width="176" height="144" rx="14" fill="white" filter="url(#vshadow2)"/>
               <rect x="22" y="153" width="30" height="30" rx="7" fill="#E6E4DC"/>
               <text x="37" y="174" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="700" fill="#6B654B" text-anchor="middle">GC</text>
-              <!-- Company name + location -->
               <text x="60" y="167" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="700" fill="#12100E">Greenland Construction</text>
               <text x="60" y="179" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="rgba(18,16,14,.42)">Brookfield, CT · Roofing</text>
-              <!-- Rating chip -->
               <rect x="22" y="192" width="132" height="15" rx="7.5" fill="#D4DF9E"/>
               <text x="88" y="203" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7" fill="#30321C" font-weight="600" text-anchor="middle">Top 25% by rating · of 50 we track</text>
-              <!-- Vesta's Read label -->
               <text x="22" y="220" font-family="ui-sans-serif,system-ui,sans-serif" font-size="6.5" fill="rgba(74,75,47,.65)" letter-spacing="0.8">✦  VESTA'S READ</text>
-              <!-- Synthesis text -->
               <text x="22" y="233" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#12100E" font-style="italic">Homeowners consistently praise</text>
               <text x="22" y="246" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.42)" font-style="italic">Greenland's one-day roof repairs.</text>
-              <!-- Registered chip -->
               <rect x="22" y="255" width="62" height="15" rx="7.5" fill="none" stroke="rgba(18,16,14,.2)" stroke-width="1"/>
               <text x="53" y="266" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7" fill="#30321C" text-anchor="middle">✓ Registered</text>
-              <!-- Tap hint -->
               <text x="100" y="278" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7" fill="rgba(18,16,14,.3)" text-anchor="middle">Tap for the full analysis</text>
-              <!-- Action buttons -->
               <circle cx="55" cy="314" r="17" fill="white" stroke="rgba(18,16,14,.1)" stroke-width="1.2"/>
               <text x="55" y="320" font-family="ui-sans-serif,system-ui,sans-serif" font-size="18" fill="rgba(18,16,14,.38)" text-anchor="middle">×</text>
               <circle cx="100" cy="314" r="17" fill="white" stroke="rgba(18,16,14,.1)" stroke-width="1.2"/>
@@ -1130,53 +1148,83 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
               <line x1="100" y1="317.5" x2="100" y2="320" stroke="rgba(18,16,14,.42)" stroke-width="1.5" stroke-linecap="round"/>
               <circle cx="145" cy="314" r="17" fill="#30321C"/>
               <path d="M145 307 C142 304 137 305 137 310 C137 314 145 321 145 321 C145 321 153 314 153 310 C153 305 148 304 145 307Z" fill="#D4DF9E"/>
-              <!-- Counter -->
               <text x="100" y="340" font-family="ui-sans-serif,system-ui,sans-serif" font-size="6.5" fill="rgba(18,16,14,.28)" text-anchor="middle" letter-spacing="1">50 OF 50 · SHUFFLED</text>
-              <!-- Bottom nav line -->
               <line x1="0" y1="350" x2="200" y2="350" stroke="rgba(18,16,14,.07)" stroke-width="1"/>
-              <!-- Grid icon -->
               <rect x="17" y="360" width="5" height="5" rx="1" fill="rgba(18,16,14,.32)"/>
               <rect x="24" y="360" width="5" height="5" rx="1" fill="rgba(18,16,14,.32)"/>
               <rect x="17" y="367" width="5" height="5" rx="1" fill="rgba(18,16,14,.32)"/>
               <rect x="24" y="367" width="5" height="5" rx="1" fill="rgba(18,16,14,.32)"/>
-              <!-- Search icon (active) -->
               <circle cx="72" cy="369" r="14" fill="#30321C"/>
               <circle cx="71" cy="368" r="4.5" fill="none" stroke="white" stroke-width="1.4"/>
               <line x1="74" y1="371" x2="77.5" y2="374.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-              <!-- Bookmark -->
               <path d="M119 358L119 380L127 375L135 380L135 358Z" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.4"/>
-              <!-- Profile -->
               <circle cx="172" cy="362" r="5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.4"/>
               <path d="M163 379Q167.5 372 172 372Q176.5 372 181 379" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.4"/>
-              <!-- Home indicator -->
               <rect x="76" y="393" width="48" height="4" rx="2" fill="rgba(18,16,14,.16)"/>
             </svg>
           </div>
+          <img src="/iphone-frame.png" class="hp-iph-frame" alt="">
         </div>
+        </div><!-- /hp-iph-wrap -->
       </div>
+      <div class="hp-below">
+        <div class="hp-tag">Vesta · For Homeowners</div>
+        <span class="hp-link">Explore Vesta <span class="hp-arr">→</span></span>
+      </div>
+    </a>
 
-    </div><!-- /hn-right -->
   </div><!-- /hero-card -->
 </section>
 
-<!-- Stat strip -->
+<!-- Stat strip — floating elevation card -->
 <div class="stat-strip-new">
-  <div class="stat-si"><div class="stat-si-icon">⚡</div>&lt; 60-sec response</div>
-  <div class="stat-sep"></div>
-  <div class="stat-si"><div class="stat-si-icon">🕐</div>24/7 — never miss a lead</div>
-  <div class="stat-sep"></div>
-  <div class="stat-si"><div class="stat-si-icon">⭐</div>Reviews on autopilot</div>
+  <div class="stat-card">
+    <div class="stat-si">
+      <div class="stat-si-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30321C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div class="stat-si-body">
+        <span class="stat-si-label">&lt; 60-sec response</span>
+        <span class="stat-si-sub">AI replies before a competitor even sees the lead.</span>
+      </div>
+    </div>
+    <div class="stat-si">
+      <div class="stat-si-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30321C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="stat-si-body">
+        <span class="stat-si-label">24/7 — never miss a lead</span>
+        <span class="stat-si-sub">Every night. Every weekend. Every holiday.</span>
+      </div>
+    </div>
+    <div class="stat-si">
+      <div class="stat-si-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30321C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="stat-si-body">
+        <span class="stat-si-label">Reviews on autopilot</span>
+        <span class="stat-si-sub">Sent after every job — zero chasing required.</span>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- Brand bar -->
+<!-- Trade bar -->
 <div class="brand-bar-new">
-  <span class="bb-logo">GAF<strong>Master Elite</strong></span>
-  <span class="bb-logo" style="font-size:1rem;font-weight:700;letter-spacing:-.02em;color:rgba(18,16,14,.32)">Carrier</span>
-  <span class="bb-logo" style="font-size:.88rem">A.O. Smith</span>
-  <span class="bb-logo" style="font-size:.9rem;font-weight:800;letter-spacing:.04em">GENERAC</span>
-  <span class="bb-logo" style="font-size:.85rem;font-weight:700;color:rgba(18,16,14,.32)">Milwaukee</span>
-  <span class="bb-logo" style="font-size:.9rem;color:rgba(18,16,14,.32)">yelp<span style="color:#D4DF9E;font-size:.7em">✦</span></span>
-  <span class="bb-logo" style="display:flex;align-items:center;gap:.3rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(18,16,14,.3)" xmlns="http://www.w3.org/2000/svg"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>Google Guaranteed</span>
+  <span class="bb-eyebrow">Built for every trade —</span>
+  <span class="bb-trade">Roofing</span>
+  <span class="bb-dot">·</span>
+  <span class="bb-trade">HVAC</span>
+  <span class="bb-dot">·</span>
+  <span class="bb-trade">Plumbing</span>
+  <span class="bb-dot">·</span>
+  <span class="bb-trade">Electrical</span>
+  <span class="bb-dot">·</span>
+  <span class="bb-trade">Paving</span>
+  <span class="bb-dot">·</span>
+  <span class="bb-trade">Lawn Care</span>
+  <span class="bb-dot">·</span>
+  <span class="bb-more">and more</span>
 </div>
 
 <!-- ════════════════════ DOORMAT — two products ════════════════════ -->
@@ -1388,7 +1436,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .mock-phone-wrap{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;padding-top:1.5rem}
 .mock-phone{position:relative;width:100%;max-width:220px;align-self:flex-end;filter:drop-shadow(0 24px 48px rgba(0,0,0,.55))}
 /* Screen content behind the frame */
-.mock-phone-screen{position:absolute;top:2.1%;left:4.4%;right:4.4%;bottom:2.1%;overflow:hidden;background:#0e1d15}
+.mock-phone-screen{position:absolute;top:2.1%;left:4.4%;right:4.4%;bottom:2.1%;overflow:hidden;background:#ECEDE6}
 .mock-phone-screen svg{width:100%;height:100%;display:block}
 /* Frame on top */
 .mock-phone-frame{position:relative;z-index:2;width:100%;display:block;pointer-events:none}
@@ -1412,6 +1460,17 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .pill-tagline{font-size:.82rem}
 }
 
+@media(max-width:540px){
+  .pills-wrap{flex-direction:column;gap:1rem}
+  .pill-card{width:100%;flex:none;min-height:auto}
+  .pill-copy{padding:1.8rem 1.4rem 2rem}
+  .pill-features{display:flex}
+  .pill-rule{display:block}
+  .pill-name{font-size:2.2rem}
+  .pill-tagline{font-size:.88rem;line-height:1.5}
+  .pill-btn{margin-top:1.6rem}
+}
+
 /* ── Industry trust bar ── */
 .trust-bar{padding:2.8rem var(--pad);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:2.8rem}
 .trust-bar-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);text-align:center;margin-bottom:1.6rem}
@@ -1422,15 +1481,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 @media(max-width:640px){.trust-item{padding:.5rem 1rem;font-size:.55rem}.trust-item svg{width:22px;height:22px}}
 
 /* ── Bottom value props ── */
-.value-strip{background:var(--ink);color:var(--cream);padding:3.6rem var(--pad)}
-.value-strip-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:3rem}
-@media(max-width:760px){.value-strip-inner{grid-template-columns:1fr;gap:2rem}}
-.vs-item{display:flex;align-items:flex-start;gap:1.1rem}
-.vs-icon{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.vs-icon svg{width:22px;height:22px;color:rgba(255,255,255,.7)}
+.value-strip{background:var(--ink);color:var(--cream);padding:5rem var(--pad) 5.5rem;margin-top:3.5rem}
+.value-strip-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(212,223,158,.5);text-align:center;margin-bottom:3.5rem;max-width:var(--max);margin-left:auto;margin-right:auto}
+.value-strip-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:3.5rem;border-top:1px solid rgba(255,255,255,.06);padding-top:3.5rem}
+@media(max-width:760px){.value-strip-inner{grid-template-columns:1fr;gap:2.5rem}}
+.vs-item{display:flex;align-items:flex-start;gap:1.2rem}
+.vs-icon{width:48px;height:48px;border-radius:12px;background:rgba(212,223,158,.08);border:1px solid rgba(212,223,158,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vs-icon svg{width:20px;height:20px;color:rgba(212,223,158,.7)}
 .vs-body{}
-.vs-h{font-family:var(--display);font-size:1.25rem;font-weight:400;letter-spacing:-.02em;margin-bottom:.4rem}
-.vs-d{font-size:.86rem;line-height:1.65;color:rgba(245,243,238,.6)}
+.vs-h{font-family:var(--display);font-size:1.2rem;font-weight:400;letter-spacing:-.02em;margin-bottom:.55rem;color:rgba(240,242,239,.92)}
+.vs-d{font-size:.88rem;line-height:1.7;color:rgba(245,243,238,.48)}
 </style>
 
 <!-- ── Product Pills ── -->
@@ -1456,79 +1516,57 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="pill-mock pill-mock-laptop" style="transition:transform .75s cubic-bezier(.22,1,.36,1);transform-origin:center 88%">
       <div class="mock-laptop">
           <div class="mock-laptop-screen">
-            <svg viewBox="0 0 470 264" preserveAspectRatio="xMinYMin slice" xmlns="http://www.w3.org/2000/svg">
-              <rect width="470" height="264" fill="#f0f0f0"/>
-              <g transform="translate(-25,-15)">
-
-              <!-- ── Sidebar ── -->
-              <rect x="25" y="15" width="153" height="264" fill="#3d0e40"/>
-              <!-- Workspace header -->
-              <rect x="25" y="15" width="153" height="46" fill="#2b0a2c"/>
-              <!-- 4THWALL bracket logo icon -->
-              <rect x="36" y="25" width="24" height="24" rx="4" fill="rgba(255,255,255,0.08)"/>
-              <image href="/4th.png" x="38" y="27" width="20" height="20"/>
-              <!-- Business name -->
-
-              <!-- Nav items -->
-              <text x="36" y="80" font-family="system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,0.65)">Home</text>
-              <text x="36" y="97" font-family="system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,0.65)">Activity</text>
-              <text x="36" y="114" font-family="system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,0.65)">Messages</text>
-
-              <!-- Channels section -->
-              <text x="36" y="137" font-family="system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,0.38)" letter-spacing="1.2">CHANNELS</text>
-              <text x="164" y="137" font-family="system-ui,sans-serif" font-size="13" fill="rgba(255,255,255,0.35)" text-anchor="end">+</text>
-
-              <text x="33" y="156" font-family="system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,0.55)"># general</text>
-
-              <!-- #foh — active -->
-              <rect x="25" y="161" width="153" height="20" fill="rgba(255,255,255,0.12)" rx="3"/>
-              <text x="33" y="175" font-family="system-ui,sans-serif" font-size="11" fill="white" font-weight="600"># foh</text>
-              <rect x="148" y="164" width="22" height="14" rx="7" fill="#cd2553"/>
-              <text x="159" y="174.5" font-family="system-ui,sans-serif" font-size="8" fill="white" text-anchor="middle" font-weight="700">3</text>
-
-              <text x="33" y="195" font-family="system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,0.55)"># boh</text>
-              <text x="33" y="213" font-family="system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,0.55)"># dispatch</text>
-              <text x="33" y="231" font-family="system-ui,sans-serif" font-size="11" fill="rgba(255,255,255,0.55)"># general-chat</text>
-
-              <!-- ── Main content ── -->
-              <line x1="178" y1="15" x2="178" y2="279" stroke="#e0e0e0" stroke-width="0.5"/>
-              <rect x="178" y="15" width="317" height="46" fill="#fff"/>
-
-              <!-- Channel header -->
-              <text x="196" y="35" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1d1c1d"># foh</text>
-              <text x="218" y="35" font-family="system-ui,sans-serif" font-size="11" fill="#999"> · Front of House</text>
-              <line x1="178" y1="61" x2="495" y2="61" stroke="#ebebeb" stroke-width="0.5"/>
-
-              <!-- Message 1: lead alert from 4thwall bot -->
-              <!-- Bot avatar with bracket logo -->
-              <rect x="188" y="70" width="28" height="28" rx="6" fill="#1a1a1a"/>
-              <image href="/4th.png" x="190" y="72" width="24" height="24"/>
-
-              <text x="224" y="81" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#1d1c1d">4thwall</text>
-              <rect x="270" y="70" width="24" height="13" rx="3" fill="#e8e8e8"/>
-              <text x="282" y="80" font-family="system-ui,sans-serif" font-size="7.5" fill="#666" text-anchor="middle" font-weight="600">APP</text>
-              <text x="302" y="81" font-family="system-ui,sans-serif" font-size="10" fill="#aaa">9:31 AM</text>
-
-              <!-- Lead card -->
-              <rect x="224" y="88" width="255" height="96" rx="5" fill="#fff" stroke="#e2e2e2" stroke-width="1"/>
-              <rect x="224" y="88" width="4" height="96" rx="2" fill="#36c5f0"/>
-              <text x="236" y="105" font-family="system-ui,sans-serif" font-size="11.5" font-weight="700" fill="#1d1c1d">📱 New inbound lead</text>
-              <text x="236" y="121" font-family="system-ui,sans-serif" font-size="10.5" fill="#555">Ryan Taylor · Roof repair estimate</text>
-              <text x="236" y="136" font-family="system-ui,sans-serif" font-size="10.5" fill="#555">Austin, TX</text>
-              <rect x="236" y="144" width="72" height="22" rx="4" fill="#f8f8f8" stroke="#ddd" stroke-width="1"/>
-              <text x="272" y="158" font-family="system-ui,sans-serif" font-size="9.5" fill="#1a1a1a" text-anchor="middle" font-weight="500">View thread</text>
-              <rect x="316" y="144" width="88" height="22" rx="4" fill="#1a1a1a"/>
-              <text x="360" y="158" font-family="system-ui,sans-serif" font-size="9.5" fill="white" text-anchor="middle" font-weight="500">✓ Replied in 38s</text>
-
-              <!-- Message 2: follow-up -->
-              <rect x="188" y="196" width="28" height="28" rx="6" fill="#1a1a1a"/>
-              <image href="/4th.png" x="190" y="198" width="24" height="24"/>
-              <text x="224" y="207" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#1d1c1d">4thwall</text>
-              <text x="270" y="207" font-family="system-ui,sans-serif" font-size="10" fill="#aaa">9:31 AM</text>
-              <text x="224" y="222" font-family="system-ui,sans-serif" font-size="10.5" fill="#555">Follow-up scheduled — 24h if no reply.</text>
-              <text x="224" y="237" font-family="system-ui,sans-serif" font-size="10.5" fill="#555">Review request queued post-job.</text>
-
-              </g>
+            <svg viewBox="0 0 520 325" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin slice">
+              <rect width="520" height="325" fill="#12100E"/>
+              <rect x="0" y="0" width="130" height="325" fill="#1C1A16"/>
+              <text x="14" y="27" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="700" fill="rgba(255,255,255,.88)" letter-spacing=".05em">4THWALL</text>
+              <line x1="0" y1="39" x2="130" y2="39" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+              <path d="M12 53 L16.5 48.5 L21 53 L21 58 L18.5 58 L18.5 54.5 L14.5 54.5 L14.5 58 L12 58 Z" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+              <text x="28" y="57" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.36)">Home</text>
+              <path d="M12 68 L21 68 L21 75 L18 75 L16.5 78 L15 75 L12 75 Z" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.2" stroke-linejoin="round"/>
+              <text x="28" y="74" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.36)">Messages</text>
+              <rect x="0" y="82" width="130" height="19" fill="rgba(212,223,158,.1)"/>
+              <rect x="0" y="82" width="2.5" height="19" fill="#D4DF9E"/>
+              <circle cx="16.5" cy="88.5" r="3" fill="#D4DF9E"/>
+              <path d="M10 98 Q13 94 16.5 94 Q20 94 23 98" fill="none" stroke="#D4DF9E" stroke-width="1.2" stroke-linecap="round"/>
+              <text x="28" y="95" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="500" fill="rgba(212,223,158,.88)">Leads</text>
+              <rect x="12" y="108" width="9" height="9" rx="1.5" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="1.2"/>
+              <text x="28" y="116" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.36)">Calendar</text>
+              <rect x="12" y="126" width="9" height="9" rx="1.5" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="1.2"/>
+              <text x="28" y="134" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.36)">Jobs</text>
+              <text x="28" y="149" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.36)">Dispatch</text>
+              <text x="28" y="168" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.36)">Invoices</text>
+              <text x="28" y="185" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.36)">Analytics</text>
+              <line x1="0" y1="197" x2="130" y2="197" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+              <text x="28" y="211" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,.36)">Settings</text>
+              <line x1="130" y1="0" x2="130" y2="325" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <text x="148" y="24" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" font-weight="600" fill="rgba(255,255,255,.88)"># leads</text>
+              <line x1="130" y1="36" x2="520" y2="36" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+              <circle cx="148" cy="60" r="11" fill="#6B654B"/>
+              <text x="148" y="65" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
+              <text x="166" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="rgba(255,255,255,.85)">Homeowner</text>
+              <text x="248" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(255,255,255,.32)">9:41 AM</text>
+              <text x="166" y="69" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">Hi, I have a roof leak in my living room.</text>
+              <text x="166" y="84" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">Can someone take a look?</text>
+              <circle cx="148" cy="113" r="11" fill="#30321C"/>
+              <text x="148" y="118" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#D4DF9E" text-anchor="middle" font-weight="700">A</text>
+              <text x="166" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="rgba(255,255,255,.85)">Atlas</text>
+              <rect x="206" y="100" width="26" height="12" rx="3" fill="rgba(212,223,158,.22)"/>
+              <text x="219" y="110" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#D4DF9E" text-anchor="middle">APP</text>
+              <text x="166" y="122" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">Thanks for reaching out. We can help.</text>
+              <text x="166" y="137" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">How does Thursday between 2–4pm look</text>
+              <text x="166" y="152" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">for a roof inspection?</text>
+              <circle cx="148" cy="178" r="11" fill="#6B654B"/>
+              <text x="148" y="183" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
+              <text x="166" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="rgba(255,255,255,.85)">Homeowner</text>
+              <text x="166" y="187" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(255,255,255,.68)">Thursday 2–4pm works. Thanks!</text>
+              <circle cx="148" cy="215" r="11" fill="#30321C"/>
+              <text x="148" y="220" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#D4DF9E" text-anchor="middle" font-weight="700">A</text>
+              <text x="166" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="rgba(255,255,255,.85)">Atlas</text>
+              <rect x="206" y="202" width="26" height="12" rx="3" fill="rgba(212,223,158,.22)"/>
+              <text x="219" y="212" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#D4DF9E" text-anchor="middle">APP</text>
+              <rect x="166" y="222" width="216" height="32" rx="7" fill="#D4DF9E"/>
+              <text x="172" y="242" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="#12100E" font-weight="600">✓ Booked: Thu, 2–4pm in 47 seconds</text>
             </svg>
           </div>
           <img src="/macbook-air.png" class="mock-laptop-frame" alt="">
@@ -1556,71 +1594,36 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="pill-mock pill-mock-phone" style="transition:transform .75s cubic-bezier(.22,1,.36,1);transform-origin:center 88%">
       <div class="mock-phone">
         <div class="mock-phone-screen">
-          <svg viewBox="0 0 240 526" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
-          <rect x="0" y="0" width="240" height="526" fill="#0e1d15"/>
-          <!-- status bar -->
-          <rect x="72" y="14" width="96" height="27" rx="13.5" fill="#18181b"/>
-          <text x="20" y="36" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="rgba(255,255,255,0.85)">9:41</text>
-          <rect x="184" y="26" width="26" height="13" rx="3" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.3"/>
-          <rect x="210" y="30" width="2.5" height="5" rx="1.25" fill="rgba(255,255,255,0.5)"/>
-          <rect x="186" y="28" width="20" height="9" rx="1.5" fill="rgba(255,255,255,0.82)"/>
-          <rect x="162" y="32" width="2.5" height="7" rx="1" fill="rgba(255,255,255,0.65)"/>
-          <rect x="167" y="29" width="2.5" height="10" rx="1" fill="rgba(255,255,255,0.65)"/>
-          <rect x="172" y="26" width="2.5" height="13" rx="1" fill="rgba(255,255,255,0.65)"/>
-          <rect x="177" y="23" width="2.5" height="16" rx="1" fill="rgba(255,255,255,0.65)"/>
-          <!-- header -->
-          <text x="20" y="100" font-family="system-ui,sans-serif" font-size="21" font-weight="700">
-            <tspan fill="white">Near </tspan><tspan fill="#4dd6a0" font-style="italic" font-weight="600">Stamford, CT</tspan>
-          </text>
-          <text x="20" y="120" font-family="system-ui,sans-serif" font-size="8.5" fill="rgba(255,255,255,0.4)">12 pros nearby · straight from the public record</text>
-          <!-- All trades banner -->
-          <rect x="18" y="138" width="204" height="44" rx="11" fill="#132117" stroke="rgba(255,255,255,0.09)" stroke-width="0.7"/>
-          <line x1="28" y1="155" x2="44" y2="155" stroke="#4dd6a0" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="28" y1="160" x2="44" y2="160" stroke="#4dd6a0" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="28" y1="165" x2="44" y2="165" stroke="#4dd6a0" stroke-width="1.4" stroke-linecap="round"/>
-          <text x="56" y="158" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="rgba(255,255,255,0.92)">All trades</text>
-          <text x="56" y="170" font-family="system-ui,sans-serif" font-size="6.2" letter-spacing="0.8" fill="rgba(255,255,255,0.3)">BROWSE EVERY PRO</text>
-          <path d="M202 154L208 160L202 166" fill="none" stroke="#4dd6a0" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- trade grid: row 1 -->
-          <rect x="18" y="200" width="64" height="70" rx="9" fill="#132117" stroke="rgba(255,255,255,0.09)" stroke-width="0.7"/>
-          <path d="M40 226L50 216L60 226" fill="none" stroke="#4dd6a0" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M43 226V234H57V226" fill="none" stroke="#4dd6a0" stroke-width="1.4" stroke-linejoin="round"/>
-          <text x="50" y="252" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.9)">Roofing</text>
-          <text x="50" y="262" text-anchor="middle" font-family="system-ui,sans-serif" font-size="6.2" letter-spacing="0.6" fill="rgba(255,255,255,0.3)">BROWSE</text>
-          <rect x="90" y="200" width="64" height="70" rx="9" fill="#132117" stroke="rgba(255,255,255,0.09)" stroke-width="0.7"/>
-          <circle cx="122" cy="225" r="8" fill="none" stroke="#4dd6a0" stroke-width="1.4"/>
-          <circle cx="122" cy="225" r="1.7" fill="#4dd6a0"/>
-          <line x1="122" y1="225" x2="122" y2="218" stroke="#4dd6a0" stroke-width="1.4" stroke-linecap="round"/>
-          <text x="122" y="252" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.9)">HVAC</text>
-          <text x="122" y="262" text-anchor="middle" font-family="system-ui,sans-serif" font-size="6.2" letter-spacing="0.6" fill="rgba(255,255,255,0.3)">BROWSE</text>
-          <rect x="162" y="200" width="64" height="70" rx="9" fill="#132117" stroke="rgba(255,255,255,0.09)" stroke-width="0.7"/>
-          <path d="M194 216C201 224 200 234 194 234C188 234 187 224 194 216Z" fill="none" stroke="#4dd6a0" stroke-width="1.4" stroke-linejoin="round"/>
-          <text x="194" y="252" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.9)">Plumbing</text>
-          <text x="194" y="262" text-anchor="middle" font-family="system-ui,sans-serif" font-size="6.2" letter-spacing="0.6" fill="rgba(255,255,255,0.3)">BROWSE</text>
-          <!-- trade grid: row 2 -->
-          <rect x="18" y="278" width="64" height="70" rx="9" fill="#132117" stroke="rgba(255,255,255,0.09)" stroke-width="0.7"/>
-          <path d="M52 294L44 305H50L48 313L56 302H50Z" fill="none" stroke="#4dd6a0" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <text x="50" y="330" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.9)">Electrical</text>
-          <text x="50" y="340" text-anchor="middle" font-family="system-ui,sans-serif" font-size="6.2" letter-spacing="0.6" fill="rgba(255,255,255,0.3)">BROWSE</text>
-          <rect x="90" y="278" width="64" height="70" rx="9" fill="#132117" stroke="rgba(255,255,255,0.09)" stroke-width="0.7"/>
-          <path d="M115 313L119 295L125 295L129 313Z" fill="none" stroke="#4dd6a0" stroke-width="1.4" stroke-linejoin="round"/>
-          <line x1="122" y1="299" x2="122" y2="302" stroke="#4dd6a0" stroke-width="1.3" stroke-linecap="round"/>
-          <line x1="122" y1="306" x2="122" y2="309" stroke="#4dd6a0" stroke-width="1.3" stroke-linecap="round"/>
-          <text x="122" y="330" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.9)">Paving</text>
-          <text x="122" y="340" text-anchor="middle" font-family="system-ui,sans-serif" font-size="6.2" letter-spacing="0.6" fill="rgba(255,255,255,0.3)">BROWSE</text>
-          <rect x="162" y="278" width="64" height="70" rx="9" fill="#132117" stroke="rgba(255,255,255,0.09)" stroke-width="0.7"/>
-          <line x1="194" y1="313" x2="194" y2="301" stroke="#4dd6a0" stroke-width="1.4" stroke-linecap="round"/>
-          <path d="M194 303C190 297 184 296 186 300C188 304 194 303 194 303Z" fill="none" stroke="#4dd6a0" stroke-width="1.4" stroke-linejoin="round"/>
-          <path d="M194 303C198 297 204 296 202 300C200 304 194 303 194 303Z" fill="none" stroke="#4dd6a0" stroke-width="1.4" stroke-linejoin="round"/>
-          <text x="194" y="330" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.9)">Lawn Care</text>
-          <text x="194" y="340" text-anchor="middle" font-family="system-ui,sans-serif" font-size="6.2" letter-spacing="0.6" fill="rgba(255,255,255,0.3)">BROWSE</text>
-          <!-- search -->
-          <rect x="18" y="398" width="204" height="46" rx="23" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>
-          <text x="34" y="426" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.27)">Search by keyword</text>
-          <rect x="162" y="404" width="54" height="34" rx="17" fill="rgba(255,255,255,0.9)"/>
-          <text x="189" y="425" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" font-weight="700" fill="#0e1d15">Search</text>
-          <!-- home indicator -->
-          <rect x="88" y="508" width="64" height="5" rx="2.5" fill="rgba(255,255,255,0.22)"/>
+          <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%">
+            <rect width="200" height="400" fill="#ECEDE6"/>
+            <rect x="60" y="8" width="80" height="20" rx="10" fill="#C8C9BE"/>
+            <text x="14" y="27" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" font-weight="700" fill="#12100E">9:41</text>
+            <rect x="158" y="19" width="18" height="9" rx="2" fill="none" stroke="#12100E" stroke-width="1" stroke-opacity=".35"/>
+            <rect x="160" y="21" width="14" height="5" rx="1" fill="#12100E" fill-opacity=".6"/>
+            <rect x="176" y="22" width="2" height="3" rx="1" fill="#12100E" fill-opacity=".35"/>
+            <text x="14" y="53" font-family="ui-sans-serif,system-ui,sans-serif" font-size="14" font-weight="700" fill="#12100E">Browse roofers</text>
+            <text x="14" y="66" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#6B654B">Stamford, CT · 50 verified pros</text>
+            <rect x="10" y="75" width="180" height="198" rx="16" fill="white" filter="url(#cs)"/>
+            <defs><filter id="cs"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#12100E" flood-opacity=".08"/></filter></defs>
+            <rect x="10" y="75" width="180" height="198" rx="16" fill="white"/>
+            <rect x="10" y="75" width="180" height="84" rx="16" fill="#D4DF9E"/>
+            <rect x="10" y="143" width="180" height="16" fill="white"/>
+            <text x="100" y="107" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="700" fill="#30321C">Greenland</text>
+            <text x="100" y="121" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="700" fill="#30321C">Construction</text>
+            <text x="100" y="136" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#4A4B2F">GAF Master Elite · Since 2008</text>
+            <text x="22" y="170" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" font-weight="600" fill="#12100E">Known for</text>
+            <text x="22" y="183" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8.5" fill="#4A4B2F">Storm damage · Gutters · Flat roofs</text>
+            <rect x="22" y="193" width="156" height="36" rx="8" fill="#F4F2EE"/>
+            <text x="30" y="207" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#6B654B" font-style="italic">"Greenland handled our entire</text>
+            <text x="30" y="218" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#6B654B" font-style="italic">storm claim — zero stress."</text>
+            <text x="22" y="244" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#6B654B">★★★★★ <tspan fill="#4A4B2F">4.9 · 187 reviews</tspan></text>
+            <text x="22" y="256" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#6B654B">HIC Registered · Milford, CT</text>
+            <rect x="10" y="283" width="180" height="198" rx="16" fill="#F4F2EE" fill-opacity=".6" transform="rotate(-3,100,382)"/>
+            <rect x="58" y="286" width="36" height="36" rx="18" fill="#ECEDE6" stroke="#E0E2D8" stroke-width="1.5"/>
+            <text x="76" y="309" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="18" fill="#D4684A">✕</text>
+            <rect x="106" y="286" width="36" height="36" rx="18" fill="#D4DF9E" stroke="#BFC9A0" stroke-width="1.5"/>
+            <text x="124" y="309" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="18" fill="#4A4B2F">♥</text>
+            <rect x="70" y="336" width="60" height="5" rx="2.5" fill="#C8C9BE"/>
           </svg>
         </div>
         <img src="/iphone-frame.png" class="mock-phone-frame" alt="">
@@ -1667,14 +1670,15 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- ── Value strip ── -->
 <div class="value-strip">
+  <p class="value-strip-label">Why contractors choose 4THWALL</p>
   <div class="value-strip-inner">
     <div class="vs-item">
       <div class="vs-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       </div>
       <div class="vs-body">
-        <div class="vs-h">Respond Faster</div>
-        <p class="vs-d">AI-powered follow-ups and automations keep your pipeline moving.</p>
+        <div class="vs-h">Respond Before the Competition</div>
+        <p class="vs-d">Atlas replies to every inbound SMS in under 60 seconds — day or night, weekend or holiday — while your competitors are still sleeping.</p>
       </div>
     </div>
     <div class="vs-item">
@@ -1682,17 +1686,17 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><polyline points="14 8 18 4 22 8"/></svg>
       </div>
       <div class="vs-body">
-        <div class="vs-h">Book on Autopilot</div>
-        <p class="vs-d">Every lead gets a reply, a booking confirmed, and a reminder sent — zero manual steps.</p>
+        <div class="vs-h">Fill Your Calendar Automatically</div>
+        <p class="vs-d">Every lead gets a reply, a booking confirmed, and a reminder sent — all without a single manual step. Your schedule fills itself.</p>
       </div>
     </div>
     <div class="vs-item">
       <div class="vs-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v2m0 8v2M9 9.5A2.5 2.5 0 0 1 12 8a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 0 0 5 2.5 2.5 0 0 0 3-2.5"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
       <div class="vs-body">
-        <div class="vs-h">Win More Work</div>
-        <p class="vs-d">Better experience. Happier customers. More jobs won.</p>
+        <div class="vs-h">Build a Reputation That Sells</div>
+        <p class="vs-d">Review requests go out automatically after every job. More 5-star reviews. More referrals. The compounding loop that grows a trade business for years.</p>
       </div>
     </div>
   </div>
@@ -1700,6 +1704,52 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- legacy section anchor kept for scroll links -->
 <section id="products-legacy" style="display:none" aria-hidden="true"></section>
+
+<!-- ── CTA Block ── -->
+<section class="cta-block" id="contact">
+  <div class="cta-block-inner">
+    <p class="cta-eyebrow">Get started today</p>
+    <h2 class="cta-h">Stop losing leads<br><em>while you sleep.</em></h2>
+    <p class="cta-body">We'll show you exactly how Atlas handles your inbound, fills your calendar, and collects your reviews — live, in 20 minutes. No sales pitch. No commitment.</p>
+    <a href="https://calendly.com" class="cta-big-btn">Book a 20-min call →</a>
+    <p class="cta-note">Free setup &nbsp;·&nbsp; No long-term contract &nbsp;·&nbsp; Built for your trade</p>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="site-foot">
+  <div class="site-foot-inner wrap">
+    <div class="foot-row">
+      <div class="foot-brand-col">
+        <a href="/" class="foot-logo" aria-label="4THWALL home">
+          <svg class="foot-mark-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
+          4THWALL
+        </a>
+        <p class="foot-tagline">AI infrastructure for the trades.</p>
+      </div>
+      <nav class="foot-nav" aria-label="Footer navigation">
+        <div class="foot-nav-col">
+          <span class="foot-nav-head">Products</span>
+          <a href="/atlas" class="foot-nav-a">Atlas — For Contractors</a>
+          <a href="/vesta" class="foot-nav-a">Vesta — For Homeowners</a>
+        </div>
+        <div class="foot-nav-col">
+          <span class="foot-nav-head">Company</span>
+          <a href="/about" class="foot-nav-a">About Us</a>
+          <a href="#contact" class="foot-nav-a">Book a Call</a>
+        </div>
+      </nav>
+    </div>
+    <div class="foot-bottom">
+      <span class="foot-copy">© 2026 4THWALL. All rights reserved.</span>
+      <span class="foot-legal">
+        <a href="/privacy" class="foot-legal-a">Privacy Policy</a>
+        <span class="foot-legal-sep">·</span>
+        <a href="/terms" class="foot-legal-a">Terms of Service</a>
+      </span>
+    </div>
+  </div>
+</footer>
 
 
 
@@ -2419,6 +2469,47 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .tf-meta a{color:var(--muted);transition:color .18s}
 .tf-meta a:hover{color:var(--ink)}
 .tf-sep{color:var(--dim);font-weight:400}
+
+/* ── CTA Block ── */
+.cta-block{background:var(--ink);padding:6rem var(--pad);text-align:center;position:relative;overflow:hidden}
+.cta-block::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 100%,rgba(212,223,158,.07),transparent 70%);pointer-events:none}
+.cta-block-inner{position:relative;z-index:1;max-width:600px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:1.4rem}
+.cta-eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(212,223,158,.65)}
+.cta-h{font-family:var(--display);font-size:clamp(2.6rem,6vw,4rem);font-weight:400;line-height:1.05;letter-spacing:-.04em;color:var(--cream);margin:0}
+.cta-h em{font-style:italic;color:rgba(212,223,158,.9)}
+.cta-body{font-size:1rem;line-height:1.7;color:rgba(240,242,239,.58);max-width:48ch;margin:0}
+.cta-big-btn{display:inline-flex;align-items:center;gap:.6rem;background:#D4DF9E;color:#12100E;border-radius:50px;padding:18px 36px;font-size:1.02rem;font-weight:600;text-decoration:none;transition:background .2s,transform .2s;letter-spacing:-.01em}
+.cta-big-btn:hover{background:#c8d48e;transform:translateY(-2px)}
+.cta-note{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:rgba(240,242,239,.28);margin:0;text-align:center}
+@media(max-width:640px){
+  .cta-block{padding:4rem var(--pad)}
+  .cta-big-btn{padding:15px 28px;font-size:.92rem;width:100%;justify-content:center}
+}
+
+/* ── Footer ── */
+.site-foot{background:#0e0c09;padding:3.5rem 0 2rem;border-top:1px solid rgba(255,255,255,.04)}
+.foot-row{display:flex;justify-content:space-between;align-items:flex-start;gap:2.4rem;padding-bottom:2.4rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.foot-brand-col{display:flex;flex-direction:column;gap:.75rem;max-width:220px}
+.foot-logo{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--mono);font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,242,239,.85);text-decoration:none}
+.foot-mark-svg{width:20px;height:20px;stroke:rgba(240,242,239,.7)}
+.foot-tagline{font-size:.82rem;line-height:1.5;color:rgba(240,242,239,.35);margin:0}
+.foot-nav{display:flex;gap:3rem}
+.foot-nav-col{display:flex;flex-direction:column;gap:.6rem}
+.foot-nav-head{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,242,239,.28);margin-bottom:.25rem}
+.foot-nav-a{font-size:.88rem;color:rgba(240,242,239,.55);text-decoration:none;transition:color .18s}
+.foot-nav-a:hover{color:rgba(240,242,239,.9)}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:1.6rem;gap:1rem;flex-wrap:wrap}
+.foot-copy{font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;color:rgba(240,242,239,.22)}
+.foot-legal{display:flex;align-items:center;gap:.5rem}
+.foot-legal-a{font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;color:rgba(240,242,239,.22);text-decoration:none;transition:color .18s}
+.foot-legal-a:hover{color:rgba(240,242,239,.5)}
+.foot-legal-sep{color:rgba(240,242,239,.14);font-size:.6rem}
+@media(max-width:640px){
+  .foot-row{flex-direction:column;gap:1.8rem}
+  .foot-brand-col{max-width:none}
+  .foot-nav{gap:2rem}
+  .foot-bottom{flex-direction:column;align-items:flex-start;gap:.6rem}
+}
 </style>
 
 <style>
