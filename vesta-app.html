@@ -70,19 +70,15 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .home-h1 { font-family:var(--serif); font-size:54px; font-weight:700; line-height:1.04; letter-spacing:-.03em; color:var(--olive); margin-bottom:12px; }
 .home-sub { font-size:14px; color:var(--ebony); margin-bottom:28px; }
 .trades-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.trade-tile { background:var(--white); border-radius:var(--r-tile); padding:20px 18px 18px; cursor:pointer; box-shadow:var(--sh-tile); border:none; text-align:left; display:flex; flex-direction:column; justify-content:space-between; gap:14px; min-height:118px; transition:transform .16s, box-shadow .16s; outline:none; }
-.trade-tile:hover { transform:translateY(-4px); box-shadow:var(--sh-row-h); }
+.trade-tile { background:linear-gradient(180deg,#FFFFFF,#FBFCF6); border-radius:var(--r-tile); padding:19px 18px; cursor:pointer; border:1px solid rgba(74,75,47,.055); box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 1px 2px rgba(74,75,47,.05), 0 9px 22px -8px rgba(74,75,47,.15), 0 30px 60px -22px rgba(74,75,47,.16); text-align:left; display:flex; flex-direction:column; justify-content:space-between; gap:16px; min-height:134px; transition:transform .18s cubic-bezier(.32,1.08,.62,1), box-shadow .18s; outline:none; }
+.trade-tile:hover { transform:translateY(-4px); box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 2px 4px rgba(74,75,47,.06), 0 16px 32px -10px rgba(74,75,47,.22), 0 44px 80px -28px rgba(74,75,47,.22); }
 .trade-tile:active { transform:scale(.975); }
 .trade-tile.sel { background:var(--tea); }
 .trade-tile:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
-.tile-icon { width:34px; height:34px; color:var(--olive); }
-.tile-meta { display:flex; flex-direction:column; gap:2px; }
+.tile-icon { width:50px; height:50px; flex-shrink:0; border-radius:15px; background:linear-gradient(180deg,rgba(212,223,158,.34),rgba(212,223,158,.15)); border:1px solid rgba(74,75,47,.05); box-shadow:inset 0 1px 0 rgba(255,255,255,.55); display:flex; align-items:center; justify-content:center; color:var(--olive); }
+.tile-icon svg { width:27px; height:27px; }
 .tile-name { font-size:16px; font-weight:600; color:var(--olive); }
-.tile-ct { font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; color:var(--ebony); }
-.home-foot { display:flex; align-items:flex-start; gap:11px; margin-top:26px; padding:15px 17px; background:rgba(212,223,158,.3); border:1px solid rgba(74,75,47,.08); border-radius:18px; }
-.home-foot .hf-spark { color:var(--olive); flex-shrink:0; margin-top:1px; display:flex; }
-.home-foot p { font-size:13px; line-height:1.55; color:var(--ebony); }
-.home-foot b { color:var(--olive); font-weight:600; }
+.home-sign { text-align:center; font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--ebony); margin-top:32px; letter-spacing:.005em; }
 
 /* BROWSE header + chips */
 .browse-hdr { padding:6px 20px 8px; }
@@ -337,10 +333,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
       <h1 class="home-h1">What do<br>you need?</h1>
       <p class="home-sub">Fairfield County &middot; trusted, vetted pros</p>
       <div class="trades-grid" id="trades-grid" role="list"></div>
-      <div class="home-foot">
-        <span class="hf-spark"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l1.4 5.1L14.5 6.5 9.4 7.9 8 13 6.6 7.9 1.5 6.5 6.6 5.1z"/></svg></span>
-        <p><b>Every pro here is read by Vesta.</b> We analyze the public reviews and Connecticut records, so you only meet the ones worth hiring — no ads, no pay-to-play.</p>
-      </div>
+      <p class="home-sign">Vetted, never advertised.</p>
     </main>
   </div>
 
@@ -530,8 +523,6 @@ async function loadContractors(){
   if (S.screen === 'browse'){
     if (S.mode === 'saved'){ renderSaved(); }
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
-  } else if (S.screen === 'home'){
-    renderHome(); // fill in the per-trade vetted counts now that data is in
   }
 }
 
@@ -541,11 +532,8 @@ function renderHome(){
   trades.forEach(t => {
     const btn = document.createElement('button');
     btn.className = 'trade-tile'; btn.setAttribute('role','listitem');
-    const n = byTrade(t.key).length;
-    btn.setAttribute('aria-label', t.label + (n ? ' — ' + n + ' vetted pros' : ' — find a pro'));
-    btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span>'+
-      '<span class="tile-meta"><span class="tile-name">'+t.label+'</span>'+
-      (n ? '<span class="tile-ct">'+n+' vetted</span>' : '')+'</span>';
+    btn.setAttribute('aria-label', t.label + ' — find a pro');
+    btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span><span class="tile-name">'+t.label+'</span>';
     btn.addEventListener('click', () => { btn.classList.add('sel'); setTimeout(()=>openBrowse(t.key),120); });
     grid.appendChild(btn);
   });
