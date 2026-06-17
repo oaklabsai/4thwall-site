@@ -407,13 +407,8 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 .hn-cta{display:flex;flex-direction:column;align-items:center;gap:.85rem}
 @media(max-width:1000px){
   .hero-card{grid-template-columns:1fr;min-height:0;overflow:hidden}
-  .hero-center{order:-1}
-  .hero-prod{overflow:hidden}
-  .hp-device{overflow:hidden;min-height:220px}
-  .hp-mac{width:88%;margin:0 auto;transform:none}
-  .hp-iph{width:52%;transform:none}
-  .hp-iph-2{display:none}
-  .hero-center{padding:2.2rem 1.5rem 2rem}
+  .hero-center{order:-1;padding:2.2rem 1.5rem 2.8rem}
+  .hero-prod{display:none}
   .hn-headline{font-size:clamp(2.4rem,7vw,4rem)}
   .stat-card{border-radius:16px}
   .stat-si{padding:1.1rem 1.4rem}
@@ -1384,35 +1379,28 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .pill-card{display:flex;flex-direction:column;border-radius:28px;overflow:hidden;text-decoration:none;color:inherit;min-height:360px;flex:1;min-width:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
 .pill-card:hover{transform:translateY(-3px)}
 
-/* LEFT — Atlas (cream) */
-.pill-atlas{background:linear-gradient(160deg,#f6f1e6 0%,#ede8dc 100%);border:1px solid rgba(92,83,70,.10);box-shadow:0 2px 4px rgba(20,16,12,.04),0 12px 32px -10px rgba(20,16,12,.12),inset 0 1px 0 rgba(255,255,255,.7);position:relative}
-/* RIGHT — Vesta (dark) */
-.pill-vesta{background:linear-gradient(160deg,#1a2e22 0%,#0e1a12 100%);border:1px solid rgba(255,255,255,.07);box-shadow:0 2px 4px rgba(0,0,0,.18),0 16px 40px -10px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.05)}
-.pill-vesta::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 100% 100%,rgba(30,102,66,.35),transparent 58%);pointer-events:none;border-radius:28px}
+/* LEFT — Atlas (pitch black → dark khaki) */
+.pill-atlas{background:linear-gradient(160deg,#1a1914 0%,#30321C 100%);border:1px solid rgba(255,255,255,.06);box-shadow:0 2px 4px rgba(0,0,0,.28),0 16px 40px -10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);position:relative}
+/* RIGHT — Vesta (olive → ebony, warmer/lighter than Atlas) */
+.pill-vesta{background:linear-gradient(160deg,#4A4B2F 0%,#6B654B 100%);border:1px solid rgba(212,223,158,.12);box-shadow:0 2px 4px rgba(0,0,0,.14),0 16px 40px -10px rgba(0,0,0,.28),inset 0 1px 0 rgba(212,223,158,.1)}
+.pill-vesta::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 110% -10%,rgba(212,223,158,.18),transparent 60%);pointer-events:none;border-radius:28px}
 .pill-vesta{position:relative}
 
-/* left col: copy */
+/* copy column */
 .pill-copy{padding:clamp(1.8rem,3vw,2.6rem);display:flex;flex-direction:column;gap:0;position:relative;z-index:1;flex:1}
-.pill-tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);display:flex;align-items:center;gap:.55rem;margin-bottom:1.1rem}
+.pill-tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:#D4DF9E;display:flex;align-items:center;gap:.55rem;margin-bottom:1.1rem}
 .pill-tag::before{content:"";width:22px;height:1px;background:currentColor;opacity:.7}
-.pill-vesta .pill-tag{color:rgba(100,200,140,.9)}
-.pill-name{font-family:var(--display);font-size:clamp(2.4rem,4vw,3.4rem);font-weight:300;letter-spacing:-.045em;line-height:.9;margin-bottom:1rem}
-.pill-name .dot{color:var(--orange)}
-.pill-vesta .pill-name{color:var(--cream)}
-.pill-vesta .pill-name .dot{color:rgba(100,200,140,.95)}
-.pill-tagline{font-family:var(--display);font-size:clamp(.95rem,1.4vw,1.2rem);font-weight:400;line-height:1.4;color:var(--muted);margin-bottom:1.4rem}
-.pill-vesta .pill-tagline{color:rgba(245,243,238,.75)}
-.pill-rule{width:100%;height:1px;background:rgba(92,83,70,.12);margin-bottom:1.2rem;flex-shrink:0}
-.pill-vesta .pill-rule{background:rgba(255,255,255,.12)}
+.pill-name{font-family:var(--display);font-size:clamp(2.4rem,4vw,3.4rem);font-weight:300;letter-spacing:-.045em;line-height:.9;margin-bottom:1rem;color:#F4F2EE}
+.pill-name .dot{color:#D4DF9E}
+.pill-tagline{font-family:var(--display);font-size:clamp(.95rem,1.4vw,1.2rem);font-weight:400;line-height:1.4;color:rgba(244,242,238,.6);margin-bottom:1.4rem}
+.pill-rule{width:100%;height:1px;background:rgba(212,223,158,.14);margin-bottom:1.2rem;flex-shrink:0}
 .pill-features{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.6rem;flex:1}
-.pill-features li{display:flex;align-items:center;gap:.65rem;font-size:.9rem;font-weight:450;color:var(--ink)}
-.pill-features li::before{content:"✓";color:var(--orange);font-size:.8rem;font-weight:700;flex-shrink:0;line-height:1}
-.pill-vesta .pill-features li{color:rgba(245,243,238,.88)}
-.pill-vesta .pill-features li::before{color:rgba(100,200,140,.9)}
-.pill-btn{display:inline-flex;align-items:center;gap:.6rem;background:var(--ink);color:var(--cream);border-radius:50px;padding:14px 26px;font-size:.9rem;font-weight:500;margin-top:1.8rem;align-self:flex-start;transition:background .2s,transform .2s;cursor:pointer;text-decoration:none}
-.pill-btn:hover{background:#4A4339;transform:translateX(2px)}
-.pill-vesta .pill-btn{background:rgba(30,102,66,.85);border:1px solid rgba(100,200,140,.2)}
-.pill-vesta .pill-btn:hover{background:rgba(30,102,66,1)}
+.pill-features li{display:flex;align-items:center;gap:.65rem;font-size:.9rem;font-weight:450;color:rgba(244,242,238,.85)}
+.pill-features li::before{content:"✓";color:#D4DF9E;font-size:.8rem;font-weight:700;flex-shrink:0;line-height:1}
+.pill-btn{display:inline-flex;align-items:center;gap:.6rem;background:#D4DF9E;color:#12100E;border-radius:50px;padding:14px 26px;font-size:.9rem;font-weight:600;margin-top:1.8rem;align-self:flex-start;transition:background .2s,transform .2s;cursor:pointer;text-decoration:none}
+.pill-btn:hover{background:#c8d48e;transform:translateX(2px)}
+.pill-vesta .pill-btn{background:rgba(212,223,158,.92);color:#12100E}
+.pill-vesta .pill-btn:hover{background:#D4DF9E}
 .pill-btn .arr{font-family:var(--display);font-size:1.1rem;transition:transform .25s}
 .pill-btn:hover .arr{transform:translateX(3px)}
 
