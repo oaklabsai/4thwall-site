@@ -7,14 +7,14 @@
 <meta name="description" content="One email. No password. Your free account unlocks contact info for every local pro.">
 <meta name="robots" content="noindex">
 <link rel="icon" href="/logo.png" type="image/png">
-<meta name="theme-color" content="#0f1310">
+<meta name="theme-color" content="#F0F2EF">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
 <link rel="stylesheet" href="/home.css">
 <script src="/home.js" defer></script>
 </head>
-<body class="v-dark">
+<body>
 
 <nav class="topnav">
   <a href="/vesta" class="nav-logo">
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (r.ok){
       document.getElementById('signin-h').innerHTML = 'Check your <em>email.</em>';
       document.getElementById('signin-sub').innerHTML = 'We sent a sign-in link to <b>' + HOME.esc(form.email.value) + '</b>. Open it on this device and you\'re in. The link expires in an hour.';
-      document.getElementById('signin-card').innerHTML = '<p class="note">Nothing arriving? Check spam, or <a href="/signin" style="color:var(--vgreen-2)">try again</a>.</p>';
+      document.getElementById('signin-card').innerHTML = '<p class="note">Nothing arriving? Check spam, or <a href="/signin" style="color:var(--orange)">try again</a>.</p>';
     } else {
       btn.disabled = false;
       st.className = 'form-status is-error';
