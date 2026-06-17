@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vesta — Find a contractor worth hiring. | 4THWALL</title>
+<meta name="description" content="Swipe through vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care. Each one read and summarized by Vesta. No ads, no pay-to-play.">
+<link rel="canonical" href="https://4thwall.solutions/vesta">
+<meta property="og:title" content="Vesta — Find a contractor worth hiring.">
+<meta property="og:description" content="Vetted Fairfield County contractors, each read and summarized by Vesta. No ads, no pay-to-play.">
+<meta property="og:url" content="https://4thwall.solutions/vesta">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F0F1E8; --olive:#4A4B2F; --ebony:#6B654B; --tea:#D4DF9E; --white:#FFFFFF;
+  --r-card:26px; --r-tile:22px; --r-pill:999px;
+  --sh-tile: 0 1px 3px rgba(74,75,47,.06), 0 6px 18px -4px rgba(74,75,47,.13), 0 20px 56px -12px rgba(74,75,47,.14);
+  --sh-row: 0 1px 3px rgba(74,75,47,.05), 0 6px 18px -6px rgba(74,75,47,.12);
+  --sh-row-h: 0 2px 6px rgba(74,75,47,.08), 0 14px 34px -8px rgba(74,75,47,.2);
+  --sh-card: 0 2px 6px rgba(74,75,47,.07), 0 18px 44px -10px rgba(74,75,47,.22), 0 40px 90px -24px rgba(74,75,47,.2);
+  --sh-panel: 0 1px 3px rgba(74,75,47,.05), 0 18px 48px -16px rgba(74,75,47,.18);
+  --sh-nav: 0 1px 0 rgba(74,75,47,.04), 0 4px 14px -2px rgba(74,75,47,.12), 0 18px 48px -8px rgba(74,75,47,.22);
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter Tight',system-ui,-apple-system,sans-serif; --mono:'JetBrains Mono','Courier New',monospace;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; }
+body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+
+#app { width:390px; min-height:100vh; margin:0 auto; background:var(--bg); position:relative; overflow-x:hidden; }
+@media (min-width:470px) and (max-width:899px) {
+  body { display:flex; justify-content:center; align-items:flex-start; padding:28px 0 48px; }
+  #app { border-radius:50px; overflow:hidden; min-height:844px; box-shadow:0 0 0 1px rgba(74,75,47,.08), 0 40px 80px -16px rgba(74,75,47,.32); }
+}
+
+.screen { display:none; flex-direction:column; min-height:100vh; background:var(--bg); position:relative; }
+.screen.active { display:flex; }
+
+.topbar { display:flex; align-items:center; padding:16px 20px 12px; background:rgba(240,241,232,.9); backdrop-filter:blur(16px) saturate(180%); -webkit-backdrop-filter:blur(16px) saturate(180%); position:sticky; top:0; z-index:3; border-bottom:.5px solid rgba(74,75,47,.07); }
+.tb-wm { font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:.08em; color:var(--olive); }
+.tb-spacer { flex:1; }
+.tb-tag { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.13em; color:var(--olive); background:var(--tea); padding:3px 8px; border-radius:4px; }
+.tb-back { background:none; border:none; cursor:pointer; color:var(--ebony); display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; margin-right:2px; border-radius:10px; }
+.tb-back:hover { background:rgba(74,75,47,.07); }
+
+/* HOME */
+.home-body { padding:14px 20px 130px; flex:1; }
+.home-h1 { font-family:var(--serif); font-size:54px; font-weight:700; line-height:1.04; letter-spacing:-.03em; color:var(--olive); margin-bottom:12px; }
+.home-sub { font-size:14px; color:var(--ebony); margin-bottom:28px; }
+.trades-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.trade-tile { background:var(--white); border-radius:var(--r-tile); padding:20px 18px 18px; cursor:pointer; box-shadow:var(--sh-tile); border:none; text-align:left; display:flex; flex-direction:column; justify-content:space-between; gap:14px; min-height:118px; transition:transform .16s, box-shadow .16s; outline:none; }
+.trade-tile:hover { transform:translateY(-4px); box-shadow:var(--sh-row-h); }
+.trade-tile:active { transform:scale(.975); }
+.trade-tile.sel { background:var(--tea); }
+.trade-tile:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
+.tile-icon { width:34px; height:34px; color:var(--olive); }
+.tile-name { font-size:16px; font-weight:600; color:var(--olive); }
+.tile-ct { font-size:12px; color:var(--ebony); }
+
+/* BROWSE header + chips */
+.browse-hdr { padding:6px 20px 8px; }
+.browse-h1 { font-family:var(--serif); font-size:38px; font-weight:700; line-height:1.05; letter-spacing:-.025em; color:var(--olive); margin-bottom:3px; }
+.browse-sub { font-size:13px; color:var(--ebony); }
+.chips-row { display:flex; gap:8px; padding:6px 20px 10px; overflow-x:auto; scrollbar-width:none; -webkit-mask-image:linear-gradient(to right,#000 86%,transparent); mask-image:linear-gradient(to right,#000 86%,transparent); }
+.chips-row::-webkit-scrollbar { display:none; }
+.chip { font-size:14px; font-weight:500; color:var(--olive); background:var(--white); border:none; border-radius:var(--r-pill); padding:0 18px; min-height:38px; white-space:nowrap; cursor:pointer; box-shadow:var(--sh-row); display:flex; align-items:center; flex-shrink:0; }
+.chip.sel { background:var(--tea); }
+
+/* analysis banner */
+.vbanner { display:flex; align-items:center; gap:10px; margin:0 20px 10px; padding:11px 16px; background:rgba(212,223,158,.28); border:1px solid rgba(74,75,47,.08); border-radius:14px; font-size:12.5px; color:var(--ebony); line-height:1.4; }
+.vbanner b { color:var(--olive); font-weight:600; }
+.vbanner .vb-spark { color:var(--olive); flex-shrink:0; }
+
+/* BODY split: left column (deck or saved list) + panel */
+.vbody { display:flex; flex:1; min-height:0; }
+.leftcol { flex:1; min-width:0; display:flex; flex-direction:column; min-height:0; }
+.vpanel { display:none; }
+
+/* ===== SWIPE DECK ===== */
+.deckwrap[hidden], .favwrap[hidden] { display:none; }
+.deckwrap { flex:1; display:flex; flex-direction:column; min-height:0; padding-bottom:96px; }
+.deck { position:relative; flex:1; min-height:300px; margin:6px 20px 0; }
+.card { position:absolute; left:0; right:0; top:0; bottom:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:22px 22px 20px; display:flex; flex-direction:column; will-change:transform; touch-action:pan-y; -webkit-user-select:none; user-select:none; overflow:hidden; }
+.card[data-k="0"] { z-index:30; cursor:grab; }
+.card[data-k="0"]:active { cursor:grabbing; }
+.card[data-k="1"] { z-index:20; transform:translateY(11px) scale(.96); }
+.card[data-k="2"] { z-index:10; transform:translateY(22px) scale(.92); }
+.card-top { display:flex; align-items:center; gap:12px; margin-bottom:13px; }
+.card-mono { width:46px; height:46px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:18px; font-weight:600; color:var(--ebony); }
+.card-id { min-width:0; flex:1; }
+.card-name { font-family:var(--serif); font-size:22px; font-weight:700; line-height:1.12; letter-spacing:-.02em; color:var(--olive); }
+.card-town { font-size:12px; color:var(--ebony); margin-top:2px; }
+.card-band { align-self:flex-start; background:var(--tea); color:var(--olive); font-size:11.5px; font-weight:600; padding:5px 13px; border-radius:var(--r-pill); margin-bottom:13px; }
+.card-readlbl { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:10px; }
+.card-readlbl .sp { color:var(--olive); display:flex; }
+.card-syn { flex:1; min-height:0; overflow:hidden; font-family:var(--serif); font-size:18.5px; line-height:1.46; font-weight:500; color:var(--olive); letter-spacing:-.004em; position:relative; }
+.card-syn::after { content:''; position:absolute; left:0; right:0; bottom:0; height:38px; background:linear-gradient(transparent,var(--white)); }
+.card-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+.card-chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; color:var(--ebony); background:rgba(74,75,47,.05); border-radius:var(--r-pill); padding:4px 10px; white-space:nowrap; }
+.card-chip svg { color:var(--olive); }
+.card-hint { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:13px; font-size:11px; color:rgba(74,75,47,.5); }
+
+/* swipe stamps */
+.stamp { position:absolute; top:22px; font-family:var(--mono); font-size:19px; font-weight:600; letter-spacing:.1em; padding:5px 13px; border-radius:9px; border:3px solid; opacity:0; pointer-events:none; z-index:6; }
+.stamp-save { left:22px; transform:rotate(-13deg); color:var(--olive); border-color:var(--olive); background:rgba(212,223,158,.55); }
+.stamp-pass { right:22px; transform:rotate(13deg); color:var(--ebony); border-color:var(--ebony); background:rgba(255,255,255,.65); }
+
+/* deck action buttons */
+.deck-actions { display:flex; align-items:center; justify-content:center; gap:20px; padding:16px 0 6px; }
+.act { border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--white); box-shadow:var(--sh-row); transition:transform .12s, box-shadow .14s; }
+.act:hover { transform:translateY(-2px); box-shadow:var(--sh-row-h); }
+.act:active { transform:scale(.9); }
+.act-pass { width:60px; height:60px; color:var(--ebony); }
+.act-info { width:46px; height:46px; color:var(--olive); }
+.act-save { width:60px; height:60px; color:var(--white); background:var(--olive); box-shadow:0 4px 14px -2px rgba(74,75,47,.5), 0 14px 32px -6px rgba(74,75,47,.4); }
+.deck-meta { text-align:center; font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:rgba(74,75,47,.5); padding:6px 0 0; }
+
+/* end-of-deck */
+.deck-end { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); }
+.deck-end .de-spark { color:var(--olive); margin-bottom:14px; }
+.deck-end h3 { font-family:var(--serif); font-size:26px; font-weight:700; color:var(--olive); margin-bottom:9px; letter-spacing:-.02em; }
+.deck-end p { font-size:13.5px; color:var(--ebony); line-height:1.55; margin-bottom:22px; max-width:270px; }
+.deck-end .de-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.de-btn { font-family:var(--sans); font-size:14px; font-weight:600; border-radius:var(--r-pill); padding:12px 20px; cursor:pointer; border:none; }
+.de-btn.primary { background:var(--olive); color:var(--white); }
+.de-btn.ghost { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); }
+
+/* ===== SAVED LIST ===== */
+.favwrap { flex:1; min-height:0; overflow-y:auto; padding:2px 20px 130px; display:flex; flex-direction:column; gap:12px; }
+.fav-intro { font-size:12.5px; color:var(--ebony); line-height:1.55; background:rgba(212,223,158,.24); border:1px solid rgba(74,75,47,.08); border-radius:14px; padding:13px 16px; margin-bottom:2px; }
+.fav-intro b { color:var(--olive); }
+.fav-intro a { color:var(--olive); font-weight:600; white-space:nowrap; }
+.fav-empty { padding:54px 22px; text-align:center; color:var(--ebony); font-size:14px; line-height:1.55; }
+.favrow { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.07); border-radius:20px; padding:16px 16px 15px; box-shadow:var(--sh-row); }
+.favrow-top { display:flex; gap:13px; align-items:flex-start; cursor:pointer; }
+.fav-mono { width:44px; height:44px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:16px; font-weight:600; color:var(--ebony); }
+.fav-id { min-width:0; flex:1; padding-right:34px; }
+.fav-name { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); line-height:1.2; letter-spacing:-.01em; }
+.fav-town { font-size:11.5px; color:var(--ebony); margin-top:2px; }
+.fav-band { display:inline-block; margin-top:8px; background:var(--tea); color:var(--olive); font-size:11px; font-weight:600; padding:3px 11px; border-radius:var(--r-pill); }
+.fav-contact { margin-top:13px; padding-top:13px; border-top:1px solid rgba(74,75,47,.08); }
+.fav-lock { font-size:12.5px; color:var(--ebony); line-height:1.5; display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+.fav-lock svg { color:var(--olive); flex-shrink:0; }
+.fav-lock a { color:var(--olive); font-weight:600; }
+.fav-show { background:var(--tea); color:var(--olive); border:none; border-radius:var(--r-pill); padding:9px 18px; font-size:13px; font-weight:600; cursor:pointer; font-family:var(--sans); display:inline-flex; align-items:center; gap:7px; }
+.fav-show:hover { filter:brightness(.97); }
+.fav-show svg { width:14px; height:14px; }
+.fav-rows { display:flex; flex-direction:column; gap:8px; }
+.fav-c { display:flex; gap:10px; font-size:13px; align-items:baseline; }
+.fav-c b { color:var(--olive); min-width:56px; flex-shrink:0; font-weight:600; }
+.fav-c a { color:var(--ebony); text-decoration:none; word-break:break-all; }
+.fav-c a:hover { text-decoration:underline; }
+.fav-unlike { position:absolute; top:13px; right:13px; width:34px; height:34px; border:none; background:none; cursor:pointer; color:var(--olive); display:flex; align-items:center; justify-content:center; border-radius:9px; }
+.fav-unlike:hover { background:rgba(74,75,47,.06); }
+.linklike { background:none; border:none; color:var(--olive); font-weight:600; cursor:pointer; font-size:12.5px; font-family:var(--sans); text-decoration:underline; padding:0; }
+
+/* ANALYSIS (shared by desktop panel + mobile sheet) */
+.va-head { display:flex; align-items:center; gap:7px; font-family:var(--serif); font-size:19px; font-weight:600; color:var(--olive); letter-spacing:-.01em; margin-bottom:14px; }
+.va-head .va-spark { color:var(--olive); }
+.va-firm { font-family:var(--serif); font-size:30px; font-weight:700; line-height:1.06; letter-spacing:-.025em; color:var(--olive); }
+.va-town { font-size:12.5px; color:var(--ebony); margin-top:3px; }
+.va-band { display:inline-block; margin-top:13px; background:var(--tea); color:var(--olive); font-size:13px; font-weight:600; padding:6px 14px; border-radius:var(--r-pill); }
+.va-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:13px; }
+.va-chip { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:500; color:var(--ebony); background:rgba(74,75,47,.05); border-radius:var(--r-pill); padding:4px 11px; }
+.va-chip svg { color:var(--olive); }
+.va-sec { margin-top:22px; }
+.va-lbl { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:9px; }
+.va-dot { width:6px; height:6px; border-radius:50%; background:var(--tea); }
+.va-read { font-size:14.5px; line-height:1.6; color:var(--olive); }
+.va-themes { display:flex; flex-wrap:wrap; gap:7px; }
+.va-theme { font-size:12.5px; color:var(--olive); border:1.5px solid rgba(74,75,47,.16); background:rgba(74,75,47,.03); border-radius:var(--r-pill); padding:6px 14px; }
+.va-why { list-style:none; display:flex; flex-direction:column; gap:9px; }
+.va-why li { display:flex; align-items:flex-start; gap:9px; font-size:13.5px; color:var(--olive); line-height:1.4; }
+.va-why li svg { color:var(--olive); flex-shrink:0; margin-top:3px; }
+.va-strengths { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.va-strengths li { display:flex; align-items:flex-start; gap:9px; font-size:14px; font-weight:500; color:var(--olive); line-height:1.4; }
+.va-strengths li svg { color:var(--olive); flex-shrink:0; margin-top:3px; }
+.va-checklist { list-style:none; display:flex; flex-direction:column; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid rgba(74,75,47,.1); }
+.va-checklist li { display:flex; align-items:flex-start; gap:8px; font-size:12.5px; color:var(--ebony); line-height:1.4; }
+.va-checklist li svg { color:var(--olive); flex-shrink:0; margin-top:2px; }
+.va-conf { margin-top:22px; padding:14px 16px; background:rgba(212,223,158,.22); border:1px solid rgba(74,75,47,.08); border-radius:14px; }
+.va-conf-l { display:flex; align-items:center; gap:7px; font-size:13.5px; font-weight:600; color:var(--olive); }
+.va-conf-l .va-shield { color:var(--olive); }
+.va-conf-n { font-size:12px; color:var(--ebony); margin-top:4px; line-height:1.45; }
+.va-actions { display:flex; gap:10px; align-items:stretch; margin-top:24px; }
+.va-req { flex:1; background:var(--olive); color:var(--white); font-family:var(--sans); font-size:15px; font-weight:600; border:none; border-radius:var(--r-card); padding:15px 20px; cursor:pointer; min-height:54px; box-shadow:0 2px 6px rgba(74,75,47,.2), 0 12px 32px -6px rgba(74,75,47,.42); transition:transform .12s, box-shadow .15s; }
+.va-req:hover { transform:translateY(-1px); }
+.va-req:active { transform:scale(.99); opacity:.9; }
+.va-bm { width:54px; flex-shrink:0; background:none; border:2px solid rgba(74,75,47,.18); border-radius:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--olive); }
+.va-bm:hover { border-color:rgba(74,75,47,.38); }
+.va-bm.on { background:var(--tea); border-color:transparent; }
+.va-bm.on svg { fill:var(--olive); }
+.va-full { display:inline-block; margin-top:16px; font-size:13px; font-weight:500; color:var(--ebony); text-decoration:underline; text-underline-offset:3px; }
+.va-note { display:flex; align-items:center; gap:6px; margin-top:14px; font-size:11.5px; color:var(--ebony); }
+
+/* MOBILE SHEET */
+.pscrim { position:fixed; inset:0; z-index:60; background:rgba(74,75,47,.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity .3s; }
+.pscrim.open { opacity:1; pointer-events:auto; }
+.psheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:min(390px,100vw); background:var(--white); border-radius:28px 28px 0 0; z-index:61; padding:10px 24px 48px; max-height:90vh; overflow-y:auto; overscroll-behavior:contain; transition:transform .4s cubic-bezier(.32,1.08,.62,1); box-shadow:0 -12px 40px -4px rgba(74,75,47,.18), 0 -40px 96px -12px rgba(74,75,47,.24); }
+.psheet.open { transform:translateX(-50%) translateY(0); }
+.phandle-wrap { display:flex; justify-content:center; padding:6px 0 16px; touch-action:none; cursor:grab; }
+.phandle { width:40px; height:4px; background:rgba(74,75,47,.15); border-radius:2px; }
+
+/* BOTTOM NAV */
+.bnav { position:fixed; bottom:18px; left:50%; transform:translateX(-50%); width:calc(min(390px,100vw) - 36px); background:rgba(248,249,240,.97); backdrop-filter:saturate(200%) blur(20px); -webkit-backdrop-filter:saturate(200%) blur(20px); border-radius:var(--r-pill); padding:9px 14px; border:.5px solid rgba(255,255,255,.75); display:flex; align-items:center; justify-content:space-between; box-shadow:var(--sh-nav); z-index:10; }
+.bnav-btn { background:none; border:none; cursor:pointer; color:var(--ebony); min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+.bnav-btn:hover { color:var(--olive); }
+.bnav-btn.on { color:var(--olive); }
+
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms!important; animation-duration:.01ms!important; } }
+:focus-visible { outline:2.5px solid var(--tea); outline-offset:2px; }
+
+/* SEARCH OVERLAY */
+.vsearch { position:fixed; inset:0; z-index:80; background:rgba(74,75,47,.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity .25s; display:flex; flex-direction:column; align-items:center; padding:0 16px; }
+.vsearch.open { opacity:1; pointer-events:auto; }
+.vsearch-card { width:100%; max-width:560px; margin-top:13vh; background:var(--white); border-radius:24px; box-shadow:0 30px 80px -20px rgba(74,75,47,.5); overflow:hidden; display:flex; flex-direction:column; max-height:74vh; transform:translateY(14px); transition:transform .25s; }
+.vsearch.open .vsearch-card { transform:none; }
+.vsearch-bar { display:flex; align-items:center; gap:12px; padding:17px 20px; border-bottom:1px solid rgba(74,75,47,.08); }
+.vsearch-bar > svg { color:var(--ebony); flex-shrink:0; }
+.vsearch-input { flex:1; border:none; outline:none; background:none; font-family:var(--sans); font-size:18px; color:var(--olive); min-width:0; }
+.vsearch-input::placeholder { color:rgba(74,75,47,.4); }
+.vsearch-x { background:none; border:none; cursor:pointer; color:var(--ebony); width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:8px; flex-shrink:0; }
+.vsearch-x:hover { background:rgba(74,75,47,.06); }
+.vsearch-results { overflow-y:auto; padding:8px; }
+.vsearch-hint { padding:26px 16px; text-align:center; color:var(--ebony); font-size:14px; line-height:1.5; }
+.vsr { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:none; border:none; cursor:pointer; padding:11px 12px; border-radius:14px; }
+.vsr:hover { background:var(--bg); }
+.vsr-mono { width:40px; height:40px; flex-shrink:0; border-radius:11px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:15px; font-weight:600; color:var(--ebony); }
+.vsr-main { min-width:0; }
+.vsr-name { display:block; font-family:var(--serif); font-size:16px; font-weight:600; color:var(--olive); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vsr-town { display:block; font-size:12px; color:var(--ebony); }
+
+/* DESKTOP (≥900px) — sidebar | deck | analysis panel */
+#dsidebar { display:none; }
+@media (min-width:900px) {
+  body { display:block; padding:0; background:var(--bg); }
+  #app { width:100%; max-width:none; min-height:100vh; margin:0; border-radius:0; overflow:visible; box-shadow:none; display:flex; flex-direction:row; background:var(--bg); }
+  #dsidebar { display:flex; flex-direction:column; width:248px; flex-shrink:0; padding:26px 14px 22px; background:#ECEEE0; border-right:1px solid rgba(74,75,47,.1); position:sticky; top:0; height:100vh; }
+  .ds-brand { display:flex; align-items:center; gap:9px; padding:0 10px 26px; }
+  .ds-nav { display:flex; flex-direction:column; gap:3px; flex:1; }
+  .ds-item { display:flex; align-items:center; gap:13px; width:100%; padding:11px 14px; border:none; background:none; cursor:pointer; border-radius:13px; text-align:left; color:var(--ebony); transition:background .14s, color .14s; }
+  .ds-item:hover { background:rgba(255,255,255,.6); color:var(--olive); }
+  .ds-item.on { background:var(--white); color:var(--olive); box-shadow:0 1px 3px rgba(74,75,47,.06), 0 6px 16px -6px rgba(74,75,47,.16); }
+  .ds-ic { width:23px; height:23px; flex-shrink:0; display:flex; }
+  .ds-ic svg { width:23px; height:23px; }
+  .ds-lbl { font-size:15px; font-weight:500; flex:1; }
+  .ds-ct { font-family:var(--mono); font-size:12px; color:var(--ebony); opacity:.65; }
+  .ds-item.on .ds-ct { color:var(--olive); opacity:.8; }
+  .ds-foot { display:flex; flex-direction:column; gap:2px; padding-top:14px; border-top:1px solid rgba(74,75,47,.1); }
+  .ds-foot-btn { display:flex; align-items:center; gap:13px; padding:11px 14px; border:none; background:none; cursor:pointer; border-radius:12px; color:var(--ebony); font-family:var(--sans); font-size:14px; font-weight:500; }
+  .ds-foot-btn:hover { background:rgba(255,255,255,.6); color:var(--olive); }
+  .ds-foot-btn.on { background:var(--white); color:var(--olive); }
+  .ds-foot-btn svg { width:20px; height:20px; }
+
+  .topbar, .bnav { display:none; }
+  #s-home { display:none !important; }
+
+  #s-browse.screen { flex:1; min-width:0; height:100vh; }
+  #s-browse .browse-hdr { padding:34px 40px 4px; }
+  .browse-h1 { font-size:46px; }
+  .chips-row { display:none; }
+  .vbanner { margin:14px 40px 0; }
+  .vbody { flex:1; min-height:0; overflow:hidden; }
+  .leftcol { min-width:0; }
+
+  .deckwrap { align-items:center; justify-content:center; padding:8px 0 28px; }
+  .deck { width:min(440px,46vw); max-width:440px; flex:0 0 auto; height:min(560px,70vh); min-height:0; margin:0; }
+  .deck-actions { padding:26px 0 4px; }
+  .act-info { display:none; }
+  .favwrap { padding:24px 40px 48px; }
+
+  .vpanel { display:block; width:392px; flex-shrink:0; height:100vh; overflow-y:auto; background:var(--white); border-left:1px solid rgba(74,75,47,.1); padding:34px 32px 48px; box-shadow:var(--sh-panel); }
+  .va-firm { font-size:32px; }
+
+  .pscrim, .psheet { display:none; }
+}
+</style>
+<script src="/home.js"></script>
+</head>
+<body>
+<div id="app">
+
+  <!-- DESKTOP SIDEBAR -->
+  <aside id="dsidebar" aria-label="Trades">
+    <div class="ds-brand"><span class="tb-wm">4THWALL</span><span class="tb-tag">VESTA</span></div>
+    <nav class="ds-nav" id="ds-nav"></nav>
+    <div class="ds-foot">
+      <button class="ds-foot-btn" id="ds-search" aria-label="Search"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg><span>Search</span></button>
+      <button class="ds-foot-btn" id="ds-saved" aria-label="Saved pros"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 19s-7-4.5-7-9.5A4 4 0 0111 7a4 4 0 017 2.5C18 14.5 11 19 11 19z"></path></svg><span>Saved</span></button>
+      <button class="ds-foot-btn" id="ds-you" aria-label="Your account"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="8" r="4"></circle><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8"></path></svg><span>You</span></button>
+    </div>
+  </aside>
+
+  <!-- HOME (mobile) -->
+  <div id="s-home" class="screen active" role="main" aria-label="Pick a trade">
+    <header class="topbar"><span class="tb-wm">4THWALL</span><span class="tb-spacer"></span><span class="tb-tag">VESTA</span></header>
+    <main class="home-body">
+      <h1 class="home-h1">What do<br>you need?</h1>
+      <p class="home-sub">Fairfield County &middot; trusted, vetted pros</p>
+      <div class="trades-grid" id="trades-grid" role="list"></div>
+    </main>
+  </div>
+
+  <!-- BROWSE -->
+  <div id="s-browse" class="screen" role="main" aria-label="Browse contractors">
+    <header class="topbar">
+      <button class="tb-back" id="btn-back" aria-label="Back to trades"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
+      <span class="tb-wm">4THWALL</span><span class="tb-spacer"></span><span class="tb-tag">VESTA</span>
+    </header>
+    <div class="browse-hdr">
+      <h1 class="browse-h1" id="browse-h1" aria-live="polite">Browse roofers</h1>
+      <p class="browse-sub" id="browse-sub">Swipe to save the ones you like</p>
+    </div>
+    <div class="chips-row" id="chips-row" role="group" aria-label="Filter by trade"></div>
+    <div class="vbanner" id="vbanner"></div>
+    <div class="vbody">
+      <div class="leftcol" id="leftcol">
+        <div class="deckwrap" id="deckwrap">
+          <div class="deck" id="deck" aria-label="Contractor cards"></div>
+          <div class="deck-actions" id="deck-actions">
+            <button class="act act-pass" id="act-pass" aria-label="Pass on this pro"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="7" y1="7" x2="19" y2="19"/><line x1="19" y1="7" x2="7" y2="19"/></svg></button>
+            <button class="act act-info" id="act-info" aria-label="See full analysis"><svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8.5"/><line x1="11" y1="10" x2="11" y2="15"/><circle cx="11" cy="6.7" r="0.6" fill="currentColor"/></svg></button>
+            <button class="act act-save" id="act-save" aria-label="Save this pro"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.9-7.5-10.3A4.3 4.3 0 0112 7.4a4.3 4.3 0 017.5 3.3C19.5 16.1 12 21 12 21z"/></svg></button>
+          </div>
+          <div class="deck-meta" id="deck-meta"></div>
+        </div>
+        <div class="favwrap" id="favwrap" hidden></div>
+      </div>
+      <aside class="vpanel" id="vpanel" aria-label="Vesta's analysis" aria-live="polite"></aside>
+    </div>
+  </div>
+
+  <!-- MOBILE SHEET -->
+  <div class="pscrim" id="pscrim" aria-hidden="true"></div>
+  <div class="psheet" id="psheet" role="dialog" aria-modal="true" aria-label="Vesta's analysis" tabindex="-1">
+    <div class="phandle-wrap" id="phandle"><div class="phandle" aria-hidden="true"></div></div>
+    <div id="psheet-body"></div>
+  </div>
+
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="bnav" aria-label="Main navigation">
+    <button class="bnav-btn" id="nav-home" aria-label="Browse trades"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="8" height="8" rx="2"></rect><rect x="12" y="2" width="8" height="8" rx="2"></rect><rect x="2" y="12" width="8" height="8" rx="2"></rect><rect x="12" y="12" width="8" height="8" rx="2"></rect></svg></button>
+    <button class="bnav-btn" id="nav-search" aria-label="Search"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg></button>
+    <button class="bnav-btn" id="nav-saved" aria-label="Saved"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 19s-7-4.5-7-9.5A4 4 0 0111 7a4 4 0 017 2.5C18 14.5 11 19 11 19z"></path></svg></button>
+    <button class="bnav-btn" id="nav-you" aria-label="Your profile"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="8" r="4"></circle><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8"></path></svg></button>
+  </nav>
+
+  <!-- SEARCH OVERLAY -->
+  <div class="vsearch" id="vsearch" role="dialog" aria-modal="true" aria-label="Search Vesta" aria-hidden="true">
+    <div class="vsearch-card">
+      <div class="vsearch-bar">
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg>
+        <input class="vsearch-input" id="vsearch-input" type="text" placeholder="Search pros by name or town…" autocomplete="off" aria-label="Search pros">
+        <button class="vsearch-x" id="vsearch-x" aria-label="Close search"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="14" y2="14"></line><line x1="14" y1="4" x2="4" y2="14"></line></svg></button>
+      </div>
+      <div class="vsearch-results" id="vsearch-results"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const trades = [
+  { key:'roofing', label:'Roofing', plural:'roofers', icon:'roof', count:50 },
+  { key:'hvac', label:'HVAC', plural:'HVAC pros', icon:'hvac', count:48 },
+  { key:'plumbing', label:'Plumbing', plural:'plumbers', icon:'pipe', count:49 },
+  { key:'electrical', label:'Electrical', plural:'electricians', icon:'bolt', count:50 },
+  { key:'paving', label:'Paving', plural:'pavers', icon:'brick', count:41 },
+  { key:'lawn', label:'Lawn', plural:'lawn pros', icon:'lawn', count:50 },
+];
+let contractors = [];
+
+const ICONS = {
+  roof:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15L16 4L29 15"/><path d="M7 15V27H13V20H19V27H25V15"/></svg>`,
+  hvac:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="2.5"/><line x1="16" y1="4.5" x2="16" y2="13.5"/><line x1="25.5" y1="21.5" x2="18.7" y2="17.5"/><line x1="6.5" y1="21.5" x2="13.3" y2="17.5"/></svg>`,
+  pipe:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="11" y1="4" x2="11" y2="17"/><path d="M11 17Q11 23 17 23"/><line x1="17" y1="23" x2="28" y2="23"/><circle cx="11" cy="4" r="2.5"/><circle cx="28" cy="23" r="2.5"/></svg>`,
+  bolt:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 3L9 18H18L13 29L24 14H15L20 3Z"/></svg>`,
+  brick:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="11" height="8" rx="2"/><rect x="18" y="5" width="11" height="8" rx="2"/><rect x="3" y="19" width="11" height="8" rx="2"/><rect x="18" y="19" width="11" height="8" rx="2"/></svg>`,
+  lawn:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 27Q9 19 11 11Q13 19 12 27"/><path d="M15.5 27Q14 17 16 8Q18 17 16.5 27"/><path d="M21 27Q20 19 22 11Q24 19 23 27"/><line x1="5" y1="27" x2="27" y2="27"/></svg>`,
+};
+const CHECK = `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 5.5L4.5 8.5L9.5 2.5"/></svg>`;
+const SPARK = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l1.4 5.1L14.5 6.5 9.4 7.9 8 13 6.6 7.9 1.5 6.5 6.6 5.1z"/></svg>`;
+const SHIELD = `<svg width="14" height="15" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M7 1l5 2v5c0 3.5-2.3 5.7-5 7-2.7-1.3-5-3.5-5-7V3z"/></svg>`;
+const HEART = `<svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 19s-7-4.5-7-9.5A4 4 0 0111 7a4 4 0 017 2.5C18 14.5 11 19 11 19z"/></svg>`;
+const HEART_FILL = `<svg width="18" height="18" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M11 19s-7-4.5-7-9.5A4 4 0 0111 7a4 4 0 017 2.5C18 14.5 11 19 11 19z"/></svg>`;
+const LOCK = `<svg width="13" height="14" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="7" width="9" height="7" rx="1.5"/><path d="M4.5 7V4.8a2.5 2.5 0 015 0V7"/></svg>`;
+
+const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, dataLoaded:false, mode:'trade',
+            shuffles:{}, pos:{}, deck:[], deckIdx:0, unlocked:{} };
+
+const $ = id => document.getElementById(id);
+const desktop = () => window.innerWidth >= 900;
+const byTrade = k => contractors.filter(c => c.trade === k);
+const tradePlural = k => { const t = trades.find(t=>t.key===k); return t?t.plural:k; };
+const tradeLabelOf = k => { const t = trades.find(t=>t.key===k); return t?t.label:k; };
+const esc = (window.HOME && HOME.esc) ? HOME.esc : (s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])));
+const TRADE_DB = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn:'lawn_care' };
+const TRADE_APP = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn_care:'lawn' };
+
+/* LIKES (favorites) — anon in localStorage, synced on sign-in (see syncLikes) */
+const LIKE_KEY = 'vesta_liked';
+function likedSet(){ try { return new Set(JSON.parse(localStorage.getItem(LIKE_KEY)||'[]')); } catch(_){ return new Set(); } }
+function isLiked(id){ return !!id && likedSet().has(id); }
+function writeLiked(s){ try{ localStorage.setItem(LIKE_KEY, JSON.stringify([...s])); }catch(_){} }
+function setLiked(id,val){ if(!id) return val; const s=likedSet(); val?s.add(id):s.delete(id); writeLiked(s); pushLike(id, !!val); return val; }
+function toggleLike(id){ return setLiked(id, !isLiked(id)); }
+function likedContractors(){ const s=likedSet(); return contractors.filter(c=>s.has(c.placeId)); }
+const signedIn = () => !!(window.HOME && HOME.token && HOME.token());
+
+/* Saved survives sign-in. Swiping/liking is free + anonymous (localStorage);
+   once signed in, every like mirrors to the account so Saved follows you across
+   devices. Best-effort — the server push never blocks the swipe. */
+function pushLike(id, on){
+  if(!signedIn() || !id || !window.HOME) return;
+  HOME.api('/favorites', { method:'POST', body: on ? { place_id:id } : { place_id:id, remove:true } }).catch(()=>{});
+}
+/* On sign-in: merge the anon localStorage likes up to the account in one call
+   (additive), then adopt the server's set as truth — picks up likes saved on
+   another device. Empty local → just pull. */
+async function syncLikes(){
+  if(!signedIn() || !window.HOME) return;
+  try {
+    const local = [...likedSet()];
+    const res = local.length
+      ? await HOME.api('/favorites', { method:'POST', body:{ place_ids: local } })
+      : await HOME.api('/favorites');
+    const { status, data } = res || {};
+    if(status===200 && data && data.ok && Array.isArray(data.favorites)){
+      writeLiked(new Set(data.favorites.map(f => f.place_id)));
+      if(S.screen==='browse' && S.mode==='saved'){ updateBrowseHead(); renderFav(); }
+    }
+  } catch(_){}
+}
+
+function monogram(name){ const w=String(name||'').replace(/[^A-Za-z ]/g,'').split(/\s+/).filter(Boolean); const i=(w.slice(0,2).map(x=>x[0]).join('')||'V'); return i.toUpperCase(); }
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+
+/* row → card shape */
+function mapRow(r){
+  const certs = [];
+  if (Array.isArray(r.certifications)) r.certifications.forEach(c => { if (c && c.issuer && c.level) certs.push(c.issuer + ' ' + c.level); });
+  const verified = [];
+  if (r.registered) verified.push('Registered');
+  certs.forEach(c => verified.push(c));
+  if (!verified.length && r.synthesis) verified.push('Vesta-analyzed');
+  const standing = standingLine(r);
+  let knownFor = [];
+  if (Array.isArray(r.known_for)) knownFor = r.known_for.map(k => k && (k.label || k)).filter(Boolean);
+  if (!knownFor.length && Array.isArray(r.specialties)) knownFor = r.specialties.filter(Boolean);
+  const yr = r.hic_issue_date ? +String(r.hic_issue_date).slice(0,4) : 0;
+  return {
+    placeId: r.place_id,
+    trade: TRADE_APP[r.trade] || r.trade,
+    name: r.business_name || 'Unnamed',
+    town: (r.city || 'Fairfield County') + ', CT',
+    registered: !!r.registered,
+    sinceYear: (yr && yr !== 1999) ? yr : 0,
+    certs: certs,
+    reviewCount: r.synthesis_review_count || 0,
+    verified: verified,
+    standing: standing,
+    knownFor: knownFor.slice(0,4),
+    read: r.synthesis || ''
+  };
+}
+function standingLine(r){
+  if (r.rating_band === 'top10') return 'Top 10% by rating';
+  if (r.rating_band === 'top25') return 'Top 25% by rating';
+  if (r.volume_band === 'top10') return 'Among the most-reviewed';
+  if (r.volume_band === 'top25') return 'A deep review track record';
+  if (r.tenure_band === 'top25') return 'One of the longest-established';
+  return r.registered ? 'Registered CT contractor' : '';
+}
+async function loadContractors(){
+  const sel = 'place_id,business_name,city,trade,registered,hic_issue_date,certifications,synthesis,synthesis_review_count,known_for,specialties,volume_band,rating_band,tenure_band,trade_n,rank_score';
+  const rows = await HOME.db('/profile_enrichment_public?select=' + sel + '&order=rank_score.desc.nullslast');
+  S.dataLoaded = true;
+  if (Array.isArray(rows)) contractors = rows.map(mapRow).filter(c => c.name);
+  if (S.screen === 'browse'){
+    if (S.mode === 'saved'){ updateBrowseHead(); renderFav(); }
+    else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
+  }
+}
+
+/* HOME */
+function renderHome(){
+  const grid = $('trades-grid'); grid.innerHTML = '';
+  trades.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'trade-tile'; btn.setAttribute('role','listitem');
+    btn.setAttribute('aria-label', t.label + ' — find a pro');
+    btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span><span class="tile-name">'+t.label+'</span>';
+    btn.addEventListener('click', () => { btn.classList.add('sel'); setTimeout(()=>openBrowse(t.key),120); });
+    grid.appendChild(btn);
+  });
+}
+
+/* CHIPS + SIDEBAR */
+function renderChips(){
+  const row = $('chips-row'); row.innerHTML = '';
+  trades.forEach(t => {
+    const on = S.mode==='trade' && S.activeTrade===t.key;
+    const btn = document.createElement('button');
+    btn.className = 'chip' + (on?' sel':''); btn.textContent = t.label;
+    btn.setAttribute('aria-pressed', on);
+    btn.addEventListener('click', () => { switchTrade(t.key); row.scrollLeft = btn.offsetLeft - 20; });
+    row.appendChild(btn);
+  });
+}
+function renderSidebar(){
+  const nav = $('ds-nav'); if(!nav) return;
+  nav.innerHTML = trades.map(t => {
+    const on = S.mode==='trade' && S.activeTrade===t.key;
+    return '<button class="ds-item'+(on?' on':'')+'" data-k="'+t.key+'" aria-pressed="'+on+'">'+
+      '<span class="ds-ic">'+ICONS[t.icon]+'</span><span class="ds-lbl">'+t.label+'</span></button>';
+  }).join('');
+  Array.from(nav.children).forEach(b => b.addEventListener('click', () => switchTrade(b.dataset.k)));
+  const sv = $('ds-saved'); if(sv) sv.classList.toggle('on', S.mode==='saved');
+}
+function updateBrowseHead(){
+  const banner = $('vbanner');
+  if (S.mode === 'saved'){
+    const n = likedContractors().length;
+    $('browse-h1').textContent = 'Saved';
+    $('browse-sub').textContent = n + ' saved ' + (n===1?'pro':'pros');
+    banner.style.display = 'none';
+    return;
+  }
+  banner.style.display = '';
+  $('browse-h1').textContent = 'Browse ' + tradePlural(S.activeTrade);
+  $('browse-sub').textContent = 'Vetted in Fairfield County · swipe to save the ones you like';
+  banner.innerHTML = '<span class="vb-spark">'+SPARK+'</span><span><b>Swipe right to save, left to pass.</b> Tap any card for Vesta’s full analysis.</span>';
+}
+
+/* ===== DECK ===== */
+function ensureDeck(key){
+  if ((!S.shuffles[key] || !S.shuffles[key].length)){
+    const base = byTrade(key);
+    if (base.length) S.shuffles[key] = shuffle(base);
+  }
+  if (S.pos[key] == null) S.pos[key] = 0;
+  S.deck = S.shuffles[key] || [];
+  S.deckIdx = S.pos[key] || 0;
+}
+function topCon(){ return (S.deck||[]).slice(S.deckIdx)[0] || null; }
+
+function cardHTML(con, k){
+  const trust = con.verified.slice(0,3);
+  return '<article class="card" data-k="'+k+'" '+(k===0?'tabindex="0" aria-label="'+esc(con.name)+', '+esc(con.town)+'"':'aria-hidden="true"')+'>'+
+    (k===0?'<span class="stamp stamp-save">SAVE</span><span class="stamp stamp-pass">PASS</span>':'')+
+    '<div class="card-top"><div class="card-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
+      '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
+    (con.standing?'<div class="card-band">'+esc(con.standing)+'</div>':'')+
+    '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
+    '<div class="card-syn">'+esc(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.')+'</div>'+
+    (trust.length?'<div class="card-chips">'+trust.map(v=>'<span class="card-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
+    '<div class="card-hint">'+(desktop()?'← pass · save →':'Tap for the full analysis')+'</div>'+
+  '</article>';
+}
+function deckEndHTML(){
+  const liked = likedContractors().length;
+  return '<div class="deck-end"><span class="de-spark">'+SPARK+'</span><h3>That’s everyone</h3>'+
+    '<p>You’ve been through the vetted '+esc(tradePlural(S.activeTrade))+' in Fairfield County for now'+(liked?'. You’ve saved '+liked+' so far.':'.')+'</p>'+
+    '<div class="de-row"><button class="de-btn primary" id="de-saved">'+(liked?'See saved · '+liked:'See saved')+'</button><button class="de-btn ghost" id="de-restart">Start over</button></div></div>';
+}
+function renderDeck(){
+  if (S.mode !== 'trade') return;
+  const deck = $('deck'); if(!deck) return;
+  const remaining = (S.deck||[]).slice(S.deckIdx);
+  if (!remaining.length){
+    if (!S.dataLoaded){ deck.innerHTML = '<div class="deck-end"><span class="de-spark">'+SPARK+'</span><p>Loading vetted pros…</p></div>'; $('deck-actions').style.visibility='hidden'; $('deck-meta').textContent=''; return; }
+    deck.innerHTML = deckEndHTML(); wireDeckEnd();
+    $('deck-actions').style.visibility='hidden'; $('deck-meta').textContent = '';
+    if (desktop()) renderPanel(null);
+    return;
+  }
+  deck.innerHTML = remaining.slice(0,3).map((c,k)=>cardHTML(c,k)).join('');
+  wireTopCard(remaining[0]);
+  $('deck-actions').style.visibility='visible';
+  $('deck-meta').textContent = 'Shuffled — a fresh order every visit';
+  if (desktop()) renderPanel(remaining[0]);
+}
+function wireDeckEnd(){
+  const a=$('de-saved'), b=$('de-restart');
+  if(a) a.onclick = showSaved;
+  if(b) b.onclick = () => { S.pos[S.activeTrade]=0; S.deckIdx=0; renderDeck(); };
+}
+function wireTopCard(con){
+  const card = $('deck').querySelector('.card[data-k="0"]'); if(!card) return;
+  const save = card.querySelector('.stamp-save'), pass = card.querySelector('.stamp-pass');
+  let active=false, downX=0, downY=0, dx=0, dy=0, moved=0, t0=0;
+  const reset = anim => { card.style.transition = anim ? 'transform .3s cubic-bezier(.34,1.1,.64,1)' : 'none'; card.style.transform=''; if(save)save.style.opacity=0; if(pass)pass.style.opacity=0; };
+  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; t0=Date.now(); moved=0; dx=0; card.style.transition='none'; try{card.setPointerCapture(e.pointerId);}catch(_){} });
+  card.addEventListener('pointermove', e => { if(!active) return; dx=e.clientX-downX; dy=e.clientY-downY; moved=Math.max(moved, Math.abs(dx)+Math.abs(dy)); card.style.transform='translate('+dx+'px,'+(dy*0.35)+'px) rotate('+(dx/20)+'deg)'; if(save)save.style.opacity=Math.max(0,Math.min(1,dx/90)); if(pass)pass.style.opacity=Math.max(0,Math.min(1,-dx/90)); });
+  const up = () => { if(!active) return; active=false; const dt=Date.now()-t0;
+    if(moved<8 && dt<300){ reset(false); tapCard(con); return; }
+    if(dx>90){ commit('save', con); return; }
+    if(dx<-90){ commit('pass', con); return; }
+    reset(true);
+  };
+  card.addEventListener('pointerup', up);
+  card.addEventListener('pointercancel', () => { active=false; reset(true); });
+  card.addEventListener('keydown', e => {
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tapCard(con); }
+    else if(e.key==='ArrowRight'){ e.preventDefault(); commit('save', con); }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); commit('pass', con); }
+  });
+}
+function tapCard(con){ if(desktop()) renderPanel(con); else openSheet(con); }
+function commit(dir, con){
+  const card = $('deck').querySelector('.card[data-k="0"]');
+  if(dir==='save') setLiked(con.placeId, true);
+  if(card){ const off = dir==='save' ? 1 : -1; card.style.transition='transform .32s ease, opacity .32s ease'; card.style.transform='translate('+(off*480)+'px,-26px) rotate('+(off*20)+'deg)'; card.style.opacity='0'; }
+  S.deckIdx++; S.pos[S.activeTrade] = S.deckIdx;
+  setTimeout(renderDeck, 290);
+}
+
+/* ===== SAVED LIST ===== */
+function contactRowsHTML(u){
+  const rows = [];
+  if (u.phone) rows.push('<div class="fav-c"><b>Phone</b><a href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">'+esc(u.phone)+'</a></div>');
+  if (u.website) rows.push('<div class="fav-c"><b>Website</b><a href="'+esc(u.website)+'" rel="nofollow noopener" target="_blank">'+esc(String(u.website).replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))+'</a></div>');
+  if (u.socials) Object.keys(u.socials).forEach(k => { if(u.socials[k]) rows.push('<div class="fav-c"><b>'+esc(HOME.tradeLabel(k))+'</b><a href="'+esc(u.socials[k])+'" rel="nofollow noopener" target="_blank">'+esc(String(u.socials[k]).replace(/^https?:\/\/(www\.)?/,''))+'</a></div>'); });
+  return rows.length ? '<div class="fav-rows">'+rows.join('')+'</div>' : '<p class="fav-lock">No public contact details surfaced for this pro — try Request through Vesta instead.</p>';
+}
+function contactBlockHTML(con){
+  if (S.unlocked[con.placeId]) return contactRowsHTML(S.unlocked[con.placeId]);
+  if (signedIn()) return '<button class="fav-show" data-unlock="'+esc(con.placeId)+'">'+LOCK+'Show contact info</button>';
+  return '<div class="fav-lock">'+LOCK+'<span>Contact info unlocks with a free account. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a></span></div>';
+}
+function favRowHTML(con){
+  return '<div class="favrow" data-place="'+esc(con.placeId)+'">'+
+    '<button class="fav-unlike" data-unlike="'+esc(con.placeId)+'" aria-label="Remove '+esc(con.name)+' from saved">'+HEART_FILL+'</button>'+
+    '<div class="favrow-top" role="button" tabindex="0" aria-label="'+esc(con.name)+', see analysis">'+
+      '<div class="fav-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
+      '<div class="fav-id"><div class="fav-name">'+esc(con.name)+'</div><div class="fav-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
+        (con.standing?'<div class="fav-band">'+esc(con.standing)+'</div>':'')+'</div>'+
+    '</div>'+
+    '<div class="fav-contact" data-contact="'+esc(con.placeId)+'">'+contactBlockHTML(con)+'</div>'+
+  '</div>';
+}
+function renderFav(){
+  const wrap = $('favwrap'); const list = likedContractors();
+  if (!list.length){
+    wrap.innerHTML = '<div class="fav-empty">No saved pros yet.<br>Swipe right (or tap the heart) on a pro to save them here, then sign up to keep your list and unlock their contact info.</div>';
+    if (desktop()) renderPanel(null);
+    return;
+  }
+  const intro = signedIn()
+    ? 'Your saved pros. Tap <b>Show contact info</b> to reveal each one’s phone and website.'
+    : '<b>Sign up to unlock contact info.</b> Your saved pros live on this device for now — create a free account to keep them and reveal each pro’s phone & website. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a>';
+  wrap.innerHTML = '<div class="fav-intro">'+intro+'</div>' + list.map(favRowHTML).join('');
+  Array.from(wrap.querySelectorAll('.favrow')).forEach(row => {
+    const con = list.find(c => c.placeId === row.dataset.place); if(!con) return;
+    const top = row.querySelector('.favrow-top');
+    top.addEventListener('click', () => tapCard(con));
+    top.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tapCard(con); } });
+    row.querySelector('.fav-unlike').addEventListener('click', () => { setLiked(con.placeId, false); updateBrowseHead(); renderFav(); });
+    const show = row.querySelector('.fav-show');
+    if (show) show.addEventListener('click', () => unlockContact(con, row.querySelector('.fav-contact')));
+  });
+  if (desktop()) renderPanel(list[0]);
+}
+async function unlockContact(con, el){
+  el.innerHTML = '<div class="fav-lock">Unlocking…</div>';
+  try {
+    const { status, data } = await HOME.api('/c/'+encodeURIComponent(con.placeId)+'/unlock', { method:'POST', body:{ zip:'' } });
+    if (data && data.ok && data.unlocked){ S.unlocked[con.placeId] = data.unlocked; el.innerHTML = contactRowsHTML(data.unlocked); return; }
+    if (status === 401){ el.innerHTML = '<div class="fav-lock">'+LOCK+'<span>Please sign in again. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign in →</a></span></div>'; return; }
+    el.innerHTML = '<div class="fav-lock">'+(status===429?'A lot of unlocks this hour — try again shortly.':'Couldn’t unlock — ')+'<button class="linklike" type="button">try again</button></div>';
+  } catch(_) {
+    el.innerHTML = '<div class="fav-lock">Couldn’t unlock — <button class="linklike" type="button">try again</button></div>';
+  }
+  const retry = el.querySelector('.linklike'); if(retry) retry.addEventListener('click', () => unlockContact(con, el));
+}
+
+/* ===== ANALYSIS (shared by panel + sheet) ===== */
+function confidence(con){
+  const n = con.reviewCount;
+  if (n >= 60) return 'High';
+  if (n >= 15) return 'Good';
+  if (n > 0)   return 'Building';
+  return con.registered ? 'Good' : 'Limited';
+}
+function confidenceNote(con){
+  const n = con.reviewCount;
+  if (n > 0) return 'Vesta weighed '+n.toLocaleString('en-US')+' homeowner review'+(n===1?'':'s')+(con.registered?' plus this pro’s state registration':'')+' to form this read.';
+  return con.registered ? 'Grounded in this pro’s state registration and public records.' : 'Limited public review history so far — read with that in mind.';
+}
+function confidenceSignals(con){
+  const out = [];
+  if (con.standing && con.standing !== 'Registered CT contractor') out.push(con.standing);
+  if (con.reviewCount) out.push(con.reviewCount.toLocaleString('en-US')+' homeowner review'+(con.reviewCount===1?'':'s')+' weighed');
+  if (con.registered) out.push('Registered CT contractor'+(con.sinceYear?' since '+con.sinceYear:''));
+  con.certs.forEach(c => out.push(c+' — manufacturer-certified'));
+  return out;
+}
+// Shared by the desktop panel and the mobile sheet. On desktop the swipe card
+// already carries the prose read, so the panel passes {read:false} — the panel
+// is the STRUCTURE (standing · what homeowners highlight · confidence), never a
+// second copy of the same paragraph. The mobile sheet (card hidden behind it)
+// includes the read. The "highlights" section auto-fills as v2 enrichment lands.
+function analysisHTML(con, opts){
+  opts = opts || {};
+  const includeRead = opts.read !== false;
+  const level = confidence(con), note = confidenceNote(con), signals = confidenceSignals(con);
+  return ''+
+    '<div class="va-head"><span class="va-spark">'+SPARK+'</span>Vesta’s analysis</div>'+
+    '<h2 class="va-firm">'+esc(con.name)+'</h2>'+
+    '<p class="va-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</p>'+
+    (con.standing?'<div class="va-band">'+esc(con.standing)+'</div>':'')+
+    (con.verified.length?'<div class="va-chips">'+con.verified.map(v=>'<span class="va-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
+    (includeRead && con.read?'<div class="va-sec"><div class="va-lbl"><span class="va-dot"></span>What homeowners say</div><p class="va-read">'+esc(con.read)+'</p></div>':'')+
+    (con.knownFor.length?'<div class="va-sec"><div class="va-lbl">What homeowners highlight</div><ul class="va-strengths">'+con.knownFor.map(k=>'<li>'+CHECK+'<span>'+esc(k)+'</span></li>').join('')+'</ul></div>':'')+
+    '<div class="va-sec"><div class="va-lbl">Our confidence in this read</div>'+
+      '<div class="va-conf"><div class="va-conf-l"><span class="va-shield">'+SHIELD+'</span>'+level+' confidence</div>'+
+      '<div class="va-conf-n">'+esc(note)+'</div>'+
+      (signals.length?'<ul class="va-checklist">'+signals.map(s=>'<li>'+CHECK+'<span>'+esc(s)+'</span></li>').join('')+'</ul>':'')+
+      '</div></div>'+
+    '<div class="va-actions"><button class="va-req">Request through Vesta</button><button class="va-bm'+(isLiked(con.placeId)?' on':'')+'" data-place="'+esc(con.placeId)+'" aria-label="Save '+esc(con.name)+'">'+HEART+'</button></div>'+
+    (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'">See the full profile →</a>':'')+
+    '<p class="va-note">No obligation · free to request</p>';
+}
+function wireAnalysis(root, con){
+  const req = root.querySelector('.va-req');
+  if (req) req.addEventListener('click', () => { location.href = '/vesta/search?mode=request&place='+encodeURIComponent(con.placeId||'')+'&trade='+encodeURIComponent(TRADE_DB[con.trade]||con.trade); });
+  const bm = root.querySelector('.va-bm');
+  if (bm){ bm.classList.toggle('on', isLiked(con.placeId)); bm.addEventListener('click', () => { const now=toggleLike(con.placeId); bm.classList.toggle('on', now); if(S.mode==='saved'){ updateBrowseHead(); renderFav(); } }); }
+}
+function renderPanel(con){
+  const p = $('vpanel'); if(!p) return;
+  if (!con){
+    p.innerHTML = '<div class="va-head"><span class="va-spark">'+SPARK+'</span>Vesta’s analysis</div>'+
+      '<p class="va-town" style="margin-top:18px;font-size:14px;line-height:1.6">'+(S.mode==='saved'?'Save a pro to see Vesta’s full analysis here.':'You’ve been through every pro in this trade. Switch trades on the left, or open your saved list.')+'</p>';
+    return;
+  }
+  p.innerHTML = analysisHTML(con, { read:false }); wireAnalysis(p, con);
+}
+
+/* MOBILE SHEET */
+function openSheet(con){
+  $('psheet-body').innerHTML = analysisHTML(con);
+  wireAnalysis($('psheet-body'), con);
+  const sheet = $('psheet'); sheet.style.transform=''; sheet.style.transition=''; sheet.classList.remove('open'); void sheet.offsetHeight;
+  $('pscrim').classList.add('open'); $('pscrim').setAttribute('aria-hidden','false');
+  sheet.classList.add('open'); S.sheetOpen = true;
+  setTimeout(()=>sheet.focus(), 360);
+}
+function closeSheet(){
+  const sheet = $('psheet'); sheet.style.transform=''; sheet.style.transition='';
+  sheet.classList.remove('open'); $('pscrim').classList.remove('open'); $('pscrim').setAttribute('aria-hidden','true'); S.sheetOpen = false;
+}
+function initSheetDrag(){
+  const handle = $('phandle'), sheet = $('psheet'); let on=false, y0=0, y=0;
+  handle.addEventListener('pointerdown', e => { if(desktop()) return; on=true; y0=y=e.clientY; handle.setPointerCapture(e.pointerId); sheet.style.transition='none'; });
+  handle.addEventListener('pointermove', e => { if(!on) return; y=e.clientY; sheet.style.transform='translateX(-50%) translateY('+Math.max(0,y-y0)+'px)'; });
+  handle.addEventListener('pointerup', () => { if(!on) return; on=false; const dy=y-y0;
+    if(dy>80){ sheet.style.transition='transform .3s ease'; sheet.style.transform='translateX(-50%) translateY(110%)'; $('pscrim').classList.remove('open'); S.sheetOpen=false; setTimeout(()=>{sheet.style.transform='';sheet.style.transition='';sheet.classList.remove('open');},300); }
+    else { sheet.style.transition='transform .3s cubic-bezier(.34,1.1,.64,1)'; sheet.style.transform='translateX(-50%) translateY(0)'; setTimeout(()=>{sheet.style.transform='';sheet.style.transition='';},300); }
+  });
+  handle.addEventListener('pointercancel', () => { on=false; sheet.style.transform=''; sheet.style.transition=''; });
+}
+
+/* SEARCH */
+function openSearch(){ const o=$('vsearch'); o.classList.add('open'); o.setAttribute('aria-hidden','false'); const inp=$('vsearch-input'); inp.value=''; renderSearchResults(''); S.searchOpen=true; setTimeout(()=>inp.focus(),60); }
+function closeSearch(){ $('vsearch').classList.remove('open'); $('vsearch').setAttribute('aria-hidden','true'); S.searchOpen=false; }
+function renderSearchResults(q){
+  q = (q||'').trim().toLowerCase(); const res = $('vsearch-results');
+  if(!q){ res.innerHTML = '<p class="vsearch-hint">Search vetted pros by name or town.</p>'; return; }
+  const matches = contractors.filter(c => c.name.toLowerCase().includes(q) || c.town.toLowerCase().includes(q)).slice(0,40);
+  if(!matches.length){ res.innerHTML = '<p class="vsearch-hint">No pros match that yet.</p>'; return; }
+  res.innerHTML = matches.map(c =>
+    '<button class="vsr" data-place="'+esc(c.placeId)+'" data-trade="'+esc(c.trade)+'">'+
+      '<span class="vsr-mono" aria-hidden="true">'+esc(monogram(c.name))+'</span>'+
+      '<span class="vsr-main"><span class="vsr-name">'+esc(c.name)+'</span><span class="vsr-town">'+esc(c.town)+' · '+esc(tradeLabelOf(c.trade))+'</span></span>'+
+    '</button>').join('');
+  Array.from(res.querySelectorAll('.vsr')).forEach(b => b.addEventListener('click', () => goToPro(b.dataset.trade, b.dataset.place)));
+}
+function goToPro(tradeKey, placeId){
+  closeSearch();
+  S.mode = 'trade'; S.activeTrade = tradeKey; ensureDeck(tradeKey);
+  const arr = S.shuffles[tradeKey] || []; const pos = S.pos[tradeKey] || 0;
+  const gi = arr.findIndex(c => c.placeId === placeId);
+  if (gi >= 0 && gi !== pos){ const [card] = arr.splice(gi,1); arr.splice(pos,0,card); }
+  S.deckIdx = pos;
+  if (S.screen !== 'browse') showScreen('browse');
+  renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck();
+  const con = topCon();
+  if (con){ if(desktop()) renderPanel(con); else openSheet(con); }
+}
+
+/* VIEW TOGGLES */
+function showDeck(){ $('deckwrap').hidden=false; $('favwrap').hidden=true; }
+function showFav(){ $('deckwrap').hidden=true; $('favwrap').hidden=false; }
+function switchTrade(key){
+  S.mode='trade'; S.activeTrade=key; ensureDeck(key);
+  if (S.screen !== 'browse') showScreen('browse');
+  renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck();
+  updateNavState();
+}
+function showSaved(){
+  S.mode='saved';
+  if (S.screen !== 'browse') showScreen('browse');
+  renderChips(); renderSidebar(); showFav(); updateBrowseHead(); renderFav();
+  updateNavState();
+}
+function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('/vesta'); }
+
+/* NAV */
+function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; }
+function openBrowse(key){ S.mode='trade'; S.activeTrade=key; ensureDeck(key); showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState(); }
+function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); updateNavState(); }
+function updateNavState(){
+  const home=$('nav-home'), saved=$('nav-saved');
+  if(home) home.classList.toggle('on', S.screen==='home' || (S.screen==='browse' && S.mode==='trade'));
+  if(saved) saved.classList.toggle('on', S.mode==='saved');
+}
+
+/* INIT */
+(function init(){
+  renderHome(); renderSidebar(); initSheetDrag(); loadContractors();
+  syncLikes();
+  if (desktop()) openBrowse(S.activeTrade);
+  updateNavState();
+  $('btn-back').addEventListener('click', goHome);
+  $('nav-home').addEventListener('click', () => { if (S.screen!=='home' || S.mode!=='trade'){ S.mode='trade'; goHome(); } });
+  $('act-pass').addEventListener('click', () => { const c=topCon(); if(c) commit('pass', c); });
+  $('act-save').addEventListener('click', () => { const c=topCon(); if(c) commit('save', c); });
+  $('act-info').addEventListener('click', () => { const c=topCon(); if(c) openSheet(c); });
+  $('pscrim').addEventListener('click', closeSheet);
+  ['nav-search','ds-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
+  ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
+  ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
+  $('vsearch-x').addEventListener('click', closeSearch);
+  $('vsearch-input').addEventListener('input', e => renderSearchResults(e.target.value));
+  $('vsearch').addEventListener('click', e => { if (e.target===$('vsearch')) closeSearch(); });
+  document.addEventListener('keydown', e => {
+    if (e.key==='Escape') { if (S.searchOpen){ closeSearch(); return; } if (S.sheetOpen){ closeSheet(); return; } }
+    if (S.screen==='browse' && S.mode==='trade' && !S.sheetOpen && !S.searchOpen){
+      const c = topCon();
+      if (e.key==='ArrowRight' && c){ e.preventDefault(); commit('save', c); }
+      else if (e.key==='ArrowLeft' && c){ e.preventDefault(); commit('pass', c); }
+    }
+  });
+})();
+</script>
+</body>
+</html>

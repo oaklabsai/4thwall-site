@@ -11,6 +11,40 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
 <link rel="stylesheet" href="/home.css">
+<style>
+/* ── §11 The Atlas moment — the contractor's corner (Atlas-toned, warm sand vs Vesta mint) ── */
+.atlas-moment{
+  --a-bg:#191712;--a-bg2:#211e16;--a-line:rgba(222,206,164,.18);
+  --a-sand:#dcceaa;--a-sand-2:#ece2c8;--a-mut:rgba(236,226,200,.6);
+  position:relative;margin:2.4rem 0 1rem;padding:clamp(1.6rem,3.6vw,2.5rem);
+  background:
+    radial-gradient(620px 320px at 86% -120px,rgba(222,206,164,.12),transparent 60%),
+    linear-gradient(180deg,var(--a-bg2),var(--a-bg));
+  border:1px solid var(--a-line);border-radius:24px;
+  box-shadow:0 44px 96px -52px rgba(0,0,0,.92);
+}
+.atlas-moment .am-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--a-sand);margin-bottom:.7rem}
+.atlas-moment .am-h{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.05rem);font-weight:500;letter-spacing:-.02em;color:var(--vcream);line-height:1.14}
+.atlas-moment .am-lede2{font-size:.92rem;color:var(--a-mut);line-height:1.65;margin:.7rem 0 1.1rem;max-width:60ch}
+.atlas-moment form{max-width:520px}
+.atlas-moment .am-rule{height:1px;background:var(--a-line);margin:1.9rem 0 1.6rem}
+.atlas-moment .am-plabel{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--a-sand);margin-bottom:.6rem}
+.atlas-moment .am-lede{font-family:var(--display);font-size:clamp(1.08rem,2vw,1.3rem);font-weight:400;line-height:1.55;letter-spacing:-.01em;color:var(--vcream);max-width:64ch;margin:0}
+.atlas-moment .am-lede b{color:var(--a-sand-2);font-weight:600}
+.atlas-moment .am-uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.9rem;margin:1.5rem 0 0}
+.atlas-moment .am-use{background:rgba(222,206,164,.05);border:1px solid var(--a-line);border-radius:16px;padding:1.15rem 1.25rem}
+.atlas-moment .am-use .am-n{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;color:var(--a-sand);margin-bottom:.5rem}
+.atlas-moment .am-use h3{font-family:var(--display);font-size:1.04rem;font-weight:500;letter-spacing:-.015em;color:var(--vcream);margin-bottom:.35rem}
+.atlas-moment .am-use p{font-size:.82rem;color:var(--a-mut);line-height:1.6}
+.atlas-moment .am-cta{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
+.atlas-moment .am-pill{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(180deg,var(--a-sand-2),var(--a-sand));color:#1a1813;font-family:var(--body);font-size:.9rem;font-weight:600;padding:.7rem 1.3rem;border-radius:999px;text-decoration:none;transition:transform .16s,box-shadow .16s}
+.atlas-moment .am-pill:hover{transform:translateY(-1px);box-shadow:0 14px 30px -12px rgba(222,206,164,.45)}
+.atlas-moment .am-fine{font-size:.76rem;color:var(--a-mut);max-width:34ch;line-height:1.5}
+.atlas-moment .form-input{background:rgba(0,0,0,.22);border-color:var(--a-line);color:var(--vcream)}
+.atlas-moment .form-label{color:var(--a-mut)}
+.atlas-moment .pill-ghost{border-color:var(--a-sand);color:var(--a-sand-2)}
+.atlas-moment .pill-ghost:hover{background:rgba(222,206,164,.1)}
+</style>
 <script src="/home.js" defer></script>
 </head>
 <body class="v-dark">
@@ -48,6 +82,51 @@
 </footer>
 
 <script>
+// ── Trade labels (our taxonomy — never Google's "General Contractor") ──
+const TRADE_LABEL = { roofing:'Roofing', hvac:'HVAC', plumbing:'Plumbing', electrical:'Electrical', paving:'Paving', lawn_care:'Lawn & landscaping' };
+const TRADE_FIRMS = { roofing:'roofing companies', hvac:'HVAC companies', plumbing:'plumbing companies', electrical:'electrical contractors', paving:'paving companies', lawn_care:'lawn & landscaping companies' };
+const TRADE_PROS  = { roofing:'roofers', hvac:'HVAC contractors', plumbing:'plumbers', electrical:'electricians', paving:'paving contractors', lawn_care:'lawn & landscaping pros' };
+
+// ── Trade hiring guides (Vesta editorial · trade-level · about no business) ──
+const HIRING_GUIDE = {
+  roofing: [
+    { t:'Confirm CT registration & insurance', d:"Any roofer working on a Connecticut home needs an active Home Improvement Contractor registration plus their own liability and workers'-comp coverage. Ask to see both before work starts." },
+    { t:'Get the full scope in writing', d:'Tear-off vs. going over the old layer, underlayment, flashing, ice-and-water shield, ventilation, and cleanup each change the price and the result. A one-line quote hides the parts that matter.' },
+    { t:'Ask about the manufacturer warranty', d:'A factory warranty (GAF, CertainTeed, Owens Corning) only holds if the installer is certified and follows spec. Certified shops can often register a longer warranty in your name.' },
+    { t:"Be wary of pressure and 'today-only' pricing", d:'Storm-chasers and rush discounts are red flags. A reputable roofer gives you a written estimate and the time to decide.' }
+  ],
+  hvac: [
+    { t:'Ask for a load calculation, not a guess', d:"The right-sized system comes from a Manual-J load calc on your actual home — not 'same as the old one.' Oversized units short-cycle, run loud, and cost more to own." },
+    { t:'Confirm the CT license', d:'Heating and cooling work is done under a Connecticut HVAC license. The licensed technician — not just the company name — is who is accountable for the install.' },
+    { t:'Get equipment, permit, and warranty in writing', d:'Model and efficiency (SEER2 / AFUE), the permit, and warranty registration should all be itemized. A permit and post-install inspection protect you.' },
+    { t:'Check real emergency response', d:'When heat or AC fails, a callback in hours beats a cheaper shop that goes quiet in a cold snap. Ask their honest after-hours window before you need it.' }
+  ],
+  plumbing: [
+    { t:'Verify the CT plumbing license', d:'Plumbing is performed under a Connecticut P-class license held by the individual tradesperson. Confirm it is active before anyone touches a pipe.' },
+    { t:'Insist on an itemized estimate', d:"Parts, labor, and any wall or finish repair should be listed separately. Open-ended 'time and materials' can balloon on larger jobs." },
+    { t:'Know the emergency rate up front', d:'Burst pipes and failed water heaters never wait for business hours. Ask the after-hours rate and callback window in advance.' },
+    { t:'Get the warranty terms', d:'On a water heater, repipe, or fixture, ask how long parts and labor are covered — and whether the manufacturer warranty needs registering in your name.' }
+  ],
+  electrical: [
+    { t:'Confirm the CT license and the permit', d:'Electrical work runs under a Connecticut E-class license, and most jobs need a permit and inspection. Both protect your home and your insurance.' },
+    { t:"Don't shop on price alone", d:'The cheapest panel swap or rewire can skip grounding, AFCI/GFCI protection, or proper load math. Ask exactly what is included to code.' },
+    { t:'Name the scope', d:'Panel size in amps, circuits added, fixture vs. rough-in work, and who patches the walls should all be written down before work begins.' },
+    { t:'Match the pro to specialty work', d:'EV chargers, generators, and solar tie-ins each have their own requirements. Confirm hands-on experience with your specific job.' }
+  ],
+  paving: [
+    { t:'Confirm registration and insurance', d:'A driveway or walkway is home-improvement work — the contractor should hold an active CT registration and carry liability coverage.' },
+    { t:'Ask about the base, not just the surface', d:"Most paving failures start underneath. Ask about excavation depth, gravel base, and compaction — the part you can't inspect once it's done." },
+    { t:'Specify materials and thickness', d:'Asphalt thickness, paver brand and type, edge restraint, and drainage slope decide whether it lasts five years or twenty-five. Get them in writing.' },
+    { t:'Mind the weather and the warranty', d:'Temperature affects how asphalt and joints set, so avoid marginal-weather pours. Ask what is guaranteed and for how long.' }
+  ],
+  lawn_care: [
+    { t:'Match the service to your yard', d:'Mowing, fertilization, design and installs, and tree work are different skills. Confirm the crew actually does the work you need — not just the easy parts.' },
+    { t:'Ask about pesticide credentials', d:'In Connecticut, anyone applying pesticides commercially must be registered with DEEP. If chemical treatment is part of the plan, ask who is certified.' },
+    { t:'Put the schedule and scope in writing', d:"Visit frequency, what each visit covers, and seasonal cleanups should be spelled out so 'lawn care' isn't left open-ended." },
+    { t:'Confirm insurance for the heavy work', d:'Tree removal, grading, and hardscape carry real risk. Liability coverage protects you if something goes wrong on your property.' }
+  ]
+};
+
 document.addEventListener('DOMContentLoaded', async function(){
   const account = await HOME.navAccount();
   const esc = HOME.esc;
@@ -57,19 +136,26 @@ document.addEventListener('DOMContentLoaded', async function(){
   const m = location.pathname.match(/^\/c\/([A-Za-z0-9_-]{8,200})\/?$/);
   const placeParam = (new URLSearchParams(location.search).get('place') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 200);
   const placeId = m ? m[1] : (placeParam.length >= 8 ? placeParam : null);
-  if (!placeId){ hero.innerHTML = '<h1 class="page-h">Profile not found.</h1><p class="page-sub">Try <a href="/vesta" style="color:var(--vgreen-2)">searching again</a>.</p>'; return; }
+  if (!placeId){ hero.innerHTML = '<h1 class="page-h">Profile not found.</h1><p class="page-sub">Try <a href="/vesta/search" style="color:var(--vgreen-2)">searching again</a>.</p>'; return; }
   const zipParam = new URLSearchParams(location.search).get('zip') || '';
-  const back = /^\d{5}$/.test(zipParam) ? '/vesta?zip=' + zipParam : '/vesta';
+  const back = /^\d{5}$/.test(zipParam) ? '/vesta/search?zip=' + zipParam : '/vesta/search';
 
-  const { data } = await HOME.api('/c/' + encodeURIComponent(placeId) + (/^\d{5}$/.test(zipParam) ? '?zip=' + zipParam : ''));
+  let data, p, zip, enr;
+  const resp = await HOME.api('/c/' + encodeURIComponent(placeId) + (/^\d{5}$/.test(zipParam) ? '?zip=' + zipParam : ''));
+  data = resp.data;
   if (!data.ok){
     hero.innerHTML = '<a class="crumb" href="' + back + '">← Back to results</a>' +
       '<h1 class="page-h">We couldn\'t load that profile.</h1><p class="page-sub">It may have moved — try <a href="/find" style="color:var(--vgreen-2)">searching again</a>.</p>';
     return;
   }
-  const p = data.place, zip = data.zip;
+  p = data.place; zip = data.zip;
+  // Vesta enrichment (public view; silent on absence — render nothing for null fields).
+  const enrRows = await HOME.db('/profile_enrichment_public?place_id=eq.' + encodeURIComponent(placeId) +
+    '&limit=1&select=trade,registered,hic_issue_date,trade_license,certifications,synthesis,synthesis_review_count,' +
+    'signature,known_for,specialties,service_area,owner_name,volume_band,rating_band,tenure_band,trade_n');
+  enr = Array.isArray(enrRows) && enrRows[0] ? enrRows[0] : null;
 
-  // Best-effort trade from the Places category (labels only — never invents data).
+  // Best-effort trade from the Places category — fallback ONLY when unenriched (labels, never invents data).
   const tradeGuess = (() => {
     const t = String(p.primary_type || '');
     if (/roof/i.test(t)) return 'roofing';
@@ -80,38 +166,160 @@ document.addEventListener('DOMContentLoaded', async function(){
     if (/lawn|landscap/i.test(t)) return 'lawn_care';
     return '';
   })();
-  const reqHref = '/vesta?mode=request&place=' + encodeURIComponent(placeId) +
-    (zip ? '&zip=' + encodeURIComponent(zip) : '') + (tradeGuess ? '&trade=' + tradeGuess : '');
+  const trade  = (enr && enr.trade) || tradeGuess;
+  const tName  = TRADE_LABEL[trade] || (trade ? trade.replace(/_/g, ' ') : '');
+  const tLower = trade === 'hvac' ? 'HVAC' : (tName ? tName.toLowerCase() : '');
 
-  // Vesta enrichment (public view; silent on absence — render nothing for null fields).
-  const enrRows = await HOME.db('/profile_enrichment_public?place_id=eq.' + encodeURIComponent(placeId) +
-    '&limit=1&select=registered,hic_issue_date,trade_license,certifications,synthesis,synthesis_review_count');
-  const enr = Array.isArray(enrRows) && enrRows[0] ? enrRows[0] : null;
+  const reqHref = '/vesta/search?mode=request&place=' + encodeURIComponent(placeId) +
+    (zip ? '&zip=' + encodeURIComponent(zip) : '') + (trade ? '&trade=' + trade : '');
+
+  // ── HERO ────────────────────────────────────────────────────────────────
+  const enriched = !!enr;
+  const heroBadges = [];
+  heroBadges.push(enriched
+    ? '<span class="badge plain">◆ Vesta-analyzed from public records</span>'
+    : '<span class="badge plain">Listed — not yet verified</span>');
+  if (data.claimed) heroBadges.push('<span class="badge">Profile claimed</span>');
+  if (p.business_status === 'CLOSED_TEMPORARILY') heroBadges.push('<span class="badge plain">Temporarily closed</span>');
 
   hero.innerHTML = '<a class="crumb" href="' + back + '">← Back to results</a>' +
     '<h1 class="page-h">' + esc(p.name) + '</h1>' +
-    '<p class="page-sub">' + (p.primary_type ? esc(p.primary_type) + ' · ' : '') + esc(p.address) + '</p>' +
-    '<div class="badges"><span class="badge plain">Listed — not yet verified</span>' +
-    (data.claimed ? '<span class="badge">Profile claimed</span>' : '') +
-    (p.business_status === 'CLOSED_TEMPORARILY' ? '<span class="badge plain">Temporarily closed</span>' : '') +
-    '</div>' +
-    '<div style="margin:1rem 0 .2rem"><a class="pill pill-orange" href="' + reqHref + '">Request through Vesta <span class="arr">→</span></a></div>' +
+    '<p class="page-sub">' + (tName ? esc(tName) + ' · ' : '') + esc(String(p.address || '').replace(/,?\s*(USA|United States)\.?$/i, '')) + '</p>' +
+    '<div class="badges">' + heroBadges.join('') + '</div>' +
+    '<div style="margin:1.1rem 0 .2rem"><a class="pill pill-orange" href="' + reqHref + '">Request through Vesta <span class="arr">→</span></a></div>' +
     '<p class="fine">One form — Vesta carries your request to them, replies come straight to you.</p>' +
-    '<p class="note">This business hasn\'t joined Vesta\'s verified network yet, so there\'s no verified work record to show — just the public listing below.</p>';
+    (enriched
+      ? '<p class="note">Vesta built this profile from public records and homeowner reviews — an independent read, not a paid placement. ' + esc(p.name) + ' hasn\'t joined Vesta\'s verified network yet, so there\'s no documented job history to show here.</p>'
+      : '<p class="note">This business hasn\'t joined Vesta\'s verified network yet, so there\'s no verified work record to show — just the public listing below.</p>');
 
-  const pubBlock = (() => {
+  // ── Signature — one sourced descriptive standout (silent if none) ────────
+  function signatureBlock(){
+    if (!enr || !enr.signature) return '';
+    return '<div class="vturn" style="margin:.6rem 0 .2rem"><p>' + esc(enr.signature) + '</p></div>';
+  }
+
+  // ── Vesta's read — comparative standing, POSITIVE-ONLY, no rank/score ────
+  function vestaReadBlock(){
+    if (!enr) return '';
+    const N = enr.trade_n;
+    const firms = TRADE_FIRMS[trade] || (tLower ? tLower + ' contractors' : 'pros');
+    const ofN = N ? ' of the ' + N + ' ' + firms + ' we track across Fairfield County' : ' among the ' + firms + ' we track';
+    const items = [];
+    if (enr.rating_band === 'top10') items.push(['Homeowner rating', 'Among the highest-rated', 'Its aggregate homeowner rating sits in the top tier' + ofN + '.']);
+    else if (enr.rating_band === 'top25') items.push(['Homeowner rating', 'Strongly rated', 'Carries one of the stronger homeowner ratings' + ofN + ', across a meaningful number of reviews.']);
+    if (enr.volume_band === 'top10') items.push(['Review volume', 'Among the most-reviewed', 'More homeowners have left public reviews here than for nearly any other firm' + ofN + '.']);
+    else if (enr.volume_band === 'top25') items.push(['Review volume', 'A deep track record', 'A deeper bank of homeowner reviews than most' + ofN + '.']);
+    if (enr.tenure_band === 'top25') items.push(['Tenure', 'Long-established', 'Holds one of the older active CT contractor registrations' + ofN + ' — years on the books.']);
+    if (!items.length) return '';
+    const cards = items.map(it =>
+      '<div class="w"><div class="k">' + esc(it[0]) + '</div><h3>' + esc(it[1]) + '</h3><p>' + esc(it[2]) + '</p></div>').join('');
+    return '<h2 class="section-h">Vesta\'s read</h2>' +
+      '<p class="note" style="margin-top:-.2rem">What stands out about this ' + esc(tLower || 'pro') + (tLower ? ' pro' : '') +
+      ' — Vesta\'s own read of public records and review history, not a paid placement.</p>' +
+      '<div class="vwhy">' + cards + '</div>';
+  }
+
+  // ── What homeowners say — the kept synthesis + structured highlights ─────
+  function homeownersBlock(){
+    const hasKnown = Array.isArray(enr && enr.known_for) && enr.known_for.length;
+    if (!enr || (!enr.synthesis && !hasKnown)) return '';
+    let html = '<h2 class="section-h">What homeowners say</h2>';
+    if (enr.synthesis){
+      html += '<div class="card-block"><p style="font-size:.96rem;line-height:1.7">' + esc(enr.synthesis) + '</p>' +
+        '<p class="fine" style="margin-top:.9rem">Summarized by Vesta from ' +
+        (enr.synthesis_review_count ? esc(enr.synthesis_review_count) + ' ' : '') +
+        'public reviews — Vesta\'s own wording, not the business\'s, and never a copy of any single review.</p></div>';
+    }
+    if (hasKnown){
+      const cards = enr.known_for.filter(k => k && (k.label || k.detail)).map(k =>
+        '<div class="w"><h3>' + esc(k.label || '') + '</h3><p>' + esc(k.detail || '') + '</p></div>').join('');
+      if (cards) html += '<h3 class="section-h sub">What they\'re known for</h3><div class="vwhy">' + cards + '</div>';
+    }
     const rows = [];
-    rows.push('<div class="kv"><span>Google rating</span><b>' +
-      (p.rating != null && p.rating_count
-        ? esc(p.rating) + '★ across ' + Number(p.rating_count).toLocaleString('en-US') + ' reviews'
-        : 'None found') + '</b></div>');
-    if (p.primary_type) rows.push('<div class="kv"><span>Listed category</span><b>' + esc(p.primary_type) + '</b></div>');
-    rows.push('<div class="kv"><span>Business status</span><b>' +
-      (p.business_status === 'CLOSED_TEMPORARILY' ? 'Temporarily closed' : 'Operational') + '</b></div>');
-    return '<h2 class="section-h">The public record</h2><div class="card-block">' + rows.join('') +
-      (p.maps_uri ? '<div style="margin-top:1rem"><a class="pill pill-ghost pill-sm" href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow">See on Google Maps ↗</a></div>' : '') +
-      '<p class="fine" style="margin-top:.8rem">This rating and category come from Google, shown live and unaltered — Vesta does not generate or stand behind them. A star rating is a marketing signal, not proof.</p></div>';
-  })();
+    if (Array.isArray(enr.specialties) && enr.specialties.length)
+      rows.push('<div class="kv"><span>Specialties</span><b style="text-align:right;max-width:64%">' + enr.specialties.map(esc).join(' · ') + '</b></div>');
+    if (Array.isArray(enr.service_area) && enr.service_area.length)
+      rows.push('<div class="kv"><span>Service area</span><b style="text-align:right;max-width:64%">' + enr.service_area.map(esc).join(', ') + '</b></div>');
+    if (enr.owner_name)
+      rows.push('<div class="kv"><span>Owner</span><b>' + esc(enr.owner_name) + '</b></div>');
+    if (rows.length) html += '<div class="card-block" style="margin-top:.9rem">' + rows.join('') + '</div>';
+    return html;
+  }
+
+  // ── Trade hiring guide — trade-level editorial, about no business ────────
+  function hiringGuideBlock(){
+    const g = HIRING_GUIDE[trade];
+    if (!g) return '';
+    const rows = g.map((it, i) =>
+      '<div class="vangle"><div class="no">' + String(i + 1).padStart(2, '0') + '</div>' +
+      '<div><h3>' + esc(it.t) + '</h3><p>' + esc(it.d) + '</p></div></div>').join('');
+    return '<h2 class="section-h">What to check before you hire</h2>' +
+      '<p class="note" style="margin-top:-.2rem">Vesta\'s plain checklist for ' + esc(TRADE_PROS[trade] || 'this trade') +
+      '. General guidance about the trade — not a claim about this business.</p>' +
+      '<div class="vangles">' + rows + '</div>';
+  }
+
+  // ── The record — registration / tenure / verified certs (vouch, not expose) ─
+  function trustBlock(){
+    if (!enr) return '';
+    const chips = [];
+    if (enr.registered){
+      const yr = enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0, 4) : 0;
+      chips.push('<span class="badge">Registered CT contractor' + (yr && yr !== 1999 ? ' · since ' + yr : '') + ' ✓</span>');
+    }
+    if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if (c && c.issuer && c.level) chips.push('<span class="badge">' + esc(c.issuer + ' ' + c.level) + ' ✓</span>'); }
+    if (Array.isArray(enr.trade_license) && enr.trade_license.length) chips.push('<span class="badge">Licensed ' + esc(tLower || 'trade') + ' ✓</span>');
+    if (!chips.length) return '';
+    return '<h2 class="section-h">The record</h2><div class="card-block"><div class="badges" style="margin:0 0 .3rem">' + chips.join('') + '</div>' +
+      '<p class="fine" style="margin-top:.7rem">Checked against public CT state registries and manufacturer directories · June 2026. Vesta vouches only what a public record confirms.</p></div>';
+  }
+
+  // ── Google — demoted to a one-line reference footnote ───────────────────
+  function googleFootnote(){
+    if (p.rating == null || !p.rating_count){
+      return p.maps_uri ? '<p class="fine" style="margin-top:1.6rem"><a href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow" style="color:var(--vgreen-2)">See this business on Google Maps ↗</a></p>' : '';
+    }
+    return '<div class="vpub" style="margin-top:1.8rem;max-width:680px">' +
+      '<span class="gsrc">For reference · Google</span><br>' +
+      '<b>' + esc(p.rating) + '★</b> across ' + Number(p.rating_count).toLocaleString('en-US') + ' Google reviews' +
+      (p.maps_uri ? ' · <a href="' + esc(p.maps_uri) + '" target="_blank" rel="noopener nofollow" style="color:var(--vgreen-2)">on Maps ↗</a>' : '') +
+      '<br><span style="font-size:.72rem;color:var(--vdim)">Shown live and unaltered — a marketing signal, not a Vesta rating. Vesta\'s read above is our own analysis.</span></div>';
+  }
+
+  // ── §11 Is this your business? — claim (free, consent) → the Atlas hook (the funnel) ──
+  function claimAtlasBlock(){
+    const ownerFirst = enr && enr.owner_name ? esc(String(enr.owner_name).trim().split(/\s+/)[0]) : '';
+    const town = esc((String(p.address || '').split(',')[1] || '').trim());
+    const head = 'Is this your business' + (ownerFirst ? ', ' + ownerFirst : '') + '?';
+    const claimInner = data.claimed
+      ? '<p class="am-lede2">✓ Claimed by the business — thank you. Here\'s what comes next.</p>'
+      : '<p class="am-lede2">Claim it free — it\'s already in front of homeowners' + (town ? ' in ' + town : '') +
+          '. Claiming takes a minute, costs nothing, and puts your name on the read above.</p>' +
+        '<form id="claim-form">' +
+        '<div class="form-row"><label class="form-label" for="cn">Your name *</label><input class="form-input" type="text" id="cn" name="name" required maxlength="80"></div>' +
+        '<div class="form-row row-pair">' +
+        '<div><label class="form-label" for="cp">Phone *</label><input class="form-input" type="tel" id="cp" name="phone" required maxlength="20"></div>' +
+        '<div><label class="form-label" for="ce">Email</label><input class="form-input" type="email" id="ce" name="email" maxlength="120"></div></div>' +
+        '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
+        '<span class="form-status" id="claim-status"></span></form>' +
+        '<div class="am-rule"></div>';
+    return '<section class="atlas-moment">' +
+      '<div class="am-eyebrow">For the owner · from 4THWALL</div>' +
+      '<h2 class="am-h">' + head + '</h2>' +
+      claimInner +
+      '<div class="am-plabel">Then put it to work — with Atlas</div>' +
+      '<p class="am-lede">Vesta brings homeowners to your door. <b>Atlas makes sure not one of them slips away.</b> ' +
+        'While you\'re on the job, Atlas answers every call and text in your name — books the work, sends the reminder, asks for the review. ' +
+        'The back office the best shops run, without hiring anyone.</p>' +
+      '<div class="am-uses">' +
+        '<div class="am-use"><div class="am-n">01</div><h3>Answers in your name, 24/7</h3><p>Every missed call and after-hours text gets a real reply — your services, your pricing, your voice. The lead never goes cold.</p></div>' +
+        '<div class="am-use"><div class="am-n">02</div><h3>Books the job for you</h3><p>It checks availability, sets the appointment, and sends the reminder — so the estimate actually happens.</p></div>' +
+        '<div class="am-use"><div class="am-n">03</div><h3>Earns the next review</h3><p>When the work\'s done it follows up and asks the happy customer for the review that brings the next one.</p></div>' +
+      '</div>' +
+      '<div class="am-cta"><a class="am-pill" href="https://4thwall.solutions" target="_blank" rel="noopener">See what Atlas does →</a>' +
+      '<span class="am-fine">Vesta stays free. Atlas is the paid back office — for when the calls start coming.</span></div>' +
+    '</section>';
+  }
 
   function contactRows(u){
     const rows = [];
@@ -121,28 +329,6 @@ document.addEventListener('DOMContentLoaded', async function(){
       rows.push('<div class="contactrow"><b>' + esc(HOME.tradeLabel(k)) + '</b><a href="' + esc(u.socials[k]) + '" rel="nofollow noopener" target="_blank">' + esc(String(u.socials[k]).replace(/^https?:\/\/(www\.)?/,'')) + '</a></div>');
     }
     return rows.length ? rows.join('') : '<p class="note">No public contact details surfaced for this pro — they may be phone-unlisted. Try the request flow instead.</p>';
-  }
-
-  // Vouch chips (positive-only) + "What homeowners say" synthesis. Renders nothing if unenriched.
-  function enrichBlock(){
-    if (!enr) return '';
-    const chips = [];
-    if (enr.registered){
-      const yr = enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0,4) : 0;
-      chips.push('<span class="badge">Registered CT contractor' + (yr && yr !== 1999 ? ' · since ' + yr : '') + ' ✓</span>');
-    }
-    if (Array.isArray(enr.trade_license) && enr.trade_license.length) chips.push('<span class="badge">Licensed ' + esc(tradeGuess || 'trade') + ' ✓</span>');
-    if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if (c && c.issuer && c.level) chips.push('<span class="badge">' + esc(c.issuer + ' ' + c.level) + ' ✓</span>'); }
-    const chipRow = chips.length ? '<div class="badges" style="margin:0 0 .5rem">' + chips.join('') + '</div>' +
-      '<p class="fine" style="margin:0 0 1.3rem">Verified against public state and manufacturer directories · June 2026</p>' : '';
-    const syn = enr.synthesis
-      ? '<h2 class="section-h">What homeowners say</h2><div class="card-block">' +
-        '<p style="font-size:.95rem;line-height:1.65">' + esc(enr.synthesis) + '</p>' +
-        '<p class="fine" style="margin-top:.85rem">Summarized by Vesta from ' +
-        (enr.synthesis_review_count ? esc(enr.synthesis_review_count) + ' ' : '') +
-        'public reviews — not written by the business.</p></div>'
-      : '';
-    return chipRow + syn;
   }
 
   function render(){
@@ -161,24 +347,13 @@ document.addEventListener('DOMContentLoaded', async function(){
         '<a class="pill pill-orange" href="' + HOME.signinHref() + '">Create free account / sign in</a></div>';
     }
 
-    const claimBlock = data.claimed
-      ? '<p class="note">✓ This profile has been claimed by the business.</p>'
-      : '<h2 class="section-h">Is this your business?</h2><div class="card-block">' +
-        '<p style="font-size:.9rem;margin-bottom:1rem">Claim this profile. Homeowners in your area are already looking — claiming takes a minute and costs nothing.</p>' +
-        '<form id="claim-form">' +
-        '<div class="form-row"><label class="form-label" for="cn">Your name *</label><input class="form-input" type="text" id="cn" name="name" required maxlength="80"></div>' +
-        '<div class="form-row row-pair">' +
-        '<div><label class="form-label" for="cp">Phone *</label><input class="form-input" type="tel" id="cp" name="phone" required maxlength="20"></div>' +
-        '<div><label class="form-label" for="ce">Email</label><input class="form-input" type="email" id="ce" name="email" maxlength="120"></div></div>' +
-        '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
-        '<span class="form-status" id="claim-status"></span></form></div>';
-
     const removalNote = '<p class="fine" style="margin-top:1.2rem;max-width:560px">' +
       'This is a public-record listing compiled by Vesta — not an endorsement, and not written by the business. ' +
       'To remove or correct it, email <a href="mailto:andrew@4thwall.solutions?subject=Vesta%20listing%20removal" style="color:var(--vgreen-2)">andrew@4thwall.solutions</a> ' +
       '(<a href="/terms.html#directory" style="color:var(--vgreen-2)">how this works ›</a>).</p>';
 
-    body.innerHTML = enrichBlock() + pubBlock + contactBlock + claimBlock + removalNote;
+    body.innerHTML = signatureBlock() + vestaReadBlock() + homeownersBlock() + hiringGuideBlock() +
+      trustBlock() + googleFootnote() + contactBlock + claimAtlasBlock() + removalNote;
 
     const unlockBtn = document.getElementById('unlock-btn');
     if (unlockBtn) unlockBtn.addEventListener('click', async () => {

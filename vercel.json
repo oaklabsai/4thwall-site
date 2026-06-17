@@ -5,7 +5,8 @@
   },
   "rewrites": [
     { "source": "/atlas",         "destination": "/atlas.html" },
-    { "source": "/vesta",         "destination": "/vesta.html" },
+    { "source": "/vesta",         "destination": "/vesta-app.html" },
+    { "source": "/vesta/search",  "destination": "/vesta.html" },
     { "source": "/find",          "destination": "/find.html" },
     { "source": "/address",       "destination": "/address.html" },
     { "source": "/myhome",        "destination": "/myhome.html" },
@@ -25,6 +26,8 @@
     { "source": "/aga-case-study.html",   "destination": "/case-study-wealth-management.html", "permanent": true },
     { "source": "/bluecrest-am.html",     "destination": "/case-study-amenity-management.html", "permanent": true },
     { "source": "/honey-due.html",        "destination": "/case-study-home-services.html",      "permanent": true },
+    { "source": "/vesta-app",             "destination": "/vesta",                              "permanent": true },
+    { "source": "/vesta-app.html",        "destination": "/vesta",                              "permanent": true },
     { "source": "/login.html",            "destination": "/",                                   "permanent": true },
     { "source": "/dashboard.html",        "destination": "/",                                   "permanent": true },
     { "source": "/admin.html",            "destination": "/",                                   "permanent": true },
@@ -67,6 +70,12 @@
     },
     {
       "source": "/myhome",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex" }
+      ]
+    },
+    {
+      "source": "/vesta/search",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex" }
       ]
