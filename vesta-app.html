@@ -100,8 +100,9 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .vpanel { display:none; }
 
 /* ===== SWIPE DECK ===== */
-.deckwrap[hidden], .favwrap[hidden] { display:none; }
+.deckwrap[hidden], .favwrap[hidden], .feedwrap[hidden] { display:none; }
 .deckwrap { flex:1; display:flex; flex-direction:column; min-height:0; padding-bottom:96px; }
+.feedwrap { display:none; }   /* desktop-only scroll feed; the phone always uses the swipe deck */
 .deck { position:relative; flex:1; min-height:300px; margin:6px 20px 0; }
 .card { position:absolute; left:0; right:0; top:0; bottom:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:22px 22px 20px; display:flex; flex-direction:column; will-change:transform; touch-action:none; -webkit-user-select:none; user-select:none; overflow:hidden; }
 .card[data-k="0"] { z-index:30; cursor:grab; }
@@ -307,6 +308,70 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .vpanel { display:block; width:392px; flex-shrink:0; height:100vh; overflow-y:auto; background:var(--white); border-left:1px solid rgba(74,75,47,.1); padding:34px 32px 48px; box-shadow:var(--sh-panel); }
   .va-firm { font-size:32px; }
 
+  /* ===== DESKTOP FEED (X/Twitter-style scroll) — replaces the swipe deck ≥900px ===== */
+  .deckwrap { display:none; }                 /* the swipe deck is mobile-only */
+  .vbanner { display:none; }                  /* "swipe right to save" copy doesn't apply to a feed */
+  .feedwrap { display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
+  .feed-controls { display:flex; align-items:center; gap:10px; padding:14px 40px 12px; flex-shrink:0; }
+  .feed-select { position:relative; display:inline-flex; }
+  .feed-select select { appearance:none; -webkit-appearance:none; font-family:var(--sans); font-size:13.5px; font-weight:500; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:9px 36px 9px 16px; cursor:pointer; box-shadow:var(--sh-row); outline:none; }
+  .feed-select select:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
+  .feed-select::after { content:''; position:absolute; right:15px; top:50%; width:7px; height:7px; border-right:1.7px solid var(--ebony); border-bottom:1.7px solid var(--ebony); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+  .feed-count { margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:rgba(74,75,47,.55); }
+  .feed { flex:1; min-height:0; overflow-y:auto; padding:4px 40px 64px; display:flex; flex-direction:column; gap:14px; }
+  .feed-empty { padding:54px 22px; text-align:center; color:var(--ebony); font-size:14px; }
+
+  .fcard { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:22px; box-shadow:var(--sh-row); padding:20px 22px 15px; transition:box-shadow .16s; }
+  .fcard:hover { box-shadow:var(--sh-row-h); }
+  .fcard.flash { box-shadow:0 0 0 2px var(--olive) !important; }
+  .fcard-top { display:flex; align-items:flex-start; gap:13px; }
+  .fcard-mono { width:46px; height:46px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:17px; font-weight:600; color:var(--ebony); }
+  .fcard-id { flex:1; min-width:0; }
+  .fcard-name { font-family:var(--serif); font-size:20px; font-weight:700; letter-spacing:-.02em; color:var(--olive); line-height:1.14; }
+  .fcard-town { font-size:12.5px; color:var(--ebony); margin-top:3px; }
+  .fcard-band { display:inline-block; margin-top:9px; background:var(--tea); color:var(--olive); font-size:11.5px; font-weight:600; padding:4px 12px; border-radius:var(--r-pill); }
+  .fcard-readlbl { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin:16px 0 8px; }
+  .fcard-readlbl .sp { color:var(--olive); display:flex; }
+  .fcard-syn { font-family:var(--serif); font-size:16.5px; line-height:1.5; font-weight:500; color:var(--olive); letter-spacing:-.003em; }
+  .fcard-syn.clamp { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .fcard-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:13px; }
+  .fcard-chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; color:var(--ebony); background:rgba(74,75,47,.05); border-radius:var(--r-pill); padding:4px 10px; }
+  .fcard-chip svg { color:var(--olive); }
+  .fcard-disclose { display:inline-flex; align-items:center; gap:7px; margin-top:14px; background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ebony); padding:4px 0; }
+  .fcard-disclose:hover { color:var(--olive); }
+  .fcard-disclose .chev { display:flex; transition:transform .22s; }
+  .fcard-disclose[aria-expanded="true"] .chev { transform:rotate(180deg); }
+  .fcard-more { max-height:0; overflow:hidden; transition:max-height .3s ease; }
+  .fcard-more.open { max-height:900px; }
+  .fcard-more-inner { padding-top:2px; }
+  .fcard-more .va-sec { margin-top:18px; }
+  .fcard-actions { display:flex; align-items:center; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid rgba(74,75,47,.08); }
+  .fc-save { display:inline-flex; align-items:center; gap:7px; background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); border-radius:var(--r-pill); padding:9px 16px; font-family:var(--sans); font-size:13.5px; font-weight:600; cursor:pointer; flex-shrink:0; }
+  .fc-save svg { width:17px; height:17px; }
+  .fc-save:hover { border-color:rgba(74,75,47,.4); }
+  .fc-save.on { background:var(--tea); border-color:transparent; }
+  .fc-req { flex:1; background:var(--olive); color:var(--white); border:none; border-radius:var(--r-pill); padding:11px 18px; font-family:var(--sans); font-size:13.5px; font-weight:600; cursor:pointer; box-shadow:0 2px 6px rgba(74,75,47,.2), 0 10px 24px -8px rgba(74,75,47,.4); transition:transform .12s; }
+  .fc-req:hover { transform:translateY(-1px); }
+  .fc-req:active { transform:scale(.99); }
+  .fcard-menu { position:relative; flex-shrink:0; }
+  .fc-menu-btn { width:36px; height:36px; border:none; background:none; cursor:pointer; color:var(--ebony); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .fc-menu-btn:hover { background:rgba(74,75,47,.07); color:var(--olive); }
+  .fmenu { position:absolute; top:40px; right:0; min-width:190px; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:14px; box-shadow:var(--sh-panel); padding:6px; z-index:20; display:none; }
+  .fmenu.open { display:block; }
+  .fmenu button { display:flex; align-items:center; gap:11px; width:100%; text-align:left; background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:13.5px; color:var(--olive); padding:9px 11px; border-radius:9px; }
+  .fmenu button:hover { background:var(--bg); }
+  .fmenu button svg { color:var(--ebony); flex-shrink:0; }
+  .fmenu hr { border:none; border-top:1px solid rgba(74,75,47,.08); margin:5px 6px; }
+  .feedrail-h { font-family:var(--serif); font-size:21px; font-weight:700; color:var(--olive); letter-spacing:-.02em; line-height:1.16; margin-top:18px; margin-bottom:11px; }
+  .feedrail-p { font-size:13.5px; line-height:1.6; color:var(--ebony); margin-bottom:18px; }
+  .feedrail-stat { display:flex; align-items:center; gap:13px; padding:14px 16px; background:rgba(212,223,158,.22); border:1px solid rgba(74,75,47,.08); border-radius:16px; margin-bottom:20px; }
+  .feedrail-stat .n { font-family:var(--serif); font-size:27px; font-weight:700; color:var(--olive); line-height:1; flex-shrink:0; }
+  .feedrail-stat .l { font-size:12.5px; color:var(--ebony); line-height:1.4; }
+  .feedrail-how { list-style:none; }
+  .feedrail-how li { display:flex; gap:9px; font-size:12.5px; color:var(--ebony); line-height:1.5; margin-bottom:11px; }
+  .feedrail-how li svg { color:var(--olive); flex-shrink:0; margin-top:2px; }
+  .feedrail-how b { color:var(--olive); font-weight:600; }
+
   .pscrim, .psheet { display:none; }
 }
 </style>
@@ -317,7 +382,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 
   <!-- DESKTOP SIDEBAR -->
   <aside id="dsidebar" aria-label="Trades">
-    <div class="ds-brand"></div>
+    <div class="ds-brand"><span class="tb-wm">4THWALL</span><span class="tb-tag">VESTA</span></div>
     <nav class="ds-nav" id="ds-nav"></nav>
     <div class="ds-foot">
       <button class="ds-foot-btn" id="ds-search" aria-label="Search"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg><span>Search</span></button>
@@ -359,6 +424,10 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
             <button class="act act-save" id="act-save" aria-label="Save this pro"><svg width="23" height="23" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M6 3.5h10a1 1 0 011 1V19l-6-4-6 4V4.5a1 1 0 011-1z"/></svg></button>
           </div>
           <div class="deck-meta" id="deck-meta"></div>
+        </div>
+        <div class="feedwrap" id="feedwrap" hidden>
+          <div class="feed-controls" id="feed-controls"></div>
+          <div class="feed" id="feed" aria-label="Contractor feed"></div>
         </div>
         <div class="favwrap" id="favwrap" hidden></div>
       </div>
@@ -427,11 +496,18 @@ const HEART_FILL = `<svg width="18" height="18" viewBox="0 0 22 22" fill="curren
 const SKIP = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="18.5" y2="12"/><polyline points="12.5 6 19 12 12.5 18"/></svg>`;
 const BOOKMARK = `<svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h10a1 1 0 011 1V19l-6-4-6 4V4.5a1 1 0 011-1z"/></svg>`;
 const BOOKMARK_FILL = `<svg width="18" height="18" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M6 3.5h10a1 1 0 011 1V19l-6-4-6 4V4.5a1 1 0 011-1z"/></svg>`;
+const DOTS = `<svg width="20" height="20" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><circle cx="5" cy="11" r="1.8"/><circle cx="11" cy="11" r="1.8"/><circle cx="17" cy="11" r="1.8"/></svg>`;
+const CHEV = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6"/></svg>`;
+const LINKIC = `<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 10.5a3 3 0 004.5.3l2-2a3 3 0 00-4.2-4.2l-1.1 1.1"/><path d="M10.5 7.5a3 3 0 00-4.5-.3l-2 2a3 3 0 004.2 4.2l1.1-1.1"/></svg>`;
+const EXTERNAL = `<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4H4.5A1.5 1.5 0 003 5.5v8A1.5 1.5 0 004.5 15h8a1.5 1.5 0 001.5-1.5V11"/><path d="M11 3h4v4"/><path d="M15 3l-6 6"/></svg>`;
+const EYEOFF = `<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9s2.5-5 7-5 7 5 7 5a13 13 0 01-2 2.3"/><path d="M7.5 7.5a2 2 0 002.8 2.8"/><line x1="3" y1="3" x2="15" y2="15"/></svg>`;
 const REWIND = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5v6h6"/><path d="M3.5 11a8 8 0 113 8.5"/></svg>`;
 const LOCK = `<svg width="13" height="14" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="7" width="9" height="7" rx="1.5"/><path d="M4.5 7V4.8a2.5 2.5 0 015 0V7"/></svg>`;
 
 const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, dataLoaded:false, mode:'trade',
-            shuffles:{}, pos:{}, deck:[], deckIdx:0, unlocked:{}, history:[], savedTab:'saved' };
+            shuffles:{}, pos:{}, deck:[], deckIdx:0, unlocked:{}, history:[], savedTab:'saved',
+            feedTown:'', feedSort:'rank' };
+const FEED_HIDDEN = new Set();   // desktop feed: "Not interested" hides for the session (not a like/dislike signal)
 
 const $ = id => document.getElementById(id);
 const desktop = () => window.innerWidth >= 900;
@@ -505,7 +581,12 @@ function mapRow(r){
     verified: verified,
     standing: standing,
     knownFor: knownFor.slice(0,4),
-    read: r.synthesis || ''
+    read: r.synthesis || '',
+    city: r.city || '',
+    ratingBand: r.rating_band || '',
+    volumeBand: r.volume_band || '',
+    tenureBand: r.tenure_band || '',
+    rankScore: r.rank_score || 0
   };
 }
 function standingLine(r){
@@ -581,7 +662,7 @@ function updateBrowseHead(){
   }
   banner.style.display = '';
   $('browse-h1').textContent = 'Browse ' + tradePlural(S.activeTrade);
-  $('browse-sub').textContent = 'Vetted in Fairfield County · swipe to save the ones you like';
+  $('browse-sub').textContent = desktop() ? 'Vetted in Fairfield County · ranked by Vesta — scroll the feed' : 'Vetted in Fairfield County · swipe to save the ones you like';
   banner.innerHTML = '<span class="vb-spark">'+SPARK+'</span><span><b>Swipe right to save, left to skip.</b> Tap any card for Vesta’s full analysis.</span>';
 }
 
@@ -618,6 +699,7 @@ function deckEndHTML(){
 }
 function renderDeck(){
   if (S.mode !== 'trade') return;
+  if (desktop()){ renderFeed(); return; }   // ≥900px renders the scroll feed instead of the swipe deck
   const deck = $('deck'); if(!deck) return;
   const remaining = (S.deck||[]).slice(S.deckIdx);
   if (!remaining.length){
@@ -861,6 +943,130 @@ function renderPanel(con){
   p.innerHTML = analysisHTML(con, { read:false }); wireAnalysis(p, con);
 }
 
+/* ===== DESKTOP FEED (X/Twitter-style scroll) — desktop-only; mobile never calls these ===== */
+function feedTowns(){ const s=new Set(); byTrade(S.activeTrade).forEach(c=>{ const t=(c.city||'').trim(); if(t) s.add(t); }); return [...s].sort(); }
+function feedSource(){
+  let list = byTrade(S.activeTrade).filter(c => !FEED_HIDDEN.has(c.placeId));
+  if (S.feedTown) list = list.filter(c => (c.city||'') === S.feedTown);
+  const band = b => b==='top10'?2 : b==='top25'?1 : 0;
+  const by = k => (a,b) => band(b[k])-band(a[k]) || (b.rankScore-a.rankScore);
+  if (S.feedSort==='rating') list = [...list].sort(by('ratingBand'));
+  else if (S.feedSort==='volume') list = [...list].sort(by('volumeBand'));
+  else if (S.feedSort==='registered') list = [...list].sort((a,b)=> (b.registered?1:0)-(a.registered?1:0) || (b.rankScore-a.rankScore));
+  // 'rank' (default) keeps the rank_score order contractors already arrives in
+  return list;
+}
+function renderFeedControls(total){
+  const c = $('feed-controls'); if(!c) return;
+  const towns = feedTowns();
+  const townOpts = ['<option value="">All towns</option>'].concat(towns.map(t=>'<option value="'+esc(t)+'"'+(S.feedTown===t?' selected':'')+'>'+esc(t)+'</option>')).join('');
+  const sorts = [['rank','Vesta’s pick'],['rating','Top rated'],['volume','Most reviewed'],['registered','Registered first']];
+  const sortOpts = sorts.map(s=>'<option value="'+s[0]+'"'+(S.feedSort===s[0]?' selected':'')+'>'+esc(s[1])+'</option>').join('');
+  c.innerHTML =
+    '<span class="feed-select"><select id="feed-town" aria-label="Filter by town">'+townOpts+'</select></span>'+
+    '<span class="feed-select"><select id="feed-sort" aria-label="Sort pros">'+sortOpts+'</select></span>'+
+    '<span class="feed-count">'+total+' pro'+(total===1?'':'s')+'</span>';
+  $('feed-town').addEventListener('change', e=>{ S.feedTown=e.target.value; renderFeed(); });
+  $('feed-sort').addEventListener('change', e=>{ S.feedSort=e.target.value; renderFeed(); });
+}
+function feedMoreHTML(con){
+  const level=confidence(con), note=confidenceNote(con), signals=confidenceSignals(con);
+  return ''+
+    '<div class="va-sec"><div class="va-lbl"><span class="va-dot"></span>What homeowners say</div><p class="va-read">'+esc(con.read)+'</p></div>'+
+    (con.knownFor.length?'<div class="va-sec"><div class="va-lbl">What homeowners highlight</div><ul class="va-strengths">'+con.knownFor.map(k=>'<li>'+CHECK+'<span>'+esc(k)+'</span></li>').join('')+'</ul></div>':'')+
+    '<div class="va-sec"><div class="va-lbl">Our confidence in this read</div>'+
+      '<div class="va-conf"><div class="va-conf-l"><span class="va-shield">'+SHIELD+'</span>'+level+' confidence</div>'+
+      '<div class="va-conf-n">'+esc(note)+'</div>'+
+      (signals.length?'<ul class="va-checklist">'+signals.map(s=>'<li>'+CHECK+'<span>'+esc(s)+'</span></li>').join('')+'</ul>':'')+
+      '</div></div>'+
+    (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'">See the full profile →</a>':'');
+}
+function feedCardHTML(con){
+  const trust = con.verified.slice(0,3);
+  const saved = isLiked(con.placeId);
+  return '<article class="fcard" data-place="'+esc(con.placeId)+'">'+
+    '<div class="fcard-top">'+
+      '<div class="fcard-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
+      '<div class="fcard-id"><div class="fcard-name">'+esc(con.name)+'</div>'+
+        '<div class="fcard-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
+        (con.standing?'<div class="fcard-band">'+esc(con.standing)+'</div>':'')+'</div>'+
+      '<div class="fcard-menu">'+
+        '<button class="fc-menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="More options for '+esc(con.name)+'">'+DOTS+'</button>'+
+        '<div class="fmenu" role="menu">'+
+          '<button data-act="save" role="menuitem">'+BOOKMARK+'<span>'+(saved?'Saved':'Save')+'</span></button>'+
+          '<button data-act="copy" role="menuitem">'+LINKIC+'<span>Copy link</span></button>'+
+          '<button data-act="profile" role="menuitem">'+EXTERNAL+'<span>See full profile</span></button>'+
+          '<hr>'+
+          '<button data-act="hide" role="menuitem">'+EYEOFF+'<span>Not interested</span></button>'+
+        '</div></div>'+
+    '</div>'+
+    '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
+    '<div class="fcard-syn clamp">'+esc(con.read)+'</div>'+
+    (trust.length?'<div class="fcard-chips">'+trust.map(v=>'<span class="fcard-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
+    '<button class="fcard-disclose" aria-expanded="false"><span>Vesta’s full analysis</span><span class="chev">'+CHEV+'</span></button>'+
+    '<div class="fcard-more"><div class="fcard-more-inner">'+feedMoreHTML(con)+'</div></div>'+
+    '<div class="fcard-actions">'+
+      '<button class="fc-save'+(saved?' on':'')+'" aria-pressed="'+saved+'">'+(saved?BOOKMARK_FILL:BOOKMARK)+'<span class="lbl">'+(saved?'Saved':'Save')+'</span></button>'+
+      '<button class="fc-req">Request through Vesta</button>'+
+    '</div>'+
+  '</article>';
+}
+function closeFeedMenus(){
+  document.querySelectorAll('#feed .fmenu.open').forEach(m=>{ m.classList.remove('open'); const b=m.parentElement.querySelector('.fc-menu-btn'); if(b) b.setAttribute('aria-expanded','false'); });
+}
+function syncFeedSaveUI(card, now){
+  const s=card.querySelector('.fc-save'); if(s){ s.classList.toggle('on',now); s.setAttribute('aria-pressed',now); s.innerHTML=(now?BOOKMARK_FILL:BOOKMARK)+'<span class="lbl">'+(now?'Saved':'Save')+'</span>'; }
+  const m=card.querySelector('.fmenu button[data-act="save"] span'); if(m) m.textContent = now?'Saved':'Save';
+}
+function feedMenuAction(act, con, card){
+  if (act==='save'){ syncFeedSaveUI(card, toggleLike(con.placeId)); }
+  else if (act==='copy'){ try{ navigator.clipboard.writeText(location.origin+'/c/'+con.placeId); }catch(_){ } }
+  else if (act==='profile'){ location.href='/c/'+encodeURIComponent(con.placeId); }
+  else if (act==='hide'){ FEED_HIDDEN.add(con.placeId); pushHistory(con,'pass'); card.style.transition='opacity .2s, transform .2s'; card.style.opacity='0'; card.style.transform='translateX(24px)'; setTimeout(renderFeed,200); }
+}
+function wireFeedCard(con){
+  const card = [...document.querySelectorAll('#feed .fcard')].find(el=>el.dataset.place===con.placeId); if(!card) return;
+  const disc=card.querySelector('.fcard-disclose'), more=card.querySelector('.fcard-more');
+  disc.addEventListener('click', ()=>{ const open=more.classList.toggle('open'); disc.setAttribute('aria-expanded',open); if(open) pushHistory(con,'view'); });
+  card.querySelector('.fc-save').addEventListener('click', ()=> syncFeedSaveUI(card, toggleLike(con.placeId)));
+  card.querySelector('.fc-req').addEventListener('click', ()=>{ location.href='/vesta/search?mode=request&place='+encodeURIComponent(con.placeId||'')+'&trade='+encodeURIComponent(TRADE_DB[con.trade]||con.trade); });
+  const mbtn=card.querySelector('.fc-menu-btn'), menu=card.querySelector('.fmenu');
+  mbtn.addEventListener('click', e=>{ e.stopPropagation(); const open=!menu.classList.contains('open'); closeFeedMenus(); menu.classList.toggle('open',open); mbtn.setAttribute('aria-expanded',open); });
+  menu.querySelectorAll('button[data-act]').forEach(b=> b.addEventListener('click', e=>{ e.stopPropagation(); const a=b.dataset.act; closeFeedMenus(); feedMenuAction(a, con, card); }));
+}
+function renderFeedRail(total){
+  const p=$('vpanel'); if(!p) return;
+  const savedN=likedContractors().length;
+  p.innerHTML =
+    '<div class="va-head"><span class="va-spark">'+SPARK+'</span>Vesta’s analysis</div>'+
+    '<h2 class="feedrail-h">'+total+' vetted '+esc(tradePlural(S.activeTrade))+'<br>in Fairfield County</h2>'+
+    '<p class="feedrail-p">Vesta read the public reviews and Connecticut records for every one, then ranked them by what homeowners actually say — no ads, no pay-to-play.</p>'+
+    '<div class="feedrail-stat"><span class="n">'+savedN+'</span><span class="l">saved '+(savedN===1?'pro':'pros')+(savedN?' · open Saved to reveal contact info':'')+'</span></div>'+
+    '<ul class="feedrail-how">'+
+      '<li>'+CHECK+'<span>Scroll the feed — Vesta’s best matches first.</span></li>'+
+      '<li>'+CHECK+'<span>Open <b>Vesta’s full analysis</b> on any card for the deep read.</span></li>'+
+      '<li>'+CHECK+'<span>Save the ones you like, then request through Vesta.</span></li>'+
+    '</ul>';
+}
+function renderFeed(){
+  const feed=$('feed'); if(!feed) return;
+  if (S.feedTown && !feedTowns().includes(S.feedTown)) S.feedTown='';
+  const list = feedSource();
+  renderFeedControls(list.length);
+  if (!S.dataLoaded){ feed.innerHTML='<div class="feed-empty">Loading vetted pros…</div>'; renderFeedRail(0); return; }
+  if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match that filter — try “All towns”.</div>'; renderFeedRail(byTrade(S.activeTrade).length); return; }
+  feed.innerHTML = list.map(feedCardHTML).join('');
+  list.forEach(wireFeedCard);
+  renderFeedRail(byTrade(S.activeTrade).length);
+}
+function focusFeedCard(placeId){
+  const card=[...document.querySelectorAll('#feed .fcard')].find(el=>el.dataset.place===placeId); if(!card) return;
+  card.scrollIntoView({behavior:'smooth', block:'center'});
+  const disc=card.querySelector('.fcard-disclose'), more=card.querySelector('.fcard-more');
+  if(more && !more.classList.contains('open')){ more.classList.add('open'); if(disc) disc.setAttribute('aria-expanded','true'); }
+  card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'),1500);
+}
+
 /* MOBILE SHEET */
 function openSheet(con){
   $('psheet-body').innerHTML = analysisHTML(con);
@@ -902,22 +1108,32 @@ function renderSearchResults(q){
 }
 function goToPro(tradeKey, placeId){
   closeSearch();
-  S.mode = 'trade'; S.activeTrade = tradeKey; ensureDeck(tradeKey);
+  S.mode = 'trade'; S.activeTrade = tradeKey;
+  if (S.screen !== 'browse') showScreen('browse');
+  renderChips(); renderSidebar(); updateNavState();
+  if (desktop()){
+    const c = contractors.find(x => x.placeId === placeId);
+    if (c && S.feedTown && (c.city||'') !== S.feedTown) S.feedTown = '';   // clear filter so the target is visible
+    FEED_HIDDEN.delete(placeId);
+    showDeck(); updateBrowseHead(); renderFeed();
+    requestAnimationFrame(() => focusFeedCard(placeId));
+    return;
+  }
+  ensureDeck(tradeKey);
   const arr = S.shuffles[tradeKey] || []; const pos = S.pos[tradeKey] || 0;
   const gi = arr.findIndex(c => c.placeId === placeId);
   if (gi >= 0 && gi !== pos){ const [card] = arr.splice(gi,1); arr.splice(pos,0,card); }
   S.deckIdx = pos;
-  if (S.screen !== 'browse') showScreen('browse');
-  renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck();
+  showDeck(); updateBrowseHead(); renderDeck();
   const con = topCon();
-  if (con){ if(desktop()) renderPanel(con); else openSheet(con); }
+  if (con) openSheet(con);
 }
 
 /* VIEW TOGGLES */
-function showDeck(){ $('deckwrap').hidden=false; $('favwrap').hidden=true; }
-function showFav(){ $('deckwrap').hidden=true; $('favwrap').hidden=false; }
+function showDeck(){ if(desktop()){ $('feedwrap').hidden=false; $('deckwrap').hidden=true; } else { $('deckwrap').hidden=false; $('feedwrap').hidden=true; } $('favwrap').hidden=true; }
+function showFav(){ $('deckwrap').hidden=true; $('feedwrap').hidden=true; $('favwrap').hidden=false; }
 function switchTrade(key){
-  S.mode='trade'; S.activeTrade=key; ensureDeck(key);
+  S.mode='trade'; S.activeTrade=key; S.feedTown=''; ensureDeck(key);
   if (S.screen !== 'browse') showScreen('browse');
   renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck();
   updateNavState();
@@ -932,7 +1148,7 @@ function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('
 
 /* NAV */
 function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; }
-function openBrowse(key){ S.mode='trade'; S.activeTrade=key; ensureDeck(key); showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState(); }
+function openBrowse(key){ S.mode='trade'; S.activeTrade=key; S.feedTown=''; ensureDeck(key); showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState(); }
 function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); updateNavState(); }
 function updateNavState(){
   const home=$('nav-home'), saved=$('nav-saved');
@@ -960,12 +1176,21 @@ function updateNavState(){
   $('vsearch-input').addEventListener('input', e => renderSearchResults(e.target.value));
   $('vsearch').addEventListener('click', e => { if (e.target===$('vsearch')) closeSearch(); });
   document.addEventListener('keydown', e => {
-    if (e.key==='Escape') { if (S.searchOpen){ closeSearch(); return; } if (S.sheetOpen){ closeSheet(); return; } }
-    if (S.screen==='browse' && S.mode==='trade' && !S.sheetOpen && !S.searchOpen){
+    if (e.key==='Escape') { closeFeedMenus(); if (S.searchOpen){ closeSearch(); return; } if (S.sheetOpen){ closeSheet(); return; } }
+    if (S.screen==='browse' && S.mode==='trade' && !S.sheetOpen && !S.searchOpen && !desktop()){
       const c = topCon();
       if (e.key==='ArrowRight' && c){ e.preventDefault(); commit('save', c); }
       else if (e.key==='ArrowLeft' && c){ e.preventDefault(); commit('pass', c); }
     }
+  });
+  // feed overflow menus close on any outside click
+  document.addEventListener('click', e => { if(!e.target.closest('.fcard-menu')) closeFeedMenus(); });
+  // re-render the browse view when the layout crosses the desktop/mobile boundary
+  let _wasDesktop = desktop();
+  window.addEventListener('resize', () => {
+    const d = desktop(); if (d===_wasDesktop) return; _wasDesktop = d;
+    if (d && S.screen!=='browse'){ openBrowse(S.activeTrade); return; }   // desktop hides the home screen → land in the feed
+    if (S.screen==='browse'){ if (S.mode==='saved') renderSaved(); else { showDeck(); updateBrowseHead(); renderDeck(); } }
   });
 })();
 </script>
