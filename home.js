@@ -13,7 +13,7 @@
 
   const HOME = {
     API,
-    TRADES: ['roofing','hvac','plumbing','electrical','paving','lawn_care'],
+    TRADES: ['roofing','hvac','plumbing','electrical','paving','lawn_care','painting','masonry'],
 
     token(){ try { return localStorage.getItem(TOKEN_KEY) || null; } catch(_) { return null; } },
     setToken(t){ try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch(_){} },
