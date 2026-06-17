@@ -126,10 +126,12 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .stamp-pass { right:22px; transform:rotate(13deg); color:var(--ebony); border-color:var(--ebony); background:rgba(255,255,255,.65); }
 
 /* deck action buttons */
-.deck-actions { display:flex; align-items:center; justify-content:center; gap:20px; padding:16px 0 6px; }
+.deck-actions { display:flex; align-items:center; justify-content:center; gap:15px; padding:16px 0 6px; }
 .act { border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--white); box-shadow:var(--sh-row); transition:transform .12s, box-shadow .14s; }
 .act:hover { transform:translateY(-2px); box-shadow:var(--sh-row-h); }
 .act:active { transform:scale(.9); }
+.act-rewind { width:46px; height:46px; color:var(--ebony); }
+.act-rewind:disabled { opacity:.32; cursor:default; box-shadow:var(--sh-row); transform:none; }
 .act-pass { width:60px; height:60px; color:var(--ebony); }
 .act-info { width:46px; height:46px; color:var(--olive); }
 .act-save { width:60px; height:60px; color:var(--white); background:var(--olive); box-shadow:0 4px 14px -2px rgba(74,75,47,.5), 0 14px 32px -6px rgba(74,75,47,.4); }
@@ -173,6 +175,16 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .fav-unlike { position:absolute; top:13px; right:13px; width:34px; height:34px; border:none; background:none; cursor:pointer; color:var(--olive); display:flex; align-items:center; justify-content:center; border-radius:9px; }
 .fav-unlike:hover { background:rgba(74,75,47,.06); }
 .linklike { background:none; border:none; color:var(--olive); font-weight:600; cursor:pointer; font-size:12.5px; font-family:var(--sans); text-decoration:underline; padding:0; }
+/* Saved / Recently-viewed segmented control + history rows */
+.saved-seg { display:flex; gap:5px; background:rgba(74,75,47,.07); border-radius:var(--r-pill); padding:4px; }
+.ss-btn { flex:1; border:none; background:none; cursor:pointer; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ebony); padding:9px 8px; border-radius:var(--r-pill); transition:background .14s, color .14s; }
+.ss-btn.on { background:var(--white); color:var(--olive); box-shadow:0 1px 3px rgba(74,75,47,.1); }
+.histrow { display:flex; align-items:center; gap:13px; width:100%; text-align:left; background:var(--white); border:1px solid rgba(74,75,47,.07); border-radius:18px; padding:13px 15px; box-shadow:var(--sh-row); cursor:pointer; font-family:var(--sans); transition:transform .14s, box-shadow .14s; }
+.histrow:hover { transform:translateY(-1px); box-shadow:var(--sh-row-h); }
+.histrow:active { transform:scale(.99); }
+.hist-id { min-width:0; flex:1; display:flex; flex-direction:column; }
+.hist-saved { color:var(--olive); display:flex; flex-shrink:0; }
+.hist-go { color:rgba(74,75,47,.32); display:flex; flex-shrink:0; }
 
 /* ANALYSIS (shared by desktop panel + mobile sheet) */
 .va-head { display:flex; align-items:center; gap:7px; font-family:var(--serif); font-size:19px; font-weight:600; color:var(--olive); letter-spacing:-.01em; margin-bottom:14px; }
@@ -218,8 +230,10 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .pscrim.open { opacity:1; pointer-events:auto; }
 .psheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:min(390px,100vw); background:var(--white); border-radius:28px 28px 0 0; z-index:61; padding:10px 24px 48px; max-height:90vh; overflow-y:auto; overscroll-behavior:contain; transition:transform .4s cubic-bezier(.32,1.08,.62,1); box-shadow:0 -12px 40px -4px rgba(74,75,47,.18), 0 -40px 96px -12px rgba(74,75,47,.24); }
 .psheet.open { transform:translateX(-50%) translateY(0); }
-.phandle-wrap { display:flex; justify-content:center; padding:6px 0 16px; touch-action:none; cursor:grab; }
+.phandle-wrap { position:sticky; top:0; z-index:3; display:flex; justify-content:center; align-items:center; padding:8px 0 14px; background:var(--white); touch-action:none; cursor:grab; }
 .phandle { width:40px; height:4px; background:rgba(74,75,47,.15); border-radius:2px; }
+.psheet-x { position:absolute; top:4px; right:0; width:34px; height:34px; border:none; background:rgba(74,75,47,.06); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--olive); cursor:pointer; touch-action:auto; }
+.psheet-x:hover { background:rgba(74,75,47,.12); }
 
 /* BOTTOM NAV */
 .bnav { position:fixed; bottom:18px; left:50%; transform:translateX(-50%); width:calc(min(390px,100vw) - 36px); background:rgba(248,249,240,.97); backdrop-filter:saturate(200%) blur(20px); -webkit-backdrop-filter:saturate(200%) blur(20px); border-radius:var(--r-pill); padding:9px 14px; border:.5px solid rgba(255,255,255,.75); display:flex; align-items:center; justify-content:space-between; box-shadow:var(--sh-nav); z-index:10; }
@@ -306,7 +320,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
     <nav class="ds-nav" id="ds-nav"></nav>
     <div class="ds-foot">
       <button class="ds-foot-btn" id="ds-search" aria-label="Search"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg><span>Search</span></button>
-      <button class="ds-foot-btn" id="ds-saved" aria-label="Saved pros"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 19s-7-4.5-7-9.5A4 4 0 0111 7a4 4 0 017 2.5C18 14.5 11 19 11 19z"></path></svg><span>Saved</span></button>
+      <button class="ds-foot-btn" id="ds-saved" aria-label="Saved pros"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"></path></svg><span>Saved</span></button>
       <button class="ds-foot-btn" id="ds-you" aria-label="Your account"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="8" r="4"></circle><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8"></path></svg><span>You</span></button>
     </div>
   </aside>
@@ -338,9 +352,10 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
         <div class="deckwrap" id="deckwrap">
           <div class="deck" id="deck" aria-label="Contractor cards"></div>
           <div class="deck-actions" id="deck-actions">
-            <button class="act act-pass" id="act-pass" aria-label="Pass on this pro"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="7" y1="7" x2="19" y2="19"/><line x1="19" y1="7" x2="7" y2="19"/></svg></button>
+            <button class="act act-rewind" id="act-rewind" aria-label="Bring back the last pro" disabled><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5v6h6"/><path d="M3.5 11a8 8 0 113 8.5"/></svg></button>
+            <button class="act act-pass" id="act-pass" aria-label="Skip this pro"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="18.5" y2="12"/><polyline points="12.5 6 19 12 12.5 18"/></svg></button>
             <button class="act act-info" id="act-info" aria-label="See full analysis"><svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8.5"/><line x1="11" y1="10" x2="11" y2="15"/><circle cx="11" cy="6.7" r="0.6" fill="currentColor"/></svg></button>
-            <button class="act act-save" id="act-save" aria-label="Save this pro"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.9-7.5-10.3A4.3 4.3 0 0112 7.4a4.3 4.3 0 017.5 3.3C19.5 16.1 12 21 12 21z"/></svg></button>
+            <button class="act act-save" id="act-save" aria-label="Save this pro"><svg width="23" height="23" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M6 3.5h10a1 1 0 011 1V19l-6-4-6 4V4.5a1 1 0 011-1z"/></svg></button>
           </div>
           <div class="deck-meta" id="deck-meta"></div>
         </div>
@@ -353,7 +368,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   <!-- MOBILE SHEET -->
   <div class="pscrim" id="pscrim" aria-hidden="true"></div>
   <div class="psheet" id="psheet" role="dialog" aria-modal="true" aria-label="Vesta's analysis" tabindex="-1">
-    <div class="phandle-wrap" id="phandle"><div class="phandle" aria-hidden="true"></div></div>
+    <div class="phandle-wrap" id="phandle"><div class="phandle" aria-hidden="true"></div><button class="psheet-x" id="psheet-x" aria-label="Close analysis"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button></div>
     <div id="psheet-body"></div>
   </div>
 
@@ -361,7 +376,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   <nav class="bnav" aria-label="Main navigation">
     <button class="bnav-btn" id="nav-home" aria-label="Browse trades"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="8" height="8" rx="2"></rect><rect x="12" y="2" width="8" height="8" rx="2"></rect><rect x="2" y="12" width="8" height="8" rx="2"></rect><rect x="12" y="12" width="8" height="8" rx="2"></rect></svg></button>
     <button class="bnav-btn" id="nav-search" aria-label="Search"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg></button>
-    <button class="bnav-btn" id="nav-saved" aria-label="Saved"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 19s-7-4.5-7-9.5A4 4 0 0111 7a4 4 0 017 2.5C18 14.5 11 19 11 19z"></path></svg></button>
+    <button class="bnav-btn" id="nav-saved" aria-label="Saved"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"></path></svg></button>
     <button class="bnav-btn" id="nav-you" aria-label="Your profile"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="8" r="4"></circle><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8"></path></svg></button>
   </nav>
 
@@ -401,12 +416,17 @@ const ICONS = {
 const CHECK = `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 5.5L4.5 8.5L9.5 2.5"/></svg>`;
 const SPARK = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l1.4 5.1L14.5 6.5 9.4 7.9 8 13 6.6 7.9 1.5 6.5 6.6 5.1z"/></svg>`;
 const SHIELD = `<svg width="14" height="15" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M7 1l5 2v5c0 3.5-2.3 5.7-5 7-2.7-1.3-5-3.5-5-7V3z"/></svg>`;
-const HEART = `<svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 19s-7-4.5-7-9.5A4 4 0 0111 7a4 4 0 017 2.5C18 14.5 11 19 11 19z"/></svg>`;
-const HEART_FILL = `<svg width="18" height="18" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M11 19s-7-4.5-7-9.5A4 4 0 0111 7a4 4 0 017 2.5C18 14.5 11 19 11 19z"/></svg>`;
+const HEART = `<svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"/></svg>`;
+const HEART_FILL = `<svg width="18" height="18" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"/></svg>`;
+// Skip = forward arrow (move on to the next pro). Save = bookmark (file this pro for later) — not a heart.
+const SKIP = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="18.5" y2="12"/><polyline points="12.5 6 19 12 12.5 18"/></svg>`;
+const BOOKMARK = `<svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h10a1 1 0 011 1V19l-6-4-6 4V4.5a1 1 0 011-1z"/></svg>`;
+const BOOKMARK_FILL = `<svg width="18" height="18" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M6 3.5h10a1 1 0 011 1V19l-6-4-6 4V4.5a1 1 0 011-1z"/></svg>`;
+const REWIND = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5v6h6"/><path d="M3.5 11a8 8 0 113 8.5"/></svg>`;
 const LOCK = `<svg width="13" height="14" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="7" width="9" height="7" rx="1.5"/><path d="M4.5 7V4.8a2.5 2.5 0 015 0V7"/></svg>`;
 
 const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, dataLoaded:false, mode:'trade',
-            shuffles:{}, pos:{}, deck:[], deckIdx:0, unlocked:{} };
+            shuffles:{}, pos:{}, deck:[], deckIdx:0, unlocked:{}, history:[], savedTab:'saved' };
 
 const $ = id => document.getElementById(id);
 const desktop = () => window.innerWidth >= 900;
@@ -447,7 +467,7 @@ async function syncLikes(){
     const { status, data } = res || {};
     if(status===200 && data && data.ok && Array.isArray(data.favorites)){
       writeLiked(new Set(data.favorites.map(f => f.place_id)));
-      if(S.screen==='browse' && S.mode==='saved'){ updateBrowseHead(); renderFav(); }
+      if(S.screen==='browse' && S.mode==='saved'){ renderSaved(); }
     }
   } catch(_){}
 }
@@ -495,9 +515,12 @@ async function loadContractors(){
   const sel = 'place_id,business_name,city,trade,registered,hic_issue_date,certifications,synthesis,synthesis_review_count,known_for,specialties,volume_band,rating_band,tenure_band,trade_n,rank_score';
   const rows = await HOME.db('/profile_enrichment_public?select=' + sel + '&order=rank_score.desc.nullslast');
   S.dataLoaded = true;
-  if (Array.isArray(rows)) contractors = rows.map(mapRow).filter(c => c.name);
+  // Substance gate: a profile only earns a place on Vesta if Vesta has something
+  // to say about it (a synthesis). Thin/silent records — no read — are left out
+  // rather than padding the deck. They're not lost; they're just not surfaced.
+  if (Array.isArray(rows)) contractors = rows.map(mapRow).filter(c => c.name && c.read);
   if (S.screen === 'browse'){
-    if (S.mode === 'saved'){ updateBrowseHead(); renderFav(); }
+    if (S.mode === 'saved'){ renderSaved(); }
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
   }
 }
@@ -540,16 +563,21 @@ function renderSidebar(){
 function updateBrowseHead(){
   const banner = $('vbanner');
   if (S.mode === 'saved'){
-    const n = likedContractors().length;
     $('browse-h1').textContent = 'Saved';
-    $('browse-sub').textContent = n + ' saved ' + (n===1?'pro':'pros');
+    if (S.savedTab === 'history'){
+      const h = S.history.length;
+      $('browse-sub').textContent = h ? (h + ' recently viewed') : 'Your recent swipes show up here';
+    } else {
+      const n = likedContractors().length;
+      $('browse-sub').textContent = n + ' saved ' + (n===1?'pro':'pros');
+    }
     banner.style.display = 'none';
     return;
   }
   banner.style.display = '';
   $('browse-h1').textContent = 'Browse ' + tradePlural(S.activeTrade);
   $('browse-sub').textContent = 'Vetted in Fairfield County · swipe to save the ones you like';
-  banner.innerHTML = '<span class="vb-spark">'+SPARK+'</span><span><b>Swipe right to save, left to pass.</b> Tap any card for Vesta’s full analysis.</span>';
+  banner.innerHTML = '<span class="vb-spark">'+SPARK+'</span><span><b>Swipe right to save, left to skip.</b> Tap any card for Vesta’s full analysis.</span>';
 }
 
 /* ===== DECK ===== */
@@ -567,14 +595,14 @@ function topCon(){ return (S.deck||[]).slice(S.deckIdx)[0] || null; }
 function cardHTML(con, k){
   const trust = con.verified.slice(0,3);
   return '<article class="card" data-k="'+k+'" '+(k===0?'tabindex="0" aria-label="'+esc(con.name)+', '+esc(con.town)+'"':'aria-hidden="true"')+'>'+
-    (k===0?'<span class="stamp stamp-save">SAVE</span><span class="stamp stamp-pass">PASS</span>':'')+
+    (k===0?'<span class="stamp stamp-save">SAVE</span><span class="stamp stamp-pass">SKIP</span>':'')+
     '<div class="card-top"><div class="card-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
     (con.standing?'<div class="card-band">'+esc(con.standing)+'</div>':'')+
     '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
     '<div class="card-syn">'+esc(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.')+'</div>'+
     (trust.length?'<div class="card-chips">'+trust.map(v=>'<span class="card-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
-    '<div class="card-hint">'+(desktop()?'← pass · save →':'Tap for the full analysis')+'</div>'+
+    '<div class="card-hint">'+(desktop()?'← skip · save →':'Tap for the full analysis')+'</div>'+
   '</article>';
 }
 function deckEndHTML(){
@@ -597,6 +625,7 @@ function renderDeck(){
   deck.innerHTML = remaining.slice(0,3).map((c,k)=>cardHTML(c,k)).join('');
   wireTopCard(remaining[0]);
   $('deck-actions').style.visibility='visible';
+  updateRewind();
   $('deck-meta').textContent = 'Shuffled — a fresh order every visit';
   if (desktop()) renderPanel(remaining[0]);
 }
@@ -632,7 +661,34 @@ function commit(dir, con){
   if(dir==='save') setLiked(con.placeId, true);
   if(card){ const off = dir==='save' ? 1 : -1; card.style.transition='transform .32s ease, opacity .32s ease'; card.style.transform='translate('+(off*480)+'px,-26px) rotate('+(off*20)+'deg)'; card.style.opacity='0'; }
   S.deckIdx++; S.pos[S.activeTrade] = S.deckIdx;
+  pushHistory(con, dir);
   setTimeout(renderDeck, 290);
+}
+/* Session history — every pro you swipe is remembered (most-recent first) so a
+   pro you skipped isn't lost. Rewind undoes the last swipe in the current trade;
+   the Recently-viewed list (Saved screen) lets you jump back to anyone, any trade. */
+function pushHistory(con, dir){
+  if(!con || !con.placeId) return;
+  S.history = S.history.filter(h => h.placeId !== con.placeId);
+  S.history.unshift({ placeId: con.placeId, trade: con.trade, dir });
+  if(S.history.length > 80) S.history.length = 80;
+}
+function updateRewind(){
+  const b = $('act-rewind'); if(!b) return;
+  const can = S.mode==='trade' && S.deckIdx > 0;
+  b.disabled = !can;
+}
+function rewindDeck(){
+  if(S.mode!=='trade' || S.deckIdx <= 0) return;
+  S.deckIdx--; S.pos[S.activeTrade] = S.deckIdx;
+  const con = topCon();
+  if(con){
+    const h = S.history.find(x => x.placeId === con.placeId);
+    if(h && h.dir === 'save') setLiked(con.placeId, false); // undo the save we just reversed
+    S.history = S.history.filter(x => x.placeId !== con.placeId);
+  }
+  if(S.sheetOpen) closeSheet();
+  renderDeck();
 }
 
 /* ===== SAVED LIST ===== */
@@ -650,7 +706,7 @@ function contactBlockHTML(con){
 }
 function favRowHTML(con){
   return '<div class="favrow" data-place="'+esc(con.placeId)+'">'+
-    '<button class="fav-unlike" data-unlike="'+esc(con.placeId)+'" aria-label="Remove '+esc(con.name)+' from saved">'+HEART_FILL+'</button>'+
+    '<button class="fav-unlike" data-unlike="'+esc(con.placeId)+'" aria-label="Remove '+esc(con.name)+' from saved">'+BOOKMARK_FILL+'</button>'+
     '<div class="favrow-top" role="button" tabindex="0" aria-label="'+esc(con.name)+', see analysis">'+
       '<div class="fav-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="fav-id"><div class="fav-name">'+esc(con.name)+'</div><div class="fav-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
@@ -659,26 +715,69 @@ function favRowHTML(con){
     '<div class="fav-contact" data-contact="'+esc(con.placeId)+'">'+contactBlockHTML(con)+'</div>'+
   '</div>';
 }
+/* The Saved screen carries two tabs: Saved (the pros you bookmarked) and
+   Recently viewed (the session history — everyone you swiped, newest first). */
+function savedSeg(){
+  return '<div class="saved-seg" role="tablist" aria-label="Saved views">'+
+    '<button class="ss-btn'+(S.savedTab==='saved'?' on':'')+'" data-tab="saved" role="tab" aria-selected="'+(S.savedTab==='saved')+'">Saved</button>'+
+    '<button class="ss-btn'+(S.savedTab==='history'?' on':'')+'" data-tab="history" role="tab" aria-selected="'+(S.savedTab==='history')+'">Recently viewed</button>'+
+  '</div>';
+}
+function wireSavedSeg(wrap){
+  Array.from(wrap.querySelectorAll('.ss-btn')).forEach(b => b.addEventListener('click', () => {
+    if (S.savedTab === b.dataset.tab) return;
+    S.savedTab = b.dataset.tab; renderSaved();
+  }));
+}
+function renderSaved(){
+  updateBrowseHead();
+  if (S.savedTab === 'history') renderHistory();
+  else renderFav();
+}
 function renderFav(){
   const wrap = $('favwrap'); const list = likedContractors();
   if (!list.length){
-    wrap.innerHTML = '<div class="fav-empty">No saved pros yet.<br>Swipe right (or tap the heart) on a pro to save them here, then sign up to keep your list and unlock their contact info.</div>';
+    wrap.innerHTML = savedSeg() + '<div class="fav-empty">No saved pros yet.<br>Swipe right (or tap the bookmark) on a pro to save them here, then sign up to keep your list and unlock their contact info.</div>';
+    wireSavedSeg(wrap);
     if (desktop()) renderPanel(null);
     return;
   }
   const intro = signedIn()
     ? 'Your saved pros. Tap <b>Show contact info</b> to reveal each one’s phone and website.'
     : '<b>Sign up to unlock contact info.</b> Your saved pros live on this device for now — create a free account to keep them and reveal each pro’s phone & website. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a>';
-  wrap.innerHTML = '<div class="fav-intro">'+intro+'</div>' + list.map(favRowHTML).join('');
+  wrap.innerHTML = savedSeg() + '<div class="fav-intro">'+intro+'</div>' + list.map(favRowHTML).join('');
+  wireSavedSeg(wrap);
   Array.from(wrap.querySelectorAll('.favrow')).forEach(row => {
     const con = list.find(c => c.placeId === row.dataset.place); if(!con) return;
     const top = row.querySelector('.favrow-top');
     top.addEventListener('click', () => tapCard(con));
     top.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tapCard(con); } });
-    row.querySelector('.fav-unlike').addEventListener('click', () => { setLiked(con.placeId, false); updateBrowseHead(); renderFav(); });
+    row.querySelector('.fav-unlike').addEventListener('click', () => { setLiked(con.placeId, false); renderSaved(); });
     const show = row.querySelector('.fav-show');
     if (show) show.addEventListener('click', () => unlockContact(con, row.querySelector('.fav-contact')));
   });
+  if (desktop()) renderPanel(list[0]);
+}
+function histRowHTML(con){
+  const saved = isLiked(con.placeId);
+  return '<button class="histrow" data-place="'+esc(con.placeId)+'" data-trade="'+esc(con.trade)+'" aria-label="Take another look at '+esc(con.name)+'">'+
+    '<span class="fav-mono" aria-hidden="true">'+esc(monogram(con.name))+'</span>'+
+    '<span class="hist-id"><span class="fav-name">'+esc(con.name)+'</span><span class="fav-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</span></span>'+
+    (saved ? '<span class="hist-saved" title="Saved" aria-label="Saved">'+BOOKMARK_FILL+'</span>' : '<span class="hist-go" aria-hidden="true">'+SKIP+'</span>')+
+  '</button>';
+}
+function renderHistory(){
+  const wrap = $('favwrap');
+  const list = S.history.map(h => contractors.find(c => c.placeId === h.placeId)).filter(Boolean);
+  if (!list.length){
+    wrap.innerHTML = savedSeg() + '<div class="fav-empty">Nothing here yet.<br>Pros you swipe through this session show up here — so anyone you skip is one tap from a second look.</div>';
+    wireSavedSeg(wrap);
+    if (desktop()) renderPanel(null);
+    return;
+  }
+  wrap.innerHTML = savedSeg() + '<div class="fav-intro">Everyone you’ve swiped this session, newest first. Tap to take another look.</div>' + list.map(histRowHTML).join('');
+  wireSavedSeg(wrap);
+  Array.from(wrap.querySelectorAll('.histrow')).forEach(row => row.addEventListener('click', () => goToPro(row.dataset.trade, row.dataset.place)));
   if (desktop()) renderPanel(list[0]);
 }
 async function unlockContact(con, el){
@@ -737,7 +836,7 @@ function analysisHTML(con, opts){
       '<div class="va-conf-n">'+esc(note)+'</div>'+
       (signals.length?'<ul class="va-checklist">'+signals.map(s=>'<li>'+CHECK+'<span>'+esc(s)+'</span></li>').join('')+'</ul>':'')+
       '</div></div>'+
-    '<div class="va-actions"><button class="va-req">Request through Vesta</button><button class="va-bm'+(isLiked(con.placeId)?' on':'')+'" data-place="'+esc(con.placeId)+'" aria-label="Save '+esc(con.name)+'">'+HEART+'</button></div>'+
+    '<div class="va-actions"><button class="va-req">Request through Vesta</button><button class="va-bm'+(isLiked(con.placeId)?' on':'')+'" data-place="'+esc(con.placeId)+'" aria-label="Save '+esc(con.name)+'">'+BOOKMARK+'</button></div>'+
     (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'">See the full profile →</a>':'')+
     '<p class="va-note">No obligation · free to request</p>';
 }
@@ -745,7 +844,7 @@ function wireAnalysis(root, con){
   const req = root.querySelector('.va-req');
   if (req) req.addEventListener('click', () => { location.href = '/vesta/search?mode=request&place='+encodeURIComponent(con.placeId||'')+'&trade='+encodeURIComponent(TRADE_DB[con.trade]||con.trade); });
   const bm = root.querySelector('.va-bm');
-  if (bm){ bm.classList.toggle('on', isLiked(con.placeId)); bm.addEventListener('click', () => { const now=toggleLike(con.placeId); bm.classList.toggle('on', now); if(S.mode==='saved'){ updateBrowseHead(); renderFav(); } }); }
+  if (bm){ bm.classList.toggle('on', isLiked(con.placeId)); bm.addEventListener('click', () => { const now=toggleLike(con.placeId); bm.classList.toggle('on', now); if(S.mode==='saved'){ renderSaved(); } }); }
 }
 function renderPanel(con){
   const p = $('vpanel'); if(!p) return;
@@ -772,7 +871,7 @@ function closeSheet(){
 }
 function initSheetDrag(){
   const handle = $('phandle'), sheet = $('psheet'); let on=false, y0=0, y=0;
-  handle.addEventListener('pointerdown', e => { if(desktop()) return; on=true; y0=y=e.clientY; handle.setPointerCapture(e.pointerId); sheet.style.transition='none'; });
+  handle.addEventListener('pointerdown', e => { if(desktop()) return; if(e.target.closest('.psheet-x')) return; on=true; y0=y=e.clientY; handle.setPointerCapture(e.pointerId); sheet.style.transition='none'; });
   handle.addEventListener('pointermove', e => { if(!on) return; y=e.clientY; sheet.style.transform='translateX(-50%) translateY('+Math.max(0,y-y0)+'px)'; });
   handle.addEventListener('pointerup', () => { if(!on) return; on=false; const dy=y-y0;
     if(dy>80){ sheet.style.transition='transform .3s ease'; sheet.style.transform='translateX(-50%) translateY(110%)'; $('pscrim').classList.remove('open'); S.sheetOpen=false; setTimeout(()=>{sheet.style.transform='';sheet.style.transition='';sheet.classList.remove('open');},300); }
@@ -821,7 +920,7 @@ function switchTrade(key){
 function showSaved(){
   S.mode='saved';
   if (S.screen !== 'browse') showScreen('browse');
-  renderChips(); renderSidebar(); showFav(); updateBrowseHead(); renderFav();
+  renderChips(); renderSidebar(); showFav(); renderSaved();
   updateNavState();
 }
 function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('/vesta'); }
@@ -844,10 +943,12 @@ function updateNavState(){
   updateNavState();
   $('btn-back').addEventListener('click', goHome);
   $('nav-home').addEventListener('click', () => { if (S.screen!=='home' || S.mode!=='trade'){ S.mode='trade'; goHome(); } });
+  $('act-rewind').addEventListener('click', rewindDeck);
   $('act-pass').addEventListener('click', () => { const c=topCon(); if(c) commit('pass', c); });
   $('act-save').addEventListener('click', () => { const c=topCon(); if(c) commit('save', c); });
   $('act-info').addEventListener('click', () => { const c=topCon(); if(c) openSheet(c); });
   $('pscrim').addEventListener('click', closeSheet);
+  $('psheet-x').addEventListener('click', closeSheet);
   ['nav-search','ds-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
