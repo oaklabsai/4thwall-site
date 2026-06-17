@@ -21,6 +21,13 @@
   --orange-2:#393A22;
   --orange-soft:rgba(212,223,158,0.42);
   --sage:#D4DF9E;
+  /* Vesta-search (vesta.html) tokens — LIGHT Vesta range. vesta.html is the sole
+     consumer of the .v*/.va-/.vsb- components; the old dark set in the now-dormant
+     body.v-dark block is overridden by these. olive text, white cards, tea highlight. */
+  --vk:#F0F1E8; --vk-2:#FFFFFF; --vk-3:#E5E8DA;
+  --vcream:#4A4B2F; --vmut:rgba(74,75,47,0.62); --vdim:rgba(74,75,47,0.40);
+  --vline:rgba(74,75,47,0.12); --vline-2:rgba(74,75,47,0.22);
+  --vgreen:#4A4B2F; --vgreen-2:#6B654B; --vgreen-soft:rgba(212,223,158,0.42);
   --display:'Fraunces',Georgia,serif;
   --body:'Inter Tight','Inter',-apple-system,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,monospace;
@@ -210,10 +217,10 @@ body.v-dark{
   --vline-2:rgba(242,238,229,.22);
   --vgreen:#67c694;
   --vgreen-2:#8fdcb2;
-  --vgreen-soft:rgba(103,198,148,.12);
+  --vgreen-soft:rgba(74,75,47,.12);
   background:
-    radial-gradient(1100px 540px at 78% -180px,rgba(103,198,148,.14),transparent 62%),
-    radial-gradient(900px 520px at -140px 36%,rgba(103,198,148,.05),transparent 55%),
+    radial-gradient(1100px 540px at 78% -180px,rgba(74,75,47,.14),transparent 62%),
+    radial-gradient(900px 520px at -140px 36%,rgba(74,75,47,.05),transparent 55%),
     var(--vk);
   color:var(--vcream);
 }
@@ -223,7 +230,7 @@ body.v-dark::after{ /* film grain */
 }
 body.v-dark nav.topnav{background:rgba(15,19,16,.82);border-bottom-color:var(--vline)}
 body.v-dark .nav-logo{color:var(--vcream)}
-body.v-dark .nav-logo .home-tag{color:var(--vgreen);border-color:rgba(103,198,148,.28);background:var(--vgreen-soft)}
+body.v-dark .nav-logo .home-tag{color:var(--vgreen);border-color:rgba(74,75,47,.28);background:var(--vgreen-soft)}
 body.v-dark .nav-a{color:var(--vmut)}
 body.v-dark .nav-a:hover,body.v-dark .nav-a.is-current{color:var(--vcream)}
 body.v-dark .eyebrow{color:var(--vgreen)}
@@ -251,7 +258,7 @@ body.v-dark .card{background:var(--vk-2);border-color:var(--vline)}
 body.v-dark .card.lift:hover{box-shadow:0 24px 60px -24px rgba(0,0,0,.85);border-color:var(--vline-2)}
 body.v-dark .card .sub{color:var(--vmut)}
 body.v-dark a.cardlink:hover h3{color:var(--vgreen-2)}
-body.v-dark .badge{background:var(--vgreen-soft);color:var(--vgreen-2);border-color:rgba(103,198,148,.26)}
+body.v-dark .badge{background:var(--vgreen-soft);color:var(--vgreen-2);border-color:rgba(74,75,47,.26)}
 body.v-dark .badge.plain{background:transparent;border-color:var(--vline-2);color:var(--vmut)}
 body.v-dark .card-block{background:var(--vk-2);border-color:var(--vline)}
 body.v-dark .empty{background:var(--vk-2);border-color:var(--vline-2);color:var(--vmut)}
@@ -265,7 +272,7 @@ body.v-dark .foot-links{color:var(--vmut)}
 /* ── DARK PROFILE SURFACES (/c listed pro on the dark desk) ─── */
 body.v-dark .crumb{color:var(--vdim)}
 body.v-dark .crumb:hover{color:var(--vcream)}
-body.v-dark .lockbox{border-color:rgba(103,198,148,.34);background:linear-gradient(180deg,var(--vgreen-soft),rgba(242,238,229,.02))}
+body.v-dark .lockbox{border-color:rgba(74,75,47,.34);background:linear-gradient(180deg,var(--vgreen-soft),rgba(242,238,229,.02))}
 body.v-dark .lockbox .blur{color:var(--vmut)}
 body.v-dark .contactrow{border-bottom-color:var(--vline)}
 body.v-dark .contactrow b{color:var(--vdim)}
@@ -290,7 +297,7 @@ body.v-dark .linkish{color:var(--vgreen-2)}
 body.v-dark .linkish:hover{color:var(--vcream)}
 body.v-dark .linkish.danger{color:#e6a08f}
 body.v-dark .sharebox input{border-color:var(--vline-2);background:var(--vk-3);color:var(--vcream)}
-body.v-dark .report-banner{background:var(--vgreen-soft);border-color:rgba(103,198,148,.28);color:var(--vgreen-2)}
+body.v-dark .report-banner{background:var(--vgreen-soft);border-color:rgba(74,75,47,.28);color:var(--vgreen-2)}
 
 /* ── VESTA HERO (oversize, editorial) ──────────────────────── */
 .vhero{padding:4.2rem var(--pad) 1.6rem;max-width:var(--max);margin:0 auto;width:100%;position:relative}
@@ -307,7 +314,7 @@ body.v-dark .report-banner{background:var(--vgreen-soft);border-color:rgba(103,1
 .vtile svg{width:26px;height:26px;stroke:var(--vgreen);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .vtile .tl{font-family:var(--display);font-size:1.04rem;font-weight:500;letter-spacing:-.015em;color:var(--vcream)}
 .vtile .ts{font-size:.69rem;color:var(--vdim);line-height:1.45}
-.vtile:hover{transform:translateY(-2px);border-color:rgba(103,198,148,.42);box-shadow:0 18px 44px -20px rgba(0,0,0,.75)}
+.vtile:hover{transform:translateY(-2px);border-color:rgba(74,75,47,.42);box-shadow:0 14px 34px -18px rgba(74,75,47,.28)}
 .vtile.on{border-color:var(--vgreen);background:var(--vgreen-soft)}
 .vtile.on::after{content:"✓";position:absolute;top:.65rem;right:.85rem;color:var(--vgreen-2);font-size:.85rem}
 .vzip{display:none;margin:1.3rem 0 .4rem;max-width:600px}
@@ -317,8 +324,8 @@ body.v-dark .report-banner{background:var(--vgreen-soft);border-color:rgba(103,1
 .vdoors{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
 
 /* ── RICH VERIFIED CARD + FINGERPRINT ──────────────────────── */
-body.v-dark .card.vcard{background:linear-gradient(180deg,rgba(103,198,148,.08),rgba(103,198,148,.02)),var(--vk-2);border-color:rgba(103,198,148,.34)}
-body.v-dark .card.vcard:hover{border-color:rgba(103,198,148,.6)}
+body.v-dark .card.vcard{background:linear-gradient(180deg,rgba(74,75,47,.08),rgba(74,75,47,.02)),var(--vk-2);border-color:rgba(74,75,47,.34)}
+body.v-dark .card.vcard:hover{border-color:rgba(74,75,47,.6)}
 .vrib{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--vgreen-2)}
 .vfp{font-size:.78rem;color:var(--vmut);line-height:1.55;border-top:1px dashed var(--vline);padding-top:.6rem;margin-top:.2rem}
 .vfp b{color:var(--vcream);font-weight:600}
@@ -342,7 +349,7 @@ body.v-dark .card.vcard:hover{border-color:rgba(103,198,148,.6)}
 @media(max-width:560px){.vangle{grid-template-columns:1fr;gap:.3rem}}
 
 /* ── PAPER ARTIFACT (the record stays cream on the dark desk) ─ */
-.vpaper{background:var(--cream);color:var(--ink);border:1px solid rgba(0,0,0,.2);border-radius:22px;padding:clamp(1.4rem,3.2vw,2.3rem);max-width:640px;box-shadow:0 50px 110px -45px rgba(0,0,0,.85);position:relative}
+.vpaper{background:#fff;color:var(--ink);border:1px solid rgba(74,75,47,.12);border-radius:22px;padding:clamp(1.4rem,3.2vw,2.3rem);max-width:640px;box-shadow:0 30px 70px -40px rgba(74,75,47,.3);position:relative}
 body.v-dark .vpaper .note{color:rgba(74,75,47,.62)}
 body.v-dark .vpaper .note b{color:var(--ink)}
 .vpaper .demo-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(74,75,47,.38);margin-bottom:1rem}
@@ -373,11 +380,11 @@ body.v-dark .vpaper .note b{color:var(--ink)}
 .vzip-hero-form{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:1.4rem 0 .5rem;max-width:500px}
 .vzip-gate-input{font-family:var(--body);font-size:1.5rem;font-weight:500;letter-spacing:.2em;padding:.6rem .85rem .6rem 1rem;width:145px;background:var(--vk-2);border:1.5px solid var(--vline-2);border-radius:12px;color:var(--vcream);outline:none;text-align:center;transition:border-color .2s,box-shadow .2s}
 .vzip-gate-input::placeholder{color:var(--vdim);letter-spacing:.06em;font-size:1rem}
-.vzip-gate-input:focus{border-color:var(--vgreen);box-shadow:0 0 0 3px rgba(103,198,148,.15)}
+.vzip-gate-input:focus{border-color:var(--vgreen);box-shadow:0 0 0 3px rgba(74,75,47,.15)}
 
 /* ── NEIGHBORHOOD PULSE ────────────────────────────────────────── */
-.vpulse{display:flex;align-items:flex-start;gap:.9rem;background:var(--vk-2);border:1px solid rgba(103,198,148,.22);border-radius:14px;padding:1rem 1.2rem;margin:.6rem 0 1.4rem;max-width:560px;animation:vUp .3s ease both}
-.vpulse .pdot{width:8px;height:8px;border-radius:50%;background:var(--vgreen);flex-shrink:0;margin-top:.42rem;box-shadow:0 0 10px rgba(103,198,148,.6);animation:vpulse-dot 2s ease-in-out infinite}
+.vpulse{display:flex;align-items:flex-start;gap:.9rem;background:var(--vk-2);border:1px solid rgba(74,75,47,.22);border-radius:14px;padding:1rem 1.2rem;margin:.6rem 0 1.4rem;max-width:560px;animation:vUp .3s ease both}
+.vpulse .pdot{width:8px;height:8px;border-radius:50%;background:var(--vgreen);flex-shrink:0;margin-top:.42rem;box-shadow:0 0 10px rgba(74,75,47,.6);animation:vpulse-dot 2s ease-in-out infinite}
 @keyframes vpulse-dot{0%,100%{opacity:1}50%{opacity:.28}}
 .vpulse .ptext{font-size:.88rem;color:var(--vcream);line-height:1.6}
 .vpulse .pzip{display:block;font-family:var(--mono);font-size:.6rem;color:var(--vgreen);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.18rem}
@@ -423,7 +430,7 @@ body.v-shell footer{display:none}
 .vsb-logo-link svg{width:19px;height:19px;stroke:var(--vcream);flex-shrink:0}
 .vsb-wordmark{display:flex;flex-direction:column;gap:2px}
 .vsb-name{font-size:.7rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--vcream);line-height:1}
-.vsb-product{font-family:var(--mono);font-size:.52rem;letter-spacing:.16em;color:var(--vgreen);background:var(--vgreen-soft);border:1px solid rgba(103,198,148,.26);border-radius:4px;padding:1px 5px;line-height:1.6;width:fit-content}
+.vsb-product{font-family:var(--mono);font-size:.52rem;letter-spacing:.16em;color:var(--vgreen);background:var(--vgreen-soft);border:1px solid rgba(74,75,47,.26);border-radius:4px;padding:1px 5px;line-height:1.6;width:fit-content}
 
 .vsb-nav{display:flex;flex-direction:column;gap:.1rem;padding:0 .8rem;flex:1}
 .vsb-item{display:flex;align-items:center;gap:.75rem;padding:.68rem .85rem;border-radius:10px;font-size:.84rem;color:var(--vmut);text-decoration:none;transition:background .14s,color .14s;line-height:1}
@@ -521,7 +528,7 @@ body.v-shell .searchbar{max-width:600px}
 .va-tile .tn{font-family:var(--display);font-size:.94rem;font-weight:500;letter-spacing:-.012em;color:var(--vcream);line-height:1.1}
 .va-tile .tc{font-family:var(--mono);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim);line-height:1.4}
 .va-tile .tc.has{color:var(--vgreen-2)}
-.va-tile:hover{transform:translateY(-1px);border-color:rgba(103,198,148,.4)}
+.va-tile:hover{transform:translateY(-1px);border-color:rgba(74,75,47,.4)}
 .va-tile.on{border-color:var(--vgreen);background:var(--vgreen-soft)}
 
 /* ── Main grid: center + sticky rail ── */
@@ -560,8 +567,8 @@ body.v-shell .searchbar{max-width:600px}
 /* ── Compare-the-proof ── */
 .vcmp-btn{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim);border:1px solid var(--vline);border-radius:50px;padding:.32rem .7rem;cursor:pointer;transition:all .15s;background:transparent}
 .vcmp-btn:hover{border-color:var(--vcream);color:var(--vcream)}
-.vcmp-btn.on{background:var(--vgreen);border-color:var(--vgreen);color:#12150f}
-.va-cmp-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:1.1rem;z-index:70;background:var(--vk-3);border:1px solid rgba(103,198,148,.45);border-radius:50px;padding:.5rem .55rem .5rem 1.15rem;display:flex;align-items:center;gap:.9rem;box-shadow:0 28px 70px -22px rgba(0,0,0,.95);max-width:min(94vw,640px)}
+.vcmp-btn.on{background:var(--vgreen);border-color:var(--vgreen);color:#F0F1E8}
+.va-cmp-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:1.1rem;z-index:70;background:var(--vk-3);border:1px solid rgba(74,75,47,.45);border-radius:50px;padding:.5rem .55rem .5rem 1.15rem;display:flex;align-items:center;gap:.9rem;box-shadow:0 22px 60px -26px rgba(74,75,47,.4);max-width:min(94vw,640px)}
 .va-cmp-bar .names{font-size:.8rem;color:var(--vcream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .va-cmp-bar .names b{color:var(--vgreen-2);font-weight:600}
 .va-cmp-bar .clr{font-family:var(--mono);font-size:.54rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim);cursor:pointer;flex-shrink:0}
