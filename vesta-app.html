@@ -60,6 +60,8 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .tb-wm { font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:.08em; color:var(--olive); }
 .tb-spacer { flex:1; }
 .tb-tag { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.13em; color:var(--olive); background:var(--tea); padding:3px 8px; border-radius:4px; }
+.tb-logo { display:flex; align-items:center; justify-content:center; width:30px; height:30px; color:var(--olive); }
+.tb-logo svg { width:23px; height:23px; }
 .tb-back { background:none; border:none; cursor:pointer; color:var(--ebony); display:flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; margin-right:2px; border-radius:10px; }
 .tb-back:hover { background:rgba(74,75,47,.07); }
 
@@ -74,8 +76,13 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .trade-tile.sel { background:var(--tea); }
 .trade-tile:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
 .tile-icon { width:34px; height:34px; color:var(--olive); }
+.tile-meta { display:flex; flex-direction:column; gap:2px; }
 .tile-name { font-size:16px; font-weight:600; color:var(--olive); }
-.tile-ct { font-size:12px; color:var(--ebony); }
+.tile-ct { font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; color:var(--ebony); }
+.home-foot { display:flex; align-items:flex-start; gap:11px; margin-top:26px; padding:15px 17px; background:rgba(212,223,158,.3); border:1px solid rgba(74,75,47,.08); border-radius:18px; }
+.home-foot .hf-spark { color:var(--olive); flex-shrink:0; margin-top:1px; display:flex; }
+.home-foot p { font-size:13px; line-height:1.55; color:var(--ebony); }
+.home-foot b { color:var(--olive); font-weight:600; }
 
 /* BROWSE header + chips */
 .browse-hdr { padding:6px 20px 8px; }
@@ -325,11 +332,15 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 
   <!-- HOME (mobile) -->
   <div id="s-home" class="screen active" role="main" aria-label="Pick a trade">
-    <header class="topbar"><span class="tb-wm">4THWALL</span><span class="tb-spacer"></span><span class="tb-tag">VESTA</span></header>
+    <header class="topbar"><span class="tb-spacer"></span><a class="tb-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a></header>
     <main class="home-body">
       <h1 class="home-h1">What do<br>you need?</h1>
       <p class="home-sub">Fairfield County &middot; trusted, vetted pros</p>
       <div class="trades-grid" id="trades-grid" role="list"></div>
+      <div class="home-foot">
+        <span class="hf-spark"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l1.4 5.1L14.5 6.5 9.4 7.9 8 13 6.6 7.9 1.5 6.5 6.6 5.1z"/></svg></span>
+        <p><b>Every pro here is read by Vesta.</b> We analyze the public reviews and Connecticut records, so you only meet the ones worth hiring — no ads, no pay-to-play.</p>
+      </div>
     </main>
   </div>
 
@@ -337,7 +348,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   <div id="s-browse" class="screen" role="main" aria-label="Browse contractors">
     <header class="topbar">
       <button class="tb-back" id="btn-back" aria-label="Back to trades"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
-      <span class="tb-wm">4THWALL</span><span class="tb-spacer"></span><span class="tb-tag">VESTA</span>
+      <span class="tb-spacer"></span><a class="tb-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a>
     </header>
     <div class="browse-hdr">
       <h1 class="browse-h1" id="browse-h1" aria-live="polite">Browse roofers</h1>
@@ -519,6 +530,8 @@ async function loadContractors(){
   if (S.screen === 'browse'){
     if (S.mode === 'saved'){ renderSaved(); }
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
+  } else if (S.screen === 'home'){
+    renderHome(); // fill in the per-trade vetted counts now that data is in
   }
 }
 
@@ -528,8 +541,11 @@ function renderHome(){
   trades.forEach(t => {
     const btn = document.createElement('button');
     btn.className = 'trade-tile'; btn.setAttribute('role','listitem');
-    btn.setAttribute('aria-label', t.label + ' — find a pro');
-    btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span><span class="tile-name">'+t.label+'</span>';
+    const n = byTrade(t.key).length;
+    btn.setAttribute('aria-label', t.label + (n ? ' — ' + n + ' vetted pros' : ' — find a pro'));
+    btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span>'+
+      '<span class="tile-meta"><span class="tile-name">'+t.label+'</span>'+
+      (n ? '<span class="tile-ct">'+n+' vetted</span>' : '')+'</span>';
     btn.addEventListener('click', () => { btn.classList.add('sel'); setTimeout(()=>openBrowse(t.key),120); });
     grid.appendChild(btn);
   });
