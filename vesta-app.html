@@ -320,6 +320,19 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .feed-count { margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:rgba(74,75,47,.55); }
   .feed { flex:1; min-height:0; overflow-y:auto; padding:4px 40px 64px; display:flex; flex-direction:column; gap:14px; }
   .feed-empty { padding:54px 22px; text-align:center; color:var(--ebony); font-size:14px; }
+  /* need-filter chips (homeowner specifics, mined from real specialties) */
+  .feed-needs { display:flex; align-items:center; gap:8px; padding:0 40px 14px; overflow-x:auto; scrollbar-width:none; flex-shrink:0; }
+  .feed-needs::-webkit-scrollbar { display:none; }
+  .need-lbl { font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(74,75,47,.55); flex-shrink:0; margin-right:2px; }
+  .need-chip { flex-shrink:0; font-family:var(--sans); font-size:12.5px; font-weight:500; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:7px 14px; cursor:pointer; white-space:nowrap; box-shadow:var(--sh-row); }
+  .need-chip:hover { border-color:rgba(74,75,47,.3); }
+  .need-chip.on { background:var(--tea); border-color:transparent; }
+  .need-clear { flex-shrink:0; background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:12.5px; font-weight:600; color:var(--ebony); text-decoration:underline; text-underline-offset:2px; padding:7px 6px; }
+  .need-clear:hover { color:var(--olive); }
+  /* top-right cluster on a feed card: the See-full-profile pill + the overflow menu */
+  .fcard-actions-top { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .fc-fullpill { display:inline-flex; align-items:center; gap:5px; font-family:var(--sans); font-size:12px; font-weight:600; color:var(--olive); background:var(--bg); border:1px solid rgba(74,75,47,.14); border-radius:var(--r-pill); padding:6px 13px; text-decoration:none; white-space:nowrap; transition:background .14s, border-color .14s; }
+  .fc-fullpill:hover { background:var(--tea); border-color:transparent; }
 
   .fcard { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:22px; box-shadow:var(--sh-row); padding:20px 22px 15px; transition:box-shadow .16s; }
   .fcard:hover { box-shadow:var(--sh-row-h); }
@@ -427,6 +440,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
         </div>
         <div class="feedwrap" id="feedwrap" hidden>
           <div class="feed-controls" id="feed-controls"></div>
+          <div class="feed-needs" id="feed-needs"></div>
           <div class="feed" id="feed" aria-label="Contractor feed"></div>
         </div>
         <div class="favwrap" id="favwrap" hidden></div>
@@ -506,8 +520,21 @@ const LOCK = `<svg width="13" height="14" viewBox="0 0 14 16" fill="none" stroke
 
 const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, dataLoaded:false, mode:'trade',
             shuffles:{}, pos:{}, deck:[], deckIdx:0, unlocked:{}, history:[], savedTab:'saved',
-            feedTown:'', feedSort:'rank' };
+            feedTown:'', feedSort:'rank', feedNeeds:new Set() };
 const FEED_HIDDEN = new Set();   // desktop feed: "Not interested" hides for the session (not a like/dislike signal)
+// Homeowner-need facets per trade — mined from the real specialties corpus. A firm matches a
+// facet if any of its specialties / known-for strings contains one of the facet keywords (.m).
+// Only facets with >=2 matching firms in the active trade render, so chips are never empty.
+const NEED_FACETS = {
+  roofing: [ {l:'Roof replacement',m:['roof replacement']}, {l:'Repairs & leaks',m:['roof repair','leak']}, {l:'Storm & insurance',m:['storm','insurance']}, {l:'Gutters',m:['gutter']}, {l:'Siding',m:['siding']}, {l:'Skylights',m:['skylight']}, {l:'Cedar & copper',m:['cedar','copper','slate']}, {l:'Commercial',m:['commercial']} ],
+  hvac: [ {l:'Maintenance plans',m:['maintenance']}, {l:'Heating & boilers',m:['heating','boiler','furnace']}, {l:'AC & cooling',m:['cooling','air condition','central air']}, {l:'Water heaters',m:['water heater']}, {l:'Heat pumps & ductless',m:['heat pump','ductless','mini-split','mini split']} ],
+  plumbing: [ {l:'Emergency',m:['emergency','burst','24/7']}, {l:'Drains & clogs',m:['drain','clog','rooter','sewer']}, {l:'Leaks',m:['leak']}, {l:'Water heaters',m:['water heater']}, {l:'Heating',m:['heating','boiler']} ],
+  electrical: [ {l:'EV chargers',m:['ev charger','ev-charger']}, {l:'Emergency',m:['emergency']}, {l:'Lighting',m:['lighting','recessed']}, {l:'Panels & wiring',m:['panel','rewire','wiring','outlet']}, {l:'Generators',m:['generator']}, {l:'Commercial',m:['commercial']} ],
+  paving: [ {l:'Asphalt driveways',m:['asphalt','driveway']}, {l:'Sealcoating',m:['sealcoat']}, {l:'Belgian block',m:['belgian','block']}, {l:'Pavers & masonry',m:['paver','masonry','retaining','stone']}, {l:'Drainage & grading',m:['grading','drainage']} ],
+  masonry: [ {l:'Patios',m:['patio']}, {l:'Walls',m:['wall','retaining']}, {l:'Walkways & steps',m:['walkway','bluestone','steps']}, {l:'Chimneys',m:['chimney']}, {l:'Stone & brick',m:['stone','brick','veneer']}, {l:'Pavers & driveways',m:['paver','driveway','apron']} ],
+  lawn: [ {l:'Lawn maintenance',m:['lawn','mow']}, {l:'Landscape design',m:['design','landscap']}, {l:'Cleanups',m:['cleanup','clean-up','spring','fall']}, {l:'Snow removal',m:['snow','plow']}, {l:'Drainage & walls',m:['drainage','retaining']}, {l:'Tree work',m:['tree']} ],
+  painting: [ {l:'Interior',m:['interior']}, {l:'Exterior',m:['exterior']}, {l:'Cabinets',m:['cabinet']}, {l:'Power washing',m:['power wash','pressure wash']}, {l:'Decks',m:['deck']}, {l:'Carpentry & repair',m:['carpentry','drywall','ceiling','trim']}, {l:'Wallpaper',m:['wallpaper']}, {l:'Historic homes',m:['historic']} ],
+};
 
 const $ = id => document.getElementById(id);
 const desktop = () => window.innerWidth >= 900;
@@ -586,7 +613,8 @@ function mapRow(r){
     ratingBand: r.rating_band || '',
     volumeBand: r.volume_band || '',
     tenureBand: r.tenure_band || '',
-    rankScore: r.rank_score || 0
+    rankScore: r.rank_score || 0,
+    specs: [...(Array.isArray(r.specialties) ? r.specialties : []), ...knownFor].map(x => String(x).toLowerCase())
   };
 }
 function standingLine(r){
@@ -945,9 +973,13 @@ function renderPanel(con){
 
 /* ===== DESKTOP FEED (X/Twitter-style scroll) — desktop-only; mobile never calls these ===== */
 function feedTowns(){ const s=new Set(); byTrade(S.activeTrade).forEach(c=>{ const t=(c.city||'').trim(); if(t) s.add(t); }); return [...s].sort(); }
+function facetMatches(c, f){ const specs=c.specs||[]; return f.m.some(kw => specs.some(s => s.includes(kw))); }
+function activeFacets(){ return (NEED_FACETS[S.activeTrade]||[]).filter(f => S.feedNeeds.has(f.l)); }
 function feedSource(){
   let list = byTrade(S.activeTrade).filter(c => !FEED_HIDDEN.has(c.placeId));
   if (S.feedTown) list = list.filter(c => (c.city||'') === S.feedTown);
+  const facets = activeFacets();
+  if (facets.length) list = list.filter(c => facets.every(f => facetMatches(c, f)));
   const band = b => b==='top10'?2 : b==='top25'?1 : 0;
   const by = k => (a,b) => band(b[k])-band(a[k]) || (b.rankScore-a.rankScore);
   if (S.feedSort==='rating') list = [...list].sort(by('ratingBand'));
@@ -959,15 +991,36 @@ function feedSource(){
 function renderFeedControls(total){
   const c = $('feed-controls'); if(!c) return;
   const towns = feedTowns();
+  const tradeOpts = trades.map(t=>'<option value="'+t.key+'"'+(S.activeTrade===t.key?' selected':'')+'>'+esc(t.label)+'</option>').join('');
   const townOpts = ['<option value="">All towns</option>'].concat(towns.map(t=>'<option value="'+esc(t)+'"'+(S.feedTown===t?' selected':'')+'>'+esc(t)+'</option>')).join('');
   const sorts = [['rank','Vesta’s pick'],['rating','Top rated'],['volume','Most reviewed'],['registered','Registered first']];
   const sortOpts = sorts.map(s=>'<option value="'+s[0]+'"'+(S.feedSort===s[0]?' selected':'')+'>'+esc(s[1])+'</option>').join('');
   c.innerHTML =
+    '<span class="feed-select"><select id="feed-trade" aria-label="Trade">'+tradeOpts+'</select></span>'+
     '<span class="feed-select"><select id="feed-town" aria-label="Filter by town">'+townOpts+'</select></span>'+
     '<span class="feed-select"><select id="feed-sort" aria-label="Sort pros">'+sortOpts+'</select></span>'+
     '<span class="feed-count">'+total+' pro'+(total===1?'':'s')+'</span>';
+  $('feed-trade').addEventListener('change', e=>{ switchTrade(e.target.value); });
   $('feed-town').addEventListener('change', e=>{ S.feedTown=e.target.value; renderFeed(); });
   $('feed-sort').addEventListener('change', e=>{ S.feedSort=e.target.value; renderFeed(); });
+}
+function renderFeedNeeds(){
+  const el = $('feed-needs'); if(!el) return;
+  const base = byTrade(S.activeTrade).filter(c => !FEED_HIDDEN.has(c.placeId) && (!S.feedTown || (c.city||'') === S.feedTown));
+  const facets = (NEED_FACETS[S.activeTrade]||[])
+    .map(f => ({ f, n: base.filter(c => facetMatches(c, f)).length }))
+    .filter(x => x.n >= 2)
+    .sort((a,b) => b.n - a.n);
+  if (!facets.length){ el.innerHTML=''; el.style.display='none'; return; }
+  el.style.display='';
+  el.innerHTML = '<span class="need-lbl">Needs</span>' +
+    facets.map(({f}) => { const on=S.feedNeeds.has(f.l);
+      return '<button class="need-chip'+(on?' on':'')+'" data-need="'+esc(f.l)+'" aria-pressed="'+on+'">'+esc(f.l)+'</button>'; }).join('') +
+    (S.feedNeeds.size ? '<button class="need-clear" id="need-clear">Clear</button>' : '');
+  el.querySelectorAll('.need-chip').forEach(b => b.addEventListener('click', () => {
+    const l = b.dataset.need; if (S.feedNeeds.has(l)) S.feedNeeds.delete(l); else S.feedNeeds.add(l); renderFeed();
+  }));
+  const clr = $('need-clear'); if (clr) clr.addEventListener('click', () => { S.feedNeeds.clear(); renderFeed(); });
 }
 function feedMoreHTML(con){
   const level=confidence(con), note=confidenceNote(con), signals=confidenceSignals(con);
@@ -990,15 +1043,17 @@ function feedCardHTML(con){
       '<div class="fcard-id"><div class="fcard-name">'+esc(con.name)+'</div>'+
         '<div class="fcard-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
         (con.standing?'<div class="fcard-band">'+esc(con.standing)+'</div>':'')+'</div>'+
-      '<div class="fcard-menu">'+
-        '<button class="fc-menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="More options for '+esc(con.name)+'">'+DOTS+'</button>'+
-        '<div class="fmenu" role="menu">'+
-          '<button data-act="save" role="menuitem">'+BOOKMARK+'<span>'+(saved?'Saved':'Save')+'</span></button>'+
-          '<button data-act="copy" role="menuitem">'+LINKIC+'<span>Copy link</span></button>'+
-          '<button data-act="profile" role="menuitem">'+EXTERNAL+'<span>See full profile</span></button>'+
-          '<hr>'+
-          '<button data-act="hide" role="menuitem">'+EYEOFF+'<span>Not interested</span></button>'+
-        '</div></div>'+
+      '<div class="fcard-actions-top">'+
+        '<a class="fc-fullpill" href="/c/'+encodeURIComponent(con.placeId)+'">See full profile <span aria-hidden="true">→</span></a>'+
+        '<div class="fcard-menu">'+
+          '<button class="fc-menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="More options for '+esc(con.name)+'">'+DOTS+'</button>'+
+          '<div class="fmenu" role="menu">'+
+            '<button data-act="save" role="menuitem">'+BOOKMARK+'<span>'+(saved?'Saved':'Save')+'</span></button>'+
+            '<button data-act="copy" role="menuitem">'+LINKIC+'<span>Copy link</span></button>'+
+            '<hr>'+
+            '<button data-act="hide" role="menuitem">'+EYEOFF+'<span>Not interested</span></button>'+
+          '</div></div>'+
+      '</div>'+
     '</div>'+
     '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
     '<div class="fcard-syn clamp">'+esc(con.read)+'</div>'+
@@ -1053,6 +1108,7 @@ function renderFeed(){
   if (S.feedTown && !feedTowns().includes(S.feedTown)) S.feedTown='';
   const list = feedSource();
   renderFeedControls(list.length);
+  renderFeedNeeds();
   if (!S.dataLoaded){ feed.innerHTML='<div class="feed-empty">Loading vetted pros…</div>'; renderFeedRail(0); return; }
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match that filter — try “All towns”.</div>'; renderFeedRail(byTrade(S.activeTrade).length); return; }
   feed.innerHTML = list.map(feedCardHTML).join('');
@@ -1114,6 +1170,7 @@ function goToPro(tradeKey, placeId){
   if (desktop()){
     const c = contractors.find(x => x.placeId === placeId);
     if (c && S.feedTown && (c.city||'') !== S.feedTown) S.feedTown = '';   // clear filter so the target is visible
+    S.feedNeeds = new Set();   // clear need-filters so the target pro is never filtered out
     FEED_HIDDEN.delete(placeId);
     showDeck(); updateBrowseHead(); renderFeed();
     requestAnimationFrame(() => focusFeedCard(placeId));
@@ -1133,7 +1190,7 @@ function goToPro(tradeKey, placeId){
 function showDeck(){ if(desktop()){ $('feedwrap').hidden=false; $('deckwrap').hidden=true; } else { $('deckwrap').hidden=false; $('feedwrap').hidden=true; } $('favwrap').hidden=true; }
 function showFav(){ $('deckwrap').hidden=true; $('feedwrap').hidden=true; $('favwrap').hidden=false; }
 function switchTrade(key){
-  S.mode='trade'; S.activeTrade=key; S.feedTown=''; ensureDeck(key);
+  S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); ensureDeck(key);
   if (S.screen !== 'browse') showScreen('browse');
   renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck();
   updateNavState();
@@ -1148,7 +1205,7 @@ function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('
 
 /* NAV */
 function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; }
-function openBrowse(key){ S.mode='trade'; S.activeTrade=key; S.feedTown=''; ensureDeck(key); showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState(); }
+function openBrowse(key){ S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); ensureDeck(key); showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState(); }
 function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); updateNavState(); }
 function updateNavState(){
   const home=$('nav-home'), saved=$('nav-saved');
