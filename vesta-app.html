@@ -518,8 +518,20 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .atlas-moment form{max-width:520px}
 @media (max-width:560px){ .atlas-moment .am-form-pair{grid-template-columns:1fr} }
 
+/* In-app request — light Vesta palette (the homeowner's side; the Atlas moment stays dark, this does not) */
+.req-form { max-width:560px; margin-top:20px; }
+.req-row { margin-bottom:14px; }
+.req-pair { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.req-label { display:block; font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); margin-bottom:6px; }
+.req-input, .req-select, .req-textarea { width:100%; background:var(--white); border:1px solid rgba(74,75,47,.16); border-radius:12px; color:var(--olive); font-family:var(--sans); font-size:14px; padding:12px 13px; outline:none; box-shadow:var(--sh-row); }
+.req-textarea { min-height:96px; resize:vertical; line-height:1.5; }
+.req-input::placeholder, .req-textarea::placeholder { color:rgba(107,101,75,.55); }
+.req-input:focus, .req-select:focus, .req-textarea:focus { border-color:var(--olive); }
+.req-select { -webkit-appearance:none; appearance:none; cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16' fill='none' stroke='%234A4B2F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='4 6 8 10 12 6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 13px center; padding-right:34px; }
+@media (max-width:560px){ .req-pair { grid-template-columns:1fr; } }
+
 @media (min-width:900px){
-  #s-profile.screen { flex:1; min-width:0; height:100vh; }
+  #s-profile.screen, #s-request.screen { flex:1; min-width:0; height:100vh; }
   .prof-wrap { padding:34px 40px 64px; }
 }
 </style>
@@ -589,6 +601,13 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   <div id="s-profile" class="screen" role="main" aria-label="Contractor profile">
     <div class="prof-scroll" id="prof-scroll">
       <div class="prof-wrap" id="prof-wrap"></div>
+    </div>
+  </div>
+
+  <!-- REQUEST (in-app — Vesta carries your request to one pro, no external page) -->
+  <div id="s-request" class="screen" role="main" aria-label="Request through Vesta">
+    <div class="prof-scroll" id="req-scroll">
+      <div class="prof-wrap" id="req-wrap"></div>
     </div>
   </div>
 
@@ -1183,7 +1202,7 @@ function analysisHTML(con){
 }
 function wireAnalysis(root, con){
   const req = root.querySelector('.va-req');
-  if (req) req.addEventListener('click', () => { location.href = '/vesta/search?mode=request&place='+encodeURIComponent(con.placeId||'')+'&trade='+encodeURIComponent(TRADE_DB[con.trade]||con.trade); });
+  if (req) req.addEventListener('click', () => enterRequest({ placeId:con.placeId, trade:con.trade, name:con.name }));
   const bm = root.querySelector('.va-bm');
   if (bm){ bm.classList.toggle('on', isLiked(con.placeId)); bm.addEventListener('click', () => { const now=toggleLike(con.placeId); bm.classList.toggle('on', now); if(S.mode==='saved'){ renderSaved(); } }); }
 }
@@ -1301,7 +1320,7 @@ function wireFeedCard(con){
   const disc=card.querySelector('.fcard-disclose'), more=card.querySelector('.fcard-more');
   disc.addEventListener('click', ()=>{ const open=more.classList.toggle('open'); disc.setAttribute('aria-expanded',open); if(open) pushHistory(con,'view'); });
   card.querySelector('.fc-save').addEventListener('click', ()=> syncFeedSaveUI(card, toggleLike(con.placeId)));
-  card.querySelector('.fc-req').addEventListener('click', ()=>{ location.href='/vesta/search?mode=request&place='+encodeURIComponent(con.placeId||'')+'&trade='+encodeURIComponent(TRADE_DB[con.trade]||con.trade); });
+  card.querySelector('.fc-req').addEventListener('click', ()=> enterRequest({ placeId:con.placeId, trade:con.trade, name:con.name }));
   const mbtn=card.querySelector('.fc-menu-btn'), menu=card.querySelector('.fmenu');
   mbtn.addEventListener('click', e=>{ e.stopPropagation(); const open=!menu.classList.contains('open'); closeFeedMenus(); menu.classList.toggle('open',open); mbtn.setAttribute('aria-expanded',open); });
   menu.querySelectorAll('button[data-act]').forEach(b=> b.addEventListener('click', e=>{ e.stopPropagation(); const a=b.dataset.act; closeFeedMenus(); feedMenuAction(a, con, card); }));
@@ -1568,12 +1587,11 @@ function profHeroHTML(){
   badges.push(enr ? '<span class="prof-badge plain">◆ Vesta-analyzed from public records</span>' : '<span class="prof-badge plain">Listed — not yet verified</span>');
   if (profData.claimed) badges.push('<span class="prof-badge">Profile claimed</span>');
   if (p.business_status==='CLOSED_TEMPORARILY') badges.push('<span class="prof-badge plain">Temporarily closed</span>');
-  const reqHref = '/vesta/search?mode=request&place='+encodeURIComponent(profData.placeId)+(trade?'&trade='+trade:'');
   return '<button class="prof-crumb" id="prof-back">'+BACKARROW+'<span>Back</span></button>'+
     '<h1 class="prof-name">'+esc(p.name)+'</h1>'+
     '<p class="prof-sub">'+(tName?esc(tName)+' · ':'')+esc(String(p.address||'').replace(/,?\s*(USA|United States)\.?$/i,''))+'</p>'+
     '<div class="prof-badges">'+badges.join('')+'</div>'+
-    '<a class="prof-req" href="'+reqHref+'">Request through Vesta <span aria-hidden="true">→</span></a>'+
+    '<button class="prof-req" id="prof-req-btn">Request through Vesta <span aria-hidden="true">→</span></button>'+
     '<p class="prof-fine">One form — Vesta carries your request to them, replies come straight to you.</p>'+
     (enr
       ? '<p class="prof-note">Vesta built this profile from public records and homeowner reviews — an independent read, not a paid placement. '+esc(p.name)+' hasn’t joined Vesta’s verified network yet, so there’s no documented job history to show here.</p>'
@@ -1669,8 +1687,8 @@ function profClaimHTML(){
   const town = esc((String(p.address||'').split(',')[1]||'').trim());
   const head = 'Is this your business'+(ownerFirst?', '+ownerFirst:'')+'?';
   const claimInner = profData.claimed
-    ? '<p class="am-lede2">✓ Claimed by the business — thank you. Here’s what comes next.</p>'
-    : '<p class="am-lede2">Claim it free — it’s already in front of homeowners'+(town?' in '+town:'')+'. Claiming takes a minute, costs nothing, and puts your name on the read above.</p>'+
+    ? '<p class="am-lede2">✓ This profile has been claimed by the business. Thank you — here’s what comes next.</p>'
+    : '<p class="am-lede2">This profile was assembled from public records and verified customer reviews, and it’s already visible to homeowners'+(town?' in '+town:'')+'. If the business is yours, you’re welcome to claim it — at no cost — to confirm the details are accurate and to be notified the moment a homeowner reaches out.</p>'+
       '<form id="prof-claim">'+
       '<div class="am-form-row"><label for="pcn">Your name *</label><input type="text" id="pcn" required maxlength="80"></div>'+
       '<div class="am-form-row am-form-pair"><div><label for="pcp">Phone *</label><input type="tel" id="pcp" required maxlength="20"></div>'+
@@ -1678,19 +1696,19 @@ function profClaimHTML(){
       '<button class="am-claim-btn" type="submit">Claim this profile</button><span class="prof-status" id="prof-claim-st"></span></form>'+
       '<div class="am-rule"></div>';
   return '<section class="atlas-moment">'+
-    '<div class="am-eyebrow">For the owner · from 4THWALL</div>'+
+    '<div class="am-eyebrow">For the business owner · from 4THWALL</div>'+
     '<h2 class="am-h">'+head+'</h2>'+claimInner+
-    '<div class="am-plabel">Then put it to work — with Atlas</div>'+
-    '<p class="am-lede">Vesta brings homeowners to your door. <b>Atlas makes sure not one of them slips away.</b> '+
-      'While you’re on the job, Atlas answers every call and text in your name — books the work, sends the reminder, asks for the review. '+
-      'The back office the best shops run, without hiring anyone.</p>'+
+    '<div class="am-plabel">When you’re ready to grow · Atlas</div>'+
+    '<p class="am-lede">Vesta introduces homeowners to your business. <b>Atlas is the back office that helps you respond to every one of them.</b> '+
+      'While you’re out on the job, it answers calls and messages in your name, schedules the estimate, and follows up once the work is done — '+
+      'the steady support of a full-time office manager, without the overhead.</p>'+
     '<div class="am-uses">'+
-      '<div class="am-use"><div class="am-n">01</div><h3>Answers in your name, 24/7</h3><p>Every missed call and after-hours text gets a real reply — your services, your pricing, your voice. The lead never goes cold.</p></div>'+
-      '<div class="am-use"><div class="am-n">02</div><h3>Books the job for you</h3><p>It checks availability, sets the appointment, and sends the reminder — so the estimate actually happens.</p></div>'+
-      '<div class="am-use"><div class="am-n">03</div><h3>Earns the next review</h3><p>When the work’s done it follows up and asks the happy customer for the review that brings the next one.</p></div>'+
+      '<div class="am-use"><div class="am-n">01</div><h3>Answers in your name, around the clock</h3><p>Calls and after-hours messages receive a prompt, professional reply — your services, your pricing, your voice — so no inquiry goes unanswered.</p></div>'+
+      '<div class="am-use"><div class="am-n">02</div><h3>Handles your scheduling</h3><p>Checks availability, books the appointment, and sends the reminder — so the estimate actually takes place.</p></div>'+
+      '<div class="am-use"><div class="am-n">03</div><h3>Builds your reputation</h3><p>After the work is complete, it follows up with the customer and invites the review that brings the next one.</p></div>'+
     '</div>'+
-    '<div class="am-cta"><a class="am-pill" href="https://4thwall.solutions" target="_blank" rel="noopener">See what Atlas does →</a>'+
-    '<span class="am-fine">Vesta stays free. Atlas is the paid back office — for when the calls start coming.</span></div>'+
+    '<div class="am-cta"><a class="am-pill" href="https://4thwall.solutions" target="_blank" rel="noopener">See how Atlas works →</a>'+
+    '<span class="am-fine">Vesta is free, always. Atlas is our paid service — for businesses ready to take on more work.</span></div>'+
   '</section>';
 }
 function profRemovalHTML(){
@@ -1708,7 +1726,9 @@ function wireProfile(){
   wireProfBack();
   const unlock=$('prof-unlock'); if(unlock) unlock.addEventListener('click', profUnlock);
   const claim=$('prof-claim'); if(claim) claim.addEventListener('submit', profClaimSubmit);
+  const req=$('prof-req-btn'); if(req) req.addEventListener('click', () => enterRequest({ placeId:profData.placeId, trade:(TRADE_APP[pTradeKey()]||pTradeKey()), name:(profData.p&&profData.p.name)||'' }));
 }
+
 async function profUnlock(){
   const btn=$('prof-unlock'), st=$('prof-unlock-st'); if(!btn) return;
   btn.disabled=true;
@@ -1731,6 +1751,88 @@ async function profClaimSubmit(e){
     btn.disabled=false; st.className='prof-status is-error';
     st.textContent = (r&&r.error==='missing_fields') ? 'Name + valid phone needed.' : (r&&r.error==='rate_limited') ? 'Too many attempts — try later.' : 'Couldn’t send — try again.';
   } catch(_){ btn.disabled=false; st.className='prof-status is-error'; st.textContent='Couldn’t send — try again.'; }
+}
+
+/* ── Request through Vesta (in-app — listed-pro intro relay, no external page) ── */
+let reqData = null;
+function enterRequest(ctx){
+  if (!ctx || !ctx.placeId) return;
+  S.reqFrom = { screen:S.screen };
+  closeSheet(); closeSearch(); if (S.filterOpen) closeFilterSheet(); closeFeedMenus();
+  reqData = { placeId:ctx.placeId, trade:ctx.trade||'', name:ctx.name||'' };
+  showScreen('request'); updateNavState();
+  const sc=$('req-scroll'); if(sc) sc.scrollTop=0;
+  $('req-wrap').innerHTML = requestHTML();
+  wireRequest();
+}
+function requestHTML(){
+  const name = reqData.name ? esc(reqData.name) : 'this pro';
+  const tl = reqData.trade ? esc(tradeLabelOf(reqData.trade)) : '';
+  return '<button class="prof-crumb" id="req-back">'+BACKARROW+'<span>Back</span></button>'+
+    '<h1 class="prof-name">Request through Vesta</h1>'+
+    '<p class="prof-sub">Your request goes to <b style="color:var(--olive)">'+name+'</b>'+(tl?' · '+tl:'')+'. Say it once — Vesta carries it over, and replies come straight to you.</p>'+
+    '<form id="req-form" class="req-form">'+
+      '<div class="req-row"><label class="req-label" for="rq-sum">What’s going on? *</label>'+
+        '<textarea class="req-textarea" id="rq-sum" maxlength="500" placeholder="A short note about the work you need — what’s happening, and where on the property."></textarea></div>'+
+      '<div class="req-row req-pair">'+
+        '<div><label class="req-label" for="rq-name">Your name</label><input class="req-input" id="rq-name" maxlength="80" autocomplete="name"></div>'+
+        '<div><label class="req-label" for="rq-email">Email — replies land here *</label><input class="req-input" id="rq-email" type="email" maxlength="254" autocomplete="email" placeholder="you@example.com"></div>'+
+      '</div>'+
+      '<div class="req-row req-pair">'+
+        '<div><label class="req-label" for="rq-zip">ZIP code</label><input class="req-input" id="rq-zip" maxlength="5" inputmode="numeric" autocomplete="postal-code" placeholder="06824"></div>'+
+        '<div><label class="req-label" for="rq-urg">How soon</label><select class="req-select" id="rq-urg">'+
+          '<option value="planning">Planning ahead</option><option value="soon" selected>In the next few weeks</option><option value="emergency">It’s urgent</option>'+
+        '</select></div>'+
+      '</div>'+
+      '<button class="prof-req" type="submit" style="margin-top:4px">Send request <span aria-hidden="true">→</span></button>'+
+      '<span class="prof-status" id="rq-status"></span>'+
+      '<p class="prof-fine" style="margin-top:14px">Vesta sends '+name+' a one-time introduction with your note and your email as the reply-to. Your details go only to this pro — never sold, never a mailing list.</p>'+
+    '</form>'+
+    '<div id="req-result"></div>';
+}
+function wireRequest(){
+  const b=$('req-back'); if(b) b.addEventListener('click', backFromRequest);
+  const f=$('req-form'); if(f) f.addEventListener('submit', requestSubmit);
+}
+function backFromRequest(){
+  const f = S.reqFrom || {};
+  if (f.screen==='profile'){ showScreen('profile'); updateNavState(); return; }
+  if (f.screen==='browse'){ showScreen('browse'); updateNavState(); return; }
+  openBrowse(S.activeTrade || 'roofing');
+}
+async function requestSubmit(e){
+  e.preventDefault();
+  const st=$('rq-status'), out=$('req-result'), btn=e.target.querySelector('button[type=submit]');
+  const fail=(m)=>{ st.className='prof-status is-error'; st.textContent=m; btn.disabled=false; };
+  const summary=(($('rq-sum')||{}).value||'').trim().slice(0,500);
+  const name=(($('rq-name')||{}).value||'').trim().slice(0,80);
+  const email=(($('rq-email')||{}).value||'').trim();
+  const zip=(($('rq-zip')||{}).value||'').replace(/[^\d]/g,'').slice(0,5);
+  const urgency=($('rq-urg')||{}).value||'soon';
+  if (!summary) return fail('Say what’s going on first.');
+  if (!/.+@.+\..+/.test(email)) return fail('Add an email — replies land there.');
+  btn.disabled=true; st.className='prof-status'; st.textContent='Sending…';
+  const trade = TRADE_DB[reqData.trade] || reqData.trade || '';
+  const who = esc(reqData.name||'this pro');
+  try {
+    const { data:r } = await HOME.api('/request', { method:'POST', body:{ trade, zip, summary, urgency, name, email, place_ids:[reqData.placeId] } });
+    if (r && r.ok){
+      const t = (r.targets||[])[0] || {};
+      let msg;
+      if (t.emailed) msg = '<b style="color:var(--olive)">'+who+'</b> just received your request — a reply will come to <b style="color:var(--olive)">'+esc(email)+'</b>.';
+      else if (!r.email_configured) msg = 'Your request to <b style="color:var(--olive)">'+who+'</b> is in — direct delivery is coming online, and we’ll route it to them the moment it does.';
+      else msg = 'We couldn’t find a public inbox for <b style="color:var(--olive)">'+who+'</b> yet — your request is saved, and we’ll relay it as soon as we can reach them.';
+      $('req-form').hidden = true;
+      out.innerHTML = '<h2 class="prof-sec-h">Request on its way ✓</h2>'+
+        '<div class="prof-block"><p style="font-size:15px;line-height:1.6;color:var(--olive)">'+msg+'</p>'+
+        '<p class="prof-fine" style="margin-top:12px">Whoever answers, you talk to them directly — Vesta steps out of the conversation.</p>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><button type="button" class="de-btn ghost" id="rq-back2">Done</button></div></div>';
+      const bb=$('rq-back2'); if(bb) bb.addEventListener('click', backFromRequest);
+      const sc=$('req-scroll'); if(sc) sc.scrollTop=0;
+    } else {
+      fail(r && r.error==='rate_limited' ? 'Daily send limit reached — try again tomorrow.' : 'Couldn’t send — try again.');
+    }
+  } catch(_){ fail('Couldn’t send — try again.'); }
 }
 
 /* VIEW TOGGLES */
@@ -1805,7 +1907,7 @@ function updateNavState(){
   let _wasDesktop = desktop();
   window.addEventListener('resize', () => {
     const d = desktop(); if (d===_wasDesktop) return; _wasDesktop = d;
-    if (d && S.screen!=='browse' && S.screen!=='profile'){ openBrowse(S.activeTrade); return; }   // desktop hides the home screen → land in the feed
+    if (d && S.screen!=='browse' && S.screen!=='profile' && S.screen!=='request'){ openBrowse(S.activeTrade); return; }   // desktop hides the home screen → land in the feed
     if (S.screen==='browse'){ if (S.mode==='saved') renderSaved(); else { showDeck(); updateBrowseHead(); renderDeck(); } }
   });
   // Deep-link: /c/:placeId (now rewritten to this app) or ?place= opens the profile in-app.
