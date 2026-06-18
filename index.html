@@ -336,27 +336,27 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
    ══════════════════════════════════════════════════ */
 .hero-new{background:#F4F2EE;padding:calc(4.5rem + 48px) var(--pad) 0;overflow:visible}
 .hero-card{background:transparent;border-radius:0;display:grid;grid-template-columns:1fr minmax(0,680px) 1fr;align-items:end;max-width:var(--max);margin:0 auto;position:relative;overflow:visible}
-.hn-side{display:flex;align-items:flex-end}
+.hn-side{display:flex;align-items:stretch;align-self:stretch}
 .hn-side--atlas{justify-content:flex-start}
 .hn-side--vesta{justify-content:flex-end}
 /* ── Cascade panels ── */
-.hn-cascade{width:clamp(200px,20vw,290px);padding-bottom:1.4rem;padding-top:.6rem}
-.hn-cas-brand{font-family:var(--body);font-weight:700;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:#12100E;display:flex;align-items:center;gap:.4rem;margin-bottom:.22rem}
-.hn-cas-spark{font-size:.65em;color:#4A4B2F;line-height:1}
-.hn-cas-sub{font-size:.67rem;color:rgba(18,16,14,.48);line-height:1.45;margin-bottom:.95rem;max-width:88%}
-.hn-cas-list{position:relative;display:flex;flex-direction:column;padding-left:.95rem}
-.hn-cas-list::before{content:"";position:absolute;left:.28rem;top:.55rem;bottom:.55rem;border-left:1.5px dashed rgba(18,16,14,.17)}
-.hn-cascade--vesta .hn-cas-list::before{border-left-color:rgba(74,75,47,.22)}
-.hn-ci{display:flex;align-items:flex-start;gap:.55rem;padding:.35rem 0;position:relative}
-.hn-ci-dot{position:absolute;left:-.7rem;top:.62rem;width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.hn-cascade{width:clamp(200px,20vw,290px);height:100%;display:flex;flex-direction:column;padding-bottom:1.6rem;padding-top:1rem}
+.hn-cas-brand{font-family:var(--mono);font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:#12100E;display:flex;align-items:center;gap:.45rem;margin-bottom:.3rem}
+.hn-cas-spark{color:#4A4B2F;line-height:1}
+.hn-cas-sub{font-family:var(--mono);font-size:.62rem;letter-spacing:.01em;color:rgba(18,16,14,.44);line-height:1.5;margin-bottom:0;max-width:92%}
+.hn-cas-list{position:relative;flex:1;display:flex;flex-direction:column;justify-content:space-evenly;padding-left:.95rem;margin-top:.9rem}
+.hn-cas-list::before{content:"";position:absolute;left:.28rem;top:.4rem;bottom:.4rem;border-left:1.5px dashed rgba(18,16,14,.15)}
+.hn-cascade--vesta .hn-cas-list::before{border-left-color:rgba(74,75,47,.2)}
+.hn-ci{display:flex;align-items:flex-start;gap:.55rem;position:relative}
+.hn-ci-dot{position:absolute;left:-.7rem;top:.55rem;width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .hn-cascade--atlas .hn-ci-dot{background:#12100E}
 .hn-cascade--vesta .hn-ci-dot{background:#4A4B2F}
 .hn-ci-icon{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .hn-cascade--atlas .hn-ci-icon{background:#12100E;box-shadow:0 2px 8px rgba(0,0,0,.22)}
 .hn-cascade--vesta .hn-ci-icon{background:rgba(212,223,158,.45)}
 .hn-ci-text{padding-top:.06rem}
-.hn-ci-label{font-size:.71rem;font-weight:700;color:#12100E;line-height:1.25;margin-bottom:.08rem}
-.hn-ci-desc{font-size:.62rem;color:rgba(18,16,14,.5);line-height:1.45}
+.hn-ci-label{font-family:var(--body);font-size:.72rem;font-weight:650;color:#12100E;line-height:1.25;margin-bottom:.07rem;letter-spacing:-.012em}
+.hn-ci-desc{font-family:var(--body);font-size:.62rem;color:rgba(18,16,14,.48);line-height:1.45;letter-spacing:-.008em}
 /* Headline */
 .hn-headline{font-family:var(--display);font-size:clamp(2.6rem,5.2vw,5.2rem);font-weight:700;line-height:.9;letter-spacing:-.04em;color:#12100E;margin-bottom:1rem}
 .hn-headline em{font-style:italic;font-weight:700;color:#4A4B2F}
@@ -1020,7 +1020,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Review Collected</div><div class="hn-ci-desc">Request, manage, and collect 5-star reviews.</div></div></div>
           <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Campaigns Running</div><div class="hn-ci-desc">Seasonal and storm campaigns that generate work.</div></div></div>
           <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">AI Visibility</div><div class="hn-ci-desc">Your business surfaces when AI recommends contractors to homeowners.</div></div></div>
-          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 270 270" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M99.4 151.2c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h12.9v12.9z" fill="#E01E5A"/><path d="M105.9 151.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9v-32.3z" fill="#E01E5A"/><path d="M118.8 99c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9V99h-12.9z" fill="#36C5F0"/><path d="M118.8 105.9c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H86.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/><path d="M170.6 118.8c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9h-12.9v-12.9z" fill="#2EB67D"/><path d="M163.7 118.8c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V86.5c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/><path d="M150.8 170.6c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9v-12.9h12.9z" fill="#ECB22E"/><path d="M150.8 163.7c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9h-32.3z" fill="#ECB22E"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Slack Assistant</div><div class="hn-ci-desc">Your AI operations assistant, living inside Slack.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="68 68 134 134" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M99.4 151.2c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h12.9v12.9z" fill="#E01E5A"/><path d="M105.9 151.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9v-32.3z" fill="#E01E5A"/><path d="M118.8 99c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9V99h-12.9z" fill="#36C5F0"/><path d="M118.8 105.9c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H86.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/><path d="M170.6 118.8c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9h-12.9v-12.9z" fill="#2EB67D"/><path d="M163.7 118.8c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V86.5c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/><path d="M150.8 170.6c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9v-12.9h12.9z" fill="#ECB22E"/><path d="M150.8 163.7c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9h-32.3z" fill="#ECB22E"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Slack Assistant</div><div class="hn-ci-desc">Your AI operations assistant, living inside Slack.</div></div></div>
         </div>
       </div>
     </div>
