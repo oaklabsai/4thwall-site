@@ -339,7 +339,24 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 .hn-side{display:flex;align-items:flex-end}
 .hn-side--atlas{justify-content:flex-start}
 .hn-side--vesta{justify-content:flex-end}
-.hn-side img{width:clamp(200px,21vw,300px);display:block}
+/* ── Cascade panels ── */
+.hn-cascade{width:clamp(200px,20vw,290px);padding-bottom:1.4rem;padding-top:.6rem}
+.hn-cas-brand{font-family:var(--body);font-weight:700;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:#12100E;display:flex;align-items:center;gap:.4rem;margin-bottom:.22rem}
+.hn-cas-spark{font-size:.65em;color:#4A4B2F;line-height:1}
+.hn-cas-sub{font-size:.67rem;color:rgba(18,16,14,.48);line-height:1.45;margin-bottom:.95rem;max-width:88%}
+.hn-cas-list{position:relative;display:flex;flex-direction:column;padding-left:.95rem}
+.hn-cas-list::before{content:"";position:absolute;left:.28rem;top:.55rem;bottom:.55rem;border-left:1.5px dashed rgba(18,16,14,.17)}
+.hn-cascade--vesta .hn-cas-list::before{border-left-color:rgba(74,75,47,.22)}
+.hn-ci{display:flex;align-items:flex-start;gap:.55rem;padding:.35rem 0;position:relative}
+.hn-ci-dot{position:absolute;left:-.7rem;top:.62rem;width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.hn-cascade--atlas .hn-ci-dot{background:#12100E}
+.hn-cascade--vesta .hn-ci-dot{background:#4A4B2F}
+.hn-ci-icon{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.hn-cascade--atlas .hn-ci-icon{background:#12100E;box-shadow:0 2px 8px rgba(0,0,0,.22)}
+.hn-cascade--vesta .hn-ci-icon{background:rgba(212,223,158,.45)}
+.hn-ci-text{padding-top:.06rem}
+.hn-ci-label{font-size:.71rem;font-weight:700;color:#12100E;line-height:1.25;margin-bottom:.08rem}
+.hn-ci-desc{font-size:.62rem;color:rgba(18,16,14,.5);line-height:1.45}
 /* Headline */
 .hn-headline{font-family:var(--display);font-size:clamp(2.6rem,5.2vw,5.2rem);font-weight:700;line-height:.9;letter-spacing:-.04em;color:#12100E;margin-bottom:1rem}
 .hn-headline em{font-style:italic;font-weight:700;color:#4A4B2F}
@@ -993,7 +1010,19 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <section class="hero-new" id="home">
   <div class="hero-card">
     <div class="hn-side hn-side--atlas" aria-hidden="true">
-      <img src="/hero-atlas.png" alt="">
+      <div class="hn-cascade hn-cascade--atlas">
+        <div class="hn-cas-brand">ATLAS <span class="hn-cas-spark">✦</span></div>
+        <div class="hn-cas-sub">AI back office for contractors</div>
+        <div class="hn-cas-list">
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="#fff"/><circle cx="12" cy="10" r="1" fill="#fff"/><circle cx="15" cy="10" r="1" fill="#fff"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Lead Arrives</div><div class="hn-ci-desc">Calls, texts, and inquiries captured 24/7.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Qualify & Book</div><div class="hn-ci-desc">We qualify the lead and book the estimate automatically.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 4v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Job in Progress</div><div class="hn-ci-desc">Keep customers updated and crews informed.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Review Collected</div><div class="hn-ci-desc">Request, manage, and collect 5-star reviews.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Campaigns Running</div><div class="hn-ci-desc">Seasonal and storm campaigns that generate work.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">AI Visibility</div><div class="hn-ci-desc">Your business surfaces when AI recommends contractors to homeowners.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="1" y="1" width="9" height="9" rx="2" fill="#E01E5A"/><rect x="1" y="14" width="9" height="9" rx="2" fill="#36C5F0"/><rect x="14" y="1" width="9" height="9" rx="2" fill="#2EB67D"/><rect x="14" y="14" width="9" height="9" rx="2" fill="#ECB22E"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Slack Assistant</div><div class="hn-ci-desc">Your AI operations assistant, living inside Slack.</div></div></div>
+        </div>
+      </div>
     </div>
     <div class="hero-center">
       <h1 class="hn-headline">AI infrastructure <span class="hn-sparkle">✦</span><br><em>for the trades.</em></h1>
@@ -1004,7 +1033,19 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </div>
     </div>
     <div class="hn-side hn-side--vesta" aria-hidden="true">
-      <img src="/hero-vesta.png" alt="">
+      <div class="hn-cascade hn-cascade--vesta">
+        <div class="hn-cas-brand">VESTA <span class="hn-cas-spark">✦</span></div>
+        <div class="hn-cas-sub">The homeowner directory that shows who actually delivers</div>
+        <div class="hn-cas-list">
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A4B2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Search by ZIP</div><div class="hn-ci-desc">Find contractors in your area based on proven performance.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A4B2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Verified Performance</div><div class="hn-ci-desc">Real response times, real job completions, and homeowner confirmations.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A4B2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Public Record Sources</div><div class="hn-ci-desc">Licensing, certifications, and operational history—not marketing.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A4B2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Listed vs Verified</div><div class="hn-ci-desc">Listed contractors have a public record. Verified have a proven one.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A4B2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Save & Compare</div><div class="hn-ci-desc">Keep track of contractors and compare who actually performs.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A4B2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Always Up To Date</div><div class="hn-ci-desc">Profiles update as new work is completed and confirmed.</div></div></div>
+          <div class="hn-ci"><span class="hn-ci-dot"></span><div class="hn-ci-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A4B2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="hn-ci-text"><div class="hn-ci-label">Find with Confidence</div><div class="hn-ci-desc">Not based on who paid for the top spot. Based on what they've proven.</div></div></div>
+        </div>
+      </div>
     </div>
   </div><!-- /hero-card -->
 </section>
