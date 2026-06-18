@@ -1306,46 +1306,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .trust-item svg{width:28px;height:28px;color:var(--ink);opacity:.55}
 @media(max-width:640px){.trust-item{padding:.5rem 1rem;font-size:.55rem}.trust-item svg{width:22px;height:22px}}
 
-/* ── Bottom value props ── */
-.value-strip{background:var(--ink);color:var(--cream);padding:5rem var(--pad) 5.5rem;margin-top:3.5rem}
-/* Toggle container */
-.ba-wrap{max-width:var(--max);margin:0 auto}
-.ba-toggle{display:flex;align-items:center;justify-content:center;margin-bottom:2.8rem}
-.ba-toggle-track{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:99px;padding:4px;gap:4px;position:relative}
-.ba-toggle-btn{font-family:var(--mono);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;padding:.55rem 1.4rem;border-radius:99px;border:none;cursor:pointer;transition:background .22s,color .22s;background:transparent;color:rgba(245,243,238,.38);line-height:1}
-.ba-toggle-btn.is-active{background:rgba(255,255,255,.1);color:rgba(245,243,238,.9)}
-.ba-toggle-btn.is-active.is-after{background:rgba(74,75,47,.7);color:#D4DF9E}
-/* Panel */
-.ba-panel{border:1px solid rgba(255,255,255,.07);border-radius:20px;position:relative;overflow:hidden;transition:border-color .3s}
-.ba-panel.is-after{border-color:rgba(212,223,158,.12)}
-.ba-panel::before{content:"";position:absolute;inset:0;border-radius:20px;opacity:0;background:rgba(74,75,47,.18);transition:opacity .35s;pointer-events:none}
-.ba-panel.is-after::before{opacity:1}
-/* Panel content fade — stack both states, show one at a time */
-.ba-state{display:flex;flex-direction:column;gap:1.6rem;padding:clamp(1.8rem,4vw,2.8rem) clamp(1.6rem,4vw,2.6rem);transition:opacity .25s,transform .25s;will-change:opacity,transform}
-.ba-state.is-hidden{display:none}
-.ba-state.is-visible{display:flex}
-/* Inner elements */
-.ba-headline{font-family:var(--display);font-size:clamp(1.55rem,2.8vw,2.2rem);font-weight:400;line-height:1.08;letter-spacing:-.03em;margin-bottom:.4rem}
-.ba-state--before .ba-headline{color:rgba(240,242,239,.62)}
-.ba-state--after .ba-headline{color:rgba(240,242,239,.9)}
-.ba-state--after .ba-headline em{font-style:italic;color:#D4DF9E}
-.ba-scene{font-family:var(--mono);font-size:.68rem;letter-spacing:.03em;line-height:1.5}
-.ba-state--before .ba-scene{color:rgba(245,243,238,.28)}
-.ba-state--after .ba-scene{color:rgba(212,223,158,.4)}
-.ba-msgs{display:flex;flex-direction:column;gap:.55rem}
-.ba-msg{display:flex;align-items:baseline;gap:.7rem}
-.ba-msg-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:.48rem}
-.ba-state--before .ba-msg-dot{background:rgba(245,243,238,.2)}
-.ba-state--after .ba-msg-dot{background:rgba(212,223,158,.55)}
-.ba-msg-text{font-size:.88rem;line-height:1.55}
-.ba-state--before .ba-msg-text{color:rgba(245,243,238,.4)}
-.ba-state--after .ba-msg-text{color:rgba(245,243,238,.78)}
-.ba-outcome{padding-top:1.4rem;border-top:1px solid rgba(255,255,255,.07);font-size:.88rem;line-height:1.55}
-.ba-state--before .ba-outcome{color:rgba(245,243,238,.35)}
-.ba-state--after .ba-outcome{color:rgba(212,223,158,.72)}
-.ba-outcome strong{display:block;font-weight:650;margin-bottom:.2rem;font-size:.92rem}
-.ba-state--before .ba-outcome strong{color:rgba(245,243,238,.52)}
-.ba-state--after .ba-outcome strong{color:#D4DF9E}
 </style>
 
 <!-- ── Product Pills ── -->
@@ -1444,84 +1404,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div>
 </div>
 
-<!-- ── Value strip ── -->
-<div class="value-strip">
-  <div class="ba-wrap">
-    <!-- Toggle -->
-    <div class="ba-toggle">
-      <div class="ba-toggle-track" role="group" aria-label="Compare with and without Atlas">
-        <button class="ba-toggle-btn is-active" data-ba="before" aria-pressed="true">Without Atlas</button>
-        <button class="ba-toggle-btn is-after" data-ba="after" aria-pressed="false">With Atlas</button>
-      </div>
-    </div>
-    <!-- Panel -->
-    <div class="ba-panel" id="ba-panel">
-      <!-- WITHOUT state -->
-      <div class="ba-state ba-state--before is-visible" id="ba-before">
-        <div>
-          <h3 class="ba-headline">Running the business<br>is the second job.</h3>
-          <p class="ba-scene">You're good at the trade. The back office is a different skill set — and there are only so many hours.</p>
-        </div>
-        <div class="ba-msgs">
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">Lead comes in while you're on the job — reply when you can</div></div>
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">Job wraps at 6pm · review ask goes out when you remember</div></div>
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">Slow month shows up before the campaign goes out</div></div>
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">Follow-ups happen when the day slows down — which it doesn't</div></div>
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">AI search — something to figure out when there's time</div></div>
-        </div>
-        <div class="ba-outcome">
-          <strong>You're not dropping the ball. You're carrying too many of them.</strong>
-          The work gets done. The system around it is harder to keep up with.
-        </div>
-      </div>
-      <!-- WITH state -->
-      <div class="ba-state ba-state--after is-hidden" id="ba-after">
-        <div>
-          <h3 class="ba-headline">Atlas runs<br><em>the back office.</em></h3>
-          <p class="ba-scene">Every lead qualified, every job tracked, every review requested, every campaign timed.</p>
-        </div>
-        <div class="ba-msgs">
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">3 leads · qualified, 2 estimates booked automatically</div></div>
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">Job closed Tuesday · 5★ review received Thursday</div></div>
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">November · 6 jobs booked, 3 more in pipeline</div></div>
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">Storm campaign · live, 5 leads generated this week</div></div>
-          <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-text">AI search for "best roofer in Fairfield County" · your profile surfaces</div></div>
-        </div>
-        <div class="ba-outcome">
-          <strong>The business runs whether you're on the job or off it.</strong>
-          Atlas handles the pipeline — you handle the work.
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<script>
-(function(){
-  var btns = document.querySelectorAll('.ba-toggle-btn');
-  var panel = document.getElementById('ba-panel');
-  var before = document.getElementById('ba-before');
-  var after = document.getElementById('ba-after');
-
-  function setActive(which) {
-    btns.forEach(function(b){ b.classList.remove('is-active'); b.setAttribute('aria-pressed','false'); });
-    document.querySelector('[data-ba="'+which+'"]').classList.add('is-active');
-    document.querySelector('[data-ba="'+which+'"]').setAttribute('aria-pressed','true');
-    if (which === 'after') {
-      before.classList.replace('is-visible','is-hidden');
-      after.classList.replace('is-hidden','is-visible');
-      panel.classList.add('is-after');
-    } else {
-      after.classList.replace('is-visible','is-hidden');
-      before.classList.replace('is-hidden','is-visible');
-      panel.classList.remove('is-after');
-    }
-  }
-
-  btns.forEach(function(b){
-    b.addEventListener('click', function(){ setActive(this.dataset.ba); });
-  });
-})();
-</script>
 
 <!-- legacy section anchor kept for scroll links -->
 <section id="products-legacy" style="display:none" aria-hidden="true"></section>
