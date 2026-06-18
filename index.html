@@ -335,7 +335,11 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
    Style: Dimensional Layering (UI/UX Pro Max)
    ══════════════════════════════════════════════════ */
 .hero-new{background:#F4F2EE;padding:calc(4.5rem + 48px) var(--pad) 0;overflow:visible}
-.hero-card{background:transparent;border-radius:0;display:flex;justify-content:center;max-width:var(--max);margin:0 auto;position:relative;overflow:visible}
+.hero-card{background:transparent;border-radius:0;display:grid;grid-template-columns:1fr minmax(0,680px) 1fr;align-items:end;max-width:var(--max);margin:0 auto;position:relative;overflow:visible}
+.hn-side{display:flex;align-items:flex-end}
+.hn-side--atlas{justify-content:flex-start}
+.hn-side--vesta{justify-content:flex-end}
+.hn-side img{width:clamp(180px,18vw,260px);display:block}
 /* Headline */
 .hn-headline{font-family:var(--display);font-size:clamp(2.6rem,5.2vw,5.2rem);font-weight:700;line-height:.9;letter-spacing:-.04em;color:#12100E;margin-bottom:1rem}
 .hn-headline em{font-style:italic;font-weight:700;color:#4A4B2F}
@@ -407,6 +411,7 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 @media(max-width:1000px){
   .hero-card{grid-template-columns:1fr;min-height:0;overflow:hidden}
   .hero-center{order:-1;padding:2.2rem 1.5rem 2.8rem}
+  .hn-side{display:none}
   .hero-prod{display:none}
   .hn-headline{font-size:clamp(2.4rem,7vw,4rem)}
   .stat-card{border-radius:16px}
@@ -987,6 +992,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <!-- ════════════════════ HERO ════════════════════ -->
 <section class="hero-new" id="home">
   <div class="hero-card">
+    <div class="hn-side hn-side--atlas" aria-hidden="true">
+      <img src="/hero-atlas.png" alt="">
+    </div>
     <div class="hero-center">
       <h1 class="hn-headline">AI infrastructure <span class="hn-sparkle">✦</span><br><em>for the trades.</em></h1>
       <p class="hn-sub">Leads answered. Jobs booked. Reviews collected — <em>all on autopilot.</em></p>
@@ -994,6 +1002,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <a href="#contact" class="hn-btn">Book a call →</a>
         <a href="#products" class="hn-link-secondary">See the products <span style="font-family:var(--display)">↓</span></a>
       </div>
+    </div>
+    <div class="hn-side hn-side--vesta" aria-hidden="true">
+      <img src="/hero-vesta.png" alt="">
     </div>
   </div><!-- /hero-card -->
 </section>
