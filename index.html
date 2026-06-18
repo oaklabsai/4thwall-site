@@ -406,8 +406,12 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 /* Hide removed sections */
 .trust-bar,.doormat{display:none}
 /* Stat strip — floating elevation card */
-.stat-strip-new{background:#F4F2EE;padding:2.6rem var(--pad) 0}
-.stat-card{display:flex;align-items:stretch;background:#fff;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);max-width:900px;margin:0 auto;overflow:hidden}
+.stat-strip-new{background:#F4F2EE;padding:3.5rem var(--pad) 0}
+.proof-statement{max-width:860px;margin:0 auto;text-align:center}
+.proof-eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(18,16,14,.38);margin-bottom:1.1rem}
+.proof-punch{font-family:var(--display);font-size:clamp(2rem,4.5vw,3.6rem);font-weight:400;line-height:1.08;letter-spacing:-.035em;color:#12100E;margin-bottom:.85rem}
+.proof-punch em{font-style:italic;color:#4A4B2F}
+.proof-under{font-family:var(--body);font-size:1rem;color:rgba(18,16,14,.48);line-height:1.6;max-width:520px;margin:0 auto}
 .stat-si{display:flex;align-items:center;gap:.9rem;padding:1.4rem 2rem;flex:1}
 .stat-si+.stat-si{border-left:1px solid rgba(18,16,14,.07)}
 .stat-sep{display:none}
@@ -1052,34 +1056,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- Stat strip — floating elevation card -->
 <div class="stat-strip-new">
-  <div class="stat-card">
-    <div class="stat-si">
-      <div class="stat-si-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30321C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      </div>
-      <div class="stat-si-body">
-        <span class="stat-si-label">&lt; 60-sec response</span>
-        <span class="stat-si-sub">AI replies before a competitor even sees the lead.</span>
-      </div>
-    </div>
-    <div class="stat-si">
-      <div class="stat-si-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30321C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      </div>
-      <div class="stat-si-body">
-        <span class="stat-si-label">24/7 — never miss a lead</span>
-        <span class="stat-si-sub">Every night. Every weekend. Every holiday.</span>
-      </div>
-    </div>
-    <div class="stat-si">
-      <div class="stat-si-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30321C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </div>
-      <div class="stat-si-body">
-        <span class="stat-si-label">Reviews on autopilot</span>
-        <span class="stat-si-sub">Sent after every job — zero chasing required.</span>
-      </div>
-    </div>
+  <div class="proof-statement">
+    <p class="proof-eyebrow">The only rule that matters</p>
+    <h2 class="proof-punch">The first contractor to respond<br><em>gets the job.</em></h2>
+    <p class="proof-under">We built Atlas around that single truth. Every feature — instant replies, automated booking, review follow-ups — exists to make sure that contractor is you.</p>
   </div>
 </div>
 
@@ -1328,15 +1308,37 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 /* ── Bottom value props ── */
 .value-strip{background:var(--ink);color:var(--cream);padding:5rem var(--pad) 5.5rem;margin-top:3.5rem}
-.value-strip-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(212,223,158,.5);text-align:center;margin-bottom:3.5rem;max-width:var(--max);margin-left:auto;margin-right:auto}
-.value-strip-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:3.5rem;border-top:1px solid rgba(255,255,255,.06);padding-top:3.5rem}
-@media(max-width:760px){.value-strip-inner{grid-template-columns:1fr;gap:2.5rem}}
-.vs-item{display:flex;align-items:flex-start;gap:1.2rem}
-.vs-icon{width:48px;height:48px;border-radius:12px;background:rgba(212,223,158,.08);border:1px solid rgba(212,223,158,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.vs-icon svg{width:20px;height:20px;color:rgba(212,223,158,.7)}
-.vs-body{}
-.vs-h{font-family:var(--display);font-size:1.2rem;font-weight:400;letter-spacing:-.02em;margin-bottom:.55rem;color:rgba(240,242,239,.92)}
-.vs-d{font-size:.88rem;line-height:1.7;color:rgba(245,243,238,.48)}
+.ba-wrap{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:20px;overflow:hidden}
+@media(max-width:760px){.ba-wrap{grid-template-columns:1fr}}
+.ba-col{padding:2.8rem 2.6rem 3rem;display:flex;flex-direction:column;gap:1.5rem}
+.ba-col--before{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.ba-col--after{background:rgba(74,75,47,.22);border:1px solid rgba(212,223,158,.1);border-left:none}
+@media(max-width:760px){.ba-col--after{border-left:1px solid rgba(212,223,158,.1);border-top:none}}
+.ba-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;display:flex;align-items:center;gap:.7rem;margin-bottom:.3rem}
+.ba-col--before .ba-label{color:rgba(245,243,238,.3)}
+.ba-col--before .ba-label::before{content:"";width:14px;height:1px;background:currentColor}
+.ba-col--after .ba-label{color:rgba(212,223,158,.7)}
+.ba-col--after .ba-label::before{content:"";width:14px;height:1px;background:currentColor}
+.ba-headline{font-family:var(--display);font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:400;line-height:1.1;letter-spacing:-.03em;color:rgba(240,242,239,.85);margin-bottom:.6rem}
+.ba-col--before .ba-headline{color:rgba(240,242,239,.5)}
+.ba-col--after .ba-headline em{font-style:italic;color:#D4DF9E}
+.ba-scene{font-family:var(--mono);font-size:.7rem;letter-spacing:.03em;color:rgba(245,243,238,.28);margin-bottom:1.4rem;line-height:1.5}
+.ba-col--after .ba-scene{color:rgba(212,223,158,.38)}
+.ba-msgs{display:flex;flex-direction:column;gap:.6rem}
+.ba-msg{display:flex;gap:.65rem;align-items:flex-start}
+.ba-msg-bubble{font-size:.8rem;line-height:1.5;padding:.55rem .8rem;border-radius:12px;max-width:82%}
+.ba-col--before .ba-msg-bubble{background:rgba(255,255,255,.06);color:rgba(245,243,238,.55);border-radius:12px 12px 12px 3px}
+.ba-col--after .ba-msg-bubble{background:rgba(212,223,158,.1);color:rgba(245,243,238,.8);border-radius:12px 12px 12px 3px}
+.ba-msg-bubble.outbound{border-radius:12px 12px 3px 12px;margin-left:auto}
+.ba-col--before .ba-msg-bubble.outbound{background:rgba(255,255,255,.04);color:rgba(245,243,238,.3)}
+.ba-col--after .ba-msg-bubble.outbound{background:rgba(74,75,47,.7);color:rgba(212,223,158,.9)}
+.ba-msg.is-right{flex-direction:row-reverse}
+.ba-outcome{margin-top:auto;padding-top:1.6rem;border-top:1px solid rgba(255,255,255,.06);font-size:.85rem;line-height:1.55}
+.ba-col--before .ba-outcome{color:rgba(245,243,238,.32)}
+.ba-col--after .ba-outcome{color:rgba(212,223,158,.7)}
+.ba-outcome strong{display:block;font-weight:650;margin-bottom:.25rem;font-size:.9rem}
+.ba-col--before .ba-outcome strong{color:rgba(245,243,238,.48)}
+.ba-col--after .ba-outcome strong{color:#D4DF9E}
 </style>
 
 <!-- ── Product Pills ── -->
@@ -1435,33 +1437,57 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 <!-- ── Value strip ── -->
 <div class="value-strip">
-  <p class="value-strip-label">Why contractors choose 4THWALL</p>
-  <div class="value-strip-inner">
-    <div class="vs-item">
-      <div class="vs-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+  <div class="ba-wrap">
+    <!-- WITHOUT -->
+    <div class="ba-col ba-col--before">
+      <div>
+        <div class="ba-label">Without 4THWALL</div>
+        <h3 class="ba-headline">Saturday morning.<br>You're still asleep.</h3>
+        <p class="ba-scene">7:14 AM · homeowner texts three roofers</p>
       </div>
-      <div class="vs-body">
-        <div class="vs-h">Respond Before the Competition</div>
-        <p class="vs-d">Atlas replies to every inbound SMS in under 60 seconds — day or night, weekend or holiday — while your competitors are still sleeping.</p>
+      <div class="ba-msgs">
+        <div class="ba-msg">
+          <div class="ba-msg-bubble">Hey, need a roof estimate ASAP — got a leak. When can you come out?</div>
+        </div>
+        <div class="ba-msg is-right">
+          <div class="ba-msg-bubble outbound">— no reply —</div>
+        </div>
+        <div class="ba-msg">
+          <div class="ba-msg-bubble">following up, still need someone</div>
+        </div>
+        <div class="ba-msg is-right">
+          <div class="ba-msg-bubble outbound">— no reply —</div>
+        </div>
+      </div>
+      <div class="ba-outcome">
+        <strong>Job goes to the competitor.</strong>
+        By the time you check your phone at 9am, they've already confirmed the estimate.
       </div>
     </div>
-    <div class="vs-item">
-      <div class="vs-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><polyline points="14 8 18 4 22 8"/></svg>
+    <!-- WITH -->
+    <div class="ba-col ba-col--after">
+      <div>
+        <div class="ba-label">With Atlas</div>
+        <h3 class="ba-headline">Same Saturday.<br><em>Job already booked.</em></h3>
+        <p class="ba-scene">7:14 AM · homeowner texts — Atlas replies in 38 seconds</p>
       </div>
-      <div class="vs-body">
-        <div class="vs-h">Fill Your Calendar Automatically</div>
-        <p class="vs-d">Every lead gets a reply, a booking confirmed, and a reminder sent — all without a single manual step. Your schedule fills itself.</p>
+      <div class="ba-msgs">
+        <div class="ba-msg">
+          <div class="ba-msg-bubble">Hey, need a roof estimate ASAP — got a leak. When can you come out?</div>
+        </div>
+        <div class="ba-msg is-right">
+          <div class="ba-msg-bubble outbound">Hi! Got your message — we can get someone out Monday between 9–11am or Tuesday afternoon. Which works better?</div>
+        </div>
+        <div class="ba-msg">
+          <div class="ba-msg-bubble">Monday morning works, thanks!</div>
+        </div>
+        <div class="ba-msg is-right">
+          <div class="ba-msg-bubble outbound">Confirmed for Monday 9am. You'll get a reminder the day before. See you then!</div>
+        </div>
       </div>
-    </div>
-    <div class="vs-item">
-      <div class="vs-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </div>
-      <div class="vs-body">
-        <div class="vs-h">Build a Reputation That Sells</div>
-        <p class="vs-d">Review requests go out automatically after every job. More 5-star reviews. More referrals. The compounding loop that grows a trade business for years.</p>
+      <div class="ba-outcome">
+        <strong>Job booked. You wake up to a calendar entry.</strong>
+        Atlas handled the lead, the booking, and the confirmation — while you slept.
       </div>
     </div>
   </div>
