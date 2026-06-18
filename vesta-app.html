@@ -270,10 +270,13 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 /* DESKTOP (≥900px) — sidebar | deck | analysis panel */
 #dsidebar { display:none; }
 @media (min-width:900px) {
+  html, body { height:100%; overflow:hidden; }   /* desktop: Vesta is a fixed app shell — lock the page, inner columns own their scroll */
   body { display:block; padding:0; background:var(--bg); }
   #app { width:100%; max-width:none; min-height:100vh; margin:0; border-radius:0; overflow:visible; box-shadow:none; display:flex; flex-direction:row; background:var(--bg); }
   #dsidebar { display:flex; flex-direction:column; width:248px; flex-shrink:0; padding:26px 14px 22px; background:#ECEEE0; border-right:1px solid rgba(74,75,47,.1); position:sticky; top:0; height:100vh; }
-  .ds-brand { display:flex; align-items:center; gap:9px; padding:0 10px 26px; }
+  .ds-brand { display:flex; align-items:center; gap:9px; padding:2px 10px 26px; }
+  .ds-logo { display:flex; align-items:center; justify-content:center; width:32px; height:32px; color:var(--olive); }
+  .ds-logo svg { width:27px; height:27px; }
   .ds-nav { display:flex; flex-direction:column; gap:3px; flex:1; }
   .ds-item { display:flex; align-items:center; gap:13px; width:100%; padding:11px 14px; border:none; background:none; cursor:pointer; border-radius:13px; text-align:left; color:var(--ebony); transition:background .14s, color .14s; }
   .ds-item:hover { background:rgba(255,255,255,.6); color:var(--olive); }
@@ -386,7 +389,46 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .feedrail-how b { color:var(--olive); font-weight:600; }
 
   .pscrim, .psheet { display:none; }
+
+  /* desktop feed-control inline labels (Sort · Town) */
+  .feed-fl { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:rgba(74,75,47,.55); margin-left:8px; }
+  .feed-fl:first-child { margin-left:0; }
 }
+
+/* ===== Task-2 additions: live saved counters · reset saved · mobile filters ===== */
+/* live saved-count badges (sidebar foot + mobile bottom nav) */
+.ds-badge { margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:var(--r-pill); background:var(--tea); color:var(--olive); font-family:var(--mono); font-size:11px; font-weight:500; display:inline-flex; align-items:center; justify-content:center; }
+.bnav-btn { position:relative; }
+.bnav-badge { position:absolute; top:5px; right:7px; min-width:16px; height:16px; padding:0 4px; border-radius:var(--r-pill); background:var(--olive); color:var(--white); font-family:var(--mono); font-size:9px; font-weight:500; display:inline-flex; align-items:center; justify-content:center; }
+/* Clear-all on the Saved screen (two-tap confirm) */
+.fav-reset { align-self:flex-start; background:none; border:none; color:var(--ebony); font-family:var(--sans); font-size:12.5px; font-weight:600; cursor:pointer; text-decoration:underline; text-underline-offset:2px; padding:4px 0 2px; }
+.fav-reset:hover { color:var(--olive); }
+.fav-reset[data-armed="1"] { color:#9A4A3A; }
+/* mobile filter trigger (browse header) */
+.tb-filter { display:inline-flex; align-items:center; gap:7px; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:7px 13px; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--olive); cursor:pointer; box-shadow:var(--sh-row); }
+.tb-filter svg { width:16px; height:16px; }
+.tb-filter.on { background:var(--tea); border-color:transparent; }
+.tb-filter-ct { min-width:16px; height:16px; padding:0 4px; border-radius:var(--r-pill); background:var(--olive); color:var(--white); font-family:var(--mono); font-size:9px; display:inline-flex; align-items:center; justify-content:center; }
+/* the [hidden] attribute must beat the explicit display above, or empty/zero badges leak through */
+.ds-badge[hidden], .bnav-badge[hidden], .tb-filter-ct[hidden] { display:none !important; }
+/* mobile filter sheet */
+.fscrim { position:fixed; inset:0; z-index:70; background:rgba(74,75,47,.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity .3s; }
+.fscrim.open { opacity:1; pointer-events:auto; }
+.fsheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:min(390px,100vw); background:var(--white); border-radius:28px 28px 0 0; z-index:71; padding:10px 24px 40px; max-height:84vh; overflow-y:auto; overscroll-behavior:contain; transition:transform .4s cubic-bezier(.32,1.08,.62,1); box-shadow:0 -12px 40px -4px rgba(74,75,47,.18), 0 -40px 96px -12px rgba(74,75,47,.24); }
+.fsheet.open { transform:translateX(-50%) translateY(0); }
+.fsheet-title { font-family:var(--serif); font-size:23px; font-weight:700; color:var(--olive); letter-spacing:-.02em; margin:2px 0 2px; }
+.fsheet-sec { margin-top:18px; }
+.fsheet-lbl { font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:10px; }
+.fsheet-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.fsheet-chips .chip { box-shadow:none; border:1px solid rgba(74,75,47,.12); }
+.fsheet-chips .chip.sel { border-color:transparent; }
+.fsheet select { appearance:none; -webkit-appearance:none; width:100%; font-family:var(--sans); font-size:15px; font-weight:500; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.14); border-radius:14px; padding:13px 16px; cursor:pointer; outline:none; }
+.feed-select.wide { position:relative; display:flex; width:100%; }
+.feed-select.wide::after { content:''; position:absolute; right:16px; top:50%; width:7px; height:7px; border-right:1.7px solid var(--ebony); border-bottom:1.7px solid var(--ebony); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+.fsheet-actions { display:flex; gap:10px; margin-top:26px; }
+.fsheet-clear { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); border-radius:var(--r-pill); padding:13px 20px; font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer; }
+.fsheet-done { flex:1; background:var(--olive); color:var(--white); border:none; border-radius:var(--r-pill); padding:13px 20px; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; }
+@media (min-width:900px){ .fscrim, .fsheet, .tb-filter { display:none !important; } }
 </style>
 <script src="/home.js"></script>
 </head>
@@ -395,11 +437,11 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 
   <!-- DESKTOP SIDEBAR -->
   <aside id="dsidebar" aria-label="Trades">
-    <div class="ds-brand"><span class="tb-wm">4THWALL</span><span class="tb-tag">VESTA</span></div>
+    <div class="ds-brand"><a class="ds-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a></div>
     <nav class="ds-nav" id="ds-nav"></nav>
     <div class="ds-foot">
       <button class="ds-foot-btn" id="ds-search" aria-label="Search"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg><span>Search</span></button>
-      <button class="ds-foot-btn" id="ds-saved" aria-label="Saved pros"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"></path></svg><span>Saved</span></button>
+      <button class="ds-foot-btn" id="ds-saved" aria-label="Saved pros"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"></path></svg><span>Saved</span><span class="ds-badge" id="ds-saved-ct" hidden></span></button>
       <button class="ds-foot-btn" id="ds-you" aria-label="Your account"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="8" r="4"></circle><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8"></path></svg><span>You</span></button>
     </div>
   </aside>
@@ -420,6 +462,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
     <header class="topbar">
       <button class="tb-back" id="btn-back" aria-label="Back to trades"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
       <a class="tb-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a><span class="tb-spacer"></span>
+      <button class="tb-filter" id="tb-filter" aria-label="Filter pros"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="17" y2="6"/><line x1="3" y1="14" x2="17" y2="14"/><circle cx="8" cy="6" r="2.3" fill="var(--white)"/><circle cx="13" cy="14" r="2.3" fill="var(--white)"/></svg><span>Filters</span><span class="tb-filter-ct" hidden></span></button>
     </header>
     <div class="browse-hdr">
       <h1 class="browse-h1" id="browse-h1" aria-live="polite">Browse roofers</h1>
@@ -456,11 +499,18 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
     <div id="psheet-body"></div>
   </div>
 
+  <!-- MOBILE FILTER SHEET -->
+  <div class="fscrim" id="fscrim" aria-hidden="true"></div>
+  <div class="fsheet" id="fsheet" role="dialog" aria-modal="true" aria-label="Filter pros" tabindex="-1">
+    <div class="phandle-wrap" id="fhandle"><div class="phandle" aria-hidden="true"></div><button class="psheet-x" id="fsheet-x" aria-label="Close filters"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button></div>
+    <div class="fsheet-body" id="fsheet-body"></div>
+  </div>
+
   <!-- BOTTOM NAV (mobile) -->
   <nav class="bnav" aria-label="Main navigation">
     <button class="bnav-btn" id="nav-home" aria-label="Browse trades"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="8" height="8" rx="2"></rect><rect x="12" y="2" width="8" height="8" rx="2"></rect><rect x="2" y="12" width="8" height="8" rx="2"></rect><rect x="12" y="12" width="8" height="8" rx="2"></rect></svg></button>
     <button class="bnav-btn" id="nav-search" aria-label="Search"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg></button>
-    <button class="bnav-btn" id="nav-saved" aria-label="Saved"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"></path></svg></button>
+    <button class="bnav-btn" id="nav-saved" aria-label="Saved"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"></path></svg><span class="bnav-badge" id="nav-saved-ct" hidden></span></button>
     <button class="bnav-btn" id="nav-you" aria-label="Your profile"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="8" r="4"></circle><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8"></path></svg></button>
   </nav>
 
@@ -518,8 +568,8 @@ const EYEOFF = `<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stro
 const REWIND = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5v6h6"/><path d="M3.5 11a8 8 0 113 8.5"/></svg>`;
 const LOCK = `<svg width="13" height="14" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="7" width="9" height="7" rx="1.5"/><path d="M4.5 7V4.8a2.5 2.5 0 015 0V7"/></svg>`;
 
-const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, dataLoaded:false, mode:'trade',
-            shuffles:{}, pos:{}, deck:[], deckIdx:0, unlocked:{}, history:[], savedTab:'saved',
+const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, filterOpen:false, dataLoaded:false, mode:'trade',
+            shuffles:{}, pos:{}, deck:[], deckIdx:0, deckSig:{}, unlocked:{}, history:[], savedTab:'saved',
             feedTown:'', feedSort:'rank', feedNeeds:new Set() };
 const FEED_HIDDEN = new Set();   // desktop feed: "Not interested" hides for the session (not a like/dislike signal)
 // Homeowner-need facets per trade — mined from the real specialties corpus. A firm matches a
@@ -550,9 +600,27 @@ const LIKE_KEY = 'vesta_liked';
 function likedSet(){ try { return new Set(JSON.parse(localStorage.getItem(LIKE_KEY)||'[]')); } catch(_){ return new Set(); } }
 function isLiked(id){ return !!id && likedSet().has(id); }
 function writeLiked(s){ try{ localStorage.setItem(LIKE_KEY, JSON.stringify([...s])); }catch(_){} }
-function setLiked(id,val){ if(!id) return val; const s=likedSet(); val?s.add(id):s.delete(id); writeLiked(s); pushLike(id, !!val); return val; }
+function setLiked(id,val){ if(!id) return val; const s=likedSet(); val?s.add(id):s.delete(id); writeLiked(s); pushLike(id, !!val); syncSavedUI(); return val; }
 function toggleLike(id){ return setLiked(id, !isLiked(id)); }
 function likedContractors(){ const s=likedSet(); return contractors.filter(c=>s.has(c.placeId)); }
+/* Live saved counter — runs on every save/unsave so the count never waits for a
+   reload. Updates the sidebar badge, the mobile-nav badge, and the desktop feed rail. */
+function syncSavedUI(){
+  const n = likedContractors().length;
+  const ds=$('ds-saved-ct'); if(ds){ ds.textContent=n; ds.hidden = !n; }
+  const nb=$('nav-saved-ct'); if(nb){ nb.textContent=n; nb.hidden = !n; }
+  const rn=document.querySelector('.feedrail-stat .n'); if(rn) rn.textContent=n;
+  const rl=document.querySelector('.feedrail-stat .l'); if(rl) rl.textContent='saved '+(n===1?'pro':'pros')+(n?' · open Saved to reveal contact info':'');
+}
+/* Reset the whole saved list (two-tap confirm lives in the button). Mirrors the
+   removals up to the account when signed in, then clears local + any revealed contacts. */
+function clearAllSaved(){
+  const ids=[...likedSet()];
+  if(signedIn()) ids.forEach(id => pushLike(id, false));
+  writeLiked(new Set());
+  S.unlocked={};
+  renderSaved(); syncSavedUI();
+}
 const signedIn = () => !!(window.HOME && HOME.token && HOME.token());
 
 /* Saved survives sign-in. Swiping/liking is free + anonymous (localStorage);
@@ -637,6 +705,7 @@ async function loadContractors(){
     if (S.mode === 'saved'){ renderSaved(); }
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
   }
+  syncSavedUI();
 }
 
 /* HOME */
@@ -676,6 +745,7 @@ function renderSidebar(){
 }
 function updateBrowseHead(){
   const banner = $('vbanner');
+  const flt = $('tb-filter'); if (flt) flt.style.display = (S.mode==='saved') ? 'none' : '';
   if (S.mode === 'saved'){
     $('browse-h1').textContent = 'Saved';
     if (S.savedTab === 'history'){
@@ -692,17 +762,46 @@ function updateBrowseHead(){
   $('browse-h1').textContent = 'Browse ' + tradePlural(S.activeTrade);
   $('browse-sub').textContent = desktop() ? 'Vetted in Fairfield County · ranked by Vesta — scroll the feed' : 'Vetted in Fairfield County · swipe to save the ones you like';
   banner.innerHTML = '<span class="vb-spark">'+SPARK+'</span><span><b>Swipe right to save, left to skip.</b> Tap any card for Vesta’s full analysis.</span>';
+  updateFilterTrigger();
 }
 
+/* ===== SHARED FILTERS (mobile deck + desktop feed run the same logic) ===== */
+// Town + need-facet filtering. FEED_HIDDEN (desktop "not interested") is empty on mobile.
+function filterList(key){
+  let list = byTrade(key).filter(c => !FEED_HIDDEN.has(c.placeId));
+  if (S.feedTown) list = list.filter(c => (c.city||'') === S.feedTown);
+  const facets = activeFacets();
+  if (facets.length) list = list.filter(c => facets.every(f => facetMatches(c, f)));
+  return list;
+}
+// Ordering. 'rank' = Vesta’s pick (rank_score order, or a fresh shuffle on the mobile deck).
+function sortList(list, mode, allowShuffle){
+  const band = b => b==='top10'?2 : b==='top25'?1 : 0;
+  const by = k => (a,b) => band(b[k])-band(a[k]) || (b.rankScore-a.rankScore);
+  if (mode==='rating') return [...list].sort(by('ratingBand'));
+  if (mode==='volume') return [...list].sort(by('volumeBand'));
+  if (mode==='registered') return [...list].sort((a,b)=> (b.registered?1:0)-(a.registered?1:0) || (b.rankScore-a.rankScore));
+  return allowShuffle ? shuffle(list) : [...list].sort((a,b)=> b.rankScore-a.rankScore);
+}
+function deckSig(){ return S.feedTown+'|'+S.feedSort+'|'+[...S.feedNeeds].sort().join(','); }
+
 /* ===== DECK ===== */
+// The deck is cached per trade so the order is stable mid-swipe; it’s rebuilt only
+// when the filter signature changes (so switching trades resets, applying a filter refreshes).
 function ensureDeck(key){
-  if ((!S.shuffles[key] || !S.shuffles[key].length)){
-    const base = byTrade(key);
-    if (base.length) S.shuffles[key] = shuffle(base);
+  const sig = deckSig();
+  if (!S.shuffles[key] || !S.shuffles[key].length || S.deckSig[key] !== sig){
+    S.shuffles[key] = sortList(filterList(key), S.feedSort, true);
+    S.deckSig[key] = sig; S.pos[key] = 0;
   }
   if (S.pos[key] == null) S.pos[key] = 0;
   S.deck = S.shuffles[key] || [];
   S.deckIdx = S.pos[key] || 0;
+}
+function rebuildDeck(){
+  const key = S.activeTrade;
+  S.shuffles[key] = sortList(filterList(key), S.feedSort, true);
+  S.deckSig[key] = deckSig(); S.pos[key] = 0; S.deckIdx = 0; S.deck = S.shuffles[key];
 }
 function topCon(){ return (S.deck||[]).slice(S.deckIdx)[0] || null; }
 
@@ -732,7 +831,9 @@ function renderDeck(){
   const remaining = (S.deck||[]).slice(S.deckIdx);
   if (!remaining.length){
     if (!S.dataLoaded){ deck.innerHTML = '<div class="deck-end"><span class="de-spark">'+SPARK+'</span><p>Loading vetted pros…</p></div>'; $('deck-actions').style.visibility='hidden'; $('deck-meta').textContent=''; return; }
-    deck.innerHTML = deckEndHTML(); wireDeckEnd();
+    const filtersActive = !!(S.feedTown || S.feedNeeds.size);
+    if (filtersActive && !filterList(S.activeTrade).length){ deck.innerHTML = deckFilterEmptyHTML(); wireDeckFilterEmpty(); }
+    else { deck.innerHTML = deckEndHTML(); wireDeckEnd(); }
     $('deck-actions').style.visibility='hidden'; $('deck-meta').textContent = '';
     if (desktop()) renderPanel(null);
     return;
@@ -748,6 +849,15 @@ function wireDeckEnd(){
   const a=$('de-saved'), b=$('de-restart');
   if(a) a.onclick = showSaved;
   if(b) b.onclick = () => { S.pos[S.activeTrade]=0; S.deckIdx=0; renderDeck(); };
+}
+function deckFilterEmptyHTML(){
+  return '<div class="deck-end"><span class="de-spark">'+SPARK+'</span><h3>No matches</h3>'+
+    '<p>No vetted '+esc(tradePlural(S.activeTrade))+' fit those filters right now. Try clearing them.</p>'+
+    '<div class="de-row"><button class="de-btn primary" id="de-clearf">Clear filters</button></div></div>';
+}
+function wireDeckFilterEmpty(){
+  const b=$('de-clearf');
+  if(b) b.onclick = () => { S.feedTown=''; S.feedNeeds.clear(); S.feedSort='rank'; rebuildDeck(); renderDeck(); updateBrowseHead(); updateFilterTrigger(); };
 }
 function wireTopCard(con){
   const card = $('deck').querySelector('.card[data-k="0"]'); if(!card) return;
@@ -844,6 +954,15 @@ function wireSavedSeg(wrap){
     S.savedTab = b.dataset.tab; renderSaved();
   }));
 }
+function wireFavReset(wrap){
+  const b = wrap.querySelector('#fav-reset'); if(!b) return;
+  let timer=null;
+  b.addEventListener('click', () => {
+    if (b.dataset.armed==='1'){ clearTimeout(timer); clearAllSaved(); return; }
+    b.dataset.armed='1'; b.textContent='Tap again to clear all';
+    timer=setTimeout(()=>{ if(b.isConnected){ b.dataset.armed='0'; b.textContent='Clear all saved'; } }, 3000);
+  });
+}
 function renderSaved(){
   updateBrowseHead();
   if (S.savedTab === 'history') renderHistory();
@@ -860,8 +979,10 @@ function renderFav(){
   const intro = signedIn()
     ? 'Your saved pros. Tap <b>Show contact info</b> to reveal each one’s phone and website.'
     : '<b>Sign up to unlock contact info.</b> Your saved pros live on this device for now — create a free account to keep them and reveal each pro’s phone & website. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a>';
-  wrap.innerHTML = savedSeg() + '<div class="fav-intro">'+intro+'</div>' + list.map(favRowHTML).join('');
+  wrap.innerHTML = savedSeg() + '<div class="fav-intro">'+intro+'</div>' + list.map(favRowHTML).join('') +
+    '<button class="fav-reset" id="fav-reset" data-armed="0">Clear all saved</button>';
   wireSavedSeg(wrap);
+  wireFavReset(wrap);
   Array.from(wrap.querySelectorAll('.favrow')).forEach(row => {
     const con = list.find(c => c.placeId === row.dataset.place); if(!con) return;
     const top = row.querySelector('.favrow-top');
@@ -975,52 +1096,49 @@ function renderPanel(con){
 function feedTowns(){ const s=new Set(); byTrade(S.activeTrade).forEach(c=>{ const t=(c.city||'').trim(); if(t) s.add(t); }); return [...s].sort(); }
 function facetMatches(c, f){ const specs=c.specs||[]; return f.m.some(kw => specs.some(s => s.includes(kw))); }
 function activeFacets(){ return (NEED_FACETS[S.activeTrade]||[]).filter(f => S.feedNeeds.has(f.l)); }
-function feedSource(){
-  let list = byTrade(S.activeTrade).filter(c => !FEED_HIDDEN.has(c.placeId));
-  if (S.feedTown) list = list.filter(c => (c.city||'') === S.feedTown);
-  const facets = activeFacets();
-  if (facets.length) list = list.filter(c => facets.every(f => facetMatches(c, f)));
-  const band = b => b==='top10'?2 : b==='top25'?1 : 0;
-  const by = k => (a,b) => band(b[k])-band(a[k]) || (b.rankScore-a.rankScore);
-  if (S.feedSort==='rating') list = [...list].sort(by('ratingBand'));
-  else if (S.feedSort==='volume') list = [...list].sort(by('volumeBand'));
-  else if (S.feedSort==='registered') list = [...list].sort((a,b)=> (b.registered?1:0)-(a.registered?1:0) || (b.rankScore-a.rankScore));
-  // 'rank' (default) keeps the rank_score order contractors already arrives in
-  return list;
+function feedSource(){ return sortList(filterList(S.activeTrade), S.feedSort, false); }
+// Light re-apply on town/sort/need change: re-render the feed list + needs + rail
+// WITHOUT rebuilding the native <select>s — keeps them stable so a pick applies instantly.
+function applyFeed(){
+  const feed=$('feed'); if(!feed) return;
+  if (S.feedTown && !feedTowns().includes(S.feedTown)) S.feedTown='';
+  const list = feedSource();
+  renderFeedNeeds();
+  if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
+  feed.innerHTML = list.map(feedCardHTML).join('');
+  list.forEach(wireFeedCard);
+  renderFeedRail(); syncSavedUI();
 }
-function renderFeedControls(total){
+function renderFeedControls(){
   const c = $('feed-controls'); if(!c) return;
   const towns = feedTowns();
-  const tradeOpts = trades.map(t=>'<option value="'+t.key+'"'+(S.activeTrade===t.key?' selected':'')+'>'+esc(t.label)+'</option>').join('');
   const townOpts = ['<option value="">All towns</option>'].concat(towns.map(t=>'<option value="'+esc(t)+'"'+(S.feedTown===t?' selected':'')+'>'+esc(t)+'</option>')).join('');
   const sorts = [['rank','Vesta’s pick'],['rating','Top rated'],['volume','Most reviewed'],['registered','Registered first']];
   const sortOpts = sorts.map(s=>'<option value="'+s[0]+'"'+(S.feedSort===s[0]?' selected':'')+'>'+esc(s[1])+'</option>').join('');
+  // Trade is navigation (the sidebar owns it); these are refinements — Sort + Town.
   c.innerHTML =
-    '<span class="feed-select"><select id="feed-trade" aria-label="Trade">'+tradeOpts+'</select></span>'+
-    '<span class="feed-select"><select id="feed-town" aria-label="Filter by town">'+townOpts+'</select></span>'+
-    '<span class="feed-select"><select id="feed-sort" aria-label="Sort pros">'+sortOpts+'</select></span>'+
-    '<span class="feed-count">'+total+' pro'+(total===1?'':'s')+'</span>';
-  $('feed-trade').addEventListener('change', e=>{ switchTrade(e.target.value); });
-  $('feed-town').addEventListener('change', e=>{ S.feedTown=e.target.value; renderFeed(); });
-  $('feed-sort').addEventListener('change', e=>{ S.feedSort=e.target.value; renderFeed(); });
+    '<span class="feed-fl">Sort</span><span class="feed-select"><select id="feed-sort" aria-label="Sort pros">'+sortOpts+'</select></span>'+
+    '<span class="feed-fl">Town</span><span class="feed-select"><select id="feed-town" aria-label="Filter by town">'+townOpts+'</select></span>';
+  $('feed-sort').addEventListener('change', e=>{ S.feedSort=e.target.value; applyFeed(); });
+  $('feed-town').addEventListener('change', e=>{ S.feedTown=e.target.value; applyFeed(); });
 }
 function renderFeedNeeds(){
   const el = $('feed-needs'); if(!el) return;
   const base = byTrade(S.activeTrade).filter(c => !FEED_HIDDEN.has(c.placeId) && (!S.feedTown || (c.city||'') === S.feedTown));
   const facets = (NEED_FACETS[S.activeTrade]||[])
     .map(f => ({ f, n: base.filter(c => facetMatches(c, f)).length }))
-    .filter(x => x.n >= 2)
+    .filter(x => x.n >= 2 || S.feedNeeds.has(x.f.l))
     .sort((a,b) => b.n - a.n);
   if (!facets.length){ el.innerHTML=''; el.style.display='none'; return; }
   el.style.display='';
-  el.innerHTML = '<span class="need-lbl">Needs</span>' +
+  el.innerHTML = '<span class="need-lbl">What you need</span>' +
     facets.map(({f}) => { const on=S.feedNeeds.has(f.l);
       return '<button class="need-chip'+(on?' on':'')+'" data-need="'+esc(f.l)+'" aria-pressed="'+on+'">'+esc(f.l)+'</button>'; }).join('') +
     (S.feedNeeds.size ? '<button class="need-clear" id="need-clear">Clear</button>' : '');
   el.querySelectorAll('.need-chip').forEach(b => b.addEventListener('click', () => {
-    const l = b.dataset.need; if (S.feedNeeds.has(l)) S.feedNeeds.delete(l); else S.feedNeeds.add(l); renderFeed();
+    const l = b.dataset.need; if (S.feedNeeds.has(l)) S.feedNeeds.delete(l); else S.feedNeeds.add(l); applyFeed();
   }));
-  const clr = $('need-clear'); if (clr) clr.addEventListener('click', () => { S.feedNeeds.clear(); renderFeed(); });
+  const clr = $('need-clear'); if (clr) clr.addEventListener('click', () => { S.feedNeeds.clear(); applyFeed(); });
 }
 function feedMoreHTML(con){
   const level=confidence(con), note=confidenceNote(con), signals=confidenceSignals(con);
@@ -1089,12 +1207,12 @@ function wireFeedCard(con){
   mbtn.addEventListener('click', e=>{ e.stopPropagation(); const open=!menu.classList.contains('open'); closeFeedMenus(); menu.classList.toggle('open',open); mbtn.setAttribute('aria-expanded',open); });
   menu.querySelectorAll('button[data-act]').forEach(b=> b.addEventListener('click', e=>{ e.stopPropagation(); const a=b.dataset.act; closeFeedMenus(); feedMenuAction(a, con, card); }));
 }
-function renderFeedRail(total){
+function renderFeedRail(){
   const p=$('vpanel'); if(!p) return;
   const savedN=likedContractors().length;
   p.innerHTML =
     '<div class="va-head"><span class="va-spark">'+SPARK+'</span>Vesta’s analysis</div>'+
-    '<h2 class="feedrail-h">'+total+' vetted '+esc(tradePlural(S.activeTrade))+'<br>in Fairfield County</h2>'+
+    '<h2 class="feedrail-h">Vetted '+esc(tradePlural(S.activeTrade))+'<br>in Fairfield County</h2>'+
     '<p class="feedrail-p">Vesta read the public reviews and Connecticut records for every one, then ranked them by what homeowners actually say — no ads, no pay-to-play.</p>'+
     '<div class="feedrail-stat"><span class="n">'+savedN+'</span><span class="l">saved '+(savedN===1?'pro':'pros')+(savedN?' · open Saved to reveal contact info':'')+'</span></div>'+
     '<ul class="feedrail-how">'+
@@ -1106,14 +1224,14 @@ function renderFeedRail(total){
 function renderFeed(){
   const feed=$('feed'); if(!feed) return;
   if (S.feedTown && !feedTowns().includes(S.feedTown)) S.feedTown='';
+  renderFeedControls();
   const list = feedSource();
-  renderFeedControls(list.length);
   renderFeedNeeds();
-  if (!S.dataLoaded){ feed.innerHTML='<div class="feed-empty">Loading vetted pros…</div>'; renderFeedRail(0); return; }
-  if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match that filter — try “All towns”.</div>'; renderFeedRail(byTrade(S.activeTrade).length); return; }
+  if (!S.dataLoaded){ feed.innerHTML='<div class="feed-empty">Loading vetted pros…</div>'; renderFeedRail(); return; }
+  if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
   feed.innerHTML = list.map(feedCardHTML).join('');
   list.forEach(wireFeedCard);
-  renderFeedRail(byTrade(S.activeTrade).length);
+  renderFeedRail(); syncSavedUI();
 }
 function focusFeedCard(placeId){
   const card=[...document.querySelectorAll('#feed .fcard')].find(el=>el.dataset.place===placeId); if(!card) return;
@@ -1121,6 +1239,47 @@ function focusFeedCard(placeId){
   const disc=card.querySelector('.fcard-disclose'), more=card.querySelector('.fcard-more');
   if(more && !more.classList.contains('open')){ more.classList.add('open'); if(disc) disc.setAttribute('aria-expanded','true'); }
   card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'),1500);
+}
+
+/* ===== MOBILE FILTER SHEET — same filters as desktop, version-appropriate ===== */
+function renderFilterSheet(){
+  const body=$('fsheet-body'); if(!body) return;
+  const towns=feedTowns();
+  const facets=(NEED_FACETS[S.activeTrade]||[])
+    .map(f=>({ f, n: byTrade(S.activeTrade).filter(c=>(!S.feedTown||(c.city||'')===S.feedTown)&&facetMatches(c,f)).length }))
+    .filter(x=>x.n>=2 || S.feedNeeds.has(x.f.l)).sort((a,b)=>b.n-a.n);
+  const sorts=[['rank','Vesta’s pick'],['rating','Top rated'],['volume','Most reviewed'],['registered','Registered first']];
+  body.innerHTML =
+    '<div class="fsheet-title">Filter '+esc(tradePlural(S.activeTrade))+'</div>'+
+    '<div class="fsheet-sec"><div class="fsheet-lbl">Sort by</div><div class="fsheet-chips">'+
+      sorts.map(s=>'<button class="chip'+(S.feedSort===s[0]?' sel':'')+'" data-sort="'+s[0]+'">'+esc(s[1])+'</button>').join('')+'</div></div>'+
+    '<div class="fsheet-sec"><div class="fsheet-lbl">Town</div><span class="feed-select wide"><select id="fsheet-town" aria-label="Filter by town"><option value="">All towns</option>'+
+      towns.map(t=>'<option value="'+esc(t)+'"'+(S.feedTown===t?' selected':'')+'>'+esc(t)+'</option>').join('')+'</select></span></div>'+
+    (facets.length?'<div class="fsheet-sec"><div class="fsheet-lbl">What you need</div><div class="fsheet-chips">'+
+      facets.map(({f})=>'<button class="chip'+(S.feedNeeds.has(f.l)?' sel':'')+'" data-need="'+esc(f.l)+'">'+esc(f.l)+'</button>').join('')+'</div></div>':'')+
+    '<div class="fsheet-actions"><button class="fsheet-clear" id="fsheet-clear">Clear all</button><button class="fsheet-done" id="fsheet-done">Show pros</button></div>';
+  const apply=()=>{ rebuildDeck(); renderDeck(); updateBrowseHead(); updateFilterTrigger(); renderFilterSheet(); };
+  body.querySelectorAll('[data-sort]').forEach(b=>b.addEventListener('click',()=>{ S.feedSort=b.dataset.sort; apply(); }));
+  body.querySelectorAll('[data-need]').forEach(b=>b.addEventListener('click',()=>{ const l=b.dataset.need; if(S.feedNeeds.has(l))S.feedNeeds.delete(l); else S.feedNeeds.add(l); apply(); }));
+  const tw=$('fsheet-town'); if(tw) tw.addEventListener('change',e=>{ S.feedTown=e.target.value; apply(); });
+  $('fsheet-clear').addEventListener('click',()=>{ S.feedTown=''; S.feedNeeds.clear(); S.feedSort='rank'; apply(); });
+  $('fsheet-done').addEventListener('click', closeFilterSheet);
+}
+function openFilterSheet(){
+  renderFilterSheet();
+  const s=$('fsheet'); s.style.transform=''; s.style.transition=''; s.classList.remove('open'); void s.offsetHeight;
+  $('fscrim').classList.add('open'); $('fscrim').setAttribute('aria-hidden','false');
+  s.classList.add('open'); S.filterOpen=true;
+  setTimeout(()=>s.focus(),300);
+}
+function closeFilterSheet(){
+  $('fsheet').classList.remove('open'); $('fscrim').classList.remove('open'); $('fscrim').setAttribute('aria-hidden','true'); S.filterOpen=false;
+}
+function updateFilterTrigger(){
+  const b=$('tb-filter'); if(!b) return;
+  const n=(S.feedTown?1:0)+S.feedNeeds.size+(S.feedSort!=='rank'?1:0);
+  const ct=b.querySelector('.tb-filter-ct'); if(ct){ ct.textContent=n; ct.hidden=!n; }
+  b.classList.toggle('on', !!n);
 }
 
 /* MOBILE SHEET */
@@ -1226,6 +1385,9 @@ function updateNavState(){
   $('act-save').addEventListener('click', () => { const c=topCon(); if(c) commit('save', c); });
   $('pscrim').addEventListener('click', closeSheet);
   $('psheet-x').addEventListener('click', closeSheet);
+  $('tb-filter').addEventListener('click', openFilterSheet);
+  $('fscrim').addEventListener('click', closeFilterSheet);
+  $('fsheet-x').addEventListener('click', closeFilterSheet);
   ['nav-search','ds-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
@@ -1233,7 +1395,7 @@ function updateNavState(){
   $('vsearch-input').addEventListener('input', e => renderSearchResults(e.target.value));
   $('vsearch').addEventListener('click', e => { if (e.target===$('vsearch')) closeSearch(); });
   document.addEventListener('keydown', e => {
-    if (e.key==='Escape') { closeFeedMenus(); if (S.searchOpen){ closeSearch(); return; } if (S.sheetOpen){ closeSheet(); return; } }
+    if (e.key==='Escape') { closeFeedMenus(); if (S.filterOpen){ closeFilterSheet(); return; } if (S.searchOpen){ closeSearch(); return; } if (S.sheetOpen){ closeSheet(); return; } }
     if (S.screen==='browse' && S.mode==='trade' && !S.sheetOpen && !S.searchOpen && !desktop()){
       const c = topCon();
       if (e.key==='ArrowRight' && c){ e.preventDefault(); commit('save', c); }
