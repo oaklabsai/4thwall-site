@@ -429,6 +429,99 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .fsheet-clear { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); border-radius:var(--r-pill); padding:13px 20px; font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer; }
 .fsheet-done { flex:1; background:var(--olive); color:var(--white); border:none; border-radius:var(--r-pill); padding:13px 20px; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; }
 @media (min-width:900px){ .fscrim, .fsheet, .tb-filter { display:none !important; } }
+
+/* ===== IN-APP PROFILE (Phase B) — the full profile, native to Vesta's light UI ===== */
+#s-profile { background:var(--bg); }
+.prof-scroll { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.prof-wrap { max-width:720px; margin:0 auto; padding:14px 20px 130px; }
+.prof-loading, .prof-error { padding:60px 22px; text-align:center; color:var(--ebony); font-size:14px; line-height:1.6; }
+.prof-error a, .prof-loading a { color:var(--olive); font-weight:600; }
+.prof-crumb { display:inline-flex; align-items:center; gap:7px; background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ebony); padding:6px 0 8px; }
+.prof-crumb:hover { color:var(--olive); }
+.prof-name { font-family:var(--serif); font-size:38px; font-weight:700; line-height:1.05; letter-spacing:-.025em; color:var(--olive); margin-top:4px; }
+.prof-sub { font-size:14px; color:var(--ebony); margin-top:6px; }
+.prof-badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.prof-badge { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--olive); background:var(--tea); border-radius:var(--r-pill); padding:5px 12px; }
+.prof-badge.plain { background:rgba(74,75,47,.06); color:var(--ebony); }
+.prof-req { display:inline-flex; align-items:center; gap:8px; margin-top:18px; background:var(--olive); color:var(--white); font-family:var(--sans); font-size:15px; font-weight:600; border:none; border-radius:var(--r-pill); padding:14px 24px; cursor:pointer; box-shadow:0 2px 6px rgba(74,75,47,.2),0 12px 32px -6px rgba(74,75,47,.42); text-decoration:none; transition:transform .12s; }
+.prof-req:hover { transform:translateY(-1px); }
+.prof-fine { font-size:11.5px; color:var(--ebony); margin-top:10px; }
+.prof-note { font-size:12.5px; color:var(--ebony); line-height:1.6; margin-top:14px; background:rgba(212,223,158,.18); border:1px solid rgba(74,75,47,.08); border-radius:14px; padding:13px 16px; }
+.prof-sig { font-family:var(--serif); font-size:20px; font-weight:500; font-style:italic; line-height:1.5; color:var(--olive); margin:24px 0 4px; padding-left:16px; border-left:3px solid var(--tea); }
+.prof-sec-h { font-family:var(--serif); font-size:24px; font-weight:700; letter-spacing:-.02em; color:var(--olive); margin:32px 0 6px; }
+.prof-sec-h.sub { font-size:18px; margin:22px 0 8px; }
+.prof-sec-note { font-size:13px; color:var(--ebony); line-height:1.55; margin-bottom:14px; }
+.prof-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
+.prof-card { background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:18px; padding:16px 18px; box-shadow:var(--sh-row); }
+.prof-card .k { font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:7px; }
+.prof-card h3 { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); margin-bottom:5px; letter-spacing:-.01em; }
+.prof-card p { font-size:13px; color:var(--ebony); line-height:1.55; }
+.prof-block { background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:18px; padding:18px 20px; box-shadow:var(--sh-row); margin-top:12px; }
+.prof-block p.read { font-family:var(--serif); font-size:17px; line-height:1.65; color:var(--olive); }
+.prof-kv { display:flex; justify-content:space-between; gap:14px; padding:10px 0; border-top:1px solid rgba(74,75,47,.08); font-size:13.5px; }
+.prof-kv:first-child { border-top:none; padding-top:0; }
+.prof-kv span { color:var(--ebony); flex-shrink:0; }
+.prof-kv b { color:var(--olive); text-align:right; font-weight:600; }
+.prof-guide { display:flex; flex-direction:column; gap:14px; margin-top:6px; }
+.prof-angle { display:flex; gap:14px; }
+.prof-angle .no { font-family:var(--mono); font-size:13px; font-weight:500; color:var(--olive); opacity:.45; flex-shrink:0; padding-top:1px; }
+.prof-angle h3 { font-size:15px; font-weight:600; color:var(--olive); margin-bottom:3px; }
+.prof-angle p { font-size:13px; color:var(--ebony); line-height:1.55; }
+.prof-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.prof-chip { display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:600; color:var(--olive); background:var(--tea); border-radius:var(--r-pill); padding:6px 13px; }
+.prof-google { margin-top:24px; padding:14px 16px; background:rgba(74,75,47,.035); border:1px solid rgba(74,75,47,.07); border-radius:14px; font-size:13px; color:var(--ebony); line-height:1.55; max-width:560px; }
+.prof-google .gsrc { font-family:var(--mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); }
+.prof-google b { color:var(--olive); }
+.prof-google a { color:var(--olive); font-weight:600; }
+.prof-lockbox { background:rgba(212,223,158,.2); border:1px solid rgba(74,75,47,.1); border-radius:16px; padding:18px 20px; margin-top:8px; }
+.prof-blur { filter:blur(5px); user-select:none; font-family:var(--mono); font-size:13px; color:var(--ebony); margin-bottom:12px; pointer-events:none; }
+.prof-contactrow { display:flex; gap:12px; padding:10px 0; border-top:1px solid rgba(74,75,47,.08); font-size:14px; }
+.prof-contactrow:first-child { border-top:none; padding-top:0; }
+.prof-contactrow b { color:var(--olive); min-width:64px; flex-shrink:0; }
+.prof-contactrow a { color:var(--ebony); text-decoration:none; word-break:break-all; }
+.prof-contactrow a:hover { text-decoration:underline; }
+.prof-removal { font-size:11.5px; color:var(--ebony); line-height:1.6; margin-top:24px; max-width:560px; }
+.prof-removal a { color:var(--olive); }
+.prof-status { font-size:12.5px; margin-left:10px; color:var(--ebony); }
+.prof-status.is-error { color:#9A4A3A; }
+@media (max-width:560px){ .prof-cards { grid-template-columns:1fr; } .prof-name { font-size:32px; } }
+
+/* The Atlas moment stays intentionally Atlas-toned (warm sand) — the contractor's corner */
+.atlas-moment{ --a-bg:#191712;--a-bg2:#211e16;--a-line:rgba(222,206,164,.18);--a-sand:#dcceaa;--a-sand-2:#ece2c8;--a-mut:rgba(236,226,200,.6);--a-cream:#F0F2EF;
+  position:relative;margin:32px 0 8px;padding:clamp(22px,4vw,32px);
+  background:radial-gradient(620px 320px at 86% -120px,rgba(222,206,164,.12),transparent 60%),linear-gradient(180deg,var(--a-bg2),var(--a-bg));
+  border:1px solid var(--a-line);border-radius:24px;box-shadow:0 44px 96px -52px rgba(0,0,0,.6); }
+.atlas-moment .am-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--a-sand);margin-bottom:11px}
+.atlas-moment .am-h{font-family:var(--serif);font-size:clamp(22px,3vw,30px);font-weight:700;letter-spacing:-.02em;color:var(--a-cream);line-height:1.14}
+.atlas-moment .am-lede2{font-size:14px;color:var(--a-mut);line-height:1.65;margin:11px 0 16px;max-width:60ch}
+.atlas-moment .am-plabel{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--a-sand);margin:26px 0 9px}
+.atlas-moment .am-lede{font-family:var(--serif);font-size:clamp(17px,2vw,20px);font-weight:400;line-height:1.55;letter-spacing:-.01em;color:var(--a-cream);max-width:64ch;margin:0}
+.atlas-moment .am-lede b{color:var(--a-sand-2);font-weight:600}
+.atlas-moment .am-uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:20px 0 0}
+.atlas-moment .am-use{background:rgba(222,206,164,.05);border:1px solid var(--a-line);border-radius:16px;padding:16px 18px}
+.atlas-moment .am-use .am-n{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--a-sand);margin-bottom:8px}
+.atlas-moment .am-use h3{font-family:var(--serif);font-size:16px;font-weight:600;letter-spacing:-.01em;color:var(--a-cream);margin-bottom:6px}
+.atlas-moment .am-use p{font-size:12.5px;color:var(--a-mut);line-height:1.6}
+.atlas-moment .am-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px}
+.atlas-moment .am-pill{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(180deg,var(--a-sand-2),var(--a-sand));color:#1a1813;font-family:var(--sans);font-size:14px;font-weight:600;padding:12px 22px;border-radius:999px;text-decoration:none;transition:transform .16s}
+.atlas-moment .am-pill:hover{transform:translateY(-1px)}
+.atlas-moment .am-fine{font-size:12px;color:var(--a-mut);max-width:34ch;line-height:1.5}
+.atlas-moment .am-rule{height:1px;background:var(--a-line);margin:24px 0 20px}
+.atlas-moment .am-form-row{margin-bottom:12px}
+.atlas-moment .am-form-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.atlas-moment label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--a-mut);margin-bottom:6px}
+.atlas-moment input{width:100%;background:rgba(0,0,0,.22);border:1px solid var(--a-line);border-radius:12px;color:var(--a-cream);font-family:var(--sans);font-size:14px;padding:11px 13px;outline:none}
+.atlas-moment input:focus{border-color:var(--a-sand)}
+.atlas-moment .am-claim-btn{margin-top:6px;background:none;border:1px solid var(--a-sand);color:var(--a-sand-2);font-family:var(--sans);font-size:14px;font-weight:600;padding:11px 20px;border-radius:999px;cursor:pointer}
+.atlas-moment .am-claim-btn:hover{background:rgba(222,206,164,.1)}
+.atlas-moment .am-claim-btn:disabled{opacity:.5;cursor:default}
+.atlas-moment form{max-width:520px}
+@media (max-width:560px){ .atlas-moment .am-form-pair{grid-template-columns:1fr} }
+
+@media (min-width:900px){
+  #s-profile.screen { flex:1; min-width:0; height:100vh; }
+  .prof-wrap { padding:34px 40px 64px; }
+}
 </style>
 <script src="/home.js"></script>
 </head>
@@ -492,6 +585,13 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
     </div>
   </div>
 
+  <!-- PROFILE (in-app full profile — same Vesta UI, no external page) -->
+  <div id="s-profile" class="screen" role="main" aria-label="Contractor profile">
+    <div class="prof-scroll" id="prof-scroll">
+      <div class="prof-wrap" id="prof-wrap"></div>
+    </div>
+  </div>
+
   <!-- MOBILE SHEET -->
   <div class="pscrim" id="pscrim" aria-hidden="true"></div>
   <div class="psheet" id="psheet" role="dialog" aria-modal="true" aria-label="Vesta's analysis" tabindex="-1">
@@ -529,15 +629,17 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 </div>
 
 <script>
+// No pro-counts anywhere on Vesta — a catalog number ("48 pros") reads as thin and
+// undercuts the due-diligence. Per-pro review counts are different and stay.
 const trades = [
-  { key:'roofing', label:'Roofing', plural:'roofers', icon:'roof', count:50 },
-  { key:'hvac', label:'HVAC', plural:'HVAC pros', icon:'hvac', count:48 },
-  { key:'plumbing', label:'Plumbing', plural:'plumbers', icon:'pipe', count:49 },
-  { key:'electrical', label:'Electrical', plural:'electricians', icon:'bolt', count:50 },
-  { key:'paving', label:'Paving', plural:'pavers', icon:'brick', count:41 },
-  { key:'lawn', label:'Lawn', plural:'lawn pros', icon:'lawn', count:50 },
-  { key:'painting', label:'Painting', plural:'painters', icon:'paint', count:71 },
-  { key:'masonry', label:'Masonry', plural:'masons', icon:'mason', count:38 },
+  { key:'roofing', label:'Roofing', plural:'roofers', icon:'roof' },
+  { key:'hvac', label:'HVAC', plural:'HVAC pros', icon:'hvac' },
+  { key:'plumbing', label:'Plumbing', plural:'plumbers', icon:'pipe' },
+  { key:'electrical', label:'Electrical', plural:'electricians', icon:'bolt' },
+  { key:'paving', label:'Paving', plural:'pavers', icon:'brick' },
+  { key:'lawn', label:'Lawn', plural:'lawn pros', icon:'lawn' },
+  { key:'painting', label:'Painting', plural:'painters', icon:'paint' },
+  { key:'masonry', label:'Masonry', plural:'masons', icon:'mason' },
 ];
 let contractors = [];
 
@@ -1050,30 +1152,33 @@ function confidenceSignals(con){
   con.certs.forEach(c => out.push(c+' — manufacturer-certified'));
   return out;
 }
-// Shared by the desktop panel and the mobile sheet. On desktop the swipe card
-// already carries the prose read, so the panel passes {read:false} — the panel
-// is the STRUCTURE (standing · what homeowners highlight · confidence), never a
-// second copy of the same paragraph. The mobile sheet (card hidden behind it)
-// includes the read. The "highlights" section auto-fills as v2 enrichment lands.
-function analysisHTML(con, opts){
-  opts = opts || {};
-  const includeRead = opts.read !== false;
+// TIER 2 — Vesta's analysis. The card (tier 1) carries the prose READ; the full
+// profile (tier 3) is the standalone dossier. This middle tier is the EVIDENCE
+// behind the verdict — what homeowners highlight + Vesta's confidence — never a
+// second copy of the synthesis paragraph. Only a sparse profile (no structured
+// highlights at all) falls back to the prose so the tier is never empty.
+function evidenceHTML(con){
   const level = confidence(con), note = confidenceNote(con), signals = confidenceSignals(con);
+  const highlights = con.knownFor.length
+    ? '<div class="va-sec"><div class="va-lbl">What homeowners highlight</div><ul class="va-strengths">'+con.knownFor.map(k=>'<li>'+CHECK+'<span>'+esc(k)+'</span></li>').join('')+'</ul></div>'
+    : (con.read ? '<div class="va-sec"><div class="va-lbl"><span class="va-dot"></span>Vesta’s read</div><p class="va-read">'+esc(con.read)+'</p></div>' : '');
+  return highlights +
+    '<div class="va-sec"><div class="va-lbl">Our confidence in this read</div>'+
+      '<div class="va-conf"><div class="va-conf-l"><span class="va-shield">'+SHIELD+'</span>'+level+' confidence</div>'+
+      '<div class="va-conf-n">'+esc(note)+'</div>'+
+      (signals.length?'<ul class="va-checklist">'+signals.map(s=>'<li>'+CHECK+'<span>'+esc(s)+'</span></li>').join('')+'</ul>':'')+
+      '</div></div>';
+}
+function analysisHTML(con){
   return ''+
     '<div class="va-head"><span class="va-spark">'+SPARK+'</span>Vesta’s analysis</div>'+
     '<h2 class="va-firm">'+esc(con.name)+'</h2>'+
     '<p class="va-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</p>'+
     (con.standing?'<div class="va-band">'+esc(con.standing)+'</div>':'')+
     (con.verified.length?'<div class="va-chips">'+con.verified.map(v=>'<span class="va-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
-    (includeRead && con.read?'<div class="va-sec"><div class="va-lbl"><span class="va-dot"></span>What homeowners say</div><p class="va-read">'+esc(con.read)+'</p></div>':'')+
-    (con.knownFor.length?'<div class="va-sec"><div class="va-lbl">What homeowners highlight</div><ul class="va-strengths">'+con.knownFor.map(k=>'<li>'+CHECK+'<span>'+esc(k)+'</span></li>').join('')+'</ul></div>':'')+
-    '<div class="va-sec"><div class="va-lbl">Our confidence in this read</div>'+
-      '<div class="va-conf"><div class="va-conf-l"><span class="va-shield">'+SHIELD+'</span>'+level+' confidence</div>'+
-      '<div class="va-conf-n">'+esc(note)+'</div>'+
-      (signals.length?'<ul class="va-checklist">'+signals.map(s=>'<li>'+CHECK+'<span>'+esc(s)+'</span></li>').join('')+'</ul>':'')+
-      '</div></div>'+
+    evidenceHTML(con)+
     '<div class="va-actions"><button class="va-req">Request through Vesta</button><button class="va-bm'+(isLiked(con.placeId)?' on':'')+'" data-place="'+esc(con.placeId)+'" aria-label="Save '+esc(con.name)+'">'+BOOKMARK+'</button></div>'+
-    (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'">See the full profile →</a>':'')+
+    (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See the full profile →</a>':'')+
     '<p class="va-note">No obligation · free to request</p>';
 }
 function wireAnalysis(root, con){
@@ -1089,7 +1194,7 @@ function renderPanel(con){
       '<p class="va-town" style="margin-top:18px;font-size:14px;line-height:1.6">'+(S.mode==='saved'?'Save a pro to see Vesta’s full analysis here.':'You’ve been through every pro in this trade. Switch trades on the left, or open your saved list.')+'</p>';
     return;
   }
-  p.innerHTML = analysisHTML(con, { read:false }); wireAnalysis(p, con);
+  p.innerHTML = analysisHTML(con); wireAnalysis(p, con);
 }
 
 /* ===== DESKTOP FEED (X/Twitter-style scroll) — desktop-only; mobile never calls these ===== */
@@ -1140,17 +1245,11 @@ function renderFeedNeeds(){
   }));
   const clr = $('need-clear'); if (clr) clr.addEventListener('click', () => { S.feedNeeds.clear(); applyFeed(); });
 }
+// Desktop feed "Vesta's full analysis" disclosure — same evidence tier as the
+// sheet/panel: highlights + confidence, no synthesis re-print (the card has it).
 function feedMoreHTML(con){
-  const level=confidence(con), note=confidenceNote(con), signals=confidenceSignals(con);
-  return ''+
-    '<div class="va-sec"><div class="va-lbl"><span class="va-dot"></span>What homeowners say</div><p class="va-read">'+esc(con.read)+'</p></div>'+
-    (con.knownFor.length?'<div class="va-sec"><div class="va-lbl">What homeowners highlight</div><ul class="va-strengths">'+con.knownFor.map(k=>'<li>'+CHECK+'<span>'+esc(k)+'</span></li>').join('')+'</ul></div>':'')+
-    '<div class="va-sec"><div class="va-lbl">Our confidence in this read</div>'+
-      '<div class="va-conf"><div class="va-conf-l"><span class="va-shield">'+SHIELD+'</span>'+level+' confidence</div>'+
-      '<div class="va-conf-n">'+esc(note)+'</div>'+
-      (signals.length?'<ul class="va-checklist">'+signals.map(s=>'<li>'+CHECK+'<span>'+esc(s)+'</span></li>').join('')+'</ul>':'')+
-      '</div></div>'+
-    (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'">See the full profile →</a>':'');
+  return evidenceHTML(con) +
+    (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See the full profile →</a>':'');
 }
 function feedCardHTML(con){
   const trust = con.verified.slice(0,3);
@@ -1162,7 +1261,7 @@ function feedCardHTML(con){
         '<div class="fcard-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
         (con.standing?'<div class="fcard-band">'+esc(con.standing)+'</div>':'')+'</div>'+
       '<div class="fcard-actions-top">'+
-        '<a class="fc-fullpill" href="/c/'+encodeURIComponent(con.placeId)+'">See full profile <span aria-hidden="true">→</span></a>'+
+        '<a class="fc-fullpill" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See full profile <span aria-hidden="true">→</span></a>'+
         '<div class="fcard-menu">'+
           '<button class="fc-menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="More options for '+esc(con.name)+'">'+DOTS+'</button>'+
           '<div class="fmenu" role="menu">'+
@@ -1345,6 +1444,295 @@ function goToPro(tradeKey, placeId){
   if (con) openSheet(con);
 }
 
+/* ===== IN-APP PROFILE (Phase B) — TIER 3, the standalone dossier, native to Vesta =====
+   Reached from the card / analysis "See full profile" links and from /c/:id deep-links.
+   No external page: this is contractor.html's depth rebuilt in Vesta's light UI, and
+   deliberately NOT a third copy of the read. The card is the verdict (prose); the
+   analysis is the receipts; this is everything — synthesis once, then the deep-only
+   layer: where it stands · known-for with detail · how to hire the trade · the record
+   · the Google source · contact · the owner's claim. */
+const PTRADE_LABEL = { roofing:'Roofing', hvac:'HVAC', plumbing:'Plumbing', electrical:'Electrical', paving:'Paving', lawn_care:'Lawn & landscaping', painting:'Painting', masonry:'Masonry' };
+const PTRADE_FIRMS = { roofing:'roofing companies', hvac:'HVAC companies', plumbing:'plumbing companies', electrical:'electrical contractors', paving:'paving companies', lawn_care:'lawn & landscaping companies', painting:'painting companies', masonry:'masonry companies' };
+const PTRADE_PROS  = { roofing:'roofers', hvac:'HVAC contractors', plumbing:'plumbers', electrical:'electricians', paving:'paving contractors', lawn_care:'lawn & landscaping pros', painting:'painters', masonry:'masons' };
+const PGUIDE = {
+  roofing: [
+    { t:'Confirm CT registration & insurance', d:"Any roofer working on a Connecticut home needs an active Home Improvement Contractor registration plus their own liability and workers'-comp coverage. Ask to see both before work starts." },
+    { t:'Get the full scope in writing', d:'Tear-off vs. going over the old layer, underlayment, flashing, ice-and-water shield, ventilation, and cleanup each change the price and the result. A one-line quote hides the parts that matter.' },
+    { t:'Ask about the manufacturer warranty', d:'A factory warranty (GAF, CertainTeed, Owens Corning) only holds if the installer is certified and follows spec. Certified shops can often register a longer warranty in your name.' },
+    { t:"Be wary of pressure and 'today-only' pricing", d:'Storm-chasers and rush discounts are red flags. A reputable roofer gives you a written estimate and the time to decide.' }
+  ],
+  hvac: [
+    { t:'Ask for a load calculation, not a guess', d:"The right-sized system comes from a Manual-J load calc on your actual home — not 'same as the old one.' Oversized units short-cycle, run loud, and cost more to own." },
+    { t:'Confirm the CT license', d:'Heating and cooling work is done under a Connecticut HVAC license. The licensed technician — not just the company name — is who is accountable for the install.' },
+    { t:'Get equipment, permit, and warranty in writing', d:'Model and efficiency (SEER2 / AFUE), the permit, and warranty registration should all be itemized. A permit and post-install inspection protect you.' },
+    { t:'Check real emergency response', d:'When heat or AC fails, a callback in hours beats a cheaper shop that goes quiet in a cold snap. Ask their honest after-hours window before you need it.' }
+  ],
+  plumbing: [
+    { t:'Verify the CT plumbing license', d:'Plumbing is performed under a Connecticut P-class license held by the individual tradesperson. Confirm it is active before anyone touches a pipe.' },
+    { t:'Insist on an itemized estimate', d:"Parts, labor, and any wall or finish repair should be listed separately. Open-ended 'time and materials' can balloon on larger jobs." },
+    { t:'Know the emergency rate up front', d:'Burst pipes and failed water heaters never wait for business hours. Ask the after-hours rate and callback window in advance.' },
+    { t:'Get the warranty terms', d:'On a water heater, repipe, or fixture, ask how long parts and labor are covered — and whether the manufacturer warranty needs registering in your name.' }
+  ],
+  electrical: [
+    { t:'Confirm the CT license and the permit', d:'Electrical work runs under a Connecticut E-class license, and most jobs need a permit and inspection. Both protect your home and your insurance.' },
+    { t:"Don't shop on price alone", d:'The cheapest panel swap or rewire can skip grounding, AFCI/GFCI protection, or proper load math. Ask exactly what is included to code.' },
+    { t:'Name the scope', d:'Panel size in amps, circuits added, fixture vs. rough-in work, and who patches the walls should all be written down before work begins.' },
+    { t:'Match the pro to specialty work', d:'EV chargers, generators, and solar tie-ins each have their own requirements. Confirm hands-on experience with your specific job.' }
+  ],
+  paving: [
+    { t:'Confirm registration and insurance', d:'A driveway or walkway is home-improvement work — the contractor should hold an active CT registration and carry liability coverage.' },
+    { t:'Ask about the base, not just the surface', d:"Most paving failures start underneath. Ask about excavation depth, gravel base, and compaction — the part you can't inspect once it's done." },
+    { t:'Specify materials and thickness', d:'Asphalt thickness, paver brand and type, edge restraint, and drainage slope decide whether it lasts five years or twenty-five. Get them in writing.' },
+    { t:'Mind the weather and the warranty', d:'Temperature affects how asphalt and joints set, so avoid marginal-weather pours. Ask what is guaranteed and for how long.' }
+  ],
+  lawn_care: [
+    { t:'Match the service to your yard', d:'Mowing, fertilization, design and installs, and tree work are different skills. Confirm the crew actually does the work you need — not just the easy parts.' },
+    { t:'Ask about pesticide credentials', d:'In Connecticut, anyone applying pesticides commercially must be registered with DEEP. If chemical treatment is part of the plan, ask who is certified.' },
+    { t:'Put the schedule and scope in writing', d:"Visit frequency, what each visit covers, and seasonal cleanups should be spelled out so 'lawn care' isn't left open-ended." },
+    { t:'Confirm insurance for the heavy work', d:'Tree removal, grading, and hardscape carry real risk. Liability coverage protects you if something goes wrong on your property.' }
+  ],
+  painting: [
+    { t:'Confirm CT registration & insurance', d:'Interior and exterior painting is home-improvement work — the painter should hold an active Connecticut Home Improvement Contractor registration and carry liability coverage. Ask to see both before work starts.' },
+    { t:'Get the prep and number of coats in writing', d:"Most of a paint job's lifespan is decided before the color goes on — washing, scraping, sanding, patching, priming, and how many finish coats. A one-line quote hides the part that makes it last." },
+    { t:'Ask about surface repair and lead-safe work', d:'Wood rot, failed caulk, and drywall cracks should be fixed first, not painted over. On homes built before 1978, ask whether the crew follows EPA lead-safe (RRP) practices when sanding or scraping.' },
+    { t:'Pin down products, color, and warranty', d:'Paint line and finish, who supplies it, color approval, and daily cleanup should all be spelled out — along with how long the work is guaranteed and any touch-up window.' }
+  ],
+  masonry: [
+    { t:'Confirm CT registration & insurance', d:'Masonry, hardscape, and chimney work is home-improvement work — the mason should hold an active Connecticut Home Improvement Contractor registration and carry liability coverage. Ask to see both before any demolition starts.' },
+    { t:'Get base prep and drainage in writing', d:'Patios, walkways, and walls last or fail on what is underneath — excavation depth, a compacted gravel base, and how water is directed away. A quote that only describes the visible stone hides the part that decides longevity.' },
+    { t:'Match the material and the repair to the house', d:'Ask which stone, brick, or paver and what pattern, and on older or historic homes, how new work and mortar will match the existing. For chimneys and foundations, confirm whether they are rebuilding or repairing — and why.' },
+    { t:'Pin down permits, timeline, and cleanup', d:'Belgian-block aprons and structural walls can require local permits — confirm who pulls them. Spell out the schedule, site protection, daily cleanup, and how long the work is guaranteed.' }
+  ]
+};
+const BACKARROW = '<svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg>';
+let profData = null;   // { placeId, p, enr, claimed, unlocked }
+
+function tradeGuessFrom(t){
+  t = String(t||'');
+  if (/roof/i.test(t)) return 'roofing';
+  if (/hvac|heating|air condition/i.test(t)) return 'hvac';
+  if (/plumb/i.test(t)) return 'plumbing';
+  if (/electric/i.test(t)) return 'electrical';
+  if (/pav|asphalt|driveway|concrete/i.test(t)) return 'paving';
+  if (/lawn|landscap/i.test(t)) return 'lawn_care';
+  if (/paint/i.test(t)) return 'painting';
+  if (/mason|brick|stone|chimney/i.test(t)) return 'masonry';
+  return '';
+}
+function pTradeKey(){ const enr=profData.enr, p=profData.p; return (enr && enr.trade) || tradeGuessFrom(p.primary_type); }
+
+async function openProfile(placeId){
+  if (!placeId) return;
+  S.profFrom = { screen:S.screen, mode:S.mode, trade:S.activeTrade };
+  closeSheet(); closeSearch(); if (S.filterOpen) closeFilterSheet(); closeFeedMenus();
+  showScreen('profile'); updateNavState();
+  const sc=$('prof-scroll'); if(sc) sc.scrollTop=0;
+  $('prof-wrap').innerHTML = '<button class="prof-crumb" id="prof-back">'+BACKARROW+'<span>Back</span></button><div class="prof-loading">Loading profile…</div>';
+  wireProfBack();
+  try {
+    const resp = await HOME.api('/c/'+encodeURIComponent(placeId));
+    const data = resp && resp.data;
+    if (!data || !data.ok){ $('prof-wrap').innerHTML = profErrorHTML(); wireProfBack(); return; }
+    const enrRows = await HOME.db('/profile_enrichment_public?place_id=eq.'+encodeURIComponent(placeId)+
+      '&limit=1&select=trade,registered,hic_issue_date,trade_license,certifications,synthesis,synthesis_review_count,'+
+      'signature,known_for,specialties,service_area,owner_name,volume_band,rating_band,tenure_band,trade_n');
+    const enr = Array.isArray(enrRows) && enrRows[0] ? enrRows[0] : null;
+    profData = { placeId, p:data.place, enr, claimed:!!data.claimed, unlocked:data.unlocked||null };
+    renderProfile();
+  } catch(_){
+    $('prof-wrap').innerHTML = profErrorHTML(); wireProfBack();
+  }
+}
+function profErrorHTML(){
+  return '<button class="prof-crumb" id="prof-back">'+BACKARROW+'<span>Back</span></button>'+
+    '<div class="prof-error">We couldn’t load that profile.<br>It may have moved — <a href="/vesta">back to Vesta</a>.</div>';
+}
+function backFromProfile(){
+  const f = S.profFrom;
+  if (f && f.screen==='browse'){
+    S.mode=f.mode; S.activeTrade=f.trade;
+    showScreen('browse'); renderChips(); renderSidebar();
+    if (f.mode==='saved'){ showFav(); renderSaved(); } else { showDeck(); updateBrowseHead(); renderDeck(); }
+    updateNavState();
+  } else {
+    const appTrade = (profData && TRADE_APP[pTradeKey()]) || S.activeTrade || 'roofing';
+    openBrowse(appTrade);
+  }
+}
+
+/* ── profile sections (silent on null — never invent a field) ── */
+function profHeroHTML(){
+  const p=profData.p, enr=profData.enr, trade=pTradeKey();
+  const tName = PTRADE_LABEL[trade] || (trade ? trade.replace(/_/g,' ') : '');
+  const badges=[];
+  badges.push(enr ? '<span class="prof-badge plain">◆ Vesta-analyzed from public records</span>' : '<span class="prof-badge plain">Listed — not yet verified</span>');
+  if (profData.claimed) badges.push('<span class="prof-badge">Profile claimed</span>');
+  if (p.business_status==='CLOSED_TEMPORARILY') badges.push('<span class="prof-badge plain">Temporarily closed</span>');
+  const reqHref = '/vesta/search?mode=request&place='+encodeURIComponent(profData.placeId)+(trade?'&trade='+trade:'');
+  return '<button class="prof-crumb" id="prof-back">'+BACKARROW+'<span>Back</span></button>'+
+    '<h1 class="prof-name">'+esc(p.name)+'</h1>'+
+    '<p class="prof-sub">'+(tName?esc(tName)+' · ':'')+esc(String(p.address||'').replace(/,?\s*(USA|United States)\.?$/i,''))+'</p>'+
+    '<div class="prof-badges">'+badges.join('')+'</div>'+
+    '<a class="prof-req" href="'+reqHref+'">Request through Vesta <span aria-hidden="true">→</span></a>'+
+    '<p class="prof-fine">One form — Vesta carries your request to them, replies come straight to you.</p>'+
+    (enr
+      ? '<p class="prof-note">Vesta built this profile from public records and homeowner reviews — an independent read, not a paid placement. '+esc(p.name)+' hasn’t joined Vesta’s verified network yet, so there’s no documented job history to show here.</p>'
+      : '<p class="prof-note">This business hasn’t joined Vesta’s verified network yet, so there’s no verified work record to show — just the public listing below.</p>');
+}
+function profSignatureHTML(){ const enr=profData.enr; return (enr && enr.signature) ? '<p class="prof-sig">'+esc(enr.signature)+'</p>' : ''; }
+function profReadHTML(){
+  const enr=profData.enr; if (!enr || !enr.synthesis) return '';
+  return '<h2 class="prof-sec-h">Vesta’s read</h2>'+
+    '<div class="prof-block"><p class="read">'+esc(enr.synthesis)+'</p>'+
+    '<p class="prof-fine" style="margin-top:12px">Summarized by Vesta from '+(enr.synthesis_review_count?esc(enr.synthesis_review_count)+' ':'')+
+    'public homeowner reviews — Vesta’s own wording, never a copy of any single review.</p></div>';
+}
+function profStandingHTML(){
+  const enr=profData.enr; if (!enr) return '';
+  const trade=pTradeKey();
+  const firms = PTRADE_FIRMS[trade] || 'pros';
+  const inFC = ' among the '+firms+' we track across Fairfield County';   // no catalog count — the band is the signal
+  const items=[];
+  if (enr.rating_band==='top10') items.push(['Homeowner rating','Among the highest-rated','Its aggregate homeowner rating sits in the top tier'+inFC+'.']);
+  else if (enr.rating_band==='top25') items.push(['Homeowner rating','Strongly rated','Carries one of the stronger homeowner ratings'+inFC+', across a meaningful number of reviews.']);
+  if (enr.volume_band==='top10') items.push(['Review volume','Among the most-reviewed','More homeowners have left public reviews here than for nearly any other firm'+inFC+'.']);
+  else if (enr.volume_band==='top25') items.push(['Review volume','A deep track record','A deeper bank of homeowner reviews than most'+inFC+'.']);
+  if (enr.tenure_band==='top25') items.push(['Tenure','Long-established','Holds one of the older active CT contractor registrations'+inFC+' — years on the books.']);
+  if (!items.length) return '';
+  const tLower = trade==='hvac' ? 'HVAC' : ((PTRADE_LABEL[trade]||'').toLowerCase());
+  return '<h2 class="prof-sec-h">Where it stands</h2>'+
+    '<p class="prof-sec-note">How this '+esc(tLower||'pro')+' compares on the signals Vesta can verify — drawn from public records and review history, not a paid placement.</p>'+
+    '<div class="prof-cards">'+items.map(it=>'<div class="prof-card"><div class="k">'+esc(it[0])+'</div><h3>'+esc(it[1])+'</h3><p>'+esc(it[2])+'</p></div>').join('')+'</div>';
+}
+function profKnownHTML(){
+  const enr=profData.enr; if (!enr) return '';
+  const known = Array.isArray(enr.known_for) ? enr.known_for.filter(k=>k && (k.label||k.detail)) : [];
+  const rows=[];
+  if (Array.isArray(enr.specialties) && enr.specialties.length) rows.push('<div class="prof-kv"><span>Specialties</span><b>'+enr.specialties.map(esc).join(' · ')+'</b></div>');
+  if (Array.isArray(enr.service_area) && enr.service_area.length) rows.push('<div class="prof-kv"><span>Service area</span><b>'+enr.service_area.map(esc).join(', ')+'</b></div>');
+  if (enr.owner_name) rows.push('<div class="prof-kv"><span>Owner</span><b>'+esc(enr.owner_name)+'</b></div>');
+  if (!known.length && !rows.length) return '';
+  let html='<h2 class="prof-sec-h">What they’re known for</h2>';
+  if (known.length) html += '<div class="prof-cards">'+known.map(k=>'<div class="prof-card"><h3>'+esc(k.label||'')+'</h3><p>'+esc(k.detail||'')+'</p></div>').join('')+'</div>';
+  if (rows.length) html += '<div class="prof-block" style="margin-top:12px">'+rows.join('')+'</div>';
+  return html;
+}
+function profGuideHTML(){
+  const g = PGUIDE[pTradeKey()]; if (!g) return '';
+  const rows = g.map((it,i)=>'<div class="prof-angle"><div class="no">'+String(i+1).padStart(2,'0')+'</div><div><h3>'+esc(it.t)+'</h3><p>'+esc(it.d)+'</p></div></div>').join('');
+  return '<h2 class="prof-sec-h">What to check before you hire</h2>'+
+    '<p class="prof-sec-note">Vesta’s plain checklist for '+esc(PTRADE_PROS[pTradeKey()]||'this trade')+'. General guidance about the trade — not a claim about this business.</p>'+
+    '<div class="prof-guide">'+rows+'</div>';
+}
+function profRecordHTML(){
+  const enr=profData.enr; if (!enr) return '';
+  const trade=pTradeKey(); const tLower = trade==='hvac' ? 'HVAC' : ((PTRADE_LABEL[trade]||'trade').toLowerCase());
+  const chips=[];
+  if (enr.registered){ const yr = enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0,4) : 0; chips.push('<span class="prof-badge">Registered CT contractor'+(yr&&yr!==1999?' · since '+yr:'')+' ✓</span>'); }
+  if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if (c && c.issuer && c.level) chips.push('<span class="prof-badge">'+esc(c.issuer+' '+c.level)+' ✓</span>'); }
+  if (Array.isArray(enr.trade_license) && enr.trade_license.length) chips.push('<span class="prof-badge">Licensed '+esc(tLower)+' ✓</span>');
+  if (!chips.length) return '';
+  return '<h2 class="prof-sec-h">The record</h2><div class="prof-block"><div class="prof-badges" style="margin:0">'+chips.join('')+'</div>'+
+    '<p class="prof-fine" style="margin-top:11px">Checked against public CT state registries and manufacturer directories · June 2026. Vesta vouches only what a public record confirms.</p></div>';
+}
+function profGoogleHTML(){
+  const p=profData.p;
+  if (p.rating==null || !p.rating_count){
+    return p.maps_uri ? '<p class="prof-fine" style="margin-top:24px"><a href="'+esc(p.maps_uri)+'" target="_blank" rel="noopener nofollow">See this business on Google Maps ↗</a></p>' : '';
+  }
+  return '<div class="prof-google"><span class="gsrc">For reference · Google</span><br>'+
+    '<b>'+esc(p.rating)+'★</b> across '+Number(p.rating_count).toLocaleString('en-US')+' Google reviews'+
+    (p.maps_uri?' · <a href="'+esc(p.maps_uri)+'" target="_blank" rel="noopener nofollow">on Maps ↗</a>':'')+
+    '<br><span style="font-size:11px;color:var(--ebony)">Shown live and unaltered — a marketing signal, not a Vesta rating. Vesta’s read above is our own analysis.</span></div>';
+}
+function profContactRows(u){
+  const rows=[];
+  if (u.phone) rows.push('<div class="prof-contactrow"><b>Phone</b><a href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">'+esc(u.phone)+'</a></div>');
+  if (u.website) rows.push('<div class="prof-contactrow"><b>Website</b><a href="'+esc(u.website)+'" rel="nofollow noopener" target="_blank">'+esc(String(u.website).replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))+'</a></div>');
+  if (u.socials) for (const k in u.socials){ if (u.socials[k]) rows.push('<div class="prof-contactrow"><b>'+esc(HOME.tradeLabel(k))+'</b><a href="'+esc(u.socials[k])+'" rel="nofollow noopener" target="_blank">'+esc(String(u.socials[k]).replace(/^https?:\/\/(www\.)?/,''))+'</a></div>'); }
+  return rows.length ? rows.join('') : '<p class="prof-fine">No public contact details surfaced for this pro — they may be phone-unlisted. Try the request flow instead.</p>';
+}
+function profContactHTML(){
+  if (profData.unlocked) return '<h2 class="prof-sec-h">Contact</h2><div class="prof-block">'+profContactRows(profData.unlocked)+'</div>';
+  if (signedIn()) return '<h2 class="prof-sec-h">Contact</h2><div class="prof-block">'+
+    '<p style="font-size:13.5px;margin-bottom:12px;color:var(--ebony)">Phone, website, and social profiles — everything public we can find.</p>'+
+    '<button class="prof-req" id="prof-unlock" style="margin-top:0">'+LOCK+' Show contact info</button><span class="prof-status" id="prof-unlock-st"></span></div>';
+  return '<h2 class="prof-sec-h">Contact</h2><div class="prof-lockbox">'+
+    '<div class="prof-blur">(516) 555-0000 · example-website.com · facebook.com/example</div>'+
+    '<p style="font-size:13.5px;margin-bottom:12px;color:var(--olive)"><b>Contact info is free — it just needs an account.</b><br>'+
+    '<span style="color:var(--ebony);font-size:12.5px">One email, no password, ten seconds. Phone, website, socials — everything public we can find.</span></p>'+
+    '<a class="prof-req" style="margin-top:0" href="'+esc(HOME.signinHref('/vesta'))+'">Create free account / sign in</a></div>';
+}
+function profClaimHTML(){
+  const enr=profData.enr, p=profData.p;
+  const ownerFirst = enr && enr.owner_name ? esc(String(enr.owner_name).trim().split(/\s+/)[0]) : '';
+  const town = esc((String(p.address||'').split(',')[1]||'').trim());
+  const head = 'Is this your business'+(ownerFirst?', '+ownerFirst:'')+'?';
+  const claimInner = profData.claimed
+    ? '<p class="am-lede2">✓ Claimed by the business — thank you. Here’s what comes next.</p>'
+    : '<p class="am-lede2">Claim it free — it’s already in front of homeowners'+(town?' in '+town:'')+'. Claiming takes a minute, costs nothing, and puts your name on the read above.</p>'+
+      '<form id="prof-claim">'+
+      '<div class="am-form-row"><label for="pcn">Your name *</label><input type="text" id="pcn" required maxlength="80"></div>'+
+      '<div class="am-form-row am-form-pair"><div><label for="pcp">Phone *</label><input type="tel" id="pcp" required maxlength="20"></div>'+
+      '<div><label for="pce">Email</label><input type="email" id="pce" maxlength="120"></div></div>'+
+      '<button class="am-claim-btn" type="submit">Claim this profile</button><span class="prof-status" id="prof-claim-st"></span></form>'+
+      '<div class="am-rule"></div>';
+  return '<section class="atlas-moment">'+
+    '<div class="am-eyebrow">For the owner · from 4THWALL</div>'+
+    '<h2 class="am-h">'+head+'</h2>'+claimInner+
+    '<div class="am-plabel">Then put it to work — with Atlas</div>'+
+    '<p class="am-lede">Vesta brings homeowners to your door. <b>Atlas makes sure not one of them slips away.</b> '+
+      'While you’re on the job, Atlas answers every call and text in your name — books the work, sends the reminder, asks for the review. '+
+      'The back office the best shops run, without hiring anyone.</p>'+
+    '<div class="am-uses">'+
+      '<div class="am-use"><div class="am-n">01</div><h3>Answers in your name, 24/7</h3><p>Every missed call and after-hours text gets a real reply — your services, your pricing, your voice. The lead never goes cold.</p></div>'+
+      '<div class="am-use"><div class="am-n">02</div><h3>Books the job for you</h3><p>It checks availability, sets the appointment, and sends the reminder — so the estimate actually happens.</p></div>'+
+      '<div class="am-use"><div class="am-n">03</div><h3>Earns the next review</h3><p>When the work’s done it follows up and asks the happy customer for the review that brings the next one.</p></div>'+
+    '</div>'+
+    '<div class="am-cta"><a class="am-pill" href="https://4thwall.solutions" target="_blank" rel="noopener">See what Atlas does →</a>'+
+    '<span class="am-fine">Vesta stays free. Atlas is the paid back office — for when the calls start coming.</span></div>'+
+  '</section>';
+}
+function profRemovalHTML(){
+  return '<p class="prof-removal">This is a public-record listing compiled by Vesta — not an endorsement, and not written by the business. '+
+    'To remove or correct it, email <a href="mailto:andrew@4thwall.solutions?subject=Vesta%20listing%20removal">andrew@4thwall.solutions</a> '+
+    '(<a href="/terms.html#directory">how this works ›</a>).</p>';
+}
+function renderProfile(){
+  $('prof-wrap').innerHTML = profHeroHTML()+profSignatureHTML()+profReadHTML()+profStandingHTML()+profKnownHTML()+
+    profGuideHTML()+profRecordHTML()+profGoogleHTML()+profContactHTML()+profClaimHTML()+profRemovalHTML();
+  wireProfile();
+}
+function wireProfBack(){ const b=$('prof-back'); if(b) b.addEventListener('click', backFromProfile); }
+function wireProfile(){
+  wireProfBack();
+  const unlock=$('prof-unlock'); if(unlock) unlock.addEventListener('click', profUnlock);
+  const claim=$('prof-claim'); if(claim) claim.addEventListener('submit', profClaimSubmit);
+}
+async function profUnlock(){
+  const btn=$('prof-unlock'), st=$('prof-unlock-st'); if(!btn) return;
+  btn.disabled=true;
+  try {
+    const { status, data:r } = await HOME.api('/c/'+encodeURIComponent(profData.placeId)+'/unlock', { method:'POST', body:{ zip:'' } });
+    if (r && r.ok && r.unlocked){ profData.unlocked=r.unlocked; renderProfile(); return; }
+    btn.disabled=false; st.className='prof-status is-error';
+    st.textContent = status===429 ? 'A lot of unlocks this hour — try again shortly.' : (status===401 ? 'Please sign in again.' : 'Couldn’t unlock — try again.');
+  } catch(_){ btn.disabled=false; st.className='prof-status is-error'; st.textContent='Couldn’t unlock — try again.'; }
+}
+async function profClaimSubmit(e){
+  e.preventDefault();
+  const form=$('prof-claim'), st=$('prof-claim-st'), btn=form.querySelector('button');
+  // read by ID — form.name resolves to the form's name attribute, not the input
+  const name=($('pcn')||{}).value||'', phone=($('pcp')||{}).value||'', email=($('pce')||{}).value||'';
+  btn.disabled=true; st.className='prof-status'; st.textContent='…';
+  try {
+    const { data:r } = await HOME.api('/c/'+encodeURIComponent(profData.placeId)+'/claim', { method:'POST', body:{ name, phone, email, zip:'' } });
+    if (r && r.ok){ form.outerHTML='<p class="am-lede2">✓ Thanks, '+esc(r.first_name)+' — we have your claim on '+esc(r.business)+'. We’ll reach out to verify it’s you, then the profile is yours.</p>'; return; }
+    btn.disabled=false; st.className='prof-status is-error';
+    st.textContent = (r&&r.error==='missing_fields') ? 'Name + valid phone needed.' : (r&&r.error==='rate_limited') ? 'Too many attempts — try later.' : 'Couldn’t send — try again.';
+  } catch(_){ btn.disabled=false; st.className='prof-status is-error'; st.textContent='Couldn’t send — try again.'; }
+}
+
 /* VIEW TOGGLES */
 function showDeck(){ if(desktop()){ $('feedwrap').hidden=false; $('deckwrap').hidden=true; } else { $('deckwrap').hidden=false; $('feedwrap').hidden=true; } $('favwrap').hidden=true; }
 function showFav(){ $('deckwrap').hidden=true; $('feedwrap').hidden=true; $('favwrap').hidden=false; }
@@ -1404,13 +1792,27 @@ function updateNavState(){
   });
   // feed overflow menus close on any outside click
   document.addEventListener('click', e => { if(!e.target.closest('.fcard-menu')) closeFeedMenus(); });
+  // "See full profile" links open the profile in-app (tier 3). Keep the href so
+  // middle-click / cmd-click / no-JS still open /c/:id in a new tab.
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a.va-full, a.fc-fullpill');
+    if (!a) return;
+    if (e.button!==0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const id = a.getAttribute('data-place'); if (!id) return;
+    e.preventDefault(); openProfile(id);
+  });
   // re-render the browse view when the layout crosses the desktop/mobile boundary
   let _wasDesktop = desktop();
   window.addEventListener('resize', () => {
     const d = desktop(); if (d===_wasDesktop) return; _wasDesktop = d;
-    if (d && S.screen!=='browse'){ openBrowse(S.activeTrade); return; }   // desktop hides the home screen → land in the feed
+    if (d && S.screen!=='browse' && S.screen!=='profile'){ openBrowse(S.activeTrade); return; }   // desktop hides the home screen → land in the feed
     if (S.screen==='browse'){ if (S.mode==='saved') renderSaved(); else { showDeck(); updateBrowseHead(); renderDeck(); } }
   });
+  // Deep-link: /c/:placeId (now rewritten to this app) or ?place= opens the profile in-app.
+  const dm = location.pathname.match(/^\/c\/([A-Za-z0-9_-]{8,200})\/?$/);
+  const pq = (new URLSearchParams(location.search).get('place')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,200);
+  const deepId = dm ? dm[1] : (pq.length>=8 ? pq : null);
+  if (deepId) openProfile(deepId);
 })();
 </script>
 </body>

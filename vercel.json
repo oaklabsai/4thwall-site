@@ -15,7 +15,7 @@
     { "source": "/auth/confirm",  "destination": "/auth-confirm.html" },
     { "source": "/record/:token", "destination": "/record.html" },
     { "source": "/pro/:id",       "destination": "/pro.html" },
-    { "source": "/c/:placeId",    "destination": "/contractor.html" },
+    { "source": "/c/:placeId",    "destination": "/vesta-app.html" },
     { "source": "/fairfield-county/:trade", "destination": "/directory.html" }
   ],
   "redirects": [
