@@ -411,7 +411,7 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 .proof-eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(18,16,14,.38);margin-bottom:1.1rem}
 .proof-punch{font-family:var(--display);font-size:clamp(2rem,4.5vw,3.6rem);font-weight:400;line-height:1.08;letter-spacing:-.035em;color:#12100E;margin-bottom:.85rem}
 .proof-punch em{font-style:italic;color:#4A4B2F}
-.proof-under{font-family:var(--body);font-size:1rem;color:rgba(18,16,14,.48);line-height:1.6;max-width:520px;margin:0 auto}
+.proof-under{font-family:var(--body);font-size:1rem;color:rgba(18,16,14,.48);line-height:1.6;max-width:580px;margin:0 auto}
 .stat-si{display:flex;align-items:center;gap:.9rem;padding:1.4rem 2rem;flex:1}
 .stat-si+.stat-si{border-left:1px solid rgba(18,16,14,.07)}
 .stat-sep{display:none}
@@ -1057,9 +1057,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <!-- Stat strip — floating elevation card -->
 <div class="stat-strip-new">
   <div class="proof-statement">
-    <p class="proof-eyebrow">The only rule that matters</p>
-    <h2 class="proof-punch">The first contractor to respond<br><em>gets the job.</em></h2>
-    <p class="proof-under">We built Atlas around that single truth. Every feature — instant replies, automated booking, review follow-ups — exists to make sure that contractor is you.</p>
+    <p class="proof-eyebrow">The real problem</p>
+    <h2 class="proof-punch">Most jobs aren't lost to<br><em>better contractors.</em></h2>
+    <p class="proof-under">They're lost to better systems. The contractor who answers first, follows up, fills the calendar, collects the reviews, and stays visible when homeowners search — that's who wins the market. Atlas is that system.</p>
   </div>
 </div>
 
@@ -1324,15 +1324,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .ba-col--after .ba-headline em{font-style:italic;color:#D4DF9E}
 .ba-scene{font-family:var(--mono);font-size:.7rem;letter-spacing:.03em;color:rgba(245,243,238,.28);margin-bottom:1.4rem;line-height:1.5}
 .ba-col--after .ba-scene{color:rgba(212,223,158,.38)}
-.ba-msgs{display:flex;flex-direction:column;gap:.6rem}
-.ba-msg{display:flex;gap:.65rem;align-items:flex-start}
-.ba-msg-bubble{font-size:.8rem;line-height:1.5;padding:.55rem .8rem;border-radius:12px;max-width:82%}
-.ba-col--before .ba-msg-bubble{background:rgba(255,255,255,.06);color:rgba(245,243,238,.55);border-radius:12px 12px 12px 3px}
-.ba-col--after .ba-msg-bubble{background:rgba(212,223,158,.1);color:rgba(245,243,238,.8);border-radius:12px 12px 12px 3px}
-.ba-msg-bubble.outbound{border-radius:12px 12px 3px 12px;margin-left:auto}
-.ba-col--before .ba-msg-bubble.outbound{background:rgba(255,255,255,.04);color:rgba(245,243,238,.3)}
-.ba-col--after .ba-msg-bubble.outbound{background:rgba(74,75,47,.7);color:rgba(212,223,158,.9)}
-.ba-msg.is-right{flex-direction:row-reverse}
+.ba-msgs{display:flex;flex-direction:column;gap:.5rem}
+.ba-msg{display:flex;align-items:baseline;gap:.7rem}
+.ba-msg-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:.45rem}
+.ba-col--before .ba-msg-dot{background:rgba(245,243,238,.18)}
+.ba-col--after .ba-msg-dot{background:rgba(212,223,158,.5)}
+.ba-msg-bubble{font-size:.82rem;line-height:1.55;color:rgba(245,243,238,.55)}
+.ba-col--before .ba-msg-bubble{color:rgba(245,243,238,.38)}
+.ba-col--after .ba-msg-bubble{color:rgba(245,243,238,.75)}
 .ba-outcome{margin-top:auto;padding-top:1.6rem;border-top:1px solid rgba(255,255,255,.06);font-size:.85rem;line-height:1.55}
 .ba-col--before .ba-outcome{color:rgba(245,243,238,.32)}
 .ba-col--after .ba-outcome{color:rgba(212,223,158,.7)}
@@ -1349,14 +1348,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <div class="pill-copy">
       <div class="pill-tag">For Contractors</div>
       <div class="pill-name">Atlas<span class="dot">.</span></div>
-      <p class="pill-tagline">Run your operations.<br>We handle the busywork.</p>
+      <p class="pill-tagline">The back office<br>your business has been missing.</p>
       <div class="pill-rule"></div>
       <ul class="pill-features">
-        <li>Lead Management</li>
-        <li>Scheduling &amp; Dispatch</li>
-        <li>Estimates &amp; Proposals</li>
-        <li>AI Follow-Ups</li>
-        <li>Reporting &amp; Insights</li>
+        <li>Leads captured &amp; qualified automatically</li>
+        <li>Estimates booked, jobs tracked</li>
+        <li>Reviews collected after every close</li>
+        <li>Campaigns that run in slow months</li>
+        <li>AI search visibility built in</li>
       </ul>
       <span class="pill-btn">Explore Atlas <span class="arr">→</span></span>
     </div>
@@ -1441,53 +1440,39 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <!-- WITHOUT -->
     <div class="ba-col ba-col--before">
       <div>
-        <div class="ba-label">Without 4THWALL</div>
-        <h3 class="ba-headline">Saturday morning.<br>You're still asleep.</h3>
-        <p class="ba-scene">7:14 AM · homeowner texts three roofers</p>
+        <div class="ba-label">Without Atlas</div>
+        <h3 class="ba-headline">You are<br>the back office.</h3>
+        <p class="ba-scene">Every lead, follow-up, review, and campaign runs through you — or doesn't run at all.</p>
       </div>
       <div class="ba-msgs">
-        <div class="ba-msg">
-          <div class="ba-msg-bubble">Hey, need a roof estimate ASAP — got a leak. When can you come out?</div>
-        </div>
-        <div class="ba-msg is-right">
-          <div class="ba-msg-bubble outbound">— no reply —</div>
-        </div>
-        <div class="ba-msg">
-          <div class="ba-msg-bubble">following up, still need someone</div>
-        </div>
-        <div class="ba-msg is-right">
-          <div class="ba-msg-bubble outbound">— no reply —</div>
-        </div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">3 unread leads · oldest is 4 days ago</div></div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">Job closed last Tuesday · no review sent</div></div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">November calendar · mostly empty</div></div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">Last campaign sent · never</div></div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">AI search for "best roofer in Fairfield County" · your name doesn't appear</div></div>
       </div>
       <div class="ba-outcome">
-        <strong>Job goes to the competitor.</strong>
-        By the time you check your phone at 9am, they've already confirmed the estimate.
+        <strong>Nothing falls through the cracks on purpose.</strong>
+        It just falls through — because there's no system catching it.
       </div>
     </div>
     <!-- WITH -->
     <div class="ba-col ba-col--after">
       <div>
         <div class="ba-label">With Atlas</div>
-        <h3 class="ba-headline">Same Saturday.<br><em>Job already booked.</em></h3>
-        <p class="ba-scene">7:14 AM · homeowner texts — Atlas replies in 38 seconds</p>
+        <h3 class="ba-headline">Atlas runs<br><em>the back office.</em></h3>
+        <p class="ba-scene">Every lead qualified, every job tracked, every review requested, every campaign timed.</p>
       </div>
       <div class="ba-msgs">
-        <div class="ba-msg">
-          <div class="ba-msg-bubble">Hey, need a roof estimate ASAP — got a leak. When can you come out?</div>
-        </div>
-        <div class="ba-msg is-right">
-          <div class="ba-msg-bubble outbound">Hi! Got your message — we can get someone out Monday between 9–11am or Tuesday afternoon. Which works better?</div>
-        </div>
-        <div class="ba-msg">
-          <div class="ba-msg-bubble">Monday morning works, thanks!</div>
-        </div>
-        <div class="ba-msg is-right">
-          <div class="ba-msg-bubble outbound">Confirmed for Monday 9am. You'll get a reminder the day before. See you then!</div>
-        </div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">3 leads · qualified, 2 estimates booked automatically</div></div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">Job closed Tuesday · 5★ review received Thursday</div></div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">November · 6 jobs booked, 3 more in pipeline</div></div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">Storm campaign · live, 5 leads generated this week</div></div>
+        <div class="ba-msg"><div class="ba-msg-dot"></div><div class="ba-msg-bubble">AI search for "best roofer in Fairfield County" · your profile surfaces</div></div>
       </div>
       <div class="ba-outcome">
-        <strong>Job booked. You wake up to a calendar entry.</strong>
-        Atlas handled the lead, the booking, and the confirmation — while you slept.
+        <strong>The business runs whether you're on the job or off it.</strong>
+        Atlas handles the pipeline — you handle the work.
       </div>
     </div>
   </div>
@@ -1500,8 +1485,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <section class="cta-block" id="contact">
   <div class="cta-block-inner">
     <p class="cta-eyebrow">Get started today</p>
-    <h2 class="cta-h">Stop losing leads<br><em>while you sleep.</em></h2>
-    <p class="cta-body">We'll show you exactly how Atlas handles your inbound, fills your calendar, and collects your reviews — live, in 20 minutes. No sales pitch. No commitment.</p>
+    <h2 class="cta-h">Your back office.<br><em>Finally automated.</em></h2>
+    <p class="cta-body">We'll show you exactly how Atlas qualifies your leads, fills your calendar, collects your reviews, and keeps your business visible — live, in 20 minutes. No sales pitch. No commitment.</p>
     <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="cta-big-btn" target="_blank" rel="noopener">Book a 20-min call →</a>
     <p class="cta-note">Free setup &nbsp;·&nbsp; No long-term contract &nbsp;·&nbsp; Built for your trade</p>
   </div>
