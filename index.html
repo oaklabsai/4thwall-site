@@ -335,7 +335,7 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
    Style: Dimensional Layering (UI/UX Pro Max)
    ══════════════════════════════════════════════════ */
 .hero-new{background:#F4F2EE;padding:calc(4.5rem + 48px) var(--pad) 0;overflow:visible}
-.hero-card{background:transparent;border-radius:0;display:grid;grid-template-columns:1fr 1.3fr 1fr;max-width:var(--max);margin:0 auto;position:relative;min-height:700px;overflow:visible}
+.hero-card{background:transparent;border-radius:0;display:flex;justify-content:center;max-width:var(--max);margin:0 auto;position:relative;overflow:visible}
 /* Headline */
 .hn-headline{font-family:var(--display);font-size:clamp(2.6rem,5.2vw,5.2rem);font-weight:700;line-height:.9;letter-spacing:-.04em;color:#12100E;margin-bottom:1rem}
 .hn-headline em{font-style:italic;font-weight:700;color:#4A4B2F}
@@ -346,7 +346,7 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 .hn-btn{background:#12100E;color:#fff;border-radius:50px;padding:.82rem 1.85rem;font-size:.92rem;font-weight:500;min-height:48px;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;transition:opacity .2s ease,transform .2s ease;letter-spacing:-.01em;cursor:pointer}
 .hn-btn:hover{opacity:.84;color:#fff;transform:translateY(-2px)}
 /* Center column */
-.hero-center{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:5rem clamp(.8rem,1.5vw,1.6rem) 3rem clamp(3rem,13vw,9rem);position:relative;z-index:5}
+.hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem 4rem;width:100%;max-width:680px;position:relative;z-index:5}
 /* Product panels */
 .hero-prod{display:flex;flex-direction:column;text-decoration:none;color:#12100E;position:relative;overflow:visible;cursor:pointer;z-index:6}
 .hero-prod:hover .hp-link{opacity:1}
@@ -987,93 +987,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <!-- ════════════════════ HERO ════════════════════ -->
 <section class="hero-new" id="home">
   <div class="hero-card">
-
-    <!-- LEFT: Atlas -->
-    <a class="hero-prod" href="/atlas" aria-label="Explore Atlas">
-      <div class="hp-device" aria-hidden="true">
-        <div class="hp-mac">
-          <div class="hp-mac-screen">
-            <svg viewBox="0 0 520 325" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin slice">
-              <rect width="520" height="325" fill="#FFFFFF"/>
-              <rect x="0" y="0" width="130" height="325" fill="#F4F2EE"/>
-              <text x="14" y="27" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="700" fill="#12100E" letter-spacing=".05em">4THWALL</text>
-              <line x1="0" y1="39" x2="130" y2="39" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
-              <path d="M12 53 L16.5 48.5 L21 53 L21 58 L18.5 58 L18.5 54.5 L14.5 54.5 L14.5 58 L12 58 Z" fill="none" stroke="rgba(18,16,14,.3)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
-              <text x="28" y="57" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Home</text>
-              <path d="M12 68 L21 68 L21 75 L18 75 L16.5 78 L15 75 L12 75 Z" fill="none" stroke="rgba(18,16,14,.3)" stroke-width="1.2" stroke-linejoin="round"/>
-              <text x="28" y="74" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Messages</text>
-              <rect x="0" y="82" width="130" height="19" fill="rgba(74,75,47,.08)"/>
-              <rect x="0" y="82" width="2.5" height="19" fill="#4A4B2F"/>
-              <circle cx="16.5" cy="88.5" r="3" fill="#4A4B2F"/>
-              <path d="M10 98 Q13 94 16.5 94 Q20 94 23 98" fill="none" stroke="#4A4B2F" stroke-width="1.2" stroke-linecap="round"/>
-              <text x="28" y="95" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#4A4B2F">Leads</text>
-              <rect x="12" y="108" width="9" height="9" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
-              <line x1="14.5" y1="106.5" x2="14.5" y2="109.5" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
-              <line x1="18.5" y1="106.5" x2="18.5" y2="109.5" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
-              <line x1="12" y1="112" x2="21" y2="112" stroke="rgba(18,16,14,.14)" stroke-width="1"/>
-              <text x="28" y="116" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Calendar</text>
-              <rect x="12" y="126" width="9" height="9" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
-              <rect x="14.5" y="124.5" width="4" height="3" rx="1" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1"/>
-              <text x="28" y="134" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Jobs</text>
-              <line x1="12" y1="142" x2="21" y2="142" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
-              <line x1="12" y1="146" x2="21" y2="146" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
-              <line x1="12" y1="150" x2="18" y2="150" stroke="rgba(18,16,14,.18)" stroke-width="1.2" stroke-linecap="round"/>
-              <text x="28" y="149" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Dispatch</text>
-              <rect x="12" y="160" width="9" height="11" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
-              <line x1="14" y1="165" x2="19" y2="165" stroke="rgba(18,16,14,.18)" stroke-width="1"/>
-              <line x1="14" y1="168" x2="19" y2="168" stroke="rgba(18,16,14,.18)" stroke-width="1"/>
-              <text x="28" y="168" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Invoices</text>
-              <line x1="12" y1="186" x2="12" y2="179" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
-              <line x1="16" y1="186" x2="16" y2="176" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
-              <line x1="20" y1="186" x2="20" y2="180" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
-              <text x="28" y="185" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Analytics</text>
-              <line x1="0" y1="197" x2="130" y2="197" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
-              <circle cx="16.5" cy="208" r="4.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
-              <circle cx="16.5" cy="208" r="1.5" fill="rgba(18,16,14,.28)"/>
-              <text x="28" y="211" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Settings</text>
-              <line x1="130" y1="0" x2="130" y2="325" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
-              <text x="148" y="24" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" font-weight="600" fill="#12100E"># leads</text>
-              <line x1="130" y1="36" x2="520" y2="36" stroke="rgba(18,16,14,.07)" stroke-width="1"/>
-              <circle cx="148" cy="60" r="11" fill="#6B654B"/>
-              <text x="148" y="65" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
-              <text x="166" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Homeowner</text>
-              <text x="248" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:41 AM</text>
-              <text x="166" y="69" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Hi, I have a roof leak in my living room.</text>
-              <text x="166" y="84" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Can someone take a look?</text>
-              <circle cx="148" cy="113" r="11" fill="#D4DF9E"/>
-              <text x="148" y="118" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#30321C" text-anchor="middle" font-weight="700">A</text>
-              <text x="166" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Atlas</text>
-              <rect x="206" y="100" width="26" height="12" rx="3" fill="rgba(74,75,47,.1)"/>
-              <text x="219" y="110" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#4A4B2F" text-anchor="middle">APP</text>
-              <text x="238" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:41 AM</text>
-              <text x="166" y="122" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Thanks for reaching out. We can help.</text>
-              <text x="166" y="137" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">How does Thursday between 2–4pm look</text>
-              <text x="166" y="152" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">for a roof inspection?</text>
-              <circle cx="148" cy="178" r="11" fill="#6B654B"/>
-              <text x="148" y="183" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
-              <text x="166" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Homeowner</text>
-              <text x="248" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:42 AM</text>
-              <text x="166" y="187" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Thursday 2–4pm works. Thanks!</text>
-              <circle cx="148" cy="215" r="11" fill="#D4DF9E"/>
-              <text x="148" y="220" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#30321C" text-anchor="middle" font-weight="700">A</text>
-              <text x="166" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Atlas</text>
-              <rect x="206" y="202" width="26" height="12" rx="3" fill="rgba(74,75,47,.1)"/>
-              <text x="219" y="212" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#4A4B2F" text-anchor="middle">APP</text>
-              <text x="238" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:42 AM</text>
-              <rect x="166" y="222" width="216" height="32" rx="7" fill="#D4DF9E"/>
-              <text x="172" y="242" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="#12100E" font-weight="600">✓ Booked: Thu, 2–4pm in 47 seconds</text>
-            </svg>
-          </div>
-          <img src="/macbook-air.png" class="hp-mac-frame" alt="">
-        </div>
-      </div>
-      <div class="hp-below">
-        <div class="hp-tag">Atlas · For Contractors</div>
-        <span class="hp-link">Explore Atlas <span class="hp-arr">→</span></span>
-      </div>
-    </a>
-
-    <!-- CENTER: Headline + CTA -->
     <div class="hero-center">
       <h1 class="hn-headline">AI infrastructure <span class="hn-sparkle">✦</span><br><em>for the trades.</em></h1>
       <p class="hn-sub">Leads answered. Jobs booked. Reviews collected — <em>all on autopilot.</em></p>
@@ -1082,80 +995,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <a href="#products" class="hn-link-secondary">See the products <span style="font-family:var(--display)">↓</span></a>
       </div>
     </div>
-
-    <!-- RIGHT: Vesta -->
-    <a class="hero-prod" href="/vesta" aria-label="Explore Vesta">
-      <div class="hp-device" aria-hidden="true">
-        <div class="hp-iph-wrap">
-        <div class="hp-iph">
-          <div class="hp-iph-screen">
-            <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-              <defs>
-                <filter id="vshadow2" x="-8%" y="-4%" width="116%" height="120%">
-                  <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(18,16,14,.13)"/>
-                </filter>
-              </defs>
-              <rect width="200" height="400" fill="#ECEDE6"/>
-              <text x="14" y="17" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">9:41</text>
-              <text x="14" y="35" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9.5" fill="rgba(18,16,14,.52)">← 4THWALL</text>
-              <rect x="136" y="25" width="36" height="14" rx="7" fill="#D4DF9E"/>
-              <text x="154" y="36" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#30321C" text-anchor="middle" font-weight="700" letter-spacing="0.6">VESTA</text>
-              <text x="14" y="58" font-family="ui-sans-serif,system-ui,sans-serif" font-size="19" font-weight="700" fill="#12100E">Browse roofers</text>
-              <text x="14" y="71" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="rgba(18,16,14,.42)">50 vetted · swipe to save the ones you like</text>
-              <rect x="14" y="79" width="52" height="19" rx="9.5" fill="#D4DF9E"/>
-              <text x="40" y="92" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#12100E" font-weight="600" text-anchor="middle">Roofing</text>
-              <rect x="70" y="79" width="40" height="19" rx="9.5" fill="rgba(255,255,255,.55)" stroke="rgba(18,16,14,.14)" stroke-width="1"/>
-              <text x="90" y="92" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.6)" text-anchor="middle">HVAC</text>
-              <rect x="114" y="79" width="50" height="19" rx="9.5" fill="rgba(255,255,255,.55)" stroke="rgba(18,16,14,.14)" stroke-width="1"/>
-              <text x="139" y="92" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.6)" text-anchor="middle">Plumbing</text>
-              <rect x="14" y="104" width="172" height="32" rx="8" fill="rgba(212,223,158,.5)" stroke="rgba(212,223,158,.8)" stroke-width="1"/>
-              <text x="24" y="118" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#30321C">✦  We weigh ratings, reviews + state records.</text>
-              <text x="24" y="129" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="#30321C" font-weight="600">Swipe right to save, left to pass.</text>
-              <rect x="12" y="142" width="176" height="144" rx="14" fill="white" filter="url(#vshadow2)"/>
-              <rect x="22" y="153" width="30" height="30" rx="7" fill="#E6E4DC"/>
-              <text x="37" y="174" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="700" fill="#6B654B" text-anchor="middle">GC</text>
-              <text x="60" y="167" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="700" fill="#12100E">Greenland Construction</text>
-              <text x="60" y="179" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7.5" fill="rgba(18,16,14,.42)">Brookfield, CT · Roofing</text>
-              <rect x="22" y="192" width="132" height="15" rx="7.5" fill="#D4DF9E"/>
-              <text x="88" y="203" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7" fill="#30321C" font-weight="600" text-anchor="middle">Top 25% by rating · of 50 we track</text>
-              <text x="22" y="220" font-family="ui-sans-serif,system-ui,sans-serif" font-size="6.5" fill="rgba(74,75,47,.65)" letter-spacing="0.8">✦  VESTA'S READ</text>
-              <text x="22" y="233" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#12100E" font-style="italic">Homeowners consistently praise</text>
-              <text x="22" y="246" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.42)" font-style="italic">Greenland's one-day roof repairs.</text>
-              <rect x="22" y="255" width="62" height="15" rx="7.5" fill="none" stroke="rgba(18,16,14,.2)" stroke-width="1"/>
-              <text x="53" y="266" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7" fill="#30321C" text-anchor="middle">✓ Registered</text>
-              <text x="100" y="278" font-family="ui-sans-serif,system-ui,sans-serif" font-size="7" fill="rgba(18,16,14,.3)" text-anchor="middle">Tap for the full analysis</text>
-              <circle cx="55" cy="314" r="17" fill="white" stroke="rgba(18,16,14,.1)" stroke-width="1.2"/>
-              <text x="55" y="320" font-family="ui-sans-serif,system-ui,sans-serif" font-size="18" fill="rgba(18,16,14,.38)" text-anchor="middle">×</text>
-              <circle cx="100" cy="314" r="17" fill="white" stroke="rgba(18,16,14,.1)" stroke-width="1.2"/>
-              <circle cx="100" cy="312" r="5.5" fill="none" stroke="rgba(18,16,14,.42)" stroke-width="1.5"/>
-              <line x1="100" y1="317.5" x2="100" y2="320" stroke="rgba(18,16,14,.42)" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cx="145" cy="314" r="17" fill="#30321C"/>
-              <path d="M145 307 C142 304 137 305 137 310 C137 314 145 321 145 321 C145 321 153 314 153 310 C153 305 148 304 145 307Z" fill="#D4DF9E"/>
-              <text x="100" y="340" font-family="ui-sans-serif,system-ui,sans-serif" font-size="6.5" fill="rgba(18,16,14,.28)" text-anchor="middle" letter-spacing="1">50 OF 50 · SHUFFLED</text>
-              <line x1="0" y1="350" x2="200" y2="350" stroke="rgba(18,16,14,.07)" stroke-width="1"/>
-              <rect x="17" y="360" width="5" height="5" rx="1" fill="rgba(18,16,14,.32)"/>
-              <rect x="24" y="360" width="5" height="5" rx="1" fill="rgba(18,16,14,.32)"/>
-              <rect x="17" y="367" width="5" height="5" rx="1" fill="rgba(18,16,14,.32)"/>
-              <rect x="24" y="367" width="5" height="5" rx="1" fill="rgba(18,16,14,.32)"/>
-              <circle cx="72" cy="369" r="14" fill="#30321C"/>
-              <circle cx="71" cy="368" r="4.5" fill="none" stroke="white" stroke-width="1.4"/>
-              <line x1="74" y1="371" x2="77.5" y2="374.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-              <path d="M119 358L119 380L127 375L135 380L135 358Z" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.4"/>
-              <circle cx="172" cy="362" r="5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.4"/>
-              <path d="M163 379Q167.5 372 172 372Q176.5 372 181 379" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.4"/>
-              <rect x="76" y="393" width="48" height="4" rx="2" fill="rgba(18,16,14,.16)"/>
-            </svg>
-          </div>
-          <img src="/iphone-frame.png" class="hp-iph-frame" alt="">
-        </div>
-        </div><!-- /hp-iph-wrap -->
-      </div>
-      <div class="hp-below">
-        <div class="hp-tag">Vesta · For Homeowners</div>
-        <span class="hp-link">Explore Vesta <span class="hp-arr">→</span></span>
-      </div>
-    </a>
-
   </div><!-- /hero-card -->
 </section>
 
@@ -1392,35 +1231,22 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .pill-btn .arr{font-family:var(--display);font-size:1.1rem;transition:transform .25s}
 .pill-btn:hover .arr{transform:translateX(3px)}
 
-/* right col: device mockup */
+/* right col: device — hidden at rest, animates in on hover */
 .pill-device{position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;flex:1}
 
-/* ── MacBook mockup (Atlas) ── */
-.mock-laptop-wrap{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;padding:1rem 0 0}
-.mock-laptop{position:relative;width:92%;max-width:460px;align-self:flex-end}
-/* Screen content sits behind the frame — coords match macbook-air.png screen cutout */
-.mock-laptop-screen{position:absolute;top:15.5%;left:10.3%;right:10.6%;bottom:12.9%;overflow:hidden}
-.mock-laptop-screen svg{width:100%;height:100%;display:block}
-/* Frame on top */
-.mock-laptop-frame{position:relative;z-index:2;width:100%;display:block;pointer-events:none}
+/* ── Atlas pill: laptop (reuses hero .hp-mac/.hp-mac-screen/.hp-mac-frame — exact screen coords) ── */
+.pill-device .hp-mac{width:100%;margin-left:0;transform-origin:center bottom;transform:perspective(1200px) rotateY(-5deg) rotateX(4deg) translateY(100%) scale(0.9);opacity:0;transition:transform .65s cubic-bezier(.16,1,.3,1),filter .65s,opacity .45s .08s;filter:drop-shadow(0 28px 56px rgba(0,0,0,.55)) drop-shadow(0 8px 18px rgba(0,0,0,.3))}
+.pill-atlas:hover .hp-mac{transform:perspective(1200px) rotateY(0deg) rotateX(0deg) translateY(4%) scale(1);opacity:1;filter:drop-shadow(0 32px 64px rgba(0,0,0,.65)) drop-shadow(0 8px 20px rgba(0,0,0,.4))}
 
-/* ── iPhone mockup (Vesta) ── */
-.mock-phone-wrap{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;padding-top:1.5rem}
-.mock-phone{position:relative;width:100%;max-width:220px;align-self:flex-end;filter:drop-shadow(0 24px 48px rgba(0,0,0,.55))}
-/* Screen content behind the frame */
-.mock-phone-screen{position:absolute;top:2.1%;left:4.4%;right:4.4%;bottom:2.1%;overflow:hidden;background:#ECEDE6}
-.mock-phone-screen svg{width:100%;height:100%;display:block}
-/* Frame on top */
-.mock-phone-frame{position:relative;z-index:2;width:100%;display:block;pointer-events:none}
+/* ── Vesta pill: iPhone (reuses hero .hp-iph/.hp-iph-screen/.hp-iph-frame — exact screen coords) ── */
+.pill-device .hp-iph-wrap{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.pill-device .hp-iph{width:58%;transform-origin:center bottom;transform:perspective(1200px) rotateY(5deg) rotateX(4deg) translateY(100%) scale(0.9);opacity:0;transition:transform .65s cubic-bezier(.16,1,.3,1),filter .65s,opacity .45s .08s}
+.pill-vesta:hover .hp-iph{transform:perspective(1200px) rotateY(0deg) rotateX(0deg) translateY(-4%) scale(1);opacity:1;filter:drop-shadow(0 28px 56px rgba(0,0,0,.45)) drop-shadow(0 8px 18px rgba(0,0,0,.25))}
 
 @media(max-width:960px){
-  /* Side-by-side compact pills, column layout */
   .pills-wrap{flex-direction:row;align-items:stretch;gap:.75rem;padding-left:1rem;padding-right:1rem}
   .pill-card{flex-direction:column;min-height:0;flex:1;min-width:0}
-  /* Hide device mockups — too cluttered at narrow width */
   .pill-device{display:none}
-  .pill-mock{display:none}
-  /* Compact copy fills full card */
   .pill-copy{flex:1;padding:1.5rem 1.2rem 1.6rem}
   .pill-tag{font-size:.58rem;letter-spacing:.1em;margin-bottom:.75rem}
   .pill-tag::before{width:14px}
@@ -1484,82 +1310,80 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <span class="pill-btn">Explore Atlas <span class="arr">→</span></span>
     </div>
     <div class="pill-device" aria-hidden="true">
-      <div class="mock-laptop-wrap">
-        <div class="mock-laptop">
-          <div class="mock-laptop-screen">
-            <svg viewBox="0 0 520 325" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin slice">
-              <rect width="520" height="325" fill="#FFFFFF"/>
-              <rect x="0" y="0" width="130" height="325" fill="#F4F2EE"/>
-              <text x="14" y="27" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="700" fill="#12100E" letter-spacing=".05em">4THWALL</text>
-              <line x1="0" y1="39" x2="130" y2="39" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
-              <path d="M12 53 L16.5 48.5 L21 53 L21 58 L18.5 58 L18.5 54.5 L14.5 54.5 L14.5 58 L12 58 Z" fill="none" stroke="rgba(18,16,14,.3)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
-              <text x="28" y="57" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Home</text>
-              <path d="M12 68 L21 68 L21 75 L18 75 L16.5 78 L15 75 L12 75 Z" fill="none" stroke="rgba(18,16,14,.3)" stroke-width="1.2" stroke-linejoin="round"/>
-              <text x="28" y="74" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Messages</text>
-              <rect x="0" y="82" width="130" height="19" fill="rgba(74,75,47,.08)"/>
-              <rect x="0" y="82" width="2.5" height="19" fill="#4A4B2F"/>
-              <circle cx="16.5" cy="88.5" r="3" fill="#4A4B2F"/>
-              <path d="M10 98 Q13 94 16.5 94 Q20 94 23 98" fill="none" stroke="#4A4B2F" stroke-width="1.2" stroke-linecap="round"/>
-              <text x="28" y="95" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#4A4B2F">Leads</text>
-              <rect x="12" y="108" width="9" height="9" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
-              <line x1="14.5" y1="106.5" x2="14.5" y2="109.5" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
-              <line x1="18.5" y1="106.5" x2="18.5" y2="109.5" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
-              <line x1="12" y1="112" x2="21" y2="112" stroke="rgba(18,16,14,.14)" stroke-width="1"/>
-              <text x="28" y="116" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Calendar</text>
-              <rect x="12" y="126" width="9" height="9" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
-              <rect x="14.5" y="124.5" width="4" height="3" rx="1" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1"/>
-              <text x="28" y="134" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Jobs</text>
-              <line x1="12" y1="142" x2="21" y2="142" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
-              <line x1="12" y1="146" x2="21" y2="146" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
-              <line x1="12" y1="150" x2="18" y2="150" stroke="rgba(18,16,14,.18)" stroke-width="1.2" stroke-linecap="round"/>
-              <text x="28" y="149" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Dispatch</text>
-              <rect x="12" y="160" width="9" height="11" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
-              <line x1="14" y1="165" x2="19" y2="165" stroke="rgba(18,16,14,.18)" stroke-width="1"/>
-              <line x1="14" y1="168" x2="19" y2="168" stroke="rgba(18,16,14,.18)" stroke-width="1"/>
-              <text x="28" y="168" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Invoices</text>
-              <line x1="12" y1="186" x2="12" y2="179" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
-              <line x1="16" y1="186" x2="16" y2="176" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
-              <line x1="20" y1="186" x2="20" y2="180" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
-              <text x="28" y="185" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Analytics</text>
-              <line x1="0" y1="197" x2="130" y2="197" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
-              <circle cx="16.5" cy="208" r="4.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
-              <circle cx="16.5" cy="208" r="1.5" fill="rgba(18,16,14,.28)"/>
-              <text x="28" y="211" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Settings</text>
-              <line x1="130" y1="0" x2="130" y2="325" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
-              <text x="148" y="24" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" font-weight="600" fill="#12100E"># leads</text>
-              <line x1="130" y1="36" x2="520" y2="36" stroke="rgba(18,16,14,.07)" stroke-width="1"/>
-              <circle cx="148" cy="60" r="11" fill="#6B654B"/>
-              <text x="148" y="65" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
-              <text x="166" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Homeowner</text>
-              <text x="248" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:41 AM</text>
-              <text x="166" y="69" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Hi, I have a roof leak in my living room.</text>
-              <text x="166" y="84" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Can someone take a look?</text>
-              <circle cx="148" cy="113" r="11" fill="#D4DF9E"/>
-              <text x="148" y="118" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#30321C" text-anchor="middle" font-weight="700">A</text>
-              <text x="166" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Atlas</text>
-              <rect x="206" y="100" width="26" height="12" rx="3" fill="rgba(74,75,47,.1)"/>
-              <text x="219" y="110" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#4A4B2F" text-anchor="middle">APP</text>
-              <text x="238" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:41 AM</text>
-              <text x="166" y="122" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Thanks for reaching out. We can help.</text>
-              <text x="166" y="137" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">How does Thursday between 2–4pm look</text>
-              <text x="166" y="152" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">for a roof inspection?</text>
-              <circle cx="148" cy="178" r="11" fill="#6B654B"/>
-              <text x="148" y="183" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
-              <text x="166" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Homeowner</text>
-              <text x="248" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:42 AM</text>
-              <text x="166" y="187" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Thursday 2–4pm works. Thanks!</text>
-              <circle cx="148" cy="215" r="11" fill="#D4DF9E"/>
-              <text x="148" y="220" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#30321C" text-anchor="middle" font-weight="700">A</text>
-              <text x="166" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Atlas</text>
-              <rect x="206" y="202" width="26" height="12" rx="3" fill="rgba(74,75,47,.1)"/>
-              <text x="219" y="212" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#4A4B2F" text-anchor="middle">APP</text>
-              <text x="238" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:42 AM</text>
-              <rect x="166" y="222" width="216" height="32" rx="7" fill="#D4DF9E"/>
-              <text x="172" y="242" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="#12100E" font-weight="600">✓ Booked: Thu, 2–4pm in 47 seconds</text>
-            </svg>
-          </div>
-          <img src="/macbook-air.png" class="mock-laptop-frame" alt="">
+      <div class="hp-mac">
+        <div class="hp-mac-screen">
+          <svg viewBox="0 0 520 325" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin slice">
+            <rect width="520" height="325" fill="#FFFFFF"/>
+            <rect x="0" y="0" width="130" height="325" fill="#F4F2EE"/>
+            <text x="14" y="27" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="700" fill="#12100E" letter-spacing=".05em">4THWALL</text>
+            <line x1="0" y1="39" x2="130" y2="39" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
+            <path d="M12 53 L16.5 48.5 L21 53 L21 58 L18.5 58 L18.5 54.5 L14.5 54.5 L14.5 58 L12 58 Z" fill="none" stroke="rgba(18,16,14,.3)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+            <text x="28" y="57" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Home</text>
+            <path d="M12 68 L21 68 L21 75 L18 75 L16.5 78 L15 75 L12 75 Z" fill="none" stroke="rgba(18,16,14,.3)" stroke-width="1.2" stroke-linejoin="round"/>
+            <text x="28" y="74" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Messages</text>
+            <rect x="0" y="82" width="130" height="19" fill="rgba(74,75,47,.08)"/>
+            <rect x="0" y="82" width="2.5" height="19" fill="#4A4B2F"/>
+            <circle cx="16.5" cy="88.5" r="3" fill="#4A4B2F"/>
+            <path d="M10 98 Q13 94 16.5 94 Q20 94 23 98" fill="none" stroke="#4A4B2F" stroke-width="1.2" stroke-linecap="round"/>
+            <text x="28" y="95" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#4A4B2F">Leads</text>
+            <rect x="12" y="108" width="9" height="9" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
+            <line x1="14.5" y1="106.5" x2="14.5" y2="109.5" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="18.5" y1="106.5" x2="18.5" y2="109.5" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="12" y1="112" x2="21" y2="112" stroke="rgba(18,16,14,.14)" stroke-width="1"/>
+            <text x="28" y="116" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Calendar</text>
+            <rect x="12" y="126" width="9" height="9" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
+            <rect x="14.5" y="124.5" width="4" height="3" rx="1" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1"/>
+            <text x="28" y="134" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Jobs</text>
+            <line x1="12" y1="142" x2="21" y2="142" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="12" y1="146" x2="21" y2="146" stroke="rgba(18,16,14,.28)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="12" y1="150" x2="18" y2="150" stroke="rgba(18,16,14,.18)" stroke-width="1.2" stroke-linecap="round"/>
+            <text x="28" y="149" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Dispatch</text>
+            <rect x="12" y="160" width="9" height="11" rx="1.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
+            <line x1="14" y1="165" x2="19" y2="165" stroke="rgba(18,16,14,.18)" stroke-width="1"/>
+            <line x1="14" y1="168" x2="19" y2="168" stroke="rgba(18,16,14,.18)" stroke-width="1"/>
+            <text x="28" y="168" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Invoices</text>
+            <line x1="12" y1="186" x2="12" y2="179" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="16" y1="186" x2="16" y2="176" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="20" y1="186" x2="20" y2="180" stroke="rgba(18,16,14,.28)" stroke-width="1.6" stroke-linecap="round"/>
+            <text x="28" y="185" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Analytics</text>
+            <line x1="0" y1="197" x2="130" y2="197" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
+            <circle cx="16.5" cy="208" r="4.5" fill="none" stroke="rgba(18,16,14,.28)" stroke-width="1.2"/>
+            <circle cx="16.5" cy="208" r="1.5" fill="rgba(18,16,14,.28)"/>
+            <text x="28" y="211" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="rgba(18,16,14,.4)">Settings</text>
+            <line x1="130" y1="0" x2="130" y2="325" stroke="rgba(18,16,14,.08)" stroke-width="1"/>
+            <text x="148" y="24" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" font-weight="600" fill="#12100E"># leads</text>
+            <line x1="130" y1="36" x2="520" y2="36" stroke="rgba(18,16,14,.07)" stroke-width="1"/>
+            <circle cx="148" cy="60" r="11" fill="#6B654B"/>
+            <text x="148" y="65" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
+            <text x="166" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Homeowner</text>
+            <text x="248" y="54" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:41 AM</text>
+            <text x="166" y="69" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Hi, I have a roof leak in my living room.</text>
+            <text x="166" y="84" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Can someone take a look?</text>
+            <circle cx="148" cy="113" r="11" fill="#D4DF9E"/>
+            <text x="148" y="118" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#30321C" text-anchor="middle" font-weight="700">A</text>
+            <text x="166" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Atlas</text>
+            <rect x="206" y="100" width="26" height="12" rx="3" fill="rgba(74,75,47,.1)"/>
+            <text x="219" y="110" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#4A4B2F" text-anchor="middle">APP</text>
+            <text x="238" y="107" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:41 AM</text>
+            <text x="166" y="122" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Thanks for reaching out. We can help.</text>
+            <text x="166" y="137" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">How does Thursday between 2–4pm look</text>
+            <text x="166" y="152" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">for a roof inspection?</text>
+            <circle cx="148" cy="178" r="11" fill="#6B654B"/>
+            <text x="148" y="183" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="white" text-anchor="middle">H</text>
+            <text x="166" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Homeowner</text>
+            <text x="248" y="172" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:42 AM</text>
+            <text x="166" y="187" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10.5" fill="rgba(18,16,14,.65)">Thursday 2–4pm works. Thanks!</text>
+            <circle cx="148" cy="215" r="11" fill="#D4DF9E"/>
+            <text x="148" y="220" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="#30321C" text-anchor="middle" font-weight="700">A</text>
+            <text x="166" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600" fill="#12100E">Atlas</text>
+            <rect x="206" y="202" width="26" height="12" rx="3" fill="rgba(74,75,47,.1)"/>
+            <text x="219" y="212" font-family="ui-sans-serif,system-ui,sans-serif" font-size="8" fill="#4A4B2F" text-anchor="middle">APP</text>
+            <text x="238" y="209" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9" fill="rgba(18,16,14,.38)">9:42 AM</text>
+            <rect x="166" y="222" width="216" height="32" rx="7" fill="#D4DF9E"/>
+            <text x="172" y="242" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" fill="#12100E" font-weight="600">✓ Booked: Thu, 2–4pm in 47 seconds</text>
+          </svg>
         </div>
+        <img src="/macbook-air.png" class="hp-mac-frame" alt="">
       </div>
     </div>
   </a>
@@ -1581,9 +1405,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <span class="pill-btn">Explore Vesta <span class="arr">→</span></span>
     </div>
     <div class="pill-device" aria-hidden="true">
-      <div class="mock-phone-wrap">
-        <div class="mock-phone">
-          <div class="mock-phone-screen">
+      <div class="hp-iph-wrap">
+        <div class="hp-iph">
+          <div class="hp-iph-screen">
             <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
               <defs>
                 <filter id="vshadow-pill" x="-8%" y="-4%" width="116%" height="120%">
@@ -1641,7 +1465,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
               <rect x="76" y="393" width="48" height="4" rx="2" fill="rgba(18,16,14,.16)"/>
             </svg>
           </div>
-          <img src="/iphone-frame.png" class="mock-phone-frame" alt="">
+          <img src="/iphone-frame.png" class="hp-iph-frame" alt="">
         </div>
       </div>
     </div>
