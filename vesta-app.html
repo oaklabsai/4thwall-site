@@ -226,6 +226,10 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .va-bm.on { background:var(--tea); border-color:transparent; }
 .va-bm.on svg { fill:var(--olive); }
 .va-full { display:inline-block; margin-top:16px; font-size:13px; font-weight:500; color:var(--ebony); text-decoration:underline; text-underline-offset:3px; }
+/* In the analysis sheet/panel, "See the full profile" is a secondary CTA placed above the primary Request button */
+.va-cta { display:flex; align-items:center; justify-content:center; gap:7px; width:100%; margin:18px 0 12px; padding:14px 20px; background:var(--white); border:1.5px solid rgba(74,75,47,.2); border-radius:var(--r-card); font-size:15px; font-weight:600; color:var(--olive); text-decoration:none; box-shadow:var(--sh-row); transition:border-color .14s, transform .12s; }
+.va-cta:hover { border-color:var(--olive); }
+.va-cta:active { transform:scale(.99); }
 .va-note { display:flex; align-items:center; gap:6px; margin-top:14px; font-size:11.5px; color:var(--ebony); }
 
 /* MOBILE SHEET */
@@ -518,6 +522,28 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .atlas-moment form{max-width:520px}
 @media (max-width:560px){ .atlas-moment .am-form-pair{grid-template-columns:1fr} }
 
+/* At-a-glance: thin rule between the credential chips and the detail rows */
+.prof-glance-rule { height:1px; background:rgba(74,75,47,.1); margin:14px 0; }
+
+/* Collapsible section (generic hiring guide) — depth kept, tucked by default */
+.prof-fold { margin-top:32px; }
+.prof-fold-sum { display:flex; align-items:center; justify-content:space-between; gap:12px; list-style:none; cursor:pointer; max-width:560px; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:16px; padding:15px 18px; box-shadow:var(--sh-row); transition:border-color .15s; }
+.prof-fold-sum::-webkit-details-marker { display:none; }
+.prof-fold-sum:hover { border-color:rgba(74,75,47,.28); }
+.prof-fold-sum > span:first-child { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); letter-spacing:-.01em; }
+.prof-fold-chev { display:flex; color:var(--ebony); transition:transform .2s; }
+.prof-fold[open] .prof-fold-chev { transform:rotate(180deg); }
+.prof-fold-body { padding:14px 2px 0; }
+
+/* Claim = a single question pill; the owner-facing claim + Atlas funnel cascades open on click */
+.claimwrap { margin-top:32px; }
+.claim-toggle { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; max-width:560px; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:16px; padding:15px 18px; cursor:pointer; font-family:var(--sans); box-shadow:var(--sh-row); transition:border-color .15s; }
+.claim-toggle:hover { border-color:rgba(74,75,47,.28); }
+.claim-q { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); letter-spacing:-.01em; }
+.claim-chev { display:flex; color:var(--ebony); transition:transform .2s; }
+.claim-toggle.open .claim-chev { transform:rotate(180deg); }
+.claim-panel .atlas-moment { margin:8px 0 0; }
+
 /* In-app request — light Vesta palette (the homeowner's side; the Atlas moment stays dark, this does not) */
 .req-form { max-width:560px; margin-top:20px; }
 .req-row { margin-bottom:14px; }
@@ -709,7 +735,18 @@ const NEED_FACETS = {
 
 const $ = id => document.getElementById(id);
 const desktop = () => window.innerWidth >= 900;
-const byTrade = k => contractors.filter(c => c.trade === k);
+// "Thin" = low-credibility bloat that slipped past the publish floor: no standing band, no credential,
+// few reviews, AND shallow known-for. Kept OUT of the browse deck/feed (homeowners won't consider them and
+// they dilute the due-diligence feel) but still reachable by name search + direct link — we don't erase a
+// contractor, we just don't surface bloat for browsing.
+function isThin(c){
+  const hasBand = c.ratingBand || c.volumeBand || c.tenureBand;
+  const hasCred = c.registered || (c.certs && c.certs.length);
+  const hasReviews = (c.reviewCount||0) >= 12;
+  const hasThemes = (c.knownFor && c.knownFor.length >= 2);
+  return !hasBand && !hasCred && !hasReviews && !hasThemes;
+}
+const byTrade = k => contractors.filter(c => c.trade === k && !c.thin);
 const tradePlural = k => { const t = trades.find(t=>t.key===k); return t?t.plural:k; };
 const tradeLabelOf = k => { const t = trades.find(t=>t.key===k); return t?t.label:k; };
 const esc = (window.HOME && HOME.esc) ? HOME.esc : (s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])));
@@ -821,7 +858,7 @@ async function loadContractors(){
   // Substance gate: a profile only earns a place on Vesta if Vesta has something
   // to say about it (a synthesis). Thin/silent records — no read — are left out
   // rather than padding the deck. They're not lost; they're just not surfaced.
-  if (Array.isArray(rows)) contractors = rows.map(mapRow).filter(c => c.name && c.read);
+  if (Array.isArray(rows)) { contractors = rows.map(mapRow).filter(c => c.name && c.read); contractors.forEach(c => { c.thin = isThin(c); }); }
   if (S.screen === 'browse'){
     if (S.mode === 'saved'){ renderSaved(); }
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
@@ -1196,8 +1233,8 @@ function analysisHTML(con){
     (con.standing?'<div class="va-band">'+esc(con.standing)+'</div>':'')+
     (con.verified.length?'<div class="va-chips">'+con.verified.map(v=>'<span class="va-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
     evidenceHTML(con)+
+    (con.placeId?'<a class="va-full va-cta" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See the full profile <span aria-hidden="true">→</span></a>':'')+
     '<div class="va-actions"><button class="va-req">Request through Vesta</button><button class="va-bm'+(isLiked(con.placeId)?' on':'')+'" data-place="'+esc(con.placeId)+'" aria-label="Save '+esc(con.name)+'">'+BOOKMARK+'</button></div>'+
-    (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See the full profile →</a>':'')+
     '<p class="va-note">No obligation · free to request</p>';
 }
 function wireAnalysis(root, con){
@@ -1598,12 +1635,15 @@ function profHeroHTML(){
       : '<p class="prof-note">This business hasn’t joined Vesta’s verified network yet, so there’s no verified work record to show — just the public listing below.</p>');
 }
 function profSignatureHTML(){ const enr=profData.enr; return (enr && enr.signature) ? '<p class="prof-sig">'+esc(enr.signature)+'</p>' : ''; }
+// Vesta's read = the verdict. Signature folds in here as the lead line so there aren't two stacked Vesta-voice blocks.
 function profReadHTML(){
-  const enr=profData.enr; if (!enr || !enr.synthesis) return '';
-  return '<h2 class="prof-sec-h">Vesta’s read</h2>'+
-    '<div class="prof-block"><p class="read">'+esc(enr.synthesis)+'</p>'+
+  const enr=profData.enr; if (!enr || (!enr.synthesis && !enr.signature)) return '';
+  let html='<h2 class="prof-sec-h">Vesta’s read</h2>';
+  if (enr.signature) html += '<p class="prof-sig">'+esc(enr.signature)+'</p>';
+  if (enr.synthesis) html += '<div class="prof-block"><p class="read">'+esc(enr.synthesis)+'</p>'+
     '<p class="prof-fine" style="margin-top:12px">Summarized by Vesta from '+(enr.synthesis_review_count?esc(enr.synthesis_review_count)+' ':'')+
     'public homeowner reviews — Vesta’s own wording, never a copy of any single review.</p></div>';
+  return html;
 }
 function profStandingHTML(){
   const enr=profData.enr; if (!enr) return '';
@@ -1622,25 +1662,43 @@ function profStandingHTML(){
     '<p class="prof-sec-note">How this '+esc(tLower||'pro')+' compares on the signals Vesta can verify — drawn from public records and review history, not a paid placement.</p>'+
     '<div class="prof-cards">'+items.map(it=>'<div class="prof-card"><div class="k">'+esc(it[0])+'</div><h3>'+esc(it[1])+'</h3><p>'+esc(it[2])+'</p></div>').join('')+'</div>';
 }
+// At a glance = every hard fact in one categorized block: registry-verified credentials (chips + provenance),
+// then the business details (specialties / service area / owner). Consolidates the old "The record" + the
+// scattered key-values that used to live under "known for".
+function profGlanceHTML(){
+  const enr=profData.enr; if (!enr) return '';
+  const trade=pTradeKey(); const tLower = trade==='hvac' ? 'HVAC' : ((PTRADE_LABEL[trade]||'trade').toLowerCase());
+  const chips=[];
+  if (enr.registered){ const yr=enr.hic_issue_date?+String(enr.hic_issue_date).slice(0,4):0; chips.push('<span class="prof-badge">Registered CT contractor'+(yr&&yr!==1999?' · since '+yr:'')+' ✓</span>'); }
+  if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if (c&&c.issuer&&c.level) chips.push('<span class="prof-badge">'+esc(c.issuer+' '+c.level)+' ✓</span>'); }
+  if (Array.isArray(enr.trade_license)&&enr.trade_license.length) chips.push('<span class="prof-badge">Licensed '+esc(tLower)+' ✓</span>');
+  const rows=[];
+  if (Array.isArray(enr.specialties)&&enr.specialties.length) rows.push('<div class="prof-kv"><span>Specialties</span><b>'+enr.specialties.map(esc).join(' · ')+'</b></div>');
+  if (Array.isArray(enr.service_area)&&enr.service_area.length) rows.push('<div class="prof-kv"><span>Service area</span><b>'+enr.service_area.map(esc).join(', ')+'</b></div>');
+  if (enr.owner_name) rows.push('<div class="prof-kv"><span>Owner</span><b>'+esc(enr.owner_name)+'</b></div>');
+  if (!chips.length && !rows.length) return '';
+  let inner='';
+  if (chips.length) inner += '<div class="prof-badges" style="margin:0">'+chips.join('')+'</div>'+
+    '<p class="prof-fine" style="margin-top:11px">Checked against public CT state registries and manufacturer directories · June 2026. Vesta vouches only what a public record confirms.</p>';
+  if (chips.length && rows.length) inner += '<div class="prof-glance-rule"></div>';
+  if (rows.length) inner += rows.join('');
+  return '<h2 class="prof-sec-h">At a glance</h2><div class="prof-block">'+inner+'</div>';
+}
 function profKnownHTML(){
   const enr=profData.enr; if (!enr) return '';
   const known = Array.isArray(enr.known_for) ? enr.known_for.filter(k=>k && (k.label||k.detail)) : [];
-  const rows=[];
-  if (Array.isArray(enr.specialties) && enr.specialties.length) rows.push('<div class="prof-kv"><span>Specialties</span><b>'+enr.specialties.map(esc).join(' · ')+'</b></div>');
-  if (Array.isArray(enr.service_area) && enr.service_area.length) rows.push('<div class="prof-kv"><span>Service area</span><b>'+enr.service_area.map(esc).join(', ')+'</b></div>');
-  if (enr.owner_name) rows.push('<div class="prof-kv"><span>Owner</span><b>'+esc(enr.owner_name)+'</b></div>');
-  if (!known.length && !rows.length) return '';
-  let html='<h2 class="prof-sec-h">What they’re known for</h2>';
-  if (known.length) html += '<div class="prof-cards">'+known.map(k=>'<div class="prof-card"><h3>'+esc(k.label||'')+'</h3><p>'+esc(k.detail||'')+'</p></div>').join('')+'</div>';
-  if (rows.length) html += '<div class="prof-block" style="margin-top:12px">'+rows.join('')+'</div>';
-  return html;
+  if (!known.length) return '';
+  return '<h2 class="prof-sec-h">What they’re known for</h2>'+
+    '<div class="prof-cards">'+known.map(k=>'<div class="prof-card"><h3>'+esc(k.label||'')+'</h3><p>'+esc(k.detail||'')+'</p></div>').join('')+'</div>';
 }
+// Generic trade education — kept for depth, but collapsed by default so it doesn't crowd the firm-specific read.
 function profGuideHTML(){
   const g = PGUIDE[pTradeKey()]; if (!g) return '';
   const rows = g.map((it,i)=>'<div class="prof-angle"><div class="no">'+String(i+1).padStart(2,'0')+'</div><div><h3>'+esc(it.t)+'</h3><p>'+esc(it.d)+'</p></div></div>').join('');
-  return '<h2 class="prof-sec-h">What to check before you hire</h2>'+
-    '<p class="prof-sec-note">Vesta’s plain checklist for '+esc(PTRADE_PROS[pTradeKey()]||'this trade')+'. General guidance about the trade — not a claim about this business.</p>'+
-    '<div class="prof-guide">'+rows+'</div>';
+  return '<details class="prof-fold"><summary class="prof-fold-sum"><span>What to check before you hire</span>'+
+    '<span class="prof-fold-chev">'+CHEV+'</span></summary>'+
+    '<div class="prof-fold-body"><p class="prof-sec-note" style="margin-top:0">Vesta’s plain checklist for '+esc(PTRADE_PROS[pTradeKey()]||'this trade')+'. General guidance about the trade — not a claim about this business.</p>'+
+    '<div class="prof-guide">'+rows+'</div></div></details>';
 }
 function profRecordHTML(){
   const enr=profData.enr; if (!enr) return '';
@@ -1682,10 +1740,8 @@ function profContactHTML(){
     '<a class="prof-req" style="margin-top:0" href="'+esc(HOME.signinHref('/vesta'))+'">Create free account / sign in</a></div>';
 }
 function profClaimHTML(){
-  const enr=profData.enr, p=profData.p;
-  const ownerFirst = enr && enr.owner_name ? esc(String(enr.owner_name).trim().split(/\s+/)[0]) : '';
+  const p=profData.p;
   const town = esc((String(p.address||'').split(',')[1]||'').trim());
-  const head = 'Is this your business'+(ownerFirst?', '+ownerFirst:'')+'?';
   const claimInner = profData.claimed
     ? '<p class="am-lede2">✓ This profile has been claimed by the business. Thank you — here’s what comes next.</p>'
     : '<p class="am-lede2">This profile was assembled from public records and verified customer reviews, and it’s already visible to homeowners'+(town?' in '+town:'')+'. If the business is yours, you’re welcome to claim it — at no cost — to confirm the details are accurate and to be notified the moment a homeowner reaches out.</p>'+
@@ -1695,21 +1751,29 @@ function profClaimHTML(){
       '<div><label for="pce">Email</label><input type="email" id="pce" maxlength="120"></div></div>'+
       '<button class="am-claim-btn" type="submit">Claim this profile</button><span class="prof-status" id="prof-claim-st"></span></form>'+
       '<div class="am-rule"></div>';
-  return '<section class="atlas-moment">'+
-    '<div class="am-eyebrow">For the business owner · from 4THWALL</div>'+
-    '<h2 class="am-h">'+head+'</h2>'+claimInner+
-    '<div class="am-plabel">When you’re ready to grow · Atlas</div>'+
-    '<p class="am-lede">Vesta introduces homeowners to your business. <b>Atlas is the back office that helps you respond to every one of them.</b> '+
-      'While you’re out on the job, it answers calls and messages in your name, schedules the estimate, and follows up once the work is done — '+
-      'the steady support of a full-time office manager, without the overhead.</p>'+
-    '<div class="am-uses">'+
-      '<div class="am-use"><div class="am-n">01</div><h3>Answers in your name, around the clock</h3><p>Calls and after-hours messages receive a prompt, professional reply — your services, your pricing, your voice — so no inquiry goes unanswered.</p></div>'+
-      '<div class="am-use"><div class="am-n">02</div><h3>Handles your scheduling</h3><p>Checks availability, books the appointment, and sends the reminder — so the estimate actually takes place.</p></div>'+
-      '<div class="am-use"><div class="am-n">03</div><h3>Builds your reputation</h3><p>After the work is complete, it follows up with the customer and invites the review that brings the next one.</p></div>'+
+  // Collapsed to a single question pill — the owner-facing claim + Atlas funnel cascades open on click.
+  return '<div class="claimwrap">'+
+    '<button class="claim-toggle" id="claim-toggle" aria-expanded="false" aria-controls="claim-panel">'+
+      '<span class="claim-q">Is this your business?</span>'+
+      '<span class="claim-chev" id="claim-chev">'+CHEV+'</span></button>'+
+    '<div class="claim-panel" id="claim-panel" hidden>'+
+      '<section class="atlas-moment">'+
+        '<div class="am-eyebrow">For the business owner · from 4THWALL</div>'+
+        claimInner+
+        '<div class="am-plabel">When you’re ready to grow · Atlas</div>'+
+        '<p class="am-lede">Vesta introduces homeowners to your business. <b>Atlas is the back office that helps you respond to every one of them.</b> '+
+          'While you’re out on the job, it answers calls and messages in your name, schedules the estimate, and follows up once the work is done — '+
+          'the steady support of a full-time office manager, without the overhead.</p>'+
+        '<div class="am-uses">'+
+          '<div class="am-use"><div class="am-n">01</div><h3>Answers in your name, around the clock</h3><p>Calls and after-hours messages receive a prompt, professional reply — your services, your pricing, your voice — so no inquiry goes unanswered.</p></div>'+
+          '<div class="am-use"><div class="am-n">02</div><h3>Handles your scheduling</h3><p>Checks availability, books the appointment, and sends the reminder — so the estimate actually takes place.</p></div>'+
+          '<div class="am-use"><div class="am-n">03</div><h3>Builds your reputation</h3><p>After the work is complete, it follows up with the customer and invites the review that brings the next one.</p></div>'+
+        '</div>'+
+        '<div class="am-cta"><a class="am-pill" href="https://4thwall.solutions" target="_blank" rel="noopener">See how Atlas works →</a>'+
+        '<span class="am-fine">Vesta is free, always. Atlas is our paid service — for businesses ready to take on more work.</span></div>'+
+      '</section>'+
     '</div>'+
-    '<div class="am-cta"><a class="am-pill" href="https://4thwall.solutions" target="_blank" rel="noopener">See how Atlas works →</a>'+
-    '<span class="am-fine">Vesta is free, always. Atlas is our paid service — for businesses ready to take on more work.</span></div>'+
-  '</section>';
+  '</div>';
 }
 function profRemovalHTML(){
   return '<p class="prof-removal">This is a public-record listing compiled by Vesta — not an endorsement, and not written by the business. '+
@@ -1717,8 +1781,10 @@ function profRemovalHTML(){
     '(<a href="/terms.html#directory">how this works ›</a>).</p>';
 }
 function renderProfile(){
-  $('prof-wrap').innerHTML = profHeroHTML()+profSignatureHTML()+profReadHTML()+profStandingHTML()+profKnownHTML()+
-    profGuideHTML()+profRecordHTML()+profGoogleHTML()+profContactHTML()+profClaimHTML()+profRemovalHTML();
+  // Reader/marketing flow: identity+CTA → the verdict → facts+credentials → homeowner proof → standing →
+  // external reference → contact → (collapsed) generic guide → claim. Depth preserved; nothing trimmed.
+  $('prof-wrap').innerHTML = profHeroHTML()+profReadHTML()+profGlanceHTML()+profKnownHTML()+profStandingHTML()+
+    profGoogleHTML()+profContactHTML()+profGuideHTML()+profClaimHTML()+profRemovalHTML();
   wireProfile();
 }
 function wireProfBack(){ const b=$('prof-back'); if(b) b.addEventListener('click', backFromProfile); }
@@ -1727,6 +1793,12 @@ function wireProfile(){
   const unlock=$('prof-unlock'); if(unlock) unlock.addEventListener('click', profUnlock);
   const claim=$('prof-claim'); if(claim) claim.addEventListener('submit', profClaimSubmit);
   const req=$('prof-req-btn'); if(req) req.addEventListener('click', () => enterRequest({ placeId:profData.placeId, trade:(TRADE_APP[pTradeKey()]||pTradeKey()), name:(profData.p&&profData.p.name)||'' }));
+  const ct=$('claim-toggle'); if(ct) ct.addEventListener('click', () => {
+    const panel=$('claim-panel'); if(!panel) return;
+    const opening = panel.hasAttribute('hidden');
+    if (opening) panel.removeAttribute('hidden'); else panel.setAttribute('hidden','');
+    ct.setAttribute('aria-expanded', opening?'true':'false'); ct.classList.toggle('open', opening);
+  });
 }
 
 async function profUnlock(){
