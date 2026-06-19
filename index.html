@@ -1362,7 +1362,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .pill-atlas .pill-device{
   position:absolute;right:0;top:0;bottom:0;
   width:55%;flex:none;
-  overflow:hidden;
+  overflow:visible;
   z-index:2;
   -webkit-mask-image:linear-gradient(to right,transparent 0%,black 22%);
   mask-image:linear-gradient(to right,transparent 0%,black 22%);
@@ -3123,24 +3123,42 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
   var sv = document.getElementById('atlasPillSpline');
   if(!sv) return;
   var canvas = null;
+
+  function sendToCanvas(x, y){
+    if(!canvas) return;
+    canvas.dispatchEvent(new PointerEvent('pointermove',{bubbles:false,cancelable:false,clientX:x,clientY:y}));
+  }
+
+  function resetGaze(){
+    if(!canvas) return;
+    var r = canvas.getBoundingClientRect();
+    sendToCanvas(r.left + r.width/2, r.top + r.height/2);
+  }
+
   function onReady(){
     var root = sv.shadowRoot;
     if(!root){ setTimeout(onReady,300); return; }
-    // Inject style to hide watermark (works even when #logo isn't ready yet)
     var s = document.createElement('style');
     s.textContent = '#logo,a[href*="spline"]{display:none!important}';
     root.appendChild(s);
     canvas = root.querySelector('canvas');
     if(!canvas){ setTimeout(onReady,300); return; }
+    // Reset to forward gaze once scene loads
+    setTimeout(resetGaze, 800);
   }
   onReady();
-  // Eye tracking scoped to card hover — prevents global mouse from orbiting the camera
+
   var card = sv.closest('.pill-atlas');
   if(card){
     card.addEventListener('mousemove',function(e){
       if(!canvas) return;
-      canvas.dispatchEvent(new PointerEvent('pointermove',{bubbles:false,cancelable:false,clientX:e.clientX,clientY:e.clientY}));
+      var r = canvas.getBoundingClientRect();
+      var cx = r.left + r.width/2;
+      var cy = r.top + r.height/2;
+      // Dampen to 18% of actual offset — subtle tracking, not full orbit range
+      sendToCanvas(cx + (e.clientX - cx) * 0.18, cy + (e.clientY - cy) * 0.18);
     },{passive:true});
+    card.addEventListener('mouseleave', resetGaze, {passive:true});
   }
 })();
 </script>
