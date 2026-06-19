@@ -1054,41 +1054,76 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div><!-- /hero-card -->
 </section>
 
-<!-- Stat strip — floating elevation card -->
-<div class="stat-strip-new">
-  <div class="proof-statement">
-    <p class="proof-eyebrow">The real problem</p>
-    <h2 class="proof-punch">Most jobs aren't lost to<br><em>better contractors.</em></h2>
-    <p class="proof-under">They're lost to better systems. The contractor who answers first, follows up, fills the calendar, collects the reviews, and stays visible when homeowners search — that's who wins the market. Atlas is that system.</p>
+<style>
+.problem-belt{background:#F4F2EE;padding:5rem var(--pad) 5.5rem;border-top:1px solid rgba(18,16,14,.06)}
+.problem-belt-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start}
+.pb-label{font-family:var(--mono);font-size:.63rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(18,16,14,.35);margin-bottom:1.6rem;display:flex;align-items:center;gap:.6rem}
+.pb-label::before{content:"";width:18px;height:1px;background:rgba(18,16,14,.22)}
+.pb-h{font-family:var(--display);font-size:clamp(2.2rem,4.2vw,3.6rem);font-weight:400;line-height:1.05;letter-spacing:-.035em;color:#12100E}
+.pb-h em{font-style:italic;color:#4A4B2F}
+.pb-rows{border-top:1px solid rgba(18,16,14,.08)}
+.pb-row{padding:1.3rem 0;border-bottom:1px solid rgba(18,16,14,.08)}
+.pb-row-label{font-size:.88rem;font-weight:600;color:#12100E;letter-spacing:-.012em;margin-bottom:.22rem}
+.pb-row-sub{font-size:.83rem;color:rgba(18,16,14,.46);line-height:1.5}
+.pb-close{margin-top:1.8rem;font-size:.86rem;color:rgba(18,16,14,.42);line-height:1.55}
+.pb-close strong{color:#12100E;font-weight:600}
+@media(max-width:800px){.problem-belt-inner{grid-template-columns:1fr;gap:2.6rem}}
+</style>
+<section class="problem-belt">
+  <div class="problem-belt-inner">
+    <div>
+      <p class="pb-label">The real problem</p>
+      <h2 class="pb-h">Most jobs aren't lost to<br><em>better contractors.</em></h2>
+    </div>
+    <div>
+      <div class="pb-rows">
+        <div class="pb-row">
+          <p class="pb-row-label">Whoever answers first gets the job.</p>
+          <p class="pb-row-sub">Homeowners call 3 contractors and book the first one who responds.</p>
+        </div>
+        <div class="pb-row">
+          <p class="pb-row-label">No follow-up is a silent handoff to your competitor.</p>
+          <p class="pb-row-sub">Leads that don't hear back within the hour move on to the next name.</p>
+        </div>
+        <div class="pb-row">
+          <p class="pb-row-label">Reviews decide who shows up in search.</p>
+          <p class="pb-row-sub">More 5-star reviews means winning the job before the phone even rings.</p>
+        </div>
+      </div>
+      <p class="pb-close"><strong>Atlas closes every gap</strong> — so you focus on the work, not the back office.</p>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- Trade bar -->
-<div class="brand-bar-new">
-  <span class="bb-eyebrow">Built for every trade —</span>
-  <span class="bb-trade">Roofing</span>
-  <span class="bb-dot">·</span>
-  <span class="bb-trade">HVAC</span>
-  <span class="bb-dot">·</span>
-  <span class="bb-trade">Plumbing</span>
-  <span class="bb-dot">·</span>
-  <span class="bb-trade">Electrical</span>
-  <span class="bb-dot">·</span>
-  <span class="bb-trade">Paving</span>
-  <span class="bb-dot">·</span>
-  <span class="bb-trade">Lawn Care</span>
-  <span class="bb-dot">·</span>
-  <span class="bb-more">and more</span>
+<style>
+.trade-band{background:#12100E;padding:1.8rem var(--pad);display:flex;align-items:center;justify-content:center;gap:clamp(.8rem,2vw,2.4rem);flex-wrap:wrap}
+.trade-band-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,242,239,.28);white-space:nowrap}
+.trade-band-chips{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;align-items:center}
+.trade-chip{font-family:var(--mono);font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:rgba(240,242,239,.62);padding:.28rem .78rem;border:1px solid rgba(240,242,239,.11);border-radius:50px;white-space:nowrap}
+.trade-chip-more{color:rgba(240,242,239,.25);border-color:transparent;font-style:italic}
+</style>
+<div class="trade-band">
+  <p class="trade-band-label">Built for every trade</p>
+  <div class="trade-band-chips">
+    <span class="trade-chip">Roofing</span>
+    <span class="trade-chip">HVAC</span>
+    <span class="trade-chip">Plumbing</span>
+    <span class="trade-chip">Electrical</span>
+    <span class="trade-chip">Paving</span>
+    <span class="trade-chip">Lawn Care</span>
+    <span class="trade-chip trade-chip-more">+ more</span>
+  </div>
 </div>
 
 <!-- ════════════════════ ATLAS SHOWCASE — scroll tilt reveal ════════════════════ -->
 <style>
   .atlas-showcase{background:#F4F2EE;padding:5rem var(--pad) 0;overflow:hidden}
   .atlas-showcase-inner{max-width:960px;margin:0 auto;text-align:center}
-  .showcase-eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(18,16,14,.38);margin-bottom:1rem}
-  .showcase-h{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,3rem);font-weight:400;line-height:1.08;letter-spacing:-.03em;color:#12100E;margin-bottom:.6rem}
+  .showcase-h{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,3rem);font-weight:400;line-height:1.08;letter-spacing:-.03em;color:#12100E;margin-bottom:1.4rem}
   .showcase-h em{font-style:italic;color:#4A4B2F}
-  .showcase-sub{font-family:var(--body);font-size:.96rem;color:rgba(18,16,14,.46);line-height:1.6;max-width:480px;margin:0 auto 3rem}
+  .showcase-caps{display:flex;align-items:center;justify-content:center;gap:.55rem;flex-wrap:wrap;margin-bottom:2.8rem}
+  .showcase-cap{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(18,16,14,.44);padding:.3rem .82rem;border:1px solid rgba(18,16,14,.1);border-radius:50px}
+  .showcase-cap-dot{color:rgba(18,16,14,.18);font-size:.7rem}
   .atlas-showcase-stage{perspective:1200px;padding-bottom:4rem}
   .atlas-showcase-card{
     transform:rotateX(18deg) scale(1.04);
@@ -1106,9 +1141,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 </style>
 <div class="atlas-showcase">
   <div class="atlas-showcase-inner">
-    <p class="showcase-eyebrow">Atlas in action</p>
     <h2 class="showcase-h">Your operations assistant,<br><em>living inside Slack.</em></h2>
-    <p class="showcase-sub">Qualify leads, check job status, send follow-ups — without leaving the app your crew already uses.</p>
+    <div class="showcase-caps">
+      <span class="showcase-cap">Qualify leads</span>
+      <span class="showcase-cap-dot">·</span>
+      <span class="showcase-cap">Check job status</span>
+      <span class="showcase-cap-dot">·</span>
+      <span class="showcase-cap">Send follow-ups</span>
+    </div>
     <div class="atlas-showcase-stage">
       <div class="atlas-showcase-card" id="atlasShowcaseCard">
         <img src="/atlas-slack.png" alt="Atlas Slack assistant interface" loading="lazy">
