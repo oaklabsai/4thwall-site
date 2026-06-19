@@ -1291,7 +1291,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 <style>
 .pills-section{background:#F4F2EE;position:relative}
 .pills-section::after{content:"";position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(to bottom,transparent,rgba(18,16,14,.06));pointer-events:none}
-.pills-wrap{max-width:var(--max);margin:0 auto;padding:2.4rem var(--pad) 5rem;display:flex;flex-direction:row;gap:1.4rem;width:100%;align-items:stretch}
+.pills-wrap{max-width:var(--max);margin:0 auto;padding:2.4rem var(--pad) 5rem;display:flex;flex-direction:row;gap:1.4rem;width:100%;align-items:stretch;position:relative;overflow:visible}
 
 /* each pill — copy left, device right */
 .pill-card{display:flex;flex-direction:row;border-radius:28px;overflow:hidden;text-decoration:none;color:inherit;min-height:380px;flex:1;min-width:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
@@ -1339,6 +1339,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .pill-card{flex-direction:column;min-height:0;flex:1;min-width:0}
   .pill-atlas{min-height:0}
   .pill-device{display:none}
+  .atlas-robot-stage{display:none}
   .pill-copy{flex:1;padding:1.5rem 1.2rem 1.6rem}
   .pill-tag{font-size:.58rem;letter-spacing:.1em;margin-bottom:.75rem}
   .pill-tag::before{width:14px}
@@ -1357,17 +1358,19 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .pill-btn{padding:9px 10px;font-size:.7rem;margin-top:1rem}
 }
 
-/* ── Atlas pill: robot stands in front of copy text (4thwall effect) ── */
-.pill-atlas .pill-copy{position:relative;z-index:1;flex:1}
-.pill-atlas .pill-device{
-  position:absolute;right:0;bottom:0;
+/* ── Atlas robot: floats OVER the pill, not inside it ── */
+.atlas-robot-stage{
+  position:absolute;
+  /* right edge aligns with Atlas/Vesta boundary (50% of flex row minus half-gap) */
+  right:calc(50% + 0.7rem);
+  /* feet flush with pill card bottom (pills-wrap padding-bottom = 5rem) */
+  bottom:5rem;
   width:220px;height:660px;
-  flex:none;overflow:visible;
-  z-index:2;pointer-events:none;
-}
-.pill-atlas .pill-device spline-viewer{
-  display:block;width:220px;height:660px;
+  z-index:20;
   pointer-events:none;
+}
+.atlas-robot-stage spline-viewer{
+  display:block;width:220px;height:660px;pointer-events:none;
 }
 
 /* ── Industry trust bar ── */
@@ -1401,9 +1404,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </ul>
       <span class="pill-btn">Explore Atlas <span class="arr">→</span></span>
     </div>
-    <div class="pill-device" aria-hidden="true">
-      <spline-viewer id="atlasPillSpline" url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" background="transparent" events-target="global"></spline-viewer>
-    </div>
   </a>
 
   <!-- Vesta -->
@@ -1433,6 +1433,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </div>
     </div>
   </a>
+
+  <!-- Atlas robot: lives outside both pill cards so overflow:hidden can't clip it -->
+  <div class="atlas-robot-stage" aria-hidden="true">
+    <spline-viewer id="atlasPillSpline" url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" background="transparent" events-target="global"></spline-viewer>
+  </div>
 
 </div>
 </div><!-- /pills-section -->
