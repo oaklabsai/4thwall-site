@@ -1298,7 +1298,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .pill-card:hover{transform:translateY(-3px)}
 
 /* LEFT — Atlas (pitch black → dark khaki) */
-.pill-atlas{background:linear-gradient(160deg,#1a1914 0%,#30321C 100%);border:1px solid rgba(255,255,255,.06);box-shadow:0 2px 4px rgba(0,0,0,.28),0 16px 40px -10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);position:relative;min-height:540px}
+.pill-atlas{background:linear-gradient(160deg,#1a1914 0%,#30321C 100%);border:1px solid rgba(255,255,255,.06);box-shadow:0 2px 4px rgba(0,0,0,.28),0 16px 40px -10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);position:relative;min-height:660px}
 /* RIGHT — Vesta (olive → ebony, warmer/lighter than Atlas) */
 .pill-vesta{background:linear-gradient(160deg,#4A4B2F 0%,#6B654B 100%);border:1px solid rgba(212,223,158,.12);box-shadow:0 2px 4px rgba(0,0,0,.14),0 16px 40px -10px rgba(0,0,0,.28),inset 0 1px 0 rgba(212,223,158,.1)}
 .pill-vesta::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 110% -10%,rgba(212,223,158,.18),transparent 60%);pointer-events:none;border-radius:28px}
@@ -1337,6 +1337,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 @media(max-width:960px){
   .pills-wrap{flex-direction:row;align-items:stretch;gap:.75rem;padding-left:1rem;padding-right:1rem}
   .pill-card{flex-direction:column;min-height:0;flex:1;min-width:0}
+  .pill-atlas{min-height:0}
   .pill-device{display:none}
   .pill-copy{flex:1;padding:1.5rem 1.2rem 1.6rem}
   .pill-tag{font-size:.58rem;letter-spacing:.1em;margin-bottom:.75rem}
@@ -1356,8 +1357,21 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .pill-btn{padding:9px 10px;font-size:.7rem;margin-top:1rem}
 }
 
-/* ── Atlas pill Spline viewer ── */
-.pill-atlas .pill-device spline-viewer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+/* ── Atlas pill: robot floats over right half of copy (4thwall effect) ── */
+.pill-atlas .pill-copy{position:relative;z-index:1;flex:1}
+.pill-atlas .pill-device{
+  position:absolute;right:0;top:0;bottom:0;
+  width:55%;flex:none;
+  overflow:hidden;
+  z-index:2;
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,black 22%);
+  mask-image:linear-gradient(to right,transparent 0%,black 22%);
+}
+.pill-atlas .pill-device spline-viewer{
+  position:absolute;bottom:0;right:0;
+  width:220px;height:660px;
+  pointer-events:none;
+}
 
 /* ── Industry trust bar ── */
 .trust-bar{padding:2.8rem var(--pad);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:2.8rem}
@@ -3109,21 +3123,25 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
   var sv = document.getElementById('atlasPillSpline');
   if(!sv) return;
   var canvas = null;
-  // Hide watermark + grab canvas ref once shadow root is ready
   function onReady(){
     var root = sv.shadowRoot;
-    if(!root){ setTimeout(onReady,200); return; }
-    var logo = root.querySelector('#logo');
-    if(logo) logo.style.display='none';
+    if(!root){ setTimeout(onReady,300); return; }
+    // Inject style to hide watermark (works even when #logo isn't ready yet)
+    var s = document.createElement('style');
+    s.textContent = '#logo,a[href*="spline"]{display:none!important}';
+    root.appendChild(s);
     canvas = root.querySelector('canvas');
-    if(!canvas){ setTimeout(onReady,200); return; }
+    if(!canvas){ setTimeout(onReady,300); return; }
   }
   onReady();
-  // Eye tracking — dispatch directly to the canvas inside shadow DOM
-  window.addEventListener('pointermove',function(e){
-    if(!canvas) return;
-    canvas.dispatchEvent(new PointerEvent('pointermove',{bubbles:true,cancelable:false,clientX:e.clientX,clientY:e.clientY}));
-  },{passive:true});
+  // Eye tracking scoped to card hover — prevents global mouse from orbiting the camera
+  var card = sv.closest('.pill-atlas');
+  if(card){
+    card.addEventListener('mousemove',function(e){
+      if(!canvas) return;
+      canvas.dispatchEvent(new PointerEvent('pointermove',{bubbles:false,cancelable:false,clientX:e.clientX,clientY:e.clientY}));
+    },{passive:true});
+  }
 })();
 </script>
 
