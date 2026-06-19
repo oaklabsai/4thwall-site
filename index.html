@@ -1298,7 +1298,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .pill-card:hover{transform:translateY(-3px)}
 
 /* LEFT — Atlas (pitch black → dark khaki) */
-.pill-atlas{background:linear-gradient(160deg,#1a1914 0%,#30321C 100%);border:1px solid rgba(255,255,255,.06);box-shadow:0 2px 4px rgba(0,0,0,.28),0 16px 40px -10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);position:relative}
+.pill-atlas{background:linear-gradient(160deg,#1a1914 0%,#30321C 100%);border:1px solid rgba(255,255,255,.06);box-shadow:0 2px 4px rgba(0,0,0,.28),0 16px 40px -10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);position:relative;min-height:540px}
 /* RIGHT — Vesta (olive → ebony, warmer/lighter than Atlas) */
 .pill-vesta{background:linear-gradient(160deg,#4A4B2F 0%,#6B654B 100%);border:1px solid rgba(212,223,158,.12);box-shadow:0 2px 4px rgba(0,0,0,.14),0 16px 40px -10px rgba(0,0,0,.28),inset 0 1px 0 rgba(212,223,158,.1)}
 .pill-vesta::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 110% -10%,rgba(212,223,158,.18),transparent 60%);pointer-events:none;border-radius:28px}
@@ -3108,18 +3108,21 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
 (function(){
   var sv = document.getElementById('atlasPillSpline');
   if(!sv) return;
-  // Hide watermark
-  function tryHide(){
+  var canvas = null;
+  // Hide watermark + grab canvas ref once shadow root is ready
+  function onReady(){
     var root = sv.shadowRoot;
-    if(!root){ setTimeout(tryHide,200); return; }
+    if(!root){ setTimeout(onReady,200); return; }
     var logo = root.querySelector('#logo');
-    if(logo){ logo.style.display='none'; return; }
-    setTimeout(tryHide,200);
+    if(logo) logo.style.display='none';
+    canvas = root.querySelector('canvas');
+    if(!canvas){ setTimeout(onReady,200); return; }
   }
-  tryHide();
-  // Eye tracking relay — cursor tracked even with pointer-events:none on viewer
+  onReady();
+  // Eye tracking — dispatch directly to the canvas inside shadow DOM
   window.addEventListener('pointermove',function(e){
-    sv.dispatchEvent(new PointerEvent('pointermove',{bubbles:false,cancelable:false,clientX:e.clientX,clientY:e.clientY}));
+    if(!canvas) return;
+    canvas.dispatchEvent(new PointerEvent('pointermove',{bubbles:true,cancelable:false,clientX:e.clientX,clientY:e.clientY}));
   },{passive:true});
 })();
 </script>
