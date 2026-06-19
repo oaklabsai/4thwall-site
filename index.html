@@ -2909,82 +2909,98 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
 })();
 </script>
 
-<!-- ── MaskedSlideReveal — word-by-word spring slide-up on scroll ── -->
+<!-- ── MaskedSlideReveal — word-by-word spring slide-up ── -->
 <script>
 (function(){
-  var el = document.querySelector('.showcase-h');
-  if(!el) return;
+  var EASE = 'cubic-bezier(0.34,1.18,0.64,1)'; /* spring: damping≈14 */
 
-  var stagger = 72;  /* ms between word starts */
-  var dur     = 660; /* ms per word transition  */
-  var ease    = 'cubic-bezier(0.34,1.18,0.64,1)'; /* spring: damping≈14, slight overshoot */
-
-  var allWords = [];
-
-  /* Recursively wrap text-node words in overflow:hidden mask + inner slide span.
-     Preserves element nodes (br, em, etc.) unchanged. */
-  function wrapWords(node) {
-    if(node.nodeType === 3) {
-      var parts = node.textContent.split(/(\s+)/);
-      var frag = document.createDocumentFragment();
-      parts.forEach(function(part){
-        if(!part.trim()){
-          frag.appendChild(document.createTextNode(part));
-        } else {
-          var outer = document.createElement('span');
-          outer.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;line-height:1.15;padding-bottom:.04em';
-          var inner = document.createElement('span');
-          inner.style.cssText = 'display:inline-block;transform:translateY(108%)';
-          inner.textContent = part;
-          outer.appendChild(inner);
-          frag.appendChild(outer);
-          allWords.push(inner);
-        }
-      });
-      return frag;
+  /* Recursively wrap text-node words in overflow:hidden mask + slide span.
+     Preserves element nodes (br, em, span, etc.) so styling is kept. */
+  function prepareEl(el, stagger, dur, wordList) {
+    function wrapWords(node) {
+      if(node.nodeType === 3) {
+        var parts = node.textContent.split(/(\s+)/);
+        var frag = document.createDocumentFragment();
+        parts.forEach(function(part){
+          if(!part.trim()){
+            frag.appendChild(document.createTextNode(part));
+          } else {
+            var outer = document.createElement('span');
+            outer.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;line-height:1.15;padding-bottom:.04em';
+            var inner = document.createElement('span');
+            inner.style.cssText = 'display:inline-block;transform:translateY(108%)';
+            inner.textContent = part;
+            outer.appendChild(inner);
+            frag.appendChild(outer);
+            wordList.push(inner);
+          }
+        });
+        return frag;
+      }
+      if(node.nodeType === 1){
+        if(node.tagName === 'BR') return node.cloneNode(true);
+        var clone = node.cloneNode(false);
+        Array.from(node.childNodes).forEach(function(child){
+          var r = wrapWords(child);
+          if(r) clone.appendChild(r);
+        });
+        return clone;
+      }
+      return null;
     }
-    if(node.nodeType === 1){
-      if(node.tagName === 'BR') return node.cloneNode(true);
-      var clone = node.cloneNode(false);
-      Array.from(node.childNodes).forEach(function(child){
-        var r = wrapWords(child);
-        if(r) clone.appendChild(r);
-      });
-      return clone;
-    }
-    return null;
+
+    var frag = document.createDocumentFragment();
+    Array.from(el.childNodes).forEach(function(child){
+      var r = wrapWords(child);
+      if(r) frag.appendChild(r);
+    });
+    el.innerHTML = '';
+    el.appendChild(frag);
   }
 
-  /* Rebuild heading content with masked words */
-  var frag = document.createDocumentFragment();
-  Array.from(el.childNodes).forEach(function(child){
-    var r = wrapWords(child);
-    if(r) frag.appendChild(r);
-  });
-  el.innerHTML = '';
-  el.appendChild(frag);
-
-  /* Attach staggered transitions (delay per word) */
-  allWords.forEach(function(w, i){
-    w.style.transition = 'transform '+dur+'ms '+ease+' '+(i*stagger)+'ms';
-  });
-
-  /* Trigger when heading scrolls into view */
-  var fired = false;
-  var obs = new IntersectionObserver(function(entries){
-    if(fired) return;
-    if(!entries[0].isIntersecting) return;
-    fired = true;
-    obs.disconnect();
-    /* Double-rAF: guarantees initial translateY(108%) is painted before transition */
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        allWords.forEach(function(w){ w.style.transform = 'translateY(0)'; });
-      });
+  /* Fire: set transition + target in same tick; browser uses already-painted
+     translateY(108%) as implicit from-state, so transition animates correctly */
+  function fire(wordList, stagger, dur, baseDelay) {
+    wordList.forEach(function(w, i){
+      w.style.transition = 'transform '+dur+'ms '+EASE+' '+(baseDelay + i*stagger)+'ms';
+      w.style.transform = 'translateY(0)';
     });
-  }, { threshold: 0.15 });
+  }
 
-  obs.observe(el);
+  /* ── 1. Hero headline + sub — trigger on load (above fold) ─────────── */
+  var headline = document.querySelector('.hn-headline');
+  var sub      = document.querySelector('.hn-sub');
+
+  if(headline && sub) {
+    var hWords = [], sWords = [];
+    prepareEl(headline, 55, 680, hWords);
+    prepareEl(sub,      45, 580, sWords);
+
+    /* Sub starts after headline's last word begins animating */
+    var subOffset = hWords.length * 55 + 80;
+
+    setTimeout(function(){
+      fire(hWords, 55, 680, 0);
+      fire(sWords, 45, 580, subOffset);
+    }, 120);
+  }
+
+  /* ── 2. Showcase heading — trigger on scroll into view ──────────────── */
+  var showcase = document.querySelector('.showcase-h');
+  if(showcase) {
+    var shWords = [];
+    prepareEl(showcase, 72, 660, shWords);
+
+    var fired = false;
+    var obs = new IntersectionObserver(function(entries){
+      if(fired || !entries[0].isIntersecting) return;
+      fired = true;
+      obs.disconnect();
+      fire(shWords, 72, 660, 0);
+    }, { threshold: 0.15 });
+    obs.observe(showcase);
+  }
+
 })();
 </script>
 
