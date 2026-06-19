@@ -367,8 +367,8 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 .hn-btn{background:#12100E;color:#fff;border-radius:50px;padding:.82rem 1.85rem;font-size:.92rem;font-weight:500;min-height:48px;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;transition:opacity .2s ease,transform .2s ease;letter-spacing:-.01em;cursor:pointer}
 .hn-btn:hover{opacity:.84;color:#fff;transform:translateY(-2px)}
 /* Center column */
-.hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem 3rem;width:100%;max-width:680px;position:relative;z-index:5}
-.hn-atlas{width:220px;height:660px;margin:2rem auto 0;flex-shrink:0;position:relative;overflow:hidden}
+.hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem 3rem;width:100%;max-width:680px;position:relative;z-index:5;min-height:660px}
+.hn-atlas{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:220px;height:660px;overflow:hidden;pointer-events:none;z-index:-1}
 .hn-atlas spline-viewer{position:absolute;top:0;left:0;width:220px;height:660px}
 /* Product panels */
 .hero-prod{display:flex;flex-direction:column;text-decoration:none;color:#12100E;position:relative;overflow:visible;cursor:pointer;z-index:6}
@@ -433,7 +433,7 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 .hn-cta{display:flex;flex-direction:column;align-items:center;gap:.85rem}
 @media(max-width:1000px){
   .hero-card{grid-template-columns:1fr;min-height:0;overflow:hidden}
-  .hero-center{order:-1;padding:2.2rem 1.5rem 2.8rem}
+  .hero-center{order:-1;padding:2.2rem 1.5rem 2.8rem;min-height:0}
   .hn-side{display:none}
   .hero-prod{display:none}
   .hn-headline{font-size:clamp(2.4rem,7vw,4rem)}
