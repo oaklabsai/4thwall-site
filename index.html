@@ -1356,6 +1356,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .pill-btn{padding:9px 10px;font-size:.7rem;margin-top:1rem}
 }
 
+/* ── Atlas pill Spline viewer ── */
+.pill-atlas .pill-device spline-viewer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
 /* ── Industry trust bar ── */
 .trust-bar{padding:2.8rem var(--pad);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:2.8rem}
 .trust-bar-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);text-align:center;margin-bottom:1.6rem}
@@ -1387,16 +1390,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </ul>
       <span class="pill-btn">Explore Atlas <span class="arr">→</span></span>
     </div>
-    <!-- pill-device reserved for future use
     <div class="pill-device" aria-hidden="true">
-      <div class="hp-mac">
-        <div class="hp-mac-screen">
-          <img src="/atlas-slack.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:top left;display:block">
-        </div>
-        <img src="/macbook-air.png" class="hp-mac-frame" alt="">
-      </div>
+      <spline-viewer id="atlasPillSpline" url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" background="transparent"></spline-viewer>
     </div>
-    -->
   </a>
 
   <!-- Vesta -->
@@ -3106,6 +3102,27 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
 })();
 </script>
 
+
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.27/build/spline-viewer.js"></script>
+<script>
+(function(){
+  var sv = document.getElementById('atlasPillSpline');
+  if(!sv) return;
+  // Hide watermark
+  function tryHide(){
+    var root = sv.shadowRoot;
+    if(!root){ setTimeout(tryHide,200); return; }
+    var logo = root.querySelector('#logo');
+    if(logo){ logo.style.display='none'; return; }
+    setTimeout(tryHide,200);
+  }
+  tryHide();
+  // Eye tracking relay — cursor tracked even with pointer-events:none on viewer
+  window.addEventListener('pointermove',function(e){
+    sv.dispatchEvent(new PointerEvent('pointermove',{bubbles:false,cancelable:false,clientX:e.clientX,clientY:e.clientY}));
+  },{passive:true});
+})();
+</script>
 
 </body>
 </html>
