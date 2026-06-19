@@ -118,7 +118,10 @@ function jsonLd(trade, label, rows, canonical) {
       name: p.name,
       url,
       areaServed: COUNTY + ', CT',
-      knowsAbout: label
+      knowsAbout: label,
+      // Canonical Google Maps listing for this place_id — entity disambiguation
+      // (helps engines tie our entity to its authoritative Google record).
+      sameAs: ['https://www.google.com/maps/place/?q=place_id:' + encodeURIComponent(p.place_id)]
     };
     if (p.city) biz.address = { '@type': 'PostalAddress', addressLocality: p.city, addressRegion: 'CT', addressCountry: 'US' };
     if (p.synthesis) biz.description = p.synthesis;
