@@ -1123,70 +1123,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   </div><!-- /hero-card -->
 </section>
 
-<!-- ════════════════════ ATLAS SHOWCASE — scroll tilt reveal ════════════════════ -->
-<style>
-  .atlas-showcase{background:#F4F2EE;padding:5rem var(--pad) 0;overflow:hidden}
-  .atlas-showcase-inner{max-width:960px;margin:0 auto;text-align:center}
-  .showcase-h{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,3rem);font-weight:400;line-height:1.08;letter-spacing:-.03em;color:#12100E;margin-bottom:1.4rem}
-  .showcase-h em{font-style:italic;color:#4A4B2F}
-  .showcase-caps{display:flex;align-items:center;justify-content:center;gap:.55rem;flex-wrap:wrap;margin-bottom:2.8rem}
-  .showcase-cap{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(18,16,14,.44);padding:.3rem .82rem;border:1px solid rgba(18,16,14,.1);border-radius:50px}
-  .showcase-cap-dot{color:rgba(18,16,14,.18);font-size:.7rem}
-  .atlas-showcase-stage{perspective:1200px;padding-bottom:4rem}
-  .atlas-showcase-card{
-    transform:rotateX(18deg) scale(1.04);
-    transform-origin:center bottom;
-    border-radius:16px;
-    overflow:hidden;
-    box-shadow:0 0 0 1px rgba(18,16,14,.08),0 8px 24px rgba(18,16,14,.12),0 32px 64px rgba(18,16,14,.18),0 80px 120px rgba(18,16,14,.10);
-    will-change:transform;
-  }
-  .atlas-showcase-card img{width:100%;height:auto;display:block}
-  @media(max-width:768px){
-    .atlas-showcase{padding:3.5rem var(--pad) 0}
-    .atlas-showcase-stage{perspective:800px}
-  }
-</style>
-<div class="atlas-showcase">
-  <div class="atlas-showcase-inner">
-    <h2 class="showcase-h">Your operations assistant,<br><em>living inside Slack.</em></h2>
-    <div class="showcase-caps">
-      <span class="showcase-cap">Qualify leads</span>
-      <span class="showcase-cap-dot">·</span>
-      <span class="showcase-cap">Check job status</span>
-      <span class="showcase-cap-dot">·</span>
-      <span class="showcase-cap">Send follow-ups</span>
-    </div>
-    <div class="atlas-showcase-stage">
-      <div class="atlas-showcase-card" id="atlasShowcaseCard">
-        <img src="/atlas-slack.png" alt="Atlas Slack assistant interface" loading="lazy">
-      </div>
-    </div>
-  </div>
-</div>
-<script>
-(function(){
-  var card = document.getElementById('atlasShowcaseCard');
-  if(!card) return;
-  var stage = card.parentElement;
-  var ticking = false;
-  function update(){
-    var rect = stage.getBoundingClientRect();
-    var vh = window.innerHeight;
-    var progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.9)));
-    var rotX = 18 * (1 - progress);
-    var sc = 1.04 - 0.04 * progress;
-    card.style.transform = 'rotateX('+rotX+'deg) scale('+sc+')';
-    ticking = false;
-  }
-  function onScroll(){
-    if(!ticking){ requestAnimationFrame(update); ticking=true; }
-  }
-  window.addEventListener('scroll', onScroll, {passive:true});
-  update();
-})();
-</script>
-
 <style>
 .trade-band{background:#12100E;padding:1.8rem var(--pad);display:flex;align-items:center;justify-content:center;gap:clamp(.8rem,2vw,2.4rem);flex-wrap:wrap}
 .trade-band-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,242,239,.28);white-space:nowrap}
@@ -1510,6 +1446,70 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 </div>
 </div><!-- /pills-section -->
+
+<!-- ════════════════════ ATLAS SHOWCASE — scroll tilt reveal ════════════════════ -->
+<style>
+  .atlas-showcase{background:#F4F2EE;padding:5rem var(--pad) 0;overflow:hidden}
+  .atlas-showcase-inner{max-width:960px;margin:0 auto;text-align:center}
+  .showcase-h{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,3rem);font-weight:400;line-height:1.08;letter-spacing:-.03em;color:#12100E;margin-bottom:1.4rem}
+  .showcase-h em{font-style:italic;color:#4A4B2F}
+  .showcase-caps{display:flex;align-items:center;justify-content:center;gap:.55rem;flex-wrap:wrap;margin-bottom:2.8rem}
+  .showcase-cap{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(18,16,14,.44);padding:.3rem .82rem;border:1px solid rgba(18,16,14,.1);border-radius:50px}
+  .showcase-cap-dot{color:rgba(18,16,14,.18);font-size:.7rem}
+  .atlas-showcase-stage{perspective:1200px;padding-bottom:4rem}
+  .atlas-showcase-card{
+    transform:rotateX(18deg) scale(1.04);
+    transform-origin:center bottom;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 0 0 1px rgba(18,16,14,.08),0 8px 24px rgba(18,16,14,.12),0 32px 64px rgba(18,16,14,.18),0 80px 120px rgba(18,16,14,.10);
+    will-change:transform;
+  }
+  .atlas-showcase-card img{width:100%;height:auto;display:block}
+  @media(max-width:768px){
+    .atlas-showcase{padding:3.5rem var(--pad) 0}
+    .atlas-showcase-stage{perspective:800px}
+  }
+</style>
+<div class="atlas-showcase">
+  <div class="atlas-showcase-inner">
+    <h2 class="showcase-h">Your operations assistant,<br><em>living inside Slack.</em></h2>
+    <div class="showcase-caps">
+      <span class="showcase-cap">Qualify leads</span>
+      <span class="showcase-cap-dot">·</span>
+      <span class="showcase-cap">Check job status</span>
+      <span class="showcase-cap-dot">·</span>
+      <span class="showcase-cap">Send follow-ups</span>
+    </div>
+    <div class="atlas-showcase-stage">
+      <div class="atlas-showcase-card" id="atlasShowcaseCard">
+        <img src="/atlas-slack.png" alt="Atlas Slack assistant interface" loading="lazy">
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var card = document.getElementById('atlasShowcaseCard');
+  if(!card) return;
+  var stage = card.parentElement;
+  var ticking = false;
+  function update(){
+    var rect = stage.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.9)));
+    var rotX = 18 * (1 - progress);
+    var sc = 1.04 - 0.04 * progress;
+    card.style.transform = 'rotateX('+rotX+'deg) scale('+sc+')';
+    ticking = false;
+  }
+  function onScroll(){
+    if(!ticking){ requestAnimationFrame(update); ticking=true; }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  update();
+})();
+</script>
 
 <!-- ── Trusted by service businesses ── -->
 <div class="trust-bar wrap">
