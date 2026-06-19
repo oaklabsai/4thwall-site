@@ -1081,6 +1081,64 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <span class="bb-more">and more</span>
 </div>
 
+<!-- ════════════════════ ATLAS SHOWCASE — scroll tilt reveal ════════════════════ -->
+<style>
+  .atlas-showcase{background:#F4F2EE;padding:5rem var(--pad) 0;overflow:hidden}
+  .atlas-showcase-inner{max-width:960px;margin:0 auto;text-align:center}
+  .showcase-eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(18,16,14,.38);margin-bottom:1rem}
+  .showcase-h{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,3rem);font-weight:400;line-height:1.08;letter-spacing:-.03em;color:#12100E;margin-bottom:.6rem}
+  .showcase-h em{font-style:italic;color:#4A4B2F}
+  .showcase-sub{font-family:var(--body);font-size:.96rem;color:rgba(18,16,14,.46);line-height:1.6;max-width:480px;margin:0 auto 3rem}
+  .atlas-showcase-stage{perspective:1200px;padding-bottom:4rem}
+  .atlas-showcase-card{
+    transform:rotateX(18deg) scale(1.04);
+    transform-origin:center bottom;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 0 0 1px rgba(18,16,14,.08),0 8px 24px rgba(18,16,14,.12),0 32px 64px rgba(18,16,14,.18),0 80px 120px rgba(18,16,14,.10);
+    will-change:transform;
+  }
+  .atlas-showcase-card img{width:100%;height:auto;display:block}
+  @media(max-width:768px){
+    .atlas-showcase{padding:3.5rem var(--pad) 0}
+    .atlas-showcase-stage{perspective:800px}
+  }
+</style>
+<div class="atlas-showcase">
+  <div class="atlas-showcase-inner">
+    <p class="showcase-eyebrow">Atlas in action</p>
+    <h2 class="showcase-h">Your operations assistant,<br><em>living inside Slack.</em></h2>
+    <p class="showcase-sub">Qualify leads, check job status, send follow-ups — without leaving the app your crew already uses.</p>
+    <div class="atlas-showcase-stage">
+      <div class="atlas-showcase-card" id="atlasShowcaseCard">
+        <img src="/atlas-slack.png" alt="Atlas Slack assistant interface" loading="lazy">
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var card = document.getElementById('atlasShowcaseCard');
+  if(!card) return;
+  var stage = card.parentElement;
+  var ticking = false;
+  function update(){
+    var rect = stage.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.9)));
+    var rotX = 18 * (1 - progress);
+    var sc = 1.04 - 0.04 * progress;
+    card.style.transform = 'rotateX('+rotX+'deg) scale('+sc+')';
+    ticking = false;
+  }
+  function onScroll(){
+    if(!ticking){ requestAnimationFrame(update); ticking=true; }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  update();
+})();
+</script>
+
 <!-- ════════════════════ DOORMAT — two products ════════════════════ -->
 <style>
   /* Doormat is a 3-row grid that fills the viewport below the hero:
