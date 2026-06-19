@@ -1035,7 +1035,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <h1 class="hn-headline">AI infrastructure <span class="hn-sparkle">✦</span><br><em>for the trades.</em></h1>
       <p class="hn-sub">Leads answered. Jobs booked. Reviews collected — <em>all on autopilot.</em></p>
       <div class="hn-cta">
-        <a href="#contact" class="hn-btn">Book a call →</a>
+        <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="hn-btn" target="_blank" rel="noopener">Book a call →</a>
         <a href="#products" class="hn-link-secondary">See the products <span style="font-family:var(--display)">↓</span></a>
       </div>
       <div class="hn-atlas" aria-hidden="true">
@@ -3113,8 +3113,31 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
 })();
 </script>
 
-<!-- ── Hide Spline watermark ── -->
-<script>(function(){var sv=document.querySelector('.hn-atlas spline-viewer');if(!sv)return;function h(){var r=sv.shadowRoot;if(!r){setTimeout(h,120);return;}var s=document.createElement('style');s.textContent='#logo{display:none!important}';r.appendChild(s);}h();})();
+<!-- ── Hide Spline watermark + global eye tracking ── -->
+<script>(function(){
+  var sv=document.querySelector('.hn-atlas spline-viewer');
+  if(!sv)return;
+  function init(){
+    var r=sv.shadowRoot;
+    if(!r){setTimeout(init,120);return;}
+    // hide watermark
+    var s=document.createElement('style');s.textContent='#logo{display:none!important}';r.appendChild(s);
+    // global eye tracking — relay every page pointer/touch as a pointermove on the canvas
+    var canvas=r.querySelector('canvas');
+    if(!canvas)return;
+    function relay(x,y){
+      canvas.dispatchEvent(new PointerEvent('pointermove',{bubbles:true,cancelable:true,clientX:x,clientY:y,pointerType:'mouse'}));
+    }
+    window.addEventListener('mousemove',function(e){relay(e.clientX,e.clientY);},{passive:true});
+    window.addEventListener('touchmove',function(e){
+      var t=e.touches[0];if(t)relay(t.clientX,t.clientY);
+    },{passive:true});
+    window.addEventListener('touchstart',function(e){
+      var t=e.touches[0];if(t)relay(t.clientX,t.clientY);
+    },{passive:true});
+  }
+  init();
+})();
 </script>
 
 </body>
