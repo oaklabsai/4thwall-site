@@ -2909,5 +2909,108 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
 })();
 </script>
 
+<!-- ── TextReveal — character-split stagger hover animation ── -->
+<script>
+(function(){
+  /* Segment text into grapheme clusters (handles emoji, accents, etc.) */
+  var segment = (typeof Intl!=='undefined' && Intl.Segmenter)
+    ? function(t){ return Array.from(new Intl.Segmenter('en',{granularity:'grapheme'}).segment(t), function(s){return s.segment;}); }
+    : function(t){ return Array.from(t); };
+
+  /**
+   * Wraps `text` in a flex container where each character is a span
+   * with textShadow 1em below. On hover, the parent slides all chars
+   * up 1em, revealing the shadow clone — the drum-roll effect.
+   *
+   * @param {HTMLElement} parent  — the link/button that owns hover state
+   * @param {string}      text    — text to animate
+   * @param {object}      opts
+   */
+  function makeReveal(parent, text, opts){
+    var stagger = opts.stagger != null ? opts.stagger : 22;
+    var dur     = opts.dur     != null ? opts.dur     : 230;
+    var ease    = opts.ease    || 'cubic-bezier(.16,1,.3,1)';
+    var chars   = segment(text);
+
+    /* Outer clip — overflow:hidden + 1em height is the magic */
+    var wrap = document.createElement('span');
+    wrap.style.cssText = 'display:inline-flex;overflow:hidden;height:1em;vertical-align:-.13em;pointer-events:none';
+    wrap.setAttribute('aria-hidden','true');
+
+    var spans = chars.map(function(ch, i){
+      var s = document.createElement('span');
+      s.style.cssText = [
+        'display:inline-block',
+        'will-change:transform',
+        'text-shadow:0 1em currentColor',          /* ghost clone below */
+        'transition:transform '+dur+'ms '+ease+' '+(i*stagger)+'ms',
+        'transform:translateY(0)'
+      ].join(';');
+      s.textContent = (ch === ' ') ? ' ' : ch;
+      wrap.appendChild(s);
+      return s;
+    });
+
+    parent.addEventListener('mouseenter', function(){
+      spans.forEach(function(s){ s.style.transform = 'translateY(-1em)'; });
+    });
+    parent.addEventListener('mouseleave', function(){
+      spans.forEach(function(s){ s.style.transform = 'translateY(0)'; });
+    });
+
+    return wrap;
+  }
+
+  /* Replace a raw text node inside `el` with the reveal span */
+  function replaceTextNode(el, opts){
+    var node = Array.from(el.childNodes).find(function(n){
+      return n.nodeType === 3 && n.textContent.trim();
+    });
+    if(!node) return;
+    var text = node.textContent;
+    var reveal = makeReveal(el, text.trim(), opts || {});
+    /* preserve leading/trailing whitespace as a separate text node */
+    var leading  = text.match(/^\s+/);
+    var trailing = text.match(/\s+$/);
+    if(leading)  el.insertBefore(document.createTextNode(leading[0]),  node);
+    el.replaceChild(reveal, node);
+    if(trailing) el.appendChild(document.createTextNode(trailing[0]));
+    el.setAttribute('aria-label', el.getAttribute('aria-label') || text.trim());
+  }
+
+  /* Replace ALL text content of el (no child element mixing) */
+  function replaceAllText(el, opts){
+    var text = el.textContent.trim();
+    if(!text) return;
+    var reveal = makeReveal(el, text, opts || {});
+    el.setAttribute('aria-label', text);
+    el.innerHTML = '';
+    el.appendChild(reveal);
+  }
+
+  /* ── 1. Nav logo "4THWALL" — text node after the SVG ─────────────── */
+  var logo = document.querySelector('.nav-logo');
+  if(logo) replaceTextNode(logo, {stagger:30, dur:280});
+
+  /* ── 2. "Products" button — text node before the chevron span ──────── */
+  var prodBtn = document.getElementById('prodBtn');
+  if(prodBtn) replaceTextNode(prodBtn, {stagger:24, dur:230});
+
+  /* ── 3. Dropdown product names ─────────────────────────────────────── */
+  document.querySelectorAll('.prod-drop-name').forEach(function(el){
+    replaceAllText(el, {stagger:28, dur:240});
+  });
+
+  /* ── 4. Hero primary CTA "Book a call →" ───────────────────────────── */
+  var hnBtn = document.querySelector('.hn-btn');
+  if(hnBtn) replaceAllText(hnBtn, {stagger:18, dur:210});
+
+  /* ── 5. Hero secondary "See the products" (text node before ↓ span) ── */
+  var secLink = document.querySelector('.hn-link-secondary');
+  if(secLink) replaceTextNode(secLink, {stagger:18, dur:210});
+
+})();
+</script>
+
 </body>
 </html>
