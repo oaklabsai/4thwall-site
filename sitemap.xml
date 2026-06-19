@@ -56,6 +56,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://4thwall.solutions/fairfield-county/painting</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://4thwall.solutions/fairfield-county/masonry</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://4thwall.solutions/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

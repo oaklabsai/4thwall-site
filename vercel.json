@@ -16,7 +16,7 @@
     { "source": "/record/:token", "destination": "/record.html" },
     { "source": "/pro/:id",       "destination": "/pro.html" },
     { "source": "/c/:placeId",    "destination": "/vesta-app.html" },
-    { "source": "/fairfield-county/:trade", "destination": "/directory.html" }
+    { "source": "/fairfield-county/:trade", "destination": "/api/directory?trade=:trade" }
   ],
   "redirects": [
     { "source": "/trades.html",           "destination": "/atlas",                              "permanent": true },
