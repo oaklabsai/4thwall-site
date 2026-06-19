@@ -102,8 +102,8 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .home-sign { text-align:center; font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--ebony); margin-top:32px; letter-spacing:.005em; }
 
 /* BROWSE header + chips */
-.browse-hdr { padding:6px 20px 8px; }
-.browse-h1 { font-family:var(--serif); font-size:38px; font-weight:700; line-height:1.05; letter-spacing:-.025em; color:var(--olive); margin-bottom:3px; }
+.browse-hdr { padding:4px 20px 6px; }
+.browse-h1 { font-family:var(--serif); font-size:30px; font-weight:700; line-height:1.08; letter-spacing:-.025em; color:var(--olive); margin-bottom:2px; }
 .browse-sub { font-size:13px; color:var(--ebony); }
 .chips-row { display:flex; gap:8px; padding:6px 20px 10px; overflow-x:auto; scrollbar-width:none; -webkit-mask-image:linear-gradient(to right,#000 86%,transparent); mask-image:linear-gradient(to right,#000 86%,transparent); }
 .chips-row::-webkit-scrollbar { display:none; }
@@ -111,7 +111,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .chip.sel { background:var(--tea); }
 
 /* analysis banner */
-.vbanner { display:flex; align-items:center; gap:10px; margin:0 20px 10px; padding:11px 16px; background:rgba(212,223,158,.28); border:1px solid rgba(74,75,47,.08); border-radius:14px; font-size:12.5px; color:var(--ebony); line-height:1.4; }
+.vbanner { display:flex; align-items:center; gap:9px; margin:0 20px 8px; padding:8px 14px; background:rgba(212,223,158,.28); border:1px solid rgba(74,75,47,.08); border-radius:12px; font-size:12px; color:var(--ebony); line-height:1.35; }
 .vbanner b { color:var(--olive); font-weight:600; }
 .vbanner .vb-spark { color:var(--olive); flex-shrink:0; }
 
@@ -125,7 +125,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .deckwrap { flex:1; display:flex; flex-direction:column; min-height:0; padding-bottom:96px; }
 .feedwrap { display:none; }   /* desktop-only scroll feed; the phone always uses the swipe deck */
 .deck { position:relative; flex:1; min-height:300px; margin:6px 20px 0; }
-.card { position:absolute; left:0; right:0; top:0; bottom:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:22px 22px 20px; display:flex; flex-direction:column; will-change:transform; touch-action:none; -webkit-user-select:none; user-select:none; overflow:hidden; }
+.card { position:absolute; left:0; right:0; top:0; bottom:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:20px 20px 17px; display:flex; flex-direction:column; will-change:transform; touch-action:none; -webkit-user-select:none; user-select:none; overflow:hidden; }
 .card[data-k="0"] { z-index:30; cursor:grab; }
 .card[data-k="0"]:active { cursor:grabbing; }
 .card[data-k="1"] { z-index:20; transform:translateY(11px) scale(.96); }
@@ -179,6 +179,22 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .de-btn.primary { background:var(--olive); color:var(--white); }
 .de-btn.ghost { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); }
 
+/* ===== MATCH INTRO (the "We found N / ranked using" anticipation beat) ===== */
+.match-intro { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px 26px; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); animation:miIn .44s cubic-bezier(.2,.7,.3,1) both; }
+.mi-kicker { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ebony); margin-bottom:18px; }
+.mi-kicker svg { color:var(--olive); }
+.mi-found { display:flex; align-items:baseline; gap:9px; justify-content:center; margin-bottom:6px; }
+.mi-n { font-family:var(--serif); font-size:56px; font-weight:700; color:var(--olive); line-height:1; letter-spacing:-.03em; }
+.mi-trade { font-family:var(--serif); font-size:22px; font-weight:600; color:var(--ebony); letter-spacing:-.01em; }
+.mi-sub { font-size:13px; color:var(--ebony); line-height:1.45; margin-bottom:24px; max-width:250px; }
+.mi-rlabel { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ebony); opacity:.72; margin-bottom:12px; }
+.mi-factors { display:flex; flex-direction:column; gap:9px; margin-bottom:27px; }
+.mi-factor { display:flex; align-items:center; gap:9px; font-size:13.5px; font-weight:500; color:var(--olive); }
+.mi-factor svg { color:var(--olive); flex-shrink:0; }
+.mi-go { min-width:210px; }
+@keyframes miIn { from { opacity:0; transform:translateY(12px) scale(.985); } to { opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce){ .match-intro { animation:none; } }
+
 /* ===== SAVED LIST ===== */
 .favwrap { flex:1; min-height:0; overflow-y:auto; padding:2px 20px 130px; display:flex; flex-direction:column; gap:12px; }
 .fav-intro { font-size:12.5px; color:var(--ebony); line-height:1.55; background:rgba(212,223,158,.24); border:1px solid rgba(74,75,47,.08); border-radius:14px; padding:13px 16px; margin-bottom:2px; }
@@ -192,6 +208,16 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .fav-name { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); line-height:1.2; letter-spacing:-.01em; }
 .fav-town { font-size:11.5px; color:var(--ebony); margin-top:2px; }
 .fav-band { display:inline-block; margin-top:8px; background:var(--tea); color:var(--olive); font-size:11px; font-weight:600; padding:3px 11px; border-radius:var(--r-pill); }
+.fav-trust { display:flex; flex-wrap:wrap; gap:6px 13px; margin-top:12px; }
+.fav-ct { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:500; color:var(--ebony); }
+.fav-ct svg { color:var(--olive); flex-shrink:0; }
+.fav-read { margin-top:11px; font-size:13px; line-height:1.5; color:var(--olive); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.fav-actions { display:flex; gap:9px; margin-top:14px; }
+.fav-act { flex:1; font-family:var(--sans); font-size:13px; font-weight:600; border-radius:var(--r-pill); padding:10px 14px; cursor:pointer; border:none; text-align:center; }
+.fav-act.primary { background:var(--olive); color:var(--white); }
+.fav-act.ghost { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); }
+.fav-act.ghost:hover { background:rgba(74,75,47,.04); }
+.fav-act.primary:hover { filter:brightness(1.06); }
 .fav-contact { margin-top:13px; padding-top:13px; border-top:1px solid rgba(74,75,47,.08); }
 .fav-lock { font-size:12.5px; color:var(--ebony); line-height:1.5; display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
 .fav-lock svg { color:var(--olive); flex-shrink:0; }
@@ -776,7 +802,7 @@ const LOCK = `<svg width="13" height="14" viewBox="0 0 14 16" fill="none" stroke
 
 const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, filterOpen:false, dataLoaded:false, mode:'trade',
             shuffles:{}, pos:{}, deck:[], deckIdx:0, deckSig:{}, unlocked:{}, history:[], savedTab:'saved',
-            feedTown:'', feedSort:'rank', feedNeeds:new Set() };
+            feedTown:'', feedSort:'rank', feedNeeds:new Set(), introPending:false };
 const FEED_HIDDEN = new Set();   // desktop feed: "Not interested" hides for the session (not a like/dislike signal)
 // Homeowner-need facets per trade — mined from the real specialties corpus. A firm matches a
 // facet if any of its specialties / known-for strings contains one of the facet keywords (.m).
@@ -1007,7 +1033,7 @@ function updateBrowseHead(){
   banner.style.display = '';
   $('browse-h1').textContent = 'Recommended ' + tradePlural(S.activeTrade);
   $('browse-sub').textContent = desktop() ? 'Vetted in Fairfield County · ranked by Vesta' : 'Vetted in Fairfield County · save the ones worth a call';
-  banner.innerHTML = '<span class="vb-spark">'+SPARK+'</span><span><b>Save the ones you’re interested in. Skip the ones that aren’t a fit.</b> Tap any card for Vesta’s full analysis.</span>';
+  banner.innerHTML = '<span class="vb-spark">'+SPARK+'</span><span>Tap any card for <b>Vesta’s full analysis</b> — or save it for a call later.</span>';
   updateFilterTrigger();
 }
 
@@ -1052,12 +1078,16 @@ function rebuildDeck(){
 function topCon(){ return (S.deck||[]).slice(S.deckIdx)[0] || null; }
 
 function cardHTML(con, k){
-  const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,3);   // real credentials only (Registered since YYYY · certs); the Vesta-analyzed placeholder isn't a credential
-  // Lead with WHY Vesta is showing this contractor: rank standing + registry/credential trust line.
-  // (Known-for specialties live on the full profile + desktop feed — omitted here so the swipe card's
-  //  Vesta's Read stays readable on a ~300px card rather than getting crushed.)
-  const why = (con.standing || trust.length)
+  const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,2);   // real credentials only (Registered since YYYY · certs); the Vesta-analyzed placeholder isn't a credential
+  // Lead with the "Why this contractor?" caption over the honest stack: rank standing + registry/
+  // credential trust line. Vesta's Read follows. The chrome above the deck (header + banner) is
+  // compacted so the caption fits without crushing the read. (Known-for phrases read as a proper
+  // checkmark list on the full profile + desktop feed — they don't compress to tag pills, so the
+  // swipe card stays clean and the band + credentials carry the specifics.)
+  const hasWhy = con.standing || trust.length;
+  const why = hasWhy
     ? '<div class="card-why">'+
+        '<div class="card-whylbl"><span class="sp">'+SPARK+'</span>Why this contractor?</div>'+
         (con.standing?'<div class="card-band">'+esc(con.standing)+'</div>':'')+
         (trust.length?'<div class="card-trust">'+trust.map(v=>'<span class="ct-item">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
       '</div>'
@@ -1078,10 +1108,44 @@ function deckEndHTML(){
     '<p>You’ve been through the vetted '+esc(tradePlural(S.activeTrade))+' in Fairfield County for now'+(liked?'. You’ve saved '+liked+' so far.':'.')+'</p>'+
     '<div class="de-row"><button class="de-btn primary" id="de-saved">'+(liked?'See saved · '+liked:'See saved')+'</button><button class="de-btn ghost" id="de-restart">Start over</button></div></div>';
 }
+// The anticipation beat before the deck: "We found N — ranked using…". Factors mirror the REAL
+// rank_score inputs (review consensus, track record/tenure, licensing/credentials) — never response time.
+function matchIntroHTML(n){
+  const plural = tradePlural(S.activeTrade);
+  const noun = n === 1 ? plural.replace(/s$/,'') : plural;   // current plurals all singularize by dropping a trailing s
+  const factors = ['Review quality &amp; consensus', 'Track record &amp; tenure', 'Licensing &amp; business records'];
+  return '<div class="match-intro">'+
+    '<span class="mi-kicker">'+SPARK+'Vesta Match</span>'+
+    '<div class="mi-found"><span class="mi-n">'+n+'</span><span class="mi-trade">'+esc(noun)+'</span></div>'+
+    '<p class="mi-sub">Found &amp; ranked for you in Fairfield County</p>'+
+    '<div class="mi-rlabel">Ranked using</div>'+
+    '<div class="mi-factors">'+factors.map(f=>'<span class="mi-factor">'+CHECK+'<span>'+f+'</span></span>').join('')+'</div>'+
+    '<button class="de-btn primary mi-go" id="mi-go">Start matching</button>'+
+  '</div>';
+}
+function renderMatchIntro(n){
+  const deck = $('deck'); if(!deck) return;
+  $('vbanner').style.display = 'none';              // hold the save/skip banner until matching begins
+  $('deck-actions').style.visibility = 'hidden';
+  $('deck-meta').textContent = '';
+  deck.innerHTML = matchIntroHTML(n);
+  const go = $('mi-go'); if(go) go.onclick = startMatching;
+  if (desktop()) renderPanel(null);
+}
+function startMatching(){
+  $('vbanner').style.display = '';
+  renderDeck();
+}
 function renderDeck(){
   if (S.mode !== 'trade') return;
   if (desktop()){ renderFeed(); return; }   // ≥900px renders the scroll feed instead of the swipe deck
   const deck = $('deck'); if(!deck) return;
+  // Once per fresh trade entry: the "We found N / ranked using" beat. If data hasn't loaded yet,
+  // leave the flag set so the post-load renderDeck shows it; an empty trade clears it and falls through.
+  if (S.introPending && S.dataLoaded){
+    S.introPending = false;
+    if ((S.deck||[]).length){ renderMatchIntro((S.deck||[]).length); return; }
+  }
   const remaining = (S.deck||[]).slice(S.deckIdx);
   if (!remaining.length){
     if (!S.dataLoaded){ deck.innerHTML = '<div class="deck-end"><span class="de-spark">'+SPARK+'</span><p>Loading vetted pros…</p></div>'; $('deck-actions').style.visibility='hidden'; $('deck-meta').textContent=''; return; }
@@ -1183,13 +1247,22 @@ function contactBlockHTML(con){
   if (signedIn()) return '<button class="fav-show" data-unlock="'+esc(con.placeId)+'">'+LOCK+'Show contact info</button>';
   return '<div class="fav-lock">'+LOCK+'<span>Contact info unlocks with a free account. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a></span></div>';
 }
+// A saved row is a curated-shortlist card: it re-states WHY (rank band + the same ✓ trust line and
+// Vesta's Read as the deck), then offers the two forward actions — View analysis · Request a quote.
 function favRowHTML(con){
+  const trust = (con.verified||[]).filter(v => v !== 'Vesta-analyzed').slice(0,2);   // real credentials only
   return '<div class="favrow" data-place="'+esc(con.placeId)+'">'+
     '<button class="fav-unlike" data-unlike="'+esc(con.placeId)+'" aria-label="Remove '+esc(con.name)+' from saved">'+BOOKMARK_FILL+'</button>'+
-    '<div class="favrow-top" role="button" tabindex="0" aria-label="'+esc(con.name)+', see analysis">'+
+    '<div class="favrow-top">'+
       '<div class="fav-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="fav-id"><div class="fav-name">'+esc(con.name)+'</div><div class="fav-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
         (con.standing?'<div class="fav-band">'+esc(con.standing)+'</div>':'')+'</div>'+
+    '</div>'+
+    (trust.length ? '<div class="fav-trust">'+trust.map(v=>'<span class="fav-ct">'+CHECK+esc(v)+'</span>').join('')+'</div>' : '')+
+    (con.read ? '<div class="fav-read">'+esc(con.read)+'</div>' : '')+
+    '<div class="fav-actions">'+
+      '<button class="fav-act ghost" data-act="analysis">View analysis</button>'+
+      '<button class="fav-act primary" data-act="request">Request a quote</button>'+
     '</div>'+
     '<div class="fav-contact" data-contact="'+esc(con.placeId)+'">'+contactBlockHTML(con)+'</div>'+
   '</div>';
@@ -1231,17 +1304,16 @@ function renderFav(){
     return;
   }
   const intro = signedIn()
-    ? 'Your saved pros. Tap <b>Show contact info</b> to reveal each one’s phone and website.'
-    : '<b>Sign up to unlock contact info.</b> Your saved pros live on this device for now — create a free account to keep them and reveal each pro’s phone & website. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a>';
+    ? 'Your shortlist — Vesta keeps the “why” next to each pro. View the full analysis or request a quote whenever you’re ready.'
+    : 'Your shortlist — the “why” stays next to each pro. It lives on this device for now; <b>sign up free</b> to keep it and unlock each pro’s phone & website. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a>';
   wrap.innerHTML = savedSeg() + '<div class="fav-intro">'+intro+'</div>' + list.map(favRowHTML).join('') +
     '<button class="fav-reset" id="fav-reset" data-armed="0">Clear all saved</button>';
   wireSavedSeg(wrap);
   wireFavReset(wrap);
   Array.from(wrap.querySelectorAll('.favrow')).forEach(row => {
     const con = list.find(c => c.placeId === row.dataset.place); if(!con) return;
-    const top = row.querySelector('.favrow-top');
-    top.addEventListener('click', () => tapCard(con));
-    top.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tapCard(con); } });
+    const an = row.querySelector('[data-act="analysis"]'); if(an) an.addEventListener('click', () => tapCard(con));
+    const rq = row.querySelector('[data-act="request"]'); if(rq) rq.addEventListener('click', () => enterRequest({ placeId:con.placeId, trade:con.trade, name:con.name }));
     row.querySelector('.fav-unlike').addEventListener('click', () => { setLiked(con.placeId, false); renderSaved(); });
     const show = row.querySelector('.fav-show');
     if (show) show.addEventListener('click', () => unlockContact(con, row.querySelector('.fav-contact')));
@@ -2030,7 +2102,7 @@ function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('
 
 /* NAV */
 function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; }
-function openBrowse(key){ S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); ensureDeck(key); showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState(); }
+function openBrowse(key){ S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); ensureDeck(key); S.introPending = !desktop(); showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState(); }
 function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); updateNavState(); }
 function updateNavState(){
   const home=$('nav-home'), saved=$('nav-saved');
