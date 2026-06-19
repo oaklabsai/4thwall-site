@@ -367,13 +367,27 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .deck-actions { padding:26px 0 4px; }
   .favwrap { padding:24px 40px 48px; }
 
-  .vpanel { display:block; width:392px; flex-shrink:0; height:100vh; overflow-y:auto; background:var(--white); border-left:1px solid rgba(74,75,47,.1); padding:34px 32px 48px; box-shadow:var(--sh-panel); }
+  .vpanel { display:block; width:392px; flex-shrink:0; align-self:stretch; min-height:0; max-height:100%; overflow-y:auto; background:var(--white); border-left:1px solid rgba(74,75,47,.1); padding:34px 32px 48px; box-shadow:var(--sh-panel); }
   .va-firm { font-size:32px; }
 
   /* ===== DESKTOP FEED (X/Twitter-style scroll) — replaces the swipe deck ≥900px ===== */
   .deckwrap { display:none; }                 /* the swipe deck is mobile-only */
   .vbanner { display:none; }                  /* the deck's save/skip banner doesn't apply to a feed */
   .feedwrap { display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
+  /* desktop problem-first entry: search box + problem pills above the feed controls */
+  .feed-entry { display:flex; align-items:center; gap:12px; padding:18px 40px 4px; flex-shrink:0; }
+  .fe-search { flex:0 0 auto; width:min(440px,54%); min-width:200px; display:flex; align-items:center; gap:10px; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:11px 18px; cursor:text; box-shadow:var(--sh-row); font-family:var(--sans); font-size:14px; color:var(--ebony); text-align:left; outline:none; }
+  .fe-search:hover { border-color:rgba(74,75,47,.24); }
+  .fe-search:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
+  .fe-search > svg { width:17px; height:17px; flex-shrink:0; }
+  .fe-search span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fe-problems { flex:1 1 0; min-width:0; display:flex; align-items:center; gap:8px; overflow-x:auto; scrollbar-width:none; -webkit-mask-image:linear-gradient(to right,#000 90%,transparent); mask-image:linear-gradient(to right,#000 90%,transparent); }
+  .fe-problems::-webkit-scrollbar { display:none; }
+  .fe-prob { flex-shrink:0; display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:8px 14px; cursor:pointer; white-space:nowrap; box-shadow:var(--sh-row); }
+  .fe-prob:hover { border-color:rgba(74,75,47,.3); }
+  .fe-prob-ic { display:flex; }
+  .fe-prob-ic svg { width:15px; height:15px; }
+
   .feed-controls { display:flex; align-items:center; gap:10px; padding:14px 40px 12px; flex-shrink:0; }
   .feed-select { position:relative; display:inline-flex; }
   .feed-select select { appearance:none; -webkit-appearance:none; font-family:var(--sans); font-size:13.5px; font-weight:500; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:9px 36px 9px 16px; cursor:pointer; box-shadow:var(--sh-row); outline:none; }
@@ -383,7 +397,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .feed { flex:1; min-height:0; overflow-y:auto; padding:4px 40px 64px; display:flex; flex-direction:column; gap:14px; }
   .feed-empty { padding:54px 22px; text-align:center; color:var(--ebony); font-size:14px; }
   /* need-filter chips (homeowner specifics, mined from real specialties) */
-  .feed-needs { display:flex; align-items:center; gap:8px; padding:0 40px 14px; overflow-x:auto; scrollbar-width:none; flex-shrink:0; }
+  .feed-needs { display:flex; align-items:center; gap:8px; padding:0 40px 14px; overflow-x:auto; scrollbar-width:none; flex-shrink:0; -webkit-mask-image:linear-gradient(to right,#000 90%,transparent); mask-image:linear-gradient(to right,#000 90%,transparent); }
   .feed-needs::-webkit-scrollbar { display:none; }
   .need-lbl { font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(74,75,47,.55); flex-shrink:0; margin-right:2px; }
   .need-chip { flex-shrink:0; font-family:var(--sans); font-size:12.5px; font-weight:500; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:7px 14px; cursor:pointer; white-space:nowrap; box-shadow:var(--sh-row); }
@@ -674,6 +688,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
           <div class="deck-meta" id="deck-meta"></div>
         </div>
         <div class="feedwrap" id="feedwrap" hidden>
+          <div class="feed-entry" id="feed-entry"></div>
           <div class="feed-controls" id="feed-controls"></div>
           <div class="feed-needs" id="feed-needs"></div>
           <div class="feed" id="feed" aria-label="Contractor feed"></div>
@@ -1438,6 +1453,22 @@ function applyFeed(){
   list.forEach(wireFeedCard);
   renderFeedRail(); syncSavedUI();
 }
+// Desktop problem-first entry: a search box + problem pills bar above the feed, so the desktop
+// experience opens with "describe your problem" the way the mobile homepage does (it lands in the
+// feed, but the diagnosis entry is always one glance away). Search → the overlay; pill → its trade.
+function renderFeedEntry(){
+  const el = $('feed-entry'); if(!el) return;
+  el.innerHTML =
+    '<button class="fe-search" id="fe-search" type="button" aria-label="Search or describe what you need">'+
+      '<svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg>'+
+      '<span>Describe a problem, or search a name…</span>'+
+    '</button>'+
+    '<div class="fe-problems" role="list" aria-label="Common needs">'+
+      PROBLEMS.map(p=>'<button class="fe-prob" role="listitem" data-trade="'+esc(p.trade)+'" aria-label="'+esc(p.label)+' — browse this trade"><span class="fe-prob-ic" aria-hidden="true">'+ICONS[p.icon]+'</span>'+esc(p.label)+'</button>').join('')+
+    '</div>';
+  const s=$('fe-search'); if(s) s.addEventListener('click', openSearch);
+  Array.from(el.querySelectorAll('.fe-prob')).forEach(b=>b.addEventListener('click',()=>openBrowse(b.dataset.trade)));
+}
 function renderFeedControls(){
   const c = $('feed-controls'); if(!c) return;
   const towns = feedTowns();
@@ -1547,6 +1578,7 @@ function renderFeedRail(){
 function renderFeed(){
   const feed=$('feed'); if(!feed) return;
   if (S.feedTown && !feedTowns().includes(S.feedTown)) S.feedTown='';
+  renderFeedEntry();
   renderFeedControls();
   const list = feedSource();
   renderFeedNeeds();
@@ -1642,7 +1674,15 @@ function renderSearchResults(q){
       '<span class="vsr-main"><span class="vsr-name">Browse '+esc(tradePlural(routed))+'</span><span class="vsr-town">Vesta-ranked '+esc(tradeLabelOf(routed))+' in Fairfield County</span></span>'+
       '<span class="vsr-arrow" aria-hidden="true">&rarr;</span>'+
     '</button>' : '';
-  const matches = contractors.filter(c => c.name.toLowerCase().includes(q) || c.town.toLowerCase().includes(q)).slice(0,40);
+  // Match name + town + trade label + specialties/known-for (c.specs is pre-lowercased) — so a
+  // specific-need query ("skylights", "EV charger", "retaining wall", "excavation") finds the pros
+  // who actually do it, not just name/town hits. (Synthesis prose is left out — too noisy to match on.)
+  const matches = contractors.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.town.toLowerCase().includes(q) ||
+    (tradeLabelOf(c.trade) || '').toLowerCase().includes(q) ||
+    (c.specs || []).some(s => s.includes(q))
+  ).slice(0,40);
   if(!sug && !matches.length){ res.innerHTML = '<p class="vsearch-hint">No matches yet — try a trade like &ldquo;roofing&rdquo; or a town.</p>'; return; }
   res.innerHTML = sug + matches.map(c =>
     '<button class="vsr" data-place="'+esc(c.placeId)+'" data-trade="'+esc(c.trade)+'">'+
