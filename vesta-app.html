@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Vesta — Find a contractor worth hiring. | 4THWALL</title>
-<meta name="description" content="Swipe through vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care. Each one read and summarized by Vesta. No ads, no pay-to-play.">
+<meta name="description" content="Vesta matches you with vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care. Each one read and summarized by Vesta. No ads, no pay-to-play.">
 <link rel="canonical" href="https://4thwall.solutions/vesta">
 <meta property="og:title" content="Vesta — Find a contractor worth hiring.">
 <meta property="og:description" content="Vetted Fairfield County contractors, each read and summarized by Vesta. No ads, no pay-to-play.">
@@ -67,17 +67,38 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 
 /* HOME */
 .home-body { padding:14px 20px 130px; flex:1; }
-.home-h1 { font-family:var(--serif); font-size:54px; font-weight:700; line-height:1.04; letter-spacing:-.03em; color:var(--olive); margin-bottom:12px; }
-.home-sub { font-size:14px; color:var(--ebony); margin-bottom:28px; }
-.trades-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.trade-tile { background:linear-gradient(180deg,#FFFFFF,#FBFCF6); border-radius:var(--r-tile); padding:19px 18px; cursor:pointer; border:1px solid rgba(74,75,47,.055); box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 1px 2px rgba(74,75,47,.05), 0 9px 22px -8px rgba(74,75,47,.15), 0 30px 60px -22px rgba(74,75,47,.16); text-align:left; display:flex; flex-direction:column; justify-content:space-between; gap:16px; min-height:134px; transition:transform .18s cubic-bezier(.32,1.08,.62,1), box-shadow .18s; outline:none; }
-.trade-tile:hover { transform:translateY(-4px); box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 2px 4px rgba(74,75,47,.06), 0 16px 32px -10px rgba(74,75,47,.22), 0 44px 80px -28px rgba(74,75,47,.22); }
-.trade-tile:active { transform:scale(.975); }
+.home-h1 { font-family:var(--serif); font-size:35px; font-weight:700; line-height:1.08; letter-spacing:-.02em; color:var(--olive); margin-bottom:10px; }
+.home-sub { font-size:14px; color:var(--ebony); margin-bottom:18px; }
+/* search hero — the front door is search, not categories */
+.home-search { display:flex; align-items:center; gap:11px; width:100%; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:15px 18px; cursor:text; box-shadow:0 2px 6px rgba(74,75,47,.05), 0 14px 30px -16px rgba(74,75,47,.2); margin-bottom:18px; text-align:left; outline:none; }
+.home-search:hover { border-color:rgba(74,75,47,.22); }
+.home-search:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
+.home-search > svg { width:19px; height:19px; color:var(--ebony); flex-shrink:0; }
+.hs-ph { font-size:15px; color:rgba(74,75,47,.5); min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.hs-ph #home-search-ph { color:var(--ebony); transition:opacity .22s; }
+/* problem pills — homeowner needs, the instant-momentum row */
+.home-problems { display:flex; flex-wrap:wrap; gap:9px; margin-bottom:30px; }
+.prob-pill { display:inline-flex; align-items:center; gap:8px; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:10px 15px 10px 13px; cursor:pointer; font-family:var(--sans); font-size:14px; font-weight:600; color:var(--olive); box-shadow:0 1px 2px rgba(74,75,47,.05); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
+.prob-pill:hover { transform:translateY(-2px); box-shadow:0 8px 18px -7px rgba(74,75,47,.26); background:var(--tea); }
+.prob-pill:active { transform:scale(.96); }
+.prob-pill:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
+.prob-pill .pp-ic { display:flex; color:var(--olive); }
+.prob-pill .pp-ic svg { width:17px; height:17px; }
+.home-browselbl { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:13px; }
+/* trades demoted to compact, scannable chips */
+.trades-grid { display:flex; flex-wrap:wrap; gap:9px; }
+.trade-tile { display:inline-flex; flex-direction:row; align-items:center; gap:9px; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-pill); padding:9px 15px 9px 11px; min-height:0; cursor:pointer; box-shadow:0 1px 2px rgba(74,75,47,.04); transition:transform .14s, box-shadow .14s, background .14s; outline:none; text-align:left; }
+.trade-tile:hover { transform:translateY(-2px); box-shadow:0 7px 16px -7px rgba(74,75,47,.22); }
+.trade-tile:active { transform:scale(.97); }
 .trade-tile.sel { background:var(--tea); }
 .trade-tile:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
-.tile-icon { width:50px; height:50px; flex-shrink:0; border-radius:15px; background:linear-gradient(180deg,rgba(212,223,158,.34),rgba(212,223,158,.15)); border:1px solid rgba(74,75,47,.05); box-shadow:inset 0 1px 0 rgba(255,255,255,.55); display:flex; align-items:center; justify-content:center; color:var(--olive); }
-.tile-icon svg { width:27px; height:27px; }
-.tile-name { font-size:16px; font-weight:600; color:var(--olive); }
+.tile-icon { width:28px; height:28px; flex-shrink:0; border-radius:8px; background:linear-gradient(180deg,rgba(212,223,158,.34),rgba(212,223,158,.15)); border:1px solid rgba(74,75,47,.05); display:flex; align-items:center; justify-content:center; color:var(--olive); }
+.tile-icon svg { width:16px; height:16px; }
+.tile-name { font-size:13.5px; font-weight:600; color:var(--olive); }
+/* search-result "browse this trade" suggestion (problem→trade routing) */
+.vsr-route { background:rgba(212,223,158,.2); }
+.vsr-arrow { margin-left:auto; color:var(--olive); font-size:18px; flex-shrink:0; padding-right:4px; }
+.vsr-route .vsr-mono svg { width:20px; height:20px; color:var(--olive); }
 .home-sign { text-align:center; font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--ebony); margin-top:32px; letter-spacing:.005em; }
 
 /* BROWSE header + chips */
@@ -115,10 +136,18 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .card-name { font-family:var(--serif); font-size:22px; font-weight:700; line-height:1.12; letter-spacing:-.02em; color:var(--olive); }
 .card-town { font-size:12px; color:var(--ebony); margin-top:2px; }
 .card-band { align-self:flex-start; background:var(--tea); color:var(--olive); font-size:11.5px; font-weight:600; padding:5px 13px; border-radius:var(--r-pill); margin-bottom:13px; }
+/* WHY THIS CONTRACTOR — the signature signal stack (rank band + registry/cert trust line) */
+.card-why { margin-bottom:12px; }
+.card-whylbl { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:9px; }
+.card-whylbl .sp { color:var(--olive); display:flex; }
+.card-why .card-band { display:inline-block; margin-bottom:9px; }
+.card-trust { display:flex; flex-wrap:wrap; gap:6px 14px; }
+.ct-item { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:500; color:var(--ebony); line-height:1.3; }
+.ct-item svg { color:var(--olive); flex-shrink:0; }
 .card-readlbl { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:10px; }
 .card-readlbl .sp { color:var(--olive); display:flex; }
-.card-syn { flex:1; min-height:0; overflow:hidden; font-family:var(--serif); font-size:18.5px; line-height:1.46; font-weight:500; color:var(--olive); letter-spacing:-.004em; position:relative; }
-.card-syn::after { content:''; position:absolute; left:0; right:0; bottom:0; height:38px; background:linear-gradient(transparent,var(--white)); }
+.card-syn { flex:1; min-height:72px; overflow:hidden; font-family:var(--serif); font-size:17px; line-height:1.42; font-weight:500; color:var(--olive); letter-spacing:-.004em; position:relative; }
+.card-syn::after { content:''; position:absolute; left:0; right:0; bottom:0; height:30px; background:linear-gradient(transparent,var(--white)); }
 .card-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
 .card-chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; color:var(--ebony); background:rgba(74,75,47,.05); border-radius:var(--r-pill); padding:4px 10px; white-space:nowrap; }
 .card-chip svg { color:var(--olive); }
@@ -317,7 +346,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 
   /* ===== DESKTOP FEED (X/Twitter-style scroll) — replaces the swipe deck ≥900px ===== */
   .deckwrap { display:none; }                 /* the swipe deck is mobile-only */
-  .vbanner { display:none; }                  /* "swipe right to save" copy doesn't apply to a feed */
+  .vbanner { display:none; }                  /* the deck's save/skip banner doesn't apply to a feed */
   .feedwrap { display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
   .feed-controls { display:flex; align-items:center; gap:10px; padding:14px 40px 12px; flex-shrink:0; }
   .feed-select { position:relative; display:inline-flex; }
@@ -581,8 +610,14 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   <div id="s-home" class="screen active" role="main" aria-label="Pick a trade">
     <header class="topbar"><a class="tb-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a><span class="tb-spacer"></span></header>
     <main class="home-body">
-      <h1 class="home-h1">What do<br>you need?</h1>
-      <p class="home-sub">Fairfield County &middot; trusted, vetted pros</p>
+      <h1 class="home-h1">Find a contractor you can actually trust.</h1>
+      <p class="home-sub">Fairfield County&rsquo;s verified contractor network.</p>
+      <button class="home-search" id="home-search" type="button" aria-label="Search contractors or describe what you need">
+        <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg>
+        <span class="hs-ph">Try <span id="home-search-ph">&ldquo;roof leak after a storm&rdquo;</span></span>
+      </button>
+      <div class="home-problems" id="home-problems" role="list" aria-label="Common needs"></div>
+      <div class="home-browselbl">Or browse by trade</div>
       <div class="trades-grid" id="trades-grid" role="list"></div>
       <p class="home-sign">Vetted, never advertised.</p>
     </main>
@@ -596,8 +631,8 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
       <button class="tb-filter" id="tb-filter" aria-label="Filter pros"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="17" y2="6"/><line x1="3" y1="14" x2="17" y2="14"/><circle cx="8" cy="6" r="2.3" fill="var(--white)"/><circle cx="13" cy="14" r="2.3" fill="var(--white)"/></svg><span>Filters</span><span class="tb-filter-ct" hidden></span></button>
     </header>
     <div class="browse-hdr">
-      <h1 class="browse-h1" id="browse-h1" aria-live="polite">Browse roofers</h1>
-      <p class="browse-sub" id="browse-sub">Swipe to save the ones you like</p>
+      <h1 class="browse-h1" id="browse-h1" aria-live="polite">Recommended roofers</h1>
+      <p class="browse-sub" id="browse-sub">Save the ones worth a call</p>
     </div>
     <div class="chips-row" id="chips-row" role="group" aria-label="Filter by trade"></div>
     <div class="vbanner" id="vbanner"></div>
@@ -688,6 +723,30 @@ const trades = [
 ];
 let contractors = [];
 
+// Problem-first entry: homeowner needs routed to a trade. Icons reuse the trade ICONS (no emoji).
+const PROBLEMS = [
+  { label:'Roof leak', icon:'roof', trade:'roofing' },
+  { label:'No AC or heat', icon:'hvac', trade:'hvac' },
+  { label:'Water leak', icon:'pipe', trade:'plumbing' },
+  { label:'Power or wiring', icon:'bolt', trade:'electrical' },
+  { label:'Driveway', icon:'brick', trade:'paving' },
+  { label:'Lawn & yard', icon:'lawn', trade:'lawn' },
+];
+// Free-text → trade routing for the search box (a typed problem maps to a trade). Order matters:
+// roofing before plumbing so "roof leak" lands on roofing, not the generic "leak" → plumbing.
+const PROBLEM_ROUTES = [
+  { trade:'hvac', re:/(\ba\/?c\b|air ?condition|furnace|\bheat|\bcool|hvac|thermostat|boiler)/i },
+  { trade:'roofing', re:/(\broof|shingle|gutter|skylight|flashing)/i },
+  { trade:'plumbing', re:/(plumb|\bleak|\bpipe|drain|water ?heater|faucet|toilet|sewer|clog|sump)/i },
+  { trade:'electrical', re:/(electric|outlet|\bpanel|wiring|breaker|\bpower\b|generator|ev ?charg)/i },
+  { trade:'paving', re:/(driveway|paving|\bpave|asphalt|sealcoat|blacktop)/i },
+  { trade:'lawn', re:/(\blawn|grass|\bmow|landscap|\byard\b|\btree|mulch|\bsod\b|garden)/i },
+  { trade:'painting', re:/(\bpaint|\bstain|primer)/i },
+  { trade:'masonry', re:/(mason|\bbrick|\bstone|patio|retaining ?wall|walkway|chimney|concrete)/i },
+];
+const SEARCH_EG = ['roof leak after a storm','my AC stopped working','need a driveway quote','looking for a painter','water heater keeps failing','an electrical panel upgrade','a new patio or walkway','lawn care for the season'];
+function routeProblem(q){ const s=(q||'').toLowerCase(); for(const r of PROBLEM_ROUTES){ if(r.re.test(s)) return r.trade; } return null; }
+
 const ICONS = {
   roof:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15L16 4L29 15"/><path d="M7 15V27H13V20H19V27H25V15"/></svg>`,
   hvac:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="2.5"/><line x1="16" y1="4.5" x2="16" y2="13.5"/><line x1="25.5" y1="21.5" x2="18.7" y2="17.5"/><line x1="6.5" y1="21.5" x2="13.3" y2="17.5"/></svg>`,
@@ -749,6 +808,7 @@ function isThin(c){
 const byTrade = k => contractors.filter(c => c.trade === k && !c.thin);
 const tradePlural = k => { const t = trades.find(t=>t.key===k); return t?t.plural:k; };
 const tradeLabelOf = k => { const t = trades.find(t=>t.key===k); return t?t.label:k; };
+const tradeIconOf = k => { const t = trades.find(t=>t.key===k); return t?t.icon:'roof'; };
 const esc = (window.HOME && HOME.esc) ? HOME.esc : (s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])));
 const TRADE_DB = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn:'lawn_care', painting:'painting', masonry:'masonry' };
 const TRADE_APP = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn_care:'lawn', painting:'painting', masonry:'masonry' };
@@ -814,7 +874,7 @@ function mapRow(r){
   const certs = [];
   if (Array.isArray(r.certifications)) r.certifications.forEach(c => { if (c && c.issuer && c.level) certs.push(c.issuer + ' ' + c.level); });
   const verified = [];
-  if (r.registered) verified.push('Registered');
+  if (r.registered){ const ry = r.hic_issue_date ? +String(r.hic_issue_date).slice(0,4) : 0; verified.push((ry && ry !== 1999) ? 'Registered since ' + ry : 'Registered'); }
   certs.forEach(c => verified.push(c));
   if (!verified.length && r.synthesis) verified.push('Vesta-analyzed');
   const standing = standingLine(r);
@@ -844,12 +904,15 @@ function mapRow(r){
   };
 }
 function standingLine(r){
-  if (r.rating_band === 'top10') return 'Top 10% by rating';
-  if (r.rating_band === 'top25') return 'Top 25% by rating';
-  if (r.volume_band === 'top10') return 'Among the most-reviewed';
+  // rating_band is the rank_score percentile (qual_rank over rank_score, partitioned by trade) —
+  // NOT a raw-rating band. So "Top X% of Fairfield County <trade>" is the honest, rank-derived read.
+  const plural = tradePlural(TRADE_APP[r.trade] || r.trade);
+  if (r.rating_band === 'top10') return 'Top 10% of Fairfield County ' + plural;
+  if (r.rating_band === 'top25') return 'Top 25% of Fairfield County ' + plural;
+  if (r.volume_band === 'top10') return 'Among the most-reviewed ' + plural;
   if (r.volume_band === 'top25') return 'A deep review track record';
   if (r.tenure_band === 'top25') return 'One of the longest-established';
-  return r.registered ? 'Registered CT contractor' : '';
+  return '';
 }
 async function loadContractors(){
   const sel = 'place_id,business_name,city,trade,registered,hic_issue_date,certifications,synthesis,synthesis_review_count,known_for,specialties,volume_band,rating_band,tenure_band,trade_n,rank_score';
@@ -867,7 +930,31 @@ async function loadContractors(){
 }
 
 /* HOME */
+let _searchRotI = null;
+function startSearchRotator(){
+  const el = $('home-search-ph'); if(!el || _searchRotI) return;
+  let i = 0;
+  _searchRotI = setInterval(() => {
+    i = (i+1) % SEARCH_EG.length;
+    el.style.opacity = '0';
+    setTimeout(() => { el.textContent = '“' + SEARCH_EG[i] + '”'; el.style.opacity = '1'; }, 220);
+  }, 3200);
+}
 function renderHome(){
+  // problem pills — homeowner needs, each routed straight to its trade
+  const pr = $('home-problems');
+  if (pr){
+    pr.innerHTML = '';
+    PROBLEMS.forEach(p => {
+      const b = document.createElement('button');
+      b.className = 'prob-pill'; b.setAttribute('role','listitem');
+      b.setAttribute('aria-label', p.label + ' — find a pro');
+      b.innerHTML = '<span class="pp-ic">'+ICONS[p.icon]+'</span>'+esc(p.label);
+      b.addEventListener('click', () => openBrowse(p.trade));
+      pr.appendChild(b);
+    });
+  }
+  // trades demoted to compact chips
   const grid = $('trades-grid'); grid.innerHTML = '';
   trades.forEach(t => {
     const btn = document.createElement('button');
@@ -877,6 +964,7 @@ function renderHome(){
     btn.addEventListener('click', () => { btn.classList.add('sel'); setTimeout(()=>openBrowse(t.key),120); });
     grid.appendChild(btn);
   });
+  startSearchRotator();
 }
 
 /* CHIPS + SIDEBAR */
@@ -908,7 +996,7 @@ function updateBrowseHead(){
     $('browse-h1').textContent = 'Saved';
     if (S.savedTab === 'history'){
       const h = S.history.length;
-      $('browse-sub').textContent = h ? (h + ' recently viewed') : 'Your recent swipes show up here';
+      $('browse-sub').textContent = h ? (h + ' recently viewed') : 'Contractors you’ve viewed show up here';
     } else {
       const n = likedContractors().length;
       $('browse-sub').textContent = n + ' saved ' + (n===1?'pro':'pros');
@@ -917,9 +1005,9 @@ function updateBrowseHead(){
     return;
   }
   banner.style.display = '';
-  $('browse-h1').textContent = 'Browse ' + tradePlural(S.activeTrade);
-  $('browse-sub').textContent = desktop() ? 'Vetted in Fairfield County · ranked by Vesta — scroll the feed' : 'Vetted in Fairfield County · swipe to save the ones you like';
-  banner.innerHTML = '<span class="vb-spark">'+SPARK+'</span><span><b>Swipe right to save, left to skip.</b> Tap any card for Vesta’s full analysis.</span>';
+  $('browse-h1').textContent = 'Recommended ' + tradePlural(S.activeTrade);
+  $('browse-sub').textContent = desktop() ? 'Vetted in Fairfield County · ranked by Vesta' : 'Vetted in Fairfield County · save the ones worth a call';
+  banner.innerHTML = '<span class="vb-spark">'+SPARK+'</span><span><b>Save the ones you’re interested in. Skip the ones that aren’t a fit.</b> Tap any card for Vesta’s full analysis.</span>';
   updateFilterTrigger();
 }
 
@@ -964,15 +1052,23 @@ function rebuildDeck(){
 function topCon(){ return (S.deck||[]).slice(S.deckIdx)[0] || null; }
 
 function cardHTML(con, k){
-  const trust = con.verified.slice(0,3);
+  const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,3);   // real credentials only (Registered since YYYY · certs); the Vesta-analyzed placeholder isn't a credential
+  // Lead with WHY Vesta is showing this contractor: rank standing + registry/credential trust line.
+  // (Known-for specialties live on the full profile + desktop feed — omitted here so the swipe card's
+  //  Vesta's Read stays readable on a ~300px card rather than getting crushed.)
+  const why = (con.standing || trust.length)
+    ? '<div class="card-why">'+
+        (con.standing?'<div class="card-band">'+esc(con.standing)+'</div>':'')+
+        (trust.length?'<div class="card-trust">'+trust.map(v=>'<span class="ct-item">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
+      '</div>'
+    : '';
   return '<article class="card" data-k="'+k+'" '+(k===0?'tabindex="0" aria-label="'+esc(con.name)+', '+esc(con.town)+'"':'aria-hidden="true"')+'>'+
     (k===0?'<span class="stamp stamp-save">SAVE</span><span class="stamp stamp-pass">SKIP</span>':'')+
     '<div class="card-top"><div class="card-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
-    (con.standing?'<div class="card-band">'+esc(con.standing)+'</div>':'')+
+    why+
     '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
     '<div class="card-syn">'+esc(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.')+'</div>'+
-    (trust.length?'<div class="card-chips">'+trust.map(v=>'<span class="card-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
     '<div class="card-hint">'+(desktop()?'← skip · save →':'Tap for the full analysis')+'</div>'+
   '</article>';
 }
@@ -1129,7 +1225,7 @@ function renderSaved(){
 function renderFav(){
   const wrap = $('favwrap'); const list = likedContractors();
   if (!list.length){
-    wrap.innerHTML = savedSeg() + '<div class="fav-empty">No saved pros yet.<br>Swipe right (or tap the bookmark) on a pro to save them here, then sign up to keep your list and unlock their contact info.</div>';
+    wrap.innerHTML = savedSeg() + '<div class="fav-empty">No saved pros yet.<br>Tap the bookmark on a pro to save them here, then sign up to keep your list and unlock their contact info.</div>';
     wireSavedSeg(wrap);
     if (desktop()) renderPanel(null);
     return;
@@ -1164,12 +1260,12 @@ function renderHistory(){
   const wrap = $('favwrap');
   const list = S.history.map(h => contractors.find(c => c.placeId === h.placeId)).filter(Boolean);
   if (!list.length){
-    wrap.innerHTML = savedSeg() + '<div class="fav-empty">Nothing here yet.<br>Pros you swipe through this session show up here — so anyone you skip is one tap from a second look.</div>';
+    wrap.innerHTML = savedSeg() + '<div class="fav-empty">Nothing here yet.<br>Contractors you view this session show up here — so anyone you skip is one tap from a second look.</div>';
     wireSavedSeg(wrap);
     if (desktop()) renderPanel(null);
     return;
   }
-  wrap.innerHTML = savedSeg() + '<div class="fav-intro">Everyone you’ve swiped this session, newest first. Tap to take another look.</div>' + list.map(histRowHTML).join('');
+  wrap.innerHTML = savedSeg() + '<div class="fav-intro">Everyone you’ve viewed this session, newest first. Tap to take another look.</div>' + list.map(histRowHTML).join('');
   wireSavedSeg(wrap);
   Array.from(wrap.querySelectorAll('.histrow')).forEach(row => row.addEventListener('click', () => goToPro(row.dataset.trade, row.dataset.place)));
   if (desktop()) renderPanel(list[0]);
@@ -1202,7 +1298,7 @@ function confidenceNote(con){
 }
 function confidenceSignals(con){
   const out = [];
-  if (con.standing && con.standing !== 'Registered CT contractor') out.push(con.standing);
+  if (con.standing) out.push(con.standing);
   if (con.reviewCount) out.push(con.reviewCount.toLocaleString('en-US')+' homeowner review'+(con.reviewCount===1?'':'s')+' weighed');
   if (con.registered) out.push('Registered CT contractor'+(con.sinceYear?' since '+con.sinceYear:''));
   con.certs.forEach(c => out.push(c+' — manufacturer-certified'));
@@ -1308,7 +1404,7 @@ function feedMoreHTML(con){
     (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See the full profile →</a>':'');
 }
 function feedCardHTML(con){
-  const trust = con.verified.slice(0,3);
+  const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,3);
   const saved = isLiked(con.placeId);
   return '<article class="fcard" data-place="'+esc(con.placeId)+'">'+
     '<div class="fcard-top">'+
@@ -1466,15 +1562,23 @@ function openSearch(){ const o=$('vsearch'); o.classList.add('open'); o.setAttri
 function closeSearch(){ $('vsearch').classList.remove('open'); $('vsearch').setAttribute('aria-hidden','true'); S.searchOpen=false; }
 function renderSearchResults(q){
   q = (q||'').trim().toLowerCase(); const res = $('vsearch-results');
-  if(!q){ res.innerHTML = '<p class="vsearch-hint">Search vetted pros by name or town.</p>'; return; }
+  if(!q){ res.innerHTML = '<p class="vsearch-hint">Search by name, town, or what you need —<br>e.g. &ldquo;roof leak,&rdquo; &ldquo;no AC,&rdquo; or &ldquo;Stamford.&rdquo;</p>'; return; }
+  // problem→trade: if the query reads like a problem, lead with a "browse this trade" route
+  const routed = routeProblem(q);
+  const sug = routed ? '<button class="vsr vsr-route" data-route="'+esc(routed)+'">'+
+      '<span class="vsr-mono" aria-hidden="true">'+ICONS[tradeIconOf(routed)]+'</span>'+
+      '<span class="vsr-main"><span class="vsr-name">Browse '+esc(tradePlural(routed))+'</span><span class="vsr-town">Vesta-ranked '+esc(tradeLabelOf(routed))+' in Fairfield County</span></span>'+
+      '<span class="vsr-arrow" aria-hidden="true">&rarr;</span>'+
+    '</button>' : '';
   const matches = contractors.filter(c => c.name.toLowerCase().includes(q) || c.town.toLowerCase().includes(q)).slice(0,40);
-  if(!matches.length){ res.innerHTML = '<p class="vsearch-hint">No pros match that yet.</p>'; return; }
-  res.innerHTML = matches.map(c =>
+  if(!sug && !matches.length){ res.innerHTML = '<p class="vsearch-hint">No matches yet — try a trade like &ldquo;roofing&rdquo; or a town.</p>'; return; }
+  res.innerHTML = sug + matches.map(c =>
     '<button class="vsr" data-place="'+esc(c.placeId)+'" data-trade="'+esc(c.trade)+'">'+
       '<span class="vsr-mono" aria-hidden="true">'+esc(monogram(c.name))+'</span>'+
       '<span class="vsr-main"><span class="vsr-name">'+esc(c.name)+'</span><span class="vsr-town">'+esc(c.town)+' · '+esc(tradeLabelOf(c.trade))+'</span></span>'+
     '</button>').join('');
-  Array.from(res.querySelectorAll('.vsr')).forEach(b => b.addEventListener('click', () => goToPro(b.dataset.trade, b.dataset.place)));
+  const rt = res.querySelector('.vsr-route'); if(rt) rt.addEventListener('click', () => { closeSearch(); openBrowse(rt.dataset.route); });
+  Array.from(res.querySelectorAll('.vsr:not(.vsr-route)')).forEach(b => b.addEventListener('click', () => goToPro(b.dataset.trade, b.dataset.place)));
 }
 function goToPro(tradeKey, placeId){
   closeSearch();
@@ -1950,7 +2054,7 @@ function updateNavState(){
   $('tb-filter').addEventListener('click', openFilterSheet);
   $('fscrim').addEventListener('click', closeFilterSheet);
   $('fsheet-x').addEventListener('click', closeFilterSheet);
-  ['nav-search','ds-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
+  ['nav-search','ds-search','home-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
   $('vsearch-x').addEventListener('click', closeSearch);
