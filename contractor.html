@@ -303,11 +303,10 @@ document.addEventListener('DOMContentLoaded', async function(){
   // ── §11 Is this your business? — claim (free, consent) → the Atlas hook (the funnel) ──
   function claimAtlasBlock(){
     const ownerFirst = enr && enr.owner_name ? esc(String(enr.owner_name).trim().split(/\s+/)[0]) : '';
-    const town = esc((String(p.address || '').split(',')[1] || '').trim());
     const head = 'Is this your business' + (ownerFirst ? ', ' + ownerFirst : '') + '?';
     const claimInner = data.claimed
       ? '<p class="am-lede2">✓ Claimed by the business — thank you. Here\'s what comes next.</p>'
-      : '<p class="am-lede2">Claim it free — it\'s already in front of homeowners' + (town ? ' in ' + town : '') +
+      : '<p class="am-lede2">Claim it free — it\'s already in front of homeowners in Fairfield County' +
           '. Claiming takes a minute, costs nothing, and puts your name on the read above.</p>' +
         '<form id="claim-form">' +
         '<div class="form-row"><label class="form-label" for="cn">Your name *</label><input class="form-input" type="text" id="cn" name="name" required maxlength="80"></div>' +

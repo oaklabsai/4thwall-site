@@ -1956,11 +1956,9 @@ function profContactHTML(){
     '<a class="prof-req" style="margin-top:0" href="'+esc(HOME.signinHref('/vesta'))+'">Create free account / sign in</a></div>';
 }
 function profClaimHTML(){
-  const p=profData.p;
-  const town = esc((String(p.address||'').split(',')[1]||'').trim());
   const claimInner = profData.claimed
     ? '<p class="am-lede2">✓ This profile has been claimed by the business. Thank you — here’s what comes next.</p>'
-    : '<p class="am-lede2">This profile was assembled from public records and verified customer reviews, and it’s already visible to homeowners'+(town?' in '+town:'')+'. If the business is yours, you’re welcome to claim it — at no cost — to confirm the details are accurate and to be notified the moment a homeowner reaches out.</p>'+
+    : '<p class="am-lede2">This profile was assembled from public records and verified customer reviews, and it’s already visible to homeowners in Fairfield County. If the business is yours, you’re welcome to claim it — at no cost — to confirm the details are accurate and to be notified the moment a homeowner reaches out.</p>'+
       '<form id="prof-claim">'+
       '<div class="am-form-row"><label for="pcn">Your name *</label><input type="text" id="pcn" required maxlength="80"></div>'+
       '<div class="am-form-row am-form-pair"><div><label for="pcp">Phone *</label><input type="tel" id="pcp" required maxlength="20"></div>'+
