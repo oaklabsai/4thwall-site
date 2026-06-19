@@ -100,7 +100,7 @@ function disclosure() {
 // GeneralContractor just to be more specific (that would be a misrepresentation,
 // and Vesta never states what it can't prove). All subtypes verified live on
 // schema.org as direct children of HomeAndConstructionBusiness.
-const BIZ_TYPE = {
+export const BIZ_TYPE = {
   roofing:    ['RoofingContractor', 'HomeAndConstructionBusiness'],
   hvac:       ['HVACBusiness', 'HomeAndConstructionBusiness'],
   plumbing:   ['Plumber', 'HomeAndConstructionBusiness'],
@@ -199,7 +199,7 @@ function shell({ title, description, canonical, headExtra, body }) {
     '</body>\n</html>\n';
 }
 
-const NAV =
+export const NAV =
   '<nav class="topnav">\n' +
   '  <a href="/" class="nav-logo">\n' +
   '    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">\n' +
@@ -215,7 +215,7 @@ const NAV =
   '  </div>\n' +
   '</nav>\n';
 
-const FOOTER =
+export const FOOTER =
   '<footer>\n' +
   '  <div class="foot-row">\n' +
   '    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>\n' +

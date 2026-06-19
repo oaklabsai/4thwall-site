@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remove or correct a listing — Vesta</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#0f1310">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<style>
+.optout-types{display:flex;gap:1.2rem;margin-top:.5rem}
+.optout-types label{display:flex;align-items:center;gap:.45rem;font-size:.92rem;color:var(--vmut);cursor:pointer}
+.optout-types input{accent-color:var(--vgreen-2)}
+</style>
+<script src="/home.js" defer></script>
+</head>
+<body class="v-dark">
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">VESTA</span>
+  </a>
+  <div class="nav-links">
+    <a href="/vesta" class="nav-a">Find a pro</a>
+    <a href="/address" class="nav-a">Check an address</a>
+    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>
+  </div>
+</nav>
+
+<main>
+<section class="page-hero" id="hero">
+  <a class="crumb" href="/vesta">← Vesta</a>
+  <h1 class="page-h">Remove or correct your listing</h1>
+  <p class="page-sub">Vesta compiles a public-record directory of Fairfield County contractors. If this is your business, you can ask us to take the listing down or fix something — requests are processed within 5 business days.</p>
+</section>
+
+<section class="section">
+  <div class="card-block" style="max-width:560px">
+    <form id="optout-form">
+      <input type="hidden" name="place_id" id="f-place">
+      <div class="form-row">
+        <label class="form-label" for="f-biz">Business name *</label>
+        <input class="form-input" type="text" id="f-biz" name="business_name" required maxlength="200" autocomplete="organization">
+      </div>
+      <div class="form-row">
+        <label class="form-label">What would you like to do? *</label>
+        <div class="optout-types">
+          <label><input type="radio" name="request_type" value="remove" checked> Remove my listing</label>
+          <label><input type="radio" name="request_type" value="correct"> Correct something</label>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="f-email">Your email *</label>
+        <input class="form-input" type="email" id="f-email" name="contact_email" required maxlength="200" autocomplete="email">
+        <span class="fine" style="margin-top:.4rem;display:block">So we can confirm you own the business and follow up. See our <a href="/privacy.html" style="color:var(--vgreen-2)">Privacy Policy</a>.</span>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="f-note">Anything to add? (optional)</label>
+        <textarea class="form-input" id="f-note" name="note" rows="3" maxlength="2000"></textarea>
+      </div>
+      <button class="pill pill-orange" type="submit">Submit request</button>
+      <span class="form-status" id="f-status"></span>
+    </form>
+  </div>
+  <p class="fine" style="max-width:560px;margin-top:1.1rem">
+    Vesta’s directory is a public-record compilation — not an endorsement, and not written by the businesses listed.
+    <a href="/terms.html#directory" style="color:var(--vgreen-2)">How this works ›</a>
+  </p>
+</section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var pid = (q.get('place_id') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 200);
+  var nm = (q.get('name') || '').slice(0, 200);
+  if (pid) document.getElementById('f-place').value = pid;
+  if (nm) document.getElementById('f-biz').value = nm;
+
+  var form = document.getElementById('optout-form');
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var st = document.getElementById('f-status');
+    var btn = form.querySelector('button[type=submit]');
+    btn.disabled = true; st.className = 'form-status'; st.textContent = 'Sending…';
+    var body = {
+      place_id: form.place_id.value,
+      business_name: form.business_name.value,
+      request_type: (form.querySelector('input[name=request_type]:checked') || {}).value || 'remove',
+      contact_email: form.contact_email.value,
+      note: form.note.value
+    };
+    try {
+      var r = await fetch('/api/opt-out', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (r.ok) {
+        form.outerHTML = '<p class="note">✓ Thanks — we’ve got your request and will process it within 5 business days. If we need to confirm you own the business, we’ll email you.</p>';
+      } else {
+        var d = await r.json().catch(function () { return {}; });
+        btn.disabled = false; st.className = 'form-status is-error';
+        st.textContent = (d && d.error === 'missing_fields') ? 'Please add your business name and a valid email.' : 'Couldn’t send — try again, or email andrew@4thwall.solutions.';
+      }
+    } catch (_) {
+      btn.disabled = false; st.className = 'form-status is-error';
+      st.textContent = 'Couldn’t send — try again, or email andrew@4thwall.solutions.';
+    }
+  });
+})();
+</script>
+</body>
+</html>

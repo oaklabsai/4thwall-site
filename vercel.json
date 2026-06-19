@@ -12,11 +12,13 @@
     { "source": "/myhome",        "destination": "/myhome.html" },
     { "source": "/signin",        "destination": "/signin.html" },
     { "source": "/request",       "destination": "/request.html" },
+    { "source": "/opt-out",       "destination": "/opt-out.html" },
     { "source": "/auth/confirm",  "destination": "/auth-confirm.html" },
     { "source": "/record/:token", "destination": "/record.html" },
     { "source": "/pro/:id",       "destination": "/pro.html" },
-    { "source": "/c/:placeId",    "destination": "/vesta-app.html" },
-    { "source": "/fairfield-county/:trade", "destination": "/api/directory?trade=:trade" }
+    { "source": "/c/:placeId",    "destination": "/api/contractor?placeId=:placeId" },
+    { "source": "/fairfield-county/:trade", "destination": "/api/directory?trade=:trade" },
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" }
   ],
   "redirects": [
     { "source": "/trades.html",           "destination": "/atlas",                              "permanent": true },
