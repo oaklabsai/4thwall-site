@@ -63,10 +63,16 @@ html[data-theme="dark"]{
   --orange-2:#b8ca7e;
   --orange-soft:rgba(212,223,158,0.10);
 }
+html[data-theme="dark"] body::after{background:radial-gradient(ellipse 90% 55% at 50% -8%,rgba(255,255,255,.03),transparent 55%),linear-gradient(90deg,rgba(244,242,238,.02),transparent 18%,transparent 82%,rgba(244,242,238,.02)),radial-gradient(ellipse 100% 32% at 50% 108%,rgba(244,242,238,.03),transparent 70%)}
+html[data-theme="dark"] .phone-toggle{background:rgba(26,24,22,.85);border-color:rgba(244,242,238,.1)}
+html[data-theme="dark"] .demo-scenario-tag{background:var(--cream-2);border-color:var(--line)}
+html[data-theme="dark"] .feat-btn{box-shadow:0 2px 8px rgba(0,0,0,.22),0 1px 2px rgba(0,0,0,.14)}
+html[data-theme="dark"] .feat-body{border-color:var(--line)}
+html{background:var(--cream)}
 html,body{transition:background .35s,color .35s}
 
 /* ── Sun/moon theme toggle ── */
-.theme-switch{--toggle-size:24px;--container-width:5.625em;--container-height:2.5em;--container-radius:6.25em;--container-light-bg:#3D7EAE;--container-night-bg:#1D1F2C;--circle-container-diameter:3.375em;--sun-moon-diameter:2.125em;--sun-bg:#ECCA2F;--moon-bg:#C4C9D1;--spot-color:#959DB1;--circle-container-offset:calc((var(--circle-container-diameter) - var(--container-height)) / 2 * -1);--stars-color:#fff;--clouds-color:#F3FDFF;--back-clouds-color:#AACADF;--transition:.5s cubic-bezier(0,-0.02,0.4,1.25);--circle-transition:.3s cubic-bezier(0,-0.02,0.35,1.17);font-size:var(--toggle-size)}
+.theme-switch{--toggle-size:13px;--container-width:5.625em;--container-height:2.5em;--container-radius:6.25em;--container-light-bg:#3D7EAE;--container-night-bg:#1D1F2C;--circle-container-diameter:3.375em;--sun-moon-diameter:2.125em;--sun-bg:#ECCA2F;--moon-bg:#C4C9D1;--spot-color:#959DB1;--circle-container-offset:calc((var(--circle-container-diameter) - var(--container-height)) / 2 * -1);--stars-color:#fff;--clouds-color:#F3FDFF;--back-clouds-color:#AACADF;--transition:.5s cubic-bezier(0,-0.02,0.4,1.25);--circle-transition:.3s cubic-bezier(0,-0.02,0.35,1.17);font-size:var(--toggle-size)}
 .theme-switch,.theme-switch *,.theme-switch *::before,.theme-switch *::after{box-sizing:border-box;margin:0;padding:0;font-size:var(--toggle-size)}
 .theme-switch__container{width:var(--container-width);height:var(--container-height);background-color:var(--container-light-bg);border-radius:var(--container-radius);overflow:hidden;cursor:pointer;box-shadow:0em -.062em .062em rgba(0,0,0,.25),0em .062em .125em rgba(255,255,255,.94);transition:var(--transition);position:relative}
 .theme-switch__container::before{content:"";position:absolute;z-index:1;inset:0;box-shadow:0em .05em .187em rgba(0,0,0,.25) inset,0em .05em .187em rgba(0,0,0,.25) inset;border-radius:var(--container-radius)}
@@ -943,12 +949,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .atlas-intro__h{font-family:var(--display);font-size:clamp(2rem,4vw,3.2rem);font-weight:500;line-height:1.12;color:var(--ink);margin-bottom:1.2rem}
 .atlas-intro__h em{font-style:italic;color:var(--orange)}
 .atlas-intro__body{font-size:1rem;line-height:1.65;color:var(--muted);max-width:38ch}
-.atlas-intro__figure{flex:1;position:relative;min-height:600px;display:flex;align-items:center;justify-content:center}
+.atlas-intro__figure{flex:1;position:relative;min-height:720px;display:flex;align-items:center;justify-content:center}
 spline-viewer{width:100%;height:100%;position:absolute;inset:0;--spline-viewer-background:transparent}
 @media(max-width:900px){
   .atlas-intro{flex-direction:column;min-height:auto}
   .atlas-intro__text{flex:none;width:100%;padding:3.5rem var(--pad) 1.5rem}
-  .atlas-intro__figure{width:100%;min-height:440px;position:relative}
+  .atlas-intro__figure{width:100%;min-height:520px;position:relative}
 }
 </style>
 <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.27/build/spline-viewer.js"></script>
@@ -1296,6 +1302,7 @@ spline-viewer{width:100%;height:100%;position:absolute;inset:0;--spline-viewer-b
     ></spline-viewer>
   </div>
 </section>
+<script>(function(){var sv=document.querySelector('spline-viewer');if(!sv)return;function h(){var r=sv.shadowRoot;if(!r){setTimeout(h,120);return;}var s=document.createElement('style');s.textContent='#logo{display:none!important}';r.appendChild(s);}h();})();</script>
 
 <!-- ════════════════════════════════════════════ FEATURES ════════════════════════════════════════════ -->
 <section class="s wrap" id="capabilities">
