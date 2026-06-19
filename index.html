@@ -367,7 +367,9 @@ nav.topnav.scrolled{background:rgba(244,242,238,0.98)}
 .hn-btn{background:#12100E;color:#fff;border-radius:50px;padding:.82rem 1.85rem;font-size:.92rem;font-weight:500;min-height:48px;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;transition:opacity .2s ease,transform .2s ease;letter-spacing:-.01em;cursor:pointer}
 .hn-btn:hover{opacity:.84;color:#fff;transform:translateY(-2px)}
 /* Center column */
-.hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem 14rem;width:100%;max-width:680px;position:relative;z-index:5}
+.hero-center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem 3rem;width:100%;max-width:680px;position:relative;z-index:5}
+.hn-geo{width:220px;height:220px;margin:2.5rem auto 0;cursor:pointer;flex-shrink:0}
+#geoCanvas{width:100%;height:100%;display:block}
 /* Product panels */
 .hero-prod{display:flex;flex-direction:column;text-decoration:none;color:#12100E;position:relative;overflow:visible;cursor:pointer;z-index:6}
 .hero-prod:hover .hp-link{opacity:1}
@@ -1034,6 +1036,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       <div class="hn-cta">
         <a href="#contact" class="hn-btn">Book a call →</a>
         <a href="#products" class="hn-link-secondary">See the products <span style="font-family:var(--display)">↓</span></a>
+      </div>
+      <div class="hn-geo" id="geoWrap" aria-hidden="true">
+        <canvas id="geoCanvas"></canvas>
       </div>
     </div>
     <div class="hn-side hn-side--vesta" aria-hidden="true">
@@ -3104,6 +3109,258 @@ body.intro-done #pulseB { animation: pulseRun 6.5s -3.25s linear infinite !impor
   var secLink = document.querySelector('.hn-link-secondary');
   if(secLink) replaceTextNode(secLink, {stagger:18, dur:210});
 
+})();
+</script>
+
+<!-- ── Geometric wireframe WebGL — hero canvas ── -->
+<script>
+(function(){
+  var canvas = document.getElementById('geoCanvas');
+  var wrap   = document.getElementById('geoWrap');
+  if(!canvas || !wrap) return;
+
+  var gl = canvas.getContext('webgl', {antialias:true, alpha:true, premultipliedAlpha:false});
+  if(!gl){ wrap.style.display='none'; return; }
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  /* ── Vertex shader ── */
+  var VS = [
+    'attribute vec3 a_position;',
+    'attribute vec2 a_uv;',
+    'varying vec2 v_texcoord;',
+    'void main(){gl_Position=vec4(a_position,1.0);v_texcoord=a_uv;}'
+  ].join('\n');
+
+  /* ── Fragment shader — ink wireframe on transparent bg ── */
+  var FS = [
+    '#ifdef GL_ES',
+    'precision highp float;',
+    '#endif',
+    'uniform vec2 u_mouse;',
+    'uniform vec2 u_resolution;',
+    'uniform float u_pixelRatio;',
+    'uniform float u_time;',
+    'uniform int u_shape;',
+    '#define TWO_PI 6.2831853071795864769252867665590',
+    'mat3 rotateX(float a){float s=sin(a),c=cos(a);return mat3(1.,0.,0.,0.,c,-s,0.,s,c);}',
+    'mat3 rotateY(float a){float s=sin(a),c=cos(a);return mat3(c,0.,s,0.,1.,0.,-s,0.,c);}',
+    'mat3 rotateZ(float a){float s=sin(a),c=cos(a);return mat3(c,-s,0.,s,c,0.,0.,0.,1.);}',
+    'vec2 coord(in vec2 p){',
+    '  p=p/u_resolution.xy;',
+    '  if(u_resolution.x>u_resolution.y){p.x*=u_resolution.x/u_resolution.y;p.x+=(u_resolution.y-u_resolution.x)/u_resolution.y/2.;}',
+    '  else{p.y*=u_resolution.y/u_resolution.x;p.y+=(u_resolution.x-u_resolution.y)/u_resolution.x/2.;}',
+    '  p-=0.5;return p;',
+    '}',
+    'vec2 project(vec3 p){float persp=2.0/(2.0-p.z);return p.xy*persp;}',
+    'float distSeg(vec2 p,vec2 a,vec2 b){vec2 pa=p-a,ba=b-a;float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.);return length(pa-ba*h);}',
+    'float dline(vec2 p,vec2 a,vec2 b,float t,float bl){return smoothstep(t+bl,t-bl,distSeg(p,a,b));}',
+    'void getCube(out vec3 v[8]){float s=0.7;v[0]=vec3(-s,-s,-s);v[1]=vec3(s,-s,-s);v[2]=vec3(s,s,-s);v[3]=vec3(-s,s,-s);v[4]=vec3(-s,-s,s);v[5]=vec3(s,-s,s);v[6]=vec3(s,s,s);v[7]=vec3(-s,s,s);}',
+    'void getTetra(out vec3 v[4]){float a=1./sqrt(3.);v[0]=vec3(a,a,a);v[1]=vec3(a,-a,-a);v[2]=vec3(-a,a,-a);v[3]=vec3(-a,-a,a);}',
+    'void getOcta(out vec3 v[6]){v[0]=vec3(1.,0.,0.);v[1]=vec3(-1.,0.,0.);v[2]=vec3(0.,1.,0.);v[3]=vec3(0.,-1.,0.);v[4]=vec3(0.,0.,1.);v[5]=vec3(0.,0.,-1.);}',
+    'void getIco(out vec3 v[12]){float t=(1.+sqrt(5.))/2.,s=1./sqrt(1.+t*t);',
+    '  v[0]=vec3(-s,t*s,0.);v[1]=vec3(s,t*s,0.);v[2]=vec3(-s,-t*s,0.);v[3]=vec3(s,-t*s,0.);',
+    '  v[4]=vec3(0.,-s,t*s);v[5]=vec3(0.,s,t*s);v[6]=vec3(0.,-s,-t*s);v[7]=vec3(0.,s,-t*s);',
+    '  v[8]=vec3(t*s,0.,-s);v[9]=vec3(t*s,0.,s);v[10]=vec3(-t*s,0.,-s);v[11]=vec3(-t*s,0.,s);}',
+    'float drawWireframe(vec2 p,int shape,mat3 rot,float sc,float tk,float bl){',
+    '  float r=0.;',
+    '  if(shape==0){',
+    '    vec3 v[8];getCube(v);',
+    '    for(int i=0;i<8;i++)v[i]=rot*(v[i]*sc);',
+    '    r+=dline(p,project(v[0]),project(v[1]),tk,bl);r+=dline(p,project(v[1]),project(v[2]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[3]),tk,bl);r+=dline(p,project(v[3]),project(v[0]),tk,bl);',
+    '    r+=dline(p,project(v[4]),project(v[5]),tk,bl);r+=dline(p,project(v[5]),project(v[6]),tk,bl);',
+    '    r+=dline(p,project(v[6]),project(v[7]),tk,bl);r+=dline(p,project(v[7]),project(v[4]),tk,bl);',
+    '    r+=dline(p,project(v[0]),project(v[4]),tk,bl);r+=dline(p,project(v[1]),project(v[5]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[6]),tk,bl);r+=dline(p,project(v[3]),project(v[7]),tk,bl);',
+    '  } else if(shape==1){',
+    '    vec3 v[4];getTetra(v);',
+    '    for(int i=0;i<4;i++)v[i]=rot*(v[i]*sc);',
+    '    r+=dline(p,project(v[0]),project(v[1]),tk,bl);r+=dline(p,project(v[0]),project(v[2]),tk,bl);',
+    '    r+=dline(p,project(v[0]),project(v[3]),tk,bl);r+=dline(p,project(v[1]),project(v[2]),tk,bl);',
+    '    r+=dline(p,project(v[1]),project(v[3]),tk,bl);r+=dline(p,project(v[2]),project(v[3]),tk,bl);',
+    '  } else if(shape==2){',
+    '    vec3 v[6];getOcta(v);',
+    '    for(int i=0;i<6;i++)v[i]=rot*(v[i]*sc);',
+    '    r+=dline(p,project(v[2]),project(v[0]),tk,bl);r+=dline(p,project(v[2]),project(v[1]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[4]),tk,bl);r+=dline(p,project(v[2]),project(v[5]),tk,bl);',
+    '    r+=dline(p,project(v[3]),project(v[0]),tk,bl);r+=dline(p,project(v[3]),project(v[1]),tk,bl);',
+    '    r+=dline(p,project(v[3]),project(v[4]),tk,bl);r+=dline(p,project(v[3]),project(v[5]),tk,bl);',
+    '    r+=dline(p,project(v[0]),project(v[4]),tk,bl);r+=dline(p,project(v[4]),project(v[1]),tk,bl);',
+    '    r+=dline(p,project(v[1]),project(v[5]),tk,bl);r+=dline(p,project(v[5]),project(v[0]),tk,bl);',
+    '  } else if(shape==3){',
+    '    vec3 v[12];getIco(v);',
+    '    for(int i=0;i<12;i++)v[i]=rot*(v[i]*sc);',
+    '    r+=dline(p,project(v[0]),project(v[1]),tk,bl);r+=dline(p,project(v[0]),project(v[5]),tk,bl);',
+    '    r+=dline(p,project(v[0]),project(v[7]),tk,bl);r+=dline(p,project(v[0]),project(v[10]),tk,bl);',
+    '    r+=dline(p,project(v[0]),project(v[11]),tk,bl);r+=dline(p,project(v[1]),project(v[5]),tk,bl);',
+    '    r+=dline(p,project(v[1]),project(v[7]),tk,bl);r+=dline(p,project(v[1]),project(v[8]),tk,bl);',
+    '    r+=dline(p,project(v[1]),project(v[9]),tk,bl);r+=dline(p,project(v[2]),project(v[3]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[4]),tk,bl);r+=dline(p,project(v[2]),project(v[6]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[10]),tk,bl);r+=dline(p,project(v[2]),project(v[11]),tk,bl);',
+    '    r+=dline(p,project(v[3]),project(v[4]),tk,bl);r+=dline(p,project(v[3]),project(v[6]),tk,bl);',
+    '    r+=dline(p,project(v[3]),project(v[8]),tk,bl);r+=dline(p,project(v[3]),project(v[9]),tk,bl);',
+    '    r+=dline(p,project(v[4]),project(v[5]),tk,bl);r+=dline(p,project(v[4]),project(v[11]),tk,bl);',
+    '    r+=dline(p,project(v[5]),project(v[11]),tk,bl);r+=dline(p,project(v[6]),project(v[7]),tk,bl);',
+    '    r+=dline(p,project(v[6]),project(v[8]),tk,bl);r+=dline(p,project(v[6]),project(v[10]),tk,bl);',
+    '    r+=dline(p,project(v[7]),project(v[10]),tk,bl);r+=dline(p,project(v[8]),project(v[9]),tk,bl);',
+    '    r+=dline(p,project(v[9]),project(v[11]),tk,bl);r+=dline(p,project(v[10]),project(v[11]),tk,bl);',
+    '  } else if(shape==4){',
+    '    vec3 v[5];float s=0.7;',
+    '    v[0]=vec3(-s,0.,-s);v[1]=vec3(s,0.,-s);v[2]=vec3(s,0.,s);v[3]=vec3(-s,0.,s);v[4]=vec3(0.,1.,0.);',
+    '    for(int i=0;i<5;i++)v[i]=rot*(v[i]*sc);',
+    '    r+=dline(p,project(v[0]),project(v[1]),tk,bl);r+=dline(p,project(v[1]),project(v[2]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[3]),tk,bl);r+=dline(p,project(v[3]),project(v[0]),tk,bl);',
+    '    r+=dline(p,project(v[0]),project(v[4]),tk,bl);r+=dline(p,project(v[1]),project(v[4]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[4]),tk,bl);r+=dline(p,project(v[3]),project(v[4]),tk,bl);',
+    '  } else if(shape==5){',
+    '    vec3 v[6];float s=0.6;',
+    '    v[0]=vec3(-s,0.,-s);v[1]=vec3(s,0.,-s);v[2]=vec3(s,0.,s);v[3]=vec3(-s,0.,s);v[4]=vec3(0.,1.,0.);v[5]=vec3(0.,-1.,0.);',
+    '    for(int i=0;i<6;i++)v[i]=rot*(v[i]*sc);',
+    '    r+=dline(p,project(v[0]),project(v[1]),tk,bl);r+=dline(p,project(v[1]),project(v[2]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[3]),tk,bl);r+=dline(p,project(v[3]),project(v[0]),tk,bl);',
+    '    r+=dline(p,project(v[0]),project(v[4]),tk,bl);r+=dline(p,project(v[1]),project(v[4]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[4]),tk,bl);r+=dline(p,project(v[3]),project(v[4]),tk,bl);',
+    '    r+=dline(p,project(v[0]),project(v[5]),tk,bl);r+=dline(p,project(v[1]),project(v[5]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[5]),tk,bl);r+=dline(p,project(v[3]),project(v[5]),tk,bl);',
+    '  } else if(shape==6){',
+    '    float as=TWO_PI/6.;',
+    '    vec3 v[12];',
+    '    v[0]=vec3(cos(0.*as),-1.,sin(0.*as));v[1]=vec3(cos(1.*as),-1.,sin(1.*as));',
+    '    v[2]=vec3(cos(2.*as),-1.,sin(2.*as));v[3]=vec3(cos(3.*as),-1.,sin(3.*as));',
+    '    v[4]=vec3(cos(4.*as),-1.,sin(4.*as));v[5]=vec3(cos(5.*as),-1.,sin(5.*as));',
+    '    v[6]=vec3(cos(0.*as),1.,sin(0.*as));v[7]=vec3(cos(1.*as),1.,sin(1.*as));',
+    '    v[8]=vec3(cos(2.*as),1.,sin(2.*as));v[9]=vec3(cos(3.*as),1.,sin(3.*as));',
+    '    v[10]=vec3(cos(4.*as),1.,sin(4.*as));v[11]=vec3(cos(5.*as),1.,sin(5.*as));',
+    '    for(int i=0;i<12;i++)v[i]=rot*(v[i]*sc);',
+    '    r+=dline(p,project(v[0]),project(v[1]),tk,bl);r+=dline(p,project(v[1]),project(v[2]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[3]),tk,bl);r+=dline(p,project(v[3]),project(v[4]),tk,bl);',
+    '    r+=dline(p,project(v[4]),project(v[5]),tk,bl);r+=dline(p,project(v[5]),project(v[0]),tk,bl);',
+    '    r+=dline(p,project(v[6]),project(v[7]),tk,bl);r+=dline(p,project(v[7]),project(v[8]),tk,bl);',
+    '    r+=dline(p,project(v[8]),project(v[9]),tk,bl);r+=dline(p,project(v[9]),project(v[10]),tk,bl);',
+    '    r+=dline(p,project(v[10]),project(v[11]),tk,bl);r+=dline(p,project(v[11]),project(v[6]),tk,bl);',
+    '    r+=dline(p,project(v[0]),project(v[6]),tk,bl);r+=dline(p,project(v[1]),project(v[7]),tk,bl);',
+    '    r+=dline(p,project(v[2]),project(v[8]),tk,bl);r+=dline(p,project(v[3]),project(v[9]),tk,bl);',
+    '    r+=dline(p,project(v[4]),project(v[10]),tk,bl);r+=dline(p,project(v[5]),project(v[11]),tk,bl);',
+    '  } else {',
+    '    float morph=sin(u_time*0.5)*0.5+0.5;',
+    '    vec3 cube[8];getCube(cube);',
+    '    vec3 octa[6];getOcta(octa);',
+    '    vec3 v[8];',
+    '    for(int i=0;i<8;i++){',
+    '      if(i<6){v[i]=mix(cube[i],octa[i]*1.5,morph);}else{v[i]=cube[i]*(1.-morph*0.3);}',
+    '      v[i]=rot*(v[i]*sc);',
+    '    }',
+    '    float al=1.-morph*0.5;',
+    '    r+=dline(p,project(v[0]),project(v[1]),tk,bl)*al;r+=dline(p,project(v[1]),project(v[2]),tk,bl)*al;',
+    '    r+=dline(p,project(v[2]),project(v[3]),tk,bl)*al;r+=dline(p,project(v[3]),project(v[0]),tk,bl)*al;',
+    '    r+=dline(p,project(v[4]),project(v[5]),tk,bl)*al;r+=dline(p,project(v[5]),project(v[6]),tk,bl)*al;',
+    '    r+=dline(p,project(v[6]),project(v[7]),tk,bl)*al;r+=dline(p,project(v[7]),project(v[4]),tk,bl)*al;',
+    '    r+=dline(p,project(v[0]),project(v[6]),tk,bl)*morph;r+=dline(p,project(v[1]),project(v[7]),tk,bl)*morph;',
+    '    r+=dline(p,project(v[2]),project(v[4]),tk,bl)*morph;r+=dline(p,project(v[3]),project(v[5]),tk,bl)*morph;',
+    '  }',
+    '  return clamp(r,0.,1.);',
+    '}',
+    'void main(){',
+    '  vec2 st=coord(gl_FragCoord.xy);',
+    '  vec2 mouse=coord(u_mouse*u_pixelRatio)*vec2(1.,-1.);',
+    '  float md=length(st-mouse);',
+    '  float mi=1.-smoothstep(0.,0.5,md);',
+    '  float t=u_time*0.2;',
+    '  mat3 rot=rotateY(t+(mouse.x-0.5)*mi)*rotateX(t*0.7+(mouse.y-0.5)*mi)*rotateZ(t*0.1);',
+    '  float sc=0.35;',
+    '  float bl=mix(0.0001,0.05,mi);',
+    '  float tk=mix(0.002,0.003,mi);',
+    '  float wf=drawWireframe(st,u_shape,rot,sc,tk,bl);',
+    '  float dimming=1.-mi*0.3;',
+    '  float vignette=1.-length(st)*0.2;',
+    '  gl_FragColor=vec4(vec3(0.071,0.063,0.055),clamp(wf*dimming*vignette,0.,1.));',
+    '}'
+  ].join('\n');
+
+  /* ── Compile + link ── */
+  function mkShader(type, src){
+    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
+    if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){ console.error(gl.getShaderInfoLog(s)); gl.deleteShader(s); return null; }
+    return s;
+  }
+  var vs=mkShader(gl.VERTEX_SHADER,VS), fs=mkShader(gl.FRAGMENT_SHADER,FS);
+  if(!vs||!fs) return;
+  var prog=gl.createProgram();
+  gl.attachShader(prog,vs); gl.attachShader(prog,fs); gl.linkProgram(prog);
+  if(!gl.getProgramParameter(prog,gl.LINK_STATUS)){ console.error(gl.getProgramInfoLog(prog)); return; }
+  gl.useProgram(prog);
+
+  /* ── Fullscreen quad ── */
+  function mkBuf(data,attr,sz){
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(prog,attr);
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,sz,gl.FLOAT,false,0,0);
+  }
+  mkBuf(new Float32Array([-1,-1,0, 1,-1,0, -1,1,0, 1,1,0]),'a_position',3);
+  mkBuf(new Float32Array([0,0, 1,0, 0,1, 1,1]),'a_uv',2);
+
+  /* ── Uniforms ── */
+  var U={
+    mouse:gl.getUniformLocation(prog,'u_mouse'),
+    res:gl.getUniformLocation(prog,'u_resolution'),
+    dpr:gl.getUniformLocation(prog,'u_pixelRatio'),
+    time:gl.getUniformLocation(prog,'u_time'),
+    shape:gl.getUniformLocation(prog,'u_shape')
+  };
+
+  /* ── State ── */
+  var curShape=3, startMs=Date.now();
+  var mouse={x:0,y:0}, damp={x:0,y:0}, lastT=performance.now();
+
+  /* ── Resize ── */
+  function resize(){
+    var dpr=Math.min(window.devicePixelRatio,2);
+    var w=wrap.clientWidth, h=wrap.clientHeight;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    gl.viewport(0,0,canvas.width,canvas.height);
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  /* ── Mouse tracking ── */
+  function onMove(e){
+    var rect=canvas.getBoundingClientRect();
+    var cx='touches' in e?e.touches[0].clientX:e.clientX;
+    var cy='touches' in e?e.touches[0].clientY:e.clientY;
+    mouse.x=cx-rect.left; mouse.y=cy-rect.top;
+  }
+  window.addEventListener('mousemove',onMove,{passive:true});
+  window.addEventListener('touchmove',onMove,{passive:true});
+
+  /* ── Click to cycle shapes ── */
+  wrap.addEventListener('click',function(){ curShape=(curShape+1)%8; });
+
+  /* ── Render loop ── */
+  function frame(t){
+    var dt=(t-lastT)/1000; lastT=t;
+    damp.x+=(mouse.x-damp.x)*8*dt;
+    damp.y+=(mouse.y-damp.y)*8*dt;
+
+    var dpr=Math.min(window.devicePixelRatio,2);
+    var elapsed=(Date.now()-startMs)/1000;
+
+    gl.clearColor(0,0,0,0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.uniform2f(U.mouse,damp.x,damp.y);
+    gl.uniform2f(U.res,canvas.width,canvas.height);
+    gl.uniform1f(U.dpr,dpr);
+    gl.uniform1f(U.time,elapsed);
+    gl.uniform1i(U.shape,curShape);
+
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 })();
 </script>
 
