@@ -1435,15 +1435,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .atlas-robot-stage{
   position:absolute;
   right:calc(50% + 0.7rem);
-  bottom:9rem;
-  width:440px;
-  height:300px;
-  overflow:hidden;
+  bottom:5rem;
+  width:220px;height:660px;
   z-index:20;
   pointer-events:none;
 }
 .atlas-robot-stage spline-viewer{
-  display:block;width:440px;height:660px;pointer-events:none;
+  display:block;width:220px;height:660px;pointer-events:none;
 }
 
 /* ── Industry trust bar ── */
@@ -1509,7 +1507,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   <!-- Atlas robot: lives outside both pill cards so overflow:hidden can't clip it -->
   <div class="atlas-robot-stage" aria-hidden="true">
-    <spline-viewer id="atlasPillSpline" url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" background="transparent" events-target="global"></spline-viewer>
+    <spline-viewer id="atlasPillSpline" url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode" background="transparent" events-target="global" loading="eager"></spline-viewer>
   </div>
 
 </div>
