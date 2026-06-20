@@ -18,25 +18,27 @@
 // the live public view. api/contractor.mjs fetches the row and calls
 // renderContractorHTML.
 
-import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, NAV, FOOTER } from './_render-directory.mjs';
+import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml } from './_render-directory.mjs';
 
 // --- the public-view read (mirror of the old contractor.html client fetch) ---
 export const PROFILE_SELECT =
   'place_id,business_name,city,zip,trade,registered,hic_issue_date,trade_license,' +
   'certifications,synthesis,synthesis_review_count,signature,known_for,specialties,' +
-  'service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,enriched_at';
+  'service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,enriched_at,index_status';
 export const profileQuery = (placeId) =>
   '/profile_enrichment_public?place_id=eq.' + encodeURIComponent(placeId) +
   '&limit=1&select=' + PROFILE_SELECT;
 
-// Index gate (Drew's call: substantive-synthesis only). A profile earns indexing
-// ONLY if it carries a real synthesis — silent/sparse profiles stay noindex to
-// stay clear of Google's scaled-content policy. INDEXING_ENABLED is the single
-// go-live switch: it stays false until the full legal posture (opt-out spine +
-// Powered-by-Google logo) is live, then flips to true in one bundled change.
-export const INDEXING_ENABLED = false;
+// Index gate (two-tier SOP). A profile is index-eligible ONLY when it has earned
+// index_status='ready' by passing the vesta_lint() QC gate in the DB (no rating/
+// count baked into prose, substantive synthesis, required fields). Tier-1
+// 'vesta_only' profiles stay browsable but noindex — clear of Google's
+// scaled-content policy. INDEXING_ENABLED is the single go-live switch: it stays
+// false until the full legal posture (opt-out spine + Powered-by-Google logo) is
+// live, then flips to true in one bundled change.
+export const INDEXING_ENABLED = true;
 export function isIndexable(enr) {
-  return INDEXING_ENABLED && !!(enr && typeof enr.synthesis === 'string' && enr.synthesis.trim().length > 0);
+  return INDEXING_ENABLED && !!(enr && enr.index_status === 'ready');
 }
 
 // Trade label maps — mirror contractor.html / home.js. Never a parallel set.
@@ -208,9 +210,12 @@ function claimBlock(enr) {
     '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
     '<span class="form-status" id="claim-status"></span></form>' +
     '<div class="am-rule"></div>';
-  return '<section class="atlas-moment" id="claim">' +
-    '<div class="am-eyebrow">For the owner · from 4THWALL</div>' +
-    '<h2 class="am-h">' + head + '</h2>' +
+  return '<details class="atlas-moment" id="claim">' +
+    '<summary class="am-summary"><span class="am-sum-text">' +
+      '<span class="am-eyebrow">For the owner · from 4THWALL</span>' +
+      '<span class="am-h">' + head + '</span></span>' +
+      '<span class="am-caret" aria-hidden="true"></span></summary>' +
+    '<div class="am-body">' +
     claimInner +
     '<div class="am-plabel">Then put it to work — with Atlas</div>' +
     '<p class="am-lede">Vesta brings homeowners to your door. <b>Atlas makes sure not one of them slips away.</b> ' +
@@ -223,7 +228,7 @@ function claimBlock(enr) {
     '</div>' +
     '<div class="am-cta"><a class="am-pill" href="/atlas">See what Atlas does →</a>' +
     '<span class="am-fine">Vesta stays free. Atlas is the paid back office — for when the calls start coming.</span></div>' +
-  '</section>';
+  '</div></details>';
 }
 
 // Mount points the client enhancer (/profile.js) fills — kept OUT of the
@@ -343,6 +348,15 @@ const ATLAS_MOMENT_CSS =
   '.atlas-moment .form-label{color:var(--a-mut)}' +
   '.atlas-moment .pill-ghost{border-color:var(--a-sand);color:var(--a-sand-2)}' +
   '.atlas-moment .pill-ghost:hover{background:rgba(222,206,164,.1)}' +
+  '.atlas-moment>summary.am-summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:1rem}' +
+  '.atlas-moment>summary.am-summary::-webkit-details-marker{display:none}' +
+  '.atlas-moment .am-sum-text{display:flex;flex-direction:column;gap:.5rem}' +
+  '.atlas-moment .am-summary .am-eyebrow{margin:0}' +
+  '.atlas-moment .am-summary .am-h{margin:0}' +
+  '.atlas-moment .am-caret{flex:none;font-family:var(--mono);font-size:1.7rem;line-height:1;color:var(--a-sand)}' +
+  '.atlas-moment .am-caret::before{content:"+"}' +
+  '.atlas-moment[open] .am-caret::before{content:"\\2013"}' +
+  '.atlas-moment .am-body{margin-top:1.4rem}' +
   '.cp-gref{margin-top:1.8rem;max-width:680px}' +
   '</style>';
 
@@ -370,8 +384,10 @@ function shell({ title, description, canonical, indexable, jsonld, body }) {
     jsonld + '\n' +
     '<script src="/home.js" defer></script>\n' +
     '<script src="/profile.js" defer></script>\n' +
-    '</head>\n<body class="v-dark">\n' +
-    NAV +
+    '</head>\n<body>\n' +
+    // Profile = single-contractor landing page: logo returns to THIS profile,
+    // no "Find a pro" escape to a competitor (the lead stays on the pro they found).
+    navHtml({ logoHref: canonical, browse: false }) +
     '<main>\n' + body + '\n</main>\n' +
     FOOTER +
     '<script>document.addEventListener("DOMContentLoaded",function(){try{if(window.HOME&&HOME.navAccount)HOME.navAccount();}catch(e){}});</script>\n' +

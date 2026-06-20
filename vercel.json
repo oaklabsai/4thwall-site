@@ -53,7 +53,7 @@
       ]
     },
     {
-      "source": "/(close|onboard).html",
+      "source": "/(close|onboard|directory).html",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
       ]
@@ -65,7 +65,7 @@
       ]
     },
     {
-      "source": "/(c|pro)/(.*)",
+      "source": "/pro/(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex" }
       ]

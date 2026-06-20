@@ -189,7 +189,7 @@ function shell({ title, description, canonical, headExtra, body }) {
     '<style>.dir-count{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim)}</style>\n' +
     (headExtra || '') + '\n' +
     '<script src="/home.js" defer></script>\n' +
-    '</head>\n<body class="v-dark">\n' +
+    '</head>\n<body>\n' +
     NAV +
     '<main>\n' + body + '\n</main>\n' +
     FOOTER +
@@ -199,21 +199,28 @@ function shell({ title, description, canonical, headExtra, body }) {
     '</body>\n</html>\n';
 }
 
-export const NAV =
-  '<nav class="topnav">\n' +
-  '  <a href="/" class="nav-logo">\n' +
-  '    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">\n' +
-  '      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>\n' +
-  '      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>\n' +
-  '    </svg>\n' +
-  '    4THWALL<span class="home-tag">VESTA</span>\n' +
-  '  </a>\n' +
-  '  <div class="nav-links">\n' +
-  '    <a href="/vesta" class="nav-a">Find a pro</a>\n' +
-  '    <a href="/address" class="nav-a">Check an address</a>\n' +
-  '    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>\n' +
-  '  </div>\n' +
-  '</nav>\n';
+// Shared top-nav. navHtml() is the default — browse context (directory pages):
+// keeps the "Find a pro" deck link. PROFILE pages call
+// navHtml({ logoHref: <canonical>, browse: false }): a single-contractor landing
+// page gives the lead NO door to escape to a competitor, so the browse link is
+// dropped and the logo points back to this profile. ("Check an address" removed
+// everywhere — it routed to the deprecated v1 /vesta/search app.)
+export function navHtml({ logoHref = '/', browse = true } = {}) {
+  return '<nav class="topnav">\n' +
+    '  <a href="' + logoHref + '" class="nav-logo">\n' +
+    '    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">\n' +
+    '      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>\n' +
+    '      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>\n' +
+    '    </svg>\n' +
+    '    4THWALL\n' +
+    '  </a>\n' +
+    '  <div class="nav-links">\n' +
+    (browse ? '    <a href="/vesta" class="nav-a">Find a pro</a>\n' : '') +
+    '    <span id="nav-acct"><a class="nav-a" href="/signin">Sign in</a></span>\n' +
+    '  </div>\n' +
+    '</nav>\n';
+}
+export const NAV = navHtml();
 
 export const FOOTER =
   '<footer>\n' +

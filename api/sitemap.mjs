@@ -31,12 +31,13 @@ export default async function handler(req, res) {
   for (const p of STATIC_PATHS) entries.push({ loc: SITE + p });
   for (const t of TRADES) entries.push({ loc: SITE + '/fairfield-county/' + t });
 
-  // /c/ deep profiles — only the substantive ones, only once indexing is on.
+  // /c/ deep profiles — only the index-ready set (index_status='ready', earned via
+  // vesta_lint), only once indexing is on.
   let fetchOk = !INDEXING_ENABLED; // nothing to fetch while the gate is off
   if (INDEXING_ENABLED) {
     try {
       const r = await fetch(DB_BASE + '/rest/v1/profile_enrichment_public' +
-        '?synthesis=not.is.null&select=place_id,enriched_at&order=rank_score.desc.nullslast&limit=2000', {
+        '?index_status=eq.ready&select=place_id,enriched_at&order=rank_score.desc.nullslast&limit=2000', {
         headers: { apikey: DB_KEY, Authorization: 'Bearer ' + DB_KEY, Accept: 'application/json' }
       });
       if (r.ok) {

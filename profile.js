@@ -67,37 +67,15 @@
     function renderContact() {
       const mount = document.getElementById('cp-contact');
       if (!mount) return;
-      let inner;
-      if (unlocked) {
-        inner = '<h2 class="section-h">Contact</h2><div class="card-block">' + contactRows(unlocked) + '</div>';
-      } else if (account) {
-        inner = '<h2 class="section-h">Contact</h2><div class="card-block">' +
-          '<p style="font-size:.9rem;margin-bottom:.8rem">Phone, website, and social profiles — everything public we can find.</p>' +
-          '<button class="pill pill-orange" id="unlock-btn">Show contact info</button>' +
-          '<span class="form-status" id="unlock-status"></span></div>';
-      } else {
-        inner = '<h2 class="section-h">Contact</h2><div class="lockbox">' +
-          '<div class="blur">(516) 555-0000 · example-website.com · facebook.com/example</div>' +
-          '<p style="font-size:.9rem;margin-bottom:.9rem"><b>Contact info is free — it just needs an account.</b><br>' +
-          '<span style="color:var(--vmut);font-size:.82rem">One email, no password, ten seconds. Phone, website, socials — everything public we can find.</span></p>' +
-          '<a class="pill pill-orange" href="' + HOME.signinHref() + '">Create free account / sign in</a></div>';
-      }
-      mount.innerHTML = inner;
-      const ub = document.getElementById('unlock-btn');
-      if (ub) ub.addEventListener('click', doUnlock);
-    }
-
-    async function doUnlock() {
-      const ub = document.getElementById('unlock-btn');
-      const st = document.getElementById('unlock-status');
-      ub.disabled = true;
-      const { status, data: r } = await HOME.api('/c/' + encodeURIComponent(placeId) + '/unlock', { method: 'POST', body: { zip: data.zip || '' } });
-      if (r && r.ok) { unlocked = r.unlocked; renderContact(); }
-      else {
-        ub.disabled = false;
-        st.className = 'form-status is-error';
-        st.textContent = status === 429 ? 'A lot of unlocks this hour — try again in a bit.' : 'Couldn’t unlock — try again.';
-      }
+      // Contact is public — no sign-in gate (the Google Maps link already exposes it).
+      // Show whatever public details surfaced; if none, point them at the request flow.
+      const u = unlocked || {};
+      const hasAny = u.phone || u.website || (u.socials && Object.keys(u.socials).length);
+      mount.innerHTML = '<h2 class="section-h">Contact</h2><div class="card-block">' +
+        (hasAny
+          ? contactRows(u)
+          : '<p class="note">No public phone or website surfaced for this pro yet — use “Request through Vesta” above and we’ll carry your message straight to them.</p>') +
+        '</div>';
     }
 
     // 3. Claim form (server-rendered markup; wired here). ---------------------
