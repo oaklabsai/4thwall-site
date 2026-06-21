@@ -8,13 +8,16 @@
 //
 // The key file (<KEY>.txt at the site root) must be LIVE before this is accepted —
 // IndexNow fetches keyLocation to verify ownership.
-import { readFile } from 'node:fs/promises';
-
+//
+// The sitemap is now DYNAMIC (api/sitemap.mjs) — there is no static sitemap.xml in
+// the repo. We fetch the LIVE sitemap so this always submits exactly what's served.
 const HOST = '4thwall.solutions';
 const KEY = '0e88ed67bb031c1afc72f2f13ecc31ed';
 const KEY_LOCATION = `https://${HOST}/${KEY}.txt`;
 
-const xml = await readFile(new URL('../sitemap.xml', import.meta.url), 'utf8');
+const sm = await fetch(`https://${HOST}/sitemap.xml`);
+if (!sm.ok) { console.error(`Could not fetch live sitemap: HTTP ${sm.status}`); process.exit(1); }
+const xml = await sm.text();
 const urlList = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].trim());
 
 if (!urlList.length) {
