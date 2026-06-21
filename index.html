@@ -24,20 +24,51 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "4THWALL",
-  "legalName": "4th Wall Solutions",
-  "url": "https://4thwall.solutions",
-  "logo": "https://4thwall.solutions/logo.png",
-  "email": "andrew@4thwall.solutions",
-  "telephone": "+1-203-670-9477",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Stamford",
-    "addressRegion": "CT",
-    "addressCountry": "US"
-  },
-  "sameAs": []
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://4thwall.solutions#org",
+      "name": "4th Wall Solutions",
+      "alternateName": "4THWALL",
+      "legalName": "4th Wall Solutions",
+      "url": "https://4thwall.solutions",
+      "logo": "https://4thwall.solutions/logo.png",
+      "email": "andrew@4thwall.solutions",
+      "telephone": "+1-203-670-9477",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Stamford",
+        "addressRegion": "CT",
+        "addressCountry": "US"
+      },
+      "areaServed": "Fairfield County, CT",
+      "sameAs": [
+        "https://share.google/s9kflTZ1ZogZUeCE1"
+      ],
+      "description": "4th Wall Solutions builds AI back-office infrastructure for trades and service businesses. It operates Vesta, a public-record contractor recommendation service for Fairfield County, CT, and Atlas, a managed AI back office for contractors.",
+      "brand": [
+        {
+          "@type": "Brand",
+          "name": "Vesta",
+          "url": "https://4thwall.solutions/vesta",
+          "description": "A public-record recommendation service that ranks Fairfield County contractors by homeowner consensus and verified credentials — no ads, no pay-to-play."
+        },
+        {
+          "@type": "Brand",
+          "name": "Atlas",
+          "url": "https://4thwall.solutions/atlas",
+          "description": "A managed AI back office that answers every call and text, books the job, and earns the review for trades contractors."
+        }
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://4thwall.solutions#website",
+      "url": "https://4thwall.solutions",
+      "name": "4th Wall Solutions",
+      "publisher": { "@id": "https://4thwall.solutions#org" }
+    }
+  ]
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">

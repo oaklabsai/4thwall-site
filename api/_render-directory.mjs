@@ -14,6 +14,63 @@ export const COUNTY = 'Fairfield County';
 // Vesta's canonical trade order — MUST mirror home.js HOME.TRADES.
 export const TRADES = ['roofing', 'hvac', 'plumbing', 'electrical', 'paving', 'lawn_care', 'painting', 'masonry'];
 
+// === Publisher identity (entity authority) ==================================
+// ONE Organization for the whole property, referenced by a shared @id as
+// publisher / isPartOf on EVERY page (directory + /c/ + homepage). This collapses
+// N orphan pages into one identifiable, citable corpus — the precondition for
+// E-E-A-T and AI-engine citation. (seo/playbook.md DO #6.)
+//
+// sameAs stays EMPTY until the real external footprint exists (a Google Business
+// Profile for "4th Wall Solutions" + a LinkedIn company page). When those land,
+// add their URLs to PUBLISHER_SAMEAS below and every surface inherits the
+// corroboration — schema *claims* the entity, the footprint is what makes engines
+// *trust* it. We never point sameAs at a record we can't prove: an unverified
+// link is a claim, not a vouch. (homepage index.html mirrors these values by hand
+// — keep the two in sync.)
+export const PUBLISHER_SAMEAS = [
+  // Google Business Profile (verified entity, created 2026-06-20). Share-link
+  // form; upgrade to the canonical /maps/place URL once the listing is publicly
+  // searchable in Maps. LinkedIn company page to be appended (D2).
+  'https://share.google/s9kflTZ1ZogZUeCE1'
+];
+
+export const ORG_ID = SITE + '#org';
+export const WEBSITE_ID = SITE + '#website';
+
+export const ORG = {
+  '@type': 'Organization',
+  '@id': ORG_ID,
+  name: '4th Wall Solutions',
+  alternateName: '4THWALL',
+  url: SITE,
+  logo: SITE + '/logo.png',
+  email: 'andrew@4thwall.solutions',
+  telephone: '+1-203-670-9477',
+  address: { '@type': 'PostalAddress', addressLocality: 'Stamford', addressRegion: 'CT', addressCountry: 'US' },
+  areaServed: COUNTY + ', CT',
+  description: '4th Wall Solutions builds AI back-office infrastructure for trades and service businesses. ' +
+    'It operates Vesta, a public-record contractor recommendation service for ' + COUNTY + ', CT, and Atlas, ' +
+    'a managed AI back office for contractors.',
+  brand: [
+    { '@type': 'Brand', name: 'Vesta', url: SITE + '/vesta',
+      description: 'A public-record recommendation service that ranks ' + COUNTY + ' contractors by homeowner consensus and verified credentials — no ads, no pay-to-play.' },
+    { '@type': 'Brand', name: 'Atlas', url: SITE + '/atlas',
+      description: 'A managed AI back office that answers every call and text, books the job, and earns the review for trades contractors.' }
+  ],
+  ...(PUBLISHER_SAMEAS.length ? { sameAs: PUBLISHER_SAMEAS } : {})
+};
+
+export const WEBSITE = {
+  '@type': 'WebSite',
+  '@id': WEBSITE_ID,
+  url: SITE,
+  name: '4th Wall Solutions',
+  publisher: { '@id': ORG_ID }
+};
+
+// The two publisher nodes, ready to splice into any page @graph.
+export const publisherNodes = () => [ORG, WEBSITE];
+
 // The exact directory read (mirrors directory.html): established-first, raw stars
 // never leave the DB (rank_score is the volume-weighted homeowner-consensus score).
 export const DIRECTORY_SELECT =
@@ -129,6 +186,7 @@ function jsonLd(trade, label, rows, canonical) {
   });
 
   const graph = [
+    ...publisherNodes(),
     {
       '@type': 'CollectionPage',
       '@id': canonical + '#webpage',
@@ -136,7 +194,8 @@ function jsonLd(trade, label, rows, canonical) {
       name: label + ' Contractors in ' + COUNTY + ', CT',
       description: 'The most-established ' + tLower(trade) + ' contractors in ' + COUNTY +
         ', Connecticut — vouched by state registration and licensing, with a plain-English read of what homeowners actually say. Compiled by Vesta from public records. No ads, no pay-to-play.',
-      isPartOf: { '@type': 'WebSite', '@id': SITE + '#website', url: SITE, name: 'Vesta by 4th Wall Solutions' },
+      isPartOf: { '@id': WEBSITE_ID },
+      publisher: { '@id': ORG_ID },
       about: { '@type': 'Thing', name: label + ' contractors in ' + COUNTY + ', CT' },
       breadcrumb: { '@id': canonical + '#breadcrumb' }
     },

@@ -18,7 +18,7 @@
 // the live public view. api/contractor.mjs fetches the row and calls
 // renderContractorHTML.
 
-import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml } from './_render-directory.mjs';
+import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml, ORG_ID, WEBSITE_ID, publisherNodes } from './_render-directory.mjs';
 
 // --- the public-view read (mirror of the old contractor.html client fetch) ---
 export const PROFILE_SELECT =
@@ -293,12 +293,14 @@ function profileJsonLd(enr, trade, label, canonical) {
   if (creds.length) biz.hasCredential = creds;
 
   const graph = [
+    ...publisherNodes(),
     {
       '@type': 'ProfilePage',
       '@id': canonical + '#webpage',
       url: canonical,
       name: enr.business_name + ' — ' + label + ' in ' + (enr.city || COUNTY) + ', CT',
-      isPartOf: { '@type': 'WebSite', '@id': SITE + '#website', url: SITE, name: 'Vesta by 4th Wall Solutions' },
+      isPartOf: { '@id': WEBSITE_ID },
+      publisher: { '@id': ORG_ID },
       about: { '@id': canonical + '#business' },
       mainEntity: { '@id': canonical + '#business' },
       breadcrumb: { '@id': canonical + '#breadcrumb' },
