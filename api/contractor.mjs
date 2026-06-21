@@ -8,7 +8,7 @@
 // Data is the PUBLIC enrichment view (publishable key, raw stars never leave the
 // DB) — no secrets involved. The live Google block + gated contact are layered
 // in CLIENT-side by /profile.js, so they never enter the crawlable HTML.
-import { renderContractorHTML, renderNotFoundHTML, profileQuery } from './_render-contractor.mjs';
+import { renderContractorHTML, renderNotFoundHTML, profileQuery, siblingsQuery } from './_render-contractor.mjs';
 
 const DB_BASE = process.env.SUPABASE_URL || 'https://vinytnzzgryodyrftabg.supabase.co';
 // Anon-scoped publishable key — RLS-protected, already public in the client (home.js).
@@ -54,6 +54,21 @@ export default async function handler(req, res) {
     return res.status(404).send(renderNotFoundHTML());
   }
 
+  // Lateral "Compare top [trade]" siblings — best-effort, never fatal. If this
+  // fails or the trade is unknown, the related block just renders nothing.
+  let siblings = [];
+  if (enr.trade) {
+    try {
+      const sr = await fetch(DB_BASE + '/rest/v1' + siblingsQuery(enr.trade, placeId), {
+        headers: { apikey: DB_KEY, Authorization: 'Bearer ' + DB_KEY, Accept: 'application/json' }
+      });
+      if (sr.ok) {
+        const sd = await sr.json();
+        if (Array.isArray(sd)) siblings = sd;
+      }
+    } catch (_) { /* non-fatal: render the profile without the compare block */ }
+  }
+
   res.setHeader('Cache-Control', FRESH);
-  return res.status(200).send(renderContractorHTML(enr));
+  return res.status(200).send(renderContractorHTML(enr, siblings));
 }

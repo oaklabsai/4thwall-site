@@ -29,6 +29,15 @@ export const profileQuery = (placeId) =>
   '/profile_enrichment_public?place_id=eq.' + encodeURIComponent(placeId) +
   '&limit=1&select=' + PROFILE_SELECT;
 
+// Sibling profiles for the lateral "Compare top [trade]" block: same trade,
+// index-ready ONLY (never link the crawl into thin/noindex pages), excluding
+// self, top-ranked first. Light select — just enough to link honestly.
+export const siblingsQuery = (trade, placeId) =>
+  '/profile_enrichment_public?trade=eq.' + encodeURIComponent(trade) +
+  '&index_status=eq.ready&place_id=neq.' + encodeURIComponent(placeId) +
+  '&order=rank_score.desc.nullslast&limit=3' +
+  '&select=place_id,business_name,city';
+
 // Index gate (two-tier SOP). A profile is index-eligible ONLY when it has earned
 // index_status='ready' by passing the vesta_lint() QC gate in the DB (no rating/
 // count baked into prose, substantive synthesis, required fields). Tier-1
@@ -360,6 +369,14 @@ const ATLAS_MOMENT_CSS =
   '.atlas-moment[open] .am-caret::before{content:"\\2013"}' +
   '.atlas-moment .am-body{margin-top:1.4rem}' +
   '.cp-gref{margin-top:1.8rem;max-width:680px}' +
+  '.rel-block{margin:2.8rem 0 .5rem;padding-top:1.9rem;border-top:1px solid var(--line,rgba(18,16,14,.12))}' +
+  '.rel-h{font-family:var(--display);font-size:clamp(1.15rem,2.4vw,1.5rem);font-weight:500;letter-spacing:-.02em;margin:0 0 .5rem;color:var(--vink,#12100e)}' +
+  '.rel-lede{font-size:.92rem;line-height:1.6;color:var(--vmut,rgba(18,16,14,.6));max-width:62ch;margin:0 0 1.2rem}' +
+  '.rel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem;margin-bottom:1.2rem}' +
+  '.rel-card{display:flex;flex-direction:column;gap:.25rem;padding:.85rem 1rem;border:1px solid var(--line,rgba(18,16,14,.12));border-radius:14px;text-decoration:none;background:var(--vcard,transparent);transition:border-color .16s,transform .16s}' +
+  '.rel-card:hover{border-color:var(--vgreen-2,#4a4b2f);transform:translateY(-1px)}' +
+  '.rel-name{font-weight:600;font-size:.95rem;color:var(--vink,#12100e);line-height:1.25}' +
+  '.rel-sub{font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:var(--vdim,rgba(18,16,14,.45))}' +
   '</style>';
 
 function shell({ title, description, canonical, indexable, jsonld, body }) {
@@ -396,9 +413,33 @@ function shell({ title, description, canonical, indexable, jsonld, body }) {
     '</body>\n</html>\n';
 }
 
+// Lateral "Compare top [trade]" block — the honest-recommender close. Placed at
+// the BOTTOM of the profile (after the contact CTA) so the page still LEADS with
+// the contractor the visitor came for; this is the only exit and it's a footer.
+// Links only index-ready siblings (the connected, crawlable corpus). Renders
+// nothing when there are no siblings (e.g. a one-firm trade).
+function relatedBlock(siblings, trade) {
+  if (!trade || !Array.isArray(siblings) || !siblings.length) return '';
+  const tl = tLowerOf(trade);
+  const cards = siblings.slice(0, 3).map((s) => {
+    if (!s || !s.place_id || !s.business_name) return '';
+    return '<a class="rel-card" href="/c/' + encodeURIComponent(s.place_id) + '">' +
+      '<span class="rel-name">' + esc(s.business_name) + '</span>' +
+      '<span class="rel-sub">' + esc(s.city ? s.city + ', CT' : COUNTY + ', CT') + '</span>' +
+    '</a>';
+  }).join('');
+  if (!cards) return '';
+  return '<section class="rel-block" aria-label="Compare other top ' + esc(tl) + ' in ' + COUNTY + '">' +
+    '<h2 class="rel-h">Compare top ' + esc(tl) + ' in ' + COUNTY + '</h2>' +
+    '<p class="rel-lede">Vesta ranks ' + esc(tl) + ' across ' + COUNTY + ' by homeowner consensus and the public record — no ads, no pay-to-play. A few others worth a look:</p>' +
+    '<div class="rel-grid">' + cards + '</div>' +
+    '<a class="pill pill-ghost pill-sm" href="/fairfield-county/' + trade + '">See the full ranked list →</a>' +
+  '</section>';
+}
+
 // === entry points ===========================================================
 
-export function renderContractorHTML(enr) {
+export function renderContractorHTML(enr, siblings = []) {
   const trade = enr.trade || '';
   const label = tradeLabel(trade) || 'Contractor';
   const tl = tLowerOf(trade);
@@ -435,6 +476,7 @@ export function renderContractorHTML(enr) {
     '<div class="cp-gref">' + GOOGLE_MOUNT + '</div>' +
     CONTACT_MOUNT +
     claimBlock(enr) +
+    relatedBlock(siblings, trade) +
     disclosureRemoval(enr) +
   '</section>';
 
