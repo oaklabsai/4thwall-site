@@ -74,7 +74,7 @@ export const publisherNodes = () => [ORG, WEBSITE];
 // The exact directory read (mirrors directory.html): established-first, raw stars
 // never leave the DB (rank_score is the volume-weighted homeowner-consensus score).
 export const DIRECTORY_SELECT =
-  'place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,synthesis';
+  'place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,specialties,synthesis';
 export const directoryQuery = (trade) =>
   '/profile_enrichment_public?trade=eq.' + encodeURIComponent(trade) +
   '&order=rank_score.desc.nullslast&limit=50&select=' + DIRECTORY_SELECT;
@@ -127,16 +127,74 @@ function card(p, trade) {
   if (Array.isArray(p.trade_license) && p.trade_license.length) chips.push('<span class="badge">Licensed ' + esc(tLower(trade)) + ' ✓</span>');
   if (Array.isArray(p.certifications)) for (const c of p.certifications) { if (c && c.issuer && c.level) chips.push('<span class="badge">' + esc(c.issuer + ' ' + c.level) + ' ✓</span>'); }
   const chipsHtml = chips.length ? '<div class="badges">' + chips.join('') + '</div>' : '';
+  // M4 — structured highlights row: the top specialties, so depth shows on the
+  // card BEFORE the homeowner opens the profile. Credential chips above carry the
+  // trust proof; these carry the "what they're known for." Cap at 3 to stay scannable.
+  const specs = Array.isArray(p.specialties)
+    ? p.specialties.filter((s) => s && String(s).trim()).slice(0, 3)
+    : [];
+  const specHtml = specs.length
+    ? '<div class="spec-row"><span class="spec-lbl">Known for</span>' +
+        specs.map((s) => '<span class="spec">' + esc(s) + '</span>').join('') + '</div>'
+    : '';
   const syn = p.synthesis
     ? '<p class="card-syn"><span class="syn-lbl">What homeowners say</span>' + esc(p.synthesis) + '</p>'
     : '';
   return '<div class="card lift">' +
     '<a class="cardlink" href="' + href + '"><h3>' + esc(p.name) + '</h3></a>' +
     '<div class="sub">' + esc(p.city || COUNTY) + '</div>' +
-    chipsHtml + syn +
+    chipsHtml + specHtml + syn +
     '<div class="spacer"></div>' +
     '<div><a class="pill pill-ghost pill-sm" href="' + href + '">View profile</a></div>' +
   '</div>';
+}
+
+// M6 — honest market-level trust bar. The credibility Angi's "617 reviews, 4.6 avg"
+// builds, done WITHOUT raw stars: registered + licensed/certified COUNTS off the
+// view, plus the no-pay-to-play tag. Counts, never ratings — the moat holds.
+function marketBar(rows, trade) {
+  const nReg = rows.filter((p) => p.registered).length;
+  const nCred = rows.filter((p) =>
+    (Array.isArray(p.trade_license) && p.trade_license.length) ||
+    (Array.isArray(p.certifications) && p.certifications.length)).length;
+  const stats = [];
+  if (nReg) stats.push('<span class="mb-stat"><b>' + nReg + '</b> registered with the State of Connecticut</span>');
+  if (nCred) stats.push('<span class="mb-stat"><b>' + nCred + '</b> with a verified trade license or certification</span>');
+  const statsHtml = stats.length
+    ? '<div class="mb-stats">' + stats.join('<span class="mb-sep" aria-hidden="true">·</span>') + '</div>'
+    : '';
+  return '<div class="market-bar">' + statsHtml +
+    '<p class="mb-tag">Ranked by homeowner consensus, weighted by how many homeowners said it — ' +
+    'no ads, no pay-to-play, no paid placement.</p></div>';
+}
+
+// M7 (standalone) — trust-criteria explainer. On the directory the cards show
+// credential CHIPS with no room for inline copy (unlike the /c/ verified block,
+// which states each criterion in place). This shared, exported helper makes the
+// standard behind every chip legible — the governing principle is "every badge
+// states its criterion." Progressive disclosure via <details> so it never clutters.
+export function criteriaExplainer(trade) {
+  const tl = tLower(trade);
+  return '<details class="vx-criteria">' +
+    '<summary>What these marks mean — and how Vesta verifies each</summary>' +
+    '<div class="vx-body">' +
+      '<dl>' +
+        '<dt>Registered CT contractor</dt>' +
+        '<dd>Holds an active Home Improvement Contractor registration, confirmed in the Connecticut ' +
+          'Department of Consumer Protection public registry — not self-reported by the business.</dd>' +
+        '<dt>Licensed ' + esc(tl) + '</dt>' +
+        '<dd>Carries the state trade license the work requires, verified in the CT eLicense state registry.</dd>' +
+        '<dt>Manufacturer certified</dt>' +
+        '<dd>Named in a manufacturer’s own contractor directory (e.g. GAF, CertainTeed) — a credential the ' +
+          'maker grants and can revoke, and which often unlocks longer workmanship warranties.</dd>' +
+        '<dt>What homeowners say</dt>' +
+        '<dd>A plain-English summary Vesta writes from public reviews and verified public records — Vesta’s ' +
+          'own wording, never a copy of any single review, and always positive-or-silent. Vesta never publishes ' +
+          'raw star ratings or review counts.</dd>' +
+      '</dl>' +
+      '<p class="vx-foot">Every mark states the standard it meets and the public record it’s checked against. ' +
+        'That is the whole point — a badge means nothing unless you can see its criterion.</p>' +
+    '</div></details>';
 }
 
 function disclosure() {
@@ -245,7 +303,29 @@ function shell({ title, description, canonical, headExtra, body }) {
     '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
     '<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">\n' +
     '<link rel="stylesheet" href="/home.css">\n' +
-    '<style>.dir-count{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim)}</style>\n' +
+    '<style>' +
+      '.dir-count{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim)}' +
+      // M6 market trust bar
+      '.market-bar{margin:.4rem 0 1.1rem;padding:.85rem 1rem;border:1px solid var(--line,rgba(74,75,47,.16));border-radius:12px;background:rgba(212,223,158,.07)}' +
+      '.mb-stats{display:flex;flex-wrap:wrap;align-items:baseline;gap:.55rem;font-size:.95rem;color:var(--vink,#12100e)}' +
+      '.mb-stat b{font-weight:600}.mb-sep{color:var(--vdim);opacity:.6}' +
+      '.mb-tag{margin:.5rem 0 0;font-size:.82rem;line-height:1.5;color:var(--vmut,#4a4b2f)}' +
+      // M7 criteria explainer
+      '.vx-criteria{margin:0 0 1.4rem;border:1px solid var(--line,rgba(74,75,47,.16));border-radius:12px;background:rgba(255,255,255,.5);overflow:hidden}' +
+      '.vx-criteria>summary{cursor:pointer;list-style:none;padding:.7rem 1rem;font-size:.88rem;font-weight:500;color:var(--vgreen-2,#4a4b2f);display:flex;align-items:center;gap:.5rem}' +
+      '.vx-criteria>summary::-webkit-details-marker{display:none}' +
+      '.vx-criteria>summary::before{content:"";width:.5rem;height:.5rem;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .18s ease}' +
+      '.vx-criteria[open]>summary::before{transform:rotate(45deg)}' +
+      '.vx-body{padding:.2rem 1rem 1rem}' +
+      '.vx-body dl{margin:0;display:grid;gap:.65rem}' +
+      '.vx-body dt{font-weight:600;font-size:.9rem;color:var(--vink,#12100e)}' +
+      '.vx-body dd{margin:.12rem 0 0;font-size:.86rem;line-height:1.55;color:var(--vmut,#4a4b2f)}' +
+      '.vx-foot{margin:1rem 0 0;padding-top:.8rem;border-top:1px solid var(--line,rgba(74,75,47,.12));font-size:.82rem;line-height:1.55;color:var(--vdim)}' +
+      // M4 specialty highlights row (cards)
+      '.spec-row{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.55rem 0 .2rem}' +
+      '.spec-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;color:var(--vdim);margin-right:.15rem}' +
+      '.spec{font-size:.74rem;padding:.16rem .5rem;border:1px solid var(--line,rgba(74,75,47,.2));border-radius:999px;color:var(--vmut,#4a4b2f);background:rgba(212,223,158,.1)}' +
+    '</style>\n' +
     (headExtra || '') + '\n' +
     '<script src="/home.js" defer></script>\n' +
     '</head>\n<body>\n' +
@@ -341,7 +421,8 @@ export function renderDirectoryHTML(trade, rows) {
   main = '<section class="section" id="body">' +
     stripHtml(trade) +
     '<h2 class="section-h">' + rows.length + ' ' + esc(tLower(trade)) + ' contractors</h2>' +
-    '<p class="dir-count">Ranked by homeowner consensus · no ads, no pay-to-play</p>' +
+    marketBar(rows, trade) +
+    criteriaExplainer(trade) +
     '<div class="grid" style="margin-top:1rem">' + rows.map((p) => card(p, trade)).join('') + '</div>' +
     disclosure() +
   '</section>';
