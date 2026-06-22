@@ -55,6 +55,18 @@ const TRADE_FIRMS = { roofing: 'roofing companies', hvac: 'HVAC companies', plum
 const TRADE_PROS  = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons' };
 const tLowerOf = (trade) => (trade === 'hvac' ? 'HVAC' : (tradeLabel(trade) ? tradeLabel(trade).toLowerCase() : ''));
 
+// Freshness (M11) — turn an enriched_at ISO date into "June 2026". Vouch-don't-
+// expose safe: it's a DATE (when Vesta last read this firm), never a rating. The
+// honest answer to a homeowner's "is this current?" — the thing Angi/HomeAdvisor
+// never show (their dormant profiles rank on years-old reviews with no signal).
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+function monthYear(iso) {
+  if (!iso) return '';
+  const s = String(iso); const y = s.slice(0, 4); const m = +s.slice(5, 7);
+  if (!/^\d{4}$/.test(y) || !m || m < 1 || m > 12) return '';
+  return MONTHS[m - 1] + ' ' + y;
+}
+
 // Trade hiring guides (Vesta editorial · trade-level · about no business).
 // Ported verbatim from the old contractor.html so the page reads identically.
 const HIRING_GUIDE = {
@@ -142,10 +154,12 @@ function homeownersBlock(enr) {
   if (!enr || (!enr.synthesis && !hasKnown)) return '';
   let html = '<h2 class="section-h">What homeowners say</h2>';
   if (enr.synthesis) {
+    const analyzed = monthYear(enr.enriched_at);
     html += '<div class="card-block"><p style="font-size:.96rem;line-height:1.7">' + esc(enr.synthesis) + '</p>' +
       '<p class="fine" style="margin-top:.9rem">Summarized by Vesta from ' +
       (enr.synthesis_review_count ? esc(enr.synthesis_review_count) + ' ' : '') +
-      'public reviews — Vesta’s own wording, not the business’s, and never a copy of any single review.</p></div>';
+      'public reviews' + (analyzed ? ' · analyzed ' + esc(analyzed) : '') +
+      ' — Vesta’s own wording, not the business’s, and never a copy of any single review.</p></div>';
   }
   if (hasKnown) {
     const cards = enr.known_for.filter((k) => k && (k.label || k.detail)).map((k) =>
@@ -176,20 +190,54 @@ function hiringGuideBlock(trade) {
     '<div class="vangles">' + rows + '</div>';
 }
 
-// The record — registration / tenure / verified certs (vouch, not expose).
-function trustBlock(enr, trade) {
+// Verified by Vesta (M3 centerpiece + inline M7) — promotes the actually-verified
+// public-record credentials (HIC registration · state trade license · issuer-
+// confirmed certs) from a buried chip row to a page centerpiece right under the
+// hero. Each mark carries its CRITERION and the public SOURCE it is checked
+// against — the M7 "every badge states its criterion" principle, inline. This is
+// Vesta's sharpest contrast vs. Angi/HomeAdvisor's self-reported, unverified
+// "Approved" badge. Vouch-don't-expose: every line is a public record, never a
+// rating. Renders nothing when there is nothing verified (honest-light firms).
+function verifiedBlock(enr, trade) {
   if (!enr) return '';
   const tl = tLowerOf(trade);
-  const chips = [];
+  const items = [];
   if (enr.registered) {
     const yr = enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0, 4) : 0;
-    chips.push('<span class="badge">Registered CT contractor' + (yr && yr !== 1999 ? ' · since ' + yr : '') + ' ✓</span>');
+    items.push([
+      'Registered CT contractor' + (yr && yr !== 1999 ? ' · since ' + yr : ''),
+      'Holds an active Connecticut Home Improvement Contractor registration — the state credential every contractor doing home work in CT is required to carry.',
+      'Confirmed in the CT Department of Consumer Protection registry'
+    ]);
   }
-  if (Array.isArray(enr.certifications)) for (const c of enr.certifications) { if (c && c.issuer && c.level) chips.push('<span class="badge">' + esc(c.issuer + ' ' + c.level) + ' ✓</span>'); }
-  if (Array.isArray(enr.trade_license) && enr.trade_license.length) chips.push('<span class="badge">Licensed ' + esc(tl || 'trade') + ' ✓</span>');
-  if (!chips.length) return '';
-  return '<h2 class="section-h">The record</h2><div class="card-block"><div class="badges" style="margin:0 0 .3rem">' + chips.join('') + '</div>' +
-    '<p class="fine" style="margin-top:.7rem">Checked against public CT state registries and manufacturer directories · June 2026. Vesta vouches only what a public record confirms.</p></div>';
+  if (Array.isArray(enr.trade_license) && enr.trade_license.length) {
+    items.push([
+      'Licensed ' + (tl || 'trade'),
+      'Carries an active Connecticut state trade license held by the individual tradesperson accountable for the work — a step beyond the basic registration.',
+      'Verified in the CT eLicense state registry'
+    ]);
+  }
+  if (Array.isArray(enr.certifications)) for (const c of enr.certifications) {
+    if (c && c.issuer && c.level) items.push([
+      c.issuer + ' ' + c.level,
+      'A manufacturer certification — ' + c.issuer + ' authorizes only vetted contractors to carry it, which often unlocks longer workmanship warranties for you.',
+      'Confirmed in ' + c.issuer + '’s own contractor directory'
+    ]);
+  }
+  if (!items.length) return '';
+  // Every item is a plain string (raw issuer names included) → escape uniformly
+  // at emit. Never pre-escape, so issuer "&" can't double-encode.
+  const cards = items.map((it) =>
+    '<div class="vv-card">' +
+      '<div class="vv-mark"><span class="vv-check" aria-hidden="true">✓</span><span>' + esc(it[0]) + '</span></div>' +
+      '<p class="vv-what">' + esc(it[1]) + '</p>' +
+      '<p class="vv-src">' + esc(it[2]) + ' · June 2026</p>' +
+    '</div>').join('');
+  return '<section class="vverify" id="verified" aria-label="Credentials Vesta verified">' +
+    '<h2 class="section-h">Verified by Vesta</h2>' +
+    '<p class="note" style="margin-top:-.2rem">Each mark below is checked against a public registry or the issuer’s own records — not self-reported by the business. Vesta vouches only what a public record confirms.</p>' +
+    '<div class="vv-grid">' + cards + '</div>' +
+  '</section>';
 }
 
 // Disclosure + the dedicated removal route (the on-page opt-out, /opt-out.html).
@@ -377,6 +425,13 @@ const ATLAS_MOMENT_CSS =
   '.rel-card:hover{border-color:var(--vgreen-2,#4a4b2f);transform:translateY(-1px)}' +
   '.rel-name{font-weight:600;font-size:.95rem;color:var(--vink,#12100e);line-height:1.25}' +
   '.rel-sub{font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:var(--vdim,rgba(18,16,14,.45))}' +
+  '.vverify{margin:1.4rem 0 2.2rem;padding:clamp(1.3rem,3vw,1.9rem);border:1px solid var(--line,rgba(18,16,14,.12));border-radius:20px;background:var(--vcard,rgba(74,75,47,.035))}' +
+  '.vverify .vv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem;margin-top:1rem}' +
+  '.vverify .vv-card{padding:1rem 1.1rem;border:1px solid var(--line,rgba(18,16,14,.1));border-radius:14px;background:rgba(255,255,255,.6)}' +
+  '.vverify .vv-mark{display:flex;align-items:flex-start;gap:.45rem;font-family:var(--display);font-weight:600;font-size:1rem;letter-spacing:-.01em;color:var(--vink,#12100e);line-height:1.25}' +
+  '.vverify .vv-check{flex:none;display:inline-flex;align-items:center;justify-content:center;width:1.15rem;height:1.15rem;margin-top:.04rem;border-radius:999px;background:var(--vgreen-2,#4a4b2f);color:#fff;font-size:.7rem;font-weight:700}' +
+  '.vverify .vv-what{font-size:.85rem;line-height:1.55;color:var(--vmut,rgba(18,16,14,.7));margin:.5rem 0 .55rem}' +
+  '.vverify .vv-src{font-family:var(--mono);font-size:.66rem;letter-spacing:.03em;color:var(--vdim,rgba(18,16,14,.5));line-height:1.45}' +
   '</style>';
 
 function shell({ title, description, canonical, indexable, jsonld, body }) {
@@ -468,11 +523,11 @@ export function renderContractorHTML(enr, siblings = []) {
     '</section>';
 
   const body = '<section class="section" id="body">' +
+    verifiedBlock(enr, trade) +
     signatureBlock(enr) +
     vestaReadBlock(enr, trade) +
     homeownersBlock(enr) +
     hiringGuideBlock(trade) +
-    trustBlock(enr, trade) +
     '<div class="cp-gref">' + GOOGLE_MOUNT + '</div>' +
     CONTACT_MOUNT +
     claimBlock(enr) +
