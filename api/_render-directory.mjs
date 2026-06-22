@@ -231,6 +231,161 @@ export const COST_GUIDE = {
     basis: 'industry installed-cost ranges adjusted for Fairfield County labor rates',
     scope: 'Fairfield County, CT',
     updated: 'June 2026'
+  },
+  hvac: {
+    noun: 'system',
+    typical: 'Most Fairfield County homeowners spend roughly $6,000–$14,000 to replace a central heating ' +
+      'or cooling system. Where you land depends on the size your home needs, the efficiency rating you ' +
+      'choose, and whether your existing ductwork can be reused.',
+    rows: [
+      { job: 'Central AC replacement (condenser + coil)', range: '$5,500 – $12,000',
+        note: 'The most common cooling job — replacing an aging system on existing ductwork. Tonnage and SEER2 efficiency drive the spread.' },
+      { job: 'Gas furnace replacement', range: '$4,500 – $9,500',
+        note: 'Swapping a worn furnace. High-efficiency (96%+ AFUE) and variable-speed units sit at the top of the range.' },
+      { job: 'Heat pump (air-source, whole-home)', range: '$8,000 – $20,000',
+        note: 'Increasingly common for electrification. Cold-climate models and multi-zone setups cost more.' },
+      { job: 'Ductless mini-split (per zone, installed)', range: '$3,500 – $7,500',
+        note: 'Priced per indoor head — ideal for additions, sunrooms, and homes without ductwork.' },
+      { job: 'Service call, tune-up, or minor repair', range: '$150 – $600',
+        note: 'A tech visit, refrigerant top-off, capacitor, or thermostat — not a full replacement.' }
+    ],
+    factors: 'the size (tonnage / BTU) your home actually needs, the efficiency rating you choose (SEER2 / AFUE), ' +
+      'whether existing ductwork can be reused, electrical upgrades for heat pumps, and how easy the equipment is to reach',
+    basis: 'industry installed-cost ranges adjusted for Fairfield County labor rates',
+    scope: 'Fairfield County, CT',
+    updated: 'June 2026'
+  },
+  plumbing: {
+    noun: 'plumbing',
+    typical: 'Plumbing spans tiny fixes to full repipes, so the range is wide. Most service jobs land between ' +
+      '$200 and $1,200, while big-ticket replacements — water heater, repipe, or sewer line — run into the thousands.',
+    rows: [
+      { job: 'Service call / common repair (leak, faucet, running toilet)', range: '$150 – $600',
+        note: 'The most common job — a visit plus a straightforward fix.' },
+      { job: 'Water heater replacement (40–50 gal tank)', range: '$1,600 – $3,800',
+        note: 'A standard gas or electric tank, installed and hauled away. Tankless costs more.' },
+      { job: 'Tankless water heater (installed)', range: '$3,500 – $7,000',
+        note: 'A gas tankless unit including venting and any gas-line work.' },
+      { job: 'Sewer line repair or replacement', range: '$3,000 – $12,000+',
+        note: 'Highly excavation-dependent. Trenchless lining sits at the top of the range.' },
+      { job: 'Whole-home repipe', range: '$6,000 – $16,000',
+        note: 'Replacing aging galvanized or polybutylene supply lines with PEX or copper.' }
+    ],
+    factors: 'whether the work is accessible or buried behind walls and underground, fixture and material grade ' +
+      '(PEX vs copper), permit and inspection requirements, and whether it is an emergency or a scheduled job',
+    basis: 'industry installed-cost ranges adjusted for Fairfield County labor rates',
+    scope: 'Fairfield County, CT',
+    updated: 'June 2026'
+  },
+  electrical: {
+    noun: 'home',
+    typical: 'Most electrical work is smaller service jobs in the $200–$1,500 range, while panel upgrades, ' +
+      'rewires, and generators are the big-ticket items that climb into the thousands.',
+    rows: [
+      { job: 'Service call / common repair (outlet, switch, fixture)', range: '$150 – $500',
+        note: 'The most common job — a visit plus a defined fix or install.' },
+      { job: 'Panel (service) upgrade to 200-amp', range: '$2,000 – $4,500',
+        note: 'Upgrading an older or overloaded panel, including the meter swap and permit.' },
+      { job: 'EV charger install (Level 2)', range: '$800 – $2,500',
+        note: 'A 240V circuit for home charging. Distance from the panel — and any panel upgrade — moves the number.' },
+      { job: 'Whole-home rewire', range: '$8,000 – $20,000+',
+        note: 'Replacing knob-and-tube or aluminum wiring in an older Fairfield County home.' },
+      { job: 'Standby generator (installed)', range: '$7,000 – $16,000',
+        note: 'A permanently wired backup generator with transfer switch and gas hookup.' }
+    ],
+    factors: 'the age and condition of existing wiring, panel capacity and whether it needs upgrading, ' +
+      'permit and inspection requirements, and how far new circuits have to run from the panel',
+    basis: 'industry installed-cost ranges adjusted for Fairfield County labor rates',
+    scope: 'Fairfield County, CT',
+    updated: 'June 2026'
+  },
+  paving: {
+    noun: 'driveway',
+    typical: 'Most Fairfield County homeowners spend roughly $4,000–$12,000 on a new asphalt driveway. ' +
+      'The spread comes from size, how much old surface comes off, and whether you choose asphalt or pavers.',
+    rows: [
+      { job: 'Asphalt driveway (new or full replacement)', range: '$4,000 – $12,000',
+        note: 'The most common job — a typical residential driveway, torn out and repaved.' },
+      { job: 'Asphalt repair / resurfacing (overlay)', range: '$1,500 – $5,000',
+        note: 'A fresh top layer over a sound base, or patching problem areas.' },
+      { job: 'Sealcoating (existing asphalt)', range: '$250 – $700',
+        note: 'A protective coat that extends a driveway’s life — recommended every few years.' },
+      { job: 'Paver driveway or walkway', range: '$12,000 – $35,000+',
+        note: 'Interlocking concrete or brick pavers — premium curb appeal and longevity.' },
+      { job: 'Drainage or regrading work', range: '$1,500 – $8,000',
+        note: 'Solving water and slope problems before or during the paving job.' }
+    ],
+    factors: 'square footage, removal of the old surface, base preparation and drainage, material choice ' +
+      '(asphalt vs pavers), and how easily equipment can reach the site',
+    basis: 'industry installed-cost ranges adjusted for Fairfield County labor rates',
+    scope: 'Fairfield County, CT',
+    updated: 'June 2026'
+  },
+  lawn_care: {
+    noun: 'property',
+    typical: 'Lawn care is usually billed per visit or per season. Most Fairfield County homeowners spend ' +
+      'roughly $150–$400 a month in season, while one-time projects like a new lawn run higher.',
+    rows: [
+      { job: 'Weekly mowing / maintenance (per visit)', range: '$40 – $90',
+        note: 'The most common service — a typical residential lot, mowed and trimmed.' },
+      { job: 'Full-season lawn program (fertilization + weed control)', range: '$400 – $1,000',
+        note: 'A season of scheduled treatments, billed as a package.' },
+      { job: 'Spring or fall cleanup', range: '$250 – $700',
+        note: 'Leaf removal, bed cleanup, and seasonal cutbacks.' },
+      { job: 'New lawn — seeding or sod', range: '$1,500 – $8,000',
+        note: 'Grading and establishing a new lawn. Sod costs more than seed.' },
+      { job: 'Landscape design / planting project', range: '$2,000 – $15,000+',
+        note: 'Beds, plantings, and hardscape edging — varies widely with scope.' }
+    ],
+    factors: 'lot size, how often you want service, the condition of the existing lawn, and add-ons like ' +
+      'irrigation, planting beds, or tree work',
+    basis: 'prevailing Fairfield County service rates for residential lawn care',
+    scope: 'Fairfield County, CT',
+    updated: 'June 2026'
+  },
+  painting: {
+    noun: 'home',
+    typical: 'Most Fairfield County homeowners spend roughly $3,000–$8,000 to repaint an interior, while a ' +
+      'full exterior repaint runs higher. Square footage, prep, and paint grade drive where you land.',
+    rows: [
+      { job: 'Interior — whole house (≈2,000–2,500 sq ft)', range: '$3,000 – $8,000',
+        note: 'The most common job — walls, ceilings, and trim throughout, with prep and two coats.' },
+      { job: 'Interior — single room', range: '$400 – $1,200',
+        note: 'A bedroom or living room, including prep and two coats.' },
+      { job: 'Exterior repaint (full house)', range: '$5,000 – $15,000',
+        note: 'Prep, priming, and two coats. Siding type and house height drive the spread.' },
+      { job: 'Cabinet refinishing (kitchen)', range: '$2,500 – $7,000',
+        note: 'Sanding, priming, and spraying kitchen cabinets — a popular alternative to replacement.' },
+      { job: 'Trim, doors, or accent work', range: '$500 – $2,500',
+        note: 'Smaller defined scopes priced on their own.' }
+    ],
+    factors: 'square footage and ceiling height, how much prep and surface repair is needed, paint grade, ' +
+      'the number of colors, and exterior access (ladders vs lifts)',
+    basis: 'industry installed-cost ranges adjusted for Fairfield County labor rates',
+    scope: 'Fairfield County, CT',
+    updated: 'June 2026'
+  },
+  masonry: {
+    noun: 'project',
+    typical: 'Masonry is priced by the project and varies widely. Most Fairfield County homeowners spend ' +
+      'roughly $2,000–$15,000 depending on whether it’s a repair or new stonework, and on the material.',
+    rows: [
+      { job: 'Brick / block repair or repointing', range: '$1,000 – $5,000',
+        note: 'The most common job — tuckpointing mortar joints or replacing damaged brick.' },
+      { job: 'Chimney repair or rebuild', range: '$1,500 – $9,000',
+        note: 'From crown and flashing repair to a full above-the-roof rebuild.' },
+      { job: 'Paver or natural-stone patio', range: '$5,000 – $20,000',
+        note: 'A new patio in concrete pavers or natural stone, including base prep.' },
+      { job: 'Retaining wall', range: '$4,000 – $18,000+',
+        note: 'Engineered block or natural stone. Height and drainage drive the cost.' },
+      { job: 'Stone veneer, steps, or walkway', range: '$2,500 – $12,000',
+        note: 'Facing a foundation or wall, rebuilding front steps, or laying a stone walkway.' }
+    ],
+    factors: 'the material (brick, block, concrete paver, or natural stone), how much demolition and base ' +
+      'prep is needed, wall height or structural requirements, and how easily the site can be reached',
+    basis: 'industry installed-cost ranges adjusted for Fairfield County labor rates',
+    scope: 'Fairfield County, CT',
+    updated: 'June 2026'
   }
 };
 
