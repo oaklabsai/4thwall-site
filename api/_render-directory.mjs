@@ -197,6 +197,66 @@ export function criteriaExplainer(trade) {
     '</div></details>';
 }
 
+// M2 — cost guide (editorial, per-trade). The cost depth Angi has, without the
+// per-review project costs Angi's reviewers type in and without inventing a
+// number we can't defend. HomeAdvisor-sharpened: (a) ranges broken down BY JOB
+// TYPE, not one aggregate; (b) lead with a typical range, NEVER a "from $X"
+// minimum-job-size number (their "from $594" bait we oppose); (c) a "how we get
+// this data" methodology line (basis · scope · last-updated). Lives as a
+// deep-linkable #cost SECTION on the directory page (decision 4) — consolidates
+// authority on the page that already targets "<trade> in Fairfield County"
+// instead of spawning a thin standalone page. Moat-clean: editorial ranges, no
+// raw stars, frames as planning estimates not quotes. Add trades for SP4 by
+// appending keys — costSection() renders nothing for a trade with no entry.
+export const COST_GUIDE = {
+  roofing: {
+    noun: 'roof',
+    typical: 'Most Fairfield County homeowners spend roughly $9,000–$24,000 on a full asphalt-shingle ' +
+      'roof replacement. Where you land depends on the roof’s size and pitch, how many old layers come ' +
+      'off, and the shingle line you choose.',
+    rows: [
+      { job: 'Asphalt shingle roof replacement', range: '$9,000 – $24,000',
+        note: 'The most common job — tear-off and replace on a typical 1,800–2,400 sq ft roof in mid-range architectural (dimensional) shingles.' },
+      { job: 'Roof repair (leak, flashing, a few shingles)', range: '$400 – $1,800',
+        note: 'Localized fixes — chimney flashing, a slipped course, or a small active leak.' },
+      { job: 'Priced per “square” (100 sq ft), installed', range: '$450 – $800',
+        note: 'How roofers actually quote a job. Multiply by your roof’s squares for a rough total.' },
+      { job: 'Standing-seam metal roof', range: '$18,000 – $45,000+',
+        note: 'A 40–50 year roof in premium material and labor — common on modern and barn-style homes.' },
+      { job: 'Cedar shake or slate (historic homes)', range: '$25,000 – $60,000+',
+        note: 'Specialty craftsmanship for period-correct restorations on older Fairfield County homes.' }
+    ],
+    factors: 'roof pitch and height (steeper and taller cost more), how many old layers are torn off, ' +
+      'skylights and chimneys to flash around, and any gutter, fascia, or decking repair found once the old roof is off',
+    basis: 'industry installed-cost ranges adjusted for Fairfield County labor rates',
+    scope: 'Fairfield County, CT',
+    updated: 'June 2026'
+  }
+};
+
+// Render the deep-linkable #cost section. Returns '' for any trade with no
+// COST_GUIDE entry (so the pilot ships roofing only; SP4 lights up the rest).
+export function costSection(trade) {
+  const g = COST_GUIDE[trade];
+  if (!g) return '';
+  const tl = tLower(trade);
+  const rows = g.rows.map((r) =>
+    '<div class="cg-row">' +
+      '<div class="cg-job">' + esc(r.job) + '</div>' +
+      '<div class="cg-range">' + esc(r.range) + '</div>' +
+      '<div class="cg-note">' + esc(r.note) + '</div>' +
+    '</div>').join('');
+  return '<section class="cost-guide" id="cost" aria-label="What ' + esc(tl) + ' costs in ' + COUNTY + '">' +
+    '<h2 class="section-h">What does ' + esc(tl) + ' cost in ' + COUNTY + '?</h2>' +
+    '<p class="cg-typical">' + esc(g.typical) + '</p>' +
+    '<div class="cg-table">' + rows + '</div>' +
+    '<p class="cg-factors"><span class="cg-flbl">What moves your number</span>' + esc(g.factors) + '.</p>' +
+    '<p class="cg-method">These are planning estimates, not quotes — your real number comes from a ' +
+      'contractor who has seen your ' + esc(g.noun || 'project') + '. ' +
+      'Basis: ' + esc(g.basis) + ' · ' + esc(g.scope) + ' · updated ' + esc(g.updated) + '.</p>' +
+  '</section>';
+}
+
 function disclosure() {
   return '<p class="fine" style="margin-top:2rem;max-width:640px">Public-record compilation — not an endorsement. ' +
     'Compiled by Vesta from public records and publicly posted reviews; the “What homeowners say” summaries are ' +
@@ -325,6 +385,18 @@ function shell({ title, description, canonical, headExtra, body }) {
       '.spec-row{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.55rem 0 .2rem}' +
       '.spec-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;color:var(--vdim);margin-right:.15rem}' +
       '.spec{font-size:.74rem;padding:.16rem .5rem;border:1px solid var(--line,rgba(74,75,47,.2));border-radius:999px;color:var(--vmut,#4a4b2f);background:rgba(212,223,158,.1)}' +
+      // M2 cost guide (#cost section)
+      '.cost-guide{margin:2.6rem 0 .5rem;padding-top:1.9rem;border-top:1px solid var(--line,rgba(74,75,47,.16));scroll-margin-top:1.5rem}' +
+      '.cg-typical{font-size:.98rem;line-height:1.7;color:var(--vink,#12100e);max-width:64ch;margin:.2rem 0 1.3rem}' +
+      '.cg-table{display:grid;gap:0;border:1px solid var(--line,rgba(74,75,47,.16));border-radius:14px;overflow:hidden}' +
+      '.cg-row{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-areas:"job range" "note note";gap:.18rem .9rem;padding:.85rem 1.1rem;background:rgba(255,255,255,.5);border-top:1px solid var(--line,rgba(74,75,47,.1))}' +
+      '.cg-row:first-child{border-top:0}' +
+      '.cg-job{grid-area:job;font-weight:600;font-size:.92rem;color:var(--vink,#12100e);line-height:1.35}' +
+      '.cg-range{grid-area:range;font-family:var(--mono);font-size:.88rem;font-weight:500;color:var(--vgreen-2,#4a4b2f);text-align:right;white-space:nowrap}' +
+      '.cg-note{grid-area:note;font-size:.82rem;line-height:1.5;color:var(--vmut,#4a4b2f)}' +
+      '.cg-factors{font-size:.88rem;line-height:1.6;color:var(--vmut,#4a4b2f);max-width:64ch;margin:1.2rem 0 .8rem}' +
+      '.cg-flbl{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;color:var(--vdim);margin-bottom:.25rem}' +
+      '.cg-method{font-size:.78rem;line-height:1.55;color:var(--vdim);max-width:64ch;margin:0}' +
     '</style>\n' +
     (headExtra || '') + '\n' +
     '<script src="/home.js" defer></script>\n' +
@@ -424,6 +496,7 @@ export function renderDirectoryHTML(trade, rows) {
     marketBar(rows, trade) +
     criteriaExplainer(trade) +
     '<div class="grid" style="margin-top:1rem">' + rows.map((p) => card(p, trade)).join('') + '</div>' +
+    costSection(trade) +
     disclosure() +
   '</section>';
 

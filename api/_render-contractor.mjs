@@ -18,7 +18,7 @@
 // the live public view. api/contractor.mjs fetches the row and calls
 // renderContractorHTML.
 
-import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml, ORG_ID, WEBSITE_ID, publisherNodes } from './_render-directory.mjs';
+import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml, ORG_ID, WEBSITE_ID, publisherNodes, COST_GUIDE } from './_render-directory.mjs';
 
 // --- the public-view read (mirror of the old contractor.html client fetch) ---
 export const PROFILE_SELECT =
@@ -188,6 +188,28 @@ function hiringGuideBlock(trade) {
     '<p class="note" style="margin-top:-.2rem">Vesta’s plain checklist for ' + esc(TRADE_PROS[trade] || 'this trade') +
     '. General guidance about the trade — not a claim about this business.</p>' +
     '<div class="vangles">' + rows + '</div>';
+}
+
+// M2 — compact cost line. Trade-level editorial (like the hiring guide, about NO
+// business): the typical Fairfield County range + a deep-link to the full
+// breakdown at /fairfield-county/<trade>#cost. Mirrors the directory's cost data
+// from the single shared COST_GUIDE source. Frames as a planning range, never
+// this firm's prices. Renders nothing for a trade with no cost entry.
+function costLineBlock(trade) {
+  const g = COST_GUIDE[trade];
+  if (!g || !Array.isArray(g.rows) || !g.rows.length) return '';
+  const tl = tLowerOf(trade);
+  const top = g.rows[0];
+  return '<section class="cost-line" aria-label="What ' + esc(tl) + ' costs in ' + COUNTY + '">' +
+    '<h2 class="section-h">What ' + esc(tl) + ' costs in ' + COUNTY + '</h2>' +
+    '<p class="note" style="margin-top:-.2rem">A planning range for the trade across ' + COUNTY +
+      ' — general guidance, not a quote from this business.</p>' +
+    '<div class="cl-card">' +
+      '<div class="cl-row"><span class="cl-job">' + esc(top.job) + '</span><span class="cl-range">' + esc(top.range) + '</span></div>' +
+      '<p class="cl-note">' + esc(g.typical) + '</p>' +
+      '<a class="cl-link" href="/fairfield-county/' + trade + '#cost">See the full ' + esc(tl) + ' cost breakdown for ' + COUNTY + ' →</a>' +
+    '</div>' +
+  '</section>';
 }
 
 // Verified by Vesta (M3 centerpiece + inline M7) — promotes the actually-verified
@@ -432,6 +454,14 @@ const ATLAS_MOMENT_CSS =
   '.vverify .vv-check{flex:none;display:inline-flex;align-items:center;justify-content:center;width:1.15rem;height:1.15rem;margin-top:.04rem;border-radius:999px;background:var(--vgreen-2,#4a4b2f);color:#fff;font-size:.7rem;font-weight:700}' +
   '.vverify .vv-what{font-size:.85rem;line-height:1.55;color:var(--vmut,rgba(18,16,14,.7));margin:.5rem 0 .55rem}' +
   '.vverify .vv-src{font-family:var(--mono);font-size:.66rem;letter-spacing:.03em;color:var(--vdim,rgba(18,16,14,.5));line-height:1.45}' +
+  '.cost-line{margin:1.6rem 0 .5rem}' +
+  '.cost-line .cl-card{border:1px solid var(--line,rgba(18,16,14,.12));border-radius:16px;padding:1.1rem 1.2rem;background:var(--vcard,rgba(74,75,47,.035));margin-top:.7rem}' +
+  '.cost-line .cl-row{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.5rem}' +
+  '.cost-line .cl-job{font-weight:600;font-size:.95rem;color:var(--vink,#12100e);line-height:1.3}' +
+  '.cost-line .cl-range{font-family:var(--mono);font-size:.92rem;font-weight:500;color:var(--vgreen-2,#4a4b2f);white-space:nowrap}' +
+  '.cost-line .cl-note{font-size:.85rem;line-height:1.6;color:var(--vmut,rgba(18,16,14,.7));margin:0 0 .85rem;max-width:64ch}' +
+  '.cost-line .cl-link{font-size:.82rem;font-weight:500;color:var(--vgreen-2,#4a4b2f);text-decoration:none}' +
+  '.cost-line .cl-link:hover{text-decoration:underline}' +
   '</style>';
 
 function shell({ title, description, canonical, indexable, jsonld, body }) {
@@ -528,6 +558,7 @@ export function renderContractorHTML(enr, siblings = []) {
     vestaReadBlock(enr, trade) +
     homeownersBlock(enr) +
     hiringGuideBlock(trade) +
+    costLineBlock(trade) +
     '<div class="cp-gref">' + GOOGLE_MOUNT + '</div>' +
     CONTACT_MOUNT +
     claimBlock(enr) +
