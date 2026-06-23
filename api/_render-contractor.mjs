@@ -157,7 +157,6 @@ function homeownersBlock(enr) {
     const analyzed = monthYear(enr.enriched_at);
     html += '<div class="card-block"><p style="font-size:.96rem;line-height:1.7">' + esc(enr.synthesis) + '</p>' +
       '<p class="fine" style="margin-top:.9rem">Summarized by Vesta from ' +
-      (enr.synthesis_review_count ? esc(enr.synthesis_review_count) + ' ' : '') +
       'public reviews' + (analyzed ? ' · analyzed ' + esc(analyzed) : '') +
       ' — Vesta’s own wording, not the business’s, and never a copy of any single review.</p></div>';
   }
