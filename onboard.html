@@ -75,6 +75,14 @@ nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;just
 .add-job:disabled{opacity:.45;cursor:not-allowed}
 .add-job .plus{font-size:.95rem;line-height:1}
 @media(max-width:640px){.job-row{grid-template-columns:1fr 1fr}.job-row .rm{grid-column:1 / -1;justify-self:end;padding:.45rem .9rem}}
+.gbp-opts{display:flex;flex-direction:column;gap:.55rem}
+.gbp-opt{display:flex;align-items:flex-start;gap:.7rem;padding:.85rem 1rem;border:1px solid var(--line);border-radius:10px;background:var(--cream);cursor:pointer;transition:border-color .15s,background .15s}
+.gbp-opt:hover{border-color:var(--ink)}
+.gbp-opt input{margin-top:.2rem;accent-color:var(--orange);width:1rem;height:1rem;flex:none}
+.gbp-opt:has(input:checked){border-color:var(--orange);background:#fff;box-shadow:0 0 0 3px rgba(30,102,66,.08)}
+.gbp-opt-t{display:flex;flex-direction:column;gap:.15rem;line-height:1.3}
+.gbp-opt-t strong{font-weight:600}
+.gbp-opt-t em{font-style:normal;color:var(--dim);font-size:.88rem}
 
 .form-row{margin-bottom:1.1rem}
 .form-row.row-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
@@ -249,9 +257,20 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
       </div>
     </div>
 
+    <!-- ── Google Business Profile autopilot (optional · never blocks submit) ── -->
+    <div class="group">
+      <div class="group-tag"><span class="num">06</span> Google Business Profile <span class="opt" style="text-transform:none;letter-spacing:0;color:var(--dim);font-family:var(--body);font-style:italic">— optional, set up anytime</span></div>
+      <p class="form-hint" style="margin-top:0;margin-bottom:.9rem">Add us as a manager and your AI keeps your Google profile working for you — posting weekly in your voice and replying to new reviews within a day. To turn it on, add <strong>andrew@4thwall.solutions</strong> as a Manager (<a href="https://support.google.com/business/answer/3403100" target="_blank" rel="noopener">how to add a manager</a>), then tell us where you're at:</p>
+      <div class="gbp-opts" id="gbpOpts">
+        <label class="gbp-opt"><input type="radio" name="gbp_access_status" value="granted"> <span class="gbp-opt-t"><strong>Done — I added them</strong><em>We'll connect you and switch on autopilot.</em></span></label>
+        <label class="gbp-opt"><input type="radio" name="gbp_access_status" value="later"> <span class="gbp-opt-t"><strong>I'll do it later</strong><em>We'll send a quick reminder with the steps.</em></span></label>
+        <label class="gbp-opt"><input type="radio" name="gbp_access_status" value="declined"> <span class="gbp-opt-t"><strong>Not interested yet</strong><em>Skip it — you can turn it on anytime.</em></span></label>
+      </div>
+    </div>
+
     <!-- ── Trade-specific fields (declarative — rendered from the active trade's data; empty for all trades today) ── -->
     <div class="group" id="extraGroup" style="display:none">
-      <div class="group-tag"><span class="num">06</span> <span id="extraGroupTitle">A few trade specifics</span></div>
+      <div class="group-tag"><span class="num">07</span> <span id="extraGroupTitle">A few trade specifics</span></div>
       <div class="extra-fields" id="extraFields"></div>
     </div>
 
@@ -522,6 +541,10 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     Object.keys(c).forEach(function(k){ if (!c[k]) delete c[k]; });
     var pricing = buildPricing();
     if (Object.keys(pricing).length) c.pricing_data = pricing;
+    // GBP autopilot — optional offer, never blocks submit. Only sent when the
+    // operator picks an option; drives the post-signup access chase.
+    var gbp = form.querySelector('input[name="gbp_access_status"]:checked');
+    if (gbp) c.gbp_access_status = gbp.value;
     // Trade-specific extra fields (declarative; none today). Each one, when
     // introduced, must also be allow-listed in the worker's config-validate.
     form.querySelectorAll('#extraFields [name]').forEach(function(el){
