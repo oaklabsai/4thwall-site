@@ -189,8 +189,8 @@ export function criteriaExplainer(trade) {
           'maker grants and can revoke, and which often unlocks longer workmanship warranties.</dd>' +
         '<dt>What homeowners say</dt>' +
         '<dd>A plain-English summary Vesta writes from public reviews and verified public records — Vesta’s ' +
-          'own wording, never a copy of any single review, and always positive-or-silent. Vesta never publishes ' +
-          'raw star ratings or review counts.</dd>' +
+          'own wording, never a copy of any single review, and always positive-or-silent. Vesta shows how many ' +
+          'public reviews a business has, but never the raw star average — the summary is the read, not a score.</dd>' +
       '</dl>' +
       '<p class="vx-foot">Every mark states the standard it meets and the public record it’s checked against. ' +
         'That is the whole point — a badge means nothing unless you can see its criterion.</p>' +

@@ -8,8 +8,9 @@
 // gets answered from).
 //
 // THE MOAT LINE (vouch-don't-expose): every field here comes from the PUBLIC
-// view (profile_enrichment_public). Raw rating / rating_count NEVER appear, and
-// there is NO aggregateRating markup. The live Google block (rating, category,
+// view (profile_enrichment_public). The raw star average (rating) NEVER appears
+// and there is NO aggregateRating markup; the total review COUNT (rating_count)
+// IS shown as a credibility signal — count yes, score no. The live Google block (rating, category,
 // Maps link) and the gated contact details are injected CLIENT-side by
 // /profile.js — deliberately ABSENT from this crawlable HTML (the live-Google
 // block needs the "Powered by Google" logo; contact is PII behind sign-in).
@@ -23,8 +24,8 @@ import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml, ORG_ID, WEBSI
 // --- the public-view read (mirror of the old contractor.html client fetch) ---
 export const PROFILE_SELECT =
   'place_id,business_name,city,zip,trade,registered,hic_issue_date,trade_license,' +
-  'certifications,synthesis,synthesis_review_count,signature,known_for,specialties,' +
-  'service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,enriched_at,index_status';
+  'certifications,synthesis,signature,known_for,specialties,' +
+  'service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,rating_count,enriched_at,index_status';
 export const profileQuery = (placeId) =>
   '/profile_enrichment_public?place_id=eq.' + encodeURIComponent(placeId) +
   '&limit=1&select=' + PROFILE_SELECT;
@@ -153,6 +154,11 @@ function homeownersBlock(enr) {
   const hasKnown = Array.isArray(enr && enr.known_for) && enr.known_for.length;
   if (!enr || (!enr.synthesis && !hasKnown)) return '';
   let html = '<h2 class="section-h">What homeowners say</h2>';
+  const total = Number(enr.rating_count) || 0;
+  if (total > 0) {
+    html += '<p class="hw-count"><strong>' + esc(total.toLocaleString('en-US')) +
+      '</strong> public reviews on record</p>';
+  }
   if (enr.synthesis) {
     const analyzed = monthYear(enr.enriched_at);
     html += '<div class="card-block"><p style="font-size:.96rem;line-height:1.7">' + esc(enr.synthesis) + '</p>' +
@@ -406,6 +412,8 @@ function profileJsonLd(enr, trade, label, canonical) {
 
 const ATLAS_MOMENT_CSS =
   '<style>' +
+  '.hw-count{font-family:var(--mono,inherit);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--vmut,#6b654b);margin:.1rem 0 1rem}' +
+  '.hw-count strong{font-family:var(--display,inherit);font-size:1.15rem;font-weight:600;letter-spacing:-.01em;color:var(--vink,#5C5346)}' +
   '.atlas-moment{--a-bg:#191712;--a-bg2:#211e16;--a-line:rgba(222,206,164,.18);--a-sand:#dcceaa;--a-sand-2:#ece2c8;--a-mut:rgba(236,226,200,.6);position:relative;margin:2.4rem 0 1rem;padding:clamp(1.6rem,3.6vw,2.5rem);background:radial-gradient(620px 320px at 86% -120px,rgba(222,206,164,.12),transparent 60%),linear-gradient(180deg,var(--a-bg2),var(--a-bg));border:1px solid var(--a-line);border-radius:24px;box-shadow:0 44px 96px -52px rgba(0,0,0,.92)}' +
   '.atlas-moment .am-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--a-sand);margin-bottom:.7rem}' +
   '.atlas-moment .am-h{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.05rem);font-weight:500;letter-spacing:-.02em;color:var(--vcream);line-height:1.14}' +
