@@ -173,6 +173,67 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
       </div>
     </div>
 
+    <!-- ── Hours & after-hours ── -->
+    <div class="group">
+      <div class="group-tag"><span class="num">04</span> Hours &amp; after-hours <span class="opt" style="text-transform:none;letter-spacing:0;color:var(--dim);font-family:var(--body);font-style:italic">— so your AI answers "are you open?" right</span></div>
+      <div class="form-row">
+        <label class="form-label" for="f-hours">Business hours <span class="opt">optional</span></label>
+        <input class="form-input" id="f-hours" name="business_hours" type="text" placeholder="Mon–Fri 7am–6pm, Sat 8am–2pm, closed Sunday" maxlength="300">
+        <p class="form-hint">Your AI quotes these exactly when customers ask if you're open.</p>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="f-afterhours">After-hours &amp; emergencies <span class="opt">optional</span></label>
+        <textarea class="form-textarea" id="f-afterhours" name="after_hours_policy" placeholder="e.g. 'For an after-hours emergency, take their info and tell them I'll call back within the hour. For anything routine, offer to book the next morning.'" maxlength="600"></textarea>
+        <p class="form-hint">What should your AI do when someone texts at 2am? This is how you win (or lose) emergency jobs.</p>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="f-escalation">When to reach you <span class="opt">optional</span></label>
+        <textarea class="form-textarea" id="f-escalation" name="escalation_rule" placeholder="e.g. 'Text me right away for any job over $10k, any complaint, or anything urgent. Everything else can wait for my morning summary.'" maxlength="600"></textarea>
+        <p class="form-hint">Your AI uses this to decide when to pull you in vs. handle it solo.</p>
+      </div>
+    </div>
+
+    <!-- ── Pricing (so the AI can answer "how much?") ── -->
+    <div class="group">
+      <div class="group-tag"><span class="num">05</span> Pricing <span class="opt" style="text-transform:none;letter-spacing:0;color:var(--dim);font-family:var(--body);font-style:italic">— optional, but it's the #1 question customers ask</span></div>
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-servicecall">Service call / trip fee <span class="opt">optional</span></label>
+          <input class="form-input" id="f-servicecall" name="p_service_call" type="text" placeholder="$89, waived if you book" maxlength="200">
+        </div>
+        <div>
+          <label class="form-label" for="f-estimates">Estimates <span class="opt">optional</span></label>
+          <input class="form-input" id="f-estimates" name="p_estimates" type="text" placeholder="Free, no obligation" maxlength="200">
+        </div>
+      </div>
+      <div class="form-row row-pair">
+        <div>
+          <label class="form-label" for="f-payment">Payment methods <span class="opt">optional</span></label>
+          <input class="form-input" id="f-payment" name="p_payment" type="text" placeholder="Cash, card, check, financing" maxlength="200">
+        </div>
+        <div>
+          <label class="form-label" for="f-afterhrsprice">After-hours pricing <span class="opt">optional</span></label>
+          <input class="form-input" id="f-afterhrsprice" name="p_after_hours" type="text" placeholder="1.5x rate after 6pm &amp; weekends" maxlength="200">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Common jobs &amp; price ranges <span class="opt">optional · add up to 3</span></label>
+        <p class="form-hint" style="margin-top:0;margin-bottom:.5rem">Give the AI real ranges so it can answer "ballpark?" confidently. Always sent as a range, never an exact quote.</p>
+        <div class="form-row row-pair" style="margin-bottom:.6rem">
+          <input class="form-input" name="j_name_1" type="text" placeholder="AC tune-up" maxlength="120">
+          <input class="form-input" name="j_range_1" type="text" placeholder="$120–$180" maxlength="80">
+        </div>
+        <div class="form-row row-pair" style="margin-bottom:.6rem">
+          <input class="form-input" name="j_name_2" type="text" placeholder="Water heater install" maxlength="120">
+          <input class="form-input" name="j_range_2" type="text" placeholder="$1,800–$3,200" maxlength="80">
+        </div>
+        <div class="form-row row-pair">
+          <input class="form-input" name="j_name_3" type="text" placeholder="Drain cleaning" maxlength="120">
+          <input class="form-input" name="j_range_3" type="text" placeholder="$150–$350" maxlength="80">
+        </div>
+      </div>
+    </div>
+
     <div class="submit-row">
       <span class="submit-status" id="submitStatus"></span>
       <button type="submit" class="btn btn-orange" id="submitBtn">Activate my AI <span>→</span></button>
@@ -236,6 +297,20 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
   form.addEventListener('input', function(e){ if (e.target.classList) e.target.classList.remove('is-invalid'); });
 
   function v(name){ var el = form.querySelector('[name="'+name+'"]'); return el ? (el.value||'').trim() : ''; }
+  function buildPricing(){
+    var p = {};
+    var sc = v('p_service_call'); if (sc) p.service_call = sc;
+    var es = v('p_estimates');    if (es) p.estimates    = es;
+    var pm = v('p_payment');      if (pm) p.payment      = pm;
+    var ah = v('p_after_hours');  if (ah) p.after_hours  = ah;
+    var jobs = [];
+    for (var i=1; i<=3; i++){
+      var n = v('j_name_'+i), r = v('j_range_'+i);
+      if (n && r) jobs.push({ name:n, range:r });
+    }
+    if (jobs.length) p.jobs = jobs;
+    return p;
+  }
   function buildConfig(){
     var c = {
       booking_link:            v('booking_link'),
@@ -244,9 +319,14 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
       current_offer:           v('current_offer'),
       bot_custom_instructions: v('bot_custom_instructions'),
       license_number:          v('license_number'),
-      financing_details:       v('financing_details')
+      financing_details:       v('financing_details'),
+      business_hours:          v('business_hours'),
+      after_hours_policy:      v('after_hours_policy'),
+      escalation_rule:         v('escalation_rule')
     };
     Object.keys(c).forEach(function(k){ if (!c[k]) delete c[k]; });
+    var pricing = buildPricing();
+    if (Object.keys(pricing).length) c.pricing_data = pricing;
     return c;
   }
   function setStatus(t, cls){ submitStatus.textContent = t||''; submitStatus.className = 'submit-status' + (cls?' '+cls:''); }
