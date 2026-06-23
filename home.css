@@ -552,6 +552,35 @@ body.v-shell .searchbar{max-width:600px}
 .vpub .gsrc{font-family:var(--mono);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim)}
 .vattr{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim);margin:.7rem 0 0}
 
+/* ── Work-photo gallery (/c/ deep profile, directly under the name) ──
+   Client-filled by profile.js. Mobile = scroll-snap swipe (next photo peeks);
+   desktop ≥720px = a 1-big-+-4 grid. Empty mount collapses to nothing. */
+.cp-photos:empty{display:none}
+.cp-photos{margin:1.1rem 0 .2rem;max-width:var(--max,920px)}
+.cp-ph-track{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+.cp-ph-track::-webkit-scrollbar{display:none}
+.cp-ph{position:relative;flex:0 0 86%;scroll-snap-align:center;aspect-ratio:4/3;padding:0;border:none;border-radius:14px;overflow:hidden;cursor:pointer;background:var(--vgreen-soft,#e7e3d8)}
+.cp-ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.cp-ph:hover img{transform:scale(1.03)}
+.cp-ph-more{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(33,30,22,.5);color:#F0F2EF;font-family:var(--display,serif);font-size:1.1rem;letter-spacing:-.01em}
+.cp-ph-src{display:flex;align-items:center;gap:.4rem;margin:.55rem 0 0;font-size:.74rem;color:var(--vdim)}
+.cp-ph-src .cp-ph-count{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vmut)}
+@media(min-width:720px){
+  .cp-ph-track{display:grid;grid-template-columns:1.55fr 1fr 1fr;grid-auto-rows:1fr;gap:8px;overflow:visible;height:300px}
+  .cp-ph{flex:none;aspect-ratio:auto;height:100%}
+  .cp-ph:first-child{grid-row:span 2}
+  .cp-ph:nth-child(n+6){display:none}
+}
+/* lightbox */
+.cp-lb{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:rgba(20,18,14,.92);padding:clamp(1rem,4vw,3rem)}
+.cp-lb-fig{margin:0;max-width:min(1100px,92vw);max-height:88vh;display:flex;flex-direction:column;align-items:center;gap:.7rem}
+.cp-lb-fig img{max-width:100%;max-height:80vh;object-fit:contain;border-radius:10px;background:#211e16}
+.cp-lb-fig figcaption{font-size:.78rem;color:rgba(240,242,239,.72);font-family:var(--mono);letter-spacing:.02em}
+.cp-lb-x{position:absolute;top:1rem;right:1.1rem;width:42px;height:42px;border-radius:50%;border:none;background:rgba(240,242,239,.12);color:#F0F2EF;font-size:1.1rem;cursor:pointer}
+.cp-lb-nav{flex:none;width:48px;height:48px;border-radius:50%;border:none;background:rgba(240,242,239,.12);color:#F0F2EF;font-size:1.7rem;line-height:1;cursor:pointer;margin:0 .4rem}
+.cp-lb-x:hover,.cp-lb-nav:hover{background:rgba(240,242,239,.22)}
+@media(max-width:560px){.cp-lb-nav{position:absolute;bottom:1.2rem}.cp-lb-prev{left:30%}.cp-lb-next{right:30%}}
+
 /* ── Vesta-analyzed tier (search + directory) ──
    A public-record analysis: state registration, licensing, manufacturer certs,
    and a plain read of the reviews. Deliberately cream/muted — a step BELOW the

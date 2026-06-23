@@ -553,6 +553,11 @@ export function renderContractorHTML(enr, siblings = []) {
       '<h1 class="page-h">' + esc(enr.business_name) + '</h1>' +
       '<p class="page-sub">' + (label ? esc(label) + ' · ' : '') + esc((enr.city || COUNTY) + ', CT') + '</p>' +
       '<div class="badges"><span class="badge plain">◆ Vesta-analyzed from public records</span></div>' +
+      // Work-photo gallery — directly under the name (Drew, 2026-06-23: "the main
+      // pieces should be practical … the images"). Filled CLIENT-side by /profile.js
+      // (live Google photos, show-don't-store) + any contractor-uploaded photos.
+      // Absent/empty → collapses to nothing (the empty-state default).
+      '<div id="cp-photos" data-mount="photos" class="cp-photos"></div>' +
       '<div style="margin:1.1rem 0 .2rem"><a class="pill pill-orange" href="' + reqHref + '">Request through Vesta <span class="arr">→</span></a></div>' +
       '<p class="fine">One form — Vesta carries your request to them, replies come straight to you.</p>' +
       '<p class="note">Vesta built this profile from public records and homeowner reviews — an independent read, not a paid placement. ' +

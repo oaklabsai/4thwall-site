@@ -28,10 +28,82 @@
     const p = data.place || {};
     let unlocked = data.unlocked || null;
 
+    renderPhotos(p.photos);
     renderGoogle(p);
     renderContact();
     wireClaim();
     if (data.claimed) markClaimed();
+
+    // 0. Work photos — the gallery directly under the name. Live Google photos
+    // (show-don't-store: each <img> hits the /photo proxy, which resolves the ref
+    // to a fresh Google CDN URL at display; bytes never touch us). Desktop = a
+    // 1-big-+-4 grid; mobile = a scroll-snap swipe. Absent/empty → collapses.
+    function photoUrl(ref, w) {
+      return HOME.apiUrl('/photo?ref=' + encodeURIComponent(ref) + '&w=' + w);
+    }
+    function renderPhotos(photos) {
+      const mount = document.getElementById('cp-photos');
+      if (!mount) return;
+      const list = (Array.isArray(photos) ? photos : []).filter((x) => x && x.ref);
+      if (!list.length) { mount.innerHTML = ''; return; }
+      const MAX = 5;
+      const shown = list.slice(0, MAX);
+      const extra = list.length - shown.length;
+      const tiles = shown.map((p, i) => {
+        const more = (extra > 0 && i === shown.length - 1)
+          ? '<span class="cp-ph-more">+' + extra + ' more</span>' : '';
+        return '<button class="cp-ph" type="button" data-i="' + i + '" ' +
+          'aria-label="View work photo ' + (i + 1) + ' of ' + list.length + '">' +
+          '<img src="' + esc(photoUrl(p.ref, 800)) + '" ' +
+            'loading="' + (i === 0 ? 'eager' : 'lazy') + '" decoding="async" ' +
+            'alt="Work photo' + (p.attribution ? ' by ' + esc(p.attribution) : '') + '" ' +
+            'onerror="this.closest(\'.cp-ph\').remove()">' + more + '</button>';
+      }).join('');
+      mount.innerHTML =
+        '<div class="cp-ph-track">' + tiles + '</div>' +
+        '<p class="cp-ph-src"><span class="cp-ph-count">' + list.length + ' photo' +
+          (list.length > 1 ? 's' : '') + '</span> · ' +
+          '<img src="/powered-by-google.png" alt="from Google" height="12" ' +
+            'style="vertical-align:middle;opacity:.85" ' +
+            'onerror="this.replaceWith(document.createTextNode(\'from Google\'))"></p>';
+      const track = mount.querySelector('.cp-ph-track');
+      if (track) track.addEventListener('click', (e) => {
+        const btn = e.target.closest('.cp-ph');
+        if (btn) openLightbox(list, Number(btn.getAttribute('data-i')) || 0);
+      });
+    }
+    function openLightbox(list, start) {
+      let idx = start;
+      const ov = document.createElement('div');
+      ov.className = 'cp-lb';
+      ov.innerHTML =
+        '<button class="cp-lb-x" type="button" aria-label="Close">✕</button>' +
+        '<button class="cp-lb-nav cp-lb-prev" type="button" aria-label="Previous photo">‹</button>' +
+        '<figure class="cp-lb-fig"><img alt=""><figcaption></figcaption></figure>' +
+        '<button class="cp-lb-nav cp-lb-next" type="button" aria-label="Next photo">›</button>';
+      document.body.appendChild(ov);
+      const img = ov.querySelector('img');
+      const cap = ov.querySelector('figcaption');
+      const show = () => {
+        const p = list[idx];
+        img.src = photoUrl(p.ref, 1400);
+        cap.textContent = 'Photo via Google' + (p.attribution ? ' · ' + p.attribution : '') +
+          '  (' + (idx + 1) + '/' + list.length + ')';
+      };
+      const close = () => { ov.remove(); document.removeEventListener('keydown', onKey); };
+      const go = (d) => { idx = (idx + d + list.length) % list.length; show(); };
+      ov.querySelector('.cp-lb-x').onclick = close;
+      ov.querySelector('.cp-lb-prev').onclick = () => go(-1);
+      ov.querySelector('.cp-lb-next').onclick = () => go(1);
+      ov.addEventListener('click', (e) => { if (e.target === ov) close(); });
+      function onKey(e) {
+        if (e.key === 'Escape') close();
+        else if (e.key === 'ArrowLeft') go(-1);
+        else if (e.key === 'ArrowRight') go(1);
+      }
+      document.addEventListener('keydown', onKey);
+      show();
+    }
 
     // 1. Google — a one-line reference footnote + required attribution. ------
     function renderGoogle(pl) {

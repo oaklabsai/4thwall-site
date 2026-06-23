@@ -16,6 +16,8 @@
     TRADES: ['roofing','hvac','plumbing','electrical','paving','lawn_care','painting','masonry'],
 
     token(){ try { return localStorage.getItem(TOKEN_KEY) || null; } catch(_) { return null; } },
+    // Absolute edge-fn URL for a path — for <img src> / hrefs that can't go through api().
+    apiUrl(path){ return API + path; },
     setToken(t){ try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch(_){} },
     setNext(url){ try { sessionStorage.setItem(NEXT_KEY, url); } catch(_){} },
     takeNext(){
