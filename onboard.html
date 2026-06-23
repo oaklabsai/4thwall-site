@@ -59,6 +59,14 @@ nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;just
 .group-tag .num{color:var(--ink);font-weight:600}
 .group{margin-bottom:1.6rem}
 
+.trade-pick{margin-bottom:1.8rem;padding-bottom:1.6rem;border-bottom:1px solid var(--line)}
+.trade-pick-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:.7rem}
+.trade-pills{display:flex;flex-wrap:wrap;gap:.5rem}
+.trade-pill{padding:.5rem .95rem;border:1px solid var(--line);border-radius:999px;background:var(--cream);font-family:var(--body);font-size:.84rem;font-weight:500;color:var(--muted);transition:border-color .15s,background .15s,color .15s}
+.trade-pill:hover{border-color:var(--ink);color:var(--ink)}
+.trade-pill.is-active{background:var(--orange);border-color:var(--orange);color:#fff}
+.extra-fields:empty{display:none}
+
 .form-row{margin-bottom:1.1rem}
 .form-row.row-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 @media(max-width:640px){.form-row.row-pair{grid-template-columns:1fr}}
@@ -110,7 +118,7 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
   <span class="hero-greeting" id="heroGreeting">Almost there.</span>
   <div class="eyebrow">Finish your setup · ~2 minutes</div>
   <h1 class="hero-h" id="heroH">A few last things only <em>you</em> can give us.</h1>
-  <p class="hero-sub">We've already set up the rest from your call with Andrew. These are the live links and the voice that have to come straight from you. When you submit, <strong>Andrew verifies and activates within 48 hours.</strong></p>
+  <p class="hero-sub" id="heroSub">This is everything your AI needs to sound like you and answer like you — booking, pricing, hours, and voice. Fill in what you know; skip what you don't. When you submit, <strong>Andrew verifies and activates within 48 hours.</strong></p>
 </header>
 
 <section class="form-section">
@@ -120,6 +128,14 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
   </div>
 
   <form class="form-card" id="onboardForm" autocomplete="off" novalidate>
+
+    <input type="hidden" id="f-trade" name="trade_type" value="">
+
+    <!-- ── Trade picker (sets the form's language; corrected trade flows back on submit) ── -->
+    <div class="trade-pick">
+      <div class="trade-pick-label">Trade</div>
+      <div class="trade-pills" id="tradePills"></div>
+    </div>
 
     <!-- ── Booking + reviews (required) ── -->
     <div class="group">
@@ -234,6 +250,12 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
       </div>
     </div>
 
+    <!-- ── Trade-specific fields (declarative — rendered from the active trade's data; empty for all trades today) ── -->
+    <div class="group" id="extraGroup" style="display:none">
+      <div class="group-tag"><span class="num">06</span> <span id="extraGroupTitle">A few trade specifics</span></div>
+      <div class="extra-fields" id="extraFields"></div>
+    </div>
+
     <div class="submit-row">
       <span class="submit-status" id="submitStatus"></span>
       <button type="submit" class="btn btn-orange" id="submitBtn">Activate my AI <span>→</span></button>
@@ -281,6 +303,149 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
   }
   if (preBusiness){ heroGreeting.textContent = 'Almost there, ' + preBusiness + '.'; }
 
+  // ── Trade-adaptive surface ──────────────────────────────────────────────
+  // One form, one set of fields, one destination. The trade only swaps the
+  // EXAMPLE text (placeholders) so the form speaks the client's language — it
+  // never adds, removes, or PRE-FILLS a field. Real CT-market example ranges
+  // (seeded from the Vesta directory) stay as grey placeholders so nothing
+  // false is ever submitted as the client's own number.
+  var TRADES = {
+    roofing: {
+      offer:       'Free roof inspection — no obligation',
+      serviceCall: 'Free inspections',
+      afterHours:  "Storm damage after hours — get their address and photos, tell them I'll call back within the hour. Routine quotes can book the next morning.",
+      escalation:  "Text me right away for any storm/insurance job or an active leak. Routine quotes can wait for my morning summary.",
+      jobs: [['Roof replacement','$8,000–$18,000'], ['Leak repair','$350–$900'], ['Gutter install','$1,200–$3,000']]
+    },
+    hvac: {
+      offer:       '$59 A/C tune-up',
+      serviceCall: '$89 diagnostic, waived if you book',
+      afterHours:  "No heat or no A/C is an emergency — take their info and reach me tonight. Anything routine can book the next morning.",
+      escalation:  "Text me for any no-heat / no-cool call or any job over $5k. Everything else waits for my morning summary.",
+      jobs: [['A/C tune-up','$89–$150'], ['Furnace install','$4,000–$7,000'], ['No-cool diagnostic','$99–$150']]
+    },
+    plumbing: {
+      offer:       'Free estimate — no trip charge',
+      serviceCall: '$49 trip fee, waived with repair',
+      afterHours:  "Burst pipe or flooding is an emergency — dispatch tonight. A slow drain can book tomorrow.",
+      escalation:  "Text me for any water emergency or job over $3k. Routine work waits for my morning summary.",
+      jobs: [['Water heater install','$1,800–$3,200'], ['Drain cleaning','$150–$350'], ['Burst pipe repair','$400–$1,200']]
+    },
+    electrical: {
+      offer:       'Free estimate on panel upgrades',
+      serviceCall: '$99 diagnostic, applied to the repair',
+      afterHours:  "No power or a burning smell is an emergency — reach me tonight. A dead outlet can wait for morning.",
+      escalation:  "Text me for any power outage, burning smell, or job over $4k. Routine work waits for the summary.",
+      jobs: [['Panel upgrade','$2,000–$4,500'], ['EV charger install','$800–$2,000'], ['Outlet / switch repair','$150–$350']]
+    },
+    paving: {
+      offer:       'Free driveway estimate',
+      serviceCall: 'Free estimates',
+      afterHours:  "After-hours requests can wait for morning — take their info and address and I'll follow up first thing.",
+      escalation:  "Text me for any commercial job or anything over $10k. Residential quotes wait for my morning summary.",
+      jobs: [['Driveway paving','$4,000–$10,000'], ['Sealcoating','$300–$700'], ['Asphalt repair','$500–$2,000']]
+    },
+    lawn_care: {
+      offer:       'Free first mow with a season sign-up',
+      serviceCall: 'Free quotes',
+      afterHours:  "After-hours requests can wait for morning — grab their info and address and I'll follow up first thing.",
+      escalation:  "Text me for any full-property install or anything over $3k. Weekly service requests wait for the summary.",
+      jobs: [['Weekly mowing','$45–$80 / visit'], ['Spring cleanup','$300–$600'], ['Mulch install','$400–$1,200']]
+    },
+    generic: {
+      offer:       'Free estimate — no obligation',
+      serviceCall: '$89, waived if you book',
+      afterHours:  "For an after-hours emergency, take their info and tell them I'll call back within the hour. Routine can book the next morning.",
+      escalation:  "Text me right away for anything urgent, any complaint, or any big job. Everything else can wait for my morning summary.",
+      jobs: [['Most common job','$120–$180'], ['Bigger install','$1,800–$3,200'], ['Quick repair','$150–$350']]
+    }
+  };
+  // Map the many real-world trade labels onto our seeded skins.
+  var TRADE_ALIASES = {
+    roofing:'roofing', roofer:'roofing', roof:'roofing', gutters:'roofing', siding:'roofing',
+    hvac:'hvac', heating:'hvac', cooling:'hvac', 'air conditioning':'hvac', 'heating and cooling':'hvac', 'heating & cooling':'hvac',
+    plumbing:'plumbing', plumber:'plumbing', drain:'plumbing',
+    electrical:'electrical', electrician:'electrical',
+    paving:'paving', paver:'paving', asphalt:'paving', concrete:'paving', masonry:'paving', hardscape:'paving', hardscaping:'paving', driveway:'paving',
+    'lawn care':'lawn_care', lawn:'lawn_care', 'lawn_care':'lawn_care', landscaping:'lawn_care', landscaper:'lawn_care', irrigation:'lawn_care', 'snow removal':'lawn_care'
+  };
+  function resolveTrade(raw){
+    var key = (raw||'').toLowerCase().trim().replace(/[-_]+/g,' ').replace(/\s+/g,' ');
+    if (!key) return 'generic';
+    if (TRADE_ALIASES[key]) return TRADE_ALIASES[key];
+    if (TRADES[key.replace(/ /g,'_')]) return key.replace(/ /g,'_');
+    return 'generic';
+  }
+  function setPlaceholder(name, text){
+    var el = form.querySelector('[name="'+name+'"]');
+    if (el && text != null) el.setAttribute('placeholder', text);
+  }
+
+  // Declarative renderer for trade-specific EXTRA fields. Empty for every trade
+  // today. The day a trade needs a unique field, add it to that trade's
+  // `extraFields` array (and allow-list its name in the worker's config-validate)
+  // and it renders here automatically — no markup or logic changes. This is the
+  // hinge that lets structural per-trade difference happen without a rebuild.
+  var extraGroup  = document.getElementById('extraGroup');
+  var extraFields = document.getElementById('extraFields');
+  function renderExtraFields(list){
+    extraFields.innerHTML = '';
+    if (!list || !list.length){ extraGroup.style.display = 'none'; return; }
+    list.forEach(function(f){
+      var row = document.createElement('div'); row.className = 'form-row';
+      var lab = document.createElement('label'); lab.className = 'form-label'; lab.htmlFor = 'xf-'+f.name;
+      lab.innerHTML = f.label + ' <span class="opt">optional</span>';
+      var input = (f.type === 'textarea') ? document.createElement('textarea') : document.createElement('input');
+      input.className = (f.type === 'textarea') ? 'form-textarea' : 'form-input';
+      if (f.type !== 'textarea') input.type = 'text';
+      input.id = 'xf-'+f.name; input.name = f.name;
+      if (f.placeholder) input.placeholder = f.placeholder;
+      if (f.max) input.setAttribute('maxlength', String(f.max));
+      row.appendChild(lab); row.appendChild(input);
+      if (f.hint){ var h = document.createElement('p'); h.className = 'form-hint'; h.textContent = f.hint; row.appendChild(h); }
+      extraFields.appendChild(row);
+    });
+    extraGroup.style.display = '';
+  }
+
+  // ── Trade pills (operator taps at the close; ?trade= pre-selects) ──
+  var tradeHidden = document.getElementById('f-trade');
+  var tradePills  = document.getElementById('tradePills');
+  var PILLS = [['roofing','Roofing'],['hvac','HVAC'],['plumbing','Plumbing'],['electrical','Electrical'],['paving','Paving'],['lawn_care','Lawn Care'],['generic','Other']];
+
+  function applyTrade(raw){
+    var slug = resolveTrade(raw);
+    var t = TRADES[slug] || TRADES.generic;
+    // Submit the canonical slug so a CORRECTION flows back to the bot. 'Other'
+    // (generic) carries no real trade → leave empty so the server keeps the
+    // trade it already has on file from provisioning.
+    tradeHidden.value = (slug === 'generic') ? '' : slug;
+    setPlaceholder('current_offer',      t.offer);
+    setPlaceholder('p_service_call',     t.serviceCall);
+    setPlaceholder('after_hours_policy', "e.g. '" + t.afterHours + "'");
+    setPlaceholder('escalation_rule',    "e.g. '" + t.escalation + "'");
+    for (var i=0; i<3; i++){
+      if (t.jobs[i]){
+        setPlaceholder('j_name_'+(i+1),  t.jobs[i][0]);
+        setPlaceholder('j_range_'+(i+1), t.jobs[i][1]);
+      }
+    }
+    renderExtraFields(t.extraFields);
+    Array.prototype.forEach.call(tradePills.children, function(btn){
+      btn.classList.toggle('is-active', btn.getAttribute('data-slug') === slug);
+    });
+  }
+
+  PILLS.forEach(function(p){
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'trade-pill';
+    btn.setAttribute('data-slug', p[0]); btn.textContent = p[1];
+    btn.addEventListener('click', function(){ applyTrade(p[0]); });
+    tradePills.appendChild(btn);
+  });
+
+  applyTrade(url.searchParams.get('trade') || '');
+
   // ── validation ──
   function validate(){
     var firstBad = null;
@@ -327,6 +492,12 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     Object.keys(c).forEach(function(k){ if (!c[k]) delete c[k]; });
     var pricing = buildPricing();
     if (Object.keys(pricing).length) c.pricing_data = pricing;
+    // Trade-specific extra fields (declarative; none today). Each one, when
+    // introduced, must also be allow-listed in the worker's config-validate.
+    form.querySelectorAll('#extraFields [name]').forEach(function(el){
+      var val = (el.value||'').trim();
+      if (val) c[el.name] = val;
+    });
     return c;
   }
   function setStatus(t, cls){ submitStatus.textContent = t||''; submitStatus.className = 'submit-status' + (cls?' '+cls:''); }
@@ -345,6 +516,8 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
       var payload = onboardingToken
         ? { onboarding_token: onboardingToken, config: config }
         : { location_id: locationId, config: config };
+      var correctedTrade = (tradeHidden.value || '').trim();
+      if (correctedTrade) payload.trade_type = correctedTrade;
       var res = await fetch(WORKER_URL, {
         method:'POST',
         headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
