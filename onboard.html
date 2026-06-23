@@ -67,6 +67,15 @@ nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;just
 .trade-pill.is-active{background:var(--orange);border-color:var(--orange);color:#fff}
 .extra-fields:empty{display:none}
 
+.job-row{display:grid;grid-template-columns:1fr 1fr auto;gap:1rem;margin-bottom:.6rem;align-items:center}
+.job-row .rm{padding:.55rem .6rem;border:1px solid var(--line);border-radius:8px;color:var(--dim);background:var(--cream);line-height:1;font-size:1rem;transition:border-color .15s,color .15s}
+.job-row .rm:hover{border-color:var(--err-line);color:var(--err)}
+.add-job{display:inline-flex;align-items:center;gap:.45rem;margin-top:.3rem;padding:.6rem 1rem;border:1px dashed var(--line);border-radius:9px;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--cream);transition:border-color .15s,color .15s}
+.add-job:hover{border-color:var(--ink);color:var(--ink)}
+.add-job:disabled{opacity:.45;cursor:not-allowed}
+.add-job .plus{font-size:.95rem;line-height:1}
+@media(max-width:640px){.job-row{grid-template-columns:1fr 1fr}.job-row .rm{grid-column:1 / -1;justify-self:end;padding:.45rem .9rem}}
+
 .form-row{margin-bottom:1.1rem}
 .form-row.row-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 @media(max-width:640px){.form-row.row-pair{grid-template-columns:1fr}}
@@ -233,20 +242,10 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
         </div>
       </div>
       <div class="form-row">
-        <label class="form-label">Common jobs &amp; price ranges <span class="opt">optional · add up to 3</span></label>
+        <label class="form-label">Common jobs &amp; price ranges <span class="opt">optional · add as many as you offer</span></label>
         <p class="form-hint" style="margin-top:0;margin-bottom:.5rem">Give the AI real ranges so it can answer "ballpark?" confidently. Always sent as a range, never an exact quote.</p>
-        <div class="form-row row-pair" style="margin-bottom:.6rem">
-          <input class="form-input" name="j_name_1" type="text" placeholder="AC tune-up" maxlength="120">
-          <input class="form-input" name="j_range_1" type="text" placeholder="$120–$180" maxlength="80">
-        </div>
-        <div class="form-row row-pair" style="margin-bottom:.6rem">
-          <input class="form-input" name="j_name_2" type="text" placeholder="Water heater install" maxlength="120">
-          <input class="form-input" name="j_range_2" type="text" placeholder="$1,800–$3,200" maxlength="80">
-        </div>
-        <div class="form-row row-pair">
-          <input class="form-input" name="j_name_3" type="text" placeholder="Drain cleaning" maxlength="120">
-          <input class="form-input" name="j_range_3" type="text" placeholder="$150–$350" maxlength="80">
-        </div>
+        <div id="jobRows"></div>
+        <button type="button" class="add-job" id="addJob"><span class="plus">+</span> Add another job</button>
       </div>
     </div>
 
@@ -408,6 +407,33 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     extraGroup.style.display = '';
   }
 
+  // ── Common jobs: dynamic rows (these guys offer more than 3 things). The
+  // worker's validatePricingData caps the jobs array at 15, so match it here. ──
+  var MAX_JOBS  = 15;
+  var jobRows   = document.getElementById('jobRows');
+  var addJobBtn = document.getElementById('addJob');
+  function jobCount(){ return jobRows.querySelectorAll('.job-row').length; }
+  function syncJobUI(){
+    var n = jobCount();
+    addJobBtn.disabled = n >= MAX_JOBS;
+    addJobBtn.querySelector('.plus').nextSibling.textContent = n >= MAX_JOBS ? ' Max 15 jobs' : ' Add another job';
+    // No remove control when only one row remains (nothing to delete down to).
+    jobRows.querySelectorAll('.job-row .rm').forEach(function(b){ b.style.display = n > 1 ? '' : 'none'; });
+  }
+  function addJobRow(namePH, rangePH){
+    if (jobCount() >= MAX_JOBS) return null;
+    var row   = document.createElement('div'); row.className = 'job-row';
+    var name  = document.createElement('input'); name.className = 'form-input j-name'; name.type = 'text'; name.maxLength = 120; name.placeholder = namePH || 'Another service';
+    var range = document.createElement('input'); range.className = 'form-input j-range'; range.type = 'text'; range.maxLength = 80; range.placeholder = rangePH || '$X–$Y';
+    var rm    = document.createElement('button'); rm.type = 'button'; rm.className = 'rm'; rm.setAttribute('aria-label', 'Remove this job'); rm.innerHTML = '&times;';
+    rm.addEventListener('click', function(){ row.remove(); if (!jobCount()) addJobRow(); syncJobUI(); });
+    row.appendChild(name); row.appendChild(range); row.appendChild(rm);
+    jobRows.appendChild(row); syncJobUI();
+    return row;
+  }
+  addJobBtn.addEventListener('click', function(){ var r = addJobRow(); if (r) r.querySelector('.j-name').focus(); });
+  addJobRow();   // one starter row; the + adds the rest
+
   // ── Trade pills (operator taps at the close; ?trade= pre-selects) ──
   var tradeHidden = document.getElementById('f-trade');
   var tradePills  = document.getElementById('tradePills');
@@ -424,11 +450,14 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     setPlaceholder('p_service_call',     t.serviceCall);
     setPlaceholder('after_hours_policy', "e.g. '" + t.afterHours + "'");
     setPlaceholder('escalation_rule',    "e.g. '" + t.escalation + "'");
-    for (var i=0; i<3; i++){
-      if (t.jobs[i]){
-        setPlaceholder('j_name_'+(i+1),  t.jobs[i][0]);
-        setPlaceholder('j_range_'+(i+1), t.jobs[i][1]);
-      }
+    // Skin the existing example rows (those the operator hasn't typed into yet)
+    // with this trade's sample jobs. Rows the operator already filled, and any
+    // rows they added, are left untouched.
+    var rows = jobRows.querySelectorAll('.job-row');
+    for (var i=0; i<rows.length && i<t.jobs.length; i++){
+      var nm = rows[i].querySelector('.j-name'), rg = rows[i].querySelector('.j-range');
+      if (!nm.value) nm.placeholder = t.jobs[i][0];
+      if (!rg.value) rg.placeholder = t.jobs[i][1];
     }
     renderExtraFields(t.extraFields);
     Array.prototype.forEach.call(tradePills.children, function(btn){
@@ -469,11 +498,12 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     var pm = v('p_payment');      if (pm) p.payment      = pm;
     var ah = v('p_after_hours');  if (ah) p.after_hours  = ah;
     var jobs = [];
-    for (var i=1; i<=3; i++){
-      var n = v('j_name_'+i), r = v('j_range_'+i);
+    jobRows.querySelectorAll('.job-row').forEach(function(row){
+      var n = (row.querySelector('.j-name').value||'').trim();
+      var r = (row.querySelector('.j-range').value||'').trim();
       if (n && r) jobs.push({ name:n, range:r });
-    }
-    if (jobs.length) p.jobs = jobs;
+    });
+    if (jobs.length) p.jobs = jobs.slice(0, MAX_JOBS);
     return p;
   }
   function buildConfig(){
