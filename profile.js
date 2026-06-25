@@ -54,8 +54,11 @@
           ? '<span class="cp-ph-more">+' + extra + ' more</span>' : '';
         return '<button class="cp-ph" type="button" data-i="' + i + '" ' +
           'aria-label="View work photo ' + (i + 1) + ' of ' + list.length + '">' +
+          // Eager: the gallery is max-5 tiles, all above the fold on desktop —
+          // loading="lazy" never fires for in-viewport injected imgs here and
+          // left the secondary tiles blank. Eager guarantees the full grid.
           '<img src="' + esc(photoUrl(p.ref, 800)) + '" ' +
-            'loading="' + (i === 0 ? 'eager' : 'lazy') + '" decoding="async" ' +
+            'loading="eager" decoding="async" ' +
             'alt="Work photo' + (p.attribution ? ' by ' + esc(p.attribution) : '') + '" ' +
             'onerror="this.closest(\'.cp-ph\').remove()">' + more + '</button>';
       }).join('');
