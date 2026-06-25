@@ -1168,7 +1168,9 @@ function galleryHTML(photos, variant){
     const more = (extra > 0 && i === shown.length - 1) ? '<span class="vph-more">+' + extra + '</span>' : '';
     const sz = i === 0 ? w.hero : w.tile;
     return '<button class="vph-tile" type="button" data-i="' + i + '" aria-label="Work photo ' + (i+1) + ' of ' + list.length + '">' +
-      '<img src="' + esc(photoUrl(p.ref, sz)) + '" loading="lazy" decoding="async" ' +
+      // eager: the gallery is <=5 tiles shown one contractor at a time; loading="lazy"
+      // doesn't fire inside this app's scroll containers (same trap the feed covers hit).
+      '<img src="' + esc(photoUrl(p.ref, sz)) + '" loading="eager" decoding="async" ' +
         'alt="Work photo' + (p.attribution ? ' by ' + esc(p.attribution) : '') + '" ' +
         'onload="this.parentElement.classList.add(\'vph-tile--on\')" ' +
         'onerror="this.closest(\'.vph-tile\').remove()">' + more + '</button>';
