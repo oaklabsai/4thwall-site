@@ -559,7 +559,10 @@ body.v-shell .searchbar{max-width:600px}
 .cp-photos{margin:1.1rem 0 .2rem;max-width:var(--max,920px)}
 .cp-ph-track{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
 .cp-ph-track::-webkit-scrollbar{display:none}
-.cp-ph{position:relative;flex:0 0 86%;scroll-snap-align:center;aspect-ratio:4/3;padding:0;border:none;border-radius:14px;overflow:hidden;cursor:pointer;background:var(--vgreen-soft,#e7e3d8)}
+.cp-ph{position:relative;flex:0 0 86%;scroll-snap-align:center;aspect-ratio:4/3;padding:0;border:none;border-radius:14px;overflow:hidden;cursor:pointer;background:var(--vgreen-soft,#e7e3d8);background-image:linear-gradient(100deg,transparent 38%,rgba(255,255,255,.55) 50%,transparent 62%);background-size:220% 100%;animation:cp-shimmer 1.5s ease-in-out infinite}
+.cp-ph--loaded{animation:none;background-image:none}
+@keyframes cp-shimmer{0%{background-position:180% 0}100%{background-position:-80% 0}}
+@media(prefers-reduced-motion:reduce){.cp-ph{animation:none}}
 .cp-ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
 .cp-ph:hover img{transform:scale(1.03)}
 .cp-ph-more{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(33,30,22,.5);color:#F0F2EF;font-family:var(--display,serif);font-size:1.1rem;letter-spacing:-.01em}

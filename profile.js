@@ -52,14 +52,19 @@
       const tiles = shown.map((p, i) => {
         const more = (extra > 0 && i === shown.length - 1)
           ? '<span class="cp-ph-more">+' + extra + ' more</span>' : '';
+        // Per-tile sizing: the hero tile renders large, the secondary tiles
+        // small — request only what each displays (retina-padded) instead of a
+        // flat 800px, cutting bytes + first-paint on both viewports.
+        const w = i === 0 ? 900 : 520;
         return '<button class="cp-ph" type="button" data-i="' + i + '" ' +
           'aria-label="View work photo ' + (i + 1) + ' of ' + list.length + '">' +
           // Eager: the gallery is max-5 tiles, all above the fold on desktop —
           // loading="lazy" never fires for in-viewport injected imgs here and
           // left the secondary tiles blank. Eager guarantees the full grid.
-          '<img src="' + esc(photoUrl(p.ref, 800)) + '" ' +
+          '<img src="' + esc(photoUrl(p.ref, w)) + '" ' +
             'loading="eager" decoding="async" ' +
             'alt="Work photo' + (p.attribution ? ' by ' + esc(p.attribution) : '') + '" ' +
+            'onload="this.parentElement.classList.add(\'cp-ph--loaded\')" ' +
             'onerror="this.closest(\'.cp-ph\').remove()">' + more + '</button>';
       }).join('');
       mount.innerHTML =
@@ -89,7 +94,7 @@
       const cap = ov.querySelector('figcaption');
       const show = () => {
         const p = list[idx];
-        img.src = photoUrl(p.ref, 1400);
+        img.src = photoUrl(p.ref, 1600);
         cap.textContent = 'Photo via Google' + (p.attribution ? ' · ' + p.attribution : '') +
           '  (' + (idx + 1) + '/' + list.length + ')';
       };
