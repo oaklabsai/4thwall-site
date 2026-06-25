@@ -629,6 +629,43 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   #s-profile.screen, #s-request.screen { flex:1; min-width:0; height:100vh; }
   .prof-wrap { padding:34px 40px 64px; }
 }
+/* ── Work-photo gallery + lightbox (the Vesta app at parity with the /c/ backlinks) ── */
+.vph{ margin:13px 0 4px; }
+.vph-track{ display:grid; gap:6px; }
+.vph-tile{ position:relative; padding:0; border:0; cursor:pointer; overflow:hidden; background:rgba(74,75,47,.07); border-radius:14px; -webkit-tap-highlight-color:transparent; }
+.vph-tile img{ width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .45s ease; }
+.vph-tile.vph-tile--on img{ opacity:1; }
+.vph-tile:active{ transform:scale(.99); }
+.vph-more{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(48,50,28,.5); color:#fff; font-family:var(--serif); font-size:17px; font-weight:600; pointer-events:none; }
+.vph-src{ font-family:var(--mono); font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:var(--ebony); margin-top:8px; }
+/* all three surfaces: the same 1-big-+-4 grid as /c/ — only the height differs */
+.vph-profile .vph-track, .vph-feed .vph-track, .vph-card .vph-track{ grid-template-columns:1.5fr 1fr 1fr; }
+.vph-profile .vph-track{ height:300px; }
+.vph-feed .vph-track{ height:188px; }
+.vph-card .vph-track{ height:138px; }
+.vph-profile .vph-tile:first-child, .vph-feed .vph-tile:first-child, .vph-card .vph-tile:first-child{ grid-row:span 2; }
+.vph-track .vph-tile:nth-child(n+6){ display:none; }
+.vph-card{ margin:2px 0 13px; }
+.vph-card .vph-src{ display:none; }
+/* narrow viewport: the profile gallery becomes a horizontal swipe strip (mirrors /c/ mobile) */
+@media (max-width:719px){
+  .vph-profile .vph-track{ display:flex; height:auto; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+  .vph-profile .vph-track::-webkit-scrollbar{ display:none; }
+  .vph-profile .vph-tile{ flex:0 0 84%; aspect-ratio:4/3; scroll-snap-align:center; }
+  .vph-profile .vph-tile:first-child{ grid-row:auto; }
+}
+/* lightbox */
+.vph-lb{ position:fixed; inset:0; z-index:9000; background:rgba(20,20,14,.93); display:flex; align-items:center; justify-content:center; animation:vphfade .18s ease; }
+@keyframes vphfade{ from{opacity:0} to{opacity:1} }
+.vph-lb-fig{ margin:0; display:flex; flex-direction:column; align-items:center; }
+.vph-lb-fig img{ max-width:94vw; max-height:82vh; object-fit:contain; border-radius:8px; box-shadow:0 12px 50px rgba(0,0,0,.5); background:rgba(255,255,255,.04); }
+.vph-lb-fig figcaption{ color:rgba(255,255,255,.8); font-family:var(--mono); font-size:11px; letter-spacing:.04em; margin-top:14px; text-align:center; }
+.vph-lb-x{ position:absolute; top:16px; right:18px; width:42px; height:42px; border:0; border-radius:50%; background:rgba(255,255,255,.12); color:#fff; font-size:18px; cursor:pointer; }
+.vph-lb-nav{ position:absolute; top:50%; transform:translateY(-50%); width:48px; height:48px; border:0; border-radius:50%; background:rgba(255,255,255,.12); color:#fff; font-size:26px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.vph-lb-prev{ left:14px; } .vph-lb-next{ right:14px; }
+.vph-lb-nav:hover, .vph-lb-x:hover{ background:rgba(255,255,255,.22); }
+@media (max-width:560px){ .vph-lb-nav{ top:auto; bottom:22px; transform:none; } .vph-lb-prev{ left:26px; } .vph-lb-next{ right:26px; } }
+@media (prefers-reduced-motion:reduce){ .vph-lb{ animation:none; } .vph-tile img{ transition:none; } }
 </style>
 <script src="/home.js"></script>
 </head>
@@ -1092,6 +1129,89 @@ function rebuildDeck(){
 }
 function topCon(){ return (S.deck||[]).slice(S.deckIdx)[0] || null; }
 
+/* ── Work photos (the same gallery the /c/ profile shows — app & backlinks at parity) ──
+   Cards carry no photo data (the DB view stores no images), so we lazy-fetch the
+   references per place from the edge fn (/photos, 24h-cached server-side), cache them
+   here, and resolve each image through /photo at display (show-don't-store, bytes never
+   stored). Bounded by lazy hydration: the swipe deck shows one card at a time; the feed
+   loads on scroll. Same 1-big-+-4 grid as /c/, tap any tile → full lightbox. */
+const PHOTO_CACHE = new Map();   // placeId -> photos[]  (cached [] means "asked, none")
+const PH_W = { profile:{hero:900,tile:520}, feed:{hero:600,tile:340}, card:{hero:440,tile:260} };
+function photoUrl(ref, w){ return HOME.apiUrl('/photo?ref=' + encodeURIComponent(ref) + '&w=' + w); }
+async function fetchPhotos(placeId){
+  if (!placeId) return [];
+  if (PHOTO_CACHE.has(placeId)) return PHOTO_CACHE.get(placeId);
+  let photos = [];
+  try {
+    const { data } = await HOME.api('/photos?placeId=' + encodeURIComponent(placeId));
+    photos = (data && Array.isArray(data.photos)) ? data.photos.filter(x => x && x.ref) : [];
+  } catch(_) { photos = []; }
+  PHOTO_CACHE.set(placeId, photos);
+  return photos;
+}
+function galleryHTML(photos, variant){
+  const list = (Array.isArray(photos) ? photos : []).filter(x => x && x.ref);
+  if (!list.length) return '';
+  const MAX = 5, shown = list.slice(0, MAX), extra = list.length - shown.length;
+  const w = PH_W[variant] || PH_W.card;
+  const tiles = shown.map((p, i) => {
+    const more = (extra > 0 && i === shown.length - 1) ? '<span class="vph-more">+' + extra + '</span>' : '';
+    const sz = i === 0 ? w.hero : w.tile;
+    return '<button class="vph-tile" type="button" data-i="' + i + '" aria-label="Work photo ' + (i+1) + ' of ' + list.length + '">' +
+      '<img src="' + esc(photoUrl(p.ref, sz)) + '" loading="lazy" decoding="async" ' +
+        'alt="Work photo' + (p.attribution ? ' by ' + esc(p.attribution) : '') + '" ' +
+        'onload="this.parentElement.classList.add(\'vph-tile--on\')" ' +
+        'onerror="this.closest(\'.vph-tile\').remove()">' + more + '</button>';
+  }).join('');
+  const cap = (variant === 'card') ? '' :
+    '<p class="vph-src">' + list.length + ' photo' + (list.length > 1 ? 's' : '') + ' · from Google</p>';
+  return '<div class="vph-track">' + tiles + '</div>' + cap;
+}
+// Fill a <div class="vph vph-VARIANT" data-place data-variant> with its gallery, once.
+async function hydratePhotos(mount){
+  if (!mount || mount.dataset.ph) return;
+  mount.dataset.ph = '1';
+  const photos = await fetchPhotos(mount.dataset.place);
+  if (!photos.length){ mount.remove(); return; }   // honest collapse — nothing to show
+  mount.innerHTML = galleryHTML(photos, mount.dataset.variant || 'card');
+}
+// Feed: lazy-hydrate mounts as they scroll into view, so off-screen cards never resolve.
+let PH_OBS = null;
+function observePhotos(root){
+  if (!root) return;
+  if (!('IntersectionObserver' in window)){ root.querySelectorAll('.vph[data-place]:not([data-ph])').forEach(hydratePhotos); return; }
+  if (!PH_OBS) PH_OBS = new IntersectionObserver((ents) => {
+    ents.forEach(en => { if (en.isIntersecting){ PH_OBS.unobserve(en.target); hydratePhotos(en.target); } });
+  }, { rootMargin: '300px' });
+  root.querySelectorAll('.vph[data-place]:not([data-ph])').forEach(m => PH_OBS.observe(m));
+}
+// Tile tap → full-screen lightbox (swipe through every photo here; no card-gesture conflict).
+function openPhotoLightbox(list, start){
+  list = (Array.isArray(list) ? list : []).filter(x => x && x.ref);
+  if (!list.length) return;
+  let idx = Math.max(0, Math.min(start || 0, list.length - 1));
+  const ov = document.createElement('div');
+  ov.className = 'vph-lb';
+  ov.innerHTML =
+    '<button class="vph-lb-x" type="button" aria-label="Close">✕</button>' +
+    '<button class="vph-lb-nav vph-lb-prev" type="button" aria-label="Previous photo">‹</button>' +
+    '<figure class="vph-lb-fig"><img alt=""><figcaption></figcaption></figure>' +
+    '<button class="vph-lb-nav vph-lb-next" type="button" aria-label="Next photo">›</button>';
+  document.body.appendChild(ov);
+  document.body.style.overflow = 'hidden';
+  const img = ov.querySelector('img'), cap = ov.querySelector('figcaption');
+  const show = () => { const p = list[idx]; img.src = photoUrl(p.ref, 1600);
+    cap.textContent = 'Photo via Google' + (p.attribution ? ' · ' + p.attribution : '') + '  (' + (idx+1) + '/' + list.length + ')'; };
+  const close = () => { ov.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); };
+  const go = d => { idx = (idx + d + list.length) % list.length; show(); };
+  ov.querySelector('.vph-lb-x').onclick = close;
+  ov.querySelector('.vph-lb-prev').onclick = () => go(-1);
+  ov.querySelector('.vph-lb-next').onclick = () => go(1);
+  ov.addEventListener('click', e => { if (e.target === ov) close(); });
+  function onKey(e){ if (e.key === 'Escape') close(); else if (e.key === 'ArrowLeft') go(-1); else if (e.key === 'ArrowRight') go(1); }
+  document.addEventListener('keydown', onKey);
+  show();
+}
 function cardHTML(con, k){
   const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,2);   // real credentials only (Registered since YYYY · certs); the Vesta-analyzed placeholder isn't a credential
   // Lead with the "Why this contractor?" caption over the honest stack: rank standing + registry/
@@ -1109,6 +1229,7 @@ function cardHTML(con, k){
     : '';
   return '<article class="card" data-k="'+k+'" '+(k===0?'tabindex="0" aria-label="'+esc(con.name)+', '+esc(con.town)+'"':'aria-hidden="true"')+'>'+
     (k===0?'<span class="stamp stamp-save">SAVE</span><span class="stamp stamp-pass">SKIP</span>':'')+
+    (k===0?'<div class="vph vph-card" data-place="'+esc(con.placeId)+'" data-variant="card"></div>':'')+
     '<div class="card-top"><div class="card-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
     why+
@@ -1173,6 +1294,7 @@ function renderDeck(){
   }
   deck.innerHTML = remaining.slice(0,3).map((c,k)=>cardHTML(c,k)).join('');
   wireTopCard(remaining[0]);
+  const _phm = deck.querySelector('.card[data-k="0"] .vph[data-place]'); if(_phm) hydratePhotos(_phm);
   $('deck-actions').style.visibility='visible';
   updateRewind();
   $('deck-meta').textContent = 'Shuffled — a fresh order every visit';
@@ -1199,8 +1321,13 @@ function wireTopCard(con){
   const reset = anim => { card.style.transition = anim ? 'transform .3s cubic-bezier(.34,1.1,.64,1)' : 'none'; card.style.transform=''; if(save)save.style.opacity=0; if(pass)pass.style.opacity=0; };
   card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; t0=Date.now(); moved=0; dx=0; card.style.transition='none'; try{card.setPointerCapture(e.pointerId);}catch(_){} });
   card.addEventListener('pointermove', e => { if(!active) return; dx=e.clientX-downX; dy=e.clientY-downY; moved=Math.max(moved, Math.abs(dx)+Math.abs(dy)); card.style.transform='translate('+dx+'px,'+(dy*0.35)+'px) rotate('+(dx/20)+'deg)'; if(save)save.style.opacity=Math.max(0,Math.min(1,dx/90)); if(pass)pass.style.opacity=Math.max(0,Math.min(1,-dx/90)); });
-  const up = () => { if(!active) return; active=false; const dt=Date.now()-t0;
-    if(moved<8 && dt<300){ reset(false); tapCard(con); return; }
+  const up = (e) => { if(!active) return; active=false; const dt=Date.now()-t0;
+    if(moved<8 && dt<300){ reset(false);
+      const tile = e && e.target && e.target.closest && e.target.closest('.vph-tile');
+      if(tile){ const ph=PHOTO_CACHE.get(con.placeId)||[]; if(ph.length){ openPhotoLightbox(ph, +tile.dataset.i||0); return; } }
+      if(e && e.target && e.target.closest && e.target.closest('.vph')) return;   // tap in the gallery gutter — ignore
+      tapCard(con); return;
+    }
     if(dx>90){ commit('save', con); return; }
     if(dx<-90){ commit('pass', con); return; }
     reset(true);
@@ -1451,6 +1578,7 @@ function applyFeed(){
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
   feed.innerHTML = list.map(feedCardHTML).join('');
   list.forEach(wireFeedCard);
+  observePhotos(feed);
   renderFeedRail(); syncSavedUI();
 }
 // Desktop problem-first entry: a search box + problem pills bar above the feed, so the desktop
@@ -1527,6 +1655,7 @@ function feedCardHTML(con){
           '</div></div>'+
       '</div>'+
     '</div>'+
+    '<div class="vph vph-feed" data-place="'+esc(con.placeId)+'" data-variant="feed"></div>'+
     '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
     '<div class="fcard-syn clamp">'+esc(con.read)+'</div>'+
     (trust.length?'<div class="fcard-chips">'+trust.map(v=>'<span class="fcard-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
@@ -1553,6 +1682,7 @@ function feedMenuAction(act, con, card){
 }
 function wireFeedCard(con){
   const card = [...document.querySelectorAll('#feed .fcard')].find(el=>el.dataset.place===con.placeId); if(!card) return;
+  card.addEventListener('click', e=>{ const t=e.target.closest('.vph-tile'); if(t){ e.preventDefault(); const ph=PHOTO_CACHE.get(con.placeId)||[]; if(ph.length) openPhotoLightbox(ph, +t.dataset.i||0); } });
   const disc=card.querySelector('.fcard-disclose'), more=card.querySelector('.fcard-more');
   disc.addEventListener('click', ()=>{ const open=more.classList.toggle('open'); disc.setAttribute('aria-expanded',open); if(open) pushHistory(con,'view'); });
   card.querySelector('.fc-save').addEventListener('click', ()=> syncFeedSaveUI(card, toggleLike(con.placeId)));
@@ -1586,6 +1716,7 @@ function renderFeed(){
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
   feed.innerHTML = list.map(feedCardHTML).join('');
   list.forEach(wireFeedCard);
+  observePhotos(feed);
   renderFeedRail(); syncSavedUI();
 }
 function focusFeedCard(placeId){
@@ -1994,16 +2125,24 @@ function profRemovalHTML(){
     'To remove or correct it, email <a href="mailto:andrew@4thwall.solutions?subject=Vesta%20listing%20removal">andrew@4thwall.solutions</a> '+
     '(<a href="/terms.html#directory">how this works ›</a>).</p>';
 }
+// Work-photo gallery on the in-app profile — the same one /c/ shows. The photos are
+// already in profData.p.photos (openProfile fetched /c/:id), so render inline, no extra call.
+function profPhotosHTML(){
+  const photos = (profData.p && Array.isArray(profData.p.photos)) ? profData.p.photos.filter(x=>x&&x.ref) : [];
+  if (!photos.length) return '';
+  return '<div class="vph vph-profile" id="prof-photos" data-ph="1">'+galleryHTML(photos,'profile')+'</div>';
+}
 function renderProfile(){
-  // Reader/marketing flow: identity+CTA → the verdict → facts+credentials → homeowner proof → standing →
-  // external reference → contact → (collapsed) generic guide → claim. Depth preserved; nothing trimmed.
-  $('prof-wrap').innerHTML = profHeroHTML()+profReadHTML()+profGlanceHTML()+profKnownHTML()+profStandingHTML()+
+  // Reader/marketing flow: identity+CTA → work photos → the verdict → facts+credentials → homeowner proof →
+  // standing → external reference → contact → (collapsed) generic guide → claim. Depth preserved; nothing trimmed.
+  $('prof-wrap').innerHTML = profHeroHTML()+profPhotosHTML()+profReadHTML()+profGlanceHTML()+profKnownHTML()+profStandingHTML()+
     profGoogleHTML()+profContactHTML()+profGuideHTML()+profClaimHTML()+profRemovalHTML();
   wireProfile();
 }
 function wireProfBack(){ const b=$('prof-back'); if(b) b.addEventListener('click', backFromProfile); }
 function wireProfile(){
   wireProfBack();
+  const pm=$('prof-photos'); if(pm){ const ph=((profData.p&&profData.p.photos)||[]).filter(x=>x&&x.ref); pm.addEventListener('click', e=>{ const t=e.target.closest('.vph-tile'); if(t) openPhotoLightbox(ph, +t.dataset.i||0); }); }
   const unlock=$('prof-unlock'); if(unlock) unlock.addEventListener('click', profUnlock);
   const claim=$('prof-claim'); if(claim) claim.addEventListener('submit', profClaimSubmit);
   const req=$('prof-req-btn'); if(req) req.addEventListener('click', () => enterRequest({ placeId:profData.placeId, trade:(TRADE_APP[pTradeKey()]||pTradeKey()), name:(profData.p&&profData.p.name)||'' }));
