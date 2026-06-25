@@ -1258,20 +1258,8 @@ function openPhotoLightbox(list, start){
   show();
 }
 function cardHTML(con, k){
-  const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,2);   // real credentials only (Registered since YYYY · certs); the Vesta-analyzed placeholder isn't a credential
-  // Lead with the "Why this contractor?" caption over the honest stack: rank standing + registry/
-  // credential trust line. Vesta's Read follows. The chrome above the deck (header + banner) is
-  // compacted so the caption fits without crushing the read. (Known-for phrases read as a proper
-  // checkmark list on the full profile + desktop feed — they don't compress to tag pills, so the
-  // swipe card stays clean and the band + credentials carry the specifics.)
-  const hasWhy = con.standing || trust.length;
-  const why = hasWhy
-    ? '<div class="card-why">'+
-        '<div class="card-whylbl"><span class="sp">'+SPARK+'</span>Why this contractor?</div>'+
-        (con.standing?'<div class="card-band">'+esc(con.standing)+'</div>':'')+
-        (trust.length?'<div class="card-trust">'+trust.map(v=>'<span class="ct-item">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
-      '</div>'
-    : '';
+  // Read-led card: the "Why this contractor?" stack (rank band + credentials) lives on the
+  // full profile now (Where it stands / At a glance), not on the swipe card.
   return '<article class="card" data-k="'+k+'" '+(k===0?'tabindex="0" aria-label="'+esc(con.name)+', '+esc(con.town)+'"':'aria-hidden="true"')+'>'+
     (k===0?'<span class="stamp stamp-save">SAVE</span><span class="stamp stamp-pass">SKIP</span>':'')+
     // Swipe card leads with the READ, not the photos: one compact hero (the full 5-grid
@@ -1282,7 +1270,6 @@ function cardHTML(con, k){
       '<span class="vph-cover-badge">Photos</span></button>':'')+
     '<div class="card-top"><div class="card-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
-    why+
     '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
     '<div class="card-synwrap"><div class="card-syn">'+esc(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.')+'</div></div>'+
     '<div class="card-hint">'+(desktop()?'← skip · save →':'Scroll to read · tap for the full profile')+'</div>'+
@@ -2050,10 +2037,7 @@ function profHeroHTML(){
     '<p class="prof-sub">'+(tName?esc(tName)+' · ':'')+esc(String(p.address||'').replace(/,?\s*(USA|United States)\.?$/i,''))+'</p>'+
     '<div class="prof-badges">'+badges.join('')+'</div>'+
     '<button class="prof-req" id="prof-req-btn">Request through Vesta <span aria-hidden="true">→</span></button>'+
-    '<p class="prof-fine">One form — Vesta carries your request to them, replies come straight to you.</p>'+
-    (enr
-      ? '<p class="prof-note">Vesta built this profile from public records and homeowner reviews — an independent read, not a paid placement. '+esc(p.name)+' hasn’t joined Vesta’s verified network yet, so there’s no documented job history to show here.</p>'
-      : '<p class="prof-note">This business hasn’t joined Vesta’s verified network yet, so there’s no verified work record to show — just the public listing below.</p>');
+    '<p class="prof-fine">One form — Vesta carries your request to them, replies come straight to you.</p>';
 }
 function profSignatureHTML(){ const enr=profData.enr; return (enr && enr.signature) ? '<p class="prof-sig">'+esc(enr.signature)+'</p>' : ''; }
 // Vesta's read = the verdict. Signature folds in here as the lead line so there aren't two stacked Vesta-voice blocks.
@@ -2168,35 +2152,23 @@ function profClaimHTML(){
       '<div class="am-form-row"><label for="pcn">Your name *</label><input type="text" id="pcn" required maxlength="80"></div>'+
       '<div class="am-form-row am-form-pair"><div><label for="pcp">Phone *</label><input type="tel" id="pcp" required maxlength="20"></div>'+
       '<div><label for="pce">Email</label><input type="email" id="pce" maxlength="120"></div></div>'+
-      '<button class="am-claim-btn" type="submit">Claim this profile</button><span class="prof-status" id="prof-claim-st"></span></form>'+
-      '<div class="am-rule"></div>';
-  // Collapsed to a single question pill — the owner-facing claim + Atlas funnel cascades open on click.
+      '<button class="am-claim-btn" type="submit">Claim this profile</button><span class="prof-status" id="prof-claim-st"></span></form>';
+  // Strictly a claim — no Atlas pitch here; the owner just confirms the listing is theirs.
   return '<div class="claimwrap">'+
     '<button class="claim-toggle" id="claim-toggle" aria-expanded="false" aria-controls="claim-panel">'+
       '<span class="claim-q">Is this your business?</span>'+
       '<span class="claim-chev" id="claim-chev">'+CHEV+'</span></button>'+
     '<div class="claim-panel" id="claim-panel" hidden>'+
       '<section class="atlas-moment">'+
-        '<div class="am-eyebrow">For the business owner · from 4THWALL</div>'+
+        '<div class="am-eyebrow">For the business owner</div>'+
         claimInner+
-        '<div class="am-plabel">When you’re ready to grow · Atlas</div>'+
-        '<p class="am-lede">Vesta introduces homeowners to your business. <b>Atlas is the back office that helps you respond to every one of them.</b> '+
-          'While you’re out on the job, it answers calls and messages in your name, schedules the estimate, and follows up once the work is done — '+
-          'the steady support of a full-time office manager, without the overhead.</p>'+
-        '<div class="am-uses">'+
-          '<div class="am-use"><div class="am-n">01</div><h3>Answers in your name, around the clock</h3><p>Calls and after-hours messages receive a prompt, professional reply — your services, your pricing, your voice — so no inquiry goes unanswered.</p></div>'+
-          '<div class="am-use"><div class="am-n">02</div><h3>Handles your scheduling</h3><p>Checks availability, books the appointment, and sends the reminder — so the estimate actually takes place.</p></div>'+
-          '<div class="am-use"><div class="am-n">03</div><h3>Builds your reputation</h3><p>After the work is complete, it follows up with the customer and invites the review that brings the next one.</p></div>'+
-        '</div>'+
-        '<div class="am-cta"><a class="am-pill" href="https://4thwall.solutions" target="_blank" rel="noopener">See how Atlas works →</a>'+
-        '<span class="am-fine">Vesta is free, always. Atlas is our paid service — for businesses ready to take on more work.</span></div>'+
       '</section>'+
     '</div>'+
   '</div>';
 }
 function profRemovalHTML(){
   return '<p class="prof-removal">This is a public-record listing compiled by Vesta — not an endorsement, and not written by the business. '+
-    'To remove or correct it, email <a href="mailto:andrew@4thwall.solutions?subject=Vesta%20listing%20removal">andrew@4thwall.solutions</a> '+
+    'To remove or correct it, email <a href="mailto:contact@4thwall.solutions?subject=Vesta%20listing%20removal">contact@4thwall.solutions</a> '+
     '(<a href="/terms.html#directory">how this works ›</a>).</p>';
 }
 // Work-photo gallery on the in-app profile — the same one /c/ shows. The photos are

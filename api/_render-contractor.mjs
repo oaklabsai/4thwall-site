@@ -292,8 +292,7 @@ function claimBlock(enr) {
     '<div><label class="form-label" for="cp">Phone *</label><input class="form-input" type="tel" id="cp" name="phone" required maxlength="20"></div>' +
     '<div><label class="form-label" for="ce">Email</label><input class="form-input" type="email" id="ce" name="email" maxlength="120"></div></div>' +
     '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
-    '<span class="form-status" id="claim-status"></span></form>' +
-    '<div class="am-rule"></div>';
+    '<span class="form-status" id="claim-status"></span></form>';
   return '<details class="atlas-moment" id="claim">' +
     '<summary class="am-summary"><span class="am-sum-text">' +
       '<span class="am-eyebrow">For the owner · from 4THWALL</span>' +
@@ -301,17 +300,6 @@ function claimBlock(enr) {
       '<span class="am-caret" aria-hidden="true"></span></summary>' +
     '<div class="am-body">' +
     claimInner +
-    '<div class="am-plabel">Then put it to work — with Atlas</div>' +
-    '<p class="am-lede">Vesta brings homeowners to your door. <b>Atlas makes sure not one of them slips away.</b> ' +
-      'While you’re on the job, Atlas answers every call and text in your name — books the work, sends the reminder, asks for the review. ' +
-      'The back office the best shops run, without hiring anyone.</p>' +
-    '<div class="am-uses">' +
-      '<div class="am-use"><div class="am-n">01</div><h3>Answers in your name, 24/7</h3><p>Every missed call and after-hours text gets a real reply — your services, your pricing, your voice. The lead never goes cold.</p></div>' +
-      '<div class="am-use"><div class="am-n">02</div><h3>Books the job for you</h3><p>It checks availability, sets the appointment, and sends the reminder — so the estimate actually happens.</p></div>' +
-      '<div class="am-use"><div class="am-n">03</div><h3>Earns the next review</h3><p>When the work’s done it follows up and asks the happy customer for the review that brings the next one.</p></div>' +
-    '</div>' +
-    '<div class="am-cta"><a class="am-pill" href="/atlas">See what Atlas does →</a>' +
-    '<span class="am-fine">Vesta stays free. Atlas is the paid back office — for when the calls start coming.</span></div>' +
   '</div></details>';
 }
 
@@ -560,8 +548,6 @@ export function renderContractorHTML(enr, siblings = []) {
       '<div id="cp-photos" data-mount="photos" class="cp-photos"></div>' +
       '<div style="margin:1.1rem 0 .2rem"><a class="pill pill-orange" href="' + reqHref + '">Request through Vesta <span class="arr">→</span></a></div>' +
       '<p class="fine">One form — Vesta carries your request to them, replies come straight to you.</p>' +
-      '<p class="note">Vesta built this profile from public records and homeowner reviews — an independent read, not a paid placement. ' +
-        esc(enr.business_name) + ' hasn’t joined Vesta’s verified network yet, so there’s no documented job history to show here.</p>' +
     '</section>';
 
   const body = '<section class="section" id="body">' +
