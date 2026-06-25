@@ -146,8 +146,11 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .ct-item svg { color:var(--olive); flex-shrink:0; }
 .card-readlbl { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:10px; }
 .card-readlbl .sp { color:var(--olive); display:flex; }
-.card-synwrap { flex:1; position:relative; min-height:0; }
-.card-syn { height:100%; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; font-family:var(--serif); font-size:17px; line-height:1.46; font-weight:500; color:var(--olive); letter-spacing:-.004em; padding-bottom:8px; scrollbar-width:thin; scrollbar-color:rgba(74,75,47,.28) transparent; }
+.card-synwrap { flex:1; position:relative; min-height:0; overflow:hidden; }
+/* absolute-fill the scroll region: a flex child's height:100% doesn't resolve to a
+   definite height, so it grows to fit + the card just clips it (no scroll). inset:0
+   against the relative wrap (whose height flex DOES set) makes it a real scroll box. */
+.card-syn { position:absolute; inset:0; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; font-family:var(--serif); font-size:17px; line-height:1.46; font-weight:500; color:var(--olive); letter-spacing:-.004em; padding-bottom:10px; scrollbar-width:thin; scrollbar-color:rgba(74,75,47,.28) transparent; }
 .card-syn::-webkit-scrollbar { width:4px; }
 .card-syn::-webkit-scrollbar-thumb { background:rgba(74,75,47,.25); border-radius:4px; }
 .card-synwrap::after { content:''; position:absolute; left:0; right:0; bottom:0; height:22px; background:linear-gradient(transparent,var(--white)); pointer-events:none; }
