@@ -146,8 +146,11 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .ct-item svg { color:var(--olive); flex-shrink:0; }
 .card-readlbl { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:10px; }
 .card-readlbl .sp { color:var(--olive); display:flex; }
-.card-syn { flex:1; min-height:72px; overflow:hidden; font-family:var(--serif); font-size:17px; line-height:1.42; font-weight:500; color:var(--olive); letter-spacing:-.004em; position:relative; }
-.card-syn::after { content:''; position:absolute; left:0; right:0; bottom:0; height:30px; background:linear-gradient(transparent,var(--white)); }
+.card-synwrap { flex:1; position:relative; min-height:0; }
+.card-syn { height:100%; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; font-family:var(--serif); font-size:17px; line-height:1.46; font-weight:500; color:var(--olive); letter-spacing:-.004em; padding-bottom:8px; scrollbar-width:thin; scrollbar-color:rgba(74,75,47,.28) transparent; }
+.card-syn::-webkit-scrollbar { width:4px; }
+.card-syn::-webkit-scrollbar-thumb { background:rgba(74,75,47,.25); border-radius:4px; }
+.card-synwrap::after { content:''; position:absolute; left:0; right:0; bottom:0; height:22px; background:linear-gradient(transparent,var(--white)); pointer-events:none; }
 .card-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
 .card-chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; color:var(--ebony); background:rgba(74,75,47,.05); border-radius:var(--r-pill); padding:4px 10px; white-space:nowrap; }
 .card-chip svg { color:var(--olive); }
@@ -1267,8 +1270,8 @@ function cardHTML(con, k){
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
     why+
     '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
-    '<div class="card-syn">'+esc(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.')+'</div>'+
-    '<div class="card-hint">'+(desktop()?'← skip · save →':'Tap for the full analysis')+'</div>'+
+    '<div class="card-synwrap"><div class="card-syn">'+esc(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.')+'</div></div>'+
+    '<div class="card-hint">'+(desktop()?'← skip · save →':'Scroll to read · tap for the full profile')+'</div>'+
   '</article>';
 }
 function deckEndHTML(){
@@ -1350,10 +1353,23 @@ function wireDeckFilterEmpty(){
 function wireTopCard(con){
   const card = $('deck').querySelector('.card[data-k="0"]'); if(!card) return;
   const save = card.querySelector('.stamp-save'), pass = card.querySelector('.stamp-pass');
-  let active=false, downX=0, downY=0, dx=0, dy=0, moved=0, t0=0;
+  const synEl = card.querySelector('.card-syn');
+  let active=false, downX=0, downY=0, dx=0, dy=0, moved=0, t0=0, mode=null, startedInSyn=false, lastY=0;
   const reset = anim => { card.style.transition = anim ? 'transform .3s cubic-bezier(.34,1.1,.64,1)' : 'none'; card.style.transform=''; if(save)save.style.opacity=0; if(pass)pass.style.opacity=0; };
-  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; t0=Date.now(); moved=0; dx=0; card.style.transition='none'; try{card.setPointerCapture(e.pointerId);}catch(_){} });
-  card.addEventListener('pointermove', e => { if(!active) return; dx=e.clientX-downX; dy=e.clientY-downY; moved=Math.max(moved, Math.abs(dx)+Math.abs(dy)); card.style.transform='translate('+dx+'px,'+(dy*0.35)+'px) rotate('+(dx/20)+'deg)'; if(save)save.style.opacity=Math.max(0,Math.min(1,dx/90)); if(pass)pass.style.opacity=Math.max(0,Math.min(1,-dx/90)); });
+  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; lastY=e.clientY; t0=Date.now(); moved=0; dx=0; dy=0; mode=null; startedInSyn = !!(synEl && synEl.contains(e.target) && synEl.scrollHeight > synEl.clientHeight + 2); card.style.transition='none'; try{card.setPointerCapture(e.pointerId);}catch(_){} });
+  card.addEventListener('pointermove', e => {
+    if(!active) return;
+    dx=e.clientX-downX; dy=e.clientY-downY; moved=Math.max(moved, Math.abs(dx)+Math.abs(dy));
+    // decide intent once: a vertical drag that began on the (scrollable) read scrolls it;
+    // anything else swipes the card exactly as before — the core gesture is untouched.
+    if(mode===null && moved>6){ mode = (startedInSyn && Math.abs(dy) > Math.abs(dx)) ? 'scroll' : 'swipe'; }
+    if(mode==='scroll'){ if(synEl) synEl.scrollTop -= (e.clientY - lastY); lastY=e.clientY; return; }
+    lastY=e.clientY;
+    if(mode!=='swipe') return;
+    card.style.transform='translate('+dx+'px,'+(dy*0.35)+'px) rotate('+(dx/20)+'deg)';
+    if(save)save.style.opacity=Math.max(0,Math.min(1,dx/90));
+    if(pass)pass.style.opacity=Math.max(0,Math.min(1,-dx/90));
+  });
   const up = (e) => { if(!active) return; active=false; const dt=Date.now()-t0;
     if(moved<8 && dt<300){ reset(false);
       const tile = e && e.target && e.target.closest && e.target.closest('.vph-tile');
@@ -1361,6 +1377,7 @@ function wireTopCard(con){
       if(e && e.target && e.target.closest && e.target.closest('.vph')) return;   // tap in the gallery gutter — ignore
       tapCard(con); return;
     }
+    if(mode==='scroll'){ return; }   // was reading the synthesis — don't swipe/commit
     if(dx>90){ commit('save', con); return; }
     if(dx<-90){ commit('pass', con); return; }
     reset(true);
