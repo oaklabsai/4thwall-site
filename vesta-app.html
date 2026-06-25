@@ -1196,18 +1196,26 @@ function observePhotos(root){
   root.querySelectorAll('.vph[data-place]:not([data-ph])').forEach(m => PH_OBS.observe(m));
 }
 // Tile tap → full-screen lightbox (swipe through every photo here; no card-gesture conflict).
-// Feed cover images: explicit lazy-load. Native loading="lazy" was unreliable inside
-// the feed's scroll container (deferred even in-view covers, then stormed all 40 at once).
-// Defer each cover's src until its card scrolls near — bounds /cover calls to what's seen.
-let COVER_OBS = null;
+// Feed covers load through a small concurrency queue (4 at a time) instead of all 40 at
+// once — that storm froze the renderer + hammered the edge fn. (Native loading="lazy" and
+// IntersectionObserver both proved unreliable inside this app's scroll-locked shell, so we
+// throttle instead of true-lazy; covers are cheap — one cached resolve each.)
 function lazyCovers(root){
   if (!root) return;
   const imgs = [...root.querySelectorAll('.vph-cover[data-src]')];
-  if (!('IntersectionObserver' in window)){ imgs.forEach(im => { im.src = im.dataset.src; im.removeAttribute('data-src'); }); return; }
-  if (!COVER_OBS) COVER_OBS = new IntersectionObserver((ents) => {
-    ents.forEach(en => { if (en.isIntersecting){ const im = en.target; COVER_OBS.unobserve(im); if (im.dataset.src){ im.src = im.dataset.src; im.removeAttribute('data-src'); } } });
-  }, { rootMargin: '300px' });
-  imgs.forEach(im => COVER_OBS.observe(im));
+  let i = 0, active = 0;
+  const pump = () => {
+    while (active < 4 && i < imgs.length){
+      const im = imgs[i++];
+      if (!im.dataset.src) continue;
+      active++;
+      const done = () => { active--; pump(); };
+      im.addEventListener('load', done, { once: true });
+      im.addEventListener('error', done, { once: true });
+      im.src = im.dataset.src; im.removeAttribute('data-src');
+    }
+  };
+  pump();
 }
 function openPhotoLightbox(list, start){
   list = (Array.isArray(list) ? list : []).filter(x => x && x.ref);
