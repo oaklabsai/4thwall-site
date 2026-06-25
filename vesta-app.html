@@ -647,13 +647,12 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .vph-track .vph-tile:nth-child(n+6){ display:none; }
 .vph-card{ margin:2px 0 13px; }
 .vph-card .vph-src{ display:none; }
-/* skeleton while a mount resolves — also gives the IntersectionObserver a real box to
-   detect (an empty 0-height div never reports as intersecting, so it'd never hydrate) */
-.vph-feed:empty, .vph-card:empty{ border-radius:14px; background:linear-gradient(100deg,rgba(74,75,47,.05) 30%,rgba(74,75,47,.12) 50%,rgba(74,75,47,.05) 70%); background-size:220% 100%; animation:vphshim 1.4s ease-in-out infinite; }
+/* placeholder while a mount resolves — also gives the IntersectionObserver a real box to
+   detect (an empty 0-height div never reports as intersecting, so it'd never hydrate).
+   Static fill, not an animation: 40 animated skeletons on one feed pegs the renderer. */
+.vph-feed:empty, .vph-card:empty{ border-radius:14px; background:rgba(74,75,47,.06); }
 .vph-feed:empty{ min-height:188px; }
 .vph-card:empty{ min-height:138px; }
-@keyframes vphshim{ 0%{background-position:180% 0} 100%{background-position:-80% 0} }
-@media (prefers-reduced-motion:reduce){ .vph-feed:empty, .vph-card:empty{ animation:none; } }
 /* narrow viewport: the profile gallery becomes a horizontal swipe strip (mirrors /c/ mobile) */
 @media (max-width:719px){
   .vph-profile .vph-track{ display:flex; height:auto; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
