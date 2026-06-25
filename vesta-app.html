@@ -1196,6 +1196,19 @@ function observePhotos(root){
   root.querySelectorAll('.vph[data-place]:not([data-ph])').forEach(m => PH_OBS.observe(m));
 }
 // Tile tap → full-screen lightbox (swipe through every photo here; no card-gesture conflict).
+// Feed cover images: explicit lazy-load. Native loading="lazy" was unreliable inside
+// the feed's scroll container (deferred even in-view covers, then stormed all 40 at once).
+// Defer each cover's src until its card scrolls near — bounds /cover calls to what's seen.
+let COVER_OBS = null;
+function lazyCovers(root){
+  if (!root) return;
+  const imgs = [...root.querySelectorAll('.vph-cover[data-src]')];
+  if (!('IntersectionObserver' in window)){ imgs.forEach(im => { im.src = im.dataset.src; im.removeAttribute('data-src'); }); return; }
+  if (!COVER_OBS) COVER_OBS = new IntersectionObserver((ents) => {
+    ents.forEach(en => { if (en.isIntersecting){ const im = en.target; COVER_OBS.unobserve(im); if (im.dataset.src){ im.src = im.dataset.src; im.removeAttribute('data-src'); } } });
+  }, { rootMargin: '300px' });
+  imgs.forEach(im => COVER_OBS.observe(im));
+}
 function openPhotoLightbox(list, start){
   list = (Array.isArray(list) ? list : []).filter(x => x && x.ref);
   if (!list.length) return;
@@ -1588,6 +1601,7 @@ function applyFeed(){
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
   feed.innerHTML = list.map(feedCardHTML).join('');
   list.forEach(wireFeedCard);
+  lazyCovers(feed);
   renderFeedRail(); syncSavedUI();
 }
 // Desktop problem-first entry: a search box + problem pills bar above the feed, so the desktop
@@ -1668,7 +1682,7 @@ function feedCardHTML(con){
     // 5 photos x 40 cards froze the renderer + burned the Places budget. The hero loads
     // only when scrolled near; tapping it opens the full gallery (all photos).
     '<button class="vph-cover-btn" type="button" data-place="'+esc(con.placeId)+'" aria-label="See work photos for '+esc(con.name)+'">'+
-      '<img class="vph-cover" loading="lazy" decoding="async" alt="" src="'+esc(HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=640'))+'" '+
+      '<img class="vph-cover" decoding="async" alt="" data-src="'+esc(HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=640'))+'" '+
         'onload="this.parentElement.classList.add(\'vph-cover--on\')" onerror="this.closest(\'.vph-cover-btn\').remove()">'+
       '<span class="vph-cover-badge">Photos</span>'+
     '</button>'+
@@ -1733,6 +1747,7 @@ function renderFeed(){
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
   feed.innerHTML = list.map(feedCardHTML).join('');
   list.forEach(wireFeedCard);
+  lazyCovers(feed);
   renderFeedRail(); syncSavedUI();
 }
 function focusFeedCard(placeId){
