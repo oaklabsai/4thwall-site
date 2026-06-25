@@ -477,6 +477,9 @@ function shell({ title, description, canonical, indexable, jsonld, body }) {
     '<meta name="theme-color" content="#0f1310">\n' +
     '<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
     '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
+    '<link rel="preconnect" href="https://vinytnzzgryodyrftabg.supabase.co">\n' +
+    '<link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>\n' +
+    '<link rel="dns-prefetch" href="https://places.googleusercontent.com">\n' +
     '<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">\n' +
     '<link rel="stylesheet" href="/home.css">\n' +
     ATLAS_MOMENT_CSS + '\n' +
