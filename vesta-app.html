@@ -657,6 +657,9 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
    detect (an empty 0-height div never reports as intersecting, so it'd never hydrate).
    Static fill, not an animation: 40 animated skeletons on one feed pegs the renderer. */
 .vph-card:empty{ border-radius:14px; background:rgba(74,75,47,.06); min-height:138px; }
+/* swipe card hero — one compact photo so the read keeps the room (full grid is on the profile) */
+.card-cover{ display:block; position:relative; width:100%; height:148px; flex:0 0 auto; padding:0; border:0; margin:2px 0 12px; border-radius:16px; overflow:hidden; cursor:pointer; background:rgba(74,75,47,.06); }
+.card-cover .vph-cover{ width:100%; height:100%; object-fit:cover; display:block; }
 /* feed card: ONE lazy hero (native loading=lazy), full gallery opens on tap */
 .vph-cover-btn{ display:block; position:relative; width:100%; padding:0; border:0; margin:13px 0 4px; border-radius:14px; overflow:hidden; cursor:pointer; background:rgba(74,75,47,.06); aspect-ratio:16/9; }
 .vph-cover{ width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .4s ease; }
@@ -1268,7 +1271,12 @@ function cardHTML(con, k){
     : '';
   return '<article class="card" data-k="'+k+'" '+(k===0?'tabindex="0" aria-label="'+esc(con.name)+', '+esc(con.town)+'"':'aria-hidden="true"')+'>'+
     (k===0?'<span class="stamp stamp-save">SAVE</span><span class="stamp stamp-pass">SKIP</span>':'')+
-    (k===0?'<div class="vph vph-card" data-place="'+esc(con.placeId)+'" data-variant="card"></div>':'')+
+    // Swipe card leads with the READ, not the photos: one compact hero (the full 5-grid
+    // lives on the profile + the lightbox). Tap the hero → lightbox. Only the top card mounts it.
+    (k===0?'<button class="card-cover" type="button" aria-label="Work photos for '+esc(con.name)+'">'+
+      '<img class="vph-cover" decoding="async" alt="" src="'+esc(HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=720'))+'" '+
+        'onload="this.parentElement.classList.add(\'vph-cover--on\')" onerror="this.closest(\'.card-cover\').remove()">'+
+      '<span class="vph-cover-badge">Photos</span></button>':'')+
     '<div class="card-top"><div class="card-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
     why+
@@ -1377,6 +1385,8 @@ function wireTopCard(con){
     if(moved<8 && dt<300){ reset(false);
       const tile = e && e.target && e.target.closest && e.target.closest('.vph-tile');
       if(tile){ const ph=PHOTO_CACHE.get(con.placeId)||[]; if(ph.length){ openPhotoLightbox(ph, +tile.dataset.i||0); return; } }
+      const cover = e && e.target && e.target.closest && e.target.closest('.card-cover');
+      if(cover){ fetchPhotos(con.placeId).then(ph => { if(ph && ph.length) openPhotoLightbox(ph, 0); }); return; }
       if(e && e.target && e.target.closest && e.target.closest('.vph')) return;   // tap in the gallery gutter — ignore
       tapCard(con); return;
     }
