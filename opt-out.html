@@ -114,11 +114,11 @@
       } else {
         var d = await r.json().catch(function () { return {}; });
         btn.disabled = false; st.className = 'form-status is-error';
-        st.textContent = (d && d.error === 'missing_fields') ? 'Please add your business name and a valid email.' : 'Couldn’t send — try again, or email andrew@4thwall.solutions.';
+        st.textContent = (d && d.error === 'missing_fields') ? 'Please add your business name and a valid email.' : 'Couldn’t send — try again, or email contact@4thwall.solutions.';
       }
     } catch (_) {
       btn.disabled = false; st.className = 'form-status is-error';
-      st.textContent = 'Couldn’t send — try again, or email andrew@4thwall.solutions.';
+      st.textContent = 'Couldn’t send — try again, or email contact@4thwall.solutions.';
     }
   });
 })();
