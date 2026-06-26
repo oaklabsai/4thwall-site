@@ -13,6 +13,8 @@
     { "source": "/signin",        "destination": "/signin.html" },
     { "source": "/request",       "destination": "/request.html" },
     { "source": "/opt-out",       "destination": "/opt-out.html" },
+    { "source": "/privacy",       "destination": "/privacy.html" },
+    { "source": "/terms",         "destination": "/terms.html" },
     { "source": "/auth/confirm",  "destination": "/auth-confirm.html" },
     { "source": "/record/:token", "destination": "/record.html" },
     { "source": "/pro/:id",       "destination": "/pro.html" },
