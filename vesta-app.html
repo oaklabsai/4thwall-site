@@ -2002,7 +2002,8 @@ async function openProfile(placeId){
     if (!data || !data.ok){ $('prof-wrap').innerHTML = profErrorHTML(); wireProfBack(); return; }
     const enrRows = await HOME.db('/profile_enrichment_public?place_id=eq.'+encodeURIComponent(placeId)+
       '&limit=1&select=trade,registered,hic_issue_date,trade_license,certifications,synthesis,synthesis_review_count,'+
-      'signature,known_for,specialties,service_area,owner_name,volume_band,rating_band,tenure_band,trade_n');
+      'signature,known_for,specialties,service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,'+
+      'capabilities,value_tier,deep_review_count,rating_count');
     const enr = Array.isArray(enrRows) && enrRows[0] ? enrRows[0] : null;
     profData = { placeId, p:data.place, enr, claimed:!!data.claimed, unlocked:data.unlocked||null };
     renderProfile();
@@ -2053,22 +2054,52 @@ function profReadHTML(){
     'public homeowner reviews — Vesta’s own wording, never a copy of any single review.</p></div>';
   return html;
 }
+// "Where it stands" — TAILORED comparative standing. Built from each firm's
+// DISTINCTIVE verifiable signals (scarce-specialty flags from the trade-wide
+// match layer, tenure, quantified review volume, rating band, and the firm's
+// OWN capability evidence) so two strong firms never read the same two cards.
+// Vouch-don't-expose holds: review COUNT yes, star SCORE never. Scarcity claims
+// use soft language ("one of the few") relative to the set Vesta tracks, so they
+// stay true as the catalog grows; the per-trade scarce list is refreshed each
+// review-intelligence pass.
+const STANDING_SPECIALTY = {
+  metal_roofing:         ['Specialty','Metal-roof specialist','One of the very few %F we track in Fairfield County equipped for standing-seam and metal roofs — an expertise homeowners say is hard to find.'],
+  in_house_masonry:      ['Specialty','In-house masonry','One of the few %F that rebuild chimneys and masonry alongside the roof, in-house rather than subbed out.'],
+  slate_cedar_specialty: ['Specialty','Slate &amp; cedar','Among the few %F we track who work slate and cedar roofs, not just asphalt shingle.'],
+  flat_low_slope:        ['Specialty','Flat &amp; low-slope','Equipped for flat and low-slope roofs (EPDM / membrane) — a job many shingle-only roofers turn down.'],
+  commercial_capable:    ['Specialty','Commercial-capable','Handles commercial roofs alongside residential — a wider remit than most %F we track.']
+};
+const STANDING_CAP = { emergency_response:['Response','Fast emergency response'], handles_insurance_claims:['Insurance','Handles your insurance claim'], full_exterior_one_team:['Scope','Whole-exterior team'], one_day_replacement:['Speed','Fast turnaround'] };
+const STANDING_CAP_ORDER = ['emergency_response','handles_insurance_claims','full_exterior_one_team','one_day_replacement'];
 function profStandingHTML(){
   const enr=profData.enr; if (!enr) return '';
   const trade=pTradeKey();
   const firms = PTRADE_FIRMS[trade] || 'pros';
-  const inFC = ' among the '+firms+' we track across Fairfield County';   // no catalog count — the band is the signal
-  const items=[];
-  if (enr.rating_band==='top10') items.push(['Homeowner rating','Among the highest-rated','Its aggregate homeowner rating sits in the top tier'+inFC+'.']);
-  else if (enr.rating_band==='top25') items.push(['Homeowner rating','Strongly rated','Carries one of the stronger homeowner ratings'+inFC+', across a meaningful number of reviews.']);
-  if (enr.volume_band==='top10') items.push(['Review volume','Among the most-reviewed','More homeowners have left public reviews here than for nearly any other firm'+inFC+'.']);
-  else if (enr.volume_band==='top25') items.push(['Review volume','A deep track record','A deeper bank of homeowner reviews than most'+inFC+'.']);
-  if (enr.tenure_band==='top25') items.push(['Tenure','Long-established','Holds one of the older active CT contractor registrations'+inFC+' — years on the books.']);
-  if (!items.length) return '';
   const tLower = trade==='hvac' ? 'HVAC' : ((PTRADE_LABEL[trade]||'').toLowerCase());
+  const caps = (enr.capabilities && typeof enr.capabilities==='object') ? enr.capabilities : {};
+  const reviewN = Number(enr.deep_review_count || enr.rating_count || 0);
+  const nStr = reviewN ? reviewN.toLocaleString('en-US') : '';
+  const items=[];   // [kicker, title, desc] — built strongest-first, capped at 4
+  // 1) Scarce specialties — the sharpest differentiator, lead with them.
+  for (const key in STANDING_SPECIALTY){ if (caps[key]){ const s=STANDING_SPECIALTY[key]; items.push([s[0], s[1], s[2].replace(/%F/g, firms)]); } }
+  // 2) Tenure.
+  if (enr.tenure_band==='top25'){ const yr=enr.hic_issue_date?+String(enr.hic_issue_date).slice(0,4):0; items.push(['Tenure','Long-established','Registered with the state'+(yr&&yr!==1999?' since '+yr:'')+' — one of the longer-established '+firms+' we track in Fairfield County.']); }
+  // 3) Review volume — quantified (COUNT yes).
+  if (enr.volume_band==='top10') items.push(['Review volume','Among the most-reviewed',(nStr?nStr+' homeowner reviews on record — one':'One')+' of the most-reviewed '+firms+' in Fairfield County.']);
+  else if (enr.volume_band==='top25') items.push(['Review volume','A deep track record',(nStr?nStr+' homeowner reviews — a':'A')+' deeper bank of homeowner reviews than most '+firms+' we track.']);
+  // 4) Rating BAND only — never the score.
+  if (enr.rating_band==='top10') items.push(['Homeowner rating','Top-rated at scale','Holds a top-tier homeowner rating'+(nStr?' across all '+nStr+' reviews':'')+' — consistency at a volume most firms never reach.']);
+  else if (enr.rating_band==='top25') items.push(['Homeowner rating','Strongly rated','Carries one of the stronger homeowner ratings among the '+firms+' we track, across a meaningful number of reviews.']);
+  // 5) Filler — one standout capability in the firm's OWN evidence, only if the list is thin.
+  if (items.length < 3){
+    for (const key of STANDING_CAP_ORDER){ const c=caps[key];
+      if (c && c.ev && STANDING_CAP[key]){ const t=STANDING_CAP[key]; const ev=String(c.ev).trim(); items.push([t[0], t[1], ev.charAt(0).toUpperCase()+ev.slice(1)+(/[.!?]$/.test(ev)?'':'.')]); break; } }
+  }
+  if (!items.length) return '';
+  const cards = items.slice(0,4).map(it=>'<div class="prof-card"><div class="k">'+esc(it[0])+'</div><h3>'+it[1]+'</h3><p>'+esc(it[2])+'</p></div>').join('');
   return '<h2 class="prof-sec-h">Where it stands</h2>'+
-    '<p class="prof-sec-note">How this '+esc(tLower||'pro')+' compares on the signals Vesta can verify — drawn from public records and review history, not a paid placement.</p>'+
-    '<div class="prof-cards">'+items.map(it=>'<div class="prof-card"><div class="k">'+esc(it[0])+'</div><h3>'+esc(it[1])+'</h3><p>'+esc(it[2])+'</p></div>').join('')+'</div>';
+    '<p class="prof-sec-note">What sets them apart on the signals Vesta can verify — public records, manufacturer credentials, and a deep read of review history, not a paid placement.</p>'+
+    '<div class="prof-cards">'+cards+'</div>';
 }
 // At a glance = every hard fact in one categorized block: registry-verified credentials (chips + provenance),
 // then the business details (specialties / service area / owner). Consolidates the old "The record" + the

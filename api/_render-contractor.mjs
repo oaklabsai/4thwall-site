@@ -25,7 +25,8 @@ import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml, ORG_ID, WEBSI
 export const PROFILE_SELECT =
   'place_id,business_name,city,zip,trade,registered,hic_issue_date,trade_license,' +
   'certifications,synthesis,signature,known_for,specialties,' +
-  'service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,rating_count,enriched_at,index_status';
+  'service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,rating_count,' +
+  'capabilities,value_tier,deep_review_count,enriched_at,index_status';
 export const profileQuery = (placeId) =>
   '/profile_enrichment_public?place_id=eq.' + encodeURIComponent(placeId) +
   '&limit=1&select=' + PROFILE_SELECT;
@@ -128,24 +129,41 @@ function signatureBlock(enr) {
   return '<div class="vturn" style="margin:.6rem 0 .2rem"><p>' + esc(enr.signature) + '</p></div>';
 }
 
-// Vesta's read — comparative standing, POSITIVE-ONLY, no rank/score.
+// Where it stands — tailored, strongest-first: scarce specialty → tenure →
+// quantified review volume → rating BAND (never the score) → one standout
+// capability if thin. POSITIVE-ONLY, no rank/score. Mirror of vesta-app.html
+// profStandingHTML, emitted with the SSR's own card classes (.vwhy/.w/.k).
+const STANDING_SPECIALTY = {
+  metal_roofing:         ['Specialty', 'Metal-roof specialist', 'One of the very few %F we track in ' + COUNTY + ' equipped for standing-seam and metal roofs — an expertise homeowners say is hard to find.'],
+  in_house_masonry:      ['Specialty', 'In-house masonry', 'One of the few %F that rebuild chimneys and masonry alongside the roof, in-house rather than subbed out.'],
+  slate_cedar_specialty: ['Specialty', 'Slate &amp; cedar', 'Among the few %F we track who work slate and cedar roofs, not just asphalt shingle.'],
+  flat_low_slope:        ['Specialty', 'Flat &amp; low-slope', 'Equipped for flat and low-slope roofs (EPDM / membrane) — a job many shingle-only roofers turn down.'],
+  commercial_capable:    ['Specialty', 'Commercial-capable', 'Handles commercial roofs alongside residential — a wider remit than most %F we track.'],
+};
+const STANDING_CAP = { emergency_response: ['Response', 'Fast emergency response'], handles_insurance_claims: ['Insurance', 'Handles your insurance claim'], full_exterior_one_team: ['Scope', 'Whole-exterior team'], one_day_replacement: ['Speed', 'Fast turnaround'] };
+const STANDING_CAP_ORDER = ['emergency_response', 'handles_insurance_claims', 'full_exterior_one_team', 'one_day_replacement'];
 function vestaReadBlock(enr, trade) {
   if (!enr) return '';
-  const N = enr.trade_n;
   const firms = TRADE_FIRMS[trade] || (tLowerOf(trade) ? tLowerOf(trade) + ' contractors' : 'pros');
-  const ofN = N ? ' of the ' + N + ' ' + firms + ' we track across ' + COUNTY : ' among the ' + firms + ' we track';
-  const items = [];
-  if (enr.rating_band === 'top10') items.push(['Homeowner rating', 'Among the highest-rated', 'Its aggregate homeowner rating sits in the top tier' + ofN + '.']);
-  else if (enr.rating_band === 'top25') items.push(['Homeowner rating', 'Strongly rated', 'Carries one of the stronger homeowner ratings' + ofN + ', across a meaningful number of reviews.']);
-  if (enr.volume_band === 'top10') items.push(['Review volume', 'Among the most-reviewed', 'More homeowners have left public reviews here than for nearly any other firm' + ofN + '.']);
-  else if (enr.volume_band === 'top25') items.push(['Review volume', 'A deep track record', 'A deeper bank of homeowner reviews than most' + ofN + '.']);
-  if (enr.tenure_band === 'top25') items.push(['Tenure', 'Long-established', 'Holds one of the older active CT contractor registrations' + ofN + ' — years on the books.']);
+  const caps = (enr.capabilities && typeof enr.capabilities === 'object') ? enr.capabilities : {};
+  const reviewN = Number(enr.deep_review_count || enr.rating_count || 0);
+  const nStr = reviewN ? reviewN.toLocaleString('en-US') : '';
+  const items = [];   // [kicker, title, desc] — strongest-first, capped at 4
+  for (const key in STANDING_SPECIALTY) { if (caps[key]) { const s = STANDING_SPECIALTY[key]; items.push([s[0], s[1], s[2].replace(/%F/g, firms)]); } }
+  if (enr.tenure_band === 'top25') { const yr = enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0, 4) : 0; items.push(['Tenure', 'Long-established', 'Registered with the state' + (yr && yr !== 1999 ? ' since ' + yr : '') + ' — one of the longer-established ' + firms + ' we track in ' + COUNTY + '.']); }
+  if (enr.volume_band === 'top10') items.push(['Review volume', 'Among the most-reviewed', (nStr ? nStr + ' homeowner reviews on record — one' : 'One') + ' of the most-reviewed ' + firms + ' in ' + COUNTY + '.']);
+  else if (enr.volume_band === 'top25') items.push(['Review volume', 'A deep track record', (nStr ? nStr + ' homeowner reviews — a' : 'A') + ' deeper bank of homeowner reviews than most ' + firms + ' we track.']);
+  if (enr.rating_band === 'top10') items.push(['Homeowner rating', 'Top-rated at scale', 'Holds a top-tier homeowner rating' + (nStr ? ' across all ' + nStr + ' reviews' : '') + ' — consistency at a volume most firms never reach.']);
+  else if (enr.rating_band === 'top25') items.push(['Homeowner rating', 'Strongly rated', 'Carries one of the stronger homeowner ratings among the ' + firms + ' we track, across a meaningful number of reviews.']);
+  if (items.length < 3) {
+    for (const key of STANDING_CAP_ORDER) { const c = caps[key];
+      if (c && c.ev && STANDING_CAP[key]) { const t = STANDING_CAP[key]; const ev = String(c.ev).trim(); items.push([t[0], t[1], ev.charAt(0).toUpperCase() + ev.slice(1) + (/[.!?]$/.test(ev) ? '' : '.')]); break; } }
+  }
   if (!items.length) return '';
-  const cards = items.map((it) => '<div class="w"><div class="k">' + esc(it[0]) + '</div><h3>' + esc(it[1]) + '</h3><p>' + esc(it[2]) + '</p></div>').join('');
-  const tl = tLowerOf(trade);
-  return '<h2 class="section-h">Vesta’s read</h2>' +
-    '<p class="note" style="margin-top:-.2rem">What stands out about this ' + esc(tl || 'pro') + (tl ? ' pro' : '') +
-    ' — Vesta’s own read of public records and review history, not a paid placement.</p>' +
+  const cards = items.slice(0, 4).map((it) =>
+    '<div class="w"><div class="k">' + esc(it[0]) + '</div><h3>' + it[1] + '</h3><p>' + esc(it[2]) + '</p></div>').join('');
+  return '<h2 class="section-h">Where it stands</h2>' +
+    '<p class="note" style="margin-top:-.2rem">What sets them apart on the signals Vesta can verify — public records, manufacturer credentials, and a deep read of review history, not a paid placement.</p>' +
     '<div class="vwhy">' + cards + '</div>';
 }
 
