@@ -991,6 +991,7 @@ function mapRow(r){
     sinceYear: (yr && yr !== 1999) ? yr : 0,
     certs: certs,
     reviewCount: r.synthesis_review_count || 0,
+    totalReviews: r.rating_count || 0,
     verified: verified,
     standing: standing,
     knownFor: knownFor.slice(0,4),
@@ -1015,7 +1016,7 @@ function standingLine(r){
   return '';
 }
 async function loadContractors(){
-  const sel = 'place_id,business_name,city,trade,registered,hic_issue_date,certifications,synthesis,synthesis_review_count,known_for,specialties,volume_band,rating_band,tenure_band,trade_n,rank_score';
+  const sel = 'place_id,business_name,city,trade,registered,hic_issue_date,certifications,synthesis,synthesis_review_count,rating_count,known_for,specialties,volume_band,rating_band,tenure_band,trade_n,rank_score';
   const rows = await HOME.db('/profile_enrichment_public?select=' + sel + '&order=rank_score.desc.nullslast');
   S.dataLoaded = true;
   // Substance gate: a profile only earns a place on Vesta if Vesta has something
@@ -1562,14 +1563,13 @@ function confidence(con){
   return con.registered ? 'Good' : 'Limited';
 }
 function confidenceNote(con){
-  const n = con.reviewCount;
-  if (n > 0) return 'Vesta weighed '+n.toLocaleString('en-US')+' homeowner review'+(n===1?'':'s')+(con.registered?' plus this pro’s state registration':'')+' to form this read.';
+  if (con.totalReviews > 0) return 'Grounded in this pro’s public homeowner reviews'+(con.registered?' and Connecticut contractor registration':'')+'.';
   return con.registered ? 'Grounded in this pro’s state registration and public records.' : 'Limited public review history so far — read with that in mind.';
 }
 function confidenceSignals(con){
   const out = [];
   if (con.standing) out.push(con.standing);
-  if (con.reviewCount) out.push(con.reviewCount.toLocaleString('en-US')+' homeowner review'+(con.reviewCount===1?'':'s')+' weighed');
+  if (con.totalReviews) out.push(con.totalReviews.toLocaleString('en-US')+' public homeowner review'+(con.totalReviews===1?'':'s'));
   if (con.registered) out.push('Registered CT contractor'+(con.sinceYear?' since '+con.sinceYear:''));
   con.certs.forEach(c => out.push(c+' — manufacturer-certified'));
   return out;
@@ -2050,8 +2050,8 @@ function profReadHTML(){
   let html='<h2 class="prof-sec-h">Vesta’s read</h2>';
   if (enr.signature) html += '<p class="prof-sig">'+esc(enr.signature)+'</p>';
   if (enr.synthesis) html += '<div class="prof-block"><p class="read">'+esc(enr.synthesis)+'</p>'+
-    '<p class="prof-fine" style="margin-top:12px">Summarized by Vesta from '+(enr.synthesis_review_count?esc(enr.synthesis_review_count)+' ':'')+
-    'public homeowner reviews — Vesta’s own wording, never a copy of any single review.</p></div>';
+    '<p class="prof-fine" style="margin-top:12px">Based on '+((enr.rating_count||enr.deep_review_count)?esc((enr.rating_count||enr.deep_review_count).toLocaleString('en-US'))+' ':'')+
+    'public homeowner reviews on record — Vesta’s own wording, never a copy of any single review.</p></div>';
   return html;
 }
 // "Where it stands" — TAILORED comparative standing. Built from each firm's

@@ -258,9 +258,9 @@ document.addEventListener('DOMContentLoaded', async function(){
     let html = '<h2 class="section-h">What homeowners say</h2>';
     if (enr.synthesis){
       html += '<div class="card-block"><p style="font-size:.96rem;line-height:1.7">' + esc(enr.synthesis) + '</p>' +
-        '<p class="fine" style="margin-top:.9rem">Summarized by Vesta from ' +
-        (enr.synthesis_review_count ? esc(enr.synthesis_review_count) + ' ' : '') +
-        'public reviews — Vesta\'s own wording, not the business\'s, and never a copy of any single review.</p></div>';
+        '<p class="fine" style="margin-top:.9rem">Based on ' +
+        ((enr.rating_count || enr.deep_review_count) ? esc((enr.rating_count || enr.deep_review_count).toLocaleString('en-US')) + ' ' : '') +
+        'public homeowner reviews on record — Vesta\'s own wording, not the business\'s, and never a copy of any single review.</p></div>';
     }
     if (hasKnown){
       const cards = enr.known_for.filter(k => k && (k.label || k.detail)).map(k =>
