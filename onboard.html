@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>4THWALL® — Finish Your Setup</title>
-<meta name="description" content="A few last things only you can give us — your booking link, your Google review link, and your voice. Two minutes, and your AI is ready.">
+<title>4THWALL® — Onboarding</title>
+<meta name="description" content="Everything a new client's AI needs — captured once at the close. Booking, voice, pricing, hours, and the details that make the system theirs.">
 <link rel="icon" href="/logo.png" type="image/png">
 <link rel="apple-touch-icon" href="/logo.png">
 <meta name="theme-color" content="#f7f3ec">
@@ -24,6 +24,7 @@
   --hand:'Caveat',cursive; --mono:'JetBrains Mono',ui-monospace,monospace;
   --pad:clamp(1.25rem,4.5vw,4rem); --max:880px;
   --err:#8a2a1f; --err-soft:rgba(220,80,60,.07); --err-line:rgba(220,80,60,.45);
+  --ok:#1e6642; --ok-soft:rgba(30,102,66,.08);
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--body);color:var(--ink);background:var(--cream);-webkit-font-smoothing:antialiased;letter-spacing:-0.011em;line-height:1.55;min-height:100vh}
@@ -34,49 +35,74 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opa
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 .serif{font-family:var(--display)} .ital{font-style:italic}
 
+/* ── Mode visibility: operator-only chrome hides on the client (token) surface ── */
+body.mode-client .op-only{display:none !important}
+body.mode-operator .client-only{display:none !important}
+
 nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1.1rem var(--pad);background:rgba(247,243,236,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-logo{display:flex;align-items:center;gap:.7rem;line-height:1;color:var(--ink)}
 .nav-logo .brand-name{font-family:var(--body);font-weight:600;font-size:.82rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink)}
 .nav-meta{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:.5rem}
 .nav-meta .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(30,102,66,.18);animation:pulse 2.4s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
-.hero{padding:3.6rem var(--pad) .5rem;max-width:var(--max);margin:0 auto}
+.hero{padding:3.2rem var(--pad) .5rem;max-width:var(--max);margin:0 auto}
 .hero-greeting{font-family:var(--hand);color:var(--orange);font-size:1.55rem;line-height:1;display:inline-block;transform:rotate(-2deg);margin-bottom:.5rem}
 .eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:1rem}
-.hero-h{font-family:var(--display);font-size:clamp(2rem,4.6vw,3.1rem);font-weight:500;line-height:1.04;letter-spacing:-.032em;max-width:20ch}
+.hero-h{font-family:var(--display);font-size:clamp(2rem,4.6vw,3.1rem);font-weight:500;line-height:1.04;letter-spacing:-.032em;max-width:22ch}
 .hero-h em{font-style:italic;color:var(--orange);font-weight:400}
-.hero-sub{font-size:1rem;line-height:1.65;color:var(--muted);margin-top:1rem;max-width:56ch}
+.hero-sub{font-size:1rem;line-height:1.65;color:var(--muted);margin-top:1rem;max-width:60ch}
 .hero-sub strong{color:var(--ink);font-weight:500}
 
 .form-section{padding:1.8rem var(--pad) 3rem;max-width:var(--max);margin:0 auto}
-.form-card{background:var(--cream-2);border:1px solid var(--line);border-radius:18px;padding:clamp(1.6rem,3.2vw,2.6rem);position:relative;box-shadow:0 14px 40px -22px rgba(26,26,24,.18),0 2px 8px -4px rgba(26,26,24,.08)}
+.form-card{background:var(--cream-2);border:1px solid var(--line);border-radius:18px;padding:clamp(1.2rem,2.6vw,1.8rem);position:relative;box-shadow:0 14px 40px -22px rgba(26,26,24,.18),0 2px 8px -4px rgba(26,26,24,.08)}
 
 .loc-missing{display:none;background:var(--err-soft);border:1px solid var(--err-line);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:1.4rem;font-size:.9rem;color:var(--ink);line-height:1.55}
 .loc-missing.is-on{display:block}
 .loc-missing a{color:var(--orange);text-decoration:underline}
 
-.group-tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);margin-bottom:1rem;display:flex;align-items:center;gap:.55rem;border-bottom:1px solid var(--line-2);padding-bottom:.5rem}
-.group-tag .num{color:var(--ink);font-weight:600}
-.group{margin-bottom:1.6rem}
+/* Operator key bar */
+.keybar{background:var(--ink);color:var(--cream);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem}
+.keybar .klabel{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:.5rem}
+.keybar input{width:100%;padding:.7rem .9rem;background:rgba(247,243,236,.07);border:1px solid rgba(247,243,236,.18);border-radius:8px;color:var(--cream);font-family:var(--mono);font-size:.85rem}
+.keybar input:focus{outline:none;border-color:var(--orange)}
+.keybar .khint{font-size:.72rem;color:rgba(247,243,236,.55);margin-top:.5rem}
 
-.trade-pick{margin-bottom:1.8rem;padding-bottom:1.6rem;border-bottom:1px solid var(--line)}
-.trade-pick-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:.7rem}
+/* Trade picker (always visible — it skins the whole form) */
+.trade-pick{margin-bottom:1.2rem;padding:1rem 1.2rem;background:var(--cream);border:1px solid var(--line);border-radius:12px}
+.trade-pick-label{font-family:var(--body);font-size:.78rem;font-weight:600;letter-spacing:.02em;color:var(--ink-2);margin-bottom:.7rem;display:flex;align-items:baseline;gap:.5rem}
+.trade-pick-label .req{font-family:var(--mono);color:var(--orange);font-size:.56rem;letter-spacing:.1em}
 .trade-pills{display:flex;flex-wrap:wrap;gap:.5rem}
-.trade-pill{padding:.5rem .95rem;border:1px solid var(--line);border-radius:999px;background:var(--cream);font-family:var(--body);font-size:.84rem;font-weight:500;color:var(--muted);transition:border-color .15s,background .15s,color .15s}
+.trade-pill{padding:.5rem .95rem;border:1px solid var(--line);border-radius:999px;background:var(--cream-2);font-family:var(--body);font-size:.84rem;font-weight:500;color:var(--muted);transition:border-color .15s,background .15s,color .15s}
 .trade-pill:hover{border-color:var(--ink);color:var(--ink)}
 .trade-pill.is-active{background:var(--orange);border-color:var(--orange);color:#fff}
-.extra-fields:empty{display:none}
+
+/* ── Accordion (collapsible categorized sections) ── */
+details.acc{border:1px solid var(--line);border-radius:12px;margin-bottom:.8rem;background:var(--cream)}
+details.acc[open]{box-shadow:0 8px 26px -20px rgba(26,26,24,.3)}
+summary.acc-head{list-style:none;display:flex;align-items:center;gap:.7rem;padding:1.05rem 1.2rem;cursor:pointer;-webkit-user-select:none;user-select:none}
+summary.acc-head::-webkit-details-marker{display:none}
+summary.acc-head:hover{background:var(--cream-2);border-radius:11px}
+.acc-head .num{font-family:var(--mono);font-size:.7rem;font-weight:600;color:#fff;background:var(--orange);border-radius:6px;padding:.22rem .46rem;line-height:1;flex:none}
+.acc-head .acc-title{flex:1;font-family:var(--body);font-weight:700;font-size:1.02rem;letter-spacing:-.01em;color:var(--ink)}
+.acc-head .acc-sub{font-family:var(--body);font-weight:400;font-size:.78rem;color:var(--dim);font-style:italic;margin-left:.1rem}
+.acc-head .chev{width:.62rem;height:.62rem;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .2s;flex:none}
+details.acc[open] .chev{transform:rotate(45deg)}
+.acc-body{padding:.2rem 1.2rem 1.3rem}
+.acc-lead{font-size:.8rem;color:var(--muted);line-height:1.55;margin-bottom:1rem}
+.acc-lead strong{color:var(--ink);font-weight:600}
 
 .job-row{display:grid;grid-template-columns:1fr 1fr auto;gap:1rem;margin-bottom:.6rem;align-items:center}
-.job-row .rm{padding:.55rem .6rem;border:1px solid var(--line);border-radius:8px;color:var(--dim);background:var(--cream);line-height:1;font-size:1rem;transition:border-color .15s,color .15s}
+.job-row .rm{padding:.55rem .6rem;border:1px solid var(--line);border-radius:8px;color:var(--dim);background:var(--cream-2);line-height:1;font-size:1rem;transition:border-color .15s,color .15s}
 .job-row .rm:hover{border-color:var(--err-line);color:var(--err)}
-.add-job{display:inline-flex;align-items:center;gap:.45rem;margin-top:.3rem;padding:.6rem 1rem;border:1px dashed var(--line);border-radius:9px;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--cream);transition:border-color .15s,color .15s}
+.add-job{display:inline-flex;align-items:center;gap:.45rem;margin-top:.3rem;padding:.6rem 1rem;border:1px dashed var(--line);border-radius:9px;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--cream-2);transition:border-color .15s,color .15s}
 .add-job:hover{border-color:var(--ink);color:var(--ink)}
 .add-job:disabled{opacity:.45;cursor:not-allowed}
 .add-job .plus{font-size:.95rem;line-height:1}
 @media(max-width:640px){.job-row{grid-template-columns:1fr 1fr}.job-row .rm{grid-column:1 / -1;justify-self:end;padding:.45rem .9rem}}
+
 .gbp-opts{display:flex;flex-direction:column;gap:.55rem}
-.gbp-opt{display:flex;align-items:flex-start;gap:.7rem;padding:.85rem 1rem;border:1px solid var(--line);border-radius:10px;background:var(--cream);cursor:pointer;transition:border-color .15s,background .15s}
+.gbp-opt{display:flex;align-items:flex-start;gap:.7rem;padding:.85rem 1rem;border:1px solid var(--line);border-radius:10px;background:var(--cream-2);cursor:pointer;transition:border-color .15s,background .15s}
 .gbp-opt:hover{border-color:var(--ink)}
 .gbp-opt input{margin-top:.2rem;accent-color:var(--orange);width:1rem;height:1rem;flex:none}
 .gbp-opt:has(input:checked){border-color:var(--orange);background:#fff;box-shadow:0 0 0 3px rgba(30,102,66,.08)}
@@ -85,27 +111,71 @@ nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;just
 .gbp-opt-t em{font-style:normal;color:var(--dim);font-size:.88rem}
 
 .form-row{margin-bottom:1.1rem}
+.form-row:last-child{margin-bottom:0}
 .form-row.row-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-@media(max-width:640px){.form-row.row-pair{grid-template-columns:1fr}}
-.form-label{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:.4rem}
-.form-label .req{color:var(--orange);font-size:.55rem}
-.form-label .opt{color:var(--dim);font-size:.55rem;text-transform:none;letter-spacing:.05em;font-style:italic;font-family:var(--body)}
+.form-row.row-triple{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:1rem}
+.form-row.row-addr{display:grid;grid-template-columns:1.4fr .8fr .6fr;gap:1rem}
+@media(max-width:640px){.form-row.row-pair,.form-row.row-triple,.form-row.row-addr{grid-template-columns:1fr}}
+/* Bolder, more prominent field titles (per Drew) */
+.form-label{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;font-family:var(--body);font-size:.8rem;font-weight:700;letter-spacing:-.005em;color:var(--ink);margin-bottom:.45rem}
+.form-label .req{font-family:var(--mono);color:var(--orange);font-size:.56rem;font-weight:600;letter-spacing:.08em}
+.form-label .opt{color:var(--dim);font-size:.7rem;font-weight:400;text-transform:none;letter-spacing:0;font-style:italic;font-family:var(--body)}
 .form-hint{font-size:.74rem;color:var(--muted);margin-top:.4rem;line-height:1.5}
 .form-hint a{color:var(--orange);text-decoration:underline;text-underline-offset:2px}
-.form-input,.form-textarea{width:100%;padding:.85rem 1rem;background:var(--cream);border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:.94rem;color:var(--ink);transition:border-color .2s,background .2s,box-shadow .2s;line-height:1.5}
-.form-textarea{min-height:120px;resize:vertical}
-.form-input:focus,.form-textarea:focus{outline:none;border-color:var(--ink);background:#fff;box-shadow:0 0 0 3px rgba(30,102,66,.08)}
+.form-hint.warn{color:var(--err)}
+.form-input,.form-textarea,.form-select{width:100%;padding:.85rem 1rem;background:var(--cream-2);border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:.94rem;color:var(--ink);transition:border-color .2s,background .2s,box-shadow .2s;line-height:1.5}
+.form-textarea{min-height:96px;resize:vertical}
+.form-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 9' fill='none' stroke='%231a1a18' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='1,1.5 7,7.5 13,1.5'/></svg>");background-repeat:no-repeat;background-position:right 1rem center;background-size:11px 7px;padding-right:2.3rem;cursor:pointer}
+.form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;border-color:var(--ink);background:#fff;box-shadow:0 0 0 3px rgba(30,102,66,.08)}
 .form-input::placeholder,.form-textarea::placeholder{color:var(--dim)}
-.form-input.is-invalid,.form-textarea.is-invalid{border-color:var(--err-line);background:var(--err-soft)}
+.form-input.is-invalid,.form-textarea.is-invalid,.form-select.is-invalid{border-color:var(--err-line);background:var(--err-soft)}
 
-.submit-row{display:flex;align-items:center;justify-content:flex-end;gap:1rem;margin-top:1.6rem}
+.radio-group{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.55rem}
+.radio-opt{position:relative;display:flex;align-items:center;gap:.55rem;padding:.7rem .85rem;background:var(--cream-2);border:1px solid var(--line);border-radius:9px;cursor:pointer;transition:border-color .15s,background .15s;font-size:.88rem}
+.radio-opt:hover{border-color:rgba(26,26,24,.28)}
+.radio-opt input{position:absolute;opacity:0;pointer-events:none}
+.radio-opt .dot{flex-shrink:0;width:14px;height:14px;border:1.5px solid var(--line);border-radius:50%;position:relative;transition:border-color .15s}
+.radio-opt input:checked ~ .dot{border-color:var(--orange)}
+.radio-opt input:checked ~ .dot::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--orange)}
+.radio-opt input:checked ~ .txt{color:var(--ink);font-weight:500}
+
+.submit-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1.4rem;flex-wrap:wrap}
+.dry-toggle{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+.dry-toggle input{width:15px;height:15px;accent-color:var(--orange)}
+.submit-end{display:flex;align-items:center;gap:1rem;margin-left:auto}
 .submit-status{font-family:var(--mono);font-size:.72rem;letter-spacing:.04em}
-.submit-status.is-error{color:var(--err)} .submit-status.is-ok{color:var(--orange)}
+.submit-status.is-error{color:var(--err)} .submit-status.is-ok{color:var(--ok)}
 .btn{display:inline-flex;align-items:center;gap:.55rem;padding:.9rem 1.7rem;border-radius:10px;font-weight:600;font-size:.95rem;transition:transform .15s,background .15s,opacity .15s}
 .btn-orange{background:var(--orange);color:#fff}
 .btn-orange:hover{background:var(--orange-2)}
 .btn-orange:disabled{opacity:.55;cursor:not-allowed}
 
+/* Operator result panel */
+.result{display:none;margin-top:1.6rem;background:var(--ok-soft);border:1px solid rgba(30,102,66,.25);border-radius:14px;padding:1.4rem 1.5rem}
+.result.is-on{display:block}
+.result h3{font-family:var(--display);font-size:1.35rem;font-weight:500;margin-bottom:.3rem}
+.result h3 em{font-style:italic;color:var(--orange)}
+.result .sub{font-size:.88rem;color:var(--muted);margin-bottom:1rem}
+.linkrow{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;flex-wrap:wrap}
+.linkrow .lk-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);min-width:108px}
+.linkrow .lk-val{flex:1;min-width:200px;font-family:var(--mono);font-size:.78rem;background:var(--cream);border:1px solid var(--line);border-radius:7px;padding:.5rem .7rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.linkrow .lk-val.empty{color:var(--dim)}
+.copybtn{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);border:1px solid var(--orange);border-radius:6px;padding:.4rem .7rem}
+.copybtn:hover{background:var(--orange);color:#fff}
+.steps{margin-top:1rem;font-family:var(--mono);font-size:.72rem;color:var(--muted);line-height:1.7}
+.steps .s-ok{color:var(--ok)} .steps .s-bad{color:var(--err)}
+/* "Still to collect" gaps block */
+.gaps{margin-top:1.1rem;padding:1rem 1.1rem;border-radius:10px;border:1px solid var(--line);background:var(--cream)}
+.gaps.is-clear{border-color:rgba(30,102,66,.3);background:var(--ok-soft)}
+.gaps .gaps-h{font-family:var(--body);font-weight:700;font-size:.82rem;color:var(--ink);margin-bottom:.5rem}
+.gaps .gaps-grp{font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:.3rem}
+.gaps .gaps-grp b{color:var(--ink-2);font-weight:600}
+.gaps .pill{display:inline-block;background:var(--cream-3);border:1px solid var(--line);border-radius:999px;padding:.12rem .6rem;margin:.15rem .25rem .15rem 0;font-size:.76rem;color:var(--ink-2)}
+.nextup{margin-top:1.1rem;padding-top:1rem;border-top:1px dashed var(--line);font-size:.8rem;color:var(--muted);line-height:1.65}
+.nextup strong{color:var(--ink);font-weight:600}
+.again{margin-top:1.2rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);cursor:pointer}
+
+/* Client success card */
 .success-card{display:none;background:var(--cream-2);border:1px solid var(--line);border-radius:18px;padding:clamp(1.8rem,3.5vw,2.8rem);box-shadow:0 14px 40px -22px rgba(26,26,24,.18)}
 .success-card.is-on{display:block}
 .success-tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);display:inline-flex;align-items:center;gap:.5rem;margin-bottom:.9rem}
@@ -124,18 +194,18 @@ nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;just
 footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-top:1px solid var(--line)}
 </style>
 </head>
-<body>
+<body class="mode-operator">
 
 <nav class="topnav">
   <div class="nav-logo"><span class="brand-name">4THWALL</span></div>
-  <div class="nav-meta"><span class="dot"></span><span class="label">Setup</span></div>
+  <div class="nav-meta"><span class="dot"></span><span class="label" id="navLabel">Close · Provision</span></div>
 </nav>
 
 <header class="hero">
-  <span class="hero-greeting" id="heroGreeting">Almost there.</span>
-  <div class="eyebrow">Finish your setup · ~2 minutes</div>
-  <h1 class="hero-h" id="heroH">A few last things only <em>you</em> can give us.</h1>
-  <p class="hero-sub" id="heroSub">This is everything your AI needs to sound like you and answer like you — booking, pricing, hours, and voice. Fill in what you know; skip what you don't. When you submit, <strong>Andrew verifies and activates within 48 hours.</strong></p>
+  <span class="hero-greeting" id="heroGreeting">Client signed.</span>
+  <div class="eyebrow" id="heroEyebrow">Capture everything · once</div>
+  <h1 class="hero-h" id="heroH">Everything their AI needs — <em>in one pass.</em></h1>
+  <p class="hero-sub" id="heroSub">Fill this while you still have them on the line. Submit once and it mints the GHL sub-account, the Stripe checkout, the Slack channel, and stores everything — booking, voice, pricing, hours, <strong>and the legal details for A2P</strong> — so you never go back to ask. Tap a section to open it; anything you leave blank shows up as a follow-up.</p>
 </header>
 
 <section class="form-section">
@@ -146,141 +216,390 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
 
   <form class="form-card" id="onboardForm" autocomplete="off" novalidate>
 
+    <!-- Operator key (operator mode only) -->
+    <div class="keybar op-only">
+      <div class="klabel">Operator key</div>
+      <input type="password" id="closeKey" placeholder="paste your close-form key" autocomplete="off">
+      <div class="khint">Stored only in this browser. Gates this trigger — not your WORKER_SECRET (that lives server-side).</div>
+    </div>
+
     <input type="hidden" id="f-trade" name="trade_type" value="">
 
-    <!-- ── Trade picker (sets the form's language; corrected trade flows back on submit) ── -->
+    <!-- ── Trade picker (always visible; skins the form) ── -->
     <div class="trade-pick">
-      <div class="trade-pick-label">Trade</div>
+      <div class="trade-pick-label">Trade <span class="req op-only">REQ</span></div>
       <div class="trade-pills" id="tradePills"></div>
     </div>
 
-    <!-- ── Booking + reviews (required) ── -->
-    <div class="group">
-      <div class="group-tag"><span class="num">01</span> Booking &amp; reviews</div>
-      <div class="form-row">
-        <label class="form-label" for="f-booking">Booking link <span class="req">REQ</span></label>
-        <input class="form-input" id="f-booking" name="booking_link" type="url" placeholder="https://calendly.com/yourname/estimate" required>
-        <p class="form-hint">The exact link customers use to book an estimate. We send this verbatim — paste the real one.</p>
+    <!-- ── 01 · The business (operator: fires provisioning) ── -->
+    <details class="acc op-only" id="sec-business" open>
+      <summary class="acc-head"><span class="num">01</span><span class="acc-title">The business</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <div class="form-row">
+          <label class="form-label" for="f-biz">Business name <span class="req">REQ</span></label>
+          <input class="form-input" id="f-biz" name="business_name" type="text" placeholder="Ridgeline Roofing">
+        </div>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-owneremail">Owner email <span class="req">REQ</span></label>
+            <input class="form-input" id="f-owneremail" name="owner_email" type="email" placeholder="owner@ridgeline.com">
+            <p class="form-hint">Keys provisioning + the onboarding link. Re-firing the same email is safe — it won't double-provision, it merges.</p>
+          </div>
+          <div>
+            <label class="form-label" for="f-ownercell">Owner cell <span class="opt">recommended</span></label>
+            <input class="form-input" id="f-ownercell" name="owner_cell_phone" type="tel" placeholder="(203) 555-0142">
+          </div>
+        </div>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-zip">Service ZIP <span class="req">REQ</span></label>
+            <input class="form-input" id="f-zip" name="service_area_zip" type="text" inputmode="numeric" pattern="\d{5}" maxlength="5" placeholder="06830">
+            <p class="form-hint">One representative ZIP → timezone + storm mode.</p>
+          </div>
+          <div>
+            <label class="form-label" for="f-plan">Plan <span class="req">REQ</span></label>
+            <select class="form-select" id="f-plan" name="plan_tier">
+              <option value="" disabled selected>Tier…</option>
+              <option value="Foundation">Foundation</option>
+              <option value="Growth">Growth</option>
+              <option value="Dominance">Dominance</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <div class="form-row">
-        <label class="form-label" for="f-review">Google review link <span class="req">REQ</span></label>
-        <input class="form-input" id="f-review" name="google_review_link" type="url" placeholder="https://g.page/r/Cabc.../review" required>
-        <p class="form-hint">Your Google review-write link (<a href="https://support.google.com/business/answer/7035772" target="_blank" rel="noopener">how to find it</a>). This is where review requests send customers.</p>
-      </div>
-    </div>
+    </details>
 
-    <!-- ── Voice + offer ── -->
-    <div class="group">
-      <div class="group-tag"><span class="num">02</span> Your voice &amp; offer</div>
-      <div class="form-row row-pair">
-        <div>
-          <label class="form-label" for="f-botname">Assistant name <span class="opt">optional · defaults to Alex</span></label>
-          <input class="form-input" id="f-botname" name="bot_name" type="text" placeholder="Alex" maxlength="32">
+    <!-- ── 02 · Booking & reviews ── -->
+    <details class="acc" id="sec-booking">
+      <summary class="acc-head"><span class="num">02</span><span class="acc-title">Booking &amp; reviews</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <div class="form-row">
+          <label class="form-label" for="f-booking">Booking link <span class="req client-only">REQ</span><span class="opt op-only">strongly recommended</span></label>
+          <input class="form-input" id="f-booking" name="booking_link" type="url" placeholder="https://calendly.com/yourname/estimate">
+          <p class="form-hint">The exact link customers use to book an estimate. The bot sends this verbatim — paste the real one. <span class="op-only">Get it while you have the client.</span></p>
         </div>
-        <div>
-          <label class="form-label" for="f-offer">Current offer <span class="opt">optional</span></label>
-          <input class="form-input" id="f-offer" name="current_offer" type="text" placeholder="Free roof inspection — no obligation">
+        <div class="form-row">
+          <label class="form-label" for="f-review">Google review link <span class="req client-only">REQ</span><span class="opt op-only">strongly recommended</span></label>
+          <input class="form-input" id="f-review" name="google_review_link" type="url" placeholder="https://g.page/r/Cabc.../review">
+          <p class="form-hint">The Google review-write link (<a href="https://support.google.com/business/answer/7035772" target="_blank" rel="noopener">how to find it</a>). This is where review requests send customers.</p>
         </div>
       </div>
-      <div class="form-row">
-        <label class="form-label" for="f-voice">How your assistant should talk <span class="opt">optional</span></label>
-        <textarea class="form-textarea" id="f-voice" name="bot_custom_instructions" placeholder="1–2 sentences. e.g. 'Warm, local, direct — short messages, Connecticut-friendly. We don't oversell. Quick to hand off a real job.'"></textarea>
-        <p class="form-hint">In your own words lands best — but a sentence is plenty. We fill the rest from your call.</p>
-      </div>
-    </div>
+    </details>
 
-    <!-- ── Credentials + financing (optional) ── -->
-    <div class="group">
-      <div class="group-tag"><span class="num">03</span> Credentials &amp; financing <span class="opt" style="text-transform:none;letter-spacing:0;color:var(--dim);font-family:var(--body);font-style:italic">— if they apply</span></div>
-      <div class="form-row row-pair">
-        <div>
-          <label class="form-label" for="f-license">License number <span class="opt">optional</span></label>
-          <input class="form-input" id="f-license" name="license_number" type="text" placeholder="HIC.0123456">
-          <p class="form-hint">Quoted verbatim to customers — only enter it if you have it exact.</p>
+    <!-- ── 03 · Legal & contact — for A2P + records (operator only) ── -->
+    <details class="acc op-only" id="sec-legal">
+      <summary class="acc-head"><span class="num">03</span><span class="acc-title">Legal &amp; contact</span><span class="acc-sub">— files A2P later</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <p class="acc-lead">These let <strong>us</strong> file A2P (carrier text registration) on the client's behalf — they never touch it. Grab what you can at the close so we never circle back. All optional here; anything blank shows up as a follow-up.</p>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-legalname">Legal business name <span class="opt">optional</span></label>
+            <input class="form-input" id="f-legalname" name="business_legal_name" type="text" placeholder="Ridgeline Roofing LLC">
+            <p class="form-hint">Exactly as on the EIN / state registration — often differs from the brand name.</p>
+          </div>
+          <div>
+            <label class="form-label" for="f-entity">Legal entity <span class="opt">optional</span></label>
+            <select class="form-select" id="f-entity" name="business_type">
+              <option value="" selected>Entity type…</option>
+              <option value="LLC">LLC</option>
+              <option value="Corporation">Corporation</option>
+              <option value="S-Corporation">S-Corporation</option>
+              <option value="Sole Proprietorship">Sole Proprietorship</option>
+              <option value="Partnership">Partnership</option>
+              <option value="Non-Profit">Non-Profit</option>
+            </select>
+          </div>
         </div>
-        <div>
-          <label class="form-label" for="f-fin">Financing terms <span class="opt">optional</span></label>
-          <input class="form-input" id="f-fin" name="financing_details" type="text" placeholder="0% APR for 12 months via GreenSky">
-          <p class="form-hint">Your live program terms — only you know the current numbers.</p>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-ein">EIN (federal tax ID) <span class="opt">optional · sensitive</span></label>
+            <input class="form-input" id="f-ein" name="ein" type="text" inputmode="numeric" maxlength="10" placeholder="12-3456789">
+            <p class="form-hint">9 digits. Stored for A2P only — never shown in the bot, Slack, or any config dump.</p>
+          </div>
+          <div>
+            <label class="form-label" for="f-website">Website <span class="opt">optional</span></label>
+            <input class="form-input" id="f-website" name="website_url" type="text" placeholder="ridgelineroofing.com">
+          </div>
+        </div>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-bizphone">Business phone <span class="opt">optional</span></label>
+            <input class="form-input" id="f-bizphone" name="business_phone" type="tel" placeholder="(203) 555-0100">
+            <p class="form-hint">The public/listed line (may differ from the owner's cell).</p>
+          </div>
+          <div>
+            <label class="form-label" for="f-bizemail">Business email <span class="opt">optional</span></label>
+            <input class="form-input" id="f-bizemail" name="business_email" type="email" placeholder="office@ridgeline.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="f-addr1">Business address <span class="opt">optional</span></label>
+          <input class="form-input" id="f-addr1" name="address_line1" type="text" placeholder="Street address" style="margin-bottom:.6rem">
+          <input class="form-input" id="f-addr2" name="address_line2" type="text" placeholder="Suite / unit (optional)">
+        </div>
+        <div class="form-row row-addr">
+          <div>
+            <label class="form-label" for="f-city">City <span class="opt">optional</span></label>
+            <input class="form-input" id="f-city" name="city" type="text" placeholder="Greenwich">
+          </div>
+          <div>
+            <label class="form-label" for="f-state">State <span class="opt">optional</span></label>
+            <input class="form-input" id="f-state" name="state" type="text" placeholder="CT" maxlength="20">
+          </div>
+          <div>
+            <label class="form-label" for="f-addrzip">ZIP <span class="opt">optional</span></label>
+            <input class="form-input" id="f-addrzip" name="zip" type="text" inputmode="numeric" maxlength="10" placeholder="06830">
+          </div>
         </div>
       </div>
-    </div>
+    </details>
 
-    <!-- ── Hours & after-hours ── -->
-    <div class="group">
-      <div class="group-tag"><span class="num">04</span> Hours &amp; after-hours <span class="opt" style="text-transform:none;letter-spacing:0;color:var(--dim);font-family:var(--body);font-style:italic">— so your AI answers "are you open?" right</span></div>
-      <div class="form-row">
-        <label class="form-label" for="f-hours">Business hours <span class="opt">optional</span></label>
-        <input class="form-input" id="f-hours" name="business_hours" type="text" placeholder="Mon–Fri 7am–6pm, Sat 8am–2pm, closed Sunday" maxlength="300">
-        <p class="form-hint">Your AI quotes these exactly when customers ask if you're open.</p>
+    <!-- ── 04 · Owner (authorized rep for A2P) — operator only ── -->
+    <details class="acc op-only" id="sec-owner">
+      <summary class="acc-head"><span class="num">04</span><span class="acc-title">Owner</span><span class="acc-sub">— the A2P authorized rep</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-ofirst">Owner first name <span class="opt">optional</span></label>
+            <input class="form-input" id="f-ofirst" name="owner_first_name" type="text" placeholder="Mike">
+          </div>
+          <div>
+            <label class="form-label" for="f-olast">Owner last name <span class="opt">optional</span></label>
+            <input class="form-input" id="f-olast" name="owner_last_name" type="text" placeholder="Ridgeline">
+          </div>
+        </div>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-years">Years in business <span class="opt">optional</span></label>
+            <input class="form-input" id="f-years" name="years_in_business" type="text" placeholder="12" maxlength="20">
+          </div>
+          <div></div>
+        </div>
       </div>
-      <div class="form-row">
-        <label class="form-label" for="f-afterhours">After-hours &amp; emergencies <span class="opt">optional</span></label>
-        <textarea class="form-textarea" id="f-afterhours" name="after_hours_policy" placeholder="e.g. 'For an after-hours emergency, take their info and tell them I'll call back within the hour. For anything routine, offer to book the next morning.'" maxlength="600"></textarea>
-        <p class="form-hint">What should your AI do when someone texts at 2am? This is how you win (or lose) emergency jobs.</p>
-      </div>
-      <div class="form-row">
-        <label class="form-label" for="f-escalation">When to reach you <span class="opt">optional</span></label>
-        <textarea class="form-textarea" id="f-escalation" name="escalation_rule" placeholder="e.g. 'Text me right away for any job over $10k, any complaint, or anything urgent. Everything else can wait for my morning summary.'" maxlength="600"></textarea>
-        <p class="form-hint">Your AI uses this to decide when to pull you in vs. handle it solo.</p>
-      </div>
-    </div>
+    </details>
 
-    <!-- ── Pricing (so the AI can answer "how much?") ── -->
-    <div class="group">
-      <div class="group-tag"><span class="num">05</span> Pricing <span class="opt" style="text-transform:none;letter-spacing:0;color:var(--dim);font-family:var(--body);font-style:italic">— optional, but it's the #1 question customers ask</span></div>
-      <div class="form-row row-pair">
-        <div>
-          <label class="form-label" for="f-servicecall">Service call / trip fee <span class="opt">optional</span></label>
-          <input class="form-input" id="f-servicecall" name="p_service_call" type="text" placeholder="$89, waived if you book" maxlength="200">
+    <!-- ── 05 · Voice & offer ── -->
+    <details class="acc" id="sec-voice">
+      <summary class="acc-head"><span class="num">05</span><span class="acc-title">Voice &amp; offer</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-botname">Assistant name <span class="opt">optional · defaults to Alex</span></label>
+            <input class="form-input" id="f-botname" name="bot_name" type="text" placeholder="Alex" maxlength="32">
+          </div>
+          <div>
+            <label class="form-label" for="f-offer">Current offer <span class="opt">optional</span></label>
+            <input class="form-input" id="f-offer" name="current_offer" type="text" placeholder="Free roof inspection — no obligation">
+          </div>
         </div>
-        <div>
-          <label class="form-label" for="f-estimates">Estimates <span class="opt">optional</span></label>
-          <input class="form-input" id="f-estimates" name="p_estimates" type="text" placeholder="Free, no obligation" maxlength="200">
+        <div class="form-row">
+          <label class="form-label" for="f-voice">How the assistant should talk <span class="opt">optional</span></label>
+          <textarea class="form-textarea" id="f-voice" name="bot_custom_instructions" placeholder="1–2 sentences. e.g. 'Warm, local, direct — short messages, Connecticut-friendly. We don't oversell. Quick to hand off a real job.'"></textarea>
+          <p class="form-hint">In the owner's own words lands best — but a sentence is plenty.</p>
+        </div>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-lang">Languages <span class="opt">optional</span></label>
+            <input class="form-input" id="f-lang" name="bot_language" type="text" placeholder="English &amp; Spanish" maxlength="30">
+            <p class="form-hint">Leave blank for English. List any second language the bot should reply in.</p>
+          </div>
+          <div></div>
         </div>
       </div>
-      <div class="form-row row-pair">
-        <div>
-          <label class="form-label" for="f-payment">Payment methods <span class="opt">optional</span></label>
-          <input class="form-input" id="f-payment" name="p_payment" type="text" placeholder="Cash, card, check, financing" maxlength="200">
-        </div>
-        <div>
-          <label class="form-label" for="f-afterhrsprice">After-hours pricing <span class="opt">optional</span></label>
-          <input class="form-input" id="f-afterhrsprice" name="p_after_hours" type="text" placeholder="1.5x rate after 6pm &amp; weekends" maxlength="200">
-        </div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Common jobs &amp; price ranges <span class="opt">optional · add as many as you offer</span></label>
-        <p class="form-hint" style="margin-top:0;margin-bottom:.5rem">Give the AI real ranges so it can answer "ballpark?" confidently. Always sent as a range, never an exact quote.</p>
-        <div id="jobRows"></div>
-        <button type="button" class="add-job" id="addJob"><span class="plus">+</span> Add another job</button>
-      </div>
-    </div>
+    </details>
 
-    <!-- ── Google Business Profile autopilot (optional · never blocks submit) ── -->
-    <div class="group">
-      <div class="group-tag"><span class="num">06</span> Google Business Profile <span class="opt" style="text-transform:none;letter-spacing:0;color:var(--dim);font-family:var(--body);font-style:italic">— optional, set up anytime</span></div>
-      <p class="form-hint" style="margin-top:0;margin-bottom:.9rem">Add us as a manager and your AI keeps your Google profile working for you — posting weekly in your voice and replying to new reviews within a day. To turn it on, add <strong>andrew@4thwall.solutions</strong> as a Manager (<a href="https://support.google.com/business/answer/3403100" target="_blank" rel="noopener">how to add a manager</a>), then tell us where you're at:</p>
-      <div class="gbp-opts" id="gbpOpts">
-        <label class="gbp-opt"><input type="radio" name="gbp_access_status" value="granted"> <span class="gbp-opt-t"><strong>Done — I added them</strong><em>We'll connect you and switch on autopilot.</em></span></label>
-        <label class="gbp-opt"><input type="radio" name="gbp_access_status" value="later"> <span class="gbp-opt-t"><strong>I'll do it later</strong><em>We'll send a quick reminder with the steps.</em></span></label>
-        <label class="gbp-opt"><input type="radio" name="gbp_access_status" value="declined"> <span class="gbp-opt-t"><strong>Not interested yet</strong><em>Skip it — you can turn it on anytime.</em></span></label>
+    <!-- ── 06 · Credentials & what you learned ── -->
+    <details class="acc" id="sec-cred">
+      <summary class="acc-head"><span class="num">06</span><span class="acc-title">Credentials &amp; offer details</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-license">License number <span class="opt">optional</span></label>
+            <input class="form-input" id="f-license" name="license_number" type="text" placeholder="HIC.0123456">
+            <p class="form-hint">Quoted verbatim to customers — only enter it if exact.</p>
+          </div>
+          <div>
+            <label class="form-label" for="f-fin">Financing terms <span class="opt">optional</span></label>
+            <input class="form-input" id="f-fin" name="financing_details" type="text" placeholder="0% APR for 12 months via GreenSky">
+          </div>
+        </div>
+        <div class="form-row op-only">
+          <label class="form-label" for="f-primary">Primary service <span class="opt">optional</span></label>
+          <input class="form-input" id="f-primary" name="primary_service" type="text" placeholder="Roof replacement">
+        </div>
+        <div class="form-row op-only">
+          <label class="form-label" for="f-services">Services offered <span class="opt">optional</span></label>
+          <textarea class="form-textarea" id="f-services" name="services_offered" placeholder="Roof replacement, repair, gutters, storm damage, insurance claims…"></textarea>
+          <p class="form-hint">List only what you're sure they do — under-listing is safe; over-listing can book a job they can't deliver.</p>
+        </div>
+        <div class="form-row row-pair op-only">
+          <div>
+            <label class="form-label" for="f-not">Services NOT offered <span class="opt">optional</span></label>
+            <input class="form-input" id="f-not" name="services_not_offered" type="text" placeholder="Commercial flat roofs, solar">
+          </div>
+          <div>
+            <label class="form-label" for="f-area">Service area <span class="opt">optional</span></label>
+            <input class="form-input" id="f-area" name="service_area_description" type="text" placeholder="Fairfield County, CT + eastern Westchester">
+          </div>
+        </div>
+        <div class="form-row row-pair op-only">
+          <div>
+            <label class="form-label" for="f-turn">Estimate turnaround <span class="opt">optional</span></label>
+            <input class="form-input" id="f-turn" name="estimate_turnaround" type="text" placeholder="24–48 hours">
+          </div>
+          <div>
+            <label class="form-label" for="f-job">Typical job size <span class="opt">optional</span></label>
+            <input class="form-input" id="f-job" name="typical_job_size" type="text" placeholder="$8k–$45k">
+          </div>
+        </div>
+        <div class="form-row op-only">
+          <label class="form-label">Insurance claims <span class="opt">optional</span></label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="insurance_claims" value="full"><span class="dot"></span><span class="txt">Full</span></label>
+            <label class="radio-opt"><input type="radio" name="insurance_claims" value="limited"><span class="dot"></span><span class="txt">Limited</span></label>
+            <label class="radio-opt"><input type="radio" name="insurance_claims" value="no"><span class="dot"></span><span class="txt">No</span></label>
+          </div>
+        </div>
+        <div class="form-row op-only">
+          <label class="form-label">Financing offered <span class="opt">optional</span></label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="financing_offered" value="yes"><span class="dot"></span><span class="txt">Yes</span></label>
+            <label class="radio-opt"><input type="radio" name="financing_offered" value="no"><span class="dot"></span><span class="txt">No</span></label>
+          </div>
+        </div>
       </div>
-    </div>
+    </details>
 
-    <!-- ── Trade-specific fields (declarative — rendered from the active trade's data; empty for all trades today) ── -->
-    <div class="group" id="extraGroup" style="display:none">
-      <div class="group-tag"><span class="num">07</span> <span id="extraGroupTitle">A few trade specifics</span></div>
-      <div class="extra-fields" id="extraFields"></div>
-    </div>
+    <!-- ── 07 · Hours & after-hours ── -->
+    <details class="acc" id="sec-hours">
+      <summary class="acc-head"><span class="num">07</span><span class="acc-title">Hours &amp; after-hours</span><span class="acc-sub">— answers "are you open?"</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <div class="form-row">
+          <label class="form-label" for="f-hours">Business hours <span class="opt">optional</span></label>
+          <input class="form-input" id="f-hours" name="business_hours" type="text" placeholder="Mon–Fri 7am–6pm, Sat 8am–2pm, closed Sunday" maxlength="300">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="f-afterhours">After-hours &amp; emergencies <span class="opt">optional</span></label>
+          <textarea class="form-textarea" id="f-afterhours" name="after_hours_policy" placeholder="e.g. 'For an after-hours emergency, take their info and tell them I'll call back within the hour. For anything routine, offer to book the next morning.'" maxlength="600"></textarea>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="f-escalation">When to reach the owner <span class="opt">optional</span></label>
+          <textarea class="form-textarea" id="f-escalation" name="escalation_rule" placeholder="e.g. 'Text me right away for any job over $10k, any complaint, or anything urgent. Everything else can wait for my morning summary.'" maxlength="600"></textarea>
+        </div>
+      </div>
+    </details>
+
+    <!-- ── 08 · Pricing ── -->
+    <details class="acc" id="sec-pricing">
+      <summary class="acc-head"><span class="num">08</span><span class="acc-title">Pricing</span><span class="acc-sub">— the #1 question</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-servicecall">Service call / trip fee <span class="opt">optional</span></label>
+            <input class="form-input" id="f-servicecall" name="p_service_call" type="text" placeholder="$89, waived if you book" maxlength="200">
+          </div>
+          <div>
+            <label class="form-label" for="f-diagnostic">Diagnostic fee <span class="opt">optional</span></label>
+            <input class="form-input" id="f-diagnostic" name="p_diagnostic" type="text" placeholder="$99, applied to the repair" maxlength="200">
+          </div>
+        </div>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-estimates">Estimates <span class="opt">optional</span></label>
+            <input class="form-input" id="f-estimates" name="p_estimates" type="text" placeholder="Free, no obligation" maxlength="200">
+          </div>
+          <div>
+            <label class="form-label" for="f-payment">Payment methods <span class="opt">optional</span></label>
+            <input class="form-input" id="f-payment" name="p_payment" type="text" placeholder="Cash, card, check, financing" maxlength="200">
+          </div>
+        </div>
+        <div class="form-row row-pair">
+          <div>
+            <label class="form-label" for="f-afterhrsprice">After-hours pricing <span class="opt">optional</span></label>
+            <input class="form-input" id="f-afterhrsprice" name="p_after_hours" type="text" placeholder="1.5x rate after 6pm &amp; weekends" maxlength="200">
+          </div>
+          <div></div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Common jobs &amp; price ranges <span class="opt">optional · add as many as they offer</span></label>
+          <p class="form-hint" style="margin-top:0;margin-bottom:.5rem">Real ranges so the AI can answer "ballpark?" — always sent as a range, never an exact quote.</p>
+          <div id="jobRows"></div>
+          <button type="button" class="add-job" id="addJob"><span class="plus">+</span> Add another job</button>
+        </div>
+        <div class="form-row" style="margin-top:1.1rem">
+          <label class="form-label" for="f-pnotes">Pricing notes <span class="opt">optional</span></label>
+          <input class="form-input" id="f-pnotes" name="p_notes" type="text" placeholder="Prices firm through spring; minimum $250 ticket" maxlength="200">
+        </div>
+      </div>
+    </details>
+
+    <!-- ── 09 · Google Business Profile autopilot ── -->
+    <details class="acc" id="sec-gbp">
+      <summary class="acc-head"><span class="num">09</span><span class="acc-title">Google Business Profile</span><span class="acc-sub">— optional, anytime</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <p class="acc-lead">Add <strong>andrew@4thwall.solutions</strong> as a Manager (<a href="https://support.google.com/business/answer/3403100" target="_blank" rel="noopener">how to add a manager</a>) and the AI keeps the Google profile working — posting weekly in their voice and replying to new reviews within a day. Then mark where they're at:</p>
+        <div class="gbp-opts" id="gbpOpts">
+          <label class="gbp-opt"><input type="radio" name="gbp_access_status" value="granted"> <span class="gbp-opt-t"><strong>Done — they added us</strong><em>We'll connect and switch on autopilot.</em></span></label>
+          <label class="gbp-opt"><input type="radio" name="gbp_access_status" value="later"> <span class="gbp-opt-t"><strong>They'll do it later</strong><em>We'll send a quick reminder with the steps.</em></span></label>
+          <label class="gbp-opt"><input type="radio" name="gbp_access_status" value="declined"> <span class="gbp-opt-t"><strong>Not interested yet</strong><em>Skip it — can turn on anytime.</em></span></label>
+        </div>
+      </div>
+    </details>
+
+    <!-- ── 10 · Booking sync preference (operator only) ── -->
+    <details class="acc op-only" id="sec-sync">
+      <summary class="acc-head"><span class="num">10</span><span class="acc-title">Booking sync</span><span class="acc-sub">— optional</span><span class="chev"></span></summary>
+      <div class="acc-body">
+        <div class="form-row">
+          <label class="form-label" for="f-extcal">Their own calendar tool <span class="opt">optional</span></label>
+          <input class="form-input" id="f-extcal" name="external_calendar" type="text" placeholder="e.g. Google Calendar, Jobber, Housecall Pro" maxlength="120">
+          <p class="form-hint">Bookings land in Slack by default. If they want them mirrored into a calendar tool they already use, note it here.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- ── Trade-specific fields (declarative; empty for all trades today) ── -->
+    <details class="acc" id="extraGroup" style="display:none">
+      <summary class="acc-head"><span class="num">11</span><span class="acc-title" id="extraGroupTitle">A few trade specifics</span><span class="chev"></span></summary>
+      <div class="acc-body"><div class="extra-fields" id="extraFields"></div></div>
+    </details>
 
     <div class="submit-row">
-      <span class="submit-status" id="submitStatus"></span>
-      <button type="submit" class="btn btn-orange" id="submitBtn">Activate my AI <span>→</span></button>
+      <label class="dry-toggle op-only"><input type="checkbox" id="dryRun"> Dry run (no live GHL / Stripe)</label>
+      <div class="submit-end">
+        <span class="submit-status" id="submitStatus"></span>
+        <button type="submit" class="btn btn-orange" id="submitBtn">Provision client <span>→</span></button>
+      </div>
+    </div>
+
+    <!-- ── Operator result panel ── -->
+    <div class="result op-only" id="result" aria-live="polite">
+      <h3>Chain <em id="resHeadWord">fired.</em></h3>
+      <p class="sub" id="resSub">The client is provisioned. Next steps below.</p>
+      <div class="linkrow">
+        <span class="lk-label">Location ID</span>
+        <span class="lk-val mono" id="resLoc">—</span>
+      </div>
+      <div class="linkrow">
+        <span class="lk-label">Onboarding link</span>
+        <span class="lk-val mono empty" id="resOnboard">—</span>
+        <button type="button" class="copybtn" data-copy="resOnboard">Copy</button>
+      </div>
+      <div class="linkrow">
+        <span class="lk-label">Payment link</span>
+        <span class="lk-val mono empty" id="resPay">—</span>
+        <button type="button" class="copybtn" data-copy="resPay">Copy</button>
+      </div>
+      <div class="steps" id="resSteps"></div>
+      <div class="gaps" id="resGaps"></div>
+      <div class="nextup">
+        <strong>What happens next:</strong> watch <strong>#system</strong> in Slack for the Tenant-App install card — install it <em>from inside the new sub-account</em>. It auto-finalizes (writes the secret, verifies the seam, posts the go-live ✅). Then file A2P from the captured details (<span class="mono">/admin/a2p-packet</span>). Anything still missing keeps a daily reminder until it's filled.
+      </div>
+      <div class="again" id="resAgain">+ Provision another</div>
     </div>
   </form>
 
-  <!-- ── Success ── -->
+  <!-- ── Client success card (client/token mode) ── -->
   <div class="success-card" id="successCard" aria-live="polite">
     <div class="success-tag"><span class="dot"></span> Configuration saved</div>
     <h2 class="success-h">You're <em>configured.</em></h2>
@@ -300,85 +619,123 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
 <script>
 (function(){
   'use strict';
-  // POST to the Vercel function which injects WORKER_SECRET server-side.
-  var WORKER_URL = '/api/register-client';
-  var form        = document.getElementById('onboardForm');
-  var locMissing  = document.getElementById('locMissing');
-  var submitBtn   = document.getElementById('submitBtn');
-  var submitStatus= document.getElementById('submitStatus');
-  var successCard = document.getElementById('successCard');
-  var heroGreeting= document.getElementById('heroGreeting');
-  var heroH       = document.getElementById('heroH');
 
-  // ── Auth params: token (preferred) or legacy ?loc= ──
-  var url = new URL(window.location.href);
+  var form         = document.getElementById('onboardForm');
+  var locMissing   = document.getElementById('locMissing');
+  var submitBtn    = document.getElementById('submitBtn');
+  var submitStatus = document.getElementById('submitStatus');
+  var successCard   = document.getElementById('successCard');
+  var resultEl      = document.getElementById('result');
+  var keyEl         = document.getElementById('closeKey');
+  var dryRunEl      = document.getElementById('dryRun');
+  var tradeHidden   = document.getElementById('f-trade');
+
+  // ── Mode detection ────────────────────────────────────────────────────────
+  var url             = new URL(window.location.href);
   var onboardingToken = url.searchParams.get('token') || '';
-  var locationId      = url.searchParams.get('loc') || url.searchParams.get('location_id') || '';
+  var legacyLoc       = url.searchParams.get('loc') || url.searchParams.get('location_id') || '';
   var preBusiness     = url.searchParams.get('business') || '';
-  if (!onboardingToken && !locationId){
-    locMissing.classList.add('is-on');
-    submitBtn.disabled = true;
-  }
-  if (preBusiness){ heroGreeting.textContent = 'Almost there, ' + preBusiness + '.'; }
+  var MODE            = (onboardingToken || legacyLoc) ? 'client' : 'operator';
 
-  // ── Trade-adaptive surface ──────────────────────────────────────────────
-  // One form, one set of fields, one destination. The trade only swaps the
-  // EXAMPLE text (placeholders) so the form speaks the client's language — it
-  // never adds, removes, or PRE-FILLS a field. Real CT-market example ranges
-  // (seeded from the Vesta directory) stay as grey placeholders so nothing
-  // false is ever submitted as the client's own number.
+  document.body.className = 'mode-' + MODE;
+
+  // Open the right default section per mode (the rest stay collapsed).
+  function openOnly(id){
+    document.querySelectorAll('details.acc').forEach(function(d){ if (d.id) d.open = (d.id === id); });
+  }
+  if (MODE === 'client') {
+    document.getElementById('navLabel').textContent = 'Setup';
+    document.getElementById('heroEyebrow').textContent = 'Finish your setup · ~2 minutes';
+    document.getElementById('heroGreeting').textContent = preBusiness ? ('Almost there, ' + preBusiness + '.') : 'Almost there.';
+    document.getElementById('heroH').innerHTML = 'A few last things only <em>you</em> can give us.';
+    document.getElementById('heroSub').innerHTML = "This is everything your AI needs to sound like you and answer like you — booking, pricing, hours, and voice. Tap a section to open it; fill what you know and skip the rest. When you submit, <strong>Andrew verifies and activates within a few hours.</strong>";
+    openOnly('sec-booking');   // client lands on the one thing only they hold
+  } else {
+    openOnly('sec-business');  // operator lands on the required provisioning fields
+  }
+
+  var WORKER_URL = (MODE === 'operator') ? '/api/client-signed' : '/api/register-client';
+
+  // ── Operator key persistence (operator mode only; this browser only) ──
+  var KEY_STORE = '4tw_close_key';
+  if (MODE === 'operator' && keyEl) {
+    try { keyEl.value = localStorage.getItem(KEY_STORE) || ''; } catch(_){}
+    keyEl.addEventListener('change', function(){
+      try { keyEl.value ? localStorage.setItem(KEY_STORE, keyEl.value) : localStorage.removeItem(KEY_STORE); } catch(_){}
+    });
+  }
+
+  // ── Phone formatting ──
+  function attachPhoneFormat(el){
+    if (!el) return;
+    el.addEventListener('input', function(){
+      var d = el.value.replace(/\D/g,'').slice(0,10);
+      el.value = d.length<4 ? d : d.length<7 ? '('+d.slice(0,3)+') '+d.slice(3) : '('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6);
+    });
+  }
+  attachPhoneFormat(document.getElementById('f-ownercell'));
+  attachPhoneFormat(document.getElementById('f-bizphone'));
+
+  // ── EIN formatting (XX-XXXXXXX) ──
+  var einEl = document.getElementById('f-ein');
+  if (einEl) einEl.addEventListener('input', function(){
+    var d = einEl.value.replace(/\D/g,'').slice(0,9);
+    einEl.value = d.length > 2 ? d.slice(0,2)+'-'+d.slice(2) : d;
+  });
+
+  // ── URL normalizer (bare domain → https://, avoids a worker 400) ──
+  function normalizeUrl(s){
+    s = (s||'').trim();
+    if (!s) return '';
+    if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
+    return s;
+  }
+
+  // ── Trade-adaptive surface (placeholders only) ──
   var TRADES = {
     roofing: {
-      offer:       'Free roof inspection — no obligation',
-      serviceCall: 'Free inspections',
-      afterHours:  "Storm damage after hours — get their address and photos, tell them I'll call back within the hour. Routine quotes can book the next morning.",
-      escalation:  "Text me right away for any storm/insurance job or an active leak. Routine quotes can wait for my morning summary.",
-      jobs: [['Roof replacement','$8,000–$18,000'], ['Leak repair','$350–$900'], ['Gutter install','$1,200–$3,000']]
+      offer:'Free roof inspection — no obligation', serviceCall:'Free inspections',
+      afterHours:"Storm damage after hours — get their address and photos, tell them I'll call back within the hour. Routine quotes can book the next morning.",
+      escalation:"Text me right away for any storm/insurance job or an active leak. Routine quotes can wait for my morning summary.",
+      jobs:[['Roof replacement','$8,000–$18,000'],['Leak repair','$350–$900'],['Gutter install','$1,200–$3,000']]
     },
     hvac: {
-      offer:       '$59 A/C tune-up',
-      serviceCall: '$89 diagnostic, waived if you book',
-      afterHours:  "No heat or no A/C is an emergency — take their info and reach me tonight. Anything routine can book the next morning.",
-      escalation:  "Text me for any no-heat / no-cool call or any job over $5k. Everything else waits for my morning summary.",
-      jobs: [['A/C tune-up','$89–$150'], ['Furnace install','$4,000–$7,000'], ['No-cool diagnostic','$99–$150']]
+      offer:'$59 A/C tune-up', serviceCall:'$89 diagnostic, waived if you book',
+      afterHours:"No heat or no A/C is an emergency — take their info and reach me tonight. Anything routine can book the next morning.",
+      escalation:"Text me for any no-heat / no-cool call or any job over $5k. Everything else waits for my morning summary.",
+      jobs:[['A/C tune-up','$89–$150'],['Furnace install','$4,000–$7,000'],['No-cool diagnostic','$99–$150']]
     },
     plumbing: {
-      offer:       'Free estimate — no trip charge',
-      serviceCall: '$49 trip fee, waived with repair',
-      afterHours:  "Burst pipe or flooding is an emergency — dispatch tonight. A slow drain can book tomorrow.",
-      escalation:  "Text me for any water emergency or job over $3k. Routine work waits for my morning summary.",
-      jobs: [['Water heater install','$1,800–$3,200'], ['Drain cleaning','$150–$350'], ['Burst pipe repair','$400–$1,200']]
+      offer:'Free estimate — no trip charge', serviceCall:'$49 trip fee, waived with repair',
+      afterHours:"Burst pipe or flooding is an emergency — dispatch tonight. A slow drain can book tomorrow.",
+      escalation:"Text me for any water emergency or job over $3k. Routine work waits for my morning summary.",
+      jobs:[['Water heater install','$1,800–$3,200'],['Drain cleaning','$150–$350'],['Burst pipe repair','$400–$1,200']]
     },
     electrical: {
-      offer:       'Free estimate on panel upgrades',
-      serviceCall: '$99 diagnostic, applied to the repair',
-      afterHours:  "No power or a burning smell is an emergency — reach me tonight. A dead outlet can wait for morning.",
-      escalation:  "Text me for any power outage, burning smell, or job over $4k. Routine work waits for the summary.",
-      jobs: [['Panel upgrade','$2,000–$4,500'], ['EV charger install','$800–$2,000'], ['Outlet / switch repair','$150–$350']]
+      offer:'Free estimate on panel upgrades', serviceCall:'$99 diagnostic, applied to the repair',
+      afterHours:"No power or a burning smell is an emergency — reach me tonight. A dead outlet can wait for morning.",
+      escalation:"Text me for any power outage, burning smell, or job over $4k. Routine work waits for the summary.",
+      jobs:[['Panel upgrade','$2,000–$4,500'],['EV charger install','$800–$2,000'],['Outlet / switch repair','$150–$350']]
     },
     paving: {
-      offer:       'Free driveway estimate',
-      serviceCall: 'Free estimates',
-      afterHours:  "After-hours requests can wait for morning — take their info and address and I'll follow up first thing.",
-      escalation:  "Text me for any commercial job or anything over $10k. Residential quotes wait for my morning summary.",
-      jobs: [['Driveway paving','$4,000–$10,000'], ['Sealcoating','$300–$700'], ['Asphalt repair','$500–$2,000']]
+      offer:'Free driveway estimate', serviceCall:'Free estimates',
+      afterHours:"After-hours requests can wait for morning — take their info and address and I'll follow up first thing.",
+      escalation:"Text me for any commercial job or anything over $10k. Residential quotes wait for my morning summary.",
+      jobs:[['Driveway paving','$4,000–$10,000'],['Sealcoating','$300–$700'],['Asphalt repair','$500–$2,000']]
     },
     lawn_care: {
-      offer:       'Free first mow with a season sign-up',
-      serviceCall: 'Free quotes',
-      afterHours:  "After-hours requests can wait for morning — grab their info and address and I'll follow up first thing.",
-      escalation:  "Text me for any full-property install or anything over $3k. Weekly service requests wait for the summary.",
-      jobs: [['Weekly mowing','$45–$80 / visit'], ['Spring cleanup','$300–$600'], ['Mulch install','$400–$1,200']]
+      offer:'Free first mow with a season sign-up', serviceCall:'Free quotes',
+      afterHours:"After-hours requests can wait for morning — grab their info and address and I'll follow up first thing.",
+      escalation:"Text me for any full-property install or anything over $3k. Weekly service requests wait for the summary.",
+      jobs:[['Weekly mowing','$45–$80 / visit'],['Spring cleanup','$300–$600'],['Mulch install','$400–$1,200']]
     },
     generic: {
-      offer:       'Free estimate — no obligation',
-      serviceCall: '$89, waived if you book',
-      afterHours:  "For an after-hours emergency, take their info and tell them I'll call back within the hour. Routine can book the next morning.",
-      escalation:  "Text me right away for anything urgent, any complaint, or any big job. Everything else can wait for my morning summary.",
-      jobs: [['Most common job','$120–$180'], ['Bigger install','$1,800–$3,200'], ['Quick repair','$150–$350']]
+      offer:'Free estimate — no obligation', serviceCall:'$89, waived if you book',
+      afterHours:"For an after-hours emergency, take their info and tell them I'll call back within the hour. Routine can book the next morning.",
+      escalation:"Text me right away for anything urgent, any complaint, or any big job. Everything else can wait for my morning summary.",
+      jobs:[['Most common job','$120–$180'],['Bigger install','$1,800–$3,200'],['Quick repair','$150–$350']]
     }
   };
-  // Map the many real-world trade labels onto our seeded skins.
   var TRADE_ALIASES = {
     roofing:'roofing', roofer:'roofing', roof:'roofing', gutters:'roofing', siding:'roofing',
     hvac:'hvac', heating:'hvac', cooling:'hvac', 'air conditioning':'hvac', 'heating and cooling':'hvac', 'heating & cooling':'hvac',
@@ -399,11 +756,7 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     if (el && text != null) el.setAttribute('placeholder', text);
   }
 
-  // Declarative renderer for trade-specific EXTRA fields. Empty for every trade
-  // today. The day a trade needs a unique field, add it to that trade's
-  // `extraFields` array (and allow-list its name in the worker's config-validate)
-  // and it renders here automatically — no markup or logic changes. This is the
-  // hinge that lets structural per-trade difference happen without a rebuild.
+  // Declarative renderer for trade-specific EXTRA fields (none today).
   var extraGroup  = document.getElementById('extraGroup');
   var extraFields = document.getElementById('extraFields');
   function renderExtraFields(list){
@@ -426,8 +779,7 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     extraGroup.style.display = '';
   }
 
-  // ── Common jobs: dynamic rows (these guys offer more than 3 things). The
-  // worker's validatePricingData caps the jobs array at 15, so match it here. ──
+  // ── Common jobs: dynamic rows (validatePricingData caps at 15) ──
   var MAX_JOBS  = 15;
   var jobRows   = document.getElementById('jobRows');
   var addJobBtn = document.getElementById('addJob');
@@ -436,7 +788,6 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     var n = jobCount();
     addJobBtn.disabled = n >= MAX_JOBS;
     addJobBtn.querySelector('.plus').nextSibling.textContent = n >= MAX_JOBS ? ' Max 15 jobs' : ' Add another job';
-    // No remove control when only one row remains (nothing to delete down to).
     jobRows.querySelectorAll('.job-row .rm').forEach(function(b){ b.style.display = n > 1 ? '' : 'none'; });
   }
   function addJobRow(namePH, rangePH){
@@ -451,27 +802,19 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     return row;
   }
   addJobBtn.addEventListener('click', function(){ var r = addJobRow(); if (r) r.querySelector('.j-name').focus(); });
-  addJobRow();   // one starter row; the + adds the rest
+  addJobRow();
 
-  // ── Trade pills (operator taps at the close; ?trade= pre-selects) ──
-  var tradeHidden = document.getElementById('f-trade');
-  var tradePills  = document.getElementById('tradePills');
+  // ── Trade pills ──
+  var tradePills = document.getElementById('tradePills');
   var PILLS = [['roofing','Roofing'],['hvac','HVAC'],['plumbing','Plumbing'],['electrical','Electrical'],['paving','Paving'],['lawn_care','Lawn Care'],['generic','Other']];
-
   function applyTrade(raw){
     var slug = resolveTrade(raw);
     var t = TRADES[slug] || TRADES.generic;
-    // Submit the canonical slug so a CORRECTION flows back to the bot. 'Other'
-    // (generic) carries no real trade → leave empty so the server keeps the
-    // trade it already has on file from provisioning.
-    tradeHidden.value = (slug === 'generic') ? '' : slug;
+    tradeHidden.value = (slug === 'generic') ? 'general_contractor' : slug;
     setPlaceholder('current_offer',      t.offer);
     setPlaceholder('p_service_call',     t.serviceCall);
     setPlaceholder('after_hours_policy', "e.g. '" + t.afterHours + "'");
     setPlaceholder('escalation_rule',    "e.g. '" + t.escalation + "'");
-    // Skin the existing example rows (those the operator hasn't typed into yet)
-    // with this trade's sample jobs. Rows the operator already filled, and any
-    // rows they added, are left untouched.
     var rows = jobRows.querySelectorAll('.job-row');
     for (var i=0; i<rows.length && i<t.jobs.length; i++){
       var nm = rows[i].querySelector('.j-name'), rg = rows[i].querySelector('.j-range');
@@ -482,8 +825,8 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     Array.prototype.forEach.call(tradePills.children, function(btn){
       btn.classList.toggle('is-active', btn.getAttribute('data-slug') === slug);
     });
+    var pickEl = document.querySelector('.trade-pick'); if (pickEl) pickEl.style.outline = '';
   }
-
   PILLS.forEach(function(p){
     var btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'trade-pill';
@@ -491,31 +834,61 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     btn.addEventListener('click', function(){ applyTrade(p[0]); });
     tradePills.appendChild(btn);
   });
+  var preTrade = url.searchParams.get('trade') || '';
+  if (preTrade) applyTrade(preTrade); else tradeHidden.value = '';
 
-  applyTrade(url.searchParams.get('trade') || '');
+  // ── Validation (per mode) ──
+  function val(name){
+    var el = form.querySelector('[name="'+name+'"]');
+    if (!el) return '';
+    if (el.type === 'radio'){ var c = form.querySelector('input[name="'+name+'"]:checked'); return c ? c.value : ''; }
+    return (el.value||'').trim();
+  }
+  function openParent(el){ if (!el || !el.closest) return; var d = el.closest('details.acc'); if (d) d.open = true; }
+  function markInvalid(name){ var el = form.querySelector('[name="'+name+'"]'); if (el){ el.classList.add('is-invalid'); openParent(el); return el; } return null; }
+  form.addEventListener('input', function(e){ if (e.target.classList) e.target.classList.remove('is-invalid'); });
+  function isUrl(v){ return /^https?:\/\/\S+/i.test(v); }
+  function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
-  // ── validation ──
   function validate(){
     var firstBad = null;
-    form.querySelectorAll('input[required]').forEach(function(f){
-      var v = (f.value||'').trim();
-      var ok = !!v;
-      if (ok && f.type === 'url' && !/^https?:\/\/\S+/i.test(v)) ok = false;
-      f.classList.toggle('is-invalid', !ok);
-      if (!ok && !firstBad) firstBad = f;
-    });
-    if (firstBad) firstBad.focus();
+    function bad(name){ var el = markInvalid(name); if (el && !firstBad) firstBad = el; }
+    if (MODE === 'operator') {
+      if (!val('business_name'))         bad('business_name');
+      if (!isEmail(val('owner_email')))  bad('owner_email');
+      if (!/^\d{5}$/.test(val('service_area_zip'))) bad('service_area_zip');
+      if (!val('plan_tier'))             bad('plan_tier');
+      if (!tradeHidden.value){
+        var pickEl = document.querySelector('.trade-pick');
+        if (pickEl){ pickEl.style.outline = '1px solid var(--err-line)'; if (!firstBad) firstBad = pickEl; }
+      }
+      ['booking_link','google_review_link'].forEach(function(n){
+        var v = val(n); if (v && !isUrl(normalizeUrl(v))) bad(n);
+      });
+    } else {
+      ['booking_link','google_review_link'].forEach(function(n){
+        var v = val(n); if (!v || !isUrl(normalizeUrl(v))) bad(n);
+      });
+    }
+    if (firstBad && firstBad.scrollIntoView) firstBad.scrollIntoView({behavior:'smooth', block:'center'});
+    if (firstBad && firstBad.focus) firstBad.focus();
     return !firstBad;
   }
-  form.addEventListener('input', function(e){ if (e.target.classList) e.target.classList.remove('is-invalid'); });
 
-  function v(name){ var el = form.querySelector('[name="'+name+'"]'); return el ? (el.value||'').trim() : ''; }
+  // ── Pricing + config builders ──
+  function hasPricing(){
+    var any = ['p_service_call','p_diagnostic','p_estimates','p_payment','p_after_hours','p_notes'].some(function(n){ return !!val(n); });
+    if (any) return true;
+    return Array.prototype.some.call(jobRows.querySelectorAll('.job-row'), function(r){
+      return (r.querySelector('.j-name').value||'').trim() && (r.querySelector('.j-range').value||'').trim();
+    });
+  }
   function buildPricing(){
     var p = {};
-    var sc = v('p_service_call'); if (sc) p.service_call = sc;
-    var es = v('p_estimates');    if (es) p.estimates    = es;
-    var pm = v('p_payment');      if (pm) p.payment      = pm;
-    var ah = v('p_after_hours');  if (ah) p.after_hours  = ah;
+    [['p_service_call','service_call'],['p_diagnostic','diagnostic'],['p_estimates','estimates'],
+     ['p_payment','payment'],['p_after_hours','after_hours'],['p_notes','notes']].forEach(function(m){
+      var v = val(m[0]); if (v) p[m[1]] = v;
+    });
     var jobs = [];
     jobRows.querySelectorAll('.job-row').forEach(function(row){
       var n = (row.querySelector('.j-name').value||'').trim();
@@ -526,73 +899,207 @@ footer{padding:2rem var(--pad);text-align:center;font-family:var(--mono);font-si
     return p;
   }
   function buildConfig(){
-    var c = {
-      booking_link:            v('booking_link'),
-      google_review_link:      v('google_review_link'),
-      bot_name:                v('bot_name'),
-      current_offer:           v('current_offer'),
-      bot_custom_instructions: v('bot_custom_instructions'),
-      license_number:          v('license_number'),
-      financing_details:       v('financing_details'),
-      business_hours:          v('business_hours'),
-      after_hours_policy:      v('after_hours_policy'),
-      escalation_rule:         v('escalation_rule')
-    };
-    Object.keys(c).forEach(function(k){ if (!c[k]) delete c[k]; });
+    var c = {};
+    var shared = ['booking_link','google_review_link','bot_name','current_offer',
+      'bot_custom_instructions','bot_language','license_number','financing_details',
+      'business_hours','after_hours_policy','escalation_rule'];
+    shared.forEach(function(n){ var v = val(n); if (v) c[n] = v; });
+    if (c.booking_link)       c.booking_link       = normalizeUrl(c.booking_link);
+    if (c.google_review_link) c.google_review_link = normalizeUrl(c.google_review_link);
+    if (MODE === 'operator') {
+      var opFields = ['business_name','business_legal_name','business_type',
+        'owner_first_name','owner_last_name','owner_email','owner_cell_phone',
+        'business_phone','business_email','years_in_business',
+        'address_line1','address_line2','city','state','zip','website_url',
+        'service_area_zip','primary_service','services_offered','services_not_offered',
+        'estimate_turnaround','typical_job_size','service_area_description',
+        'insurance_claims','financing_offered','external_calendar','plan_tier'];
+      opFields.forEach(function(n){ var v = val(n); if (v) c[n] = v; });
+      if (c.website_url) c.website_url = normalizeUrl(c.website_url);
+      if (tradeHidden.value) c.trade_type = tradeHidden.value;
+    }
     var pricing = buildPricing();
     if (Object.keys(pricing).length) c.pricing_data = pricing;
-    // GBP autopilot — optional offer, never blocks submit. Only sent when the
-    // operator picks an option; drives the post-signup access chase.
     var gbp = form.querySelector('input[name="gbp_access_status"]:checked');
     if (gbp) c.gbp_access_status = gbp.value;
-    // Trade-specific extra fields (declarative; none today). Each one, when
-    // introduced, must also be allow-listed in the worker's config-validate.
     form.querySelectorAll('#extraFields [name]').forEach(function(el){
-      var val = (el.value||'').trim();
-      if (val) c[el.name] = val;
+      var v = (el.value||'').trim(); if (v) c[el.name] = v;
     });
     return c;
   }
+
+  // ── Gap computation (mirrors the worker's getClientSetupGaps so Drew sees,
+  //    at the close, exactly what's still missing for follow-up) ──
+  function computeGaps(){
+    function blank(n){ return !val(n); }
+    var experience = [];
+    if (blank('booking_link'))       experience.push('Booking link');
+    if (blank('google_review_link')) experience.push('Google review link');
+    if (blank('business_hours'))     experience.push('Business hours');
+    if (!hasPricing())               experience.push('Pricing');
+    var a2p = [];
+    // Mirrors the worker's getA2PPacket fallback (legal name ← brand name): only
+    // a gap when BOTH are blank, so the at-close list matches the daily reminder.
+    if (blank('business_legal_name') && blank('business_name')) a2p.push('Legal name');
+    if (!val('business_type'))        a2p.push('Entity type');
+    if (blank('ein'))                 a2p.push('EIN');
+    if (blank('business_email'))      a2p.push('Business email');
+    if (blank('website_url'))         a2p.push('Website');
+    if (blank('address_line1') || blank('city') || blank('state') || blank('zip')) a2p.push('Business address');
+    if (blank('owner_first_name') || blank('owner_last_name')) a2p.push('Owner name');
+    if (blank('business_phone') && blank('owner_cell_phone'))  a2p.push('Owner/business phone');
+    return { experience: experience, a2p: a2p };
+  }
+
   function setStatus(t, cls){ submitStatus.textContent = t||''; submitStatus.className = 'submit-status' + (cls?' '+cls:''); }
 
+  // ── Submit ──
   form.addEventListener('submit', async function(e){
     e.preventDefault();
-    if (!onboardingToken && !locationId){ setStatus('Missing link — see banner above.', 'is-error'); return; }
+    setStatus('');
+    if (MODE === 'client' && !onboardingToken && !legacyLoc){
+      locMissing.classList.add('is-on');
+      setStatus('Missing link — see banner above.', 'is-error'); return;
+    }
+    if (MODE === 'operator' && (!keyEl || !keyEl.value.trim())){
+      setStatus('Operator key required.', 'is-error'); if (keyEl) keyEl.focus(); return;
+    }
     if (!validate()){ setStatus('Check the highlighted fields.', 'is-error'); return; }
 
     var config = buildConfig();
+    var gaps   = computeGaps();
+    var dry = MODE === 'operator' && dryRunEl && dryRunEl.checked;
     var orig = submitBtn.innerHTML;
-    submitBtn.disabled = true; submitBtn.innerHTML = 'Saving…';
-    setStatus('Locking in your configuration…');
+    submitBtn.disabled = true; submitBtn.innerHTML = dry ? 'Dry running…' : 'Working…';
+    setStatus(MODE === 'operator'
+      ? (dry ? 'Simulating the full chain…' : 'Minting sub-account, Stripe, channel…')
+      : 'Locking in your configuration…');
 
     try {
-      var payload = onboardingToken
-        ? { onboarding_token: onboardingToken, config: config }
-        : { location_id: locationId, config: config };
-      var correctedTrade = (tradeHidden.value || '').trim();
-      if (correctedTrade) payload.trade_type = correctedTrade;
-      var res = await fetch(WORKER_URL, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
-        body: JSON.stringify(payload)
-      });
-      var data = await res.json().catch(function(){ return {}; });
+      var res, data, headers = { 'Content-Type':'application/json', 'Accept':'application/json' };
+      var body;
+      if (MODE === 'operator') {
+        headers['X-Close-Key'] = keyEl.value.trim();
+        body = {
+          business_name: val('business_name'),
+          email:         val('owner_email'),
+          phone:         val('owner_cell_phone'),
+          service_zip:   val('service_area_zip'),
+          trade_type:    tradeHidden.value || undefined,
+          config:        config
+        };
+        var ein = val('ein'); if (ein) body.ein = ein;
+        if (dry) body.test_mode = true;
+      } else {
+        body = onboardingToken
+          ? { onboarding_token: onboardingToken, config: config }
+          : { location_id: legacyLoc, config: config };
+        if (tradeHidden.value) body.trade_type = tradeHidden.value;
+      }
+
+      res = await fetch(WORKER_URL, { method:'POST', headers: headers, body: JSON.stringify(body) });
+      data = await res.json().catch(function(){ return {}; });
+      if (res.status === 401){ throw new Error('Operator key rejected.'); }
       if (!res.ok || data.ok === false){ throw new Error(data.error || ('HTTP '+res.status)); }
 
-      if (data.payment_link){
-        var pl = document.getElementById('sxPaymentLink');
-        var pb = document.getElementById('sxPaymentBlock');
-        pl.href = data.payment_link; pb.classList.add('is-on');
-      }
-      form.style.display = 'none';
-      heroH.innerHTML = "You're <em>configured.</em>";
-      heroGreeting.textContent = 'Done — Andrew takes it from here.';
-      successCard.classList.add('is-on');
-      window.scrollTo({ top:0, behavior:'smooth' });
+      if (MODE === 'operator') { renderOperatorResult(data, dry, gaps); }
+      else { renderClientSuccess(data); }
     } catch(err){
       submitBtn.disabled = false; submitBtn.innerHTML = orig;
-      setStatus("Couldn't activate — try again or email andrew@4thwall.solutions", 'is-error');
+      setStatus(err.message || "Couldn't complete — try again or email andrew@4thwall.solutions", 'is-error');
     }
+  });
+
+  // ── Operator result rendering ──
+  function setLink(id, urlVal){
+    var el = document.getElementById(id);
+    if (urlVal){ el.textContent = urlVal; el.classList.remove('empty'); }
+    else { el.textContent = '— (emailed to the client)'; el.classList.add('empty'); }
+  }
+  function renderSteps(steps){
+    var box = document.getElementById('resSteps');
+    if (!Array.isArray(steps) || !steps.length){ box.innerHTML = ''; return; }
+    box.innerHTML = steps.map(function(s){
+      var good = /ok|simulated|partial/.test(s.status||'');
+      return '<div><span class="'+(good?'s-ok':'s-bad')+'">'+(good?'✓':'✗')+'</span> '+esc(s.step)+' — '+esc(s.status)+'</div>';
+    }).join('');
+  }
+  function renderGaps(gaps){
+    var box = document.getElementById('resGaps');
+    var pills = function(list){ return list.map(function(x){ return '<span class="pill">'+esc(x)+'</span>'; }).join(''); };
+    if ((!gaps.experience.length) && (!gaps.a2p.length)){
+      box.className = 'gaps is-clear';
+      box.innerHTML = '<div class="gaps-h">Nothing outstanding ✓</div><div class="gaps-grp">Everything was captured — no follow-up needed.</div>';
+      return;
+    }
+    box.className = 'gaps';
+    var html = '<div class="gaps-h">Still to collect from the client</div>';
+    if (gaps.experience.length) html += '<div class="gaps-grp"><b>For the bot:</b><br>'+pills(gaps.experience)+'</div>';
+    if (gaps.a2p.length)        html += '<div class="gaps-grp"><b>For A2P filing:</b><br>'+pills(gaps.a2p)+'</div>';
+    html += '<div class="gaps-grp" style="margin-top:.5rem;font-style:italic">Re-open this form for the same owner email to add them — it merges, no double-provision. A daily reminder will nag until they’re filled.</div>';
+    box.innerHTML = html;
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+
+  function renderOperatorResult(data, dry, gaps){
+    if (data.status === 'already_provisioned' || data.status === 'duplicate_skipped'){
+      document.getElementById('resHeadWord').textContent = 'already up.';
+      document.getElementById('resSub').textContent = data.prefill_deferred
+        ? "This client is still provisioning — your fields weren't saved yet. Re-submit once you see the ✅ provisioning card in #system."
+        : 'This client already exists — no double-provision. Your fields were merged onto their record.';
+      document.getElementById('resLoc').textContent = data.location_id || '—';
+      setLink('resOnboard', null); setLink('resPay', null);
+      renderSteps(null);
+      if (gaps) renderGaps(gaps); else document.getElementById('resGaps').innerHTML = '';
+      resultEl.classList.add('is-on');
+      setStatus(data.prefill_deferred ? 'Re-submit shortly.' : 'Fields merged.', data.prefill_deferred ? 'is-error' : 'is-ok');
+      resultEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+      return;
+    }
+    document.getElementById('resHeadWord').textContent = dry ? 'simulated.' : 'fired.';
+    document.getElementById('resSub').textContent = dry
+      ? 'Dry run — no live GHL/Stripe. Below is what a real run would produce.'
+      : 'The client is provisioned. Next steps below.';
+    document.getElementById('resLoc').textContent = data.location_id || '—';
+    setLink('resOnboard', data.onboarding_url);
+    setLink('resPay', data.payment_link);
+    renderSteps(data.steps);
+    renderGaps(gaps);
+    resultEl.classList.add('is-on');
+    setStatus(dry ? 'Dry run complete.' : 'Provisioned.', 'is-ok');
+    resultEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  // ── Client success rendering ──
+  function renderClientSuccess(data){
+    if (data.payment_link){
+      document.getElementById('sxPaymentLink').href = data.payment_link;
+      document.getElementById('sxPaymentBlock').classList.add('is-on');
+    }
+    form.style.display = 'none';
+    document.getElementById('heroH').innerHTML = "You're <em>configured.</em>";
+    document.getElementById('heroGreeting').textContent = 'Done — Andrew takes it from here.';
+    successCard.classList.add('is-on');
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  // ── Copy buttons + "provision another" (operator) ──
+  form.addEventListener('click', function(e){
+    var b = e.target.closest('.copybtn'); if (!b) return;
+    var v = document.getElementById(b.getAttribute('data-copy')).textContent;
+    if (!v || v.indexOf('—') === 0) return;
+    navigator.clipboard.writeText(v).then(function(){ var o=b.textContent; b.textContent='Copied'; setTimeout(function(){b.textContent=o;},1200); });
+  });
+  document.getElementById('resAgain').addEventListener('click', function(){
+    resultEl.classList.remove('is-on'); form.reset();
+    submitBtn.disabled = false; submitBtn.innerHTML = 'Provision client <span>→</span>';
+    setStatus('');
+    if (MODE === 'operator' && keyEl){ try { keyEl.value = localStorage.getItem(KEY_STORE) || ''; } catch(_){} }
+    addJobRow(); syncJobUI();
+    tradeHidden.value = '';
+    Array.prototype.forEach.call(tradePills.children, function(btn){ btn.classList.remove('is-active'); });
+    openOnly('sec-business');
+    window.scrollTo({top:0,behavior:'smooth'});
   });
 })();
 </script>
