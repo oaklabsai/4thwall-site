@@ -258,6 +258,24 @@ function homeownersBlock(enr) {
   return html;
 }
 
+// Honest treatment for a firm Vesta hasn't published a read on yet (no synthesis, no known_for).
+// Listed for the full field; says plainly why there's no read; shows only public-record facts —
+// never a fabricated summary. Renders in the same slot as homeownersBlock (exactly one applies).
+function notReviewedBlock(enr) {
+  if (!enr || enr.synthesis || (Array.isArray(enr.known_for) && enr.known_for.length)) return '';
+  const bits = [];
+  if (enr.registered) {
+    const yr = enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0, 4) : 0;
+    bits.push(['State registration', 'Registered as a home-improvement contractor with Connecticut' + (yr && yr !== 1999 ? ' since ' + yr : '') + '.']);
+  }
+  const total = Number(enr.rating_count) || 0;
+  if (total > 0) bits.push(['Public reviews', total.toLocaleString('en-US') + ' review' + (total === 1 ? '' : 's') + ' on public record — worth a look yourself, not yet a base for a fair Vesta read.']);
+  const cards = bits.map((b) => '<div class="w"><h3>' + esc(b[0]) + '</h3><p>' + esc(b[1]) + '</p></div>').join('');
+  return '<h2 class="section-h">Vesta hasn’t published a read on this firm yet</h2>' +
+    '<p class="note" style="margin-top:-.2rem">Vesta only publishes a read once we’ve done a deep, fair review of a firm’s public history — and we’d rather show you nothing than a shallow or unverified summary. We haven’t gotten to this one. Here’s what’s on public record, with how to vet them yourself below.</p>' +
+    (cards ? '<div class="vwhy">' + cards + '</div>' : '');
+}
+
 // Trade hiring guide — trade-level editorial, about no business.
 function hiringGuideBlock(trade) {
   const g = HIRING_GUIDE[trade];
@@ -604,11 +622,14 @@ export function renderContractorHTML(enr, siblings = []) {
   const tl = tLowerOf(trade);
   const canonical = SITE + '/c/' + encodeURIComponent(enr.place_id);
   const indexable = isIndexable(enr);
+  const hasRead = !!(enr.synthesis || (Array.isArray(enr.known_for) && enr.known_for.length));
 
   const title = enr.business_name + ' — ' + label + ' in ' + (enr.city || COUNTY) + ', CT | Vesta';
   const description = enr.synthesis
     ? String(enr.synthesis).slice(0, 154) + (String(enr.synthesis).length > 154 ? '…' : '')
-    : (label + ' contractor in ' + (enr.city || COUNTY) + ', CT — vouched by the public record. A plain-English read from Vesta.');
+    : (hasRead
+        ? (label + ' in ' + (enr.city || COUNTY) + ', CT — a plain-English read from Vesta, from the public record.')
+        : (label + ' in ' + (enr.city || COUNTY) + ', CT. Listed from public records — Vesta hasn’t published a read on this firm yet.'));
 
   // Request-through-Vesta CTA (a plain link — no JS needed).
   const reqHref = '/vesta/search?mode=request&place=' + encodeURIComponent(enr.place_id) +
@@ -619,7 +640,7 @@ export function renderContractorHTML(enr, siblings = []) {
       '<a class="crumb" href="' + (trade ? '/fairfield-county/' + trade : '/vesta') + '">← ' + esc(label ? label + ' in ' + COUNTY : 'Vesta') + '</a>' +
       '<h1 class="page-h">' + esc(enr.business_name) + '</h1>' +
       '<p class="page-sub">' + (label ? esc(label) + ' · ' : '') + esc((enr.city || COUNTY) + ', CT') + '</p>' +
-      '<div class="badges"><span class="badge plain">◆ Vesta-analyzed from public records</span></div>' +
+      '<div class="badges"><span class="badge plain">◆ ' + (hasRead ? 'Vesta-analyzed from public records' : 'Listed from public records — not yet reviewed') + '</span></div>' +
       // Work-photo gallery — directly under the name (Drew, 2026-06-23: "the main
       // pieces should be practical … the images"). Filled CLIENT-side by /profile.js
       // (live Google photos, show-don't-store) + any contractor-uploaded photos.
@@ -634,6 +655,7 @@ export function renderContractorHTML(enr, siblings = []) {
     signatureBlock(enr) +
     vestaReadBlock(enr, trade) +
     homeownersBlock(enr) +
+    notReviewedBlock(enr) +
     hiringGuideBlock(trade) +
     costLineBlock(trade) +
     '<div class="cp-gref">' + GOOGLE_MOUNT + '</div>' +

@@ -184,6 +184,25 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .deck-end h3 { font-family:var(--serif); font-size:26px; font-weight:700; color:var(--olive); margin-bottom:9px; letter-spacing:-.02em; }
 .deck-end p { font-size:13.5px; color:var(--ebony); line-height:1.55; margin-bottom:22px; max-width:270px; }
 .deck-end .de-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+/* ── Silent-firm coverage tail: count-only firms with no Vesta Read yet. Shown last, collapsed,
+   clearly labeled — completeness without faking depth. Used below the desktop feed + in the mobile deck-end. ── */
+.silent-tail { margin:16px 0 2px; }
+.silent-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; background:transparent; border:none; border-top:1px solid rgba(74,75,47,.12); padding:16px 2px 14px; cursor:pointer; font-family:var(--sans); font-size:13.5px; font-weight:500; color:var(--ebony); text-align:left; }
+.silent-toggle b { color:var(--olive); font-weight:700; }
+.silent-toggle .st-chev { width:8px; height:8px; border-right:1.8px solid var(--ebony); border-bottom:1.8px solid var(--ebony); transform:rotate(45deg); transition:transform .2s; flex-shrink:0; margin-right:5px; }
+.silent-toggle.open .st-chev { transform:rotate(-135deg); }
+.silent-toggle:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
+.silent-list { display:flex; flex-direction:column; gap:8px; padding:2px 0 8px; }
+.st-note { font-size:12.5px; line-height:1.55; color:var(--ebony); background:rgba(74,75,47,.05); border-radius:12px; padding:11px 13px; margin:0 0 4px; }
+.silent-card { display:flex; align-items:center; justify-content:space-between; gap:12px; text-decoration:none; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:14px; padding:12px 14px; box-shadow:var(--sh-row); }
+.silent-card:hover { border-color:rgba(74,75,47,.2); }
+.sc-main { display:flex; flex-direction:column; gap:1px; min-width:0; }
+.sc-name { font-family:var(--sans); font-size:14.5px; font-weight:600; color:var(--olive); }
+.sc-town { font-size:12px; color:var(--ebony); }
+.sc-meta { font-family:var(--mono); font-size:10.5px; letter-spacing:.02em; color:rgba(74,75,47,.62); margin-top:3px; }
+.sc-tag { flex-shrink:0; font-family:var(--mono); font-size:9px; letter-spacing:.09em; text-transform:uppercase; color:var(--ebony); background:rgba(74,75,47,.07); border-radius:var(--r-pill); padding:5px 9px; white-space:nowrap; }
+.deck-end.has-tail { justify-content:flex-start; align-items:stretch; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:28px 22px 24px; }
+.deck-end.has-tail .de-spark, .deck-end.has-tail h3, .deck-end.has-tail p { align-self:center; }
 .de-btn { font-family:var(--sans); font-size:14px; font-weight:600; border-radius:var(--r-pill); padding:12px 20px; cursor:pointer; border:none; }
 .de-btn.primary { background:var(--olive); color:var(--white); }
 .de-btn.ghost { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); }
@@ -877,6 +896,7 @@ const trades = [
   { key:'masonry', label:'Masonry', plural:'masons', icon:'mason' },
 ];
 let contractors = [];
+let silentContractors = [];   // count-only firms (no Vesta Read yet) — kept out of the ranked deck/feed/match; surfaced only in the honest coverage tail
 
 // Problem-first entry: homeowner needs routed to a trade. Icons reuse the trade ICONS (no emoji).
 const PROBLEMS = [
@@ -1110,6 +1130,7 @@ function isThin(c){
   return !hasBand && !hasCred && !hasReviews && !hasThemes;
 }
 const byTrade = k => contractors.filter(c => c.trade === k && !c.thin);
+const silentByTrade = k => silentContractors.filter(c => c.trade === k);
 const tradePlural = k => { const t = trades.find(t=>t.key===k); return t?t.plural:k; };
 const tradeLabelOf = k => { const t = trades.find(t=>t.key===k); return t?t.label:k; };
 const tradeIconOf = k => { const t = trades.find(t=>t.key===k); return t?t.icon:'roof'; };
@@ -1229,7 +1250,13 @@ async function loadContractors(){
   // Substance gate: a profile only earns a place on Vesta if Vesta has something
   // to say about it (a synthesis). Thin/silent records — no read — are left out
   // rather than padding the deck. They're not lost; they're just not surfaced.
-  if (Array.isArray(rows)) { contractors = rows.map(mapRow).filter(c => c.name && c.read); contractors.forEach(c => { c.thin = isThin(c); }); }
+  if (Array.isArray(rows)) {
+    const mapped = rows.map(mapRow).filter(c => c.name);
+    contractors = mapped.filter(c => c.read);
+    contractors.forEach(c => { c.thin = isThin(c); });
+    // Silent firms (no synthesis → no read) go to their own lane: reachable in the coverage tail, never ranked or matched.
+    silentContractors = mapped.filter(c => !c.read);
+  }
   if (S.screen === 'browse'){
     if (S.mode === 'saved'){ renderSaved(); }
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
@@ -1515,9 +1542,11 @@ function cardHTML(con, k){
 }
 function deckEndHTML(){
   const liked = likedContractors().length;
-  return '<div class="deck-end"><span class="de-spark">'+SPARK+'</span><h3>That’s everyone</h3>'+
+  const tail = (S.match && S.match.job) ? '' : silentTailHTML(S.activeTrade);
+  return '<div class="deck-end'+(tail?' has-tail':'')+'"><span class="de-spark">'+SPARK+'</span><h3>That’s everyone</h3>'+
     '<p>You’ve been through the vetted '+esc(tradePlural(S.activeTrade))+' in Fairfield County for now'+(liked?'. You’ve saved '+liked+' so far.':'.')+'</p>'+
-    '<div class="de-row"><button class="de-btn primary" id="de-saved">'+(liked?'See saved · '+liked:'See saved')+'</button><button class="de-btn ghost" id="de-restart">Start over</button></div></div>';
+    '<div class="de-row"><button class="de-btn primary" id="de-saved">'+(liked?'See saved · '+liked:'See saved')+'</button><button class="de-btn ghost" id="de-restart">Start over</button></div>'+
+    tail+'</div>';
 }
 // The anticipation beat before the deck: "We found N — ranked using…". Factors mirror the REAL
 // rank_score inputs (review consensus, track record/tenure, licensing/credentials) — never response time.
@@ -1580,6 +1609,7 @@ function wireDeckEnd(){
   const a=$('de-saved'), b=$('de-restart');
   if(a) a.onclick = showSaved;
   if(b) b.onclick = () => { S.pos[S.activeTrade]=0; S.deckIdx=0; renderDeck(); };
+  wireSilentTail();
 }
 function deckFilterEmptyHTML(){
   return '<div class="deck-end"><span class="de-spark">'+SPARK+'</span><h3>No matches</h3>'+
@@ -1876,8 +1906,9 @@ function applyFeed(){
   const list = feedSource();
   renderFeedNeeds();
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
-  feed.innerHTML = feedListHTML(list);
+  feed.innerHTML = feedListHTML(list) + (S.match && S.match.job ? '' : silentTailHTML(S.activeTrade));
   list.forEach(wireFeedCard);
+  wireSilentTail();
   lazyCovers(feed);
   renderFeedRail(); syncSavedUI();
 }
@@ -2044,6 +2075,37 @@ function renderFeedRail(){
       '<li>'+CHECK+'<span>Save the ones you like, then request through Vesta.</span></li>'+
     '</ul>';
 }
+// ── Silent-firm coverage tail ──────────────────────────────────────────────
+// Honest, collapsed "N more, not yet reviewed" section. Count-only firms: what's on
+// public record (registered since X · N reviews) + a "Not yet reviewed" tag, linking to /c/.
+function silentCardHTML(con){
+  const bits = [];
+  if (con.registered) bits.push(con.sinceYear ? 'Registered since ' + con.sinceYear : 'State-registered');
+  if (con.totalReviews) bits.push(con.totalReviews + ' review' + (con.totalReviews === 1 ? '' : 's') + ' on record');
+  const meta = bits.length ? '<span class="sc-meta">' + esc(bits.join(' · ')) + '</span>' : '';
+  return '<a class="silent-card" href="/c/' + encodeURIComponent(con.placeId) + '">' +
+    '<span class="sc-main"><span class="sc-name">' + esc(con.name) + '</span>' +
+    '<span class="sc-town">' + esc(con.town) + '</span>' + meta + '</span>' +
+    '<span class="sc-tag">Not yet reviewed</span></a>';
+}
+function silentTailHTML(trade){
+  const list = silentByTrade(trade);
+  if (!list.length) return '';
+  return '<div class="silent-tail"><button class="silent-toggle" id="silent-toggle" type="button" aria-expanded="false" aria-controls="silent-list">' +
+    '<span><b>' + list.length + '</b> more ' + esc(tradePlural(trade)) + ' in Fairfield County we haven’t published a read on yet</span>' +
+    '<span class="st-chev" aria-hidden="true"></span></button>' +
+    '<div class="silent-list" id="silent-list" hidden>' +
+      '<p class="st-note">Vesta hasn’t reviewed these yet — no read, no ranking. They’re here for completeness so you see the whole field; below is only what’s on public record.</p>' +
+      list.map(silentCardHTML).join('') + '</div></div>';
+}
+function wireSilentTail(){
+  const t = $('silent-toggle'); if (!t) return;
+  t.addEventListener('click', () => {
+    const l = $('silent-list'); const open = t.getAttribute('aria-expanded') === 'true';
+    t.setAttribute('aria-expanded', open ? 'false' : 'true'); t.classList.toggle('open', !open);
+    if (l) l.hidden = open;
+  });
+}
 function renderFeed(){
   const feed=$('feed'); if(!feed) return;
   if (S.feedTown && !feedTowns().includes(S.feedTown)) S.feedTown='';
@@ -2053,8 +2115,9 @@ function renderFeed(){
   renderFeedNeeds();
   if (!S.dataLoaded){ feed.innerHTML='<div class="feed-empty">Loading vetted pros…</div>'; renderFeedRail(); return; }
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
-  feed.innerHTML = feedListHTML(list);
+  feed.innerHTML = feedListHTML(list) + (S.match && S.match.job ? '' : silentTailHTML(S.activeTrade));
   list.forEach(wireFeedCard);
+  wireSilentTail();
   lazyCovers(feed);
   renderFeedRail(); syncSavedUI();
 }
