@@ -442,6 +442,12 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .feed-select select { appearance:none; -webkit-appearance:none; font-family:var(--sans); font-size:13.5px; font-weight:500; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:9px 36px 9px 16px; cursor:pointer; box-shadow:var(--sh-row); outline:none; }
   .feed-select select:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
   .feed-select::after { content:''; position:absolute; right:15px; top:50%; width:7px; height:7px; border-right:1.7px solid var(--ebony); border-bottom:1.7px solid var(--ebony); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+  .feed-toggle { display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-size:13.5px; font-weight:500; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:8px 15px; cursor:pointer; box-shadow:var(--sh-row); transition:background .15s,border-color .15s; }
+  .feed-toggle:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
+  .feed-toggle .ft-dot { width:15px; height:15px; border-radius:50%; border:1.7px solid rgba(74,75,47,.32); position:relative; flex-shrink:0; transition:.15s; }
+  .feed-toggle.on { background:var(--tea); border-color:transparent; font-weight:600; }
+  .feed-toggle.on .ft-dot { border-color:var(--olive); background:var(--olive); }
+  .feed-toggle.on .ft-dot::after { content:''; position:absolute; left:4.5px; top:1.5px; width:3.5px; height:7.5px; border:solid var(--white); border-width:0 1.7px 1.7px 0; transform:rotate(45deg); }
   .feed-count { margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:rgba(74,75,47,.55); }
   .feed { flex:1; min-height:0; overflow-y:auto; padding:4px 40px 64px; display:flex; flex-direction:column; gap:14px; }
   .feed-empty { padding:54px 22px; text-align:center; color:var(--ebony); font-size:14px; }
@@ -925,7 +931,7 @@ const LOCK = `<svg width="13" height="14" viewBox="0 0 14 16" fill="none" stroke
 
 const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, filterOpen:false, dataLoaded:false, mode:'trade',
             shuffles:{}, pos:{}, deck:[], deckIdx:0, deckSig:{}, unlocked:{}, history:[], savedTab:'saved',
-            feedTown:'', feedSort:'rank', feedNeeds:new Set(), introPending:false,
+            feedTown:'', feedSort:'rank', feedNeeds:new Set(), feedReg:false, introPending:false,
             // Match engine: when match.job is set, the deck/feed reorder by the locked scorer and the
             // head copy adapts to how selective the job is (the honesty rule). null = plain browse.
             match:null, matchPending:false, matchStep:'job', matchSeedJob:null };
@@ -1329,6 +1335,7 @@ function updateBrowseHead(){
 function filterList(key){
   let list = byTrade(key).filter(c => !FEED_HIDDEN.has(c.placeId));
   if (S.feedTown) list = list.filter(c => (c.city||'') === S.feedTown);
+  if (S.feedReg && tradeSupportsReg(key)) list = list.filter(c => c.registered);   // HIC filter; gated to trades where it's honest
   if (S.match && S.match.job){
     // Match mode: the scorer (sortList) floats matchers up. In the SHARP tier we hard-filter to the
     // specialists — padding "the few who specialize" with the rest of the field would be a lie. The
@@ -1346,6 +1353,7 @@ function sortList(list, mode, allowShuffle){
   const by = k => (a,b) => band(b[k])-band(a[k]) || (b.rankScore-a.rankScore);
   if (mode==='rating') return [...list].sort(by('ratingBand'));
   if (mode==='volume') return [...list].sort(by('volumeBand'));
+  if (mode==='tenure') return [...list].sort((a,b)=> band(b.tenureBand)-band(a.tenureBand) || ((a.sinceYear||9999)-(b.sinceYear||9999)) || (b.rankScore-a.rankScore));
   if (mode==='registered') return [...list].sort((a,b)=> (b.registered?1:0)-(a.registered?1:0) || (b.rankScore-a.rankScore));
   // Default 'rank' = Vesta's pick. In match mode the locked scorer orders it (matchers first, then by
   // rank_score); a match is never shuffled — the order carries meaning.
@@ -1354,7 +1362,7 @@ function sortList(list, mode, allowShuffle){
 }
 // The match is part of the deck signature — changing the job/axis must rebuild the cached deck
 // (otherwise ensureDeck reuses a stale order and, in the sharp tier, the wrong firm set).
-function deckSig(){ return S.feedTown+'|'+S.feedSort+'|'+[...S.feedNeeds].sort().join(',')+'|'+(S.match&&S.match.job?S.match.job+':'+(S.match.axis||''):''); }
+function deckSig(){ return S.feedTown+'|'+S.feedSort+'|'+(S.feedReg?'reg':'')+'|'+[...S.feedNeeds].sort().join(',')+'|'+(S.match&&S.match.job?S.match.job+':'+(S.match.axis||''):''); }
 
 /* ===== DECK ===== */
 // The deck is cached per trade so the order is stable mid-swipe; it’s rebuilt only
@@ -1552,7 +1560,7 @@ function renderDeck(){
   const remaining = (S.deck||[]).slice(S.deckIdx);
   if (!remaining.length){
     if (!S.dataLoaded){ deck.innerHTML = '<div class="deck-end"><span class="de-spark">'+SPARK+'</span><p>Loading vetted pros…</p></div>'; $('deck-actions').style.visibility='hidden'; $('deck-meta').textContent=''; return; }
-    const filtersActive = !!(S.feedTown || S.feedNeeds.size);
+    const filtersActive = !!(S.feedTown || S.feedNeeds.size || (S.feedReg && tradeSupportsReg(S.activeTrade)));
     if (filtersActive && !filterList(S.activeTrade).length){ deck.innerHTML = deckFilterEmptyHTML(); wireDeckFilterEmpty(); }
     else { deck.innerHTML = deckEndHTML(); wireDeckEnd(); }
     $('deck-actions').style.visibility='hidden'; $('deck-meta').textContent = '';
@@ -1850,6 +1858,15 @@ function renderPanel(con){
 function feedTowns(){ const s=new Set(); byTrade(S.activeTrade).forEach(c=>{ const t=(c.city||'').trim(); if(t) s.add(t); }); return [...s].sort(); }
 function facetMatches(c, f){ const specs=c.specs||[]; return f.m.some(kw => specs.some(s => s.includes(kw))); }
 function activeFacets(){ return (NEED_FACETS[S.activeTrade]||[]).filter(f => S.feedNeeds.has(f.l)); }
+// "Registered (HIC)" is only an honest filter where state registration is the norm — HIC-core trades
+// (roofing/lawn/paving/painting/masonry run 29–70% registered). On licensed-exempt trades
+// (plumbing/hvac/electrical, ~6–10%) HIC doesn't apply, so filtering by it would wrongly bury good
+// firms — we hide the control there, and filterList ignores a stale flag, so it can never stick.
+function tradeSupportsReg(trade){
+  const rows = byTrade(trade); if (!rows.length) return false;
+  const reg = rows.filter(c => c.registered).length;
+  return reg >= 8 && reg >= 0.2 * rows.length;
+}
 function feedSource(){ return sortList(filterList(S.activeTrade), S.feedSort, false); }
 // Light re-apply on town/sort/need change: re-render the feed list + needs + rail
 // WITHOUT rebuilding the native <select>s — keeps them stable so a pick applies instantly.
@@ -1884,14 +1901,23 @@ function renderFeedControls(){
   const c = $('feed-controls'); if(!c) return;
   const towns = feedTowns();
   const townOpts = ['<option value="">All towns</option>'].concat(towns.map(t=>'<option value="'+esc(t)+'"'+(S.feedTown===t?' selected':'')+'>'+esc(t)+'</option>')).join('');
-  const sorts = [['rank','Vesta’s pick'],['rating','Top rated'],['volume','Most reviewed'],['registered','Registered first']];
+  // Sort by Vesta’s own signal — rank, tenure, review volume, rating band. Raw stars never lead;
+  // "Registered" is a filter (below), not a sort.
+  const sorts = [['rank','Vesta’s pick'],['tenure','Longest established'],['volume','Most reviewed'],['rating','Top rated']];
   const sortOpts = sorts.map(s=>'<option value="'+s[0]+'"'+(S.feedSort===s[0]?' selected':'')+'>'+esc(s[1])+'</option>').join('');
-  // Trade is navigation (the sidebar owns it); these are refinements — Sort + Town.
+  // Trade is navigation (the sidebar owns it); these are refinements — Sort · Town · Registered.
+  // The HIC filter renders only where registration is the norm (tradeSupportsReg) — on it, an
+  // unregistered firm reads as a real gap; on licensed-exempt trades it'd mislead, so it's hidden.
+  const regBtn = tradeSupportsReg(S.activeTrade)
+    ? '<button class="feed-toggle'+(S.feedReg?' on':'')+'" id="feed-reg" type="button" role="switch" aria-checked="'+(S.feedReg?'true':'false')+'" aria-label="Show only state-registered pros"><span class="ft-dot" aria-hidden="true"></span>Registered</button>'
+    : '';
   c.innerHTML =
     '<span class="feed-fl">Sort</span><span class="feed-select"><select id="feed-sort" aria-label="Sort pros">'+sortOpts+'</select></span>'+
-    '<span class="feed-fl">Town</span><span class="feed-select"><select id="feed-town" aria-label="Filter by town">'+townOpts+'</select></span>';
+    '<span class="feed-fl">Town</span><span class="feed-select"><select id="feed-town" aria-label="Filter by town">'+townOpts+'</select></span>'+
+    regBtn;
   $('feed-sort').addEventListener('change', e=>{ S.feedSort=e.target.value; applyFeed(); });
   $('feed-town').addEventListener('change', e=>{ S.feedTown=e.target.value; applyFeed(); });
+  const rb=$('feed-reg'); if(rb) rb.addEventListener('click', e=>{ S.feedReg=!S.feedReg; const b=e.currentTarget; b.classList.toggle('on',S.feedReg); b.setAttribute('aria-checked',S.feedReg?'true':'false'); applyFeed(); });
 }
 function renderFeedNeeds(){
   const el = $('feed-needs'); if(!el) return;
@@ -2047,21 +2073,24 @@ function renderFilterSheet(){
   const facets=(NEED_FACETS[S.activeTrade]||[])
     .map(f=>({ f, n: byTrade(S.activeTrade).filter(c=>(!S.feedTown||(c.city||'')===S.feedTown)&&facetMatches(c,f)).length }))
     .filter(x=>x.n>=2 || S.feedNeeds.has(x.f.l)).sort((a,b)=>b.n-a.n);
-  const sorts=[['rank','Vesta’s pick'],['rating','Top rated'],['volume','Most reviewed'],['registered','Registered first']];
+  const sorts=[['rank','Vesta’s pick'],['tenure','Longest established'],['volume','Most reviewed'],['rating','Top rated']];
   body.innerHTML =
     '<div class="fsheet-title">Filter '+esc(tradePlural(S.activeTrade))+'</div>'+
     '<div class="fsheet-sec"><div class="fsheet-lbl">Sort by</div><div class="fsheet-chips">'+
       sorts.map(s=>'<button class="chip'+(S.feedSort===s[0]?' sel':'')+'" data-sort="'+s[0]+'">'+esc(s[1])+'</button>').join('')+'</div></div>'+
     '<div class="fsheet-sec"><div class="fsheet-lbl">Town</div><span class="feed-select wide"><select id="fsheet-town" aria-label="Filter by town"><option value="">All towns</option>'+
       towns.map(t=>'<option value="'+esc(t)+'"'+(S.feedTown===t?' selected':'')+'>'+esc(t)+'</option>').join('')+'</select></span></div>'+
+    (tradeSupportsReg(S.activeTrade)?'<div class="fsheet-sec"><div class="fsheet-lbl">Credentials</div><div class="fsheet-chips">'+
+      '<button class="chip'+(S.feedReg?' sel':'')+'" data-reg="1">State-registered (HIC)</button></div></div>':'')+
     (facets.length?'<div class="fsheet-sec"><div class="fsheet-lbl">What you need</div><div class="fsheet-chips">'+
       facets.map(({f})=>'<button class="chip'+(S.feedNeeds.has(f.l)?' sel':'')+'" data-need="'+esc(f.l)+'">'+esc(f.l)+'</button>').join('')+'</div></div>':'')+
     '<div class="fsheet-actions"><button class="fsheet-clear" id="fsheet-clear">Clear all</button><button class="fsheet-done" id="fsheet-done">Show pros</button></div>';
   const apply=()=>{ rebuildDeck(); renderDeck(); updateBrowseHead(); updateFilterTrigger(); renderFilterSheet(); };
   body.querySelectorAll('[data-sort]').forEach(b=>b.addEventListener('click',()=>{ S.feedSort=b.dataset.sort; apply(); }));
   body.querySelectorAll('[data-need]').forEach(b=>b.addEventListener('click',()=>{ const l=b.dataset.need; if(S.feedNeeds.has(l))S.feedNeeds.delete(l); else S.feedNeeds.add(l); apply(); }));
+  body.querySelectorAll('[data-reg]').forEach(b=>b.addEventListener('click',()=>{ S.feedReg=!S.feedReg; apply(); }));
   const tw=$('fsheet-town'); if(tw) tw.addEventListener('change',e=>{ S.feedTown=e.target.value; apply(); });
-  $('fsheet-clear').addEventListener('click',()=>{ S.feedTown=''; S.feedNeeds.clear(); S.feedSort='rank'; apply(); });
+  $('fsheet-clear').addEventListener('click',()=>{ S.feedTown=''; S.feedNeeds.clear(); S.feedSort='rank'; S.feedReg=false; apply(); });
   $('fsheet-done').addEventListener('click', closeFilterSheet);
 }
 function openFilterSheet(){
@@ -2076,7 +2105,7 @@ function closeFilterSheet(){
 }
 function updateFilterTrigger(){
   const b=$('tb-filter'); if(!b) return;
-  const n=(S.feedTown?1:0)+S.feedNeeds.size+(S.feedSort!=='rank'?1:0);
+  const n=(S.feedTown?1:0)+S.feedNeeds.size+(S.feedSort!=='rank'?1:0)+((S.feedReg&&tradeSupportsReg(S.activeTrade))?1:0);
   const ct=b.querySelector('.tb-filter-ct'); if(ct){ ct.textContent=n; ct.hidden=!n; }
   b.classList.toggle('on', !!n);
 }
@@ -2651,7 +2680,7 @@ function showFav(){ $('deckwrap').hidden=true; $('feedwrap').hidden=true; $('fav
 function switchTrade(key){
   // Lateral navigation (chip row / sidebar) — go straight to that trade, clearing any active match.
   // The walkthrough is the deliberate entry (home problem/trade, feed pill, search), not every chip tap.
-  S.mode='trade'; S.activeTrade=key; S.match=null; S.feedTown=''; S.feedNeeds=new Set(); ensureDeck(key);
+  S.mode='trade'; S.activeTrade=key; S.match=null; S.feedTown=''; S.feedNeeds=new Set(); S.feedReg=false; ensureDeck(key);
   if (S.screen !== 'browse') showScreen('browse');
   renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck();
   updateNavState();
