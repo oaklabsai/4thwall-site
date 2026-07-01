@@ -1662,7 +1662,7 @@ function wireTopCard(con){
     else if(e.key==='ArrowLeft'){ e.preventDefault(); commit('pass', con); }
   });
 }
-function tapCard(con){ if(desktop()) renderPanel(con); else openProfile(con.placeId); }
+function tapCard(con){ if(desktop()){ logView(con&&con.placeId, con&&con.trade); renderPanel(con); } else openProfile(con.placeId); }
 function commit(dir, con){
   const card = $('deck').querySelector('.card[data-k="0"]');
   if(dir==='save') setLiked(con.placeId, true);
@@ -2331,6 +2331,7 @@ function pTradeKey(){ const enr=profData.enr, p=profData.p; return (enr && enr.t
 
 async function openProfile(placeId){
   if (!placeId) return;
+  logView(placeId, S.activeTrade);
   S.profFrom = { screen:S.screen, mode:S.mode, trade:S.activeTrade };
   closeSheet(); closeSearch(); if (S.filterOpen) closeFilterSheet(); closeFeedMenus();
   showScreen('profile'); updateNavState();
@@ -2659,6 +2660,7 @@ async function profClaimSubmit(e){
 let reqData = null;
 function enterRequest(ctx){
   if (!ctx || !ctx.placeId) return;
+  logRequest(ctx.placeId, ctx.trade);
   S.reqFrom = { screen:S.screen };
   closeSheet(); closeSearch(); if (S.filterOpen) closeFilterSheet(); closeFeedMenus();
   reqData = { placeId:ctx.placeId, trade:ctx.trade||'', name:ctx.name||'' };
@@ -2859,13 +2861,21 @@ function skipMatch(){
   logMatch(S.activeTrade, null, null);
   showBrowse(S.activeTrade);
 }
-// Instrumentation seam (Stage 1.4 wires the endpoint, then flips the flag). No users yet = no signal
-// lost; once live it records the job/axis chosen per match from the first real visitor. Fire-and-forget.
-const MATCH_EVENTS_LIVE = false;   // ← Stage 1.4: set true when the /vesta-event endpoint exists
-function logMatch(appTrade, job, axis){
+// ── Instrumentation (Stage 1.4 — LIVE) ──────────────────────────────────────
+// Records the demand funnel: match (Q1 job + Q2 axis) → profile view → request.
+// No PII — an anonymous per-visit session id threads the funnel; the endpoint
+// attaches homeowner_id only if signed in, never an IP, never a rating (the moat).
+// Fire-and-forget: a logging hiccup never breaks or slows the app. Endpoint = the
+// home edge fn, POST /vesta-event.
+const MATCH_EVENTS_LIVE = true;
+const VS_SID = (function(){ try { let s = sessionStorage.getItem('v_sid'); if(!s){ s = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem('v_sid', s); } return s; } catch(_){ return null; } })();
+function logEvent(kind, fields){
   if (!MATCH_EVENTS_LIVE || !window.HOME || !HOME.api) return;
-  try { HOME.api('/vesta-event', { method:'POST', body:{ kind:'match', trade:(TRADE_DB[appTrade]||appTrade), job:job||null, axis:axis||null } }).catch(()=>{}); } catch(_){}
+  try { HOME.api('/vesta-event', { method:'POST', body: Object.assign({ kind:kind, session:VS_SID }, fields||{}) }).catch(()=>{}); } catch(_){}
 }
+function logMatch(appTrade, job, axis){ logEvent('match', { trade:(TRADE_DB[appTrade]||appTrade)||null, job:job||null, axis:axis||null }); }
+function logView(placeId, appTrade){ if(placeId) logEvent('profile_view', { place_id:placeId, trade:(TRADE_DB[appTrade]||appTrade)||null }); }
+function logRequest(placeId, appTrade){ if(placeId) logEvent('request', { place_id:placeId, trade:(TRADE_DB[appTrade]||appTrade)||null }); }
 
 /* INIT */
 (function init(){
