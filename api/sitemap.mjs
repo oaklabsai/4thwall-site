@@ -16,7 +16,7 @@ const DB_KEY  = process.env.SUPABASE_ANON_KEY || 'sb_publishable_IEQcNbThGZblpzq
 
 // Core indexable pages (noindex surfaces like /vesta/search, /myhome, /opt-out,
 // /signin are deliberately excluded).
-const STATIC_PATHS = ['/', '/vesta', '/find', '/address', '/atlas', '/contact.html', '/privacy.html', '/terms.html'];
+const STATIC_PATHS = ['/', '/vesta', '/directory', '/find', '/address', '/atlas', '/contact.html', '/privacy.html', '/terms.html'];
 
 export function sitemapXml(entries) {
   return '<?xml version="1.0" encoding="UTF-8"?>\n' +

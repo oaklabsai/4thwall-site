@@ -593,6 +593,12 @@ export const FOOTER =
   '  <div class="foot-row">\n' +
   '    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>\n' +
   '    <div class="foot-links">\n' +
+  // "All contractors" -> the /directory hub. Present on every directory and /c/
+  // profile page (both render this shared footer), so it flattens crawl depth:
+  // every deep profile is one hop from the hub, and the hub inherits authority
+  // from all of them. Keeps the homeowner inside Vesta rather than bouncing to a
+  // competitor — the browse door that /c/ drops from its NAV is fine in the footer.
+  '      <a href="/directory">All contractors</a>\n' +
   '      <a href="/privacy.html">Privacy Policy</a>\n' +
   '      <a href="/terms.html">Terms of Service</a>\n' +
   '    </div>\n' +
@@ -656,4 +662,171 @@ export function renderDirectoryHTML(trade, rows) {
   '</section>';
 
   return shell({ title, description, canonical, headExtra: jsonLd(trade, label, rows, canonical), body: hero + main });
+}
+
+// --- the /directory hub (Stage 3 B1) ----------------------------------------
+// A single crawl hub: every index-ready /c/ profile, grouped by trade then town.
+// Why it exists: the per-trade directory caps at limit=50, so a trade with more
+// ready profiles has an orphaned tail linked from nowhere (painting: 70 ready →
+// 20 orphaned). And every deep profile sat 2+ low-authority hops from anything
+// crawlable, so Google barely reached them (avg position ~38). This page is
+// footer-linked site-wide, so it's one hop from the homepage and inherits
+// authority from all ~330 pages; from it, every profile is one more hop — a tight
+// crawl mesh over the whole corpus. It mirrors the sitemap EXACTLY (index_status
+// 'ready' only) so we never funnel crawl into thin/noindex profiles. Town is a
+// GROUPING, not a link target (no town pages exist yet) — it still hands engines
+// the town×trade association in anchor proximity, and structures the index for a
+// human. Counts only, never ratings — the moat holds.
+
+const HUB_CSS =
+  '.hub-lead{margin:.2rem 0 1.4rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--vdim);display:flex;flex-wrap:wrap;gap:.5rem}' +
+  '.hub-lead b{color:var(--vgreen-2,#4a4b2f);font-weight:600}' +
+  '.hub-lead .sep{opacity:.5}' +
+  '.hub-sections{display:grid;gap:2.6rem;margin-top:1.6rem}' +
+  '.hub-trade{scroll-margin-top:1.5rem}' +
+  '.hub-trade-head{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;padding-bottom:.7rem;margin-bottom:1.1rem;border-bottom:1px solid var(--line,rgba(74,75,47,.16))}' +
+  '.hub-ico{width:1.35rem;height:1.35rem;flex:none;stroke:var(--vgreen-2,#4a4b2f);fill:none;stroke-width:1.6}' +
+  '.hub-trade-h{margin:0;font-family:var(--serif,"Fraunces",serif);font-size:1.32rem;font-weight:600;color:var(--vink,#12100e)}' +
+  '.hub-trade-n{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim);padding:.16rem .5rem;border:1px solid var(--line,rgba(74,75,47,.2));border-radius:999px;white-space:nowrap}' +
+  '.hub-trade-link{margin-left:auto;font-size:.82rem;color:var(--vgreen-2,#4a4b2f);white-space:nowrap}' +
+  '.hub-trade-link:hover{text-decoration:underline}' +
+  '.hub-towns{columns:3;column-gap:2.2rem}' +
+  '@media(max-width:860px){.hub-towns{columns:2}}' +
+  '@media(max-width:520px){.hub-towns{columns:1}}' +
+  '.hub-town{break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;display:inline-block;width:100%;margin:0 0 1.3rem}' +
+  '.hub-town-h{display:flex;align-items:baseline;gap:.4rem;font-family:var(--mono);font-size:.63rem;letter-spacing:.11em;text-transform:uppercase;color:var(--vdim);margin-bottom:.25rem}' +
+  '.hub-town-n{font-size:.58rem;opacity:.7}' +
+  '.hub-firms{display:flex;flex-direction:column}' +
+  // Firm links are the PRIMARY clickable content — full-strength deep olive
+  // (#3a3b24 ≈ 10:1 on the cream bg, well past AA), NOT the 0.62-alpha --vmut used
+  // for the directory's secondary prose. Hover DARKENS to ink (a stronger, not
+  // weaker, affordance — the site link color --vgreen-2 is #6B654B, too light here).
+  '.hub-firm{padding:.42rem 0;font-size:.9rem;line-height:1.35;color:#3a3b24;border-bottom:1px solid var(--line,rgba(74,75,47,.09));transition:color .12s ease}' +
+  '.hub-firm:hover,.hub-firm:focus{color:#12100e}';
+
+function hubJsonLd(canonical, orderedTrades) {
+  // ItemList of the 8 trade directories (the hub's children) — NOT all 318
+  // profiles, which already carry their own ListItem entries on the trade pages.
+  // This positions the hub as the parent index without duplicating the corpus.
+  const items = orderedTrades.map((t, i) => {
+    const url = SITE + '/fairfield-county/' + t;
+    return {
+      '@type': 'ListItem', position: i + 1, url,
+      name: tradeLabel(t) + ' contractors in ' + COUNTY + ', CT',
+      item: { '@type': 'CollectionPage', '@id': url + '#webpage', url,
+        name: tradeLabel(t) + ' Contractors in ' + COUNTY + ', CT' }
+    };
+  });
+  const graph = [
+    ...publisherNodes(),
+    {
+      '@type': 'CollectionPage', '@id': canonical + '#webpage', url: canonical,
+      name: 'Contractor Directory — ' + COUNTY + ', CT',
+      description: 'The full public-record index of contractors Vesta covers in ' + COUNTY +
+        ', CT, across ' + items.length + ' trades. Compiled from public records. No ads, no pay-to-play.',
+      isPartOf: { '@id': WEBSITE_ID }, publisher: { '@id': ORG_ID },
+      breadcrumb: { '@id': canonical + '#breadcrumb' }
+    },
+    {
+      '@type': 'BreadcrumbList', '@id': canonical + '#breadcrumb',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Vesta', item: SITE + '/vesta' },
+        { '@type': 'ListItem', position: 2, name: 'Directory' }
+      ]
+    },
+    {
+      '@type': 'ItemList', '@id': canonical + '#list',
+      name: 'Contractor trades in ' + COUNTY + ', CT',
+      numberOfItems: items.length, itemListElement: items
+    }
+  ];
+  return '<script type="application/ld+json">' +
+    JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c') +
+    '</script>';
+}
+
+// Pure: rows in (index-ready public-view rows), full hub HTML out.
+export function renderHubHTML(rows) {
+  const canonical = SITE + '/directory';
+  const list = (Array.isArray(rows) ? rows : []).filter((r) => r && r.place_id && TRADES.includes(r.trade));
+
+  const byTrade = {};
+  for (const r of list) (byTrade[r.trade] = byTrade[r.trade] || []).push(r);
+  const orderedTrades = TRADES.filter((t) => (byTrade[t] || []).length);
+  const total = list.length;
+  const townCount = new Set(list.map((r) => String(r.city || '').trim()).filter(Boolean)).size;
+
+  const title = 'Contractor Directory — ' + COUNTY + ', CT | Vesta';
+  const description = 'Every contractor Vesta covers in ' + COUNTY + ', Connecticut — ' + total +
+    ' vetted pros across ' + orderedTrades.length + ' trades, compiled from public records. ' +
+    'Browse the full index by trade and town. No ads, no pay-to-play.';
+
+  const hero =
+    '<section class="page-hero" id="hero">' +
+      '<a class="crumb" href="/vesta">← Vesta</a>' +
+      '<h1 class="page-h">Every Contractor Vesta Covers in ' + COUNTY + ', CT</h1>' +
+      '<p class="page-sub">The complete public-record index — browse the full roster by trade and town. ' +
+        'Ranked by homeowner consensus, vouched by Connecticut registration and licensing. No ads, no pay-to-play.</p>' +
+    '</section>';
+
+  // Fetch failed / empty: minimal honest shell, never a fabricated list, never cached.
+  if (!total) {
+    const body = hero + '<section class="section" id="body">' + stripHtml('') +
+      '<p class="note" style="margin-top:1.2rem">The directory is compiling right now — pick a trade above to browse.</p>' +
+      disclosure() + '</section>';
+    return shell({ title, description, canonical, body });
+  }
+
+  const lead = '<div class="hub-lead">' +
+    '<span><b>' + total + '</b> contractors</span><span class="sep">·</span>' +
+    '<span><b>' + orderedTrades.length + '</b> trades</span><span class="sep">·</span>' +
+    '<span><b>' + townCount + '</b> towns</span></div>';
+
+  const sections = orderedTrades.map((t) => {
+    const label = tradeLabel(t);
+    // group this trade by town; town order = its size within this trade, desc.
+    const byTown = {};
+    for (const r of byTrade[t]) {
+      const town = String(r.city || '').trim() || COUNTY;
+      (byTown[town] = byTown[town] || []).push(r);
+    }
+    const towns = Object.keys(byTown).sort((a, b) =>
+      byTown[b].length - byTown[a].length || a.localeCompare(b));
+    const townBlocks = towns.map((town) => {
+      const firms = byTown[town].slice().sort((a, b) =>
+        (+b.rank_score || 0) - (+a.rank_score || 0) ||
+        String(a.business_name).localeCompare(String(b.business_name)));
+      const links = firms.map((f) =>
+        '<a class="hub-firm" href="/c/' + encodeURIComponent(f.place_id) + '">' +
+          esc(f.business_name) + '</a>').join('');
+      return '<div class="hub-town">' +
+        '<span class="hub-town-h">' + esc(town) + '<span class="hub-town-n">' + firms.length + '</span></span>' +
+        '<div class="hub-firms">' + links + '</div>' +
+      '</div>';
+    }).join('');
+
+    return '<section class="hub-trade" id="' + t + '">' +
+      '<div class="hub-trade-head">' +
+        '<svg class="hub-ico" viewBox="0 0 24 24" aria-hidden="true">' + (ICON[t] || ICON.all) + '</svg>' +
+        '<h2 class="hub-trade-h">' + esc(label) + '</h2>' +
+        '<span class="hub-trade-n">' + byTrade[t].length + ' in ' + COUNTY + '</span>' +
+        '<a class="hub-trade-link" href="/fairfield-county/' + t + '">The ' + esc(tLower(t)) + ' page →</a>' +
+      '</div>' +
+      '<div class="hub-towns">' + townBlocks + '</div>' +
+    '</section>';
+  }).join('');
+
+  const body = hero +
+    '<section class="section" id="body">' +
+      stripHtml('') +
+      lead +
+      '<div class="hub-sections">' + sections + '</div>' +
+      disclosure() +
+    '</section>';
+
+  return shell({
+    title, description, canonical,
+    headExtra: '<style>' + HUB_CSS + '</style>' + hubJsonLd(canonical, orderedTrades),
+    body
+  });
 }

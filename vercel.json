@@ -20,6 +20,7 @@
     { "source": "/pro/:id",       "destination": "/pro.html" },
     { "source": "/c/:placeId",    "destination": "/api/contractor?placeId=:placeId" },
     { "source": "/fairfield-county/:trade", "destination": "/api/directory?trade=:trade" },
+    { "source": "/directory",     "destination": "/api/hub" },
     { "source": "/sitemap.xml", "destination": "/api/sitemap" }
   ],
   "redirects": [
