@@ -2434,6 +2434,7 @@ async function openProfile(placeId){
   closeSheet(); closeSearch(); if (S.filterOpen) closeFilterSheet(); closeFeedMenus();
   showScreen('profile'); updateNavState();
   const sc=$('prof-scroll'); if(sc) sc.scrollTop=0;
+  window.scrollTo(0,0);   // desktop scrolls the document, not prof-scroll — without this the profile opens blank at the deck's old offset
   $('prof-wrap').innerHTML = '<button class="prof-crumb" id="prof-back">'+BACKARROW+'<span>Back</span></button><div class="prof-loading">Loading profile…</div>';
   wireProfBack();
   try {
@@ -2776,6 +2777,7 @@ function enterRequest(ctx){
   reqData = { placeId:ctx.placeId, trade:ctx.trade||'', name:ctx.name||'' };
   showScreen('request'); updateNavState();
   const sc=$('req-scroll'); if(sc) sc.scrollTop=0;
+  window.scrollTo(0,0);   // same document-scroll reset as openProfile
   $('req-wrap').innerHTML = requestHTML();
   wireRequest();
 }
@@ -2843,6 +2845,7 @@ async function requestSubmit(e){
         '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><button type="button" class="de-btn ghost" id="rq-back2">Done</button></div></div>';
       const bb=$('rq-back2'); if(bb) bb.addEventListener('click', backFromRequest);
       const sc=$('req-scroll'); if(sc) sc.scrollTop=0;
+      window.scrollTo(0,0);
     } else {
       fail(r && r.error==='rate_limited' ? 'Daily send limit reached — try again tomorrow.' : 'Couldn’t send — try again.');
     }
