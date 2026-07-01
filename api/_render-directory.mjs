@@ -499,7 +499,7 @@ function jsonLd(trade, label, rows, canonical) {
 
 // --- shell ------------------------------------------------------------------
 
-function shell({ title, description, canonical, headExtra, body }) {
+export function shell({ title, description, canonical, headExtra, body }) {
   return '<!DOCTYPE html>\n<html lang="en">\n<head>\n' +
     '<meta charset="UTF-8">\n' +
     '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
@@ -599,6 +599,9 @@ export const FOOTER =
   // from all of them. Keeps the homeowner inside Vesta rather than bouncing to a
   // competitor — the browse door that /c/ drops from its NAV is fine in the footer.
   '      <a href="/directory">All contractors</a>\n' +
+  // The original-data report (Stage 3 B4): the citable stats page. In the shared
+  // footer for the same crawl-mesh reason as the hub link above.
+  '      <a href="/fairfield-county-contractor-report">Contractor Report</a>\n' +
   '      <a href="/privacy.html">Privacy Policy</a>\n' +
   '      <a href="/terms.html">Terms of Service</a>\n' +
   '    </div>\n' +
