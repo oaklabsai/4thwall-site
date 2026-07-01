@@ -217,12 +217,73 @@ document.addEventListener('DOMContentLoaded', async function(){
   // quantified review volume, rating BAND (never the score), and — only if thin —
   // one standout capability in the firm's own evidence. Mirror of vesta-app.html
   // profStandingHTML; uses contractor.html's own card classes (.vwhy/.w/.k).
+  // Per-trade. An entry exists ONLY for a capability genuinely scarce in the live
+  // data (present in ≥1 firm AND ≤25% of a trade's synth firms hold it), so "one of
+  // the few" stays true — verified against profile_enrichment_public each review-
+  // intelligence pass. Scarcity language tiered to rarity: ≤5% "very few" · 6–15%
+  // "few" · 16–25% relative ("many don't"/"more than most"). Common caps omitted.
   const STANDING_SPECIALTY = {
-    metal_roofing:         ['Specialty','Metal-roof specialist','One of the very few %F we track in Fairfield County equipped for standing-seam and metal roofs — an expertise homeowners say is hard to find.'],
-    in_house_masonry:      ['Specialty','In-house masonry','One of the few %F that rebuild chimneys and masonry alongside the roof, in-house rather than subbed out.'],
-    slate_cedar_specialty: ['Specialty','Slate &amp; cedar','Among the few %F we track who work slate and cedar roofs, not just asphalt shingle.'],
-    flat_low_slope:        ['Specialty','Flat &amp; low-slope','Equipped for flat and low-slope roofs (EPDM / membrane) — a job many shingle-only roofers turn down.'],
-    commercial_capable:    ['Specialty','Commercial-capable','Handles commercial roofs alongside residential — a wider remit than most %F we track.']
+    roofing: {
+      metal_roofing:         ['Specialty','Metal-roof specialist','One of the very few %F we track in Fairfield County equipped for standing-seam and metal roofs — an expertise homeowners say is hard to find.'],
+      in_house_masonry:      ['Specialty','In-house masonry','One of the few %F that rebuild chimneys and masonry alongside the roof, in-house rather than subbed out.'],
+      slate_cedar_specialty: ['Specialty','Slate &amp; cedar','Among the few %F we track who work slate and cedar roofs, not just asphalt shingle.'],
+      flat_low_slope:        ['Specialty','Flat &amp; low-slope','Equipped for flat and low-slope roofs (EPDM / membrane) — a job many shingle-only roofers turn down.'],
+      commercial_capable:    ['Specialty','Commercial-capable','Handles commercial roofs alongside residential — a wider remit than most %F we track.']
+    },
+    hvac: {
+      oil_to_gas:          ['Specialty','Oil-to-gas conversions','One of the very few %F we track that handle full oil-to-gas heating conversions — a switchover most installers refer out.'],
+      commercial_capable:  ['Specialty','Commercial-capable','One of the very few %F we track equipped for commercial HVAC alongside residential work.'],
+      ductless_mini_split: ['Specialty','Ductless mini-splits','One of the few %F we track who specialize in ductless mini-splits — the answer for additions and homes without ductwork.'],
+      boiler_specialty:    ['Specialty','Boiler &amp; hydronic heat','Services boilers and hydronic heat, not just forced air — a job many %F we track don\'t take on.']
+    },
+    plumbing: {
+      hydro_jetting:   ['Specialty','Hydro-jetting','One of the very few %F we track equipped for hydro-jetting — high-pressure sewer-line clearing most plumbers sub out.'],
+      septic_service:  ['Specialty','Septic service','One of the very few %F we track that service septic systems alongside standard plumbing.'],
+      water_treatment: ['Specialty','Water treatment','One of the very few %F we track that install and service whole-home water-treatment and filtration.'],
+      well_pump:       ['Specialty','Well-pump systems','One of the few %F we track who handle well-pump systems — essential for the county\'s many well-water homes.']
+    },
+    electrical: {
+      industrial_capable: ['Specialty','Industrial-capable','One of the very few %F we track equipped for industrial electrical work alongside residential.'],
+      solar_install:      ['Specialty','Solar tie-ins','One of the very few %F we track that install and tie in solar systems.'],
+      battery_backup:     ['Specialty','Battery backup','One of the very few %F we track who install whole-home battery-backup systems.'],
+      knob_and_tube:      ['Specialty','Knob-and-tube replacement','One of the very few %F we track who take on knob-and-tube removal — older-home rewiring many electricians avoid.'],
+      whole_home_rewire:  ['Specialty','Whole-home rewiring','One of the very few %F we track who handle full whole-home rewires, not just panel and circuit work.'],
+      pool_spa_wiring:    ['Specialty','Pool &amp; spa wiring','One of the few %F we track equipped for pool and spa wiring — specialized, code-heavy work.'],
+      smart_home:         ['Specialty','Smart-home &amp; automation','Installs smart-home and automation systems — a remit more than most %F we track offer.'],
+      low_voltage_data:   ['Specialty','Low-voltage &amp; data','Wires low-voltage and structured data alongside standard electrical — more than most %F we track take on.']
+    },
+    paving: {
+      private_road:      ['Specialty','Private roads &amp; lanes','One of the very few %F we track equipped for private-road and shared-lane paving — bigger and more complex than a driveway.'],
+      retaining_wall:    ['Specialty','Retaining walls','One of the very few %F we track that build retaining walls alongside paving.'],
+      commercial_paving: ['Specialty','Commercial paving','Handles commercial lots and large-scale paving — a wider remit than most %F we track.'],
+      masonry_capable:   ['Specialty','In-house masonry','Pairs masonry work with paving in-house — more than most %F we track offer.']
+    },
+    lawn_care: {
+      commercial_grounds: ['Specialty','Commercial grounds','One of the very few %F we track that maintain commercial and institutional grounds alongside residential.'],
+      outdoor_lighting:   ['Specialty','Landscape lighting','One of the few %F we track who design and install landscape lighting.'],
+      paver_installation: ['Specialty','Paver patios &amp; walkways','One of the few %F we track who install paver patios and walkways in-house.'],
+      stump_grinding:     ['Specialty','Stump grinding','One of the few %F we track equipped for stump grinding and removal.'],
+      irrigation_install: ['Specialty','Irrigation systems','One of the few %F we track that design and install irrigation systems.'],
+      water_features:     ['Specialty','Water features','One of the few %F we track who build water features — ponds, falls, and fountains.'],
+      retaining_wall:     ['Specialty','Retaining walls','Builds retaining walls alongside landscaping — a job many %F we track don\'t take on.'],
+      drainage_solutions: ['Specialty','Drainage solutions','Solves yard drainage and grading, not just planting — more than most %F we track handle.'],
+      grading_excavation: ['Specialty','Grading &amp; excavation','Equipped for grading and excavation — a heavier capability than most %F we track offer.'],
+      masonry_capable:    ['Specialty','In-house masonry','Pairs masonry and hardscape with landscaping in-house — more than most %F we track.']
+    },
+    painting: {
+      faux_decorative_finishes: ['Specialty','Faux &amp; decorative finishes','One of the very few %F we track who do faux and decorative finishes — specialized, artisan work.'],
+      venetian_plaster:         ['Specialty','Venetian plaster','One of the very few %F we track skilled in Venetian plaster and lime finishes.'],
+      epoxy_floor_coating:      ['Specialty','Epoxy floor coatings','One of the very few %F we track that apply epoxy floor coatings — garages, basements, and shops.'],
+      specialty_coatings:       ['Specialty','Specialty coatings','One of the very few %F we track equipped for specialty and high-performance coatings.'],
+      masonry_brick_painting:   ['Specialty','Masonry &amp; brick painting','One of the very few %F we track who properly prep and paint masonry and brick.'],
+      commercial_capable:       ['Specialty','Commercial-capable','One of the few %F we track that handle commercial painting alongside residential.']
+    },
+    masonry: {
+      foundation_repair:      ['Specialty','Foundation repair','One of the very few %F we track that take on foundation repair and structural masonry.'],
+      stucco_eifs:            ['Specialty','Stucco &amp; EIFS','One of the very few %F we track skilled in stucco and EIFS systems.'],
+      pool_deck:              ['Specialty','Pool decks &amp; coping','Builds pool decks and coping — a job many %F we track don\'t take on.'],
+      fireplace_construction: ['Specialty','Fireplaces &amp; fire pits','Builds outdoor fireplaces and fire pits — more than most %F we track offer.']
+    }
   };
   function vestaReadBlock(){
     if (!enr) return '';
@@ -231,7 +292,8 @@ document.addEventListener('DOMContentLoaded', async function(){
     const reviewN = Number(enr.deep_review_count || enr.rating_count || 0);
     const nStr = reviewN ? reviewN.toLocaleString('en-US') : '';
     const items = [];   // [kicker, title, desc] — strongest-first, capped at 4
-    for (const key in STANDING_SPECIALTY){ if (caps[key]){ const s = STANDING_SPECIALTY[key]; items.push([s[0], s[1], s[2].replace(/%F/g, firms)]); } }
+    const specMap = STANDING_SPECIALTY[trade] || {};
+    for (const key in specMap){ if (caps[key]){ const s = specMap[key]; items.push([s[0], s[1], s[2].replace(/%F/g, firms)]); } }
     if (enr.tenure_band === 'top25'){ const yr = enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0,4) : 0; items.push(['Tenure','Long-established','Registered with the state' + (yr && yr !== 1999 ? ' since ' + yr : '') + ' — one of the longer-established ' + firms + ' we track in Fairfield County.']); }
     if (enr.volume_band === 'top10') items.push(['Review volume','Among the most-reviewed', (nStr ? nStr + ' homeowner reviews on record — one' : 'One') + ' of the most-reviewed ' + firms + ' in Fairfield County.']);
     else if (enr.volume_band === 'top25') items.push(['Review volume','A deep track record', (nStr ? nStr + ' homeowner reviews — a' : 'A') + ' deeper bank of homeowner reviews than most ' + firms + ' we track.']);

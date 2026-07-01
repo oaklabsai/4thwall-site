@@ -204,6 +204,44 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 @keyframes miIn { from { opacity:0; transform:translateY(12px) scale(.985); } to { opacity:1; transform:none; } }
 @media (prefers-reduced-motion: reduce){ .match-intro { animation:none; } }
 
+/* ===== MATCH WALKTHROUGH (Q1 the job → Q2 what matters) — the tailored triage ===== */
+#s-match.screen { overflow:hidden; flex-direction:column; }
+.match-wrap { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:10px 20px 120px; }
+.mw-inner { max-width:560px; margin:0 auto; animation:miIn .4s cubic-bezier(.2,.7,.3,1) both; }
+.mw-kicker { display:inline-flex; align-items:center; gap:7px; font-size:10.5px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ebony); margin:4px 0 13px; }
+.mw-kicker svg { color:var(--olive); }
+.mw-step { opacity:.55; }
+.mw-q { font-family:var(--serif); font-size:26px; font-weight:600; color:var(--olive); letter-spacing:-.02em; line-height:1.18; margin-bottom:7px; }
+.mw-q b { color:var(--ebony); font-weight:600; }
+.mw-hint { font-size:13px; color:var(--ebony); line-height:1.5; margin-bottom:19px; }
+.mw-opts { display:grid; grid-template-columns:1fr; gap:9px; }
+.mw-opt { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; text-align:left; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:15px; padding:15px 17px; cursor:pointer; box-shadow:var(--sh-row); transition:border-color .16s, transform .16s, background .16s; }
+.mw-opt:hover { border-color:rgba(74,75,47,.34); transform:translateY(-1px); }
+.mw-opt:focus-visible { outline:2px solid var(--olive); outline-offset:2px; }
+.mw-opt.sel { border-color:var(--olive); background:rgba(212,223,158,.2); }
+.mw-opt-l { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.mw-opt-name { font-family:var(--sans); font-size:15px; font-weight:600; color:var(--olive); line-height:1.25; }
+.mw-opt-blurb { font-size:12.5px; color:var(--ebony); line-height:1.35; }
+.mw-opt-ic { flex-shrink:0; color:var(--olive); opacity:.42; }
+.mw-more { width:100%; margin-top:10px; background:transparent; border:1px dashed rgba(74,75,47,.28); border-radius:13px; padding:12px; font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ebony); cursor:pointer; }
+.mw-more:hover { border-color:var(--olive); color:var(--olive); }
+.mw-foot { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:22px; }
+.mw-skip { background:none; border:none; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--ebony); cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:6px 2px; }
+.mw-skip:hover { color:var(--olive); }
+.mw-backbtn { display:inline-flex; align-items:center; gap:6px; background:none; border:none; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--olive); cursor:pointer; padding:6px 2px; }
+.mw-backbtn svg { width:15px; height:15px; }
+.browse-change { display:inline; background:none; border:none; font-family:var(--sans); font-size:inherit; font-weight:600; color:var(--olive); cursor:pointer; text-decoration:underline; text-underline-offset:2px; padding:0 0 0 2px; }
+.browse-change:hover { opacity:.72; }
+/* the data-true "why" on cards (match mode) + the best-reviewed divider */
+.card-matchwhy { display:flex; align-items:flex-start; gap:7px; margin:-1px 0 12px; font-size:12.5px; font-weight:600; color:var(--olive); line-height:1.35; }
+.card-matchwhy svg { color:var(--olive); flex-shrink:0; margin-top:2px; }
+.fcard-band.fcard-why { display:inline-flex; align-items:center; gap:6px; background:rgba(212,223,158,.36); }
+.fcard-band.fcard-why svg { color:var(--olive); flex-shrink:0; }
+.feed-divider { display:flex; align-items:center; gap:14px; margin:20px 0 12px; }
+.feed-divider::before, .feed-divider::after { content:''; flex:1; height:1px; background:rgba(74,75,47,.14); }
+.feed-divider span { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); opacity:.66; white-space:nowrap; }
+@media (min-width:600px){ .mw-opts { grid-template-columns:1fr 1fr; } .mw-opt--wide { grid-column:1 / -1; } }
+
 /* ===== SAVED LIST ===== */
 .favwrap { flex:1; min-height:0; overflow-y:auto; padding:2px 20px 130px; display:flex; flex-direction:column; gap:12px; }
 .fav-intro { font-size:12.5px; color:var(--ebony); line-height:1.55; background:rgba(212,223,158,.24); border:1px solid rgba(74,75,47,.08); border-radius:14px; padding:13px 16px; margin-bottom:2px; }
@@ -363,7 +401,9 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .topbar, .bnav { display:none; }
   #s-home { display:none !important; }
 
-  #s-browse.screen { flex:1; min-width:0; height:100vh; }
+  #s-browse.screen, #s-match.screen { flex:1; min-width:0; height:100vh; }
+  #s-match .match-wrap { padding:30px 40px 60px; }
+  .mw-q { font-size:31px; }
   #s-browse .browse-hdr { padding:34px 40px 4px; }
   .browse-h1 { font-size:46px; }
   .chips-row { display:none; }
@@ -758,6 +798,15 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
     </div>
   </div>
 
+  <!-- MATCH WALKTHROUGH (Q1 the job → Q2 what matters) — the tailored triage -->
+  <div id="s-match" class="screen" role="main" aria-label="Tell Vesta what you need">
+    <header class="topbar">
+      <button class="tb-back" id="match-back" aria-label="Back to trades"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
+      <a class="tb-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a><span class="tb-spacer"></span>
+    </header>
+    <div class="match-wrap" id="match-wrap"></div>
+  </div>
+
   <!-- PROFILE (in-app full profile — same Vesta UI, no external page) -->
   <div id="s-profile" class="screen" role="main" aria-label="Contractor profile">
     <div class="prof-scroll" id="prof-scroll">
@@ -876,7 +925,10 @@ const LOCK = `<svg width="13" height="14" viewBox="0 0 14 16" fill="none" stroke
 
 const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, filterOpen:false, dataLoaded:false, mode:'trade',
             shuffles:{}, pos:{}, deck:[], deckIdx:0, deckSig:{}, unlocked:{}, history:[], savedTab:'saved',
-            feedTown:'', feedSort:'rank', feedNeeds:new Set(), introPending:false };
+            feedTown:'', feedSort:'rank', feedNeeds:new Set(), introPending:false,
+            // Match engine: when match.job is set, the deck/feed reorder by the locked scorer and the
+            // head copy adapts to how selective the job is (the honesty rule). null = plain browse.
+            match:null, matchPending:false, matchStep:'job', matchSeedJob:null };
 const FEED_HIDDEN = new Set();   // desktop feed: "Not interested" hides for the session (not a like/dislike signal)
 // Homeowner-need facets per trade — mined from the real specialties corpus. A firm matches a
 // facet if any of its specialties / known-for strings contains one of the facet keywords (.m).
@@ -891,6 +943,152 @@ const NEED_FACETS = {
   lawn: [ {l:'Lawn maintenance',m:['lawn','mow']}, {l:'Landscape design',m:['design','landscap']}, {l:'Cleanups',m:['cleanup','clean-up','spring','fall']}, {l:'Snow removal',m:['snow','plow']}, {l:'Drainage & walls',m:['drainage','retaining']}, {l:'Tree work',m:['tree']} ],
   painting: [ {l:'Interior',m:['interior']}, {l:'Exterior',m:['exterior']}, {l:'Cabinets',m:['cabinet']}, {l:'Power washing',m:['power wash','pressure wash']}, {l:'Decks',m:['deck']}, {l:'Carpentry & repair',m:['carpentry','drywall','ceiling','trim']}, {l:'Wallpaper',m:['wallpaper']}, {l:'Historic homes',m:['historic']} ],
 };
+
+/* ===== MATCH ENGINE — the tailored triage (Stage 1, Step 1) =====
+   Two questions, both authored by the synthesis into best_for:
+     Q1 = the job (every job, common ones included)   Q2 = what matters (a priority axis)
+   The locked scorer (3.0·job + 1.0·priority + 0.8·budget) reorders the trade; the head copy adapts
+   to how selective the chosen job is (the honesty rule) so we never claim "tailored" when the whole
+   field does the job. Options come live from the vesta_match_options view, so the match gets more
+   tailored as coverage grows — zero rework. */
+
+// Homeowner-facing labels over the kebab job tags. A deliberate copy layer; any tag not yet mapped
+// falls back to a readable de-kebab, so new coverage never breaks the UI.
+const JOB_LABELS = {
+  'full-roof-replacement':'Full roof replacement','storm-or-insurance-claim':'Storm or insurance claim',
+  'active-leak-or-emergency':'Active leak — emergency','roof-plus-siding-gutters':'Roof + siding / gutters',
+  'historic-or-specialty-materials':'Historic or specialty materials','flat-or-low-slope-roof':'Flat or low-slope roof',
+  'repair':'Roof repair','chimney-plus-roof':'Chimney + roof','commercial':'Commercial roofing',
+  'routine-maintenance':'Routine maintenance / tune-up','system-replacement':'System replacement',
+  'no-heat-or-no-cool-emergency':'No heat or AC — emergency','central-ac-install':'Central AC install',
+  'boiler-or-radiant':'Boiler or radiant heat','ductless-for-additions':'Ductless (mini-split)',
+  'heat-pump-upgrade':'Heat-pump upgrade','oil-to-gas-conversion':'Oil-to-gas conversion','commercial-hvac':'Commercial HVAC',
+  'emergency-leak-or-burst':'Emergency leak or burst','water-heater-replacement':'Water-heater replacement',
+  'drain-or-sewer-backup':'Drain or sewer backup','bathroom-or-kitchen-remodel':'Bath or kitchen remodel',
+  'well-or-sump-pump':'Well or sump pump','sewer-line-replacement':'Sewer-line replacement',
+  'tankless-upgrade':'Tankless upgrade','water-treatment':'Water treatment',
+  'panel-or-service-upgrade':'Panel or service upgrade','recessed-or-landscape-lighting':'Lighting (recessed or landscape)',
+  'emergency-power-loss':'Emergency — power loss','ev-charger-install':'EV charger install',
+  'troubleshooting-diagnostics':'Troubleshooting a problem','commercial-electrical':'Commercial electrical',
+  'whole-home-generator':'Whole-home generator','remodel-or-addition-wiring':'Remodel or addition wiring',
+  'smart-home-automation':'Smart-home automation','rewiring-old-home':'Rewiring an old home',
+  'code-correction-or-inspection':'Code correction or inspection','low-voltage-data-network':'Low-voltage / data wiring',
+  'pool-or-hot-tub-wiring':'Pool or hot-tub wiring','solar-or-battery-backup':'Solar or battery backup',
+  'knob-and-tube-replacement':'Knob-and-tube replacement',
+  'new-driveway-installation':'New driveway','drainage-problem':'Drainage problem',
+  'driveway-resurfacing':'Driveway resurfacing','belgian-block-or-cobblestone':'Belgian block or cobblestone',
+  'sealcoating-maintenance':'Sealcoating','driveway-repair-or-patching':'Driveway repair or patching',
+  'paver-patio-or-walkway':'Paver patio or walkway','commercial-parking-lot':'Commercial parking lot',
+  'excavation-and-grading':'Excavation & grading','private-road':'Private road',
+  'recurring-lawn-maintenance':'Recurring lawn maintenance','landscape-design-and-install':'Landscape design & install',
+  'seasonal-cleanup':'Seasonal cleanup','planting-and-garden-beds':'Planting & garden beds',
+  'hardscape-patio-or-walkway':'Patio or walkway (hardscape)','drainage-or-grading':'Drainage or grading',
+  'tree-removal-or-stump':'Tree removal or stump','snow-removal':'Snow removal',
+  'lawn-renovation-or-sod':'Lawn renovation or sod','fertilization-and-weed-program':'Fertilization & weed program',
+  'water-feature':'Water feature','irrigation-install-or-repair':'Irrigation install or repair',
+  'tree-and-shrub-care':'Tree & shrub care','leaf-removal':'Leaf removal','outdoor-lighting':'Outdoor lighting',
+  'commercial-grounds-management':'Commercial grounds',
+  'walkway-or-steps':'Walkway or steps','stone-or-paver-patio':'Stone or paver patio',
+  'fireplace-or-fire-pit':'Fireplace or fire pit','brick-or-stone-repair':'Brick or stone repair',
+  'chimney-repair-or-rebuild':'Chimney repair or rebuild','repointing-old-mortar':'Repointing old mortar',
+  'pool-deck-surround':'Pool-deck surround','stone-veneer-facade':'Stone veneer facade',
+  'interior-repaint':'Interior repaint','exterior-repaint':'Exterior repaint',
+  'carpentry-and-rot-repair':'Carpentry & rot repair','drywall-or-plaster-repair':'Drywall or plaster repair',
+  'cabinet-refinishing':'Cabinet refinishing','color-consultation':'Color consultation',
+  'deck-or-fence-staining':'Deck or fence staining','wallpaper-removal-or-install':'Wallpaper removal or install',
+  'faux-or-decorative-finish':'Faux or decorative finish','popcorn-ceiling-removal':'Popcorn-ceiling removal',
+  'new-construction-painting':'New-construction painting','epoxy-or-garage-floor':'Epoxy / garage floor',
+  'retaining-wall':'Retaining wall',   // shared across lawn / masonry / paving
+};
+function jobLabel(v){ return JOB_LABELS[v] || String(v||'').replace(/-/g,' ').replace(/\b\w/g, c=>c.toUpperCase()); }
+// Lowercase a label for mid-sentence use, but keep leading acronyms (EV, AC) intact.
+function lc(s){ s=String(s||''); const m=s.match(/^(\S+)/); if (m && m[1]===m[1].toUpperCase() && /[A-Z]/.test(m[1])) return s; return s.charAt(0).toLowerCase()+s.slice(1); }
+
+// The five priority axes (Q2). Raw best_for priority tags are trade-specific variants matched by
+// prefix/suffix. budget carries the locked 0.8 weight; the rest carry 1.0.
+const PRIORITY_AXES = {
+  premium:      { label:'Premium quality',           blurb:'craftsmanship over price',    weight:1.0, order:1 },
+  relationship: { label:'A lasting relationship',    blurb:'a pro worth keeping on call',  weight:1.0, order:2 },
+  guided:       { label:'Guidance for first-timers', blurb:'walked through every step',    weight:1.0, order:3 },
+  fast:         { label:'Fast turnaround',           blurb:'in and done quickly',          weight:1.0, order:4 },
+  budget:       { label:'Budget-friendly',           blurb:'value for the money',          weight:0.8, order:5 },
+};
+function priorityAxis(v){
+  if (/^budget-conscious/.test(v)) return 'budget';
+  if (/^premium/.test(v)) return 'premium';
+  if (/^guided/.test(v)) return 'guided';
+  if (v === 'fast-turnaround') return 'fast';
+  if (/-relationship$/.test(v)) return 'relationship';
+  return null;
+}
+
+// The question bank, built once from vesta_match_options, keyed by APP trade key.
+// MATCH_BANK[appTrade] = { trade_n, jobs:[{value,label,firms,pct}], axes:[{axis,label,blurb,weight,firms,order}] }
+const MATCH_BANK = {};
+async function loadMatchBank(){
+  let rows;
+  try { rows = await HOME.db('/vesta_match_options?select=trade,value,is_priority,firms,trade_n'); }
+  catch(_){ rows = null; }
+  if (!Array.isArray(rows)) return;
+  rows.forEach(r => {
+    const app = TRADE_APP[r.trade] || r.trade;
+    const b = MATCH_BANK[app] || (MATCH_BANK[app] = { trade_n:r.trade_n||0, jobs:[], _ax:{} });
+    b.trade_n = b.trade_n || r.trade_n || 0;
+    if (!r.is_priority){
+      b.jobs.push({ value:r.value, label:jobLabel(r.value), firms:r.firms||0, pct:(r.trade_n ? (r.firms||0)/r.trade_n : 0) });
+    } else {
+      const ax = priorityAxis(r.value); if (ax) b._ax[ax] = (b._ax[ax]||0) + (r.firms||0);
+    }
+  });
+  // finalize: jobs by coverage desc; axes collapsed to the supported set (>=3 firms) in canonical order
+  Object.values(MATCH_BANK).forEach(b => {
+    b.jobs.sort((a,c)=> c.firms - a.firms);
+    b.axes = Object.keys(b._ax)
+      .filter(ax => b._ax[ax] >= 3 && PRIORITY_AXES[ax])
+      .map(ax => ({ axis:ax, firms:b._ax[ax], label:PRIORITY_AXES[ax].label, blurb:PRIORITY_AXES[ax].blurb, weight:PRIORITY_AXES[ax].weight, order:PRIORITY_AXES[ax].order }))
+      .sort((x,y)=> x.order - y.order);
+    delete b._ax;
+  });
+}
+function tradeBank(appTrade){ return MATCH_BANK[appTrade] || null; }
+
+// ── The locked scorer ──────────────────────────────────────────────────────────
+// 3.0·job + (1.0|0.8)·priority. Job strictly dominates (a non-job match maxes at 1.8 < 3.0); the
+// axis only re-orders within job-matchers. Tiebreak by rank_score (applied by the caller).
+function jobMatches(con, jobValue){ return !!jobValue && (con.bestFor||[]).indexOf(jobValue) !== -1; }
+function matchScore(con, m){
+  if (!m || !m.job) return 0;
+  const bf = con.bestFor || [];
+  let s = 0;
+  if (bf.indexOf(m.job) !== -1) s += 3.0;
+  if (m.axis && PRIORITY_AXES[m.axis] && bf.some(t => priorityAxis(t) === m.axis)) s += PRIORITY_AXES[m.axis].weight;
+  return s;
+}
+// Coverage of the chosen job within the trade → the honesty tier of the result copy.
+function jobCoverage(appTrade, jobValue){
+  const b = tradeBank(appTrade); if (!b) return 0;
+  const j = b.jobs.find(x => x.value === jobValue);
+  return j ? j.pct : 0;
+}
+function honestyTier(pct){ return pct > 0.5 ? 'wide' : (pct >= 0.15 ? 'narrowed' : 'sharp'); }
+// Result head copy, adapted to selectivity. The label names the NEED; the tier decides whether we
+// claim "picks" (the field narrowed) or admit the field is wide (best-reviewed first).
+function matchHeadline(appTrade, m){
+  const plural = tradePlural(appTrade), jl = jobLabel(m.job);
+  const tier = honestyTier(jobCoverage(appTrade, m.job));
+  if (tier === 'wide')     return { h:'Most '+plural+' handle '+lc(jl), sub:'Vesta read every one — best-reviewed first.' };
+  if (tier === 'narrowed') return { h:'Vesta’s picks for '+lc(jl), sub:'Matched to your job, best-reviewed first.' };
+  return { h:'Specialists in '+lc(jl), sub:'The few Vesta found for this specific job.' };
+}
+// The per-pick "why" — data-true, never fabricated. Leads with the job it actually matches, then
+// its standing, then the axis fit. A non-matcher gets no job claim — its standing line carries it.
+function whyLine(con, m){
+  const bits = [];
+  if (m && m.job && jobMatches(con, m.job)) bits.push('Does '+lc(jobLabel(m.job)));
+  if (con.standing) bits.push(con.standing);
+  if (m && m.axis && (con.bestFor||[]).some(t => priorityAxis(t) === m.axis)) bits.push(PRIORITY_AXES[m.axis].blurb);
+  return bits.slice(0,3).join(' · ');
+}
 
 const $ = id => document.getElementById(id);
 const desktop = () => window.innerWidth >= 900;
@@ -1001,6 +1199,9 @@ function mapRow(r){
     volumeBand: r.volume_band || '',
     tenureBand: r.tenure_band || '',
     rankScore: r.rank_score || 0,
+    // best_for is the synthesis-authored, synthesis-gated tag set (jobs + priority axes) the match
+    // engine scores against. Silenced firms expose null → empty array → score 0 (never surfaced as a match).
+    bestFor: Array.isArray(r.best_for) ? r.best_for : [],
     specs: [...(Array.isArray(r.specialties) ? r.specialties : []), ...knownFor].map(x => String(x).toLowerCase())
   };
 }
@@ -1016,7 +1217,7 @@ function standingLine(r){
   return '';
 }
 async function loadContractors(){
-  const sel = 'place_id,business_name,city,trade,registered,hic_issue_date,certifications,synthesis,synthesis_review_count,rating_count,known_for,specialties,volume_band,rating_band,tenure_band,trade_n,rank_score';
+  const sel = 'place_id,business_name,city,trade,registered,hic_issue_date,certifications,synthesis,synthesis_review_count,rating_count,known_for,specialties,best_for,volume_band,rating_band,tenure_band,trade_n,rank_score';
   const rows = await HOME.db('/profile_enrichment_public?select=' + sel + '&order=rank_score.desc.nullslast');
   S.dataLoaded = true;
   // Substance gate: a profile only earns a place on Vesta if Vesta has something
@@ -1105,6 +1306,17 @@ function updateBrowseHead(){
     banner.style.display = 'none';
     return;
   }
+  // Match mode: the head copy adapts to how selective the chosen job is (the honesty rule).
+  if (S.match && S.match.job){
+    const mh = matchHeadline(S.activeTrade, S.match);
+    $('browse-h1').textContent = mh.h;
+    const sub = $('browse-sub');
+    sub.innerHTML = esc(mh.sub) + ' <button class="browse-change" id="browse-change">Change</button>';
+    const ch = $('browse-change'); if(ch) ch.addEventListener('click', () => enterMatch(S.activeTrade));
+    banner.style.display = 'none';
+    updateFilterTrigger();
+    return;
+  }
   banner.style.display = 'none';   // mobile: the card's own hint covers it; desktop already hides it
   $('browse-h1').textContent = 'Recommended ' + tradePlural(S.activeTrade);
   $('browse-sub').textContent = desktop() ? 'Vetted in Fairfield County · ranked by Vesta' : 'Vetted in Fairfield County · save the ones worth a call';
@@ -1117,6 +1329,13 @@ function updateBrowseHead(){
 function filterList(key){
   let list = byTrade(key).filter(c => !FEED_HIDDEN.has(c.placeId));
   if (S.feedTown) list = list.filter(c => (c.city||'') === S.feedTown);
+  if (S.match && S.match.job){
+    // Match mode: the scorer (sortList) floats matchers up. In the SHARP tier we hard-filter to the
+    // specialists — padding "the few who specialize" with the rest of the field would be a lie. The
+    // old need-facet chips are suppressed in match mode (renderFeedNeeds), so no double "what you need".
+    if (honestyTier(jobCoverage(key, S.match.job)) === 'sharp') list = list.filter(c => jobMatches(c, S.match.job));
+    return list;
+  }
   const facets = activeFacets();
   if (facets.length) list = list.filter(c => facets.every(f => facetMatches(c, f)));
   return list;
@@ -1128,9 +1347,14 @@ function sortList(list, mode, allowShuffle){
   if (mode==='rating') return [...list].sort(by('ratingBand'));
   if (mode==='volume') return [...list].sort(by('volumeBand'));
   if (mode==='registered') return [...list].sort((a,b)=> (b.registered?1:0)-(a.registered?1:0) || (b.rankScore-a.rankScore));
+  // Default 'rank' = Vesta's pick. In match mode the locked scorer orders it (matchers first, then by
+  // rank_score); a match is never shuffled — the order carries meaning.
+  if (S.match && S.match.job) return [...list].sort((a,b)=> matchScore(b,S.match)-matchScore(a,S.match) || (b.rankScore-a.rankScore));
   return allowShuffle ? shuffle(list) : [...list].sort((a,b)=> b.rankScore-a.rankScore);
 }
-function deckSig(){ return S.feedTown+'|'+S.feedSort+'|'+[...S.feedNeeds].sort().join(','); }
+// The match is part of the deck signature — changing the job/axis must rebuild the cached deck
+// (otherwise ensureDeck reuses a stale order and, in the sharp tier, the wrong firm set).
+function deckSig(){ return S.feedTown+'|'+S.feedSort+'|'+[...S.feedNeeds].sort().join(',')+'|'+(S.match&&S.match.job?S.match.job+':'+(S.match.axis||''):''); }
 
 /* ===== DECK ===== */
 // The deck is cached per trade so the order is stable mid-swipe; it’s rebuilt only
@@ -1264,6 +1488,7 @@ function openPhotoLightbox(list, start){
 function cardHTML(con, k){
   // Read-led card: the "Why this contractor?" stack (rank band + credentials) lives on the
   // full profile now (Where it stands / At a glance), not on the swipe card.
+  const mw = (S.match && S.match.job) ? whyLine(con, S.match) : '';   // match mode: the data-true "why", on the card
   return '<article class="card" data-k="'+k+'" '+(k===0?'tabindex="0" aria-label="'+esc(con.name)+', '+esc(con.town)+'"':'aria-hidden="true"')+'>'+
     (k===0?'<span class="stamp stamp-save">SAVE</span><span class="stamp stamp-pass">SKIP</span>':'')+
     // Swipe card leads with the READ, not the photos: one compact hero (the full 5-grid
@@ -1274,6 +1499,7 @@ function cardHTML(con, k){
       '<span class="vph-cover-badge">Photos</span></button>':'')+
     '<div class="card-top"><div class="card-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
+    (mw ? '<div class="card-matchwhy">'+SPARK+'<span>'+esc(mw)+'</span></div>' : '')+
     '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
     '<div class="card-synwrap"><div class="card-syn">'+esc(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.')+'</div></div>'+
     '<div class="card-hint">'+(desktop()?'← skip · save →':'Scroll to read · tap for the full profile')+'</div>'+
@@ -1338,7 +1564,8 @@ function renderDeck(){
   const _phm = deck.querySelector('.card[data-k="0"] .vph[data-place]'); if(_phm) hydratePhotos(_phm);
   $('deck-actions').style.visibility='visible';
   updateRewind();
-  $('deck-meta').textContent = 'Shuffled — a fresh order every visit';
+  // In match mode the order is scored (matchers first), not shuffled — say so honestly.
+  $('deck-meta').textContent = (S.match && S.match.job) ? 'Ordered by your match — best-reviewed first' : 'Shuffled — a fresh order every visit';
   if (desktop()) renderPanel(remaining[0]);
 }
 function wireDeckEnd(){
@@ -1632,7 +1859,7 @@ function applyFeed(){
   const list = feedSource();
   renderFeedNeeds();
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
-  feed.innerHTML = list.map(feedCardHTML).join('');
+  feed.innerHTML = feedListHTML(list);
   list.forEach(wireFeedCard);
   lazyCovers(feed);
   renderFeedRail(); syncSavedUI();
@@ -1668,6 +1895,7 @@ function renderFeedControls(){
 }
 function renderFeedNeeds(){
   const el = $('feed-needs'); if(!el) return;
+  if (S.match && S.match.job){ el.innerHTML=''; el.style.display='none'; return; }   // match mode owns "what you need" — no double control
   const base = byTrade(S.activeTrade).filter(c => !FEED_HIDDEN.has(c.placeId) && (!S.feedTown || (c.city||'') === S.feedTown));
   const facets = (NEED_FACETS[S.activeTrade]||[])
     .map(f => ({ f, n: base.filter(c => facetMatches(c, f)).length }))
@@ -1690,15 +1918,36 @@ function feedMoreHTML(con){
   return evidenceHTML(con) +
     (con.placeId?'<a class="va-full" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See the full profile →</a>':'');
 }
+// The feed body: in match mode, drop a "best-reviewed below" divider at the matcher/non-matcher
+// boundary (wide + narrowed tiers) — the literal "Vesta's picks → the rest" shape. Sharp tier is
+// matchers-only (hard-filtered upstream), so it never divides.
+function feedListHTML(list){
+  if (!(S.match && S.match.job)) return list.map(feedCardHTML).join('');
+  const sharp = honestyTier(jobCoverage(S.activeTrade, S.match.job)) === 'sharp';
+  let out = '', divided = false;
+  list.forEach(con => {
+    if (!sharp && !divided && matchScore(con, S.match) === 0){
+      out += '<div class="feed-divider"><span>More '+esc(tradePlural(S.activeTrade))+' · best-reviewed</span></div>';
+      divided = true;
+    }
+    out += feedCardHTML(con);
+  });
+  return out;
+}
 function feedCardHTML(con){
   const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,3);
   const saved = isLiked(con.placeId);
+  // In match mode the band becomes the data-true "why" (job it matches · standing · axis fit);
+  // a job-matcher gets the spark. Outside match mode it's the plain standing line.
+  const isM = !!(S.match && S.match.job && jobMatches(con, S.match.job));
+  const bandText = (S.match && S.match.job) ? whyLine(con, S.match) : con.standing;
+  const bandHTML = bandText ? '<div class="fcard-band'+(isM?' fcard-why':'')+'">'+(isM?SPARK:'')+esc(bandText)+'</div>' : '';
   return '<article class="fcard" data-place="'+esc(con.placeId)+'">'+
     '<div class="fcard-top">'+
       '<div class="fcard-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="fcard-id"><div class="fcard-name">'+esc(con.name)+'</div>'+
         '<div class="fcard-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
-        (con.standing?'<div class="fcard-band">'+esc(con.standing)+'</div>':'')+'</div>'+
+        bandHTML+'</div>'+
       '<div class="fcard-actions-top">'+
         '<a class="fc-fullpill" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See full profile <span aria-hidden="true">→</span></a>'+
         '<div class="fcard-menu">'+
@@ -1778,7 +2027,7 @@ function renderFeed(){
   renderFeedNeeds();
   if (!S.dataLoaded){ feed.innerHTML='<div class="feed-empty">Loading vetted pros…</div>'; renderFeedRail(); return; }
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
-  feed.innerHTML = list.map(feedCardHTML).join('');
+  feed.innerHTML = feedListHTML(list);
   list.forEach(wireFeedCard);
   lazyCovers(feed);
   renderFeedRail(); syncSavedUI();
@@ -2062,12 +2311,74 @@ function profReadHTML(){
 // use soft language ("one of the few") relative to the set Vesta tracks, so they
 // stay true as the catalog grows; the per-trade scarce list is refreshed each
 // review-intelligence pass.
+// Per-trade. An entry exists ONLY for a capability genuinely scarce in the live
+// data (present in ≥1 firm AND ≤25% of a trade's synth firms hold it), so "one of
+// the few" stays true — verified against profile_enrichment_public each review-
+// intelligence pass. Scarcity language tiered to measured rarity: ≤5% "very few" ·
+// 6–15% "few" · 16–25% relative ("many don't"/"more than most"). Common caps
+// (e.g. EV chargers, ~half of electricians) are omitted — they don't differentiate.
 const STANDING_SPECIALTY = {
-  metal_roofing:         ['Specialty','Metal-roof specialist','One of the very few %F we track in Fairfield County equipped for standing-seam and metal roofs — an expertise homeowners say is hard to find.'],
-  in_house_masonry:      ['Specialty','In-house masonry','One of the few %F that rebuild chimneys and masonry alongside the roof, in-house rather than subbed out.'],
-  slate_cedar_specialty: ['Specialty','Slate &amp; cedar','Among the few %F we track who work slate and cedar roofs, not just asphalt shingle.'],
-  flat_low_slope:        ['Specialty','Flat &amp; low-slope','Equipped for flat and low-slope roofs (EPDM / membrane) — a job many shingle-only roofers turn down.'],
-  commercial_capable:    ['Specialty','Commercial-capable','Handles commercial roofs alongside residential — a wider remit than most %F we track.']
+  roofing: {
+    metal_roofing:         ['Specialty','Metal-roof specialist','One of the very few %F we track in Fairfield County equipped for standing-seam and metal roofs — an expertise homeowners say is hard to find.'],
+    in_house_masonry:      ['Specialty','In-house masonry','One of the few %F that rebuild chimneys and masonry alongside the roof, in-house rather than subbed out.'],
+    slate_cedar_specialty: ['Specialty','Slate &amp; cedar','Among the few %F we track who work slate and cedar roofs, not just asphalt shingle.'],
+    flat_low_slope:        ['Specialty','Flat &amp; low-slope','Equipped for flat and low-slope roofs (EPDM / membrane) — a job many shingle-only roofers turn down.'],
+    commercial_capable:    ['Specialty','Commercial-capable','Handles commercial roofs alongside residential — a wider remit than most %F we track.']
+  },
+  hvac: {
+    oil_to_gas:          ['Specialty','Oil-to-gas conversions','One of the very few %F we track that handle full oil-to-gas heating conversions — a switchover most installers refer out.'],
+    commercial_capable:  ['Specialty','Commercial-capable','One of the very few %F we track equipped for commercial HVAC alongside residential work.'],
+    ductless_mini_split: ['Specialty','Ductless mini-splits','One of the few %F we track who specialize in ductless mini-splits — the answer for additions and homes without ductwork.'],
+    boiler_specialty:    ['Specialty','Boiler &amp; hydronic heat','Services boilers and hydronic heat, not just forced air — a job many %F we track don\'t take on.']
+  },
+  plumbing: {
+    hydro_jetting:   ['Specialty','Hydro-jetting','One of the very few %F we track equipped for hydro-jetting — high-pressure sewer-line clearing most plumbers sub out.'],
+    septic_service:  ['Specialty','Septic service','One of the very few %F we track that service septic systems alongside standard plumbing.'],
+    water_treatment: ['Specialty','Water treatment','One of the very few %F we track that install and service whole-home water-treatment and filtration.'],
+    well_pump:       ['Specialty','Well-pump systems','One of the few %F we track who handle well-pump systems — essential for the county\'s many well-water homes.']
+  },
+  electrical: {
+    industrial_capable: ['Specialty','Industrial-capable','One of the very few %F we track equipped for industrial electrical work alongside residential.'],
+    solar_install:      ['Specialty','Solar tie-ins','One of the very few %F we track that install and tie in solar systems.'],
+    battery_backup:     ['Specialty','Battery backup','One of the very few %F we track who install whole-home battery-backup systems.'],
+    knob_and_tube:      ['Specialty','Knob-and-tube replacement','One of the very few %F we track who take on knob-and-tube removal — older-home rewiring many electricians avoid.'],
+    whole_home_rewire:  ['Specialty','Whole-home rewiring','One of the very few %F we track who handle full whole-home rewires, not just panel and circuit work.'],
+    pool_spa_wiring:    ['Specialty','Pool &amp; spa wiring','One of the few %F we track equipped for pool and spa wiring — specialized, code-heavy work.'],
+    smart_home:         ['Specialty','Smart-home &amp; automation','Installs smart-home and automation systems — a remit more than most %F we track offer.'],
+    low_voltage_data:   ['Specialty','Low-voltage &amp; data','Wires low-voltage and structured data alongside standard electrical — more than most %F we track take on.']
+  },
+  paving: {
+    private_road:      ['Specialty','Private roads &amp; lanes','One of the very few %F we track equipped for private-road and shared-lane paving — bigger and more complex than a driveway.'],
+    retaining_wall:    ['Specialty','Retaining walls','One of the very few %F we track that build retaining walls alongside paving.'],
+    commercial_paving: ['Specialty','Commercial paving','Handles commercial lots and large-scale paving — a wider remit than most %F we track.'],
+    masonry_capable:   ['Specialty','In-house masonry','Pairs masonry work with paving in-house — more than most %F we track offer.']
+  },
+  lawn_care: {
+    commercial_grounds: ['Specialty','Commercial grounds','One of the very few %F we track that maintain commercial and institutional grounds alongside residential.'],
+    outdoor_lighting:   ['Specialty','Landscape lighting','One of the few %F we track who design and install landscape lighting.'],
+    paver_installation: ['Specialty','Paver patios &amp; walkways','One of the few %F we track who install paver patios and walkways in-house.'],
+    stump_grinding:     ['Specialty','Stump grinding','One of the few %F we track equipped for stump grinding and removal.'],
+    irrigation_install: ['Specialty','Irrigation systems','One of the few %F we track that design and install irrigation systems.'],
+    water_features:     ['Specialty','Water features','One of the few %F we track who build water features — ponds, falls, and fountains.'],
+    retaining_wall:     ['Specialty','Retaining walls','Builds retaining walls alongside landscaping — a job many %F we track don\'t take on.'],
+    drainage_solutions: ['Specialty','Drainage solutions','Solves yard drainage and grading, not just planting — more than most %F we track handle.'],
+    grading_excavation: ['Specialty','Grading &amp; excavation','Equipped for grading and excavation — a heavier capability than most %F we track offer.'],
+    masonry_capable:    ['Specialty','In-house masonry','Pairs masonry and hardscape with landscaping in-house — more than most %F we track.']
+  },
+  painting: {
+    faux_decorative_finishes: ['Specialty','Faux &amp; decorative finishes','One of the very few %F we track who do faux and decorative finishes — specialized, artisan work.'],
+    venetian_plaster:         ['Specialty','Venetian plaster','One of the very few %F we track skilled in Venetian plaster and lime finishes.'],
+    epoxy_floor_coating:      ['Specialty','Epoxy floor coatings','One of the very few %F we track that apply epoxy floor coatings — garages, basements, and shops.'],
+    specialty_coatings:       ['Specialty','Specialty coatings','One of the very few %F we track equipped for specialty and high-performance coatings.'],
+    masonry_brick_painting:   ['Specialty','Masonry &amp; brick painting','One of the very few %F we track who properly prep and paint masonry and brick.'],
+    commercial_capable:       ['Specialty','Commercial-capable','One of the few %F we track that handle commercial painting alongside residential.']
+  },
+  masonry: {
+    foundation_repair:      ['Specialty','Foundation repair','One of the very few %F we track that take on foundation repair and structural masonry.'],
+    stucco_eifs:            ['Specialty','Stucco &amp; EIFS','One of the very few %F we track skilled in stucco and EIFS systems.'],
+    pool_deck:              ['Specialty','Pool decks &amp; coping','Builds pool decks and coping — a job many %F we track don\'t take on.'],
+    fireplace_construction: ['Specialty','Fireplaces &amp; fire pits','Builds outdoor fireplaces and fire pits — more than most %F we track offer.']
+  }
 };
 function profStandingHTML(){
   const enr=profData.enr; if (!enr) return '';
@@ -2079,7 +2390,8 @@ function profStandingHTML(){
   const nStr = reviewN ? reviewN.toLocaleString('en-US') : '';
   const items=[];   // [kicker, title, desc] — built strongest-first, capped at 4
   // 1) Scarce specialties — the sharpest differentiator, lead with them.
-  for (const key in STANDING_SPECIALTY){ if (caps[key]){ const s=STANDING_SPECIALTY[key]; items.push([s[0], s[1], s[2].replace(/%F/g, firms)]); } }
+  const specMap = STANDING_SPECIALTY[trade] || {};
+  for (const key in specMap){ if (caps[key]){ const s=specMap[key]; items.push([s[0], s[1], s[2].replace(/%F/g, firms)]); } }
   // 2) Tenure.
   if (enr.tenure_band==='top25'){ const yr=enr.hic_issue_date?+String(enr.hic_issue_date).slice(0,4):0; items.push(['Tenure','Long-established','Registered with the state'+(yr&&yr!==1999?' since '+yr:'')+' — one of the longer-established '+firms+' we track in Fairfield County.']); }
   // 3) Review volume — quantified (COUNT yes).
@@ -2337,7 +2649,9 @@ async function requestSubmit(e){
 function showDeck(){ if(desktop()){ $('feedwrap').hidden=false; $('deckwrap').hidden=true; } else { $('deckwrap').hidden=false; $('feedwrap').hidden=true; } $('favwrap').hidden=true; }
 function showFav(){ $('deckwrap').hidden=true; $('feedwrap').hidden=true; $('favwrap').hidden=false; }
 function switchTrade(key){
-  S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); ensureDeck(key);
+  // Lateral navigation (chip row / sidebar) — go straight to that trade, clearing any active match.
+  // The walkthrough is the deliberate entry (home problem/trade, feed pill, search), not every chip tap.
+  S.mode='trade'; S.activeTrade=key; S.match=null; S.feedTown=''; S.feedNeeds=new Set(); ensureDeck(key);
   if (S.screen !== 'browse') showScreen('browse');
   renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck();
   updateNavState();
@@ -2352,21 +2666,123 @@ function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('
 
 /* NAV */
 function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; }
-function openBrowse(key){ S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); ensureDeck(key); S.introPending = !desktop(); showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState(); }
+// User picked a trade/problem: run the triage first (when the trade has a bank + the entry is
+// user-initiated), else go straight to browse. opts.walk===false = passive land (desktop auto/resize).
+function openBrowse(key, opts){
+  opts = opts || {};
+  if (opts.walk !== false && tradeMatchable(key)){ enterMatch(key, opts); return; }
+  S.match = null;   // explicit browse-all clears any prior match
+  showBrowse(key);
+}
+// Render the browse results (swipe deck on mobile, feed on desktop). Honors S.match when set.
+function showBrowse(key){
+  S.mode='trade'; S.activeTrade=key; S.matchPending=false;
+  if (!S.match){ S.feedTown=''; S.feedNeeds=new Set(); }        // a live match keeps its context; a plain open resets
+  ensureDeck(key); S.introPending = !desktop() && !S.match;     // the old "We found N" beat: plain mobile browse only
+  showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState();
+}
 function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); updateNavState(); }
 function updateNavState(){
   const home=$('nav-home'), saved=$('nav-saved');
-  if(home) home.classList.toggle('on', S.screen==='home' || (S.screen==='browse' && S.mode==='trade'));
+  if(home) home.classList.toggle('on', S.screen==='home' || S.screen==='match' || (S.screen==='browse' && S.mode==='trade'));
   if(saved) saved.classList.toggle('on', S.mode==='saved');
+}
+
+/* ===== MATCH WALKTHROUGH UI (Q1 the job → Q2 what matters) ===== */
+const MW_ARROW = '<svg class="mw-opt-ic" width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5L12 9l-5.5 5.5"/></svg>';
+const MW_TOP = 9;          // jobs shown before the "More options" expander (high-cardinality trades)
+let _mwMoreOpen = false;
+let _pendingJob = null;    // the Q1 choice, held while Q2 is answered
+
+// A trade opens the triage only if it has a real question bank (loaded from vesta_match_options).
+function tradeMatchable(appTrade){ const b=tradeBank(appTrade); return !!(b && b.jobs && b.jobs.length); }
+
+// User picked a trade/problem → run the triage. A seeded job (a specific problem pill) skips Q1.
+function enterMatch(key, opts){
+  opts = opts || {};
+  S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank';
+  S.match=null; S.matchPending=true; S.matchStep='job'; _mwMoreOpen=false; _pendingJob=null;
+  renderChips(); renderSidebar(); showScreen('match'); updateNavState();
+  if (opts.job) pickJob(opts.job); else renderMatchWalk();
+}
+function renderMatchWalk(){
+  const wrap = $('match-wrap'); if(!wrap) return;
+  if (S.matchStep==='priority'){ wrap.innerHTML = matchWalkPriorityHTML(); wireMatchPriority(); }
+  else { wrap.innerHTML = matchWalkJobHTML(); wireMatchJob(); }
+  wrap.scrollTop = 0;
+}
+function matchWalkJobHTML(){
+  const b = tradeBank(S.activeTrade), jobs = (b&&b.jobs)?b.jobs:[];
+  const shown = _mwMoreOpen ? jobs : jobs.slice(0, MW_TOP);
+  const hasMore = jobs.length > shown.length;
+  const opt = j => '<button class="mw-opt" data-job="'+esc(j.value)+'"><span class="mw-opt-l"><span class="mw-opt-name">'+esc(j.label)+'</span></span>'+MW_ARROW+'</button>';
+  return '<div class="mw-inner">'+
+    '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step"> · Step 1 of 2</span></div>'+
+    '<h1 class="mw-q">What do you need done?</h1>'+
+    '<p class="mw-hint">Pick the closest — Vesta tailors its '+esc(tradePlural(S.activeTrade))+' to it.</p>'+
+    '<div class="mw-opts">'+shown.map(opt).join('')+'</div>'+
+    (hasMore ? '<button class="mw-more" id="mw-more">More options</button>' : '')+
+    '<div class="mw-foot"><button class="mw-skip" id="mw-skip">Not sure — just show me the best</button></div>'+
+  '</div>';
+}
+function wireMatchJob(){
+  const wrap=$('match-wrap'); if(!wrap) return;
+  wrap.querySelectorAll('.mw-opt').forEach(b=> b.addEventListener('click', ()=> pickJob(b.dataset.job)));
+  const more=$('mw-more'); if(more) more.addEventListener('click', ()=>{ _mwMoreOpen=true; renderMatchWalk(); });
+  const skip=$('mw-skip'); if(skip) skip.addEventListener('click', skipMatch);
+}
+function matchWalkPriorityHTML(){
+  const b = tradeBank(S.activeTrade), axes = (b&&b.axes)?b.axes:[];
+  const jl = jobLabel(_pendingJob);
+  const opt = a => '<button class="mw-opt" data-axis="'+esc(a.axis)+'"><span class="mw-opt-l"><span class="mw-opt-name">'+esc(a.label)+'</span><span class="mw-opt-blurb">'+esc(a.blurb)+'</span></span>'+MW_ARROW+'</button>';
+  const none = '<button class="mw-opt mw-opt--wide" data-axis=""><span class="mw-opt-l"><span class="mw-opt-name">No preference</span><span class="mw-opt-blurb">Just show me the best for this job</span></span>'+MW_ARROW+'</button>';
+  return '<div class="mw-inner">'+
+    '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step"> · Step 2 of 2</span></div>'+
+    '<h1 class="mw-q">For '+esc(lc(jl))+' — what matters most?</h1>'+
+    '<p class="mw-hint">Optional. This only re-orders the picks; the job always comes first.</p>'+
+    '<div class="mw-opts">'+axes.map(opt).join('')+none+'</div>'+
+    '<div class="mw-foot"><button class="mw-backbtn" id="mw-back2"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg>Back</button></div>'+
+  '</div>';
+}
+function wireMatchPriority(){
+  const wrap=$('match-wrap'); if(!wrap) return;
+  wrap.querySelectorAll('.mw-opt').forEach(b=> b.addEventListener('click', ()=> applyMatch(_pendingJob, b.dataset.axis||null)));
+  const back=$('mw-back2'); if(back) back.addEventListener('click', ()=>{ S.matchStep='job'; renderMatchWalk(); });
+}
+function pickJob(jobValue){
+  _pendingJob = jobValue;
+  const b = tradeBank(S.activeTrade);
+  const hasQ2 = b && b.axes && b.axes.length >= 2;   // ask Q2 only when the trade has real differentiation
+  if (hasQ2){ S.matchStep='priority'; renderMatchWalk(); }
+  else applyMatch(jobValue, null);
+}
+function applyMatch(job, axis){
+  S.match = { job:job, axis:axis||null };
+  S.matchPending=false; _pendingJob=null;
+  logMatch(S.activeTrade, job, axis);
+  showBrowse(S.activeTrade);
+}
+function skipMatch(){
+  S.match=null; S.matchPending=false; _pendingJob=null;
+  logMatch(S.activeTrade, null, null);
+  showBrowse(S.activeTrade);
+}
+// Instrumentation seam (Stage 1.4 wires the endpoint, then flips the flag). No users yet = no signal
+// lost; once live it records the job/axis chosen per match from the first real visitor. Fire-and-forget.
+const MATCH_EVENTS_LIVE = false;   // ← Stage 1.4: set true when the /vesta-event endpoint exists
+function logMatch(appTrade, job, axis){
+  if (!MATCH_EVENTS_LIVE || !window.HOME || !HOME.api) return;
+  try { HOME.api('/vesta-event', { method:'POST', body:{ kind:'match', trade:(TRADE_DB[appTrade]||appTrade), job:job||null, axis:axis||null } }).catch(()=>{}); } catch(_){}
 }
 
 /* INIT */
 (function init(){
-  renderHome(); renderSidebar(); initSheetDrag(); loadContractors();
+  renderHome(); renderSidebar(); initSheetDrag(); loadContractors(); loadMatchBank();
   syncLikes();
-  if (desktop()) openBrowse(S.activeTrade);
+  if (desktop()) openBrowse(S.activeTrade, {walk:false});   // passive auto-land: feed, not the walkthrough
   updateNavState();
   $('btn-back').addEventListener('click', goHome);
+  { const mb=$('match-back'); if(mb) mb.addEventListener('click', goHome); }
   $('nav-home').addEventListener('click', () => { if (S.screen!=='home' || S.mode!=='trade'){ S.mode='trade'; goHome(); } });
   $('act-rewind').addEventListener('click', rewindDeck);
   $('act-pass').addEventListener('click', () => { const c=topCon(); if(c) commit('pass', c); });
@@ -2405,7 +2821,7 @@ function updateNavState(){
   let _wasDesktop = desktop();
   window.addEventListener('resize', () => {
     const d = desktop(); if (d===_wasDesktop) return; _wasDesktop = d;
-    if (d && S.screen!=='browse' && S.screen!=='profile' && S.screen!=='request'){ openBrowse(S.activeTrade); return; }   // desktop hides the home screen → land in the feed
+    if (d && S.screen!=='browse' && S.screen!=='profile' && S.screen!=='request' && S.screen!=='match'){ openBrowse(S.activeTrade, {walk:false}); return; }   // desktop hides the home screen → land in the feed
     if (S.screen==='browse'){ if (S.mode==='saved') renderSaved(); else { showDeck(); updateBrowseHead(); renderDeck(); } }
   });
   // Deep-link: /c/:placeId (now rewritten to this app) or ?place= opens the profile in-app.
