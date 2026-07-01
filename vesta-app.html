@@ -104,6 +104,37 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .vsr-route .vsr-mono svg { width:20px; height:20px; color:var(--olive); }
 .home-sign { text-align:center; font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--ebony); margin-top:32px; letter-spacing:.005em; }
 
+/* ===== RETURN BAND (Stage 1.5) — recognizes a returning homeowner: resume the last match
+   + jump to the saved shortlist. Renders ONLY when there's state; a first-timer sees nothing
+   here (honest cold open). Sits above the hero so a returner is recognized first. ===== */
+.home-return { display:flex; flex-direction:column; gap:10px; margin-bottom:22px; }
+.home-return:empty { display:none; }
+/* primary — resume the last tailored match (olive-filled to stand apart from the white hero) */
+.hr-resume { display:flex; align-items:center; gap:13px; width:100%; text-align:left; cursor:pointer;
+  background:linear-gradient(158deg,#55562F 0%,var(--olive) 78%); color:var(--white); border:none; border-radius:var(--r-tile);
+  padding:14px 16px; box-shadow:0 2px 8px rgba(74,75,47,.16), 0 18px 34px -16px rgba(74,75,47,.55);
+  transition:transform .14s, box-shadow .14s; outline:none; }
+.hr-resume:hover { transform:translateY(-2px); box-shadow:0 12px 26px -9px rgba(74,75,47,.5); }
+.hr-resume:active { transform:scale(.985); }
+.hr-resume:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
+.hr-ic { width:40px; height:40px; flex-shrink:0; border-radius:12px; background:rgba(212,223,158,.16); display:flex; align-items:center; justify-content:center; color:var(--tea); }
+.hr-tx { flex:1; min-width:0; }
+.hr-kick { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--tea); margin-bottom:3px; }
+.hr-kick .sp { display:flex; }
+.hr-job { display:block; font-family:var(--serif); font-size:18px; font-weight:700; line-height:1.12; letter-spacing:-.01em; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hr-meta { display:block; font-size:12.5px; color:rgba(255,255,255,.72); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hr-arrow { flex-shrink:0; color:var(--tea); display:flex; }
+/* secondary — jump to the saved shortlist (lighter, sits under the resume card) */
+.hr-saved { display:flex; align-items:center; gap:11px; width:100%; text-align:left; cursor:pointer; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:12px 16px; box-shadow:0 1px 2px rgba(74,75,47,.05); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
+.hr-saved:hover { transform:translateY(-2px); box-shadow:0 8px 18px -7px rgba(74,75,47,.26); background:var(--tea); }
+.hr-saved:active { transform:scale(.98); }
+.hr-saved:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
+.hr-bk { display:flex; color:var(--olive); flex-shrink:0; }
+.hr-bk svg { width:18px; height:18px; }
+.hr-saved-tx { flex:1; font-size:14px; font-weight:600; color:var(--olive); }
+.hr-saved-tx b { font-weight:700; }
+.hr-go { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); display:flex; align-items:center; gap:5px; flex-shrink:0; }
+
 /* BROWSE header + chips */
 .browse-hdr { padding:4px 20px 6px; }
 .browse-h1 { font-family:var(--serif); font-size:22px; font-weight:700; line-height:1.1; letter-spacing:-.02em; color:var(--olive); margin-bottom:2px; }
@@ -774,6 +805,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   <div id="s-home" class="screen active" role="main" aria-label="Pick a trade">
     <header class="topbar"><a class="tb-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a><span class="tb-spacer"></span></header>
     <main class="home-body">
+      <div class="home-return" id="home-return"></div>
       <h1 class="home-h1">Find a contractor you can actually trust.</h1>
       <p class="home-sub">Fairfield County&rsquo;s verified contractor network.</p>
       <button class="home-search" id="home-search" type="button" aria-label="Search contractors or describe what you need">
@@ -1075,6 +1107,7 @@ async function loadMatchBank(){
       .sort((x,y)=> x.order - y.order);
     delete b._ax;
   });
+  if (S.screen==='home') renderReturn();   // bank loads after first paint — surface a stored match's resume chip
 }
 function tradeBank(appTrade){ return MATCH_BANK[appTrade] || null; }
 
@@ -1187,9 +1220,35 @@ async function syncLikes(){
     if(status===200 && data && data.ok && Array.isArray(data.favorites)){
       writeLiked(new Set(data.favorites.map(f => f.place_id)));
       if(S.screen==='browse' && S.mode==='saved'){ renderSaved(); }
+      if(S.screen==='home'){ renderReturn(); }   // account favorites merged in → refresh the saved strip
     }
   } catch(_){}
 }
+
+/* LAST MATCH (return loop, Stage 1.5) — the last tailored match persists locally so a
+   returning homeowner can resume it instead of redoing the two questions. Written on
+   applyMatch; read on boot with a 30-day expiry. Stores the APP trade key (not the DB
+   key) so it feeds straight back into showBrowse/tradeBank. No PII — {trade, job, axis, ts}. */
+const LAST_MATCH_KEY = 'vesta_last_match';
+const LAST_MATCH_TTL = 30*24*60*60*1000;   // 30 days
+function saveLastMatch(appTrade, job, axis){
+  if(!appTrade || !job) return;            // a real tailored match only — skip/"show me the best" isn't resumable
+  try { localStorage.setItem(LAST_MATCH_KEY, JSON.stringify({ trade:appTrade, job:job, axis:axis||null, ts:Date.now() })); } catch(_){}
+}
+function lastMatch(){
+  try {
+    const m = JSON.parse(localStorage.getItem(LAST_MATCH_KEY)||'null');
+    if(!m || !m.trade || !m.job || !m.ts) return null;
+    if(Date.now() - m.ts > LAST_MATCH_TTL){ localStorage.removeItem(LAST_MATCH_KEY); return null; }
+    return m;
+  } catch(_){ return null; }
+}
+function clearLastMatch(){ try { localStorage.removeItem(LAST_MATCH_KEY); } catch(_){} }
+
+/* Saved-pro count for the return strip — storage-only so it's correct at cold boot,
+   before contractor data loads (likedSet is the source of truth; account favorites
+   merge into it via syncLikes). */
+function savedCount(){ return likedSet().size; }
 
 function monogram(name){ const w=String(name||'').replace(/[^A-Za-z ]/g,'').split(/\s+/).filter(Boolean); const i=(w.slice(0,2).map(x=>x[0]).join('')||'V'); return i.toUpperCase(); }
 function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
@@ -1300,6 +1359,43 @@ function renderHome(){
     grid.appendChild(btn);
   });
   startSearchRotator();
+  renderReturn();
+}
+
+/* RETURN BAND — resume last match (primary) + saved shortlist (secondary). Renders only
+   when there's real state, so a first-timer sees nothing here. Defensive on the resume side:
+   only offers a resume the bank can actually honor. Re-called on every return to home and
+   once the match bank finishes loading (async, after first paint). */
+function renderReturn(){
+  const box = $('home-return'); if(!box) return;
+  let html = '';
+  const m = lastMatch();
+  if (m && tradeMatchable(m.trade)){
+    const b = tradeBank(m.trade);
+    if (b && b.jobs && b.jobs.some(j => j.value === m.job)){
+      const tp = tradePlural(m.trade), tpCap = tp.charAt(0).toUpperCase()+tp.slice(1);
+      html += '<button class="hr-resume" id="hr-resume" type="button" aria-label="Resume your Vesta match">'+
+        '<span class="hr-ic">'+SPARK+'</span>'+
+        '<span class="hr-tx">'+
+          '<span class="hr-kick"><span class="sp">'+SPARK+'</span>Pick up where you left off</span>'+
+          '<span class="hr-job">'+esc(jobLabel(m.job))+'</span>'+
+          '<span class="hr-meta">Your Vesta match · '+esc(tpCap)+'</span>'+
+        '</span>'+
+        '<span class="hr-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l6 6-6 6"/></svg></span>'+
+      '</button>';
+    }
+  }
+  const n = savedCount();
+  if (n > 0){
+    html += '<button class="hr-saved" id="hr-saved" type="button" aria-label="Open your saved shortlist">'+
+      '<span class="hr-bk"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"/></svg></span>'+
+      '<span class="hr-saved-tx"><b>'+n+'</b> saved '+(n===1?'pro':'pros')+'</span>'+
+      '<span class="hr-go">Open shortlist <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l6 6-6 6"/></svg></span>'+
+    '</button>';
+  }
+  box.innerHTML = html;
+  const r = $('hr-resume'); if(r) r.addEventListener('click', ()=>{ if(!resumeMatch()){ clearLastMatch(); renderReturn(); } });
+  const s = $('hr-saved'); if(s) s.addEventListener('click', showSaved);
 }
 
 /* CHIPS + SIDEBAR */
@@ -2775,7 +2871,7 @@ function showBrowse(key){
   ensureDeck(key); S.introPending = !desktop() && !S.match;     // the old "We found N" beat: plain mobile browse only
   showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState();
 }
-function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); updateNavState(); }
+function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); renderReturn(); updateNavState(); }
 function updateNavState(){
   const home=$('nav-home'), saved=$('nav-saved');
   if(home) home.classList.toggle('on', S.screen==='home' || S.screen==='match' || (S.screen==='browse' && S.mode==='trade'));
@@ -2853,6 +2949,7 @@ function pickJob(jobValue){
 function applyMatch(job, axis){
   S.match = { job:job, axis:axis||null };
   S.matchPending=false; _pendingJob=null;
+  saveLastMatch(S.activeTrade, job, axis);   // return loop: remember this match so it can be resumed
   logMatch(S.activeTrade, job, axis);
   showBrowse(S.activeTrade);
 }
@@ -2860,6 +2957,24 @@ function skipMatch(){
   S.match=null; S.matchPending=false; _pendingJob=null;
   logMatch(S.activeTrade, null, null);
   showBrowse(S.activeTrade);
+}
+// Resume a stored match (return loop): rehydrate S.match from localStorage and open the
+// tailored result — the wiring behind the "pick up where you left off" chip. Defensive:
+// bails (returns false) if the bank isn't loaded yet or the stored job no longer exists,
+// so the UI only ever offers a resume that actually works. Does NOT re-log a 'match' event
+// — a resume is its own signal (wired in the UI layer), never a duplicate match.
+function resumeMatch(){
+  const m = lastMatch();
+  if(!m || !tradeMatchable(m.trade)) return false;
+  const b = tradeBank(m.trade);
+  if(!(b && b.jobs && b.jobs.some(j => j.value === m.job))) return false;
+  S.mode='trade'; S.activeTrade=m.trade;
+  S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank';
+  S.match = { job:m.job, axis:m.axis||null };
+  S.matchPending=false;
+  logResume(m.trade, m.job, m.axis);   // return-loop signal — a resume, never a duplicate 'match'
+  showBrowse(m.trade);
+  return true;
 }
 // ── Instrumentation (Stage 1.4 — LIVE) ──────────────────────────────────────
 // Records the demand funnel: match (Q1 job + Q2 axis) → profile view → request.
@@ -2876,6 +2991,7 @@ function logEvent(kind, fields){
 function logMatch(appTrade, job, axis){ logEvent('match', { trade:(TRADE_DB[appTrade]||appTrade)||null, job:job||null, axis:axis||null }); }
 function logView(placeId, appTrade){ if(placeId) logEvent('profile_view', { place_id:placeId, trade:(TRADE_DB[appTrade]||appTrade)||null }); }
 function logRequest(placeId, appTrade){ if(placeId) logEvent('request', { place_id:placeId, trade:(TRADE_DB[appTrade]||appTrade)||null }); }
+function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[appTrade]||appTrade)||null, job:job||null, axis:axis||null }); }
 
 /* INIT */
 (function init(){
