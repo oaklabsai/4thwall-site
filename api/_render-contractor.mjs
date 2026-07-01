@@ -375,26 +375,37 @@ function disclosureRemoval(enr) {
 // §11 Is this your business? — claim (free, consent) → the Atlas hook. Rendered
 // server-side (crawlable copy); the form is wired by /profile.js.
 function claimBlock(enr) {
-  const ownerFirst = enr && enr.owner_name ? esc(String(enr.owner_name).trim().split(/\s+/)[0]) : '';
-  const head = 'Is this your business' + (ownerFirst ? ', ' + ownerFirst : '') + '?';
-  const claimInner =
-    '<p class="am-lede2">Claim it free — it’s already in front of homeowners in ' + COUNTY +
-      '. Claiming takes a minute, costs nothing, and puts your name on the read above.</p>' +
+  const uses = [
+    ['01', 'Verified owner badge', 'Homeowners see you’re the real owner.'],
+    ['02', 'Your own photos', 'Real job shots — owned, and crawlable.'],
+    ['03', 'Respond to your read', 'Add your voice beside Vesta’s.'],
+    ['04', 'Get notified', 'The moment a homeowner reaches out.'],
+  ].map(([n, h, p]) =>
+    '<div class="am-use"><div class="am-n">' + n + '</div><h3>' + h + '</h3><p>' + p + '</p></div>').join('');
+  const form =
     '<form id="claim-form">' +
-    '<div class="form-row"><label class="form-label" for="cn">Your name *</label><input class="form-input" type="text" id="cn" name="name" required maxlength="80"></div>' +
+    '<div class="form-row"><label class="form-label" for="cn">Your name</label><input class="form-input" type="text" id="cn" name="name" required maxlength="80"></div>' +
     '<div class="form-row row-pair">' +
-    '<div><label class="form-label" for="cp">Phone *</label><input class="form-input" type="tel" id="cp" name="phone" required maxlength="20"></div>' +
-    '<div><label class="form-label" for="ce">Email</label><input class="form-input" type="email" id="ce" name="email" maxlength="120"></div></div>' +
-    '<button class="pill pill-ghost" type="submit">Claim this profile</button>' +
+    '<div><label class="form-label" for="cp">Phone</label><input class="form-input" type="tel" id="cp" name="phone" required maxlength="20"></div>' +
+    '<div><label class="form-label" for="ce">Email (optional)</label><input class="form-input" type="email" id="ce" name="email" maxlength="120"></div></div>' +
+    '<button class="am-pill" type="submit">Claim this profile — free</button>' +
     '<span class="form-status" id="claim-status"></span></form>';
-  return '<details class="atlas-moment" id="claim">' +
-    '<summary class="am-summary"><span class="am-sum-text">' +
-      '<span class="am-eyebrow">For the owner · from 4THWALL</span>' +
-      '<span class="am-h">' + head + '</span></span>' +
-      '<span class="am-caret" aria-hidden="true"></span></summary>' +
-    '<div class="am-body">' +
-    claimInner +
-  '</div></details>';
+  return '<section class="atlas-moment" id="claim" aria-label="Is this your business?">' +
+    '<div class="am-eyebrow">For the owner · from 4THWALL</div>' +
+    '<h2 class="am-h">Is this your business?</h2>' +
+    '<p class="am-lede2">It’s already in front of homeowners in ' + COUNTY + ' choosing who to hire. ' +
+      'Vesta weighed your reviews, your public record, and the work you’re known for into the honest read above. ' +
+      'Claim it free to make it yours.</p>' +
+    '<div class="am-plabel">What claiming gives you</div>' +
+    '<div class="am-uses">' + uses + '</div>' +
+    form +
+    '<p class="am-fine">Free · no obligation · we verify ownership before anything changes.</p>' +
+    '<div class="am-rule"></div>' +
+    '<div class="am-plabel">Then there’s Atlas</div>' +
+    '<p class="am-lede">Claimed owners can switch on <b>Atlas</b> — the AI back-office that answers your inbound, ' +
+      'books the job, and follows up while you’re on the job.</p>' +
+    '<div class="am-cta"><a class="pill-ghost" href="/atlas.html">See what Atlas does →</a></div>' +
+  '</section>';
 }
 
 // Mount points the client enhancer (/profile.js) fills — kept OUT of the

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify a claim — Vesta</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#0f1310">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body class="v-dark">
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">VESTA</span>
+  </a>
+</nav>
+
+<main>
+<section class="page-hero">
+  <a class="crumb" href="/vesta">← Vesta</a>
+  <h1 class="page-h" id="ca-h">Review a business claim</h1>
+  <p class="page-sub" id="ca-sub">Confirm this action to finish. Nothing happens until you click.</p>
+</section>
+
+<section class="section">
+  <div class="card-block" style="max-width:560px">
+    <div id="ca-body">
+      <button class="pill" id="ca-confirm" type="button">Confirm</button>
+      <span class="form-status" id="ca-status"></span>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var token = (q.get('token') || '').replace(/[^a-f0-9]/gi, '').slice(0, 64);
+  var doAct = q.get('do') === 'reject' ? 'reject' : (q.get('do') === 'verify' ? 'verify' : '');
+  var h = document.getElementById('ca-h');
+  var sub = document.getElementById('ca-sub');
+  var body = document.getElementById('ca-body');
+  var btn = document.getElementById('ca-confirm');
+  var st = document.getElementById('ca-status');
+
+  if (!token || !doAct) {
+    body.innerHTML = '<p class="note">This link is missing or malformed. Open the verify link from the claim email again.</p>';
+    return;
+  }
+
+  if (doAct === 'verify') {
+    h.textContent = 'Verify this claim';
+    sub.textContent = 'This marks the person as the verified owner of the business and shows a verified badge on their profile.';
+    btn.textContent = 'Verify — make them the owner';
+  } else {
+    h.textContent = 'Reject this claim';
+    sub.textContent = 'This clears the pending claim and leaves the profile open for the real owner to claim.';
+    btn.textContent = 'Reject this claim';
+    btn.classList.add('pill-orange');
+  }
+
+  btn.addEventListener('click', async function () {
+    if (!window.HOME || !HOME.api) { st.className = 'form-status is-error'; st.textContent = 'Still loading — try again in a second.'; return; }
+    btn.disabled = true; st.className = 'form-status'; st.textContent = doAct === 'verify' ? 'Verifying…' : 'Rejecting…';
+    try {
+      var res = await HOME.api('/claim/decision', { method: 'POST', body: { token: token, do: doAct } });
+      var d = (res && res.data) || {};
+      if (d.ok) {
+        var biz = d.business || 'the business';
+        body.innerHTML = doAct === 'verify'
+          ? '<p class="note">✓ ' + esc(biz) + ' is now the verified owner. Their profile shows the verified badge.</p>'
+          : '<p class="note">✓ Claim on ' + esc(biz) + ' rejected — the profile is open again for the real owner.</p>';
+      } else {
+        btn.disabled = false; st.className = 'form-status is-error';
+        st.textContent = (d.error === 'invalid_or_used')
+          ? 'This link was already used, or the claim is no longer pending.'
+          : 'Couldn’t complete that — try again.';
+      }
+    } catch (_) {
+      btn.disabled = false; st.className = 'form-status is-error';
+      st.textContent = 'Couldn’t complete that — try again.';
+    }
+  });
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+})();
+</script>
+</body>
+</html>

@@ -693,6 +693,8 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .atlas-moment .am-claim-btn{margin-top:6px;background:none;border:1px solid var(--a-sand);color:var(--a-sand-2);font-family:var(--sans);font-size:14px;font-weight:600;padding:11px 20px;border-radius:999px;cursor:pointer}
 .atlas-moment .am-claim-btn:hover{background:rgba(222,206,164,.1)}
 .atlas-moment .am-claim-btn:disabled{opacity:.5;cursor:default}
+.atlas-moment .am-atlas-link{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--a-sand);color:var(--a-sand-2);font-family:var(--sans);font-size:13.5px;font-weight:600;padding:10px 18px;border-radius:999px;text-decoration:none;transition:background .16s}
+.atlas-moment .am-atlas-link:hover{background:rgba(222,206,164,.1)}
 .atlas-moment form{max-width:520px}
 @media (max-width:560px){ .atlas-moment .am-form-pair{grid-template-columns:1fr} }
 
@@ -2673,26 +2675,38 @@ function profContactHTML(){
     '<a class="prof-req" style="margin-top:0" href="'+esc(HOME.signinHref('/vesta'))+'">Create free account / sign in</a></div>';
 }
 function profClaimHTML(){
-  const claimInner = profData.claimed
-    ? '<p class="am-lede2">✓ This profile has been claimed by the business. Thank you — here’s what comes next.</p>'
-    : '<p class="am-lede2">This profile was assembled from public records and verified customer reviews, and it’s already visible to homeowners in Fairfield County. If the business is yours, you’re welcome to claim it — at no cost — to confirm the details are accurate and to be notified the moment a homeowner reaches out.</p>'+
-      '<form id="prof-claim">'+
-      '<div class="am-form-row"><label for="pcn">Your name *</label><input type="text" id="pcn" required maxlength="80"></div>'+
-      '<div class="am-form-row am-form-pair"><div><label for="pcp">Phone *</label><input type="tel" id="pcp" required maxlength="20"></div>'+
-      '<div><label for="pce">Email</label><input type="email" id="pce" maxlength="120"></div></div>'+
-      '<button class="am-claim-btn" type="submit">Claim this profile</button><span class="prof-status" id="prof-claim-st"></span></form>';
-  // Strictly a claim — no Atlas pitch here; the owner just confirms the listing is theirs.
-  return '<div class="claimwrap">'+
-    '<button class="claim-toggle" id="claim-toggle" aria-expanded="false" aria-controls="claim-panel">'+
-      '<span class="claim-q">Is this your business?</span>'+
-      '<span class="claim-chev" id="claim-chev">'+CHEV+'</span></button>'+
-    '<div class="claim-panel" id="claim-panel" hidden>'+
-      '<section class="atlas-moment">'+
-        '<div class="am-eyebrow">For the business owner</div>'+
-        claimInner+
-      '</section>'+
-    '</div>'+
-  '</div>';
+  // Verified owner → quiet confirmation, no form. (claimed reflects claimed_at, which is
+  // set only when ops verifies — a pending claim never shows as claimed.)
+  if (profData.claimed){
+    return '<section class="atlas-moment">'+
+      '<div class="am-eyebrow">For the owner · from 4THWALL</div>'+
+      '<h2 class="am-h">Claimed by the business</h2>'+
+      '<p class="am-lede2">✓ This profile has a verified owner. Thank you.</p></section>';
+  }
+  const uses = [
+    ['01','Verified owner badge','Homeowners see you’re the real owner.'],
+    ['02','Your own photos','Real job shots — owned, and crawlable.'],
+    ['03','Respond to your read','Add your voice beside Vesta’s.'],
+    ['04','Get notified','The moment a homeowner reaches out.'],
+  ].map(u => '<div class="am-use"><div class="am-n">'+u[0]+'</div><h3>'+u[1]+'</h3><p>'+u[2]+'</p></div>').join('');
+  const form = '<form id="prof-claim">'+
+    '<div class="am-form-row"><label for="pcn">Your name</label><input type="text" id="pcn" required maxlength="80"></div>'+
+    '<div class="am-form-row am-form-pair"><div><label for="pcp">Phone</label><input type="tel" id="pcp" required maxlength="20"></div>'+
+    '<div><label for="pce">Email (optional)</label><input type="email" id="pce" maxlength="120"></div></div>'+
+    '<button class="am-pill" type="submit">Claim this profile — free</button><span class="prof-status" id="prof-claim-st"></span></form>';
+  return '<section class="atlas-moment" aria-label="Is this your business?">'+
+    '<div class="am-eyebrow">For the owner · from 4THWALL</div>'+
+    '<h2 class="am-h">Is this your business?</h2>'+
+    '<p class="am-lede2">It’s already in front of homeowners in Fairfield County choosing who to hire. Vesta weighed your reviews, your public record, and the work you’re known for into the honest read above. Claim it free to make it yours.</p>'+
+    '<div class="am-plabel">What claiming gives you</div>'+
+    '<div class="am-uses">'+uses+'</div>'+
+    form+
+    '<p class="am-fine">Free · no obligation · we verify ownership before anything changes.</p>'+
+    '<div class="am-rule"></div>'+
+    '<div class="am-plabel">Then there’s Atlas</div>'+
+    '<p class="am-lede">Claimed owners can switch on <b>Atlas</b> — the AI back-office that answers your inbound, books the job, and follows up while you’re on the job.</p>'+
+    '<div class="am-cta"><a class="am-atlas-link" href="/atlas.html">See what Atlas does →</a></div>'+
+  '</section>';
 }
 function profRemovalHTML(){
   return '<p class="prof-removal">This is a public-record listing compiled by Vesta — not an endorsement, and not written by the business. '+
