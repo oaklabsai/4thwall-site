@@ -953,13 +953,14 @@ const PROBLEMS = [
 // Free-text → trade routing for the search box (a typed problem maps to a trade). Order matters:
 // roofing before plumbing so "roof leak" lands on roofing, not the generic "leak" → plumbing.
 const PROBLEM_ROUTES = [
+  { trade:'lawn', re:/gutter.{0,14}clean|clean.{0,14}gutter/i },   // cleaning ≠ install — must outrank roofing's generic gutter
   { trade:'hvac', re:/(\ba\/?c\b|air ?condition|furnace|\bheat|\bcool|hvac|thermostat|boiler)/i },
-  { trade:'roofing', re:/(\broof|shingle|gutter|skylight|flashing)/i },
+  { trade:'roofing', re:/(\broof|shingle|gutter|siding|skylight|flashing)/i },
   { trade:'plumbing', re:/(plumb|\bleak|\bpipe|drain|water ?heater|faucet|toilet|sewer|clog|sump)/i },
-  { trade:'electrical', re:/(electric|outlet|\bpanel|wiring|breaker|\bpower\b|generator|ev ?charg)/i },
+  { trade:'electrical', re:/(electric|outlet|\bpanel|wiring|breaker|\bpower\b(?! ?wash)|generator|ev ?charg)/i },
   { trade:'paving', re:/(driveway|paving|\bpave|asphalt|sealcoat|blacktop)/i },
-  { trade:'lawn', re:/(\blawn|grass|\bmow|landscap|\byard\b|\btree|mulch|\bsod\b|garden)/i },
-  { trade:'painting', re:/(\bpaint|\bstain|primer)/i },
+  { trade:'lawn', re:/(\blawn|grass|\bmow|landscap|\byard\b|\btree|mulch|\bsod\b|garden|\bsnow|plow)/i },
+  { trade:'painting', re:/(\bpaint|\bstain|primer|power ?wash|pressure ?wash)/i },
   { trade:'masonry', re:/(mason|\bbrick|\bstone|patio|retaining ?wall|walkway|chimney|concrete)/i },
 ];
 const SEARCH_EG = ['roof leak after a storm','my AC stopped working','need a driveway quote','looking for a painter','water heater keeps failing','an electrical panel upgrade','a new patio or walkway','lawn care for the season'];
@@ -971,6 +972,9 @@ function routeProblem(q){ const s=(q||'').toLowerCase(); for(const r of PROBLEM_
 const JOB_ROUTES = [
   { trade:'roofing',    job:'active-leak-or-emergency',     re:/roof.{0,24}leak|leak.{0,10}roof/ },
   { trade:'roofing',    job:'storm-or-insurance-claim',     re:/insurance|storm/ },
+  { trade:'lawn',       job:'gutter-cleaning',              re:/gutter.{0,14}clean|clean.{0,14}gutter/ },
+  { trade:'roofing',    job:'roof-plus-siding-gutters',     re:/gutter/ },
+  { trade:'roofing',    job:'roof-plus-siding-gutters',     re:/^(?!.*paint).*siding/ },
   { trade:'hvac',       job:'no-heat-or-no-cool-emergency', re:/no (a\/?c|ac|heat|cool)|(a\/?c|ac|heat|furnace|boiler).{0,16}(stopped|not work|broke|died|out\b)/ },
   { trade:'hvac',       job:'heat-pump-upgrade',            re:/heat ?pump/ },
   { trade:'hvac',       job:'ductless-for-additions',       re:/ductless|mini.?split/ },
@@ -986,6 +990,9 @@ const JOB_ROUTES = [
   { trade:'painting',   job:'cabinet-refinishing',          re:/cabinet/ },
   { trade:'painting',   job:'wallpaper-removal-or-install', re:/wallpaper/ },
   { trade:'painting',   job:'popcorn-ceiling-removal',      re:/popcorn/ },
+  { trade:'painting',   job:'power-washing',                re:/power ?wash|pressure ?wash|soft ?wash/ },
+  { trade:'painting',   job:'deck-or-fence-staining',       re:/(deck|fence).{0,14}(stain|refinish)|(stain|refinish).{0,12}(deck|fence)/ },
+  { trade:'painting',   job:'exterior-repaint',             re:/paint.{0,16}siding|siding.{0,16}paint/ },
   { trade:'masonry',    job:'chimney-repair-or-rebuild',    re:/chimney/ },
   { trade:'masonry',    job:'repointing-old-mortar',        re:/repoint|mortar/ },
 ];
@@ -1046,7 +1053,7 @@ const NEED_FACETS = {
   electrical: [ {l:'EV chargers',m:['ev charger','ev-charger']}, {l:'Emergency',m:['emergency']}, {l:'Lighting',m:['lighting','recessed']}, {l:'Panels & wiring',m:['panel','rewire','wiring','outlet']}, {l:'Generators',m:['generator']}, {l:'Commercial',m:['commercial']} ],
   paving: [ {l:'Asphalt driveways',m:['asphalt','driveway']}, {l:'Sealcoating',m:['sealcoat']}, {l:'Belgian block',m:['belgian','block']}, {l:'Pavers & masonry',m:['paver','masonry','retaining','stone']}, {l:'Drainage & grading',m:['grading','drainage']} ],
   masonry: [ {l:'Patios',m:['patio']}, {l:'Walls',m:['wall','retaining']}, {l:'Walkways & steps',m:['walkway','bluestone','steps']}, {l:'Chimneys',m:['chimney']}, {l:'Stone & brick',m:['stone','brick','veneer']}, {l:'Pavers & driveways',m:['paver','driveway','apron']} ],
-  lawn: [ {l:'Lawn maintenance',m:['lawn','mow']}, {l:'Landscape design',m:['design','landscap']}, {l:'Cleanups',m:['cleanup','clean-up','spring','fall']}, {l:'Snow removal',m:['snow','plow']}, {l:'Drainage & walls',m:['drainage','retaining']}, {l:'Tree work',m:['tree']} ],
+  lawn: [ {l:'Lawn maintenance',m:['lawn','mow']}, {l:'Landscape design',m:['design','landscap']}, {l:'Cleanups',m:['cleanup','clean-up','spring','fall']}, {l:'Snow removal',m:['snow','plow']}, {l:'Gutter cleaning',m:['gutter']}, {l:'Drainage & walls',m:['drainage','retaining']}, {l:'Tree work',m:['tree']} ],
   painting: [ {l:'Interior',m:['interior']}, {l:'Exterior',m:['exterior']}, {l:'Cabinets',m:['cabinet']}, {l:'Power washing',m:['power wash','pressure wash']}, {l:'Decks',m:['deck']}, {l:'Carpentry & repair',m:['carpentry','drywall','ceiling','trim']}, {l:'Wallpaper',m:['wallpaper']}, {l:'Historic homes',m:['historic']} ],
 };
 
@@ -1093,7 +1100,8 @@ const JOB_LABELS = {
   'lawn-renovation-or-sod':'Lawn renovation or sod','fertilization-and-weed-program':'Fertilization & weed program',
   'water-feature':'Water feature','irrigation-install-or-repair':'Irrigation install or repair',
   'tree-and-shrub-care':'Tree & shrub care','leaf-removal':'Leaf removal','outdoor-lighting':'Outdoor lighting',
-  'commercial-grounds-management':'Commercial grounds',
+  'commercial-grounds-management':'Commercial grounds','gutter-cleaning':'Gutter cleaning',
+  'power-washing':'Power washing',   // shared across painting / lawn
   'walkway-or-steps':'Walkway or steps','stone-or-paver-patio':'Stone or paver patio',
   'fireplace-or-fire-pit':'Fireplace or fire pit','brick-or-stone-repair':'Brick or stone repair',
   'chimney-repair-or-rebuild':'Chimney repair or rebuild','repointing-old-mortar':'Repointing old mortar',
