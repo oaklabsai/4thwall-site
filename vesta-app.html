@@ -272,6 +272,9 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .mw-opt-l { display:flex; flex-direction:column; gap:2px; min-width:0; }
 .mw-opt-name { font-family:var(--sans); font-size:15px; font-weight:600; color:var(--olive); line-height:1.25; }
 .mw-opt-blurb { font-size:12.5px; color:var(--ebony); line-height:1.35; }
+/* seeded-need pins: the home chip / search words pre-highlight their closest Q1 jobs */
+.mw-opt--hit { border-color:rgba(74,75,47,.32); background:linear-gradient(180deg,rgba(212,223,158,.18),var(--white)); }
+.mw-hit-tag { display:block; font-family:var(--mono); font-size:8.5px; font-weight:500; letter-spacing:.11em; text-transform:uppercase; color:var(--ebony); margin-top:3px; }
 .mw-opt-ic { flex-shrink:0; color:var(--olive); opacity:.42; }
 .mw-more { width:100%; margin-top:10px; background:transparent; border:1px dashed rgba(74,75,47,.28); border-radius:13px; padding:12px; font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ebony); cursor:pointer; }
 .mw-more:hover { border-color:var(--olive); color:var(--olive); }
@@ -725,6 +728,9 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .req-row { margin-bottom:14px; }
 .req-pair { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .req-label { display:block; font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); margin-bottom:6px; }
+/* the carried match — the need declared in Q1 arrives at the form instead of dying there */
+.req-match { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--olive); background:rgba(212,223,158,.28); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:5px 11px; margin-bottom:8px; }
+.req-match svg { width:11px; height:11px; flex-shrink:0; }
 .req-input, .req-select, .req-textarea { width:100%; background:var(--white); border:1px solid rgba(74,75,47,.16); border-radius:12px; color:var(--olive); font-family:var(--sans); font-size:14px; padding:12px 13px; outline:none; box-shadow:var(--sh-row); }
 .req-textarea { min-height:96px; resize:vertical; line-height:1.5; }
 .req-input::placeholder, .req-textarea::placeholder { color:rgba(107,101,75,.55); }
@@ -933,13 +939,16 @@ let contractors = [];
 let silentContractors = [];   // count-only firms (no Vesta Read yet) — kept out of the ranked deck/feed/match; surfaced only in the honest coverage tail
 
 // Problem-first entry: homeowner needs routed to a trade. Icons reuse the trade ICONS (no emoji).
+// hi = need-keywords the chip carries into Q1 (pre-highlights its closest jobs — the chip
+// pre-answers the question without skipping the homeowner's confirmation; a "roof leak" is
+// genuinely ambiguous between emergency and repair, so Q1 still gets the tap).
 const PROBLEMS = [
-  { label:'Roof leak', icon:'roof', trade:'roofing' },
-  { label:'No AC or heat', icon:'hvac', trade:'hvac' },
-  { label:'Water leak', icon:'pipe', trade:'plumbing' },
-  { label:'Power or wiring', icon:'bolt', trade:'electrical' },
-  { label:'Driveway', icon:'brick', trade:'paving' },
-  { label:'Lawn & yard', icon:'lawn', trade:'lawn' },
+  { label:'Roof leak', icon:'roof', trade:'roofing', hi:['leak','repair'] },
+  { label:'No AC or heat', icon:'hvac', trade:'hvac', hi:['no heat'] },
+  { label:'Water leak', icon:'pipe', trade:'plumbing', hi:['leak','burst'] },
+  { label:'Power or wiring', icon:'bolt', trade:'electrical', hi:['power','wiring','panel'] },
+  { label:'Driveway', icon:'brick', trade:'paving', hi:['driveway'] },
+  { label:'Lawn & yard', icon:'lawn', trade:'lawn', hi:['lawn'] },
 ];
 // Free-text → trade routing for the search box (a typed problem maps to a trade). Order matters:
 // roofing before plumbing so "roof leak" lands on roofing, not the generic "leak" → plumbing.
@@ -955,6 +964,43 @@ const PROBLEM_ROUTES = [
 ];
 const SEARCH_EG = ['roof leak after a storm','my AC stopped working','need a driveway quote','looking for a painter','water heater keeps failing','an electrical panel upgrade','a new patio or walkway','lawn care for the season'];
 function routeProblem(q){ const s=(q||'').toLowerCase(); for(const r of PROBLEM_ROUTES){ if(r.re.test(s)) return r.trade; } return null; }
+// Free-text → a specific JOB, not just a trade — so search enters the match flow with the need
+// preselected instead of dumping to generic browse. Conservative: only unambiguous phrases; a
+// route is offered only if the live bank actually carries the job (defensive, like resumeMatch).
+// First match wins; more specific phrases sit above broader ones.
+const JOB_ROUTES = [
+  { trade:'roofing',    job:'active-leak-or-emergency',     re:/roof.{0,24}leak|leak.{0,10}roof/ },
+  { trade:'roofing',    job:'storm-or-insurance-claim',     re:/insurance|storm/ },
+  { trade:'hvac',       job:'no-heat-or-no-cool-emergency', re:/no (a\/?c|ac|heat|cool)|(a\/?c|ac|heat|furnace|boiler).{0,16}(stopped|not work|broke|died|out\b)/ },
+  { trade:'hvac',       job:'heat-pump-upgrade',            re:/heat ?pump/ },
+  { trade:'hvac',       job:'ductless-for-additions',       re:/ductless|mini.?split/ },
+  { trade:'plumbing',   job:'tankless-upgrade',             re:/tankless/ },
+  { trade:'plumbing',   job:'water-heater-replacement',     re:/water ?heater/ },
+  { trade:'plumbing',   job:'emergency-leak-or-burst',      re:/burst|pipe.{0,16}leak|leak.{0,10}pipe/ },
+  { trade:'plumbing',   job:'drain-or-sewer-backup',        re:/sewer|drain|clog|backup/ },
+  { trade:'electrical', job:'ev-charger-install',           re:/ev ?charg/ },
+  { trade:'electrical', job:'whole-home-generator',         re:/generator/ },
+  { trade:'electrical', job:'panel-or-service-upgrade',     re:/\bpanel|breaker/ },
+  { trade:'paving',     job:'sealcoating-maintenance',      re:/sealcoat/ },
+  { trade:'lawn',       job:'snow-removal',                 re:/\bsnow|plow/ },
+  { trade:'painting',   job:'cabinet-refinishing',          re:/cabinet/ },
+  { trade:'painting',   job:'wallpaper-removal-or-install', re:/wallpaper/ },
+  { trade:'painting',   job:'popcorn-ceiling-removal',      re:/popcorn/ },
+  { trade:'masonry',    job:'chimney-repair-or-rebuild',    re:/chimney/ },
+  { trade:'masonry',    job:'repointing-old-mortar',        re:/repoint|mortar/ },
+];
+function routeJobSeed(q){
+  const s = (q||'').toLowerCase();
+  for (const r of JOB_ROUTES){
+    if (!r.re.test(s)) continue;
+    const b = tradeBank(r.trade);
+    if (b && b.jobs && b.jobs.some(j => j.value === r.job)) return r;   // only offer a seed the bank can honor
+  }
+  return null;
+}
+// Query words → Q1 pre-highlight keywords (when only the trade routes, the words still travel).
+const HI_STOP = new Set(['need','want','have','that','this','with','from','after','keeps','looking','some','just','like','really','broken','broke','stopped','working','doesn','going']);
+function queryHi(q){ return (q||'').toLowerCase().split(/[^a-z]+/).filter(w => w.length>=4 && !HI_STOP.has(w)).slice(0,6); }
 
 const ICONS = {
   roof:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15L16 4L29 15"/><path d="M7 15V27H13V20H19V27H25V15"/></svg>`,
@@ -1346,7 +1392,7 @@ function renderHome(){
       b.className = 'prob-pill'; b.setAttribute('role','listitem');
       b.setAttribute('aria-label', p.label + ' — find a pro');
       b.innerHTML = '<span class="pp-ic">'+ICONS[p.icon]+'</span>'+esc(p.label);
-      b.addEventListener('click', () => openBrowse(p.trade));
+      b.addEventListener('click', () => openBrowse(p.trade, p.hi ? { hi:p.hi, hiLabel:p.label } : undefined));
       pr.appendChild(b);
     });
   }
@@ -2024,7 +2070,7 @@ function renderFeedEntry(){
       PROBLEMS.map(p=>'<button class="fe-prob" role="listitem" data-trade="'+esc(p.trade)+'" aria-label="'+esc(p.label)+' — browse this trade"><span class="fe-prob-ic" aria-hidden="true">'+ICONS[p.icon]+'</span>'+esc(p.label)+'</button>').join('')+
     '</div>';
   const s=$('fe-search'); if(s) s.addEventListener('click', openSearch);
-  Array.from(el.querySelectorAll('.fe-prob')).forEach(b=>b.addEventListener('click',()=>openBrowse(b.dataset.trade)));
+  Array.from(el.querySelectorAll('.fe-prob')).forEach(b=>b.addEventListener('click',()=>{ const p=PROBLEMS.find(x=>x.trade===b.dataset.trade); openBrowse(b.dataset.trade, p&&p.hi ? { hi:p.hi, hiLabel:p.label } : undefined); }));
 }
 function renderFeedControls(){
   const c = $('feed-controls'); if(!c) return;
@@ -2301,9 +2347,16 @@ function closeSearch(){ $('vsearch').classList.remove('open'); $('vsearch').setA
 function renderSearchResults(q){
   q = (q||'').trim().toLowerCase(); const res = $('vsearch-results');
   if(!q){ res.innerHTML = '<p class="vsearch-hint">Search by name, town, or what you need —<br>e.g. &ldquo;roof leak,&rdquo; &ldquo;no AC,&rdquo; or &ldquo;Stamford.&rdquo;</p>'; return; }
-  // problem→trade: if the query reads like a problem, lead with a "browse this trade" route
-  const routed = routeProblem(q);
-  const sug = routed ? '<button class="vsr vsr-route" data-route="'+esc(routed)+'">'+
+  // problem→job first (the match flow with the need preselected), problem→trade as the fallback —
+  // the typed need enters the match instead of dying at generic browse.
+  const seed = routeJobSeed(q);
+  const routed = seed ? seed.trade : routeProblem(q);
+  const sug = seed ? '<button class="vsr vsr-route" data-route="'+esc(seed.trade)+'" data-job="'+esc(seed.job)+'">'+
+      '<span class="vsr-mono" aria-hidden="true">'+ICONS[tradeIconOf(seed.trade)]+'</span>'+
+      '<span class="vsr-main"><span class="vsr-name">'+esc(jobLabel(seed.job))+'</span><span class="vsr-town">Vesta Match &middot; tailored '+esc(tradePlural(seed.trade))+'</span></span>'+
+      '<span class="vsr-arrow" aria-hidden="true">&rarr;</span>'+
+    '</button>'
+  : routed ? '<button class="vsr vsr-route" data-route="'+esc(routed)+'">'+
       '<span class="vsr-mono" aria-hidden="true">'+ICONS[tradeIconOf(routed)]+'</span>'+
       '<span class="vsr-main"><span class="vsr-name">Browse '+esc(tradePlural(routed))+'</span><span class="vsr-town">Vesta-ranked '+esc(tradeLabelOf(routed))+' in Fairfield County</span></span>'+
       '<span class="vsr-arrow" aria-hidden="true">&rarr;</span>'+
@@ -2323,11 +2376,16 @@ function renderSearchResults(q){
       '<span class="vsr-mono" aria-hidden="true">'+esc(monogram(c.name))+'</span>'+
       '<span class="vsr-main"><span class="vsr-name">'+esc(c.name)+'</span><span class="vsr-town">'+esc(c.town)+' · '+esc(tradeLabelOf(c.trade))+'</span></span>'+
     '</button>').join('');
-  const rt = res.querySelector('.vsr-route'); if(rt) rt.addEventListener('click', () => { closeSearch(); openBrowse(rt.dataset.route); });
+  const rt = res.querySelector('.vsr-route'); if(rt) rt.addEventListener('click', () => {
+    closeSearch();
+    if (rt.dataset.job) enterMatch(rt.dataset.route, { job:rt.dataset.job });                  // need preselected — straight past Q1
+    else openBrowse(rt.dataset.route, { hi:queryHi(q), hiLabel:q.slice(0,28) });               // trade only — the words still pre-highlight Q1
+  });
   Array.from(res.querySelectorAll('.vsr:not(.vsr-route)')).forEach(b => b.addEventListener('click', () => goToPro(b.dataset.trade, b.dataset.place)));
 }
 function goToPro(tradeKey, placeId){
   closeSearch();
+  if (tradeKey !== S.activeTrade) S.match = null;   // a match belongs to its trade — never leaks onto another trade's deck or form
   S.mode = 'trade'; S.activeTrade = tradeKey;
   if (S.screen !== 'browse') showScreen('browse');
   renderChips(); renderSidebar(); updateNavState();
@@ -2774,7 +2832,10 @@ function enterRequest(ctx){
   logRequest(ctx.placeId, ctx.trade);
   S.reqFrom = { screen:S.screen };
   closeSheet(); closeSearch(); if (S.filterOpen) closeFilterSheet(); closeFeedMenus();
-  reqData = { placeId:ctx.placeId, trade:ctx.trade||'', name:ctx.name||'' };
+  // Carry the declared need into the form + intro email — only when the pro's trade is the one
+  // the match was run on (a saved pro from another trade gets a clean form).
+  const carry = (S.match && S.match.job && ctx.trade === S.activeTrade) ? { job:S.match.job } : null;
+  reqData = { placeId:ctx.placeId, trade:ctx.trade||'', name:ctx.name||'', match:carry };
   showScreen('request'); updateNavState();
   const sc=$('req-scroll'); if(sc) sc.scrollTop=0;
   window.scrollTo(0,0);   // same document-scroll reset as openProfile
@@ -2789,7 +2850,8 @@ function requestHTML(){
     '<p class="prof-sub">Your request goes to <b style="color:var(--olive)">'+name+'</b>'+(tl?' · '+tl:'')+'. Say it once — Vesta carries it over, and replies come straight to you.</p>'+
     '<form id="req-form" class="req-form">'+
       '<div class="req-row"><label class="req-label" for="rq-sum">What’s going on? *</label>'+
-        '<textarea class="req-textarea" id="rq-sum" maxlength="500" placeholder="A short note about the work you need — what’s happening, and where on the property."></textarea></div>'+
+        (reqData.match ? '<span class="req-match">'+SPARK+'Your Vesta match — '+esc(jobLabel(reqData.match.job))+'</span>' : '')+
+        '<textarea class="req-textarea" id="rq-sum" maxlength="500" placeholder="A short note about the work you need — what’s happening, and where on the property.">'+(reqData.match ? esc(jobLabel(reqData.match.job)) : '')+'</textarea></div>'+
       '<div class="req-row req-pair">'+
         '<div><label class="req-label" for="rq-name">Your name</label><input class="req-input" id="rq-name" maxlength="80" autocomplete="name"></div>'+
         '<div><label class="req-label" for="rq-email">Email — replies land here *</label><input class="req-input" id="rq-email" type="email" maxlength="254" autocomplete="email" placeholder="you@example.com"></div>'+
@@ -2797,7 +2859,8 @@ function requestHTML(){
       '<div class="req-row req-pair">'+
         '<div><label class="req-label" for="rq-zip">ZIP code</label><input class="req-input" id="rq-zip" maxlength="5" inputmode="numeric" autocomplete="postal-code" placeholder="06824"></div>'+
         '<div><label class="req-label" for="rq-urg">How soon</label><select class="req-select" id="rq-urg">'+
-          '<option value="planning">Planning ahead</option><option value="soon" selected>In the next few weeks</option><option value="emergency">It’s urgent</option>'+
+          (function(){ const em = reqData.match && /emergency/.test(reqData.match.job);   // an emergency match pre-answers urgency
+            return '<option value="planning">Planning ahead</option><option value="soon"'+(em?'':' selected')+'>In the next few weeks</option><option value="emergency"'+(em?' selected':'')+'>It’s urgent</option>'; })()+
         '</select></div>'+
       '</div>'+
       '<button class="prof-req" type="submit" style="margin-top:4px">Send request <span aria-hidden="true">→</span></button>'+
@@ -2909,6 +2972,7 @@ function enterMatch(key, opts){
   opts = opts || {};
   S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank';
   S.match=null; S.matchPending=true; S.matchStep='job'; _mwMoreOpen=false; _pendingJob=null;
+  S.matchHi = opts.hi || null; S.matchHiLabel = opts.hiLabel || null;   // seeded need → Q1 pre-highlight
   renderChips(); renderSidebar(); showScreen('match'); updateNavState();
   if (opts.job) pickJob(opts.job); else renderMatchWalk();
 }
@@ -2919,10 +2983,19 @@ function renderMatchWalk(){
   wrap.scrollTop = 0;
 }
 function matchWalkJobHTML(){
-  const b = tradeBank(S.activeTrade), jobs = (b&&b.jobs)?b.jobs:[];
+  const b = tradeBank(S.activeTrade); let jobs = (b&&b.jobs)?b.jobs.slice():[];
+  // A seeded need (home chip / typed search) pins its closest jobs to the top, tagged — the chip
+  // pre-answers Q1 without skipping the homeowner's confirmation. Cap 3; bank order breaks ties.
+  let hits = new Set();
+  if (S.matchHi && S.matchHi.length){
+    const hit = j => S.matchHi.some(k => j.value.indexOf(k.replace(/ /g,'-'))!==-1 || j.label.toLowerCase().indexOf(k)!==-1);
+    const top = jobs.filter(hit).slice(0,3);
+    if (top.length){ hits = new Set(top.map(j=>j.value)); jobs = top.concat(jobs.filter(j=>!hits.has(j.value))); }
+  }
+  const hiTag = '<span class="mw-hit-tag">Closest to '+(S.matchHiLabel ? '&ldquo;'+esc(S.matchHiLabel)+'&rdquo;' : 'your pick')+'</span>';
   const shown = _mwMoreOpen ? jobs : jobs.slice(0, MW_TOP);
   const hasMore = jobs.length > shown.length;
-  const opt = j => '<button class="mw-opt" data-job="'+esc(j.value)+'"><span class="mw-opt-l"><span class="mw-opt-name">'+esc(j.label)+'</span></span>'+MW_ARROW+'</button>';
+  const opt = j => '<button class="mw-opt'+(hits.has(j.value)?' mw-opt--hit':'')+'" data-job="'+esc(j.value)+'"><span class="mw-opt-l"><span class="mw-opt-name">'+esc(j.label)+'</span>'+(hits.has(j.value)?hiTag:'')+'</span>'+MW_ARROW+'</button>';
   return '<div class="mw-inner">'+
     '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step"> · Step 1 of 2</span></div>'+
     '<h1 class="mw-q">What do you need done?</h1>'+
@@ -2959,6 +3032,14 @@ function wireMatchPriority(){
 function pickJob(jobValue){
   _pendingJob = jobValue;
   const b = tradeBank(S.activeTrade);
+  // Situation routing: a declared emergency answers Q2 itself — the generic "what matters most?"
+  // is off-key under urgency. Skip it and weight fast-turnaround when the trade's bank carries the
+  // axis (evidence-tagged firms only, so the re-order stays data-true).
+  if (/emergency/.test(jobValue)){
+    const fast = b && b.axes && b.axes.some(a => a.axis==='fast');
+    applyMatch(jobValue, fast ? 'fast' : null);
+    return;
+  }
   const hasQ2 = b && b.axes && b.axes.length >= 2;   // ask Q2 only when the trade has real differentiation
   if (hasQ2){ S.matchStep='priority'; renderMatchWalk(); }
   else applyMatch(jobValue, null);
