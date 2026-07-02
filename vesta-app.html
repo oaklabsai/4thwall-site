@@ -959,7 +959,7 @@ const PROBLEM_ROUTES = [
   { trade:'plumbing', re:/(plumb|\bleak|\bpipe|drain|water ?heater|faucet|toilet|sewer|clog|sump)/i },
   { trade:'electrical', re:/(electric|outlet|\bpanel|wiring|breaker|\bpower\b(?! ?wash)|generator|ev ?charg)/i },
   { trade:'paving', re:/(driveway|paving|\bpave|asphalt|sealcoat|blacktop)/i },
-  { trade:'lawn', re:/(\blawn|grass|\bmow|landscap|\byard\b|\btree|mulch|\bsod\b|garden|\bsnow|plow)/i },
+  { trade:'lawn', re:/(\blawn|grass|\bmow|landscap|\byard\b|\btree|mulch|\bsod\b|garden|\bsnow|plow|\bfenc)/i },
   { trade:'painting', re:/(\bpaint|\bstain|primer|power ?wash|pressure ?wash)/i },
   { trade:'masonry', re:/(mason|\bbrick|\bstone|patio|retaining ?wall|walkway|chimney|concrete)/i },
 ];
@@ -972,26 +972,32 @@ function routeProblem(q){ const s=(q||'').toLowerCase(); for(const r of PROBLEM_
 const JOB_ROUTES = [
   { trade:'roofing',    job:'active-leak-or-emergency',     re:/roof.{0,24}leak|leak.{0,10}roof/ },
   { trade:'roofing',    job:'storm-or-insurance-claim',     re:/insurance|storm/ },
+  { trade:'roofing',    job:'skylight-replacement',         re:/skylight/ },
   { trade:'lawn',       job:'gutter-cleaning',              re:/gutter.{0,14}clean|clean.{0,14}gutter/ },
   { trade:'roofing',    job:'roof-plus-siding-gutters',     re:/gutter/ },
   { trade:'roofing',    job:'roof-plus-siding-gutters',     re:/^(?!.*paint).*siding/ },
-  { trade:'hvac',       job:'no-heat-or-no-cool-emergency', re:/no (a\/?c|ac|heat|cool)|(a\/?c|ac|heat|furnace|boiler).{0,16}(stopped|not work|broke|died|out\b)/ },
+  { trade:'hvac',       job:'no-heat-or-no-cool-emergency', re:/no (a\/?c|ac|heat|cool)|(a\/?c|ac|heat\b|furnace|boiler).{0,16}(stopped|not work|broke|died|out\b)/ },
   { trade:'hvac',       job:'heat-pump-upgrade',            re:/heat ?pump/ },
   { trade:'hvac',       job:'ductless-for-additions',       re:/ductless|mini.?split/ },
   { trade:'plumbing',   job:'tankless-upgrade',             re:/tankless/ },
   { trade:'plumbing',   job:'water-heater-replacement',     re:/water ?heater/ },
   { trade:'plumbing',   job:'emergency-leak-or-burst',      re:/burst|pipe.{0,16}leak|leak.{0,10}pipe/ },
-  { trade:'plumbing',   job:'drain-or-sewer-backup',        re:/sewer|drain|clog|backup/ },
+  { trade:'plumbing',   job:'drain-or-sewer-backup',        re:/sewer|drain|clog|back(ed)? ?up/ },
+  { trade:'plumbing',   job:'emergency-leak-or-burst',      re:/frozen|freez/ },
+  { trade:'plumbing',   job:'fixture-or-small-repair',      re:/faucet|toilet|\bdisposal|\bfixture/ },
   { trade:'electrical', job:'ev-charger-install',           re:/ev ?charg/ },
   { trade:'electrical', job:'whole-home-generator',         re:/generator/ },
   { trade:'electrical', job:'panel-or-service-upgrade',     re:/\bpanel|breaker/ },
   { trade:'paving',     job:'sealcoating-maintenance',      re:/sealcoat/ },
+  { trade:'paving',     job:'concrete-slab-or-pad',         re:/concrete.{0,14}(driveway|pad|slab)|\bslab\b/ },
+  { trade:'masonry',    job:'concrete-repair-or-flatwork',  re:/concrete/ },
   { trade:'lawn',       job:'snow-removal',                 re:/\bsnow|plow/ },
   { trade:'painting',   job:'cabinet-refinishing',          re:/cabinet/ },
   { trade:'painting',   job:'wallpaper-removal-or-install', re:/wallpaper/ },
   { trade:'painting',   job:'popcorn-ceiling-removal',      re:/popcorn/ },
   { trade:'painting',   job:'power-washing',                re:/power ?wash|pressure ?wash|soft ?wash/ },
   { trade:'painting',   job:'deck-or-fence-staining',       re:/(deck|fence).{0,14}(stain|refinish)|(stain|refinish).{0,12}(deck|fence)/ },
+  { trade:'lawn',       job:'fence-install',                re:/\bfenc/ },
   { trade:'painting',   job:'exterior-repaint',             re:/paint.{0,16}siding|siding.{0,16}paint/ },
   { trade:'masonry',    job:'chimney-repair-or-rebuild',    re:/chimney/ },
   { trade:'masonry',    job:'repointing-old-mortar',        re:/repoint|mortar/ },
@@ -1049,11 +1055,11 @@ const FEED_HIDDEN = new Set();   // desktop feed: "Not interested" hides for the
 const NEED_FACETS = {
   roofing: [ {l:'Roof replacement',m:['roof replacement']}, {l:'Repairs & leaks',m:['roof repair','leak']}, {l:'Storm & insurance',m:['storm','insurance']}, {l:'Gutters',m:['gutter']}, {l:'Siding',m:['siding']}, {l:'Skylights',m:['skylight']}, {l:'Cedar & copper',m:['cedar','copper','slate']}, {l:'Commercial',m:['commercial']} ],
   hvac: [ {l:'Maintenance plans',m:['maintenance']}, {l:'Heating & boilers',m:['heating','boiler','furnace']}, {l:'AC & cooling',m:['cooling','air condition','central air']}, {l:'Water heaters',m:['water heater']}, {l:'Heat pumps & ductless',m:['heat pump','ductless','mini-split','mini split']} ],
-  plumbing: [ {l:'Emergency',m:['emergency','burst','24/7']}, {l:'Drains & clogs',m:['drain','clog','rooter','sewer']}, {l:'Leaks',m:['leak']}, {l:'Water heaters',m:['water heater']}, {l:'Heating',m:['heating','boiler']} ],
+  plumbing: [ {l:'Emergency',m:['emergency','burst','24/7']}, {l:'Drains & clogs',m:['drain','clog','rooter','sewer']}, {l:'Leaks',m:['leak']}, {l:'Water heaters',m:['water heater']}, {l:'Fixtures & small repairs',m:['faucet','toilet','fixture']}, {l:'Heating',m:['heating','boiler']} ],
   electrical: [ {l:'EV chargers',m:['ev charger','ev-charger']}, {l:'Emergency',m:['emergency']}, {l:'Lighting',m:['lighting','recessed']}, {l:'Panels & wiring',m:['panel','rewire','wiring','outlet']}, {l:'Generators',m:['generator']}, {l:'Commercial',m:['commercial']} ],
-  paving: [ {l:'Asphalt driveways',m:['asphalt','driveway']}, {l:'Sealcoating',m:['sealcoat']}, {l:'Belgian block',m:['belgian','block']}, {l:'Pavers & masonry',m:['paver','masonry','retaining','stone']}, {l:'Drainage & grading',m:['grading','drainage']} ],
-  masonry: [ {l:'Patios',m:['patio']}, {l:'Walls',m:['wall','retaining']}, {l:'Walkways & steps',m:['walkway','bluestone','steps']}, {l:'Chimneys',m:['chimney']}, {l:'Stone & brick',m:['stone','brick','veneer']}, {l:'Pavers & driveways',m:['paver','driveway','apron']} ],
-  lawn: [ {l:'Lawn maintenance',m:['lawn','mow']}, {l:'Landscape design',m:['design','landscap']}, {l:'Cleanups',m:['cleanup','clean-up','spring','fall']}, {l:'Snow removal',m:['snow','plow']}, {l:'Gutter cleaning',m:['gutter']}, {l:'Drainage & walls',m:['drainage','retaining']}, {l:'Tree work',m:['tree']} ],
+  paving: [ {l:'Asphalt driveways',m:['asphalt','driveway']}, {l:'Sealcoating',m:['sealcoat']}, {l:'Belgian block',m:['belgian','block']}, {l:'Concrete work',m:['concrete']}, {l:'Pavers & masonry',m:['paver','masonry','retaining','stone']}, {l:'Drainage & grading',m:['grading','drainage']} ],
+  masonry: [ {l:'Patios',m:['patio']}, {l:'Walls',m:['wall','retaining']}, {l:'Walkways & steps',m:['walkway','bluestone','steps']}, {l:'Chimneys',m:['chimney']}, {l:'Stone & brick',m:['stone','brick','veneer']}, {l:'Concrete',m:['concrete']}, {l:'Pavers & driveways',m:['paver','driveway','apron']} ],
+  lawn: [ {l:'Lawn maintenance',m:['lawn','mow']}, {l:'Landscape design',m:['design','landscap']}, {l:'Cleanups',m:['cleanup','clean-up','spring','fall']}, {l:'Snow removal',m:['snow','plow']}, {l:'Gutter cleaning',m:['gutter']}, {l:'Fences',m:['fence']}, {l:'Drainage & walls',m:['drainage','retaining']}, {l:'Tree work',m:['tree']} ],
   painting: [ {l:'Interior',m:['interior']}, {l:'Exterior',m:['exterior']}, {l:'Cabinets',m:['cabinet']}, {l:'Power washing',m:['power wash','pressure wash']}, {l:'Decks',m:['deck']}, {l:'Carpentry & repair',m:['carpentry','drywall','ceiling','trim']}, {l:'Wallpaper',m:['wallpaper']}, {l:'Historic homes',m:['historic']} ],
 };
 
@@ -1072,6 +1078,7 @@ const JOB_LABELS = {
   'active-leak-or-emergency':'Active leak — emergency','roof-plus-siding-gutters':'Roof + siding / gutters',
   'historic-or-specialty-materials':'Historic or specialty materials','flat-or-low-slope-roof':'Flat or low-slope roof',
   'repair':'Roof repair','chimney-plus-roof':'Chimney + roof','commercial':'Commercial roofing',
+  'skylight-replacement':'Skylight replacement',
   'routine-maintenance':'Routine maintenance / tune-up','system-replacement':'System replacement',
   'no-heat-or-no-cool-emergency':'No heat or AC — emergency','central-ac-install':'Central AC install',
   'boiler-or-radiant':'Boiler or radiant heat','ductless-for-additions':'Ductless (mini-split)',
@@ -1080,6 +1087,7 @@ const JOB_LABELS = {
   'drain-or-sewer-backup':'Drain or sewer backup','bathroom-or-kitchen-remodel':'Bath or kitchen remodel',
   'well-or-sump-pump':'Well or sump pump','sewer-line-replacement':'Sewer-line replacement',
   'tankless-upgrade':'Tankless upgrade','water-treatment':'Water treatment',
+  'fixture-or-small-repair':'Faucet, toilet or small repair',
   'panel-or-service-upgrade':'Panel or service upgrade','recessed-or-landscape-lighting':'Lighting (recessed or landscape)',
   'emergency-power-loss':'Emergency — power loss','ev-charger-install':'EV charger install',
   'troubleshooting-diagnostics':'Troubleshooting a problem','commercial-electrical':'Commercial electrical',
@@ -1106,6 +1114,8 @@ const JOB_LABELS = {
   'fireplace-or-fire-pit':'Fireplace or fire pit','brick-or-stone-repair':'Brick or stone repair',
   'chimney-repair-or-rebuild':'Chimney repair or rebuild','repointing-old-mortar':'Repointing old mortar',
   'pool-deck-surround':'Pool-deck surround','stone-veneer-facade':'Stone veneer facade',
+  'concrete-repair-or-flatwork':'Concrete repair or flatwork','concrete-slab-or-pad':'Concrete slab or pad',
+  'fence-install':'Fence install',
   'interior-repaint':'Interior repaint','exterior-repaint':'Exterior repaint',
   'carpentry-and-rot-repair':'Carpentry & rot repair','drywall-or-plaster-repair':'Drywall or plaster repair',
   'cabinet-refinishing':'Cabinet refinishing','color-consultation':'Color consultation',
@@ -3101,7 +3111,8 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
 
 /* INIT */
 (function init(){
-  renderHome(); renderSidebar(); initSheetDrag(); loadContractors(); loadMatchBank();
+  renderHome(); renderSidebar(); initSheetDrag();
+  const _loads = Promise.all([loadContractors(), loadMatchBank()]);
   syncLikes();
   if (desktop()) openBrowse(S.activeTrade, {walk:false});   // passive auto-land: feed, not the walkthrough
   updateNavState();
@@ -3153,6 +3164,15 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   const pq = (new URLSearchParams(location.search).get('place')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,200);
   const deepId = dm ? dm[1] : (pq.length>=8 ? pq : null);
   if (deepId) openProfile(deepId);
+  // Deep-link: ?q= runs the same problem→job routing as the search box, once the bank is
+  // loaded (routeJobSeed only offers seeds the live bank honors). Directory facet links use
+  // this to land in the match flow with the need preselected; trade-only falls back to browse.
+  const qq = (new URLSearchParams(location.search).get('q')||'').replace(/[^\w\s&+-]/g,' ').slice(0,80).trim();
+  if (!deepId && qq) _loads.then(() => {
+    const seed = routeJobSeed(qq.toLowerCase());
+    if (seed) enterMatch(seed.trade, { job: seed.job });
+    else { const t = routeProblem(qq); if (t) openBrowse(t, { hi: queryHi(qq), hiLabel: qq.slice(0,28) }); }
+  });
 })();
 </script>
 </body>

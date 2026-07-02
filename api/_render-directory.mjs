@@ -14,6 +14,38 @@ export const COUNTY = 'Fairfield County';
 // Vesta's canonical trade order — MUST mirror home.js HOME.TRADES.
 export const TRADES = ['roofing', 'hvac', 'plumbing', 'electrical', 'paving', 'lawn_care', 'painting', 'masonry'];
 
+// === The family layer (Phase C 2c) ==========================================
+// Browse "aisles" over the trades — NAVIGATION ONLY, never data. The match
+// engine stays trade-scoped; a family exists to (a) organize browse the way a
+// homeowner thinks ("the outside of my house", "the yard") and (b) give the
+// cross-trade facets (power washing, snow, gutter cleaning, fences, concrete)
+// a home. Facet links deep-link into the match flow via /vesta?q= — the app
+// runs the same routing as its search box, so a facet lands with the need
+// preselected and only ever offers what the live match bank honors.
+// Handyman + remodel are DELIBERATE, visible gaps (charter rule 3): handyman
+// work is too varied to vouch for at Vesta's bar, and a remodel aisle would
+// double-count the licensed trades already listed. Empty aisles, stated honestly.
+export const FAMILIES = [
+  { name: 'Roofing & the top of the house', trades: ['roofing'],
+    facets: [ { l: 'Skylights', q: 'skylight replacement' }, { l: 'Gutters (with a roof job)', q: 'gutters' }, { l: 'Siding', q: 'siding' } ] },
+  { name: 'Heating & cooling', trades: ['hvac'],
+    facets: [ { l: 'Heat pumps', q: 'heat pump' }, { l: 'Boilers', q: 'boiler' }, { l: 'Ductless / mini-splits', q: 'mini split' } ] },
+  { name: 'Plumbing & water', trades: ['plumbing'],
+    facets: [ { l: 'Water heaters', q: 'water heater' }, { l: 'Faucets & small repairs', q: 'leaky faucet' }, { l: 'Drains & sewer', q: 'drain backup' } ] },
+  { name: 'Electrical & power', trades: ['electrical'],
+    facets: [ { l: 'EV chargers', q: 'ev charger' }, { l: 'Generators', q: 'generator' }, { l: 'Panel upgrades', q: 'panel upgrade' } ] },
+  { name: 'Paint & exterior finishes', trades: ['painting'],
+    facets: [ { l: 'Power washing', q: 'power washing' }, { l: 'Deck & fence staining', q: 'deck staining' }, { l: 'Cabinets', q: 'cabinet refinishing' } ] },
+  { name: 'Grounds & curb appeal', trades: ['lawn_care', 'paving', 'masonry'],
+    facets: [ { l: 'Snow removal', q: 'snow removal' }, { l: 'Gutter cleaning', q: 'gutter cleaning' }, { l: 'Fences', q: 'fence install' }, { l: 'Concrete', q: 'concrete slab' }, { l: 'Tree work', q: 'tree removal' } ] },
+];
+export const FAMILY_GAPS = [
+  { name: 'Handyman & odd jobs',
+    why: 'Not listed — the work is too varied to read from public reviews at Vesta’s bar. We only vouch for what the record shows.' },
+  { name: 'Remodeling & general contracting',
+    why: 'Not listed as its own aisle — a remodel is the licensed trades above working together, and listing it twice would double-count them.' },
+];
+
 // === Publisher identity (entity authority) ==================================
 // ONE Organization for the whole property, referenced by a shared @id as
 // publisher / isPartOf on EVERY page (directory + /c/ + homepage). This collapses
@@ -681,7 +713,52 @@ export function renderDirectoryHTML(trade, rows) {
 // the town×trade association in anchor proximity, and structures the index for a
 // human. Counts only, never ratings — the moat holds.
 
+// The family aisles (2c): rendered on the hub ABOVE the per-trade sections.
+// Trade links go to the /fairfield-county/<trade> directory pages; facet chips
+// deep-link into the match app (/vesta?q=) with the need preselected. counts =
+// byTrade sizes so each aisle states its real coverage.
+function familyAisles(byTrade) {
+  const aisles = FAMILIES.map((f) => {
+    const n = f.trades.reduce((s, t) => s + (byTrade[t] || []).length, 0);
+    const tradeLinks = f.trades.map((t) =>
+      '<a class="aisle-trade" href="/fairfield-county/' + t + '">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICON[t] || ICON.all) + '</svg>' +
+        esc(tradeLabel(t)) + '</a>').join('');
+    const facetLinks = (f.facets || []).map((x) =>
+      '<a class="aisle-facet" href="/vesta?q=' + encodeURIComponent(x.q) + '">' + esc(x.l) + '</a>').join('');
+    return '<div class="aisle">' +
+      '<div class="aisle-head"><h3 class="aisle-h">' + esc(f.name) + '</h3>' +
+        (n ? '<span class="aisle-n">' + n + ' pros</span>' : '') + '</div>' +
+      '<div class="aisle-trades">' + tradeLinks + '</div>' +
+      (facetLinks ? '<div class="aisle-facets">' + facetLinks + '</div>' : '') +
+    '</div>';
+  }).join('');
+  const gaps = FAMILY_GAPS.map((g) =>
+    '<div class="aisle aisle-gap">' +
+      '<div class="aisle-head"><h3 class="aisle-h">' + esc(g.name) + '</h3></div>' +
+      '<p class="aisle-why">' + esc(g.why) + '</p>' +
+    '</div>').join('');
+  return '<section class="aisles" aria-label="Browse by what you need">' +
+    aisles + gaps + '</section>';
+}
+
 const HUB_CSS =
+  // 2c family aisles
+  '.aisles{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:.9rem;margin:.4rem 0 2.2rem}' +
+  '.aisle{border:1px solid var(--line,rgba(74,75,47,.16));border-radius:14px;padding:.95rem 1.05rem;background:rgba(255,255,255,.5);display:flex;flex-direction:column;gap:.6rem}' +
+  '.aisle-head{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}' +
+  '.aisle-h{margin:0;font-family:var(--serif,"Fraunces",serif);font-size:1.02rem;font-weight:600;color:var(--vink,#12100e)}' +
+  '.aisle-n{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim);white-space:nowrap}' +
+  '.aisle-trades{display:flex;flex-wrap:wrap;gap:.4rem}' +
+  '.aisle-trade{display:inline-flex;align-items:center;gap:.38rem;font-size:.84rem;font-weight:500;color:#3a3b24;padding:.3rem .65rem;border:1px solid var(--line,rgba(74,75,47,.22));border-radius:999px;background:rgba(212,223,158,.12);transition:color .12s ease}' +
+  '.aisle-trade:hover{color:#12100e}' +
+  '.aisle-trade svg{width:.95rem;height:.95rem;stroke:currentColor;fill:none;stroke-width:1.6}' +
+  '.aisle-facets{display:flex;flex-wrap:wrap;gap:.3rem .6rem}' +
+  '.aisle-facet{font-size:.78rem;color:var(--vmut,#4a4b2f);text-decoration:underline;text-decoration-color:rgba(74,75,47,.3);text-underline-offset:2px}' +
+  '.aisle-facet:hover{color:#12100e}' +
+  '.aisle-gap{background:transparent;border-style:dashed}' +
+  '.aisle-gap .aisle-h{color:var(--vmut,#4a4b2f)}' +
+  '.aisle-why{margin:0;font-size:.78rem;line-height:1.55;color:var(--vdim)}' +
   '.hub-lead{margin:.2rem 0 1.4rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--vdim);display:flex;flex-wrap:wrap;gap:.5rem}' +
   '.hub-lead b{color:var(--vgreen-2,#4a4b2f);font-weight:600}' +
   '.hub-lead .sep{opacity:.5}' +
@@ -821,7 +898,10 @@ export function renderHubHTML(rows) {
 
   const body = hero +
     '<section class="section" id="body">' +
-      stripHtml('') +
+      // 2c: the family aisles replace the flat trade strip on the hub — same
+      // /fairfield-county/<trade> links, organized the way a homeowner thinks,
+      // plus the cross-trade facet doors and the two honest gap aisles.
+      familyAisles(byTrade) +
       lead +
       '<div class="hub-sections">' + sections + '</div>' +
       disclosure() +
