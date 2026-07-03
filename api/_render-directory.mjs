@@ -12,7 +12,7 @@ export const SITE = 'https://4thwall.solutions';
 export const COUNTY = 'Fairfield County';
 
 // Vesta's canonical trade order — MUST mirror home.js HOME.TRADES.
-export const TRADES = ['roofing', 'hvac', 'plumbing', 'electrical', 'paving', 'lawn_care', 'painting', 'masonry'];
+export const TRADES = ['roofing', 'hvac', 'plumbing', 'electrical', 'paving', 'lawn_care', 'painting', 'masonry', 'tree_service'];
 
 // === The family layer (Phase C 2c) ==========================================
 // Browse "aisles" over the trades — NAVIGATION ONLY, never data. The match
@@ -36,8 +36,8 @@ export const FAMILIES = [
     facets: [ { l: 'EV chargers', q: 'ev charger' }, { l: 'Generators', q: 'generator' }, { l: 'Panel upgrades', q: 'panel upgrade' } ] },
   { name: 'Paint & exterior finishes', trades: ['painting'],
     facets: [ { l: 'Power washing', q: 'power washing' }, { l: 'Deck & fence staining', q: 'deck staining' }, { l: 'Cabinets', q: 'cabinet refinishing' } ] },
-  { name: 'Grounds & curb appeal', trades: ['lawn_care', 'paving', 'masonry'],
-    facets: [ { l: 'Snow removal', q: 'snow removal' }, { l: 'Gutter cleaning', q: 'gutter cleaning' }, { l: 'Fences', q: 'fence install' }, { l: 'Concrete', q: 'concrete slab' }, { l: 'Tree work', q: 'tree removal' } ] },
+  { name: 'Grounds & curb appeal', trades: ['lawn_care', 'tree_service', 'paving', 'masonry'],
+    facets: [ { l: 'Snow removal', q: 'snow removal' }, { l: 'Gutter cleaning', q: 'gutter cleaning' }, { l: 'Fences', q: 'fence install' }, { l: 'Concrete', q: 'concrete slab' }, { l: 'Stump grinding', q: 'stump grinding' } ] },
 ];
 export const FAMILY_GAPS = [
   { name: 'Handyman & odd jobs',
@@ -121,7 +121,8 @@ const ICON = {
   electrical: '<path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z"/>',
   lawn_care:  '<path d="M12 20.5V13"/><path d="M12 14.5C12 10.5 9 8.5 5 8.5c0 4 3 6 7 6Z"/><path d="M12 12.5c0-4 3-6 7-6 0 4-3 6-7 6Z"/>',
   painting:   '<rect x="3.5" y="4" width="11" height="6" rx="1.5"/><path d="M14.5 7h3.5a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-6a1.2 1.2 0 0 0-1.2 1.2V14"/><rect x="9.3" y="14" width="3.6" height="6" rx="1"/>',
-  masonry:    '<rect x="3.5" y="5" width="17" height="14" rx="1"/><path d="M3.5 9.7h17M3.5 14.3h17M9 5v4.7M14.5 5v4.7M6.2 9.7v4.6M11.8 9.7v4.6M17.3 9.7v4.6M9 14.3V19M14.5 14.3V19"/>'
+  masonry:    '<rect x="3.5" y="5" width="17" height="14" rx="1"/><path d="M3.5 9.7h17M3.5 14.3h17M9 5v4.7M14.5 5v4.7M6.2 9.7v4.6M11.8 9.7v4.6M17.3 9.7v4.6M9 14.3V19M14.5 14.3V19"/>',
+  tree_service: '<circle cx="12" cy="9.5" r="5.5"/><path d="M12 15v5.5"/><path d="M9.5 20.5h5"/><path d="M12 12.5 9.8 10.3M12 10.5l1.9-1.9"/>'
 };
 
 export function tradeLabel(t) {

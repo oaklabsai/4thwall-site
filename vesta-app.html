@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Vesta — Find a contractor worth hiring. | 4THWALL</title>
-<meta name="description" content="Vesta matches you with vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care. Each one read and summarized by Vesta. No ads, no pay-to-play.">
+<meta name="description" content="Vesta matches you with vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care, painters, masons, tree crews. Each one read and summarized by Vesta. No ads, no pay-to-play.">
 <link rel="canonical" href="https://4thwall.solutions/vesta">
 <meta property="og:title" content="Vesta — Find a contractor worth hiring.">
 <meta property="og:description" content="Vetted Fairfield County contractors, each read and summarized by Vesta. No ads, no pay-to-play.">
@@ -934,6 +934,7 @@ const trades = [
   { key:'lawn', label:'Lawn', plural:'lawn pros', icon:'lawn' },
   { key:'painting', label:'Painting', plural:'painters', icon:'paint' },
   { key:'masonry', label:'Masonry', plural:'masons', icon:'mason' },
+  { key:'tree', label:'Tree care', plural:'tree crews', icon:'tree' },
 ];
 let contractors = [];
 let silentContractors = [];   // count-only firms (no Vesta Read yet) — kept out of the ranked deck/feed/match; surfaced only in the honest coverage tail
@@ -949,27 +950,33 @@ const PROBLEMS = [
   { label:'Power or wiring', icon:'bolt', trade:'electrical', hi:['power','wiring','panel'] },
   { label:'Driveway', icon:'brick', trade:'paving', hi:['driveway'] },
   { label:'Lawn & yard', icon:'lawn', trade:'lawn', hi:['lawn'] },
+  { label:'Tree removal', icon:'tree', trade:'tree', hi:['removal'] },
 ];
 // Free-text → trade routing for the search box (a typed problem maps to a trade). Order matters:
 // roofing before plumbing so "roof leak" lands on roofing, not the generic "leak" → plumbing.
 const PROBLEM_ROUTES = [
   { trade:'lawn', re:/gutter.{0,14}clean|clean.{0,14}gutter/i },   // cleaning ≠ install — must outrank roofing's generic gutter
   { trade:'hvac', re:/(\ba\/?c\b|air ?condition|furnace|\bheat|\bcool|hvac|thermostat|boiler)/i },
+  { trade:'tree', re:/(\btree|arborist|\bstump|\blimb\b)/i },   // above roofing: "tree fell on my roof" needs the tree crew first
   { trade:'roofing', re:/(\broof|shingle|gutter|siding|skylight|flashing)/i },
   { trade:'plumbing', re:/(plumb|\bleak|\bpipe|drain|water ?heater|faucet|toilet|sewer|clog|sump)/i },
   { trade:'electrical', re:/(electric|outlet|\bpanel|wiring|breaker|\bpower\b(?! ?wash)|generator|ev ?charg)/i },
   { trade:'paving', re:/(driveway|paving|\bpave|asphalt|sealcoat|blacktop)/i },
-  { trade:'lawn', re:/(\blawn|grass|\bmow|landscap|\byard\b|\btree|mulch|\bsod\b|garden|\bsnow|plow|\bfenc)/i },
+  { trade:'lawn', re:/(\blawn|grass|\bmow|landscap|\byard\b|mulch|\bsod\b|garden|\bsnow|plow|\bfenc)/i },   // `tree` split to its own trade (Phase D)
   { trade:'painting', re:/(\bpaint|\bstain|primer|power ?wash|pressure ?wash)/i },
   { trade:'masonry', re:/(mason|\bbrick|\bstone|patio|retaining ?wall|walkway|chimney|concrete)/i },
 ];
-const SEARCH_EG = ['roof leak after a storm','my AC stopped working','need a driveway quote','looking for a painter','water heater keeps failing','an electrical panel upgrade','a new patio or walkway','lawn care for the season'];
+const SEARCH_EG = ['roof leak after a storm','my AC stopped working','need a driveway quote','looking for a painter','water heater keeps failing','an electrical panel upgrade','a new patio or walkway','lawn care for the season','a tree too close to the house'];
 function routeProblem(q){ const s=(q||'').toLowerCase(); for(const r of PROBLEM_ROUTES){ if(r.re.test(s)) return r.trade; } return null; }
 // Free-text → a specific JOB, not just a trade — so search enters the match flow with the need
 // preselected instead of dumping to generic browse. Conservative: only unambiguous phrases; a
 // route is offered only if the live bank actually carries the job (defensive, like resumeMatch).
 // First match wins; more specific phrases sit above broader ones.
 const JOB_ROUTES = [
+  { trade:'tree',       job:'emergency-or-storm-damage',    re:/tree.{0,24}(fell|down\b|on (the )?(house|roof|car|wires?|line))|storm.{0,16}tree/ },
+  { trade:'tree',       job:'tree-removal',                 re:/(remove|removal|take down|cut(ting)? down).{0,14}tree|tree.{0,14}(remov|take ?down)|dead tree/ },
+  { trade:'tree',       job:'stump-grinding',               re:/\bstump/ },
+  { trade:'tree',       job:'pruning-or-trimming',          re:/tree.{0,16}(trim|prun)|(trim|prun\w*).{0,12}tree|\bprun/ },
   { trade:'roofing',    job:'active-leak-or-emergency',     re:/roof.{0,24}leak|leak.{0,10}roof/ },
   { trade:'roofing',    job:'storm-or-insurance-claim',     re:/insurance|storm/ },
   { trade:'roofing',    job:'skylight-replacement',         re:/skylight/ },
@@ -1024,6 +1031,7 @@ const ICONS = {
   lawn:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 27Q9 19 11 11Q13 19 12 27"/><path d="M15.5 27Q14 17 16 8Q18 17 16.5 27"/><path d="M21 27Q20 19 22 11Q24 19 23 27"/><line x1="5" y1="27" x2="27" y2="27"/></svg>`,
   paint:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="6" width="16" height="8" rx="2"/><path d="M20.5 10H24.5a1.5 1.5 0 011.5 1.5V13a1.5 1.5 0 01-1.5 1.5H15a1.5 1.5 0 00-1.5 1.5V20"/><rect x="11" y="20" width="5" height="7.5" rx="1.5"/></svg>`,
   mason:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6.5" width="24" height="19" rx="1.5"/><path d="M4 12.8h24M4 19.1h24M14 6.5v6.3M22 6.5v6.3M9 12.8v6.3M18 12.8v6.3M27 12.8v6.3M14 19.1v6.4M22 19.1v6.4"/></svg>`,
+  tree:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="12" r="7.5"/><path d="M16 19.5V27"/><path d="M12.5 27h7"/><path d="M16 16l-3-3M16 13.5l2.5-2.5"/></svg>`,
 };
 const CHECK = `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 5.5L4.5 8.5L9.5 2.5"/></svg>`;
 const SPARK = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l1.4 5.1L14.5 6.5 9.4 7.9 8 13 6.6 7.9 1.5 6.5 6.6 5.1z"/></svg>`;
@@ -1059,7 +1067,8 @@ const NEED_FACETS = {
   electrical: [ {l:'EV chargers',m:['ev charger','ev-charger']}, {l:'Emergency',m:['emergency']}, {l:'Lighting',m:['lighting','recessed']}, {l:'Panels & wiring',m:['panel','rewire','wiring','outlet']}, {l:'Generators',m:['generator']}, {l:'Commercial',m:['commercial']} ],
   paving: [ {l:'Asphalt driveways',m:['asphalt','driveway']}, {l:'Sealcoating',m:['sealcoat']}, {l:'Belgian block',m:['belgian','block']}, {l:'Concrete work',m:['concrete']}, {l:'Pavers & masonry',m:['paver','masonry','retaining','stone']}, {l:'Drainage & grading',m:['grading','drainage']} ],
   masonry: [ {l:'Patios',m:['patio']}, {l:'Walls',m:['wall','retaining']}, {l:'Walkways & steps',m:['walkway','bluestone','steps']}, {l:'Chimneys',m:['chimney']}, {l:'Stone & brick',m:['stone','brick','veneer']}, {l:'Concrete',m:['concrete']}, {l:'Pavers & driveways',m:['paver','driveway','apron']} ],
-  lawn: [ {l:'Lawn maintenance',m:['lawn','mow']}, {l:'Landscape design',m:['design','landscap']}, {l:'Cleanups',m:['cleanup','clean-up','spring','fall']}, {l:'Snow removal',m:['snow','plow']}, {l:'Gutter cleaning',m:['gutter']}, {l:'Fences',m:['fence']}, {l:'Drainage & walls',m:['drainage','retaining']}, {l:'Tree work',m:['tree']} ],
+  lawn: [ {l:'Lawn maintenance',m:['lawn','mow']}, {l:'Landscape design',m:['design','landscap']}, {l:'Cleanups',m:['cleanup','clean-up','spring','fall']}, {l:'Snow removal',m:['snow','plow']}, {l:'Gutter cleaning',m:['gutter']}, {l:'Fences',m:['fence']}, {l:'Drainage & walls',m:['drainage','retaining']} ],
+  tree: [ {l:'Removal',m:['removal','remove']}, {l:'Pruning & trimming',m:['prun','trim']}, {l:'Stump grinding',m:['stump']}, {l:'Storm & emergency',m:['storm','emergency']}, {l:'Tree & plant health',m:['health','arborist','shrub']}, {l:'Land clearing',m:['clearing','lot']} ],
   painting: [ {l:'Interior',m:['interior']}, {l:'Exterior',m:['exterior']}, {l:'Cabinets',m:['cabinet']}, {l:'Power washing',m:['power wash','pressure wash']}, {l:'Decks',m:['deck']}, {l:'Carpentry & repair',m:['carpentry','drywall','ceiling','trim']}, {l:'Wallpaper',m:['wallpaper']}, {l:'Historic homes',m:['historic']} ],
 };
 
@@ -1123,6 +1132,9 @@ const JOB_LABELS = {
   'faux-or-decorative-finish':'Faux or decorative finish','popcorn-ceiling-removal':'Popcorn-ceiling removal',
   'new-construction-painting':'New-construction painting','epoxy-or-garage-floor':'Epoxy / garage floor',
   'retaining-wall':'Retaining wall',   // shared across lawn / masonry / paving
+  'tree-removal':'Tree removal','stump-grinding':'Stump grinding',
+  'pruning-or-trimming':'Pruning or trimming','emergency-or-storm-damage':'Emergency / storm damage',
+  'land-or-lot-clearing':'Land or lot clearing',   // tree_service (Phase D)
 };
 function jobLabel(v){ return JOB_LABELS[v] || String(v||'').replace(/-/g,' ').replace(/\b\w/g, c=>c.toUpperCase()); }
 // Lowercase a label for mid-sentence use, but keep leading acronyms (EV, AC) intact.
@@ -1234,8 +1246,8 @@ const tradePlural = k => { const t = trades.find(t=>t.key===k); return t?t.plura
 const tradeLabelOf = k => { const t = trades.find(t=>t.key===k); return t?t.label:k; };
 const tradeIconOf = k => { const t = trades.find(t=>t.key===k); return t?t.icon:'roof'; };
 const esc = (window.HOME && HOME.esc) ? HOME.esc : (s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])));
-const TRADE_DB = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn:'lawn_care', painting:'painting', masonry:'masonry' };
-const TRADE_APP = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn_care:'lawn', painting:'painting', masonry:'masonry' };
+const TRADE_DB = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn:'lawn_care', painting:'painting', masonry:'masonry', tree:'tree_service' };
+const TRADE_APP = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn_care:'lawn', painting:'painting', masonry:'masonry', tree_service:'tree' };
 
 /* LIKES (favorites) — anon in localStorage, synced on sign-in (see syncLikes) */
 const LIKE_KEY = 'vesta_liked';
@@ -2433,9 +2445,9 @@ function goToPro(tradeKey, placeId){
    analysis is the receipts; this is everything — synthesis once, then the deep-only
    layer: where it stands · known-for with detail · how to hire the trade · the record
    · the Google source · contact · the owner's claim. */
-const PTRADE_LABEL = { roofing:'Roofing', hvac:'HVAC', plumbing:'Plumbing', electrical:'Electrical', paving:'Paving', lawn_care:'Lawn & landscaping', painting:'Painting', masonry:'Masonry' };
-const PTRADE_FIRMS = { roofing:'roofing companies', hvac:'HVAC companies', plumbing:'plumbing companies', electrical:'electrical contractors', paving:'paving companies', lawn_care:'lawn & landscaping companies', painting:'painting companies', masonry:'masonry companies' };
-const PTRADE_PROS  = { roofing:'roofers', hvac:'HVAC contractors', plumbing:'plumbers', electrical:'electricians', paving:'paving contractors', lawn_care:'lawn & landscaping pros', painting:'painters', masonry:'masons' };
+const PTRADE_LABEL = { roofing:'Roofing', hvac:'HVAC', plumbing:'Plumbing', electrical:'Electrical', paving:'Paving', lawn_care:'Lawn & landscaping', painting:'Painting', masonry:'Masonry', tree_service:'Tree service' };
+const PTRADE_FIRMS = { roofing:'roofing companies', hvac:'HVAC companies', plumbing:'plumbing companies', electrical:'electrical contractors', paving:'paving companies', lawn_care:'lawn & landscaping companies', painting:'painting companies', masonry:'masonry companies', tree_service:'tree services' };
+const PTRADE_PROS  = { roofing:'roofers', hvac:'HVAC contractors', plumbing:'plumbers', electrical:'electricians', paving:'paving contractors', lawn_care:'lawn & landscaping pros', painting:'painters', masonry:'masons', tree_service:'tree crews' };
 const PGUIDE = {
   roofing: [
     { t:'Confirm CT registration & insurance', d:"Any roofer working on a Connecticut home needs an active Home Improvement Contractor registration plus their own liability and workers'-comp coverage. Ask to see both before work starts." },
@@ -2479,6 +2491,12 @@ const PGUIDE = {
     { t:'Ask about surface repair and lead-safe work', d:'Wood rot, failed caulk, and drywall cracks should be fixed first, not painted over. On homes built before 1978, ask whether the crew follows EPA lead-safe (RRP) practices when sanding or scraping.' },
     { t:'Pin down products, color, and warranty', d:'Paint line and finish, who supplies it, color approval, and daily cleanup should all be spelled out — along with how long the work is guaranteed and any touch-up window.' }
   ],
+  tree_service: [
+    { t:'Insurance first — this is the one trade where it decides everything', d:"Tree work is the riskiest job that happens on a home lot. Ask for current liability AND workers'-comp certificates from the insurer, not a photocopy — if an uninsured climber is hurt on your property, the claim can land on you." },
+    { t:'Ask about the CT arborist license for tree care', d:'Connecticut licenses arborists through DEEP — pruning, cabling, and treating trees for hire is licensed work. Straight removals sit outside the license, but for anything meant to keep a tree healthy, ask whether a licensed arborist is on the job.' },
+    { t:'Get the full scope in writing', d:'Removal vs. pruning, whether the stump is ground out, what happens to the wood and brush, lawn and driveway protection, and whether a crane is needed — each changes the price. A one-line "take the tree down" quote hides all of it.' },
+    { t:'Be wary of storm-chasers', d:'Crews that knock on the door after a storm, quote cash-only, or push same-day decisions are the classic red flag in this trade. A reputable crew gives a written estimate — even in an emergency.' }
+  ],
   masonry: [
     { t:'Confirm CT registration & insurance', d:'Masonry, hardscape, and chimney work is home-improvement work — the mason should hold an active Connecticut Home Improvement Contractor registration and carry liability coverage. Ask to see both before any demolition starts.' },
     { t:'Get base prep and drainage in writing', d:'Patios, walkways, and walls last or fail on what is underneath — excavation depth, a compacted gravel base, and how water is directed away. A quote that only describes the visible stone hides the part that decides longevity.' },
@@ -2496,6 +2514,7 @@ function tradeGuessFrom(t){
   if (/plumb/i.test(t)) return 'plumbing';
   if (/electric/i.test(t)) return 'electrical';
   if (/pav|asphalt|driveway|concrete/i.test(t)) return 'paving';
+  if (/tree|arborist|stump/i.test(t)) return 'tree_service';
   if (/lawn|landscap/i.test(t)) return 'lawn_care';
   if (/paint/i.test(t)) return 'painting';
   if (/mason|brick|stone|chimney/i.test(t)) return 'masonry';
@@ -2646,6 +2665,12 @@ const STANDING_SPECIALTY = {
     stucco_eifs:            ['Specialty','Stucco &amp; EIFS','One of the very few %F we track skilled in stucco and EIFS systems.'],
     pool_deck:              ['Specialty','Pool decks &amp; coping','Builds pool decks and coping — a job many %F we track don\'t take on.'],
     fireplace_construction: ['Specialty','Fireplaces &amp; fire pits','Builds outdoor fireplaces and fire pits — more than most %F we track offer.']
+  },
+  tree_service: {
+    crane_capable:      ['Specialty','Crane removals','One of the very few %F we track equipped for crane-assisted removals — the answer for oversized trees or tight-access lots.'],
+    land_clearing:      ['Specialty','Land &amp; lot clearing','One of the few %F we track that take on full land and lot clearing, not just single-tree removal.'],
+    cabling_bracing:    ['Specialty','Cabling &amp; bracing','One of the few %F we track who cable and brace structurally weak trees to save them — specialized arborist work.'],
+    commercial_capable: ['Specialty','Commercial-capable','Handles commercial and municipal tree work alongside residential — a wider remit than most %F we track.']
   }
 };
 function profStandingHTML(){

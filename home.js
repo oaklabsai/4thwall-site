@@ -13,7 +13,7 @@
 
   const HOME = {
     API,
-    TRADES: ['roofing','hvac','plumbing','electrical','paving','lawn_care','painting','masonry'],
+    TRADES: ['roofing','hvac','plumbing','electrical','paving','lawn_care','painting','masonry','tree_service'],
 
     token(){ try { return localStorage.getItem(TOKEN_KEY) || null; } catch(_) { return null; } },
     // Absolute edge-fn URL for a path — for <img src> / hrefs that can't go through api().

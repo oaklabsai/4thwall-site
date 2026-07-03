@@ -53,8 +53,8 @@ export function isIndexable(enr) {
 }
 
 // Trade label maps — mirror contractor.html / home.js. Never a parallel set.
-const TRADE_FIRMS = { roofing: 'roofing companies', hvac: 'HVAC companies', plumbing: 'plumbing companies', electrical: 'electrical contractors', paving: 'paving companies', lawn_care: 'lawn & landscaping companies', painting: 'painting companies', masonry: 'masonry companies' };
-const TRADE_PROS  = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons' };
+const TRADE_FIRMS = { roofing: 'roofing companies', hvac: 'HVAC companies', plumbing: 'plumbing companies', electrical: 'electrical contractors', paving: 'paving companies', lawn_care: 'lawn & landscaping companies', painting: 'painting companies', masonry: 'masonry companies', tree_service: 'tree services' };
+const TRADE_PROS  = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons', tree_service: 'tree crews' };
 const tLowerOf = (trade) => (trade === 'hvac' ? 'HVAC' : (tradeLabel(trade) ? tradeLabel(trade).toLowerCase() : ''));
 
 // Freshness (M11) — turn an enriched_at ISO date into "June 2026". Vouch-don't-
@@ -113,6 +113,12 @@ const HIRING_GUIDE = {
     { t: 'Get the prep and number of coats in writing', d: "Most of a paint job's lifespan is decided before the color goes on — washing, scraping, sanding, patching, priming, and how many finish coats. A one-line quote hides the part that makes it last." },
     { t: 'Ask about surface repair and lead-safe work', d: 'Wood rot, failed caulk, and drywall cracks should be fixed first, not painted over. On homes built before 1978, ask whether the crew follows EPA lead-safe (RRP) practices when sanding or scraping.' },
     { t: 'Pin down products, color, and warranty', d: 'Paint line and finish, who supplies it, color approval, and daily cleanup should all be spelled out — along with how long the work is guaranteed and any touch-up window.' }
+  ],
+  tree_service: [
+    { t: 'Insurance first — this is the one trade where it decides everything', d: "Tree work is the riskiest job that happens on a home lot. Ask for current liability AND workers'-comp certificates from the insurer, not a photocopy — if an uninsured climber is hurt on your property, the claim can land on you." },
+    { t: 'Ask about the CT arborist license for tree care', d: 'Connecticut licenses arborists through DEEP — pruning, cabling, and treating trees for hire is licensed work. Straight removals sit outside the license, but for anything meant to keep a tree healthy, ask whether a licensed arborist is on the job.' },
+    { t: 'Get the full scope in writing', d: 'Removal vs. pruning, whether the stump is ground out, what happens to the wood and brush, lawn and driveway protection, and whether a crane is needed — each changes the price. A one-line "take the tree down" quote hides all of it.' },
+    { t: 'Be wary of storm-chasers', d: 'Crews that knock on the door after a storm, quote cash-only, or push same-day decisions are the classic red flag in this trade. A reputable crew gives a written estimate — even in an emergency.' }
   ],
   masonry: [
     { t: 'Confirm CT registration & insurance', d: 'Masonry, hardscape, and chimney work is home-improvement work — the mason should hold an active Connecticut Home Improvement Contractor registration and carry liability coverage. Ask to see both before any demolition starts.' },
@@ -201,6 +207,12 @@ const STANDING_SPECIALTY = {
     stucco_eifs:            ['Specialty', 'Stucco &amp; EIFS', 'One of the very few %F we track skilled in stucco and EIFS systems.'],
     pool_deck:              ['Specialty', 'Pool decks &amp; coping', 'Builds pool decks and coping — a job many %F we track don\'t take on.'],
     fireplace_construction: ['Specialty', 'Fireplaces &amp; fire pits', 'Builds outdoor fireplaces and fire pits — more than most %F we track offer.'],
+  },
+  tree_service: {
+    crane_capable:      ['Specialty', 'Crane removals', 'One of the very few %F we track equipped for crane-assisted removals — the answer for oversized trees or tight-access lots.'],
+    land_clearing:      ['Specialty', 'Land &amp; lot clearing', 'One of the few %F we track that take on full land and lot clearing, not just single-tree removal.'],
+    cabling_bracing:    ['Specialty', 'Cabling &amp; bracing', 'One of the few %F we track who cable and brace structurally weak trees to save them — specialized arborist work.'],
+    commercial_capable: ['Specialty', 'Commercial-capable', 'Handles commercial and municipal tree work alongside residential — a wider remit than most %F we track.'],
   },
 };
 function vestaReadBlock(enr, trade) {
