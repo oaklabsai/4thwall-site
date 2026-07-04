@@ -13,7 +13,7 @@
 
   const HOME = {
     API,
-    TRADES: ['roofing','hvac','plumbing','electrical','paving','lawn_care','painting','masonry','tree_service','flooring'],
+    TRADES: ['roofing','hvac','plumbing','electrical','paving','lawn_care','painting','masonry','tree_service','flooring','windows_doors'],
 
     token(){ try { return localStorage.getItem(TOKEN_KEY) || null; } catch(_) { return null; } },
     // Absolute edge-fn URL for a path — for <img src> / hrefs that can't go through api().
@@ -61,6 +61,7 @@
     },
 
     tradeLabel(t){
+      if (t === 'windows_doors') return 'Windows & Doors';
       const s = String(t || '').replace(/_/g,' ').trim();
       return s ? s.replace(/\b\w/g, c => c.toUpperCase()) : 'General';
     },

@@ -12,7 +12,7 @@ export const SITE = 'https://4thwall.solutions';
 export const COUNTY = 'Fairfield County';
 
 // Vesta's canonical trade order — MUST mirror home.js HOME.TRADES.
-export const TRADES = ['roofing', 'hvac', 'plumbing', 'electrical', 'paving', 'lawn_care', 'painting', 'masonry', 'tree_service', 'flooring'];
+export const TRADES = ['roofing', 'hvac', 'plumbing', 'electrical', 'paving', 'lawn_care', 'painting', 'masonry', 'tree_service', 'flooring', 'windows_doors'];
 
 // === The family layer (Phase C 2c) ==========================================
 // Browse "aisles" over the trades — NAVIGATION ONLY, never data. The match
@@ -38,6 +38,8 @@ export const FAMILIES = [
     facets: [ { l: 'Power washing', q: 'power washing' }, { l: 'Deck & fence staining', q: 'deck staining' }, { l: 'Cabinets', q: 'cabinet refinishing' } ] },
   { name: 'Floors & interior surfaces', trades: ['flooring'],
     facets: [ { l: 'Hardwood refinishing', q: 'refinish hardwood floors' }, { l: 'New hardwood', q: 'install new hardwood floors' }, { l: 'Carpet', q: 'carpet installation' }, { l: 'Vinyl & laminate', q: 'vinyl plank flooring' } ] },
+  { name: 'Windows & doors', trades: ['windows_doors'],
+    facets: [ { l: 'Window replacement', q: 'window replacement' }, { l: 'Entry & patio doors', q: 'entry door' }, { l: 'Garage doors', q: 'garage door' }, { l: 'Shower doors & glass', q: 'shower door' } ] },
   { name: 'Grounds & curb appeal', trades: ['lawn_care', 'tree_service', 'paving', 'masonry'],
     facets: [ { l: 'Snow removal', q: 'snow removal' }, { l: 'Gutter cleaning', q: 'gutter cleaning' }, { l: 'Fences', q: 'fence install' }, { l: 'Concrete', q: 'concrete slab' }, { l: 'Stump grinding', q: 'stump grinding' } ] },
 ];
@@ -125,11 +127,13 @@ const ICON = {
   painting:   '<rect x="3.5" y="4" width="11" height="6" rx="1.5"/><path d="M14.5 7h3.5a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-6a1.2 1.2 0 0 0-1.2 1.2V14"/><rect x="9.3" y="14" width="3.6" height="6" rx="1"/>',
   masonry:    '<rect x="3.5" y="5" width="17" height="14" rx="1"/><path d="M3.5 9.7h17M3.5 14.3h17M9 5v4.7M14.5 5v4.7M6.2 9.7v4.6M11.8 9.7v4.6M17.3 9.7v4.6M9 14.3V19M14.5 14.3V19"/>',
   tree_service: '<circle cx="12" cy="9.5" r="5.5"/><path d="M12 15v5.5"/><path d="M9.5 20.5h5"/><path d="M12 12.5 9.8 10.3M12 10.5l1.9-1.9"/>',
-  flooring:   '<rect x="3.5" y="5" width="17" height="14" rx="1"/><path d="M3.5 8.5h17M3.5 12h17M3.5 15.5h17M16 5v3.5M7.5 8.5V12M13.5 12v3.5M10 15.5V19"/>'
+  flooring:   '<rect x="3.5" y="5" width="17" height="14" rx="1"/><path d="M3.5 8.5h17M3.5 12h17M3.5 15.5h17M16 5v3.5M7.5 8.5V12M13.5 12v3.5M10 15.5V19"/>',
+  windows_doors: '<rect x="3" y="4" width="10.5" height="10.5" rx="1"/><path d="M8.25 4v10.5M3 9.25h10.5"/><rect x="15" y="4" width="6.5" height="17.5" rx="1"/><circle cx="19.5" cy="12.5" r="0.7" fill="currentColor" stroke="none"/>'
 };
 
 export function tradeLabel(t) {
   if (t === 'hvac') return 'HVAC';
+  if (t === 'windows_doors') return 'Windows & Doors';
   const s = String(t || '').replace(/_/g, ' ').trim();
   return s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : 'General';
 }

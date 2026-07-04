@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Vesta — Find a contractor worth hiring. | 4THWALL</title>
-<meta name="description" content="Vesta matches you with vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care, painters, masons, tree crews, flooring pros. Each one read and summarized by Vesta. No ads, no pay-to-play.">
+<meta name="description" content="Vesta matches you with vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care, painters, masons, tree crews, flooring pros, window & door installers. Each one read and summarized by Vesta. No ads, no pay-to-play.">
 <link rel="canonical" href="https://4thwall.solutions/vesta">
 <meta property="og:title" content="Vesta — Find a contractor worth hiring.">
 <meta property="og:description" content="Vetted Fairfield County contractors, each read and summarized by Vesta. No ads, no pay-to-play.">
@@ -936,6 +936,7 @@ const trades = [
   { key:'masonry', label:'Masonry', plural:'masons', icon:'mason' },
   { key:'tree', label:'Tree care', plural:'tree crews', icon:'tree' },
   { key:'flooring', label:'Flooring', plural:'flooring pros', icon:'floor' },
+  { key:'windows_doors', label:'Windows & Doors', plural:'window & door pros', icon:'windowdoor' },
 ];
 let contractors = [];
 let silentContractors = [];   // count-only firms (no Vesta Read yet) — kept out of the ranked deck/feed/match; surfaced only in the honest coverage tail
@@ -953,6 +954,7 @@ const PROBLEMS = [
   { label:'Lawn & yard', icon:'lawn', trade:'lawn', hi:['lawn'] },
   { label:'Tree removal', icon:'tree', trade:'tree', hi:['removal'] },
   { label:'Floors', icon:'floor', trade:'flooring', hi:['refinish','hardwood'] },
+  { label:'Windows or doors', icon:'windowdoor', trade:'windows_doors', hi:['window-replacement'] },
 ];
 // Free-text → trade routing for the search box (a typed problem maps to a trade). Order matters:
 // roofing before plumbing so "roof leak" lands on roofing, not the generic "leak" → plumbing.
@@ -963,6 +965,7 @@ const PROBLEM_ROUTES = [
   { trade:'roofing', re:/(\broof|shingle|gutter|siding|skylight|flashing)/i },
   { trade:'plumbing', re:/(plumb|\bleak|\bpipe|drain|water ?heater|faucet|toilet|sewer|clog|sump)/i },
   { trade:'flooring', re:/(hardwood|\bcarpet|laminate|vinyl ?(plank|floor)|\blvp\b|parquet|\btile\b|refinish.{0,12}floor|floor(ing|s)?\b)/i },   // after plumbing: "floor drain" stays a plumber's call
+  { trade:'windows_doors', re:/(\bwindow|garage.{0,8}door|entry.{0,8}door|front.{0,8}door|storm.{0,8}door|patio.{0,8}door|slid(ing)?.{0,8}door|shower.{0,8}door|\bglazier|egress)/i },   // after roofing/flooring: "roof skylight" stays roofing's call
 
   { trade:'electrical', re:/(electric|outlet|\bpanel|wiring|breaker|\bpower\b(?! ?wash)|generator|ev ?charg)/i },
   { trade:'paving', re:/(driveway|paving|\bpave|asphalt|sealcoat|blacktop)/i },
@@ -970,7 +973,7 @@ const PROBLEM_ROUTES = [
   { trade:'painting', re:/(\bpaint|\bstain|primer|power ?wash|pressure ?wash)/i },
   { trade:'masonry', re:/(mason|\bbrick|\bstone|patio|retaining ?wall|walkway|chimney|concrete)/i },
 ];
-const SEARCH_EG = ['roof leak after a storm','my AC stopped working','need a driveway quote','looking for a painter','water heater keeps failing','an electrical panel upgrade','a new patio or walkway','lawn care for the season','a tree too close to the house','refinishing tired hardwood floors'];
+const SEARCH_EG = ['roof leak after a storm','my AC stopped working','need a driveway quote','looking for a painter','water heater keeps failing','an electrical panel upgrade','a new patio or walkway','lawn care for the season','a tree too close to the house','refinishing tired hardwood floors','replacing drafty old windows'];
 function routeProblem(q){ const s=(q||'').toLowerCase(); for(const r of PROBLEM_ROUTES){ if(r.re.test(s)) return r.trade; } return null; }
 // Free-text → a specific JOB, not just a trade — so search enters the match flow with the need
 // preselected instead of dumping to generic browse. Conservative: only unambiguous phrases; a
@@ -1006,6 +1009,12 @@ const JOB_ROUTES = [
   { trade:'flooring',   job:'vinyl-or-laminate',            re:/vinyl ?plank|laminate|\blvp\b/ },
   { trade:'flooring',   job:'tile-floor',                   re:/tile.{0,12}floor|floor.{0,12}tile/ },
   { trade:'flooring',   job:'floor-repair',                 re:/floor.{0,16}(repair|squeak|buckl|water damage)|squeak\w*.{0,10}floor/ },
+  { trade:'windows_doors', job:'egress-or-basement-windows',  re:/egress/ },
+  { trade:'windows_doors', job:'garage-or-overhead-doors',    re:/garage.{0,8}door/ },
+  { trade:'windows_doors', job:'shower-doors-or-custom-glass',re:/shower.{0,8}door|custom.{0,8}glass|\bglazier/ },
+  { trade:'windows_doors', job:'window-or-door-repair',       re:/(window|door).{0,16}(repair|fix|stuck|drafty|foggy|seal)/ },
+  { trade:'windows_doors', job:'entry-or-patio-doors',        re:/(entry|front|patio|slid(ing)?).{0,10}door/ },
+  { trade:'windows_doors', job:'window-replacement',          re:/window/ },
   { trade:'paving',     job:'sealcoating-maintenance',      re:/sealcoat/ },
   { trade:'paving',     job:'concrete-slab-or-pad',         re:/concrete.{0,14}(driveway|pad|slab)|\bslab\b/ },
   { trade:'masonry',    job:'concrete-repair-or-flatwork',  re:/concrete/ },
@@ -1044,6 +1053,7 @@ const ICONS = {
   mason:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6.5" width="24" height="19" rx="1.5"/><path d="M4 12.8h24M4 19.1h24M14 6.5v6.3M22 6.5v6.3M9 12.8v6.3M18 12.8v6.3M27 12.8v6.3M14 19.1v6.4M22 19.1v6.4"/></svg>`,
   tree:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="12" r="7.5"/><path d="M16 19.5V27"/><path d="M12.5 27h7"/><path d="M16 16l-3-3M16 13.5l2.5-2.5"/></svg>`,
   floor:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6.5" width="24" height="19" rx="1.5"/><path d="M4 11.2h24M4 16h24M4 20.8h24M21 6.5v4.7M9 11.2v4.8M18 16v4.8M13 20.8v4.7"/></svg>`,
+  windowdoor:`<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="14" height="14" rx="1.5"/><path d="M10 4v14M3 11h14"/><rect x="20" y="4" width="9" height="24" rx="1.5"/><circle cx="26" cy="16" r="0.9" fill="currentColor" stroke="none"/></svg>`,
 };
 const CHECK = `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 5.5L4.5 8.5L9.5 2.5"/></svg>`;
 const SPARK = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l1.4 5.1L14.5 6.5 9.4 7.9 8 13 6.6 7.9 1.5 6.5 6.6 5.1z"/></svg>`;
@@ -1083,6 +1093,7 @@ const NEED_FACETS = {
   tree: [ {l:'Removal',m:['removal','remove']}, {l:'Pruning & trimming',m:['prun','trim']}, {l:'Stump grinding',m:['stump']}, {l:'Storm & emergency',m:['storm','emergency']}, {l:'Tree & plant health',m:['health','arborist','shrub']}, {l:'Land clearing',m:['clearing','lot']} ],
   painting: [ {l:'Interior',m:['interior']}, {l:'Exterior',m:['exterior']}, {l:'Cabinets',m:['cabinet']}, {l:'Power washing',m:['power wash','pressure wash']}, {l:'Decks',m:['deck']}, {l:'Carpentry & repair',m:['carpentry','drywall','ceiling','trim']}, {l:'Wallpaper',m:['wallpaper']}, {l:'Historic homes',m:['historic']} ],
   flooring: [ {l:'Hardwood & refinishing',m:['hardwood','refinish','sanding']}, {l:'Carpet',m:['carpet']}, {l:'Tile',m:['tile']}, {l:'Vinyl & laminate',m:['vinyl','laminate']}, {l:'Repairs',m:['repair','leveling']}, {l:'Stairs & custom',m:['stairs','inlay','herringbone','border']} ],
+  windows_doors: [ {l:'Window replacement',m:['window replacement','window install']}, {l:'Entry & patio doors',m:['entry door','patio door','sliding door']}, {l:'Garage & overhead doors',m:['garage door','overhead door']}, {l:'Repairs',m:['repair','foggy','seal']}, {l:'Shower doors & glass',m:['shower door','custom glass','glazier']}, {l:'European & custom',m:['european','custom window']} ],
 };
 
 /* ===== MATCH ENGINE — the tailored triage (Stage 1, Step 1) =====
@@ -1152,6 +1163,10 @@ const JOB_LABELS = {
   'carpet-installation':'Carpet installation','tile-floor':'Tile flooring',
   'vinyl-or-laminate':'Vinyl or laminate','floor-repair':'Floor repair',
   'stairs-or-custom-work':'Stairs or custom work',   // flooring (Phase D campaign 2)
+  'window-replacement':'Window replacement','entry-or-patio-doors':'Entry or patio doors',
+  'garage-or-overhead-doors':'Garage or overhead doors','window-or-door-repair':'Window or door repair',
+  'shower-doors-or-custom-glass':'Shower doors or custom glass','custom-or-european-windows':'Custom or European windows',
+  'egress-or-basement-windows':'Egress or basement windows',   // windows_doors (Phase D campaign 3)
 };
 function jobLabel(v){ return JOB_LABELS[v] || String(v||'').replace(/-/g,' ').replace(/\b\w/g, c=>c.toUpperCase()); }
 // Lowercase a label for mid-sentence use, but keep leading acronyms (EV, AC) intact.
@@ -1263,8 +1278,8 @@ const tradePlural = k => { const t = trades.find(t=>t.key===k); return t?t.plura
 const tradeLabelOf = k => { const t = trades.find(t=>t.key===k); return t?t.label:k; };
 const tradeIconOf = k => { const t = trades.find(t=>t.key===k); return t?t.icon:'roof'; };
 const esc = (window.HOME && HOME.esc) ? HOME.esc : (s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])));
-const TRADE_DB = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn:'lawn_care', painting:'painting', masonry:'masonry', tree:'tree_service', flooring:'flooring' };
-const TRADE_APP = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn_care:'lawn', painting:'painting', masonry:'masonry', tree_service:'tree', flooring:'flooring' };
+const TRADE_DB = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn:'lawn_care', painting:'painting', masonry:'masonry', tree:'tree_service', flooring:'flooring', windows_doors:'windows_doors' };
+const TRADE_APP = { roofing:'roofing', hvac:'hvac', plumbing:'plumbing', electrical:'electrical', paving:'paving', lawn_care:'lawn', painting:'painting', masonry:'masonry', tree_service:'tree', flooring:'flooring', windows_doors:'windows_doors' };
 
 /* LIKES (favorites) — anon in localStorage, synced on sign-in (see syncLikes) */
 const LIKE_KEY = 'vesta_liked';
@@ -2462,9 +2477,9 @@ function goToPro(tradeKey, placeId){
    analysis is the receipts; this is everything — synthesis once, then the deep-only
    layer: where it stands · known-for with detail · how to hire the trade · the record
    · the Google source · contact · the owner's claim. */
-const PTRADE_LABEL = { roofing:'Roofing', hvac:'HVAC', plumbing:'Plumbing', electrical:'Electrical', paving:'Paving', lawn_care:'Lawn & landscaping', painting:'Painting', masonry:'Masonry', tree_service:'Tree service', flooring:'Flooring' };
-const PTRADE_FIRMS = { roofing:'roofing companies', hvac:'HVAC companies', plumbing:'plumbing companies', electrical:'electrical contractors', paving:'paving companies', lawn_care:'lawn & landscaping companies', painting:'painting companies', masonry:'masonry companies', tree_service:'tree services', flooring:'flooring companies' };
-const PTRADE_PROS  = { roofing:'roofers', hvac:'HVAC contractors', plumbing:'plumbers', electrical:'electricians', paving:'paving contractors', lawn_care:'lawn & landscaping pros', painting:'painters', masonry:'masons', tree_service:'tree crews', flooring:'flooring installers' };
+const PTRADE_LABEL = { roofing:'Roofing', hvac:'HVAC', plumbing:'Plumbing', electrical:'Electrical', paving:'Paving', lawn_care:'Lawn & landscaping', painting:'Painting', masonry:'Masonry', tree_service:'Tree service', flooring:'Flooring', windows_doors:'Windows & Doors' };
+const PTRADE_FIRMS = { roofing:'roofing companies', hvac:'HVAC companies', plumbing:'plumbing companies', electrical:'electrical contractors', paving:'paving companies', lawn_care:'lawn & landscaping companies', painting:'painting companies', masonry:'masonry companies', tree_service:'tree services', flooring:'flooring companies', windows_doors:'window & door companies' };
+const PTRADE_PROS  = { roofing:'roofers', hvac:'HVAC contractors', plumbing:'plumbers', electrical:'electricians', paving:'paving contractors', lawn_care:'lawn & landscaping pros', painting:'painters', masonry:'masons', tree_service:'tree crews', flooring:'flooring installers', windows_doors:'window & door installers' };
 const PGUIDE = {
   roofing: [
     { t:'Confirm CT registration & insurance', d:"Any roofer working on a Connecticut home needs an active Home Improvement Contractor registration plus their own liability and workers'-comp coverage. Ask to see both before work starts." },
@@ -2525,6 +2540,12 @@ const PGUIDE = {
     { t:'Get the prep underfoot in writing', d:'A floor lasts or fails on what is beneath it — moisture testing, subfloor repair and leveling, acclimating the wood before install. A quote that only prices the visible boards hides the part that decides whether they cup, gap, or squeak later.' },
     { t:'Refinish vs. replace is the real first question', d:'Solid hardwood can usually be sanded and refinished for a fraction of replacement — but not always, and engineered floors only take so many sandings. Ask the installer to make the case for the path they quote, not just price one.' },
     { t:'Pin down dust, finish, and the timeline', d:'Sanding is disruptive — ask about dust containment, which finish (oil vs. water-based changes cure time and smell), how long before furniture goes back, and who moves it. Spell out cleanup and the warranty on both material and labor.' }
+  ],
+  windows_doors: [
+    { t:'Confirm CT registration & insurance', d:'Window and door replacement is home-improvement work — the installer should hold an active Connecticut Home Improvement Contractor registration and carry liability coverage. Ask to see both before work starts.' },
+    { t:'Ask who actually installs it', d:'Some window sellers subcontract installation to whoever is available that week. Ask whether the crew is in-house, and who is named to lead your specific job.' },
+    { t:'Pin down the product line and glass spec', d:'Brand, series, glazing (double vs. triple pane), and low-E or gas-fill options change both price and performance. Get the exact spec in writing, not just "energy-efficient windows."' },
+    { t:'Nail down measurements before ordering', d:'Custom windows and doors are made to the measurement taken — a mistake here means weeks of delay waiting on a remake. Ask who re-verifies measurements before the order is placed.' }
   ]
 };
 const BACKARROW = '<svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg>';
@@ -2542,6 +2563,7 @@ function tradeGuessFrom(t){
   if (/lawn|landscap/i.test(t)) return 'lawn_care';
   if (/paint/i.test(t)) return 'painting';
   if (/mason|brick|stone|chimney/i.test(t)) return 'masonry';
+  if (/window|garage.{0,8}door|glazier|egress/i.test(t)) return 'windows_doors';
   return '';
 }
 function pTradeKey(){ const enr=profData.enr, p=profData.p; return (enr && enr.trade) || tradeGuessFrom(p.primary_type); }
@@ -2703,6 +2725,14 @@ const STANDING_SPECIALTY = {
     commercial_capable:       ['Specialty','Commercial-capable','Handles commercial flooring alongside residential — a wider remit than most %F we track.'],
     herringbone_parquet_inlay:['Specialty','Herringbone &amp; pattern work','One of the very few %F we track skilled in herringbone, parquet, and custom pattern floors.'],
     home_gym_flooring:        ['Specialty','Home-gym flooring','Specializes in home-gym flooring — a niche most %F we track don\'t offer.']
+  },
+  windows_doors: {
+    egress_windows:            ['Specialty','Egress window installs','One of the very few %F we track equipped for basement egress-window installs — foundation-cutting work most window companies don\'t take on.'],
+    european_custom_windows:   ['Specialty','European &amp; custom windows','One of the very few %F we track skilled in European tilt-turn and architect-grade custom windows.'],
+    shower_doors_custom_glass: ['Specialty','Shower doors &amp; custom glass','Fabricates custom glass and shower enclosures in-house — more than most %F we track offer.'],
+    automatic_gates_openers:   ['Specialty','Gates &amp; automatic openers','One of the few %F we track that install and service automatic gates and openers alongside standard doors.'],
+    storm_windows_doors:       ['Specialty','Storm windows &amp; doors','One of the few %F we track carrying storm windows and doors as a standing line, not a special order.'],
+    commercial_capable:        ['Specialty','Commercial-capable','Handles commercial glazing and door work alongside residential — a wider remit than most %F we track.']
   }
 };
 function profStandingHTML(){

@@ -53,8 +53,8 @@ export function isIndexable(enr) {
 }
 
 // Trade label maps — mirror contractor.html / home.js. Never a parallel set.
-const TRADE_FIRMS = { roofing: 'roofing companies', hvac: 'HVAC companies', plumbing: 'plumbing companies', electrical: 'electrical contractors', paving: 'paving companies', lawn_care: 'lawn & landscaping companies', painting: 'painting companies', masonry: 'masonry companies', tree_service: 'tree services', flooring: 'flooring companies' };
-const TRADE_PROS  = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons', tree_service: 'tree crews', flooring: 'flooring installers' };
+const TRADE_FIRMS = { roofing: 'roofing companies', hvac: 'HVAC companies', plumbing: 'plumbing companies', electrical: 'electrical contractors', paving: 'paving companies', lawn_care: 'lawn & landscaping companies', painting: 'painting companies', masonry: 'masonry companies', tree_service: 'tree services', flooring: 'flooring companies', windows_doors: 'window & door companies' };
+const TRADE_PROS  = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons', tree_service: 'tree crews', flooring: 'flooring installers', windows_doors: 'window & door installers' };
 const tLowerOf = (trade) => (trade === 'hvac' ? 'HVAC' : (tradeLabel(trade) ? tradeLabel(trade).toLowerCase() : ''));
 
 // Freshness (M11) — turn an enriched_at ISO date into "June 2026". Vouch-don't-
@@ -131,6 +131,12 @@ const HIRING_GUIDE = {
     { t: 'Get the prep underfoot in writing', d: 'A floor lasts or fails on what is beneath it — moisture testing, subfloor repair and leveling, acclimating the wood before install. A quote that only prices the visible boards hides the part that decides whether they cup, gap, or squeak later.' },
     { t: 'Refinish vs. replace is the real first question', d: 'Solid hardwood can usually be sanded and refinished for a fraction of replacement — but not always, and engineered floors only take so many sandings. Ask the installer to make the case for the path they quote, not just price one.' },
     { t: 'Pin down dust, finish, and the timeline', d: 'Sanding is disruptive — ask about dust containment, which finish (oil vs. water-based changes cure time and smell), how long before furniture goes back, and who moves it. Spell out cleanup and the warranty on both material and labor.' }
+  ],
+  windows_doors: [
+    { t: 'Confirm CT registration & insurance', d: 'Window and door replacement is home-improvement work — the installer should hold an active Connecticut Home Improvement Contractor registration and carry liability coverage. Ask to see both before work starts.' },
+    { t: 'Ask who actually installs it', d: 'Some window sellers subcontract installation to whoever is available that week. Ask whether the crew is in-house, and who is named to lead your specific job.' },
+    { t: 'Pin down the product line and glass spec', d: 'Brand, series, glazing (double vs. triple pane), and low-E or gas-fill options change both price and performance. Get the exact spec in writing, not just "energy-efficient windows."' },
+    { t: 'Nail down measurements before ordering', d: 'Custom windows and doors are made to the measurement taken — a mistake here means weeks of delay waiting on a remake. Ask who re-verifies measurements before the order is placed.' }
   ]
 };
 
@@ -227,6 +233,14 @@ const STANDING_SPECIALTY = {
     commercial_capable:       ['Specialty', 'Commercial-capable', 'Handles commercial flooring alongside residential — a wider remit than most %F we track.'],
     herringbone_parquet_inlay:['Specialty', 'Herringbone &amp; pattern work', 'One of the very few %F we track skilled in herringbone, parquet, and custom pattern floors.'],
     home_gym_flooring:        ['Specialty', 'Home-gym flooring', 'Specializes in home-gym flooring — a niche most %F we track don\'t offer.'],
+  },
+  windows_doors: {
+    egress_windows:            ['Specialty', 'Egress window installs', 'One of the very few %F we track equipped for basement egress-window installs — foundation-cutting work most window companies don\'t take on.'],
+    european_custom_windows:   ['Specialty', 'European &amp; custom windows', 'One of the very few %F we track skilled in European tilt-turn and architect-grade custom windows.'],
+    shower_doors_custom_glass: ['Specialty', 'Shower doors &amp; custom glass', 'Fabricates custom glass and shower enclosures in-house — more than most %F we track offer.'],
+    automatic_gates_openers:   ['Specialty', 'Gates &amp; automatic openers', 'One of the few %F we track that install and service automatic gates and openers alongside standard doors.'],
+    storm_windows_doors:       ['Specialty', 'Storm windows &amp; doors', 'One of the few %F we track carrying storm windows and doors as a standing line, not a special order.'],
+    commercial_capable:        ['Specialty', 'Commercial-capable', 'Handles commercial glazing and door work alongside residential — a wider remit than most %F we track.'],
   },
 };
 function vestaReadBlock(enr, trade) {
