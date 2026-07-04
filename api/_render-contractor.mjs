@@ -53,8 +53,8 @@ export function isIndexable(enr) {
 }
 
 // Trade label maps — mirror contractor.html / home.js. Never a parallel set.
-const TRADE_FIRMS = { roofing: 'roofing companies', hvac: 'HVAC companies', plumbing: 'plumbing companies', electrical: 'electrical contractors', paving: 'paving companies', lawn_care: 'lawn & landscaping companies', painting: 'painting companies', masonry: 'masonry companies', tree_service: 'tree services' };
-const TRADE_PROS  = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons', tree_service: 'tree crews' };
+const TRADE_FIRMS = { roofing: 'roofing companies', hvac: 'HVAC companies', plumbing: 'plumbing companies', electrical: 'electrical contractors', paving: 'paving companies', lawn_care: 'lawn & landscaping companies', painting: 'painting companies', masonry: 'masonry companies', tree_service: 'tree services', flooring: 'flooring companies' };
+const TRADE_PROS  = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons', tree_service: 'tree crews', flooring: 'flooring installers' };
 const tLowerOf = (trade) => (trade === 'hvac' ? 'HVAC' : (tradeLabel(trade) ? tradeLabel(trade).toLowerCase() : ''));
 
 // Freshness (M11) — turn an enriched_at ISO date into "June 2026". Vouch-don't-
@@ -125,6 +125,12 @@ const HIRING_GUIDE = {
     { t: 'Get base prep and drainage in writing', d: 'Patios, walkways, and walls last or fail on what is underneath — excavation depth, a compacted gravel base, and how water is directed away. A quote that only describes the visible stone hides the part that decides longevity.' },
     { t: 'Match the material and the repair to the house', d: 'Ask which stone, brick, or paver and what pattern, and on older or historic homes, how new work and mortar will match the existing. For chimneys and foundations, confirm whether they are rebuilding or repairing — and why.' },
     { t: 'Pin down permits, timeline, and cleanup', d: 'Belgian-block aprons and structural walls can require local permits — confirm who pulls them. Spell out the schedule, site protection, daily cleanup, and how long the work is guaranteed.' }
+  ],
+  flooring: [
+    { t: 'Confirm CT registration & insurance', d: 'Flooring installation and refinishing is home-improvement work — the installer should hold an active Connecticut Home Improvement Contractor registration and carry liability coverage. Ask to see both before work starts.' },
+    { t: 'Get the prep underfoot in writing', d: 'A floor lasts or fails on what is beneath it — moisture testing, subfloor repair and leveling, acclimating the wood before install. A quote that only prices the visible boards hides the part that decides whether they cup, gap, or squeak later.' },
+    { t: 'Refinish vs. replace is the real first question', d: 'Solid hardwood can usually be sanded and refinished for a fraction of replacement — but not always, and engineered floors only take so many sandings. Ask the installer to make the case for the path they quote, not just price one.' },
+    { t: 'Pin down dust, finish, and the timeline', d: 'Sanding is disruptive — ask about dust containment, which finish (oil vs. water-based changes cure time and smell), how long before furniture goes back, and who moves it. Spell out cleanup and the warranty on both material and labor.' }
   ]
 };
 
@@ -213,6 +219,14 @@ const STANDING_SPECIALTY = {
     land_clearing:      ['Specialty', 'Land &amp; lot clearing', 'One of the few %F we track that take on full land and lot clearing, not just single-tree removal.'],
     cabling_bracing:    ['Specialty', 'Cabling &amp; bracing', 'One of the few %F we track who cable and brace structurally weak trees to save them — specialized arborist work.'],
     commercial_capable: ['Specialty', 'Commercial-capable', 'Handles commercial and municipal tree work alongside residential — a wider remit than most %F we track.'],
+  },
+  flooring: {
+    subfloor_leveling_repair: ['Specialty', 'Subfloor leveling &amp; repair', 'One of the few %F we track that fix the subfloor underneath — leveling and structural repair before a new floor ever goes down.'],
+    water_damage_repair:      ['Specialty', 'Water-damage restoration', 'One of the few %F we track equipped to rescue a floor after water damage rather than just replace it.'],
+    dustless_refinishing:     ['Specialty', 'Dustless refinishing', 'One of the few %F we track offering dust-contained refinishing — a cleaner process most crews don\'t provide.'],
+    commercial_capable:       ['Specialty', 'Commercial-capable', 'Handles commercial flooring alongside residential — a wider remit than most %F we track.'],
+    herringbone_parquet_inlay:['Specialty', 'Herringbone &amp; pattern work', 'One of the very few %F we track skilled in herringbone, parquet, and custom pattern floors.'],
+    home_gym_flooring:        ['Specialty', 'Home-gym flooring', 'Specializes in home-gym flooring — a niche most %F we track don\'t offer.'],
   },
 };
 function vestaReadBlock(enr, trade) {
