@@ -124,6 +124,20 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .vsr-arrow { margin-left:auto; color:var(--olive); font-size:18px; flex-shrink:0; padding-right:4px; }
 .vsr-route .vsr-mono svg { width:20px; height:20px; color:var(--olive); }
 .home-sign { text-align:center; font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--ebony); margin-top:32px; letter-spacing:.005em; }
+/* Desktop-only proof beats — hidden by default (mobile keeps the trade grid as its
+   "or browse" instead); shown via the desktop media query once populated with real data. */
+.home-trust, .home-sample { display:none; }
+.home-trust { text-align:center; font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:rgba(74,75,47,.55); margin-top:34px; }
+.home-trust b { color:var(--olive); font-weight:600; }
+.home-sample { margin-top:18px; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-row); padding:22px 26px; }
+.home-sample .hsp-kicker { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--olive); margin-bottom:10px; }
+.hsp-shuffle { margin-left:auto; display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; border:1px solid rgba(74,75,47,.14); background:var(--bg); color:var(--olive); cursor:pointer; transition:transform .3s var(--spring), background .15s; }
+.hsp-shuffle:hover { background:var(--tea); }
+.hsp-shuffle:active svg { transform:rotate(180deg); }
+.hsp-shuffle svg { transition:transform .3s var(--spring); }
+.home-sample .hsp-text { font-family:var(--serif); font-size:16px; line-height:1.6; color:var(--olive); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+.home-sample .hsp-attr { margin-top:12px; font-size:12.5px; color:var(--ebony); }
+.home-sample .hsp-attr b { color:var(--olive); }
 
 /* ===== RETURN BAND (Stage 1.5) — recognizes a returning homeowner: resume the last match
    + jump to the saved shortlist. Renders ONLY when there's state; a first-timer sees nothing
@@ -499,9 +513,38 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
      hidden and force-skipped straight into a trade — first landing should feel like an
      invitation, not a pre-picked list. */
   #s-browse.screen, #s-match.screen, #s-home.screen { flex:1; min-width:0; height:100vh; overflow-y:auto; }
-  #s-home .home-body { max-width:600px; margin:0 auto; padding:9vh 24px 80px; flex:none; }
-  #s-home .home-h1 { font-size:44px; }
-  #s-home .home-sign { text-align:center; margin-top:22px; }
+  /* A fixed narrow column centered in a wide viewport reads as a printed letter — huge
+     dead gutters either side. Use the actual width instead: a soft radial glow behind
+     the hero (depth, not decoration) and content that spans further before wrapping. */
+  #s-home .home-body { max-width:1120px; margin:0 auto; padding:8vh 40px 80px; flex:none;
+    background:radial-gradient(720px 420px at 88% -8%, rgba(212,223,158,.32), transparent 62%); }
+  #s-home .home-h1 { font-size:46px; }
+  /* The sidebar is the full trade taxonomy on desktop — repeating it as tiles in the
+     center column was pure duplication (same group labels, same counts, twice). Center
+     stays focused on discovery: search + problems + the personalized return band. */
+  #s-home .home-browselbl, #s-home .trades-grid { display:none; }
+  #s-home .home-trust:not([hidden]) { display:block; }
+  #s-home .home-sample:not([hidden]) { display:block; }
+  #s-home .home-sign { text-align:center; margin-top:40px; }
+  /* Entrance choreography — the hero stops looking like a static page and starts
+     looking like something that just happened, each piece a beat behind the last. */
+  #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems,
+  #s-home .home-hero-proof { animation:tileIn .5s var(--spring) both; }
+  #s-home .home-h1 { animation-delay:.03s; } #s-home .home-sub { animation-delay:.09s; }
+  #s-home .home-search { animation-delay:.15s; } #s-home .home-problems { animation-delay:.21s; }
+  #s-home .home-hero-proof { animation-delay:.32s; }
+  @media (prefers-reduced-motion:reduce){ #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems, #s-home .home-hero-proof { animation:none; } }
+}
+@media (min-width:1200px) {
+  /* The actual fix for "reads like a document": an asymmetric two-column split instead
+     of one centered column drowning in side margins. Left = the action (search, the
+     job you came to do); right = proof, pinned so it stays in view while you read. */
+  #s-home .home-hero { display:grid; grid-template-columns:1.15fr .85fr; gap:64px; align-items:start; }
+  #s-home .home-hero-proof { position:sticky; top:8vh; margin-top:0; }
+  #s-home .home-trust { text-align:left; }
+  #s-home .home-sign { text-align:left; }
+}
+@media (min-width:900px) {
   #s-match .match-wrap { padding:30px 40px 60px; }
   .mw-q { font-size:31px; }
   #s-browse .browse-hdr { padding:34px 40px 4px; }
@@ -860,16 +903,28 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   <div id="s-home" class="screen active" role="main" aria-label="Pick a trade">
     <header class="topbar"><a class="tb-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a><span class="tb-spacer"></span></header>
     <main class="home-body">
-      <div class="home-return" id="home-return"></div>
-      <h1 class="home-h1">Find a contractor you can actually trust.</h1>
-      <p class="home-sub">Fairfield County&rsquo;s verified contractor network.</p>
-      <button class="home-search" id="home-search" type="button" aria-label="Search contractors or describe what you need">
-        <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg>
-        <span class="hs-ph">&ldquo;<span id="home-search-ph"></span><span class="hs-caret" aria-hidden="true"></span>&rdquo;</span>
-      </button>
-      <div class="home-problems" id="home-problems" role="list" aria-label="Common needs"></div>
-      <div class="home-browselbl">Or browse by trade</div>
-      <div class="trades-grid" id="trades-grid" role="list"></div>
+      <div class="home-hero">
+        <div class="home-hero-main">
+          <div class="home-return" id="home-return"></div>
+          <h1 class="home-h1">Find a contractor you can actually trust.</h1>
+          <p class="home-sub">Fairfield County&rsquo;s verified contractor network.</p>
+          <button class="home-search" id="home-search" type="button" aria-label="Search contractors or describe what you need">
+            <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg>
+            <span class="hs-ph">&ldquo;<span id="home-search-ph"></span><span class="hs-caret" aria-hidden="true"></span>&rdquo;</span>
+          </button>
+          <div class="home-problems" id="home-problems" role="list" aria-label="Common needs"></div>
+          <div class="home-browselbl">Or browse by trade</div>
+          <div class="trades-grid" id="trades-grid" role="list"></div>
+        </div>
+        <!-- Desktop-only proof panel (sidebar already owns full browse) — a real aggregate
+             stat and a real published read, both from live data, never placeholder copy.
+             Sits BESIDE the action column, not stacked below it — the asymmetric split is
+             what makes this read as a landing screen instead of a centered document. -->
+        <div class="home-hero-proof" id="home-hero-proof">
+          <p class="home-trust" id="home-trust" hidden></p>
+          <div class="home-sample" id="home-sample" hidden></div>
+        </div>
+      </div>
       <p class="home-sign">Vetted, never advertised.</p>
     </main>
   </div>
@@ -1125,6 +1180,7 @@ const ICONS = {
 };
 const CHECK = `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 5.5L4.5 8.5L9.5 2.5"/></svg>`;
 const SPARK = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l1.4 5.1L14.5 6.5 9.4 7.9 8 13 6.6 7.9 1.5 6.5 6.6 5.1z"/></svg>`;
+const SHUFFLE = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>`;
 const SHIELD = `<svg width="14" height="15" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M7 1l5 2v5c0 3.5-2.3 5.7-5 7-2.7-1.3-5-3.5-5-7V3z"/></svg>`;
 const HEART = `<svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"/></svg>`;
 const HEART_FILL = `<svg width="18" height="18" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"/></svg>`;
@@ -1507,7 +1563,42 @@ async function loadContractors(){
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
   }
   updateHomeCounts();   // fill the home tiles' depth counts if the home screen rendered before data landed
+  renderHomeProof();
   syncSavedUI();
+}
+// Desktop home proof beats — real aggregate + a real read, standing in for the trade
+// grid the sidebar now owns alone. Both no-op silently if data hasn't landed yet.
+let _proofPool = null, _proofLast = null;
+function renderHomeProof(){
+  const trustEl = $('home-trust'), sampleEl = $('home-sample');
+  if (!trustEl || !sampleEl || !contractors.length) return;
+  const tradeCount = new Set(contractors.map(c => c.trade)).size;
+  trustEl.innerHTML = '<b>' + contractors.length.toLocaleString('en-US') + '</b> vetted pros across <b>' + tradeCount + '</b> trades in Fairfield County';
+  trustEl.hidden = false;
+  // Pick from the top-rated tier only, and pick RANDOMLY each load (never the same firm
+  // twice in a row) — no business gets a standing "featured" slot; it's proof-of-the-read,
+  // not an ad placement. A shuffle control makes that randomness visible/usable, not just
+  // an implementation detail — the one genuinely interactive thing on the page.
+  _proofPool = contractors.filter(c => c.ratingBand === 'top10' && c.read && c.read.length > 80);
+  if (!_proofPool.length){ sampleEl.hidden = true; return; }
+  paintProofSample();
+  sampleEl.hidden = false;
+}
+function paintProofSample(){
+  const sampleEl = $('home-sample'); if (!sampleEl || !_proofPool || !_proofPool.length) return;
+  let pick = _proofPool[Math.floor(Math.random() * _proofPool.length)];
+  if (_proofPool.length > 1) while (pick === _proofLast) pick = _proofPool[Math.floor(Math.random() * _proofPool.length)];
+  _proofLast = pick;
+  sampleEl.innerHTML = '<div class="hsp-kicker">'+SPARK+'Vesta’s read — a real example'+
+      '<button class="hsp-shuffle" id="hsp-shuffle" type="button" aria-label="Show another example">'+SHUFFLE+'</button></div>'+
+    '<p class="hsp-text">“'+esc(pick.read)+'”</p>'+
+    '<p class="hsp-attr"><b>'+esc(pick.name)+'</b> · '+esc(tradeLabelOf(pick.trade))+' · '+esc(pick.town)+'</p>'+
+    '<a class="va-full" href="/c/'+encodeURIComponent(pick.placeId)+'" data-place="'+esc(pick.placeId)+'" style="margin-top:4px">See the full profile →</a>';
+  const sh = $('hsp-shuffle'); if (sh) sh.addEventListener('click', () => {
+    sampleEl.style.animation = 'none'; void sampleEl.offsetHeight;
+    sampleEl.style.animation = 'tileIn .34s var(--spring) both';
+    paintProofSample();
+  });
 }
 
 /* HOME — search placeholder as a live typewriter: each example types out letter by
