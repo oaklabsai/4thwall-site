@@ -17,6 +17,8 @@
     if (!m) return;
     const placeId = m[1];
 
+    countStat();   // before the awaits — the stat is SSR'd and shouldn't wait on the API
+
     const account = await HOME.navAccount();
 
     // Live data from the worker (Places-backed). Never stored; absent on error.
@@ -156,6 +158,29 @@
           ? contactRows(u)
           : '<p class="note">No public phone or website surfaced for this pro yet — use “Request through Vesta” above and we’ll carry your message straight to them.</p>') +
         '</div>';
+    }
+
+    // 2.5 Review-count roll-up — the "N public reviews" stat counts up when it
+    // scrolls into view. Pure flourish on an SSR'd number: crawlers and
+    // reduced-motion users see the final value untouched.
+    function countStat() {
+      const el = document.querySelector('.hw-count strong');
+      if (!el || !('IntersectionObserver' in window)) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const n = parseInt(String(el.textContent).replace(/[^0-9]/g, ''), 10);
+      if (!n || n < 10) return;   // tiny counts don't earn an animation
+      const fmt = (v) => v.toLocaleString('en-US');
+      const io = new IntersectionObserver((entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        const t0 = performance.now(), DUR = 900;
+        (function tick(now) {
+          const p = Math.min(1, (now - t0) / DUR), e = 1 - Math.pow(1 - p, 3);
+          el.textContent = fmt(Math.round(e * n));
+          if (p < 1) requestAnimationFrame(tick);
+        })(t0);
+      }, { threshold: 0.6 });
+      io.observe(el);
     }
 
     // 3. Claim form (server-rendered markup; wired here). ---------------------

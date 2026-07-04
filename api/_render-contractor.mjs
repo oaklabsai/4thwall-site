@@ -293,7 +293,9 @@ function homeownersBlock(enr) {
   }
   if (enr.synthesis) {
     const analyzed = monthYear(enr.enriched_at);
-    html += '<div class="card-block"><p style="font-size:.96rem;line-height:1.7">' + esc(enr.synthesis) + '</p>' +
+    // The read is the product — same voice as the app card: spark kicker + the serif.
+    html += '<div class="card-block vread-block"><p class="vread-kicker"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0l1.4 5.1L14.5 6.5 9.4 7.9 8 13 6.6 7.9 1.5 6.5 6.6 5.1z"/></svg>Vesta’s read</p>' +
+      '<p class="vread">' + esc(enr.synthesis) + '</p>' +
       '<p class="fine" style="margin-top:.9rem">Summarized by Vesta from ' +
       'public reviews' + (analyzed ? ' · analyzed ' + esc(analyzed) : '') +
       ' — Vesta’s own wording, not the business’s, and never a copy of any single review.</p></div>';
@@ -563,6 +565,15 @@ const ATLAS_MOMENT_CSS =
   '<style>' +
   '.hw-count{font-family:var(--mono,inherit);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--vmut,#6b654b);margin:.1rem 0 1rem}' +
   '.hw-count strong{font-family:var(--display,inherit);font-size:1.15rem;font-weight:600;letter-spacing:-.01em;color:var(--vink,#5C5346)}' +
+  /* Vesta's read — the same voice as the app card: spark kicker + the serif, slightly up-sized. */
+  '.vread-kicker{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--mono,monospace);font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--vgreen-2,#4a4b2f);margin-bottom:.55rem}' +
+  '.vread{font-family:var(--display,Georgia,serif);font-size:1.12rem;line-height:1.65;letter-spacing:-.005em;color:var(--vink,#393A22)}' +
+  /* Scroll-reveal — content blocks rise in as they enter the viewport. CSS scroll-driven
+     animation only: no JS, no effect on browsers without support or with reduced motion. */
+  '@supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {' +
+  ' .vwhy .w, .vread-block, .vverify, .cost-line, .rel-card, .atlas-moment { animation:crIn both; animation-timeline:view(); animation-range:entry 5% entry 38%; }' +
+  ' @keyframes crIn { from { opacity:.001; transform:translateY(16px); } to { opacity:1; transform:none; } }' +
+  '}}' +
   '.atlas-moment{--a-bg:#191712;--a-bg2:#211e16;--a-line:rgba(222,206,164,.18);--a-sand:#dcceaa;--a-sand-2:#ece2c8;--a-mut:rgba(236,226,200,.6);position:relative;margin:2.4rem 0 1rem;padding:clamp(1.6rem,3.6vw,2.5rem);background:radial-gradient(620px 320px at 86% -120px,rgba(222,206,164,.12),transparent 60%),linear-gradient(180deg,var(--a-bg2),var(--a-bg));border:1px solid var(--a-line);border-radius:24px;box-shadow:0 44px 96px -52px rgba(0,0,0,.92)}' +
   '.atlas-moment .am-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--a-sand);margin-bottom:.7rem}' +
   '.atlas-moment .am-h{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.05rem);font-weight:500;letter-spacing:-.02em;color:var(--vcream);line-height:1.14}' +
