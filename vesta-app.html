@@ -470,10 +470,15 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   body { display:block; padding:0; background:var(--bg); }
   #app { width:100%; max-width:none; min-height:100vh; margin:0; border-radius:0; overflow:visible; box-shadow:none; display:flex; flex-direction:row; background:var(--bg); }
   #dsidebar { display:flex; flex-direction:column; width:248px; flex-shrink:0; padding:26px 14px 22px; background:#ECEEE0; border-right:1px solid rgba(74,75,47,.1); position:sticky; top:0; height:100vh; }
-  .ds-brand { display:flex; align-items:center; gap:9px; padding:2px 10px 26px; }
+  .ds-brand { display:flex; align-items:center; gap:9px; padding:2px 10px 26px; flex-shrink:0; }
   .ds-logo { display:flex; align-items:center; justify-content:center; width:32px; height:32px; color:var(--olive); }
   .ds-logo svg { width:27px; height:27px; }
-  .ds-nav { display:flex; flex-direction:column; gap:3px; flex:1; }
+  /* The nav list owns its own scroll (min-height:0 is what lets a flex child shrink below
+     its content size) — brand + footer stay pinned even if the trade list overflows a
+     short viewport, instead of the whole sidebar clipping. */
+  .ds-nav { display:flex; flex-direction:column; gap:3px; flex:1; min-height:0; overflow-y:auto; scrollbar-width:thin; }
+  .ds-glabel { font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.13em; text-transform:uppercase; color:rgba(74,75,47,.5); padding:12px 14px 4px; }
+  .ds-glabel:first-child { padding-top:4px; }
   .ds-item { display:flex; align-items:center; gap:13px; width:100%; padding:11px 14px; border:none; background:none; cursor:pointer; border-radius:13px; text-align:left; color:var(--ebony); transition:background .14s, color .14s; }
   .ds-item:hover { background:rgba(255,255,255,.6); color:var(--olive); }
   .ds-item.on { background:var(--white); color:var(--olive); box-shadow:0 1px 3px rgba(74,75,47,.06), 0 6px 16px -6px rgba(74,75,47,.16); }
@@ -482,16 +487,21 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .ds-lbl { font-size:15px; font-weight:500; flex:1; }
   .ds-ct { font-family:var(--mono); font-size:12px; color:var(--ebony); opacity:.65; }
   .ds-item.on .ds-ct { color:var(--olive); opacity:.8; }
-  .ds-foot { display:flex; flex-direction:column; gap:2px; padding-top:14px; border-top:1px solid rgba(74,75,47,.1); }
+  .ds-foot { display:flex; flex-direction:column; gap:2px; padding-top:14px; border-top:1px solid rgba(74,75,47,.1); flex-shrink:0; }
   .ds-foot-btn { display:flex; align-items:center; gap:13px; padding:11px 14px; border:none; background:none; cursor:pointer; border-radius:12px; color:var(--ebony); font-family:var(--sans); font-size:14px; font-weight:500; }
   .ds-foot-btn:hover { background:rgba(255,255,255,.6); color:var(--olive); }
   .ds-foot-btn.on { background:var(--white); color:var(--olive); }
   .ds-foot-btn svg { width:20px; height:20px; }
 
   .topbar, .bnav { display:none; }
-  #s-home { display:none !important; }
 
-  #s-browse.screen, #s-match.screen { flex:1; min-width:0; height:100vh; }
+  /* Home now renders on desktop too (inside the sidebar+content shell) instead of being
+     hidden and force-skipped straight into a trade — first landing should feel like an
+     invitation, not a pre-picked list. */
+  #s-browse.screen, #s-match.screen, #s-home.screen { flex:1; min-width:0; height:100vh; overflow-y:auto; }
+  #s-home .home-body { max-width:600px; margin:0 auto; padding:9vh 24px 80px; flex:none; }
+  #s-home .home-h1 { font-size:44px; }
+  #s-home .home-sign { text-align:center; margin-top:22px; }
   #s-match .match-wrap { padding:30px 40px 60px; }
   .mw-q { font-size:31px; }
   #s-browse .browse-hdr { padding:34px 40px 4px; }
@@ -1581,6 +1591,9 @@ function updateHomeCounts(){
     const n = byTrade(el.dataset.ct).length;
     el.textContent = n ? (n + ' vetted') : '';
   });
+  document.querySelectorAll('.ds-ct[data-ct]').forEach(el => {
+    el.textContent = byTrade(el.dataset.ct).length || '';
+  });
 }
 
 /* RETURN BAND — resume last match (primary) + saved shortlist (secondary). Renders only
@@ -1641,15 +1654,23 @@ function renderNeedChips(){
     rebuildDeck(); renderDeck(); updateBrowseHead(); updateFilterTrigger(); renderNeedChips();
   }));
 }
+// Same grouping as the mobile home grid (TRADE_GROUPS) — a homeowner's mental model of
+// the house, not a flat alphabetic-ish list of 12. Highlight only tracks an actual browse
+// view of that trade, not just the stored default while sitting on the home screen.
 function renderSidebar(){
   const nav = $('ds-nav'); if(!nav) return;
-  nav.innerHTML = trades.map(t => {
-    const on = S.mode==='trade' && S.activeTrade===t.key;
-    return '<button class="ds-item'+(on?' on':'')+'" data-k="'+t.key+'" aria-pressed="'+on+'">'+
-      '<span class="ds-ic">'+ICONS[t.icon]+'</span><span class="ds-lbl">'+t.label+'</span></button>';
+  nav.innerHTML = TRADE_GROUPS.map(g => {
+    const items = g.keys.map(k => {
+      const t = trades.find(x => x.key === k); if (!t) return '';
+      const on = S.screen==='browse' && S.mode==='trade' && S.activeTrade===t.key;
+      return '<button class="ds-item'+(on?' on':'')+'" data-k="'+t.key+'" aria-pressed="'+on+'">'+
+        '<span class="ds-ic">'+ICONS[t.icon]+'</span><span class="ds-lbl">'+t.label+'</span><span class="ds-ct" data-ct="'+t.key+'"></span></button>';
+    }).join('');
+    return '<div class="ds-glabel">'+esc(g.label)+'</div>'+items;
   }).join('');
-  Array.from(nav.children).forEach(b => b.addEventListener('click', () => switchTrade(b.dataset.k)));
+  Array.from(nav.querySelectorAll('.ds-item')).forEach(b => b.addEventListener('click', () => switchTrade(b.dataset.k)));
   const sv = $('ds-saved'); if(sv) sv.classList.toggle('on', S.mode==='saved');
+  updateHomeCounts();
 }
 function updateBrowseHead(){
   const banner = $('vbanner');
@@ -3228,7 +3249,7 @@ function showBrowse(key){
   ensureDeck(key); S.introPending = !desktop() && !S.match;     // the old "We found N" beat: plain mobile browse only
   showScreen('browse'); renderNeedChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState();
 }
-function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); renderReturn(); updateNavState(); }
+function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); renderReturn(); renderSidebar(); updateNavState(); }
 function updateNavState(){
   const home=$('nav-home'), saved=$('nav-saved');
   if(home) home.classList.toggle('on', S.screen==='home' || S.screen==='match' || (S.screen==='browse' && S.mode==='trade'));
@@ -3373,7 +3394,6 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   renderHome(); renderSidebar(); initSheetDrag();
   const _loads = Promise.all([loadContractors(), loadMatchBank()]);
   syncLikes();
-  if (desktop()) openBrowse(S.activeTrade, {walk:false});   // passive auto-land: feed, not the walkthrough
   updateNavState();
   $('btn-back').addEventListener('click', goHome);
   { const mb=$('match-back'); if(mb) mb.addEventListener('click', goHome); }
@@ -3411,11 +3431,11 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
     const id = a.getAttribute('data-place'); if (!id) return;
     e.preventDefault(); openProfile(id);
   });
-  // re-render the browse view when the layout crosses the desktop/mobile boundary
+  // re-render the browse view when the layout crosses the desktop/mobile boundary — the
+  // deck (mobile) and feed (desktop) are different DOM shapes for the same data.
   let _wasDesktop = desktop();
   window.addEventListener('resize', () => {
     const d = desktop(); if (d===_wasDesktop) return; _wasDesktop = d;
-    if (d && S.screen!=='browse' && S.screen!=='profile' && S.screen!=='request' && S.screen!=='match'){ openBrowse(S.activeTrade, {walk:false}); return; }   // desktop hides the home screen → land in the feed
     if (S.screen==='browse'){ if (S.mode==='saved') renderSaved(); else { showDeck(); updateBrowseHead(); renderDeck(); } }
   });
   // Deep-link: /c/:placeId (now rewritten to this app) or ?place= opens the profile in-app.
