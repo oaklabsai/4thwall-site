@@ -27,6 +27,10 @@
   --sh-panel: 0 1px 3px rgba(74,75,47,.05), 0 18px 48px -16px rgba(74,75,47,.18);
   --sh-nav: 0 1px 0 rgba(74,75,47,.04), 0 4px 14px -2px rgba(74,75,47,.12), 0 18px 48px -8px rgba(74,75,47,.22);
   --serif:'Fraunces',Georgia,serif; --sans:'Inter Tight',system-ui,-apple-system,sans-serif; --mono:'JetBrains Mono','Courier New',monospace;
+  /* A real (sampled) spring for the felt moments — slight overshoot, soft settle.
+     Falls back to the old cubic-bezier where linear() is unsupported. */
+  --spring: cubic-bezier(.32,1.08,.62,1);
+  --spring: linear(0, 0.01, 0.04 2.2%, 0.16 4.8%, 0.71 12.6%, 0.92 16.2%, 1.02 19.7%, 1.09 23.6%, 1.115 27.4%, 1.106 31.3%, 1.06 38%, 1.008 46.5%, 0.988 53.2%, 0.985 60.1%, 0.996 76.4%, 1);
 }
 /* Cross-document view transitions: tapping into a contractor's /c/ profile morphs the
    name/monogram instead of a hard cut. Progressive enhancement — unsupported browsers
@@ -101,8 +105,12 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .home-browselbl { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:13px; }
 /* trades demoted to compact, scannable chips */
 /* Compact icon-forward grid (like an app launcher) instead of ragged wrapped pills —
-   fixed 3 equal columns so every row lines up regardless of label length. */
-.trades-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+   grouped into labeled sections (TRADE_GROUPS), each a fixed 3-col grid so rows align. */
+.trades-grid { display:flex; flex-direction:column; gap:10px; }
+.tg-label { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:rgba(74,75,47,.55); margin-top:8px; }
+.tg-label:first-child { margin-top:0; }
+.tg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+.tile-ct { font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; color:rgba(74,75,47,.5); min-height:12px; }
 .trade-tile { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; text-align:center; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-tile); padding:14px 6px 12px; min-height:0; cursor:pointer; box-shadow:0 1px 2px rgba(74,75,47,.04); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
 .trade-tile:hover { transform:translateY(-2px); box-shadow:0 7px 16px -7px rgba(74,75,47,.22); }
 .trade-tile:active { transform:scale(.97); }
@@ -263,7 +271,11 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .mi-sub { font-size:13px; color:var(--ebony); line-height:1.45; margin-bottom:24px; max-width:250px; }
 .mi-rlabel { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ebony); opacity:.72; margin-bottom:12px; }
 .mi-factors { display:flex; flex-direction:column; gap:9px; margin-bottom:27px; }
-.mi-factor { display:flex; align-items:center; gap:9px; font-size:13.5px; font-weight:500; color:var(--olive); }
+/* Offset & delay: the ranking factors check in one after another (after the card lands),
+   so "ranked using" reads as a sequence of checks rather than a static list. */
+.mi-factor { display:flex; align-items:center; gap:9px; font-size:13.5px; font-weight:500; color:var(--olive); animation:tileIn .4s cubic-bezier(.2,.7,.3,1) both; }
+.mi-factor:nth-child(1){ animation-delay:.5s; } .mi-factor:nth-child(2){ animation-delay:.68s; } .mi-factor:nth-child(3){ animation-delay:.86s; }
+@media (prefers-reduced-motion: reduce){ .mi-factor { animation:none; } }
 .mi-factor svg { color:var(--olive); flex-shrink:0; }
 .mi-go { min-width:210px; }
 @keyframes miIn { from { opacity:0; transform:translateY(12px) scale(.985); } to { opacity:1; transform:none; } }
@@ -321,7 +333,11 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .fav-intro { font-size:12.5px; color:var(--ebony); line-height:1.55; background:rgba(212,223,158,.24); border:1px solid rgba(74,75,47,.08); border-radius:14px; padding:13px 16px; margin-bottom:2px; }
 .fav-intro b { color:var(--olive); }
 .fav-intro a { color:var(--olive); font-weight:600; white-space:nowrap; }
-.fav-empty { padding:54px 22px; text-align:center; color:var(--ebony); font-size:14px; line-height:1.55; }
+.fav-empty { display:flex; flex-direction:column; align-items:center; gap:6px; padding:54px 22px; text-align:center; color:var(--ebony); font-size:14px; line-height:1.55; }
+.fav-empty .fe-ic { width:52px; height:52px; border-radius:50%; background:var(--white); box-shadow:var(--sh-row); display:flex; align-items:center; justify-content:center; color:var(--olive); margin-bottom:8px; }
+.fav-empty .fe-ic svg { width:22px; height:22px; }
+.fav-empty .fe-h { font-family:var(--serif); font-size:19px; font-weight:600; color:var(--olive); letter-spacing:-.01em; }
+.fav-empty .fe-cta { margin-top:16px; background:var(--olive); color:var(--white); border:none; border-radius:var(--r-pill); padding:12px 24px; font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer; box-shadow:0 2px 6px rgba(74,75,47,.2), 0 10px 26px -6px rgba(74,75,47,.38); }
 .favrow { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.07); border-radius:20px; padding:16px 16px 15px; box-shadow:var(--sh-row); }
 .favrow-top { display:flex; gap:13px; align-items:flex-start; cursor:pointer; }
 .fav-mono { width:44px; height:44px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:16px; font-weight:600; color:var(--ebony); }
@@ -411,7 +427,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 /* MOBILE SHEET */
 .pscrim { position:fixed; inset:0; z-index:60; background:rgba(74,75,47,.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity .3s; }
 .pscrim.open { opacity:1; pointer-events:auto; }
-.psheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:min(390px,100vw); background:var(--white); border-radius:28px 28px 0 0; z-index:61; padding:10px 24px 48px; max-height:90vh; overflow-y:auto; overscroll-behavior:contain; transition:transform .4s cubic-bezier(.32,1.08,.62,1); box-shadow:0 -12px 40px -4px rgba(74,75,47,.18), 0 -40px 96px -12px rgba(74,75,47,.24); }
+.psheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:min(390px,100vw); background:var(--white); border-radius:28px 28px 0 0; z-index:61; padding:10px 24px 48px; max-height:90vh; overflow-y:auto; overscroll-behavior:contain; transition:transform .45s var(--spring); box-shadow:0 -12px 40px -4px rgba(74,75,47,.18), 0 -40px 96px -12px rgba(74,75,47,.24); }
 .psheet.open { transform:translateX(-50%) translateY(0); }
 .phandle-wrap { position:sticky; top:0; z-index:3; display:flex; justify-content:center; align-items:center; padding:8px 0 14px; background:var(--white); touch-action:none; cursor:grab; }
 .phandle { width:40px; height:4px; background:rgba(74,75,47,.15); border-radius:2px; }
@@ -616,7 +632,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 /* mobile filter sheet */
 .fscrim { position:fixed; inset:0; z-index:70; background:rgba(74,75,47,.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity .3s; }
 .fscrim.open { opacity:1; pointer-events:auto; }
-.fsheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:min(390px,100vw); background:var(--white); border-radius:28px 28px 0 0; z-index:71; padding:10px 24px 40px; max-height:84vh; overflow-y:auto; overscroll-behavior:contain; transition:transform .4s cubic-bezier(.32,1.08,.62,1); box-shadow:0 -12px 40px -4px rgba(74,75,47,.18), 0 -40px 96px -12px rgba(74,75,47,.24); }
+.fsheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:min(390px,100vw); background:var(--white); border-radius:28px 28px 0 0; z-index:71; padding:10px 24px 40px; max-height:84vh; overflow-y:auto; overscroll-behavior:contain; transition:transform .45s var(--spring); box-shadow:0 -12px 40px -4px rgba(74,75,47,.18), 0 -40px 96px -12px rgba(74,75,47,.24); }
 .fsheet.open { transform:translateX(-50%) translateY(0); }
 .fsheet-title { font-family:var(--serif); font-size:23px; font-weight:700; color:var(--olive); letter-spacing:-.02em; margin:2px 0 2px; }
 .fsheet-sec { margin-top:18px; }
@@ -959,6 +975,15 @@ const trades = [
   { key:'flooring', label:'Flooring', plural:'flooring pros', icon:'floor' },
   { key:'windows_doors', label:'Windows & Doors', plural:'window & door pros', icon:'windowdoor' },
   { key:'pool', label:'Pool', plural:'pool pros', icon:'pool' },
+];
+// Home-screen grouping: the homeowner's mental model of the house, not our DB taxonomy.
+// Four rooms of the problem space — systems that fail, the shell that leaks, the inside
+// you live in, the yard you keep. Every trade lives in exactly one group.
+const TRADE_GROUPS = [
+  { label:'Home systems',      keys:['hvac','plumbing','electrical'] },
+  { label:'Roof & structure',  keys:['roofing','masonry','windows_doors'] },
+  { label:'Inside the home',   keys:['flooring','painting'] },
+  { label:'Yard & outdoors',   keys:['lawn','tree','paving','pool'] },
 ];
 let contractors = [];
 let silentContractors = [];   // count-only firms (no Vesta Read yet) — kept out of the ranked deck/feed/match; surfaced only in the honest coverage tail
@@ -1471,6 +1496,7 @@ async function loadContractors(){
     if (S.mode === 'saved'){ renderSaved(); }
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
   }
+  updateHomeCounts();   // fill the home tiles' depth counts if the home screen rendered before data landed
   syncSavedUI();
 }
 
@@ -1519,19 +1545,42 @@ function renderHome(){
       pr.appendChild(b);
     });
   }
-  // trades demoted to compact chips
+  // trades, grouped by the homeowner's mental model (TRADE_GROUPS) — each group is a
+  // labeled section with its own 3-col grid, so the list scans as rooms of a directory
+  // instead of one undifferentiated pile.
   const grid = $('trades-grid'); grid.innerHTML = '';
-  trades.forEach((t,i) => {
-    const btn = document.createElement('button');
-    btn.className = 'trade-tile'; btn.setAttribute('role','listitem');
-    btn.style.setProperty('--d', (Math.min(i,10)*24)+'ms');
-    btn.setAttribute('aria-label', t.label + ' — find a pro');
-    btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span><span class="tile-name">'+t.label+'</span>';
-    btn.addEventListener('click', () => { btn.classList.add('sel'); setTimeout(()=>openBrowse(t.key),120); });
-    grid.appendChild(btn);
+  let gi = 0;
+  TRADE_GROUPS.forEach(g => {
+    const lbl = document.createElement('div');
+    lbl.className = 'tg-label'; lbl.textContent = g.label;
+    grid.appendChild(lbl);
+    const sec = document.createElement('div');
+    sec.className = 'tg-grid'; sec.setAttribute('role','list');
+    g.keys.forEach(k => {
+      const t = trades.find(x => x.key === k); if (!t) return;
+      const btn = document.createElement('button');
+      btn.className = 'trade-tile'; btn.setAttribute('role','listitem');
+      btn.style.setProperty('--d', (Math.min(gi++,10)*24)+'ms');
+      btn.setAttribute('aria-label', t.label + ' — find a pro');
+      btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span><span class="tile-name">'+t.label+'</span>'+
+        '<span class="tile-ct" data-ct="'+t.key+'"></span>';
+      btn.addEventListener('click', () => { btn.classList.add('sel'); setTimeout(()=>openBrowse(t.key),120); });
+      sec.appendChild(btn);
+    });
+    grid.appendChild(sec);
   });
+  updateHomeCounts();
   startSearchRotator();
   renderReturn();
+}
+// Depth line on each trade tile — the live count of vetted pros, filled once data lands.
+// Count = firms with a published read (the product's honest claim), not raw listings.
+function updateHomeCounts(){
+  if (!S.dataLoaded) return;
+  document.querySelectorAll('.tile-ct[data-ct]').forEach(el => {
+    const n = byTrade(el.dataset.ct).length;
+    el.textContent = n ? (n + ' vetted') : '';
+  });
 }
 
 /* RETURN BAND — resume last match (primary) + saved shortlist (secondary). Renders only
@@ -1847,8 +1896,22 @@ function renderMatchIntro(n){
   $('deck-actions').style.visibility = 'hidden';
   $('deck-meta').textContent = '';
   deck.innerHTML = matchIntroHTML(n);
+  countUp(deck.querySelector('.mi-n'), n);
   const go = $('mi-go'); if(go) go.onclick = startMatching;
   if (desktop()) renderPanel(null);
+}
+// Value-change beat: the found-count rolls up to its total instead of appearing fully
+// formed — the number is the payoff of the intro card, so it gets a moment. Eased
+// (fast start, soft landing), ~0.8s, skipped under prefers-reduced-motion.
+function countUp(el, n){
+  if (!el || !n) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent = n; return; }
+  const t0 = performance.now(), DUR = 800;
+  (function tick(now){
+    const p = Math.min(1, (now - t0) / DUR), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(e * n);
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
 }
 function startMatching(){
   $('vbanner').style.display = '';
@@ -1904,9 +1967,9 @@ function wireTopCard(con){
   const card = $('deck').querySelector('.card[data-k="0"]'); if(!card) return;
   const save = card.querySelector('.stamp-save'), pass = card.querySelector('.stamp-pass');
   const synEl = card.querySelector('.card-syn');
-  let active=false, downX=0, downY=0, dx=0, dy=0, moved=0, t0=0, mode=null, startedInSyn=false, lastY=0;
+  let active=false, downX=0, downY=0, dx=0, dy=0, moved=0, t0=0, mode=null, startedInSyn=false, lastY=0, lastX=0, lastT=0, vx=0;
   const reset = anim => { card.style.transition = anim ? 'transform .3s cubic-bezier(.34,1.1,.64,1)' : 'none'; card.style.transform=''; if(save)save.style.opacity=0; if(pass)pass.style.opacity=0; };
-  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; lastY=e.clientY; t0=Date.now(); moved=0; dx=0; dy=0; mode=null; startedInSyn = !!(synEl && synEl.contains(e.target) && synEl.scrollHeight > synEl.clientHeight + 2); card.style.transition='none'; try{card.setPointerCapture(e.pointerId);}catch(_){} });
+  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; lastY=e.clientY; lastX=e.clientX; lastT=Date.now(); vx=0; t0=Date.now(); moved=0; dx=0; dy=0; mode=null; startedInSyn = !!(synEl && synEl.contains(e.target) && synEl.scrollHeight > synEl.clientHeight + 2); card.style.transition='none'; try{card.setPointerCapture(e.pointerId);}catch(_){} });
   card.addEventListener('pointermove', e => {
     if(!active) return;
     dx=e.clientX-downX; dy=e.clientY-downY; moved=Math.max(moved, Math.abs(dx)+Math.abs(dy));
@@ -1916,6 +1979,10 @@ function wireTopCard(con){
     if(mode==='scroll'){ if(synEl) synEl.scrollTop -= (e.clientY - lastY); lastY=e.clientY; return; }
     lastY=e.clientY;
     if(mode!=='swipe') return;
+    // horizontal velocity (px/ms), lightly smoothed — lets a quick flick commit without
+    // dragging the full distance, like every native card UI.
+    const now=Date.now(), dt=now-lastT;
+    if(dt>0){ vx = 0.75*vx + 0.25*((e.clientX-lastX)/dt); lastX=e.clientX; lastT=now; }
     card.style.transform='translate('+dx+'px,'+(dy*0.35)+'px) rotate('+(dx/20)+'deg)';
     if(save)save.style.opacity=Math.max(0,Math.min(1,dx/90));
     if(pass)pass.style.opacity=Math.max(0,Math.min(1,-dx/90));
@@ -1930,8 +1997,10 @@ function wireTopCard(con){
       tapCard(con); return;
     }
     if(mode==='scroll'){ return; }   // was reading the synthesis — don't swipe/commit
-    if(dx>90){ commit('save', con); return; }
-    if(dx<-90){ commit('pass', con); return; }
+    // Commit on distance OR a decisive flick (fast, direction agrees, moved past the noise floor).
+    const flick = Math.abs(vx) > 0.55 && Math.sign(vx) === Math.sign(dx) && Math.abs(dx) > 28;
+    if(dx>90 || (flick && dx>0)){ commit('save', con); return; }
+    if(dx<-90 || (flick && dx<0)){ commit('pass', con); return; }
     reset(true);
   };
   card.addEventListener('pointerup', up);
@@ -1944,9 +2013,15 @@ function wireTopCard(con){
 }
 function tapCard(con){ if(desktop()){ logView(con&&con.placeId, con&&con.trade); renderPanel(con); } else openProfile(con.placeId); }
 function commit(dir, con){
-  const card = $('deck').querySelector('.card[data-k="0"]');
+  const deck = $('deck'), card = deck.querySelector('.card[data-k="0"]');
   if(dir==='save') setLiked(con.placeId, true);
   if(card){ const off = dir==='save' ? 1 : -1; card.style.transition='transform .32s ease, opacity .32s ease'; card.style.transform='translate('+(off*480)+'px,-26px) rotate('+(off*20)+'deg)'; card.style.opacity='0'; }
+  // Promote the under-cards in the same beat: each slides up one slot while the top card
+  // flies out, so the deck visibly advances instead of snapping on the re-render. The
+  // re-render then lands on identical resting positions — no visual seam.
+  const under1 = deck.querySelector('.card[data-k="1"]'), under2 = deck.querySelector('.card[data-k="2"]');
+  if(under1){ under1.style.transition='transform .3s var(--spring)'; under1.style.transform='translateY(0) scale(1)'; }
+  if(under2){ under2.style.transition='transform .3s var(--spring)'; under2.style.transform='translateY(30px) scale(.96)'; }
   S.deckIdx++; S.pos[S.activeTrade] = S.deckIdx;
   pushHistory(con, dir);
   setTimeout(renderDeck, 290);
@@ -2042,7 +2117,11 @@ function renderSaved(){
 function renderFav(){
   const wrap = $('favwrap'); const list = likedContractors();
   if (!list.length){
-    wrap.innerHTML = savedSeg() + '<div class="fav-empty">No saved pros yet.<br>Tap the bookmark on a pro to save them here, then sign up to keep your list and unlock their contact info.</div>';
+    wrap.innerHTML = savedSeg() + '<div class="fav-empty"><span class="fe-ic">'+BOOKMARK+'</span>'+
+      '<span class="fe-h">Your shortlist starts here</span>'+
+      '<span>Save the pros worth a call as you browse —<br>Vesta keeps the “why” next to each one.</span>'+
+      '<button class="fe-cta" id="fe-browse">Browse pros</button></div>';
+    const fb = $('fe-browse'); if (fb) fb.addEventListener('click', goHome);
     wireSavedSeg(wrap);
     if (desktop()) renderPanel(null);
     return;
@@ -2076,7 +2155,9 @@ function renderHistory(){
   const wrap = $('favwrap');
   const list = S.history.map(h => contractors.find(c => c.placeId === h.placeId)).filter(Boolean);
   if (!list.length){
-    wrap.innerHTML = savedSeg() + '<div class="fav-empty">Nothing here yet.<br>Contractors you view this session show up here — so anyone you skip is one tap from a second look.</div>';
+    wrap.innerHTML = savedSeg() + '<div class="fav-empty"><span class="fe-ic">'+SPARK+'</span>'+
+      '<span class="fe-h">Nothing viewed yet</span>'+
+      '<span>Contractors you view this session show up here —<br>so anyone you skip is one tap from a second look.</span></div>';
     wireSavedSeg(wrap);
     if (desktop()) renderPanel(null);
     return;
