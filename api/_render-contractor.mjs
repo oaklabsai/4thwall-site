@@ -53,8 +53,8 @@ export function isIndexable(enr) {
 }
 
 // Trade label maps — mirror contractor.html / home.js. Never a parallel set.
-const TRADE_FIRMS = { roofing: 'roofing companies', hvac: 'HVAC companies', plumbing: 'plumbing companies', electrical: 'electrical contractors', paving: 'paving companies', lawn_care: 'lawn & landscaping companies', painting: 'painting companies', masonry: 'masonry companies', tree_service: 'tree services', flooring: 'flooring companies', windows_doors: 'window & door companies' };
-const TRADE_PROS  = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons', tree_service: 'tree crews', flooring: 'flooring installers', windows_doors: 'window & door installers' };
+const TRADE_FIRMS = { roofing: 'roofing companies', hvac: 'HVAC companies', plumbing: 'plumbing companies', electrical: 'electrical contractors', paving: 'paving companies', lawn_care: 'lawn & landscaping companies', painting: 'painting companies', masonry: 'masonry companies', tree_service: 'tree services', flooring: 'flooring companies', windows_doors: 'window & door companies', pool: 'pool companies' };
+const TRADE_PROS  = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons', tree_service: 'tree crews', flooring: 'flooring installers', windows_doors: 'window & door installers', pool: 'pool pros' };
 const tLowerOf = (trade) => (trade === 'hvac' ? 'HVAC' : (tradeLabel(trade) ? tradeLabel(trade).toLowerCase() : ''));
 
 // Freshness (M11) — turn an enriched_at ISO date into "June 2026". Vouch-don't-
@@ -137,6 +137,12 @@ const HIRING_GUIDE = {
     { t: 'Ask who actually installs it', d: 'Some window sellers subcontract installation to whoever is available that week. Ask whether the crew is in-house, and who is named to lead your specific job.' },
     { t: 'Pin down the product line and glass spec', d: 'Brand, series, glazing (double vs. triple pane), and low-E or gas-fill options change both price and performance. Get the exact spec in writing, not just "energy-efficient windows."' },
     { t: 'Nail down measurements before ordering', d: 'Custom windows and doors are made to the measurement taken — a mistake here means weeks of delay waiting on a remake. Ask who re-verifies measurements before the order is placed.' }
+  ],
+  pool: [
+    { t: 'Confirm CT registration & insurance', d: 'Pool construction and major renovation is home-improvement work — the firm should hold an active Connecticut Home Improvement Contractor registration and carry liability coverage. Ask to see both before signing.' },
+    { t: 'Get permits and the C-of-O in writing', d: 'Unpermitted or incomplete-permit pool builds surface at home sale, sometimes years later, and can block a closing. Ask who files the permit, get the certificate of occupancy in the contract, and confirm it before final payment.' },
+    { t: 'Pin down the build type and scope', d: 'Gunite, fiberglass, and vinyl liner pools differ sharply in cost, timeline, and what a renovation later requires. Get the exact spec, decking and coping scope, and equipment brand in writing — not just "a new pool."' },
+    { t: 'Ask what a season of service actually costs', d: 'A weekly-maintenance quote often excludes chemicals, opening, and closing. Ask what is included in the base price versus billed separately before the season starts.' }
   ]
 };
 
@@ -241,6 +247,16 @@ const STANDING_SPECIALTY = {
     automatic_gates_openers:   ['Specialty', 'Gates &amp; automatic openers', 'One of the few %F we track that install and service automatic gates and openers alongside standard doors.'],
     storm_windows_doors:       ['Specialty', 'Storm windows &amp; doors', 'One of the few %F we track carrying storm windows and doors as a standing line, not a special order.'],
     commercial_capable:        ['Specialty', 'Commercial-capable', 'Handles commercial glazing and door work alongside residential — a wider remit than most %F we track.'],
+  },
+  pool: {
+    pool_water_delivery:       ['Specialty', 'Pool water delivery', 'One of the very few %F we track that deliver bulk truckload water for a fill — not just chemicals and service.'],
+    fiberglass_install:        ['Specialty', 'Fiberglass pools', 'One of the few %F we track specializing in fiberglass pool construction, crane-set in days rather than weeks.'],
+    masonry_patio_integration: ['Specialty', 'Masonry &amp; patio integration', 'Builds the surrounding patio, coping, and hardscape in-house alongside the pool — more than most %F we track offer.'],
+    custom_design_landscape:   ['Specialty', 'Custom design on difficult sites', 'Takes on sloped, tight, or "impossible" yards and designs a pool around them — a job many %F we track turn down.'],
+    above_ground_pools:        ['Specialty', 'Above-ground pools', 'One of the few %F we track that install and service above-ground pools — a segment much of the county declines.'],
+    hot_tub_spa_service:       ['Specialty', 'Hot tub &amp; spa service', 'Services hot tubs and spas alongside pools — more than most %F we track take on.'],
+    leak_detection_repair:     ['Specialty', 'Leak detection &amp; repair', 'Diagnoses and fixes underground and equipment leaks other %F we track have left unresolved.'],
+    green_pool_recovery:       ['Specialty', 'Green-pool recovery', 'One of the few %F we track known for rescuing a neglected or green pool rather than recommending a drain-and-restart.'],
   },
 };
 function vestaReadBlock(enr, trade) {

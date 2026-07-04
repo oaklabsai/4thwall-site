@@ -12,7 +12,7 @@ export const SITE = 'https://4thwall.solutions';
 export const COUNTY = 'Fairfield County';
 
 // Vesta's canonical trade order — MUST mirror home.js HOME.TRADES.
-export const TRADES = ['roofing', 'hvac', 'plumbing', 'electrical', 'paving', 'lawn_care', 'painting', 'masonry', 'tree_service', 'flooring', 'windows_doors'];
+export const TRADES = ['roofing', 'hvac', 'plumbing', 'electrical', 'paving', 'lawn_care', 'painting', 'masonry', 'tree_service', 'flooring', 'windows_doors', 'pool'];
 
 // === The family layer (Phase C 2c) ==========================================
 // Browse "aisles" over the trades — NAVIGATION ONLY, never data. The match
@@ -40,6 +40,8 @@ export const FAMILIES = [
     facets: [ { l: 'Hardwood refinishing', q: 'refinish hardwood floors' }, { l: 'New hardwood', q: 'install new hardwood floors' }, { l: 'Carpet', q: 'carpet installation' }, { l: 'Vinyl & laminate', q: 'vinyl plank flooring' } ] },
   { name: 'Windows & doors', trades: ['windows_doors'],
     facets: [ { l: 'Window replacement', q: 'window replacement' }, { l: 'Entry & patio doors', q: 'entry door' }, { l: 'Garage doors', q: 'garage door' }, { l: 'Shower doors & glass', q: 'shower door' } ] },
+  { name: 'Pool & backyard water', trades: ['pool'],
+    facets: [ { l: 'Weekly service', q: 'weekly pool service' }, { l: 'Opening & closing', q: 'pool opening' }, { l: 'New construction', q: 'new pool construction' }, { l: 'Liner replacement', q: 'pool liner' } ] },
   { name: 'Grounds & curb appeal', trades: ['lawn_care', 'tree_service', 'paving', 'masonry'],
     facets: [ { l: 'Snow removal', q: 'snow removal' }, { l: 'Gutter cleaning', q: 'gutter cleaning' }, { l: 'Fences', q: 'fence install' }, { l: 'Concrete', q: 'concrete slab' }, { l: 'Stump grinding', q: 'stump grinding' } ] },
 ];
@@ -128,7 +130,8 @@ const ICON = {
   masonry:    '<rect x="3.5" y="5" width="17" height="14" rx="1"/><path d="M3.5 9.7h17M3.5 14.3h17M9 5v4.7M14.5 5v4.7M6.2 9.7v4.6M11.8 9.7v4.6M17.3 9.7v4.6M9 14.3V19M14.5 14.3V19"/>',
   tree_service: '<circle cx="12" cy="9.5" r="5.5"/><path d="M12 15v5.5"/><path d="M9.5 20.5h5"/><path d="M12 12.5 9.8 10.3M12 10.5l1.9-1.9"/>',
   flooring:   '<rect x="3.5" y="5" width="17" height="14" rx="1"/><path d="M3.5 8.5h17M3.5 12h17M3.5 15.5h17M16 5v3.5M7.5 8.5V12M13.5 12v3.5M10 15.5V19"/>',
-  windows_doors: '<rect x="3" y="4" width="10.5" height="10.5" rx="1"/><path d="M8.25 4v10.5M3 9.25h10.5"/><rect x="15" y="4" width="6.5" height="17.5" rx="1"/><circle cx="19.5" cy="12.5" r="0.7" fill="currentColor" stroke="none"/>'
+  windows_doors: '<rect x="3" y="4" width="10.5" height="10.5" rx="1"/><path d="M8.25 4v10.5M3 9.25h10.5"/><rect x="15" y="4" width="6.5" height="17.5" rx="1"/><circle cx="19.5" cy="12.5" r="0.7" fill="currentColor" stroke="none"/>',
+  pool:       '<rect x="3" y="6" width="18" height="11" rx="1.5"/><path d="M4.5 10Q7 8 9.5 10T15 10T18 10T19.5 10"/><path d="M3 19Q5.5 17 8 19T13 19T18 19T21 19"/>'
 };
 
 export function tradeLabel(t) {
