@@ -28,6 +28,11 @@
   --sh-nav: 0 1px 0 rgba(74,75,47,.04), 0 4px 14px -2px rgba(74,75,47,.12), 0 18px 48px -8px rgba(74,75,47,.22);
   --serif:'Fraunces',Georgia,serif; --sans:'Inter Tight',system-ui,-apple-system,sans-serif; --mono:'JetBrains Mono','Courier New',monospace;
 }
+/* Cross-document view transitions: tapping into a contractor's /c/ profile morphs the
+   name/monogram instead of a hard cut. Progressive enhancement — unsupported browsers
+   (and prefers-reduced-motion) just get the ordinary navigation, no fallback code needed. */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 html,body { height:100%; overscroll-behavior:none; }
 body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
@@ -253,6 +258,12 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .mi-go { min-width:210px; }
 @keyframes miIn { from { opacity:0; transform:translateY(12px) scale(.985); } to { opacity:1; transform:none; } }
 @media (prefers-reduced-motion: reduce){ .match-intro { animation:none; } }
+
+/* Entrance stagger for home pills/tiles + feed cards — each item fades/lifts in with a
+   small per-index delay (set inline as --d), same spring curve as miIn for consistency. */
+@keyframes tileIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.prob-pill, .trade-tile, .fcard { animation:tileIn .38s cubic-bezier(.2,.7,.3,1) both; animation-delay:var(--d,0s); }
+@media (prefers-reduced-motion: reduce){ .prob-pill, .trade-tile, .fcard { animation:none; } }
 
 /* ===== MATCH WALKTHROUGH (Q1 the job → Q2 what matters) — the tailored triage ===== */
 #s-match.screen { overflow:hidden; flex-direction:column; }
@@ -1378,6 +1389,9 @@ function clearLastMatch(){ try { localStorage.removeItem(LAST_MATCH_KEY); } catc
 function savedCount(){ return likedSet().size; }
 
 function monogram(name){ const w=String(name||'').replace(/[^A-Za-z ]/g,'').split(/\s+/).filter(Boolean); const i=(w.slice(0,2).map(x=>x[0]).join('')||'V'); return i.toUpperCase(); }
+// Shared cross-document view-transition name for a contractor's name element — must match
+// the identical ident the SSR /c/ profile assigns its <h1>, so tapping a card morphs into it.
+function vtName(placeId){ return 'vt-name-'+String(placeId||'').replace(/[^A-Za-z0-9]/g,''); }
 function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 
 /* row → card shape */
@@ -1466,9 +1480,10 @@ function renderHome(){
   const pr = $('home-problems');
   if (pr){
     pr.innerHTML = '';
-    PROBLEMS.forEach(p => {
+    PROBLEMS.forEach((p,i) => {
       const b = document.createElement('button');
       b.className = 'prob-pill'; b.setAttribute('role','listitem');
+      b.style.setProperty('--d', (Math.min(i,10)*24)+'ms');
       b.setAttribute('aria-label', p.label + ' — find a pro');
       b.innerHTML = '<span class="pp-ic">'+ICONS[p.icon]+'</span>'+esc(p.label);
       b.addEventListener('click', () => openBrowse(p.trade, p.hi ? { hi:p.hi, hiLabel:p.label } : undefined));
@@ -1477,9 +1492,10 @@ function renderHome(){
   }
   // trades demoted to compact chips
   const grid = $('trades-grid'); grid.innerHTML = '';
-  trades.forEach(t => {
+  trades.forEach((t,i) => {
     const btn = document.createElement('button');
     btn.className = 'trade-tile'; btn.setAttribute('role','listitem');
+    btn.style.setProperty('--d', (Math.min(i,10)*24)+'ms');
     btn.setAttribute('aria-label', t.label + ' — find a pro');
     btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span><span class="tile-name">'+t.label+'</span>';
     btn.addEventListener('click', () => { btn.classList.add('sel'); setTimeout(()=>openBrowse(t.key),120); });
@@ -2082,7 +2098,7 @@ function evidenceHTML(con){
 function analysisHTML(con){
   return ''+
     '<div class="va-head"><span class="va-spark">'+SPARK+'</span>Vesta’s analysis</div>'+
-    '<h2 class="va-firm">'+esc(con.name)+'</h2>'+
+    '<h2 class="va-firm" style="view-transition-name:'+vtName(con.placeId)+'">'+esc(con.name)+'</h2>'+
     '<p class="va-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</p>'+
     (con.standing?'<div class="va-band">'+esc(con.standing)+'</div>':'')+
     (con.verified.length?'<div class="va-chips">'+con.verified.map(v=>'<span class="va-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
@@ -2204,17 +2220,17 @@ function feedMoreHTML(con){
 function feedListHTML(list){
   if (!(S.match && S.match.job)) return list.map(feedCardHTML).join('');
   const sharp = honestyTier(jobCoverage(S.activeTrade, S.match.job)) === 'sharp';
-  let out = '', divided = false;
+  let out = '', divided = false, i = 0;
   list.forEach(con => {
     if (!sharp && !divided && matchScore(con, S.match) === 0){
       out += '<div class="feed-divider"><span>More '+esc(tradePlural(S.activeTrade))+' · best-reviewed</span></div>';
       divided = true;
     }
-    out += feedCardHTML(con);
+    out += feedCardHTML(con, i++);
   });
   return out;
 }
-function feedCardHTML(con){
+function feedCardHTML(con, i){
   const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,3);
   const saved = isLiked(con.placeId);
   // In match mode the band becomes the data-true "why" (job it matches · standing · axis fit);
@@ -2222,10 +2238,10 @@ function feedCardHTML(con){
   const isM = !!(S.match && S.match.job && jobMatches(con, S.match.job));
   const bandText = (S.match && S.match.job) ? whyLine(con, S.match) : con.standing;
   const bandHTML = bandText ? '<div class="fcard-band'+(isM?' fcard-why':'')+'">'+(isM?SPARK:'')+esc(bandText)+'</div>' : '';
-  return '<article class="fcard" data-place="'+esc(con.placeId)+'">'+
+  return '<article class="fcard" data-place="'+esc(con.placeId)+'" style="--d:'+(Math.min(i||0,8)*30)+'ms">'+
     '<div class="fcard-top">'+
       '<div class="fcard-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
-      '<div class="fcard-id"><div class="fcard-name">'+esc(con.name)+'</div>'+
+      '<div class="fcard-id"><div class="fcard-name" style="view-transition-name:'+vtName(con.placeId)+'">'+esc(con.name)+'</div>'+
         '<div class="fcard-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
         bandHTML+'</div>'+
       '<div class="fcard-actions-top">'+

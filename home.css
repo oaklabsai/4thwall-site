@@ -6,6 +6,12 @@
    ════════════════════════════════════════════════════════════════════ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 [hidden]{display:none!important}
+/* Cross-document view transitions: opts every page sharing this stylesheet (directory,
+   contractor profile, etc.) into the native morph when navigating between them — pairs
+   with vesta-app.html's own opt-in. Progressive enhancement; unsupported browsers and
+   prefers-reduced-motion just get the ordinary navigation. */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 :root{
   /* Vesta range — middle→right of the brand ramp (#4A4B2F olive · #6B654B ebony
      · #D4DF9E tea green), matched to the live deck (vesta-app.html). The clay

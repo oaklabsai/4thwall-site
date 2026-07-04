@@ -149,8 +149,9 @@ document.addEventListener('DOMContentLoaded', async function(){
     const syn = p.synthesis
       ? '<p class="card-syn"><span class="syn-lbl">What homeowners say</span>' + esc(p.synthesis) + '</p>'
       : '';
+    const vtName = 'vt-name-' + String(p.place_id || '').replace(/[^A-Za-z0-9]/g, '');
     return '<div class="card lift">' +
-      '<a class="cardlink" href="' + href + '"><h3>' + esc(p.name) + '</h3></a>' +
+      '<a class="cardlink" href="' + href + '"><h3 style="view-transition-name:' + vtName + '">' + esc(p.name) + '</h3></a>' +
       '<div class="sub">' + esc(p.city || COUNTY) + '</div>' +
       chipsHtml + syn +
       '<div class="spacer"></div>' +

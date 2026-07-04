@@ -705,7 +705,7 @@ export function renderContractorHTML(enr, siblings = []) {
   const hero =
     '<section class="page-hero" id="hero">' +
       '<a class="crumb" href="' + (trade ? '/fairfield-county/' + trade : '/vesta') + '">← ' + esc(label ? label + ' in ' + COUNTY : 'Vesta') + '</a>' +
-      '<h1 class="page-h">' + esc(enr.business_name) + '</h1>' +
+      '<h1 class="page-h" style="view-transition-name:vt-name-' + String(enr.place_id || '').replace(/[^A-Za-z0-9]/g, '') + '">' + esc(enr.business_name) + '</h1>' +
       '<p class="page-sub">' + (label ? esc(label) + ' · ' : '') + esc((enr.city || COUNTY) + ', CT') + '</p>' +
       '<div class="badges"><span class="badge plain">◆ ' + (hasRead ? 'Vesta-analyzed from public records' : 'Listed from public records — not yet reviewed') + '</span></div>' +
       // Work-photo gallery — directly under the name (Drew, 2026-06-23: "the main
