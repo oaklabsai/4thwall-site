@@ -83,10 +83,16 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .home-search:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
 .home-search > svg { width:19px; height:19px; color:var(--ebony); flex-shrink:0; }
 .hs-ph { font-size:15px; color:rgba(74,75,47,.5); min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
-.hs-ph #home-search-ph { color:var(--ebony); transition:opacity .22s; }
+.hs-ph #home-search-ph { color:var(--ebony); }
+/* Typewriter caret — blinks steadily at rest, held solid while a character is being typed
+   (toggled via .typing from the rotator) so it never blinks mid-keystroke. */
+.hs-caret { display:inline-block; width:1.5px; height:14px; margin-left:1px; background:var(--ebony); vertical-align:-2px; animation:hsCaretBlink 1s step-end infinite; }
+.hs-ph.typing .hs-caret { animation:none; opacity:1; }
+@keyframes hsCaretBlink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+@media (prefers-reduced-motion: reduce){ .hs-caret { animation:none; opacity:.6; } }
 /* problem pills — homeowner needs, the instant-momentum row */
-.home-problems { display:flex; flex-wrap:wrap; gap:9px; margin-bottom:30px; }
-.prob-pill { display:inline-flex; align-items:center; gap:8px; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:10px 15px 10px 13px; cursor:pointer; font-family:var(--sans); font-size:14px; font-weight:600; color:var(--olive); box-shadow:0 1px 2px rgba(74,75,47,.05); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
+.home-problems { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:30px; }
+.prob-pill { display:flex; align-items:center; gap:8px; width:100%; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:10px 15px 10px 13px; cursor:pointer; font-family:var(--sans); font-size:14px; font-weight:600; color:var(--olive); box-shadow:0 1px 2px rgba(74,75,47,.05); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
 .prob-pill:hover { transform:translateY(-2px); box-shadow:0 8px 18px -7px rgba(74,75,47,.26); background:var(--tea); }
 .prob-pill:active { transform:scale(.96); }
 .prob-pill:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
@@ -94,15 +100,17 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .prob-pill .pp-ic svg { width:17px; height:17px; }
 .home-browselbl { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:13px; }
 /* trades demoted to compact, scannable chips */
-.trades-grid { display:flex; flex-wrap:wrap; gap:9px; }
-.trade-tile { display:inline-flex; flex-direction:row; align-items:center; gap:9px; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-pill); padding:9px 15px 9px 11px; min-height:0; cursor:pointer; box-shadow:0 1px 2px rgba(74,75,47,.04); transition:transform .14s, box-shadow .14s, background .14s; outline:none; text-align:left; }
+/* Compact icon-forward grid (like an app launcher) instead of ragged wrapped pills —
+   fixed 3 equal columns so every row lines up regardless of label length. */
+.trades-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+.trade-tile { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; text-align:center; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-tile); padding:14px 6px 12px; min-height:0; cursor:pointer; box-shadow:0 1px 2px rgba(74,75,47,.04); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
 .trade-tile:hover { transform:translateY(-2px); box-shadow:0 7px 16px -7px rgba(74,75,47,.22); }
 .trade-tile:active { transform:scale(.97); }
 .trade-tile.sel { background:var(--tea); }
 .trade-tile:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
-.tile-icon { width:28px; height:28px; flex-shrink:0; border-radius:8px; background:linear-gradient(180deg,rgba(212,223,158,.34),rgba(212,223,158,.15)); border:1px solid rgba(74,75,47,.05); display:flex; align-items:center; justify-content:center; color:var(--olive); }
-.tile-icon svg { width:16px; height:16px; }
-.tile-name { font-size:13.5px; font-weight:600; color:var(--olive); }
+.tile-icon { width:34px; height:34px; flex-shrink:0; border-radius:10px; background:linear-gradient(180deg,rgba(212,223,158,.34),rgba(212,223,158,.15)); border:1px solid rgba(74,75,47,.05); display:flex; align-items:center; justify-content:center; color:var(--olive); }
+.tile-icon svg { width:17px; height:17px; }
+.tile-name { font-size:12.5px; font-weight:600; color:var(--olive); line-height:1.25; }
 /* search-result "browse this trade" suggestion (problem→trade routing) */
 .vsr-route { background:rgba(212,223,158,.2); }
 .vsr-arrow { margin-left:auto; color:var(--olive); font-size:18px; flex-shrink:0; padding-right:4px; }
@@ -164,11 +172,13 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .deckwrap { flex:1; display:flex; flex-direction:column; min-height:0; padding-bottom:96px; }
 .feedwrap { display:none; }   /* desktop-only scroll feed; the phone always uses the swipe deck */
 .deck { position:relative; flex:1; min-height:300px; margin:6px 20px 0; }
-.card { position:absolute; left:0; right:0; top:0; bottom:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:20px 20px 17px; display:flex; flex-direction:column; will-change:transform; touch-action:none; -webkit-user-select:none; user-select:none; overflow:hidden; }
+.card { position:absolute; left:0; right:0; top:0; bottom:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:20px 20px 17px; display:flex; flex-direction:column; will-change:transform; touch-action:none; -webkit-user-select:none; user-select:none; overflow:hidden; transform-origin:top center; }
 .card[data-k="0"] { z-index:30; cursor:grab; }
 .card[data-k="0"]:active { cursor:grabbing; }
-.card[data-k="1"] { z-index:20; transform:translateY(11px) scale(.96); }
-.card[data-k="2"] { z-index:10; transform:translateY(22px) scale(.92); }
+/* Visible stack peek (top-anchored scale, so the sliver shows at the BOTTOM) — reads as a
+   real deck of cards to swipe through, not one static card floating alone. */
+.card[data-k="1"] { z-index:20; transform:translateY(30px) scale(.96); }
+.card[data-k="2"] { z-index:10; transform:translateY(56px) scale(.92); }
 .card-top { display:flex; align-items:center; gap:12px; margin-bottom:13px; }
 .card-mono { width:46px; height:46px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:18px; font-weight:600; color:var(--ebony); }
 .card-id { min-width:0; flex:1; }
@@ -829,7 +839,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
       <p class="home-sub">Fairfield County&rsquo;s verified contractor network.</p>
       <button class="home-search" id="home-search" type="button" aria-label="Search contractors or describe what you need">
         <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg>
-        <span class="hs-ph">Try <span id="home-search-ph">&ldquo;roof leak after a storm&rdquo;</span></span>
+        <span class="hs-ph">&ldquo;<span id="home-search-ph"></span><span class="hs-caret" aria-hidden="true"></span>&rdquo;</span>
       </button>
       <div class="home-problems" id="home-problems" role="list" aria-label="Common needs"></div>
       <div class="home-browselbl">Or browse by trade</div>
@@ -849,7 +859,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
       <h1 class="browse-h1" id="browse-h1" aria-live="polite">Recommended roofers</h1>
       <p class="browse-sub" id="browse-sub">Save the ones worth a call</p>
     </div>
-    <div class="chips-row" id="chips-row" role="group" aria-label="Filter by trade"></div>
+    <div class="chips-row" id="chips-row" role="group" aria-label="Filter by what you need"></div>
     <div class="vbanner" id="vbanner"></div>
     <div class="vbody">
       <div class="leftcol" id="leftcol">
@@ -987,7 +997,7 @@ const PROBLEM_ROUTES = [
   { trade:'painting', re:/(\bpaint|\bstain|primer|power ?wash|pressure ?wash)/i },
   { trade:'masonry', re:/(mason|\bbrick|\bstone|patio|retaining ?wall|walkway|chimney|concrete)/i },
 ];
-const SEARCH_EG = ['roof leak after a storm','my AC stopped working','need a driveway quote','looking for a painter','water heater keeps failing','an electrical panel upgrade','a new patio or walkway','lawn care for the season','a tree too close to the house','refinishing tired hardwood floors','replacing drafty old windows','opening the pool for the season'];
+const SEARCH_EG = ['roof leak after a storm','my AC stopped working','need a driveway quote','looking for a painter','water heater keeps failing','an electrical panel upgrade','a new patio or walkway','lawn care for the season','a tree too close to the house','refinishing tired hardwood floors','replacing drafty old windows','opening the pool for the season','a cracked foundation wall','gutters overflowing every storm','mold in the crawl space','a fence that needs replacing','an emergency plumber tonight','bids before winter hits','a bathroom remodel gone wrong','sump pump making a weird noise'];
 function routeProblem(q){ const s=(q||'').toLowerCase(); for(const r of PROBLEM_ROUTES){ if(r.re.test(s)) return r.trade; } return null; }
 // Free-text → a specific JOB, not just a trade — so search enters the match flow with the need
 // preselected instead of dumping to generic browse. Conservative: only unambiguous phrases; a
@@ -1464,16 +1474,35 @@ async function loadContractors(){
   syncSavedUI();
 }
 
-/* HOME */
+/* HOME — search placeholder as a live typewriter: each example types out letter by
+   letter, holds so it can actually be read, then erases before the next one types in.
+   No hard cuts between examples — the whole cycle is one continuous motion. */
 let _searchRotI = null;
 function startSearchRotator(){
   const el = $('home-search-ph'); if(!el || _searchRotI) return;
+  const wrap = el.closest('.hs-ph');
   let i = 0;
-  _searchRotI = setInterval(() => {
-    i = (i+1) % SEARCH_EG.length;
-    el.style.opacity = '0';
-    setTimeout(() => { el.textContent = '“' + SEARCH_EG[i] + '”'; el.style.opacity = '1'; }, 220);
-  }, 3200);
+  const TYPE_MS = 42, TYPE_JITTER = 26, ERASE_MS = 20, HOLD_MS = 1900, GAP_MS = 350;
+  const typeOut = (text, done) => {
+    let ci = 0;
+    if (wrap) wrap.classList.add('typing');
+    (function step(){
+      ci++; el.textContent = text.slice(0, ci);
+      if (ci < text.length) _searchRotI = setTimeout(step, TYPE_MS + Math.random()*TYPE_JITTER);
+      else { if (wrap) wrap.classList.remove('typing'); _searchRotI = setTimeout(done, HOLD_MS); }
+    })();
+  };
+  const eraseOut = (text, done) => {
+    let ci = text.length;
+    if (wrap) wrap.classList.add('typing');
+    (function step(){
+      ci--; el.textContent = text.slice(0, ci);
+      if (ci > 0) _searchRotI = setTimeout(step, ERASE_MS);
+      else { if (wrap) wrap.classList.remove('typing'); _searchRotI = setTimeout(done, GAP_MS); }
+    })();
+  };
+  const cycle = () => { typeOut(SEARCH_EG[i], () => eraseOut(SEARCH_EG[i], () => { i = (i+1) % SEARCH_EG.length; cycle(); })); };
+  cycle();
 }
 function renderHome(){
   // problem pills — homeowner needs, each routed straight to its trade
@@ -1542,16 +1571,26 @@ function renderReturn(){
 }
 
 /* CHIPS + SIDEBAR */
-function renderChips(){
-  const row = $('chips-row'); row.innerHTML = '';
-  trades.forEach(t => {
-    const on = S.mode==='trade' && S.activeTrade===t.key;
-    const btn = document.createElement('button');
-    btn.className = 'chip' + (on?' sel':''); btn.textContent = t.label;
-    btn.setAttribute('aria-pressed', on);
-    btn.addEventListener('click', () => { switchTrade(t.key); row.scrollLeft = btn.offsetLeft - 20; });
-    row.appendChild(btn);
-  });
+// Was a trade-switcher (the full list already lives one tap back, via btn-back → home) —
+// this space is worth more as an inline "what you need" filter for the trade you're
+// already in, so a homeowner narrows in place instead of hunting through a full sheet.
+function renderNeedChips(){
+  const row = $('chips-row'); if (!row) return;
+  if (S.mode !== 'trade' || (S.match && S.match.job)){ row.innerHTML=''; return; }   // match mode owns "what you need" via its own walkthrough
+  const base = byTrade(S.activeTrade).filter(c => !FEED_HIDDEN.has(c.placeId) && (!S.feedTown || (c.city||'') === S.feedTown));
+  const facets = (NEED_FACETS[S.activeTrade]||[])
+    .map(f => ({ f, n: base.filter(c => facetMatches(c, f)).length }))
+    .filter(x => x.n >= 2 || S.feedNeeds.has(x.f.l))
+    .sort((a,b) => b.n - a.n);
+  if (!facets.length){ row.innerHTML=''; return; }
+  row.innerHTML = facets.map(({f}) => {
+    const on = S.feedNeeds.has(f.l);
+    return '<button class="chip'+(on?' sel':'')+'" data-need="'+esc(f.l)+'" aria-pressed="'+on+'">'+esc(f.l)+'</button>';
+  }).join('');
+  row.querySelectorAll('[data-need]').forEach(b => b.addEventListener('click', () => {
+    const l = b.dataset.need; if (S.feedNeeds.has(l)) S.feedNeeds.delete(l); else S.feedNeeds.add(l);
+    rebuildDeck(); renderDeck(); updateBrowseHead(); updateFilterTrigger(); renderNeedChips();
+  }));
 }
 function renderSidebar(){
   const nav = $('ds-nav'); if(!nav) return;
@@ -1840,8 +1879,10 @@ function renderDeck(){
   const _phm = deck.querySelector('.card[data-k="0"] .vph[data-place]'); if(_phm) hydratePhotos(_phm);
   $('deck-actions').style.visibility='visible';
   updateRewind();
-  // In match mode the order is scored (matchers first), not shuffled — say so honestly.
-  $('deck-meta').textContent = (S.match && S.match.job) ? 'Ordered by your match — best-reviewed first' : 'Shuffled — a fresh order every visit';
+  // In match mode the subhead already says "matched to your job, best-reviewed first" —
+  // repeating it here as a caption was one more line competing for space, so it's silent
+  // in that mode. Shuffle mode has no other place this fact lives, so it stays.
+  $('deck-meta').textContent = (S.match && S.match.job) ? '' : 'Shuffled — a fresh order every visit';
   if (desktop()) renderPanel(remaining[0]);
 }
 function wireDeckEnd(){
@@ -2483,7 +2524,7 @@ function goToPro(tradeKey, placeId){
   if (tradeKey !== S.activeTrade) S.match = null;   // a match belongs to its trade — never leaks onto another trade's deck or form
   S.mode = 'trade'; S.activeTrade = tradeKey;
   if (S.screen !== 'browse') showScreen('browse');
-  renderChips(); renderSidebar(); updateNavState();
+  renderNeedChips(); renderSidebar(); updateNavState();
   if (desktop()){
     const c = contractors.find(x => x.placeId === placeId);
     if (c && S.feedTown && (c.city||'') !== S.feedTown) S.feedTown = '';   // clear filter so the target is visible
@@ -2641,7 +2682,7 @@ function backFromProfile(){
   const f = S.profFrom;
   if (f && f.screen==='browse'){
     S.mode=f.mode; S.activeTrade=f.trade;
-    showScreen('browse'); renderChips(); renderSidebar();
+    showScreen('browse'); renderNeedChips(); renderSidebar();
     if (f.mode==='saved'){ showFav(); renderSaved(); } else { showDeck(); updateBrowseHead(); renderDeck(); }
     updateNavState();
   } else {
@@ -3078,13 +3119,13 @@ function switchTrade(key){
   // The walkthrough is the deliberate entry (home problem/trade, feed pill, search), not every chip tap.
   S.mode='trade'; S.activeTrade=key; S.match=null; S.feedTown=''; S.feedNeeds=new Set(); S.feedReg=false; ensureDeck(key);
   if (S.screen !== 'browse') showScreen('browse');
-  renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck();
+  renderNeedChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck();
   updateNavState();
 }
 function showSaved(){
   S.mode='saved';
   if (S.screen !== 'browse') showScreen('browse');
-  renderChips(); renderSidebar(); showFav(); renderSaved();
+  renderNeedChips(); renderSidebar(); showFav(); renderSaved();
   updateNavState();
 }
 function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('/vesta'); }
@@ -3104,7 +3145,7 @@ function showBrowse(key){
   S.mode='trade'; S.activeTrade=key; S.matchPending=false;
   if (!S.match){ S.feedTown=''; S.feedNeeds=new Set(); }        // a live match keeps its context; a plain open resets
   ensureDeck(key); S.introPending = !desktop() && !S.match;     // the old "We found N" beat: plain mobile browse only
-  showScreen('browse'); renderChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState();
+  showScreen('browse'); renderNeedChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState();
 }
 function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); renderReturn(); updateNavState(); }
 function updateNavState(){
@@ -3128,7 +3169,7 @@ function enterMatch(key, opts){
   S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank';
   S.match=null; S.matchPending=true; S.matchStep='job'; _mwMoreOpen=false; _pendingJob=null;
   S.matchHi = opts.hi || null; S.matchHiLabel = opts.hiLabel || null;   // seeded need → Q1 pre-highlight
-  renderChips(); renderSidebar(); showScreen('match'); updateNavState();
+  renderNeedChips(); renderSidebar(); showScreen('match'); updateNavState();
   if (opts.job) pickJob(opts.job); else renderMatchWalk();
 }
 function renderMatchWalk(){
