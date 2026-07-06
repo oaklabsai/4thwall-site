@@ -795,13 +795,13 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .prof-kv span { color:var(--ebony); flex-shrink:0; }
 .prof-kv b { color:var(--olive); text-align:right; font-weight:600; }
 .prof-guide { display:flex; flex-direction:column; gap:14px; margin-top:6px; }
-.prof-angle { display:flex; gap:14px; }
-.prof-angle .no { font-family:var(--mono); font-size:13px; font-weight:500; color:var(--olive); opacity:.45; flex-shrink:0; padding-top:1px; }
+.prof-angle { display:flex; gap:13px; align-items:flex-start; }
+.prof-angle-no { flex-shrink:0; width:29px; height:29px; border-radius:9px; background:rgba(212,223,158,.4); color:var(--olive); font-family:var(--mono); font-size:11.5px; font-weight:600; display:flex; align-items:center; justify-content:center; }
 .prof-angle h3 { font-size:15px; font-weight:600; color:var(--olive); margin-bottom:3px; }
 .prof-angle p { font-size:13px; color:var(--ebony); line-height:1.55; }
 .prof-chips { display:flex; flex-wrap:wrap; gap:8px; }
-.prof-chip { display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:600; color:var(--olive); background:var(--tea); border-radius:var(--r-pill); padding:6px 13px; }
-.prof-chip.alt { color:var(--olive); background:rgba(74,75,47,.06); font-weight:500; }
+.prof-chip { display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:600; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border:1px solid rgba(74,75,47,.1); box-shadow:0 1px 2px rgba(74,75,47,.07), inset 0 1px 0 rgba(255,255,255,.5); border-radius:var(--r-pill); padding:6px 13px; }
+.prof-chip.alt { color:var(--olive); background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(74,75,47,.04)); border-color:rgba(74,75,47,.12); box-shadow:0 1px 2px rgba(74,75,47,.05), inset 0 1px 0 rgba(255,255,255,.6); font-weight:500; }
 /* ── "The Record" — the locked dot-axis design standard (mirrors api/_render-contractor.mjs) ── */
 .trec-kicker { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--olive); margin:28px 0 14px; }
 .trec-sec-lbl { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); margin-bottom:9px; }
@@ -860,7 +860,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .atlas-moment .am-lede b{color:var(--a-sand-2);font-weight:600}
 .atlas-moment .am-uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:20px 0 0}
 .atlas-moment .am-use{background:rgba(222,206,164,.05);border:1px solid var(--a-line);border-radius:16px;padding:16px 18px}
-.atlas-moment .am-use .am-n{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--a-sand);margin-bottom:8px}
+.atlas-moment .am-use .am-n{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:rgba(222,206,164,.14);border:1px solid rgba(222,206,164,.22);color:var(--a-sand-2);margin-bottom:10px}
 .atlas-moment .am-use h3{font-family:var(--serif);font-size:16px;font-weight:600;letter-spacing:-.01em;color:var(--a-cream);margin-bottom:6px}
 .atlas-moment .am-use p{font-size:12.5px;color:var(--a-mut);line-height:1.6}
 .atlas-moment .am-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px}
@@ -3453,7 +3453,7 @@ function profKnownHTML(){
 // Generic trade education — kept for depth, but collapsed by default so it doesn't crowd the firm-specific read.
 function profGuideHTML(){
   const g = PGUIDE[pTradeKey()]; if (!g) return '';
-  const rows = g.map((it,i)=>'<div class="prof-angle"><div class="no">'+String(i+1).padStart(2,'0')+'</div><div><h3>'+esc(it.t)+'</h3><p>'+esc(it.d)+'</p></div></div>').join('');
+  const rows = g.map((it,i)=>'<div class="prof-angle"><div class="prof-angle-no">'+String(i+1).padStart(2,'0')+'</div><div><h3>'+esc(it.t)+'</h3><p>'+esc(it.d)+'</p></div></div>').join('');
   return '<details class="prof-fold"><summary class="prof-fold-sum">'+
     '<span class="fold-tw"><span class="fold-title">What to check before you hire</span>'+
     '<span class="fold-sub">'+g.length+' checks · Vesta’s checklist for '+esc(PTRADE_PROS[pTradeKey()]||'this trade')+'</span></span>'+
@@ -3495,6 +3495,12 @@ function profContactHTML(){
     '<span style="color:var(--ebony);font-size:12.5px">One email, no password, ten seconds. Phone, website, socials — everything public we can find.</span></p>'+
     '<a class="prof-req" style="margin-top:0" href="'+esc(HOME.signinHref('/vesta'))+'">Create free account / sign in</a></div>';
 }
+const AM_IC = {
+  shield:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V5z"/><path d="M9 12l2 2 4-4"/></svg>',
+  camera:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+  chat:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-1.1 4.2A8.5 8.5 0 0112 20a8.4 8.4 0 01-4.2-1.1L3 20l1.1-4.8A8.4 8.4 0 013.5 11.5 8.5 8.5 0 0112 3a8.5 8.5 0 019 8.5z"/></svg>',
+  bell:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>'
+};
 function profClaimHTML(){
   // Verified owner → quiet confirmation, no form. (claimed reflects claimed_at, which is
   // set only when ops verifies — a pending claim never shows as claimed.)
@@ -3505,10 +3511,10 @@ function profClaimHTML(){
       '<p class="am-lede2">✓ This profile has a verified owner. Thank you.</p></section>';
   }
   const uses = [
-    ['01','Verified owner badge','Homeowners see you’re the real owner.'],
-    ['02','Your own photos','Real job shots — owned, and crawlable.'],
-    ['03','Respond to your read','Add your voice beside Vesta’s.'],
-    ['04','Get notified','The moment a homeowner reaches out.'],
+    [AM_IC.shield,'Verified owner badge','Homeowners see you’re the real owner.'],
+    [AM_IC.camera,'Your own photos','Real job shots — owned, and crawlable.'],
+    [AM_IC.chat,'Respond to your read','Add your voice beside Vesta’s.'],
+    [AM_IC.bell,'Get notified','The moment a homeowner reaches out.'],
   ].map(u => '<div class="am-use"><div class="am-n">'+u[0]+'</div><h3>'+u[1]+'</h3><p>'+u[2]+'</p></div>').join('');
   const form = '<form id="prof-claim">'+
     '<div class="am-form-row"><label for="pcn">Your name</label><input type="text" id="pcn" required maxlength="80"></div>'+
