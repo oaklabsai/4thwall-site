@@ -40,6 +40,14 @@
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 html,body { height:100%; overscroll-behavior:none; }
 body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+/* Universal tap feedback — the single biggest "this feels like an app" tell most sites
+   skip. A bare fallback so every button gets a press-state even where no per-component
+   :active rule was written; anything with its own :active (chips, cards, pills above)
+   already overrides this via higher selector specificity, so nothing here double-applies. */
+button { transition:transform .1s cubic-bezier(.2,.8,.2,1); }
+button:active { transform:scale(.97); }
+a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale(.97); }
+@media (prefers-reduced-motion:reduce){ button:active, a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:none; } }
 
 #app { width:390px; min-height:100vh; margin:0 auto; background:var(--bg); position:relative; overflow-x:hidden; }
 @media (min-width:470px) and (max-width:899px) {
@@ -117,6 +125,24 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .tile-icon { width:34px; height:34px; flex-shrink:0; border-radius:10px; background:linear-gradient(180deg,rgba(212,223,158,.34),rgba(212,223,158,.15)); border:1px solid rgba(74,75,47,.05); display:flex; align-items:center; justify-content:center; color:var(--olive); }
 .tile-icon svg { width:17px; height:17px; }
 .tile-name { font-size:12.5px; font-weight:600; color:var(--olive); line-height:1.25; }
+/* Scroll-driven reveal — the trades grid is the part of the mobile home screen users
+   actually scroll to reach, so it's the part that should visibly respond to scrolling
+   (the "inanimate scroll" complaint). Same technique already used on profile known-tiles;
+   feature-detected + reduced-motion gated, falls back to the plain load-in stagger above. */
+@supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {
+  .trade-tile { animation:ttIn both; animation-timeline:view(); animation-range:entry 5% entry 42%; }
+  @keyframes ttIn { from { opacity:.001; transform:translateY(14px) scale(.97); } to { opacity:1; transform:none; } }
+}}
+/* "How it works" — desktop-only, fills the dead space left when the trade grid above
+   is hidden (sidebar owns that job there). Genuinely explains the mechanism to a cold
+   visitor rather than padding the column with decoration. */
+.how-strip { display:none; margin-top:34px; padding-top:26px; border-top:1px solid rgba(74,75,47,.1); }
+.how-steps { display:flex; flex-direction:column; gap:16px; }
+.how-step { display:flex; gap:13px; align-items:flex-start; }
+.how-ic { flex-shrink:0; width:34px; height:34px; border-radius:10px; background:linear-gradient(180deg,rgba(212,223,158,.34),rgba(212,223,158,.15)); border:1px solid rgba(74,75,47,.05); display:flex; align-items:center; justify-content:center; color:var(--olive); }
+.how-ic svg { width:17px; height:17px; }
+.how-step b { display:block; font-family:var(--serif); font-size:15.5px; font-weight:700; color:var(--olive); letter-spacing:-.008em; margin-bottom:2px; }
+.how-step p { font-size:13px; color:var(--ebony); line-height:1.5; }
 /* search-result "browse this trade" suggestion (problem→trade routing) */
 .vsr-route { background:rgba(212,223,158,.2); }
 .vsr-arrow { margin-left:auto; color:var(--olive); font-size:18px; flex-shrink:0; padding-right:4px; }
@@ -133,7 +159,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .hsp-shuffle:hover { background:var(--tea); }
 .hsp-shuffle:active svg { transform:rotate(180deg); }
 .hsp-shuffle svg { transition:transform .3s var(--spring); }
-.home-sample .hsp-text { font-family:var(--serif); font-size:16px; line-height:1.6; color:var(--olive); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+.home-sample .read-quote p.read { font-family:var(--serif); font-size:15px; line-height:1.6; color:var(--olive); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .home-sample .hsp-attr { margin-top:12px; font-size:12.5px; color:var(--ebony); }
 .home-sample .hsp-attr b { color:var(--olive); }
 
@@ -559,6 +585,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   #s-home .home-trust:not([hidden]) { display:block; }
   #s-home .home-sample:not([hidden]) { display:block; }
   #s-home .home-sign { text-align:center; margin-top:40px; }
+  #s-home .how-strip { display:block; }
   /* Entrance choreography — the hero stops looking like a static page and starts
      looking like something that just happened, each piece a beat behind the last. */
   #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems,
@@ -777,8 +804,10 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .prof-fine { font-size:11.5px; color:var(--ebony); margin-top:10px; }
 .prof-note { font-size:12.5px; color:var(--ebony); line-height:1.6; margin-top:14px; background:rgba(212,223,158,.18); border:1px solid rgba(74,75,47,.08); border-radius:14px; padding:13px 16px; }
 .prof-sig { font-family:var(--serif); font-size:20px; font-weight:500; font-style:italic; line-height:1.5; color:var(--olive); margin:24px 0 4px; padding-left:16px; border-left:3px solid var(--tea); }
-.prof-sec-h { font-family:var(--serif); font-size:24px; font-weight:700; letter-spacing:-.02em; color:var(--olive); margin:32px 0 6px; }
-.prof-sec-h.sub { font-size:18px; margin:22px 0 8px; }
+.prof-sec-h { font-family:var(--serif); font-size:29px; font-weight:700; letter-spacing:-.025em; color:var(--olive); margin:14px 0 8px; line-height:1.08; }
+.prof-sec-h.sub { font-size:20px; margin:22px 0 8px; }
+.prof-sec-kick { display:block; font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--ebony); margin:38px 0 0; }
+.prof-sec-kick::before { content:'— '; color:rgba(74,75,47,.4); }
 .prof-sec-note { font-size:13px; color:var(--ebony); line-height:1.55; margin-bottom:14px; }
 .prof-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
 .prof-card { background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:18px; padding:16px 18px; box-shadow:var(--sh-row); }
@@ -787,6 +816,17 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .prof-card p { font-size:13px; color:var(--ebony); line-height:1.55; }
 .prof-block { background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:18px; padding:18px 20px; box-shadow:var(--sh-row); margin-top:12px; }
 .prof-block p.read { font-family:var(--serif); font-size:17px; line-height:1.65; color:var(--olive); }
+/* Read pull-quote — the lede sentence gets real editorial weight (oversized italic serif +
+   an oversized quote glyph) instead of running flush into the supporting paragraph. Same
+   treatment on the home proof card, at a smaller scale, so the "read" reads as one voice
+   everywhere it appears. */
+.read-quote { position:relative; padding-left:34px; }
+.read-quote .rq-mark { position:absolute; left:-4px; top:-16px; font-family:var(--serif); font-size:56px; font-weight:700; color:var(--tea); line-height:1; user-select:none; z-index:0; }
+.read-quote .rq-lede { position:relative; font-family:var(--serif); font-style:italic; font-size:21px; font-weight:600; line-height:1.42; letter-spacing:-.012em; color:var(--olive); margin-bottom:8px; }
+.read-quote p.read { position:relative; }
+.home-sample .read-quote { padding-left:26px; }
+.home-sample .read-quote .rq-mark { font-size:40px; left:-2px; top:-12px; }
+.home-sample .read-quote .rq-lede { font-size:16px; margin-bottom:5px; }
 .prof-kv { display:flex; justify-content:space-between; gap:14px; padding:10px 0; border-top:1px solid rgba(74,75,47,.08); font-size:13.5px; }
 .prof-kv:first-child { border-top:none; padding-top:0; }
 .prof-kv span { color:var(--ebony); flex-shrink:0; }
@@ -1060,6 +1100,27 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
           <div class="home-problems" id="home-problems" role="list" aria-label="Common needs"></div>
           <div class="home-browselbl">Or browse by trade</div>
           <div class="trades-grid" id="trades-grid" role="list"></div>
+          <!-- Desktop-only — at 1200px+ the trade grid above is hidden (the sidebar already owns
+               the full taxonomy), which used to leave this column dead-ending under the pills.
+               A cold visitor also doesn't yet know HOW Vesta differs from a directory, so this
+               is real information, not filler: the mechanism, in three steps. -->
+          <div class="how-strip" aria-label="How Vesta works">
+            <div class="prof-sec-kick" style="margin-top:0">How it works</div>
+            <div class="how-steps">
+              <div class="how-step">
+                <span class="how-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg></span>
+                <div><b>Say what you need</b><p>Search, or tap a common job — Vesta narrows to firms that actually do that work.</p></div>
+              </div>
+              <div class="how-step">
+                <span class="how-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l1.4 5.1L14.5 8.5 9.4 9.9 8 15 6.6 9.9 1.5 8.5 6.6 7.1z" transform="translate(2 2) scale(1.1)"/></svg></span>
+                <div><b>Read Vesta's take</b><p>A plain-language verdict on each firm, written from their public review record — not a star average.</p></div>
+              </div>
+              <div class="how-step">
+                <span class="how-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16a1 1 0 011 1v11a1 1 0 01-1 1H4a1 1 0 01-1-1v-11a1 1 0 011-1z"/><path d="M3.4 6.2L12 13l8.6-6.8"/></svg></span>
+                <div><b>Reach out, direct</b><p>No lead auction — message the ones worth a call, on your terms.</p></div>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- Desktop-only proof panel (sidebar already owns full browse) — a real aggregate
              stat and a real published read, both from live data, never placeholder copy.
@@ -1729,23 +1790,49 @@ function renderHomeProof(){
   if (!_proofPool.length){ sampleEl.hidden = true; return; }
   paintProofSample();
   sampleEl.hidden = false;
+  if (!sampleEl.dataset.hoverWired){
+    sampleEl.dataset.hoverWired = '1';
+    sampleEl.addEventListener('mouseenter', stopProofRotator);
+    sampleEl.addEventListener('mouseleave', startProofRotator);
+  }
+  if (S.screen === 'home') startProofRotator();
 }
 function paintProofSample(){
   const sampleEl = $('home-sample'); if (!sampleEl || !_proofPool || !_proofPool.length) return;
   let pick = _proofPool[Math.floor(Math.random() * _proofPool.length)];
   if (_proofPool.length > 1) while (pick === _proofLast) pick = _proofPool[Math.floor(Math.random() * _proofPool.length)];
   _proofLast = pick;
+  const s = splitRead(pick.read || '');
   sampleEl.innerHTML = '<div class="hsp-kicker">'+SPARK+'Vesta’s read — a real example'+
       '<button class="hsp-shuffle" id="hsp-shuffle" type="button" aria-label="Show another example">'+SHUFFLE+'</button></div>'+
-    '<p class="hsp-text">“'+esc(pick.read)+'”</p>'+
+    '<div class="read-quote"><span class="rq-mark" aria-hidden="true">&ldquo;</span>'+
+    (s.lede ? '<p class="rq-lede">'+esc(s.lede)+'</p>' : '')+
+    '<p class="read">'+esc(s.rest)+'</p></div>'+
     '<p class="hsp-attr"><b>'+esc(pick.name)+'</b> · '+esc(tradeLabelOf(pick.trade))+' · '+esc(pick.town)+'</p>'+
     '<a class="va-full" href="/c/'+encodeURIComponent(pick.placeId)+'" data-place="'+esc(pick.placeId)+'" style="margin-top:4px">See the full profile →</a>';
   const sh = $('hsp-shuffle'); if (sh) sh.addEventListener('click', () => {
     sampleEl.style.animation = 'none'; void sampleEl.offsetHeight;
     sampleEl.style.animation = 'tileIn .34s var(--spring) both';
     paintProofSample();
+    startProofRotator();   // manual shuffle resets the auto-cycle so it doesn't double up
   });
 }
+// Auto-rotate the proof card on desktop so the right column reads as alive, not a static
+// poster — pauses on hover (the reader is mid-sentence) and stops entirely off the home
+// screen / under reduced-motion. Manual shuffle (above) always wins and resets the clock.
+let _proofRotI = null;
+function startProofRotator(){
+  stopProofRotator();
+  if (!desktop() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const sampleEl = $('home-sample'); if (!sampleEl) return;
+  _proofRotI = setInterval(() => {
+    if (!_proofPool || _proofPool.length < 2) return;
+    sampleEl.style.animation = 'none'; void sampleEl.offsetHeight;
+    sampleEl.style.animation = 'tileIn .34s var(--spring) both';
+    paintProofSample();
+  }, 9000);
+}
+function stopProofRotator(){ if (_proofRotI){ clearInterval(_proofRotI); _proofRotI = null; } }
 
 /* HOME — search placeholder as a live typewriter: each example types out letter by
    letter, holds so it can actually be read, then erases before the next one types in.
@@ -3157,8 +3244,14 @@ function profReadHTML(){
   const enr=profData.enr; if (!enr || (!enr.synthesis && !enr.signature)) return '';
   let inner='';
   if (enr.signature) inner += '<p class="prof-sig">'+esc(enr.signature)+'</p>';
-  if (enr.synthesis) inner += '<div class="prof-block prof-block-hi"><p class="read">'+esc(enr.synthesis)+'</p>'+
-    '<p class="prof-fine" style="margin-top:12px">Drawn from this firm’s public review history — Vesta’s own wording, never a copy of any single review.</p></div>';
+  if (enr.synthesis){
+    const s = splitRead(enr.synthesis);
+    inner += '<div class="prof-block prof-block-hi"><div class="read-quote">'+
+      '<span class="rq-mark" aria-hidden="true">&ldquo;</span>'+
+      (s.lede ? '<p class="rq-lede">'+esc(s.lede)+'</p>' : '')+
+      '<p class="read">'+esc(s.rest)+'</p></div>'+
+      '<p class="prof-fine" style="margin-top:12px">Drawn from this firm’s public review history — Vesta’s own wording, never a copy of any single review.</p></div>';
+  }
   return '<details class="prof-fold prof-fold-hi" open>'+
     '<summary class="prof-fold-sum prof-fold-sum-hi"><span class="fold-title"><span class="fold-spark">'+SPARK+'</span>Vesta’s read</span>'+
     '<span class="prof-fold-chev">'+CHEV+'</span></summary>'+
@@ -3401,7 +3494,7 @@ function profTrackRecordHTML(){
   if (stats.length) parts.push('<div class="trec-stats">'+stats.join('')+'</div>');
   if (creds.length) parts.push(credHtml);
   if (meters) parts.push(meters);
-  return '<h2 class="prof-sec-h">Track record</h2><div class="prof-block">'+parts.join('<div class="prof-glance-rule"></div>')+'</div>';
+  return '<span class="prof-sec-kick">Vetted &amp; provable</span><h2 class="prof-sec-h">Track record</h2><div class="prof-block">'+parts.join('<div class="prof-glance-rule"></div>')+'</div>';
 }
 function profTheRecordHTML(){
   const enr=profData.enr; if (!enr) return '';
@@ -3479,11 +3572,11 @@ function profContactRows(u){
   return rows.length ? rows.join('') : '<p class="prof-fine">No public contact details surfaced for this pro — they may be phone-unlisted. Try the request flow instead.</p>';
 }
 function profContactHTML(){
-  if (profData.unlocked) return '<h2 class="prof-sec-h">Contact</h2><div class="prof-block">'+profContactRows(profData.unlocked)+'</div>';
-  if (signedIn()) return '<h2 class="prof-sec-h">Contact</h2><div class="prof-block">'+
+  if (profData.unlocked) return '<span class="prof-sec-kick">Reach out</span><h2 class="prof-sec-h">Contact</h2><div class="prof-block">'+profContactRows(profData.unlocked)+'</div>';
+  if (signedIn()) return '<span class="prof-sec-kick">Reach out</span><h2 class="prof-sec-h">Contact</h2><div class="prof-block">'+
     '<p style="font-size:13.5px;margin-bottom:12px;color:var(--ebony)">Phone, website, and social profiles — everything public we can find.</p>'+
     '<button class="prof-req" id="prof-unlock" style="margin-top:0">'+LOCK+' Show contact info</button><span class="prof-status" id="prof-unlock-st"></span></div>';
-  return '<h2 class="prof-sec-h">Contact</h2><div class="prof-lockbox">'+
+  return '<span class="prof-sec-kick">Reach out</span><h2 class="prof-sec-h">Contact</h2><div class="prof-lockbox">'+
     '<div class="prof-blur">(516) 555-0000 · example-website.com · facebook.com/example</div>'+
     '<p style="font-size:13.5px;margin-bottom:12px;color:var(--olive)"><b>Contact info is free — it just needs an account.</b><br>'+
     '<span style="color:var(--ebony);font-size:12.5px">One email, no password, ten seconds. Phone, website, socials — everything public we can find.</span></p>'+
@@ -3711,7 +3804,7 @@ function showSaved(){
 function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('/vesta'); }
 
 /* NAV */
-function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; }
+function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; if (name==='home') startProofRotator(); else stopProofRotator(); }
 // User picked a trade/problem: run the triage first (when the trade has a bank + the entry is
 // user-initiated), else go straight to browse. opts.walk===false = passive land (desktop auto/resize).
 function openBrowse(key, opts){
