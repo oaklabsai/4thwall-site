@@ -171,8 +171,33 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* Both now render on mobile too — the front door should contain one real Vesta read,
    not just a menu of ways to choose. [hidden] (set by JS only once real data/a pool
    exists) is what actually gates visibility; no breakpoint hides these anymore. */
-.home-trust { text-align:center; font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:rgba(74,75,47,.55); margin-top:34px; }
-.home-trust b { color:var(--olive); font-weight:600; }
+/* ── THE FIELD REPORT — the county-wide cross-trade layer. Desktop: the right column's
+   resident (sticky, internally scrollable). Mobile: a teaser card opening the same
+   report in a bottom sheet. One builder, both surfaces. ── */
+#field-report { display:none; }
+.frep-card { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:20px; padding:20px 22px 18px; box-shadow:var(--sh-row); overflow:hidden; }
+.frep-card::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
+.frep-h { font-family:var(--serif); font-size:23px; font-weight:700; letter-spacing:-.02em; color:var(--olive); line-height:1.15; margin:2px 0 5px; }
+.frep-sub { font-size:12.5px; color:var(--ebony); line-height:1.5; margin-bottom:16px; }
+.frep-pulse { display:flex; gap:8px 26px; flex-wrap:wrap; padding-bottom:4px; }
+.frep-note { font-size:11.5px; color:var(--ebony); line-height:1.45; margin:-4px 0 8px; }
+.frep-row { display:flex; align-items:center; gap:10px; width:100%; border:none; background:none; cursor:pointer; padding:7px 8px; margin:0 -8px 1px; border-radius:11px; font-family:var(--sans); text-align:left; transition:background .14s; }
+.frep-row:hover { background:rgba(74,75,47,.05); }
+.frep-row-l { font-size:12.5px; font-weight:600; color:var(--olive); flex-shrink:0; width:88px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.frep-row-track { flex:1; height:7px; border-radius:99px; background:rgba(74,75,47,.08); overflow:hidden; display:flex; }
+.frep-row-fill { display:block; height:100%; border-radius:99px; background:var(--olive); }
+.frep-mix { gap:2px; }
+.frep-row-n { font-family:var(--mono); font-size:10px; font-weight:600; color:var(--olive); flex-shrink:0; min-width:34px; text-align:right; }
+.frep-row-n i { font-style:normal; font-size:8px; color:var(--ebony); margin-left:2px; }
+.frep-scarce { display:flex; justify-content:space-between; align-items:center; gap:12px; width:100%; border:none; background:none; cursor:pointer; padding:7px 8px; margin:0 -8px; border-radius:11px; text-align:left; border-bottom:1px dashed rgba(74,75,47,.12); transition:background .14s; }
+.frep-scarce:hover { background:rgba(74,75,47,.05); }
+.frep-scarce:last-of-type { border-bottom:none; }
+.frep-scarce-l { font-family:var(--sans); font-size:13px; font-weight:600; color:var(--olive); line-height:1.3; }
+.frep-scarce-l i { display:block; font-style:normal; font-family:var(--mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); margin-top:2px; }
+.frep-chip { font-family:var(--mono); font-size:9px; font-weight:600; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-pill); padding:4px 9px; flex-shrink:0; white-space:nowrap; }
+#frep-teaser { margin-top:30px; }
+.frep-tz-line { display:block; font-size:13px; font-weight:600; color:var(--olive); line-height:1.45; }
+@media (min-width:900px){ #frep-teaser { display:none; } #field-report { display:block; } }
 .home-sample { margin-top:18px; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-row); padding:22px 26px; }
 .home-sample .hsp-kicker { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--olive); margin-bottom:10px; }
 .hsp-shuffle { margin-left:auto; display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; border:1px solid rgba(74,75,47,.14); background:var(--bg); color:var(--olive); cursor:pointer; transition:transform .3s var(--spring), background .15s; }
@@ -636,8 +661,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
      of one centered column drowning in side margins. Left = the action (search, the
      job you came to do); right = proof, pinned so it stays in view while you read. */
   #s-home .home-hero { display:grid; grid-template-columns:1.15fr .85fr; gap:64px; align-items:start; }
-  #s-home .home-hero-proof { position:sticky; top:8vh; margin-top:0; }
-  #s-home .home-trust { text-align:left; }
+  /* The report + read can exceed the viewport — the column scrolls internally while
+     staying pinned, so the reader can browse the report without losing the hero. */
+  #s-home .home-hero-proof { position:sticky; top:4vh; margin-top:0; max-height:92vh; overflow-y:auto; scrollbar-width:none; }
+  #s-home .home-hero-proof::-webkit-scrollbar { display:none; }
   #s-home .home-foot, #s-home .home-sign, #s-home .home-prov { text-align:left; }
 }
 @media (min-width:900px) {
@@ -1175,13 +1202,17 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
             <p class="home-sec-sub">The whole field Vesta tracks in Fairfield County — ranked by record, never by ad spend.</p>
             <div class="trades-grid" id="trades-grid" role="list"></div>
           </div>
+          <!-- Mobile entry to The Field Report — the county-wide layer lives in a bottom
+               sheet on phones (same one-builder law as the per-trade field panel). -->
+          <div id="frep-teaser"></div>
         </div>
-        <!-- Desktop-only proof panel (sidebar already owns full browse) — a real aggregate
-             stat and a real published read, both from live data, never placeholder copy.
-             Sits BESIDE the action column, not stacked below it — the asymmetric split is
-             what makes this read as a landing screen instead of a centered document. -->
+        <!-- The right column is the product's BRAIN: The Field Report — cross-trade
+             conclusions only this dataset can draw (who answers emergencies, how the
+             trades price, the county's scarcest skills), every number computed live
+             from the loaded data. The rotating read sits beneath as the closing
+             exhibit — the report is the brain, the read is the voice. -->
         <div class="home-hero-proof" id="home-hero-proof">
-          <p class="home-trust" id="home-trust" hidden></p>
+          <div id="field-report"></div>
           <div class="home-sample" id="home-sample" hidden></div>
         </div>
       </div>
@@ -1271,6 +1302,13 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   <div class="fsheet fldsheet" id="fldsheet" role="dialog" aria-modal="true" aria-label="The field at a glance" tabindex="-1">
     <div class="phandle-wrap"><div class="phandle" aria-hidden="true"></div><button class="psheet-x" id="fldsheet-x" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button></div>
     <div class="fsheet-body" id="fldsheet-body"></div>
+  </div>
+
+  <!-- MOBILE FIELD REPORT SHEET — the county-wide cross-trade layer (same builder as the desktop column) -->
+  <div class="fscrim" id="frepscrim" aria-hidden="true"></div>
+  <div class="fsheet fldsheet" id="frepsheet" role="dialog" aria-modal="true" aria-label="The Field Report" tabindex="-1">
+    <div class="phandle-wrap"><div class="phandle" aria-hidden="true"></div><button class="psheet-x" id="frepsheet-x" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button></div>
+    <div class="fsheet-body" id="frepsheet-body"></div>
   </div>
 
   <!-- BOTTOM NAV (mobile) -->
@@ -1629,6 +1667,7 @@ async function loadMatchBank(){
     delete b._ax;
   });
   if (S.screen==='home') renderReturn();   // bank loads after first paint — surface a stored match's resume chip
+  renderFieldReport();                      // the report's emergency/scarce sections need the bank
 }
 function tradeBank(appTrade){ return MATCH_BANK[appTrade] || null; }
 
@@ -1846,18 +1885,15 @@ async function loadContractors(){
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
   }
   renderHomeProof();
+  renderFieldReport();
   syncSavedUI();
 }
-// Desktop home proof beats — real aggregate + a real read, standing in for the trade
-// grid the sidebar now owns alone. Both no-op silently if data hasn't landed yet.
+// Home proof read — the closing exhibit beneath The Field Report (the report is the
+// brain, the read is the voice). No-ops silently if data hasn't landed yet.
 let _proofPool = null, _proofLast = null;
 function renderHomeProof(){
-  const trustEl = $('home-trust'), sampleEl = $('home-sample');
-  if (!trustEl || !sampleEl || !contractors.length) return;
-  // Never a depth count (how many firms Vesta tracks/vetted) — that's the one thing
-  // never shown. Breadth is communicated qualitatively instead.
-  trustEl.textContent = 'Vetted across every trade Vesta tracks in Fairfield County';
-  trustEl.hidden = false;
+  const sampleEl = $('home-sample');
+  if (!sampleEl || !contractors.length) return;
   // Pick from the top-rated tier only, and pick RANDOMLY each load (never the same firm
   // twice in a row) — no business gets a standing "featured" slot; it's proof-of-the-read,
   // not an ad placement. A shuffle control makes that randomness visible/usable, not just
@@ -1909,6 +1945,104 @@ function startProofRotator(){
   }, 9000);
 }
 function stopProofRotator(){ if (_proofRotI){ clearInterval(_proofRotI); _proofRotI = null; } }
+
+// ═══ THE FIELD REPORT — the county-wide layer over the per-trade "field at a glance" ═══
+// Cross-trade conclusions only this dataset can draw: who answers an emergency (ranked),
+// how the trades price (stacked mixes), the county's scarcest skills. Every number is
+// recomputed live from the loaded data; every section drops when its data is absent;
+// every trade row is a real door into that field. Same NO-FLUFF kill filter as the
+// per-trade panel — shares and qualitative facts only, never a vetted/depth count.
+// ONE builder renders the desktop home column AND the mobile bottom sheet.
+function fieldReportHTML(){
+  if (!contractors.length) return '';
+  const per = trades.map(t => ({ k:t.key, label:t.label, f:fieldStats(t.key) })).filter(x => x.f.vetted);
+  if (!per.length) return '';
+  // County pulse — breadth facts (trades/towns) are allowed; depth counts never are.
+  const allTen = contractors.map(c=>c.sinceYear).filter(y=>y>0).map(y=>2026-y).sort((a,b)=>a-b);
+  const countyMed = allTen.length >= 5 ? allTen[Math.floor(allTen.length/2)] : 0;
+  const townCount = new Set(contractors.map(c=>c.city).filter(Boolean)).size;
+  const pulse =
+    '<div class="frep-pulse">'+
+      (countyMed?'<span class="fband-stat"><span class="fb-n">'+countyMed+'</span><span class="fb-l">yrs median tenure, county-wide</span></span>':'')+
+      '<span class="fband-stat"><span class="fb-n">'+per.length+'</span><span class="fb-l">trades tracked</span></span>'+
+      (townCount?'<span class="fband-stat"><span class="fb-n">'+townCount+'</span><span class="fb-l">towns</span></span>':'')+
+    '</div>';
+  // Who answers an emergency — the ranked cross-trade truth nobody else publishes.
+  const emerg = per.filter(x=>x.f.emergPct>0).sort((a,b)=>b.f.emergPct-a.f.emergPct).slice(0,6);
+  const emergHtml = emerg.length
+    ? '<div class="fr2-lbl" style="margin-top:22px">Who answers an emergency</div>'+
+      '<p class="frep-note">Share of each field whose review record shows emergency response.</p>'+
+      emerg.map(x=>'<button class="frep-row" data-trade="'+esc(x.k)+'">'+
+        '<span class="frep-row-l">'+esc(x.label)+'</span>'+
+        '<span class="frep-row-track"><span class="frep-row-fill" style="width:'+x.f.emergPct+'%"></span></span>'+
+        '<span class="frep-row-n">'+x.f.emergPct+'%</span></button>').join('')
+    : '';
+  // How the trades price — stacked value/mid/premium mixes, ranked premium-first.
+  const priced = per.filter(x=>x.f.priceMix).sort((a,b)=>b.f.priceMix.prem-a.f.priceMix.prem).slice(0,6);
+  const pricedHtml = priced.length
+    ? '<div class="fr2-lbl" style="margin-top:22px">How the trades price</div>'+
+      '<p class="frep-note">Value · mid-market · premium — where reviews show a clear pricing signal.</p>'+
+      priced.map(x=>{ const m=x.f.priceMix;
+        return '<button class="frep-row" data-trade="'+esc(x.k)+'">'+
+        '<span class="frep-row-l">'+esc(x.label)+'</span>'+
+        '<span class="frep-row-track frep-mix">'+
+          (m.value?'<span class="fr2-seg pv" style="flex:'+m.value+'"></span>':'')+
+          (m.mid?'<span class="fr2-seg pm" style="flex:'+m.mid+'"></span>':'')+
+          (m.prem?'<span class="fr2-seg pp" style="flex:'+m.prem+'"></span>':'')+'</span>'+
+        '<span class="frep-row-n">'+m.prem+'%<i>prem</i></span></button>'; }).join('')+
+      '<div class="fr2-legend" style="margin-top:6px;margin-bottom:0">'+
+        '<span><i class="pv"></i>Value</span><span><i class="pm"></i>Mid-market</span><span><i class="pp"></i>Premium</span></div>'
+    : '';
+  // The county's scarcest skills — the rarest real jobs across every trade.
+  const scarce = per.flatMap(x=>x.f.scarce.map(s=>({label:s.label, pct:s.pct, k:x.k, trade:x.label})))
+    .sort((a,b)=>a.pct-b.pct).slice(0,4);
+  const scarceHtml = scarce.length
+    ? '<div class="fr2-lbl" style="margin-top:22px">The county’s scarcest skills</div>'+
+      '<p class="frep-note">Start early if you need one — few firms carry these.</p>'+
+      scarce.map(s=>'<button class="frep-scarce" data-trade="'+esc(s.k)+'">'+
+        '<span class="frep-scarce-l">'+esc(s.label)+'<i>'+esc(s.trade)+'</i></span>'+
+        '<span class="frep-chip">'+s.pct+'% of the field</span></button>').join('')
+    : '';
+  return '<div class="frep-card">'+
+    '<div class="fband-kick">'+SPARK+'The Field Report — Fairfield County</div>'+
+    '<h2 class="frep-h">The county, <span class="squig">measured</span></h2>'+
+    '<p class="frep-sub">Cross-trade conclusions from Vesta’s own read of the field — public records, zero self-reporting.</p>'+
+    pulse+emergHtml+pricedHtml+scarceHtml+
+    '<p class="fr2-method">Every number recomputed live from the field Vesta tracks — never ads, never pay-to-play.</p>'+
+  '</div>';
+}
+function wireFieldReport(container){
+  container.querySelectorAll('[data-trade]').forEach(b=>b.addEventListener('click',()=>{
+    closeFieldReportSheet();
+    openBrowse(b.dataset.trade, { walk:false });
+  }));
+}
+function renderFieldReport(){
+  const el = $('field-report'), tz = $('frep-teaser');
+  const html = fieldReportHTML();
+  if (el){ el.innerHTML = html; if (html) wireFieldReport(el); }
+  // Mobile teaser — a compact door into the same report, opened as a bottom sheet.
+  if (tz){
+    tz.innerHTML = html ? '<button class="fband frep-tz" type="button" aria-haspopup="dialog">'+
+      '<span class="fband-kick">'+SPARK+'The Field Report — Fairfield County</span>'+
+      '<span class="frep-tz-line">Who answers emergencies · how the trades price · the county’s scarcest skills</span>'+
+      '<span class="fband-more">Read the report →</span></button>' : '';
+    const b = tz.querySelector('.fband'); if (b) b.addEventListener('click', openFieldReportSheet);
+  }
+}
+function openFieldReportSheet(){
+  const body=$('frepsheet-body'); if(!body) return;
+  body.innerHTML = fieldReportHTML();
+  wireFieldReport(body);
+  const s=$('frepsheet'); s.classList.remove('open'); void s.offsetHeight;
+  $('frepscrim').classList.add('open'); $('frepscrim').setAttribute('aria-hidden','false');
+  s.classList.add('open'); S.reportOpen=true;
+  setTimeout(()=>s.focus(),300);
+}
+function closeFieldReportSheet(){
+  const s=$('frepsheet'); if(!s) return;
+  s.classList.remove('open'); $('frepscrim').classList.remove('open'); $('frepscrim').setAttribute('aria-hidden','true'); S.reportOpen=false;
+}
 
 /* HOME — search placeholder as a live typewriter: each example types out letter by
    letter, holds so it can actually be read, then erases before the next one types in.
@@ -4195,6 +4329,8 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   $('fsheet-x').addEventListener('click', closeFilterSheet);
   $('fldscrim').addEventListener('click', closeFieldSheet);
   $('fldsheet-x').addEventListener('click', closeFieldSheet);
+  $('frepscrim').addEventListener('click', closeFieldReportSheet);
+  $('frepsheet-x').addEventListener('click', closeFieldReportSheet);
   ['nav-search','ds-search','home-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
@@ -4202,7 +4338,7 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   $('vsearch-input').addEventListener('input', e => renderSearchResults(e.target.value));
   $('vsearch').addEventListener('click', e => { if (e.target===$('vsearch')) closeSearch(); });
   document.addEventListener('keydown', e => {
-    if (e.key==='Escape') { closeFeedMenus(); if (S.fieldOpen){ closeFieldSheet(); return; } if (S.filterOpen){ closeFilterSheet(); return; } if (S.searchOpen){ closeSearch(); return; } if (S.sheetOpen){ closeSheet(); return; } }
+    if (e.key==='Escape') { closeFeedMenus(); if (S.reportOpen){ closeFieldReportSheet(); return; } if (S.fieldOpen){ closeFieldSheet(); return; } if (S.filterOpen){ closeFilterSheet(); return; } if (S.searchOpen){ closeSearch(); return; } if (S.sheetOpen){ closeSheet(); return; } }
     if (S.screen==='browse' && S.mode==='trade' && !S.sheetOpen && !S.searchOpen && !desktop()){
       const c = topCon();
       if (e.key==='ArrowRight' && c){ e.preventDefault(); commit('save', c); }
