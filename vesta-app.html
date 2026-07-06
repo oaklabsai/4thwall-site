@@ -801,6 +801,35 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .prof-angle p { font-size:13px; color:var(--ebony); line-height:1.55; }
 .prof-chips { display:flex; flex-wrap:wrap; gap:8px; }
 .prof-chip { display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:600; color:var(--olive); background:var(--tea); border-radius:var(--r-pill); padding:6px 13px; }
+.prof-chip.alt { color:var(--olive); background:rgba(74,75,47,.06); font-weight:500; }
+/* ── "The Record" — the locked dot-axis design standard (mirrors api/_render-contractor.mjs) ── */
+.trec-kicker { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--olive); margin:28px 0 14px; }
+.trec-sec-lbl { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); margin-bottom:9px; }
+.trec-dots { display:flex; align-items:center; gap:5px; flex-wrap:wrap; margin-bottom:9px; }
+.trec-dot { width:9px; height:9px; border-radius:50%; background:rgba(74,75,47,.14); }
+.trec-dot.a { background:var(--olive); }
+.trec-dot.me { width:15px; height:15px; background:var(--olive); box-shadow:0 0 0 3px var(--white),0 0 0 5px var(--tea); }
+.trec-poscap { font-size:13px; color:var(--ebony); line-height:1.5; }
+.trec-poscap b { color:var(--olive); }
+.trec-standing { margin-bottom:20px; }
+.trec-meters { display:flex; flex-direction:column; gap:16px; margin-top:2px; }
+.trec-meter-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+.trec-meter-lbl { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); }
+.trec-meter-val { font-family:var(--serif); font-size:15px; font-weight:700; letter-spacing:-.01em; color:var(--olive); }
+.trec-axis { display:flex; align-items:center; }
+.trec-axd { width:9px; height:9px; border-radius:50%; background:rgba(74,75,47,.16); flex-shrink:0; }
+.trec-axd.on { width:15px; height:15px; background:var(--olive); box-shadow:0 0 0 3px var(--white),0 0 0 5px var(--tea); }
+.trec-axl { flex:1; height:2px; background:rgba(74,75,47,.1); }
+.trec-axl.pre { background:linear-gradient(90deg,rgba(74,75,47,.1),rgba(74,75,47,.3)); }
+.trec-ticks { display:flex; justify-content:space-between; margin-top:7px; }
+.trec-ticks span { font-family:var(--mono); font-size:9px; letter-spacing:.03em; text-transform:uppercase; color:rgba(74,75,47,.4); flex:1; text-align:center; }
+.trec-ticks span:first-child { text-align:left; } .trec-ticks span:last-child { text-align:right; }
+.trec-ticks span.on { color:var(--olive); font-weight:600; }
+.trec-ev { margin-bottom:13px; } .trec-ev:last-child { margin-bottom:0; }
+.trec-ev-h { display:block; font-size:14px; font-weight:600; color:var(--olive); line-height:1.3; }
+.trec-ev-q { display:block; font-family:var(--serif); font-style:italic; font-size:13.5px; color:var(--ebony); line-height:1.5; margin-top:3px; }
+.trec-crew { font-size:13px; color:var(--ebony); margin-top:18px; }
+.trec-crew b { color:var(--olive); font-weight:600; }
 .prof-google { margin-top:24px; padding:14px 16px; background:rgba(74,75,47,.035); border:1px solid rgba(74,75,47,.07); border-radius:14px; font-size:13px; color:var(--ebony); line-height:1.55; max-width:560px; }
 .prof-google .gsrc { font-family:var(--mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); }
 .prof-google b { color:var(--olive); }
@@ -864,15 +893,43 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .prof-fold-chev { display:flex; color:var(--ebony); transition:transform .2s; }
 .prof-fold[open] .prof-fold-chev { transform:rotate(180deg); }
 .prof-fold-body { padding:14px 2px 0; }
+/* Shared dropdown-title styling (fold summary text + claim-toggle text) */
+.fold-title { display:inline-flex; align-items:center; gap:8px; }
+.fold-spark { display:inline-flex; color:var(--olive); }
+/* Prioritized/highlighted variant — Vesta's read: open by default, visually the loudest dropdown on the page */
+.prof-fold-hi { margin-top:26px; }
+.prof-fold-sum-hi { max-width:none; background:linear-gradient(135deg, rgba(212,223,158,.34), rgba(212,223,158,.1)); border-color:rgba(74,75,47,.2); box-shadow:var(--sh-row-h); }
+.prof-fold-sum-hi:hover { border-color:var(--olive); }
+.prof-block-hi { position:relative; max-width:none; border-color:rgba(74,75,47,.13); box-shadow:var(--sh-card); overflow:hidden; }
+.prof-block-hi::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
 
-/* Claim = a single question pill; the owner-facing claim + Atlas funnel cascades open on click */
+/* Claim = a single question pill; the owner-facing claim + Atlas funnel cascades open on click.
+   Animated via the grid-rows collapse trick (0fr→1fr) — a real height transition, not an instant show/hide. */
 .claimwrap { margin-top:32px; }
 .claim-toggle { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; max-width:560px; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:16px; padding:15px 18px; cursor:pointer; font-family:var(--sans); box-shadow:var(--sh-row); transition:border-color .15s; }
 .claim-toggle:hover { border-color:rgba(74,75,47,.28); }
 .claim-q { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); letter-spacing:-.01em; }
 .claim-chev { display:flex; color:var(--ebony); transition:transform .2s; }
 .claim-toggle.open .claim-chev { transform:rotate(180deg); }
+.claim-panel { display:grid; grid-template-rows:0fr; transition:grid-template-rows .34s var(--spring); }
+.claim-panel.open { grid-template-rows:1fr; }
+.claim-panel-inner { overflow:hidden; min-height:0; }
 .claim-panel .atlas-moment { margin:8px 0 0; }
+
+/* "What sets them apart" — specialty capability cards, redesigned to match The Record's
+   visual sophistication: gradient top edge, hover lift, monospace tag, scroll-driven reveal. */
+.trec-spec-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
+.trec-spec-card { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:18px; padding:17px 18px 16px; box-shadow:var(--sh-row); overflow:hidden; transition:transform .18s var(--spring), box-shadow .18s, border-color .18s; }
+.trec-spec-card::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); opacity:.85; }
+.trec-spec-card:hover, .trec-spec-card:active { transform:translateY(-3px); box-shadow:var(--sh-row-h); border-color:rgba(74,75,47,.22); }
+.trec-spec-tag { display:inline-flex; align-items:center; gap:4px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.13em; text-transform:uppercase; color:var(--olive); background:rgba(212,223,158,.4); border-radius:999px; padding:3px 9px; margin-bottom:9px; }
+.trec-spec-card h3 { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); margin-bottom:5px; letter-spacing:-.01em; }
+.trec-spec-card p { font-size:13px; color:var(--ebony); line-height:1.55; }
+@media (max-width:560px){ .trec-spec-cards { grid-template-columns:1fr; } }
+@supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {
+  .trec-spec-card { animation:trecSpecIn both; animation-timeline:view(); animation-range:entry 8% entry 42%; }
+  @keyframes trecSpecIn { from { opacity:.001; transform:translateY(14px); } to { opacity:1; transform:none; } }
+}}
 
 /* In-app request — light Vesta palette (the homeowner's side; the Atlas moment stays dark, this does not) */
 .req-form { max-width:560px; margin-top:20px; }
@@ -3027,7 +3084,8 @@ async function openProfile(placeId){
     const enrRows = await HOME.db('/profile_enrichment_public?place_id=eq.'+encodeURIComponent(placeId)+
       '&limit=1&select=trade,registered,hic_issue_date,trade_license,certifications,synthesis,synthesis_review_count,'+
       'signature,known_for,specialties,service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,'+
-      'capabilities,value_tier,deep_review_count,rating_count');
+      'capabilities,value_tier,deep_review_count,rating_count,best_for,project_scale,responsiveness,'+
+      'pricing_profile,recurring_praise,crew_named');
     const enr = Array.isArray(enrRows) && enrRows[0] ? enrRows[0] : null;
     profData = { placeId, p:data.place, enr, claimed:!!data.claimed, unlocked:data.unlocked||null };
     renderProfile();
@@ -3068,15 +3126,21 @@ function profHeroHTML(){
     '<p class="prof-fine">One form — Vesta carries your request to them, replies come straight to you.</p>';
 }
 function profSignatureHTML(){ const enr=profData.enr; return (enr && enr.signature) ? '<p class="prof-sig">'+esc(enr.signature)+'</p>' : ''; }
-// Vesta's read = the verdict. Signature folds in here as the lead line so there aren't two stacked Vesta-voice blocks.
+// Vesta's read = the verdict — the single most important thing on the page, so it's the
+// loudest dropdown: open by default (prioritized), visually highlighted (not a plain fold).
+// Signature folds in here as the lead line so there aren't two stacked Vesta-voice blocks.
 function profReadHTML(){
   const enr=profData.enr; if (!enr || (!enr.synthesis && !enr.signature)) return '';
-  let html='<h2 class="prof-sec-h">Vesta’s read</h2>';
-  if (enr.signature) html += '<p class="prof-sig">'+esc(enr.signature)+'</p>';
-  if (enr.synthesis) html += '<div class="prof-block"><p class="read">'+esc(enr.synthesis)+'</p>'+
+  let inner='';
+  if (enr.signature) inner += '<p class="prof-sig">'+esc(enr.signature)+'</p>';
+  if (enr.synthesis) inner += '<div class="prof-block prof-block-hi"><p class="read">'+esc(enr.synthesis)+'</p>'+
     '<p class="prof-fine" style="margin-top:12px">Based on '+((enr.rating_count||enr.deep_review_count)?esc((enr.rating_count||enr.deep_review_count).toLocaleString('en-US'))+' ':'')+
     'public homeowner reviews on record — Vesta’s own wording, never a copy of any single review.</p></div>';
-  return html;
+  return '<details class="prof-fold prof-fold-hi" open>'+
+    '<summary class="prof-fold-sum prof-fold-sum-hi"><span class="fold-title"><span class="fold-spark">'+SPARK+'</span>Vesta’s read</span>'+
+    '<span class="prof-fold-chev">'+CHEV+'</span></summary>'+
+    '<div class="prof-fold-body">'+inner+'</div>'+
+  '</details>';
 }
 // "Where it stands" — TAILORED comparative standing. Built from each firm's
 // DISTINCTIVE verifiable signals (scarce-specialty flags from the trade-wide
@@ -3187,53 +3251,157 @@ const STANDING_SPECIALTY = {
     green_pool_recovery:      ['Specialty','Green-pool recovery','One of the few %F we track known for rescuing a neglected or green pool rather than recommending a drain-and-restart.']
   }
 };
+// Specialty capabilities only — NOT a standing/rank claim, so it can sit
+// alongside "The Record" without repeating the dot-strip's percentile language.
+// (This used to also carry volume/rating/tenure-band "Where it stands" cards
+// that restated standing in prose on every profile — cut per Drew's rule:
+// standing appears in exactly ONE place, the dot strip in profTheRecordHTML.)
 function profStandingHTML(){
   const enr=profData.enr; if (!enr) return '';
   const trade=pTradeKey();
   const firms = PTRADE_FIRMS[trade] || 'pros';
-  const tLower = trade==='hvac' ? 'HVAC' : ((PTRADE_LABEL[trade]||'').toLowerCase());
   const caps = (enr.capabilities && typeof enr.capabilities==='object') ? enr.capabilities : {};
-  const reviewN = Number(enr.deep_review_count || enr.rating_count || 0);
-  const nStr = reviewN ? reviewN.toLocaleString('en-US') : '';
-  const items=[];   // [kicker, title, desc] — built strongest-first, capped at 4
-  // 1) Scarce specialties — the sharpest differentiator, lead with them.
+  const items=[];   // [kicker, title, desc] — capped at 4
   const specMap = STANDING_SPECIALTY[trade] || {};
   for (const key in specMap){ if (caps[key]){ const s=specMap[key]; items.push([s[0], s[1], s[2].replace(/%F/g, firms)]); } }
-  // 2) Tenure.
-  if (enr.tenure_band==='top25'){ const yr=enr.hic_issue_date?+String(enr.hic_issue_date).slice(0,4):0; items.push(['Tenure','Long-established','Registered with the state'+(yr&&yr!==1999?' since '+yr:'')+' — one of the longer-established '+firms+' we track in Fairfield County.']); }
-  // 3) Review volume — quantified (COUNT yes).
-  if (enr.volume_band==='top10') items.push(['Review volume','Among the most-reviewed',(nStr?nStr+' homeowner reviews on record — one':'One')+' of the most-reviewed '+firms+' in Fairfield County.']);
-  else if (enr.volume_band==='top25') items.push(['Review volume','A deep track record',(nStr?nStr+' homeowner reviews — a':'A')+' deeper bank of homeowner reviews than most '+firms+' we track.']);
-  // 4) Rating BAND only — never the score.
-  if (enr.rating_band==='top10') items.push(['Homeowner rating','Top-rated at scale','Holds a top-tier homeowner rating'+(nStr?' across all '+nStr+' reviews':'')+' — consistency at a volume most firms never reach.']);
-  else if (enr.rating_band==='top25') items.push(['Homeowner rating','Strongly rated','Carries one of the stronger homeowner ratings among the '+firms+' we track, across a meaningful number of reviews.']);
   if (!items.length) return '';
-  const cards = items.slice(0,4).map(it=>'<div class="prof-card"><div class="k">'+esc(it[0])+'</div><h3>'+it[1]+'</h3><p>'+esc(it[2])+'</p></div>').join('');
-  return '<h2 class="prof-sec-h">Where it stands</h2>'+
-    '<p class="prof-sec-note">What sets them apart on the signals Vesta can verify — public records, manufacturer credentials, and a deep read of review history, not a paid placement.</p>'+
-    '<div class="prof-cards">'+cards+'</div>';
+  const cards = items.slice(0,4).map(it=>'<div class="trec-spec-card"><span class="trec-spec-tag">'+esc(it[0])+'</span><h3>'+it[1]+'</h3><p>'+esc(it[2])+'</p></div>').join('');
+  return '<h2 class="prof-sec-h">What sets them apart</h2>'+
+    '<p class="prof-sec-note">Specialty capability confirmed in the review record — not every '+esc((PTRADE_LABEL[trade]||'firm').toLowerCase())+' Vesta tracks takes this on.</p>'+
+    '<div class="trec-spec-cards">'+cards+'</div>';
 }
-// At a glance = every hard fact in one categorized block: registry-verified credentials (chips + provenance),
-// then the business details (specialties / service area / owner). Consolidates the old "The record" + the
-// scattered key-values that used to live under "known for".
-function profGlanceHTML(){
+
+// === "The Record" — the locked dot-axis design standard (mirrors the SSR
+// build in api/_render-contractor.mjs; same fields, same rules, same visual
+// system — kept in sync so the app and the crawlable /c/ page never diverge). ===
+const TREC_HUMANIZE_FIX = { ev:'EV', ac:'AC', hvac:'HVAC', lvp:'LVP', eifs:'EIFS', gaf:'GAF', epa:'EPA', ct:'CT' };
+function trecHumanize(tag){
+  return String(tag).split(/[_-]/).map(w => TREC_HUMANIZE_FIX[w.toLowerCase()] || (w.charAt(0).toUpperCase()+w.slice(1)))
+    .join(' ').replace(/\b24 7\b/, '24/7');
+}
+// Standing dot-strip — the ONLY place standing/percentile language appears.
+// Illustrative dot pattern (a stylized band position, never an exact rank);
+// the caption never states a field size or review depth.
+function profStandingDotHTML(){
+  const enr=profData.enr; const band = enr && enr.rating_band;
+  if (band!=='top10' && band!=='top25') return '';
+  const isTop10 = band==='top10';
+  const total=20, meIdx = isTop10?1:4, bandEnd = isTop10?4:9;
+  let dots='';
+  for (let i=0;i<total;i++){ const cls = i===meIdx?'me':(i<bandEnd?'a':''); dots += '<span class="trec-dot'+(cls?' '+cls:'')+'" aria-hidden="true"></span>'; }
+  return '<div class="trec-sec-lbl">Where it sits in the Fairfield County field</div>'+
+    '<div class="trec-dots">'+dots+'</div>'+
+    '<p class="trec-poscap">In the <b>'+(isTop10?'top 10%':'top 25%')+' band</b> of the field Vesta tracks.</p>';
+}
+function trecMeterHTML(label, valLabel, ticks, idx){
+  let axis='';
+  for (let i=0;i<ticks.length;i++){
+    axis += '<span class="trec-axd'+(i===idx?' on':'')+'"></span>';
+    if (i<ticks.length-1) axis += '<span class="trec-axl'+(i<idx?' pre':'')+'"></span>';
+  }
+  const ticksHtml = ticks.map((t,i)=>'<span'+(i===idx?' class="on"':'')+'>'+esc(t)+'</span>').join('');
+  return '<div class="trec-meter">'+
+    '<div class="trec-meter-head"><span class="trec-meter-lbl">'+esc(label)+'</span><span class="trec-meter-val">'+esc(valLabel)+'</span></div>'+
+    '<div class="trec-axis">'+axis+'</div>'+
+    '<div class="trec-ticks">'+ticksHtml+'</div>'+
+  '</div>';
+}
+const TREC_PRICING_POS = { value:0, 'mid-market':1, premium:2 };
+const TREC_PRICING_LABELS = ['Value','Mid-market','Premium'];
+const TREC_RESP_LABELS = ['Standard','Fast','Emergency-ready'];
+function profMetersHTML(){
+  const enr=profData.enr; if (!enr) return '';
+  const parts=[];
+  const pIdx = TREC_PRICING_POS[enr.value_tier];
+  if (pIdx!==undefined) parts.push(trecMeterHTML('Pricing tier', TREC_PRICING_LABELS[pIdx], TREC_PRICING_LABELS, pIdx));
+  const r = enr.responsiveness;
+  if (r && (r.tier==='fast' || r.tier==='standard')){
+    const rIdx = r.emergency ? 2 : (r.tier==='fast'?1:0);
+    parts.push(trecMeterHTML('Responsiveness', TREC_RESP_LABELS[rIdx], TREC_RESP_LABELS, rIdx));
+  }
+  if (!parts.length) return '';
+  return '<div class="trec-meters">'+parts.join('')+'</div>';
+}
+// How they operate — the card-plate signal picker's profile-depth sibling: ranks
+// candidate evidence (fast/emergency responsiveness, pricing behavior, capability-
+// flag quotes) and keeps the 3 strongest, each a REAL quote from the review
+// record. A signal only qualifies with a substantive (12+ char) quote.
+function profOperateHTML(){
+  const enr=profData.enr; if (!enr) return '';
+  const trade=pTradeKey();
+  const caps = (enr.capabilities && typeof enr.capabilities==='object') ? enr.capabilities : {};
+  const specMap = STANDING_SPECIALTY[trade] || {};
+  const items=[];
+  const r = enr.responsiveness;
+  if (r && r.ev && (r.emergency || r.tier==='fast')) items.push({label: r.emergency?'Answers in an emergency':'Fast to respond', quote:r.ev, pri:r.emergency?3:2});
+  if (enr.pricing_profile && enr.pricing_profile.theme) items.push({label:'How they price the job', quote:enr.pricing_profile.theme, pri:2});
+  for (const key in caps){
+    const c = caps[key]; if (!c || !c.ev || String(c.ev).length<12) continue;
+    const curated = specMap[key];
+    const label = curated ? String(curated[1]).replace(/&amp;/g,'&') : trecHumanize(key);
+    items.push({label, quote:c.ev, pri: curated?2:(String(c.ev).length>60?1:0)});
+  }
+  items.sort((a,b)=> b.pri-a.pri || String(b.quote).length-String(a.quote).length);
+  const top = items.slice(0,3);
+  if (!top.length) return '';
+  const rows = top.map(it=>'<div class="trec-ev"><span class="trec-ev-h">'+esc(it.label)+'</span><span class="trec-ev-q">“'+esc(it.quote)+'”</span></div>').join('');
+  return '<h2 class="prof-sec-h sub">How they operate — from the review record</h2><div class="prof-block">'+rows+'</div>';
+}
+function trecChipsHTML(heading, tags, altStyle){
+  const arr = Array.isArray(tags) ? tags.filter(Boolean) : [];
+  if (!arr.length) return '';
+  const chips = arr.slice(0,6).map(t=>'<span class="prof-chip'+(altStyle?' alt':'')+'">'+(altStyle?'':'✓ ')+esc(trecHumanize(t))+'</span>').join('');
+  return '<h2 class="prof-sec-h sub">'+esc(heading)+'</h2><div class="prof-chips">'+chips+'</div>';
+}
+function profCrewProvenanceHTML(){
+  const enr=profData.enr; if (!enr) return '';
+  const crew = Array.isArray(enr.crew_named) ? enr.crew_named.filter(Boolean) : [];
+  return (crew.length ? '<p class="trec-crew">Crew homeowners name: <b>'+crew.map(esc).join(', ')+'</b></p>' : '')+
+    '<p class="prof-fine" style="margin-top:8px">Everything above is drawn from public reviews and Connecticut state records — nothing self-reported, nothing paid for.</p>';
+}
+// Track record — verified credentials (registered/licensed/certified, same
+// facts profGlanceHTML used to show as loose badges) + the dot-axis meters.
+function profTrackRecordHTML(){
   const enr=profData.enr; if (!enr) return '';
   const trade=pTradeKey(); const tLower = trade==='hvac' ? 'HVAC' : ((PTRADE_LABEL[trade]||'trade').toLowerCase());
   const chips=[];
   if (enr.registered){ const yr=enr.hic_issue_date?+String(enr.hic_issue_date).slice(0,4):0; chips.push('<span class="prof-badge">Registered CT contractor'+(yr&&yr!==1999?' · since '+yr:'')+' ✓</span>'); }
   if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if (c&&c.issuer&&c.level) chips.push('<span class="prof-badge">'+esc(c.issuer+' '+c.level)+' ✓</span>'); }
   if (Array.isArray(enr.trade_license)&&enr.trade_license.length) chips.push('<span class="prof-badge">Licensed '+esc(tLower)+' ✓</span>');
+  const meters = profMetersHTML();
+  if (!chips.length && !meters) return '';
+  let inner='';
+  if (chips.length) inner += '<div class="prof-badges" style="margin:0">'+chips.join('')+'</div>'+
+    '<p class="prof-fine" style="margin-top:11px">Checked against public CT state registries and manufacturer directories · June 2026. Vesta vouches only what a public record confirms.</p>';
+  if (chips.length && meters) inner += '<div class="prof-glance-rule"></div>';
+  inner += meters;
+  return '<h2 class="prof-sec-h">Track record</h2><div class="prof-block">'+inner+'</div>';
+}
+function profTheRecordHTML(){
+  const enr=profData.enr; if (!enr) return '';
+  const dotStrip = profStandingDotHTML();
+  const track = profTrackRecordHTML();
+  const operate = profOperateHTML();
+  const praise = trecChipsHTML('What keeps coming up', enr.recurring_praise, false);
+  const scope = trecChipsHTML('Scope of work', enr.project_scale, true);
+  const hiredFor = trecChipsHTML('What homeowners hire them for', enr.best_for, true);
+  if (!dotStrip && !track && !operate && !praise && !scope && !hiredFor) return '';
+  return '<p class="trec-kicker">✦ The record — what’s public &amp; provable</p>'+
+    (dotStrip ? '<div class="trec-standing">'+dotStrip+'</div>' : '')+
+    track+operate+praise+scope+hiredFor+
+    profCrewProvenanceHTML();
+}
+// At a glance = the remaining business facts not already covered by The Record
+// (specialties / service area / owner). Verified credentials live in The
+// Record's Track record section now — kept in exactly one place, not repeated.
+function profGlanceHTML(){
+  const enr=profData.enr; if (!enr) return '';
   const rows=[];
   if (Array.isArray(enr.specialties)&&enr.specialties.length) rows.push('<div class="prof-kv"><span>Specialties</span><b>'+enr.specialties.map(esc).join(' · ')+'</b></div>');
   if (Array.isArray(enr.service_area)&&enr.service_area.length) rows.push('<div class="prof-kv"><span>Service area</span><b>'+enr.service_area.map(esc).join(', ')+'</b></div>');
   if (enr.owner_name) rows.push('<div class="prof-kv"><span>Owner</span><b>'+esc(enr.owner_name)+'</b></div>');
-  if (!chips.length && !rows.length) return '';
-  let inner='';
-  if (chips.length) inner += '<div class="prof-badges" style="margin:0">'+chips.join('')+'</div>'+
-    '<p class="prof-fine" style="margin-top:11px">Checked against public CT state registries and manufacturer directories · June 2026. Vesta vouches only what a public record confirms.</p>';
-  if (chips.length && rows.length) inner += '<div class="prof-glance-rule"></div>';
-  if (rows.length) inner += rows.join('');
-  return '<h2 class="prof-sec-h">At a glance</h2><div class="prof-block">'+inner+'</div>';
+  if (!rows.length) return '';
+  return '<h2 class="prof-sec-h">At a glance</h2><div class="prof-block">'+rows.join('')+'</div>';
 }
 function profKnownHTML(){
   const enr=profData.enr; if (!enr) return '';
@@ -3250,17 +3418,6 @@ function profGuideHTML(){
     '<span class="prof-fold-chev">'+CHEV+'</span></summary>'+
     '<div class="prof-fold-body"><p class="prof-sec-note" style="margin-top:0">Vesta’s plain checklist for '+esc(PTRADE_PROS[pTradeKey()]||'this trade')+'. General guidance about the trade — not a claim about this business.</p>'+
     '<div class="prof-guide">'+rows+'</div></div></details>';
-}
-function profRecordHTML(){
-  const enr=profData.enr; if (!enr) return '';
-  const trade=pTradeKey(); const tLower = trade==='hvac' ? 'HVAC' : ((PTRADE_LABEL[trade]||'trade').toLowerCase());
-  const chips=[];
-  if (enr.registered){ const yr = enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0,4) : 0; chips.push('<span class="prof-badge">Registered CT contractor'+(yr&&yr!==1999?' · since '+yr:'')+' ✓</span>'); }
-  if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if (c && c.issuer && c.level) chips.push('<span class="prof-badge">'+esc(c.issuer+' '+c.level)+' ✓</span>'); }
-  if (Array.isArray(enr.trade_license) && enr.trade_license.length) chips.push('<span class="prof-badge">Licensed '+esc(tLower)+' ✓</span>');
-  if (!chips.length) return '';
-  return '<h2 class="prof-sec-h">The record</h2><div class="prof-block"><div class="prof-badges" style="margin:0">'+chips.join('')+'</div>'+
-    '<p class="prof-fine" style="margin-top:11px">Checked against public CT state registries and manufacturer directories · June 2026. Vesta vouches only what a public record confirms.</p></div>';
 }
 function profGoogleHTML(){
   const p=profData.p;
@@ -3310,7 +3467,7 @@ function profClaimHTML(){
     '<div class="am-form-row am-form-pair"><div><label for="pcp">Phone</label><input type="tel" id="pcp" required maxlength="20"></div>'+
     '<div><label for="pce">Email (optional)</label><input type="email" id="pce" maxlength="120"></div></div>'+
     '<button class="am-pill" type="submit">Claim this profile — free</button><span class="prof-status" id="prof-claim-st"></span></form>';
-  return '<section class="atlas-moment" aria-label="Is this your business?">'+
+  const panel = '<section class="atlas-moment" aria-label="Is this your business?">'+
     '<div class="am-eyebrow">For the owner · from 4THWALL</div>'+
     '<h2 class="am-h">Is this your business?</h2>'+
     '<p class="am-lede2">It’s already in front of homeowners in Fairfield County choosing who to hire. Vesta weighed your reviews, your public record, and the work you’re known for into the honest read above. Claim it free to make it yours.</p>'+
@@ -3323,6 +3480,15 @@ function profClaimHTML(){
     '<p class="am-lede">Claimed owners can switch on <b>Atlas</b> — the AI back-office that answers your inbound, books the job, and follows up while you’re on the job.</p>'+
     '<div class="am-cta"><a class="am-atlas-link" href="/atlas.html">See what Atlas does →</a></div>'+
   '</section>';
+  // Toggle, not a full always-open block — the claim CTA is real estate the read/
+  // record now earn instead. Animated via the .claim-panel grid-rows trick (wireProfile).
+  return '<div class="claimwrap">'+
+    '<button class="claim-toggle" id="claim-toggle" type="button" aria-expanded="false" aria-controls="claim-panel">'+
+      '<span class="claim-q fold-title"><span class="fold-spark">'+SPARK+'</span>Is this your business?</span>'+
+      '<span class="claim-chev">'+CHEV+'</span>'+
+    '</button>'+
+    '<div class="claim-panel" id="claim-panel"><div class="claim-panel-inner">'+panel+'</div></div>'+
+  '</div>';
 }
 function profRemovalHTML(){
   return '<p class="prof-removal">This is a public-record listing compiled by Vesta — not an endorsement, and not written by the business. '+
@@ -3337,9 +3503,11 @@ function profPhotosHTML(){
   return '<div class="vph vph-profile" id="prof-photos" data-ph="1">'+galleryHTML(photos,'profile')+'</div>';
 }
 function renderProfile(){
-  // Reader/marketing flow: identity+CTA → work photos → the verdict → facts+credentials → homeowner proof →
-  // standing → external reference → contact → (collapsed) generic guide → claim. Depth preserved; nothing trimmed.
-  $('prof-wrap').innerHTML = profHeroHTML()+profPhotosHTML()+profReadHTML()+profGlanceHTML()+profKnownHTML()+profStandingHTML()+
+  // Reader/marketing flow: identity+CTA → work photos → The Record (standing dot-
+  // strip, track record, how they operate, chips) → the verdict → what sets them
+  // apart → remaining facts → homeowner proof → external reference → contact →
+  // (collapsed) generic guide → claim. Mirrors api/_render-contractor.mjs's order.
+  $('prof-wrap').innerHTML = profHeroHTML()+profPhotosHTML()+profTheRecordHTML()+profReadHTML()+profStandingHTML()+profGlanceHTML()+profKnownHTML()+
     profGoogleHTML()+profContactHTML()+profGuideHTML()+profClaimHTML()+profRemovalHTML();
   wireProfile();
 }
@@ -3352,8 +3520,8 @@ function wireProfile(){
   const req=$('prof-req-btn'); if(req) req.addEventListener('click', () => enterRequest({ placeId:profData.placeId, trade:(TRADE_APP[pTradeKey()]||pTradeKey()), name:(profData.p&&profData.p.name)||'' }));
   const ct=$('claim-toggle'); if(ct) ct.addEventListener('click', () => {
     const panel=$('claim-panel'); if(!panel) return;
-    const opening = panel.hasAttribute('hidden');
-    if (opening) panel.removeAttribute('hidden'); else panel.setAttribute('hidden','');
+    const opening = !panel.classList.contains('open');
+    panel.classList.toggle('open', opening);
     ct.setAttribute('aria-expanded', opening?'true':'false'); ct.classList.toggle('open', opening);
   });
 }
