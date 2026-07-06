@@ -64,7 +64,6 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 @media (max-width:469px) and (max-height:720px) {
   .browse-h1 { font-size:19px; }
   .browse-hdr { padding:4px 20px 3px; }
-  .vbanner { display:none; }
   .deck-meta { display:none; }
 }
 
@@ -183,6 +182,14 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .vbanner { display:flex; align-items:center; gap:9px; margin:0 20px 8px; padding:8px 14px; background:rgba(212,223,158,.28); border:1px solid rgba(74,75,47,.08); border-radius:12px; font-size:12px; color:var(--ebony); line-height:1.35; }
 .vbanner b { color:var(--olive); font-weight:600; }
 .vbanner .vb-spark { color:var(--olive); flex-shrink:0; }
+/* PHONES: the instruction banner duplicated the card's own hint line ("tap for the full
+   profile") while costing the deck ~90px — with the stat strip on the card, that space
+   belongs to the read. NOTE: this hide must live BELOW the base .vbanner rule — media
+   queries don't beat source order at equal specificity (the old SE-class hide silently
+   lost that fight for exactly this reason). */
+@media (max-width:469px) {
+  .vbanner { display:none; }
+}
 
 /* BODY split: left column (deck or saved list) + panel */
 .vbody { display:flex; flex:1; min-height:0; }
@@ -229,6 +236,33 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .card-chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; color:var(--ebony); background:rgba(74,75,47,.05); border-radius:var(--r-pill); padding:4px 10px; white-space:nowrap; }
 .card-chip svg { color:var(--olive); }
 .card-hint { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:13px; font-size:11px; color:rgba(74,75,47,.5); }
+/* ── Data-rollout layers (shared: deck card + feed card) ─────────────────────
+   The stat strip is the structured middle register between the name and the
+   prose — real numbers presented as numbers. The lede/body split gives the
+   read typographic hierarchy: the authored thesis sentence reads as a deck,
+   the evidence reads as body. */
+.statstrip { display:flex; align-items:stretch; gap:14px; padding:7px 0 9px; margin-bottom:2px; }
+.statstrip .stat { display:flex; flex-direction:column; gap:1px; min-width:0; }
+.statstrip .stat b { font-family:var(--serif); font-size:18px; font-weight:700; color:var(--olive); line-height:1.1; letter-spacing:-.02em; white-space:nowrap; }
+.statstrip .stat i { font-style:normal; font-family:var(--mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); white-space:nowrap; }
+.statstrip .statdiv { width:1px; background:rgba(74,75,47,.14); flex-shrink:0; }
+.syn-lede { font-size:1.12em; font-weight:600; letter-spacing:-.012em; }
+.syn-body { opacity:.86; }
+/* The rollout beat: a freshly promoted top card cascades its layers in —
+   identity, then the numbers, then the read. Replays on every promotion. */
+.card[data-k="0"] .card-top { animation:tileIn .4s var(--spring) both; }
+.card[data-k="0"] .statstrip { animation:tileIn .4s var(--spring) .06s both; }
+.card[data-k="0"] .card-readlbl { animation:tileIn .4s var(--spring) .12s both; }
+.card[data-k="0"] .card-synwrap { animation:tileIn .45s var(--spring) .17s both; }
+@media (prefers-reduced-motion:reduce){
+  .card[data-k="0"] .card-top, .card[data-k="0"] .statstrip, .card[data-k="0"] .card-readlbl, .card[data-k="0"] .card-synwrap { animation:none; }
+}
+/* Mobile field strip — the per-trade analytics layer the desktop rail carries,
+   compressed to one honest mono line under the browse header. */
+.field-strip { font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--ebony); padding:0 20px 8px; white-space:nowrap; overflow-x:auto; scrollbar-width:none; -webkit-mask-image:linear-gradient(to right,#000 88%,transparent); mask-image:linear-gradient(to right,#000 88%,transparent); }
+.field-strip::-webkit-scrollbar { display:none; }
+.field-strip:empty { display:none; }
+.field-strip b { color:var(--olive); font-weight:600; }
 
 /* swipe stamps */
 .stamp { position:absolute; top:22px; font-family:var(--mono); font-size:19px; font-weight:600; letter-spacing:.1em; padding:5px 13px; border-radius:9px; border:3px solid; opacity:0; pointer-events:none; z-index:6; }
@@ -552,6 +586,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   #s-browse .browse-hdr { padding:34px 40px 4px; }
   .browse-h1 { font-size:46px; }
   .chips-row { display:none; }
+  .field-strip { display:none; }   /* desktop carries this layer in the field-at-a-glance rail */
   .vbanner { margin:14px 40px 0; }
   .vbody { flex:1; min-height:0; overflow:hidden; }
   .leftcol { min-width:0; }
@@ -967,6 +1002,7 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
       <p class="browse-sub" id="browse-sub">Save the ones worth a call</p>
     </div>
     <div class="chips-row" id="chips-row" role="group" aria-label="Filter by what you need"></div>
+    <div class="field-strip" id="field-strip" aria-label="About this field"></div>
     <div class="vbanner" id="vbanner"></div>
     <div class="vbody">
       <div class="leftcol" id="leftcol">
@@ -1791,6 +1827,7 @@ function renderSidebar(){
 }
 function updateBrowseHead(){
   const banner = $('vbanner');
+  renderFieldStrip();
   const flt = $('tb-filter'); if (flt) flt.style.display = (S.mode==='saved') ? 'none' : '';
   if (S.mode === 'saved'){
     $('browse-h1').textContent = 'Saved';
@@ -1985,6 +2022,36 @@ function openPhotoLightbox(list, start){
   document.addEventListener('keydown', onKey);
   show();
 }
+// ── The data-rollout layer set ──────────────────────────────────────────────
+// Every contractor surface rolls out in the same cascade: name → stat strip →
+// lede → body. The strip is the structured middle register that was missing —
+// the same facts that used to hide in prose/pills, presented as numbers.
+// The read is authored thesis-first (section-IA), so sentence 1 IS the lede;
+// splitting it out is pure typography, no new data and no re-authoring.
+function splitRead(read){
+  read = read || '';
+  // First sentence = 60–240 chars ending in ./!/? followed by a capital or quote.
+  // Length guards keep abbreviation false-splits ("Inc. ", "Jr. ") from making a
+  // nonsense lede; anything that doesn't match cleanly just renders unsplit.
+  const m = read.match(/^(.{60,240}?[.!?])\s+(?=[A-Z“"'])/);
+  return m ? { lede: m[1], rest: read.slice(m[0].length) } : { lede: '', rest: read };
+}
+function statStripHTML(con){
+  const cells = [];
+  if (con.sinceYear) cells.push('<span class="stat"><b>'+(2026-con.sinceYear)+'</b><i>yrs in business</i></span>');
+  if (con.reviewCount) cells.push('<span class="stat"><b>'+con.reviewCount+'</b><i>reviews read</i></span>');
+  if (con.ratingBand==='top10' || con.ratingBand==='top25')
+    cells.push('<span class="stat"><b>'+(con.ratingBand==='top10'?'Top 10%':'Top 25%')+'</b><i>county standing</i></span>');
+  if (con.registered && tradeSupportsReg(con.trade)) cells.push('<span class="stat"><b>CT</b><i>registered</i></span>');
+  if (!cells.length) return '';
+  return '<div class="statstrip">'+cells.slice(0,3).join('<span class="statdiv" aria-hidden="true"></span>')+'</div>';
+}
+function readHTML(con, cls){
+  const s = splitRead(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.');
+  return '<div class="'+cls+'">'+
+    (s.lede ? '<span class="syn-lede">'+esc(s.lede)+'</span> ' : '')+
+    '<span class="syn-body">'+esc(s.rest)+'</span></div>';
+}
 function cardHTML(con, k){
   // Read-led card: the "Why this contractor?" stack (rank band + credentials) lives on the
   // full profile now (Where it stands / At a glance), not on the swipe card.
@@ -1999,9 +2066,10 @@ function cardHTML(con, k){
       '<span class="vph-cover-badge">Photos</span></button>':'')+
     '<div class="card-top"><div class="card-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
+    statStripHTML(con)+
     (mw ? '<div class="card-matchwhy">'+SPARK+'<span>'+esc(mw)+'</span></div>' : '')+
     '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
-    '<div class="card-synwrap"><div class="card-syn">'+esc(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.')+'</div></div>'+
+    '<div class="card-synwrap">'+readHTML(con,'card-syn')+'</div>'+
     '<div class="card-hint">'+(desktop()?'← skip · save →':'Scroll to read · tap for the full profile')+'</div>'+
   '</article>';
 }
@@ -2494,9 +2562,12 @@ function feedCardHTML(con, i){
   const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,3);
   const saved = isLiked(con.placeId);
   // In match mode the band becomes the data-true "why" (job it matches · standing · axis fit);
-  // a job-matcher gets the spark. Outside match mode it's the plain standing line.
+  // a job-matcher gets the spark. Outside match mode it's the plain standing line — but only
+  // when the stat strip below doesn't already carry it (top10/top25 render as a strip cell;
+  // repeating the same claim as a pill read as noise, not emphasis).
   const isM = !!(S.match && S.match.job && jobMatches(con, S.match.job));
-  const bandText = (S.match && S.match.job) ? whyLine(con, S.match) : con.standing;
+  const stripHasStanding = con.ratingBand==='top10' || con.ratingBand==='top25';
+  const bandText = (S.match && S.match.job) ? whyLine(con, S.match) : (stripHasStanding ? '' : con.standing);
   const bandHTML = bandText ? '<div class="fcard-band'+(isM?' fcard-why':'')+'">'+(isM?SPARK:'')+esc(bandText)+'</div>' : '';
   return '<article class="fcard" data-place="'+esc(con.placeId)+'" style="--d:'+(Math.min(i||0,8)*30)+'ms">'+
     '<div class="fcard-top">'+
@@ -2524,8 +2595,9 @@ function feedCardHTML(con, i){
         'onload="this.parentElement.classList.add(\'vph-cover--on\')" onerror="this.closest(\'.vph-cover-btn\').remove()">'+
       '<span class="vph-cover-badge">Photos</span>'+
     '</button>'+
+    statStripHTML(con)+
     '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
-    '<div class="fcard-syn clamp">'+esc(con.read)+'</div>'+
+    readHTML(con,'fcard-syn clamp')+
     (trust.length?'<div class="fcard-chips">'+trust.map(v=>'<span class="fcard-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
     '<button class="fcard-disclose" aria-expanded="false"><span>Vesta’s full analysis</span><span class="chev">'+CHEV+'</span></button>'+
     '<div class="fcard-more"><div class="fcard-more-inner">'+feedMoreHTML(con)+'</div></div>'+
@@ -2567,19 +2639,42 @@ function wireFeedCard(con){
 // recomputable from what's on the page; the registered share renders only where registration
 // is the norm (same tradeSupportsReg gate as the filter). No deltas, no activity counters —
 // we have no time-series, so we show fractions ("12 of 40 do this") instead of trends.
+// One computation, two surfaces: the desktop rail and the mobile field strip
+// both read from here, so the numbers can never drift apart.
+function fieldStats(key){
+  const base = byTrade(key);
+  const tenures = base.map(c=>c.sinceYear).filter(y=>y>0).map(y=>2026-y).sort((a,b)=>a-b);
+  return {
+    vetted: base.length,
+    onRecord: base.length + silentByTrade(key).length,
+    t10: base.filter(c=>c.ratingBand==='top10').length,
+    t25: base.filter(c=>c.ratingBand==='top25').length,
+    reviewsRead: base.reduce((s,c)=>s+(c.reviewCount||0),0),
+    medTen: tenures.length >= 5 ? tenures[Math.floor(tenures.length/2)] : 0,
+    regN: base.filter(c=>c.registered).length
+  };
+}
+// Mobile mirror of the rail's headline numbers — one mono line under the header.
+// Suppressed in match mode (the match header owns that space) and saved mode.
+function renderFieldStrip(){
+  const el = $('field-strip'); if (!el) return;
+  if (S.mode !== 'trade' || (S.match && S.match.job) || !S.dataLoaded){ el.innerHTML=''; return; }
+  const f = fieldStats(S.activeTrade);
+  if (!f.vetted){ el.innerHTML=''; return; }
+  const bits = ['<b>'+f.vetted+'</b> vetted · of <b>'+f.onRecord+'</b> on record'];
+  if (f.reviewsRead) bits.push('<b>'+f.reviewsRead.toLocaleString('en-US')+'</b> reviews read');
+  if (f.medTen) bits.push('<b>'+f.medTen+'</b> yrs median tenure');
+  if (tradeSupportsReg(S.activeTrade)) bits.push('<b>'+Math.round(100*f.regN/f.vetted)+'%</b> registered');
+  el.innerHTML = bits.join('&ensp;·&ensp;');
+}
 let _railTrade = null;
 function renderFeedRail(){
   const p=$('vpanel'); if(!p) return;
   const key = S.activeTrade, base = byTrade(key);
   if (!base.length){ p.innerHTML=''; return; }
-  const silent = silentByTrade(key).length, onRecord = base.length + silent;
-  const t10 = base.filter(c=>c.ratingBand==='top10').length;
-  const t25 = base.filter(c=>c.ratingBand==='top25').length;
-  const rest = base.length - t10 - t25;
-  const reviewsRead = base.reduce((s,c)=>s+(c.reviewCount||0),0);
-  const tenures = base.map(c=>c.sinceYear).filter(y=>y>0).map(y=>2026-y).sort((a,b)=>a-b);
-  const medTen = tenures.length >= 5 ? tenures[Math.floor(tenures.length/2)] : 0;
-  const regN = base.filter(c=>c.registered).length;
+  const f = fieldStats(key);
+  const onRecord = f.onRecord, t10 = f.t10, t25 = f.t25, rest = base.length - t10 - t25;
+  const reviewsRead = f.reviewsRead, medTen = f.medTen, regN = f.regN;
   const facets = (NEED_FACETS[key]||[])
     .map(f=>({ f, n: base.filter(c=>facetMatches(c,f)).length }))
     .filter(x=>x.n>=2).sort((a,b)=>b.n-a.n).slice(0,5);
