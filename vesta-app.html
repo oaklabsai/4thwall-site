@@ -1034,8 +1034,6 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .prof-google .gsrc { font-family:var(--mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); }
 .prof-google b { color:var(--olive); }
 .prof-google a { color:var(--olive); font-weight:600; }
-.prof-lockbox { background:rgba(212,223,158,.2); border:1px solid rgba(74,75,47,.1); border-radius:16px; padding:18px 20px; margin-top:8px; }
-.prof-blur { filter:blur(5px); user-select:none; font-family:var(--mono); font-size:13px; color:var(--ebony); margin-bottom:12px; pointer-events:none; }
 .prof-contactrow { display:flex; gap:12px; padding:10px 0; border-top:1px solid rgba(74,75,47,.08); font-size:14px; }
 .prof-contactrow:first-child { border-top:none; padding-top:0; }
 .prof-contactrow b { color:var(--olive); min-width:64px; flex-shrink:0; }
@@ -1888,7 +1886,7 @@ function syncSavedUI(){
   const ds=$('ds-saved-ct'); if(ds){ ds.textContent=n; ds.hidden = !n; }
   const nb=$('nav-saved-ct'); if(nb){ nb.textContent=n; nb.hidden = !n; }
   const rn=document.querySelector('.feedrail-stat .n'); if(rn) rn.textContent=n;
-  const rl=document.querySelector('.feedrail-stat .l'); if(rl) rl.textContent='saved '+(n===1?'pro':'pros')+(n?' · open Saved to reveal contact info':'');
+  const rl=document.querySelector('.feedrail-stat .l'); if(rl) rl.textContent='saved '+(n===1?'pro':'pros')+(n?' · open Saved for your shortlist':'');
 }
 /* Reset the whole saved list (two-tap confirm lives in the button). Mirrors the
    removals up to the account when signed in, then clears local + any revealed contacts. */
@@ -2974,8 +2972,9 @@ function contactRowsHTML(u){
 }
 function contactBlockHTML(con){
   if (S.unlocked[con.placeId]) return contactRowsHTML(S.unlocked[con.placeId]);
-  if (signedIn()) return '<button class="fav-show" data-unlock="'+esc(con.placeId)+'">'+LOCK+'Show contact info</button>';
-  return '<div class="fav-lock">'+LOCK+'<span>Contact info unlocks with a free account. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a></span></div>';
+  // Contact is public — nothing to gate. A lazy-fetch button for everyone (so the Saved list
+  // doesn't fetch contact for every pro up front); no sign-in branch.
+  return '<button class="fav-show" data-unlock="'+esc(con.placeId)+'">'+CHEV+'Show contact info</button>';
 }
 // A saved row is a curated-shortlist card: it re-states WHY (rank band + the same ✓ trust line and
 // Vesta's Read as the deck), then offers the two forward actions — View analysis · Request a quote.
@@ -3039,7 +3038,7 @@ function renderFav(){
   }
   const intro = signedIn()
     ? 'Your shortlist — Vesta keeps the “why” next to each pro. View the full analysis or request a quote whenever you’re ready.'
-    : 'Your shortlist — the “why” stays next to each pro. It lives on this device for now; <b>sign up free</b> to keep it and unlock each pro’s phone & website. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a>';
+    : 'Your shortlist — the “why” stays next to each pro. It lives on this device for now; <b>sign up free</b> to keep it across your devices. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign up free →</a>';
   wrap.innerHTML = savedSeg() + '<div class="fav-intro">'+intro+'</div>' + list.map(favRowHTML).join('') +
     '<button class="fav-reset" id="fav-reset" data-armed="0">Clear all saved</button>';
   wireSavedSeg(wrap);
@@ -3079,14 +3078,16 @@ function renderHistory(){
   if (desktop()) renderPanel(list[0]);
 }
 async function unlockContact(con, el){
-  el.innerHTML = '<div class="fav-lock">Unlocking…</div>';
+  el.innerHTML = '<div class="fav-lock">Loading…</div>';
   try {
-    const { status, data } = await HOME.api('/c/'+encodeURIComponent(con.placeId)+'/unlock', { method:'POST', body:{ zip:'' } });
-    if (data && data.ok && data.unlocked){ S.unlocked[con.placeId] = data.unlocked; el.innerHTML = contactRowsHTML(data.unlocked); return; }
-    if (status === 401){ el.innerHTML = '<div class="fav-lock">'+LOCK+'<span>Please sign in again. <a href="'+esc(HOME.signinHref('/vesta'))+'">Sign in →</a></span></div>'; return; }
-    el.innerHTML = '<div class="fav-lock">'+(status===429?'A lot of unlocks this hour — try again shortly.':'Couldn’t unlock — ')+'<button class="linklike" type="button">try again</button></div>';
+    // Contact is public — read it from the same public profile GET the /c/ page uses; the
+    // auth-only /unlock POST is off this path, so there's no sign-in branch to hit.
+    const { data } = await HOME.api('/c/'+encodeURIComponent(con.placeId));
+    const u = data && data.unlocked;
+    if (u && (u.phone || u.website || (u.socials && Object.keys(u.socials).length))){ S.unlocked[con.placeId] = u; el.innerHTML = contactRowsHTML(u); return; }
+    el.innerHTML = '<p class="fav-lock">No public contact details surfaced for this pro — try Request through Vesta instead.</p>'; return;
   } catch(_) {
-    el.innerHTML = '<div class="fav-lock">Couldn’t unlock — <button class="linklike" type="button">try again</button></div>';
+    el.innerHTML = '<div class="fav-lock">Couldn’t load — <button class="linklike" type="button">try again</button></div>';
   }
   const retry = el.querySelector('.linklike'); if(retry) retry.addEventListener('click', () => unlockContact(con, el));
 }
@@ -4207,15 +4208,14 @@ function profContactRows(u){
   return rows.length ? rows.join('') : '<p class="prof-fine">No public contact details surfaced for this pro — they may be phone-unlisted. Try the request flow instead.</p>';
 }
 function profContactHTML(){
-  if (profData.unlocked) return '<span class="prof-sec-kick">Reach out</span><h2 class="prof-sec-h">Contact</h2><div class="prof-block">'+profContactRows(profData.unlocked)+'</div>';
-  if (signedIn()) return '<span class="prof-sec-kick">Reach out</span><h2 class="prof-sec-h">Contact</h2><div class="prof-block">'+
-    '<p style="font-size:13.5px;margin-bottom:12px;color:var(--ebony)">Phone, website, and social profiles — everything public we can find.</p>'+
-    '<button class="prof-req" id="prof-unlock" style="margin-top:0">'+LOCK+' Show contact info</button><span class="prof-status" id="prof-unlock-st"></span></div>';
-  return '<span class="prof-sec-kick">Reach out</span><h2 class="prof-sec-h">Contact</h2><div class="prof-lockbox">'+
-    '<div class="prof-blur">(516) 555-0000 · example-website.com · facebook.com/example</div>'+
-    '<p style="font-size:13.5px;margin-bottom:12px;color:var(--olive)"><b>Contact info is free — it just needs an account.</b><br>'+
-    '<span style="color:var(--ebony);font-size:12.5px">One email, no password, ten seconds. Phone, website, socials — everything public we can find.</span></p>'+
-    '<a class="prof-req" style="margin-top:0" href="'+esc(HOME.signinHref('/vesta'))+'">Create free account / sign in</a></div>';
+  const head = '<span class="prof-sec-kick">Reach out</span><h2 class="prof-sec-h">Contact</h2>';
+  // Contact is public: the Google Maps link on this profile already exposes phone + website,
+  // so the server returns it to everyone — no sign-in gate, no blurred teaser. `unlocked` is
+  // only ever empty when the upstream Places fetch failed; show an honest fallback then.
+  const u = profData.unlocked;
+  if (u && (u.phone || u.website || (u.socials && Object.keys(u.socials).length)))
+    return head+'<div class="prof-block">'+profContactRows(u)+'</div>';
+  return head+'<div class="prof-block"><p style="font-size:13.5px;color:var(--ebony);margin:0">We couldn’t pull this pro’s public contact details right now — the Google reviews link above lists their phone and website, or reach out through Vesta.</p></div>';
 }
 const AM_IC = {
   shield:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V5z"/><path d="M9 12l2 2 4-4"/></svg>',
@@ -4294,7 +4294,6 @@ function wireProfBack(){ const b=$('prof-back'); if(b) b.addEventListener('click
 function wireProfile(){
   wireProfBack();
   const pm=$('prof-photos'); if(pm){ const ph=((profData.p&&profData.p.photos)||[]).filter(x=>x&&x.ref); pm.addEventListener('click', e=>{ const t=e.target.closest('.vph-tile'); if(t) openPhotoLightbox(ph, +t.dataset.i||0); }); }
-  const unlock=$('prof-unlock'); if(unlock) unlock.addEventListener('click', profUnlock);
   const claim=$('prof-claim'); if(claim) claim.addEventListener('submit', profClaimSubmit);
   const req=$('prof-req-btn'); if(req) req.addEventListener('click', () => enterRequest({ placeId:profData.placeId, trade:(TRADE_APP[pTradeKey()]||pTradeKey()), name:(profData.p&&profData.p.name)||'' }));
   const ct=$('claim-toggle'); if(ct) ct.addEventListener('click', () => {
@@ -4305,16 +4304,6 @@ function wireProfile(){
   });
 }
 
-async function profUnlock(){
-  const btn=$('prof-unlock'), st=$('prof-unlock-st'); if(!btn) return;
-  btn.disabled=true;
-  try {
-    const { status, data:r } = await HOME.api('/c/'+encodeURIComponent(profData.placeId)+'/unlock', { method:'POST', body:{ zip:'' } });
-    if (r && r.ok && r.unlocked){ profData.unlocked=r.unlocked; renderProfile(); return; }
-    btn.disabled=false; st.className='prof-status is-error';
-    st.textContent = status===429 ? 'A lot of unlocks this hour — try again shortly.' : (status===401 ? 'Please sign in again.' : 'Couldn’t unlock — try again.');
-  } catch(_){ btn.disabled=false; st.className='prof-status is-error'; st.textContent='Couldn’t unlock — try again.'; }
-}
 async function profClaimSubmit(e){
   e.preventDefault();
   const form=$('prof-claim'), st=$('prof-claim-st'), btn=form.querySelector('button');
