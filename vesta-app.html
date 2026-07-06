@@ -660,6 +660,30 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .feedrail-how li { display:flex; gap:9px; font-size:12.5px; color:var(--ebony); line-height:1.5; margin-bottom:11px; }
   .feedrail-how li svg { color:var(--olive); flex-shrink:0; margin-top:2px; }
   .feedrail-how b { color:var(--olive); font-weight:600; }
+  /* Field-at-a-glance rail — per-trade analytics, all real. Hero count, band-share bar,
+     tappable capability rows (they ARE the need-filter), fact line, methodology sign-off. */
+  .fr2-hero { display:flex; align-items:baseline; gap:12px; margin:16px 0 18px; }
+  .fr2-n { font-family:var(--serif); font-size:52px; font-weight:700; color:var(--olive); line-height:.95; letter-spacing:-.03em; }
+  .fr2-hl { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); line-height:1.25; }
+  .fr2-sub { font-family:var(--sans); font-size:12px; font-weight:400; color:var(--ebony); }
+  .fr2-bar { display:flex; gap:3px; height:10px; border-radius:99px; overflow:hidden; margin-bottom:10px; }
+  .fr2-seg { border-radius:99px; } .fr2-seg.a { background:var(--olive); } .fr2-seg.b { background:#8a8a63; } .fr2-seg.c { background:rgba(74,75,47,.18); }
+  .fr2-legend { display:flex; flex-wrap:wrap; gap:7px 14px; font-size:11.5px; color:var(--ebony); margin-bottom:22px; }
+  .fr2-legend i { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
+  .fr2-legend i.a { background:var(--olive); } .fr2-legend i.b { background:#8a8a63; } .fr2-legend i.c { background:rgba(74,75,47,.22); }
+  .fr2-lbl { font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:9px; }
+  .fr2-row { display:flex; align-items:center; gap:10px; width:100%; border:none; background:none; cursor:pointer; padding:8px 10px; margin:0 -10px 2px; border-radius:12px; font-family:var(--sans); text-align:left; transition:background .14s; }
+  .fr2-row:hover { background:rgba(255,255,255,.65); }
+  .fr2-row.on { background:var(--white); box-shadow:var(--sh-row); }
+  .fr2-row-l { font-size:12.5px; font-weight:600; color:var(--olive); flex-shrink:0; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:46%; }
+  .fr2-row-track { flex:1; height:5px; border-radius:99px; background:rgba(74,75,47,.1); overflow:hidden; }
+  .fr2-row-fill { display:block; height:100%; border-radius:99px; background:var(--tea); }
+  .fr2-row.on .fr2-row-fill { background:var(--olive); }
+  .fr2-row-n { font-family:var(--mono); font-size:10px; color:var(--ebony); flex-shrink:0; }
+  .fr2-facts { font-size:12px; color:var(--ebony); margin-top:18px; line-height:1.7; }
+  .fr2-facts b { font-family:var(--serif); font-size:15px; color:var(--olive); }
+  .fr2-facts .dot { margin:0 7px; opacity:.5; }
+  .fr2-method { font-family:var(--serif); font-style:italic; font-size:12.5px; color:var(--ebony); margin-top:14px; line-height:1.5; }
 
   .pscrim, .psheet { display:none; }
 
@@ -2536,19 +2560,56 @@ function wireFeedCard(con){
   mbtn.addEventListener('click', e=>{ e.stopPropagation(); const open=!menu.classList.contains('open'); closeFeedMenus(); menu.classList.toggle('open',open); mbtn.setAttribute('aria-expanded',open); });
   menu.querySelectorAll('button[data-act]').forEach(b=> b.addEventListener('click', e=>{ e.stopPropagation(); const a=b.dataset.act; closeFeedMenus(); feedMenuAction(a, con, card); }));
 }
+// The desktop rail is "the field at a glance" — real per-trade analytics computed from
+// the loaded data, never fabricated. The honesty lines it holds: band SHARES not ordinal
+// ranks (top10/top25 is the true resolution of rank_score — a #1..#N list would over-claim);
+// aggregates describe the market, never grade an individual firm downward; every number is
+// recomputable from what's on the page; the registered share renders only where registration
+// is the norm (same tradeSupportsReg gate as the filter). No deltas, no activity counters —
+// we have no time-series, so we show fractions ("12 of 40 do this") instead of trends.
+let _railTrade = null;
 function renderFeedRail(){
   const p=$('vpanel'); if(!p) return;
-  const savedN=likedContractors().length;
+  const key = S.activeTrade, base = byTrade(key);
+  if (!base.length){ p.innerHTML=''; return; }
+  const silent = silentByTrade(key).length, onRecord = base.length + silent;
+  const t10 = base.filter(c=>c.ratingBand==='top10').length;
+  const t25 = base.filter(c=>c.ratingBand==='top25').length;
+  const rest = base.length - t10 - t25;
+  const reviewsRead = base.reduce((s,c)=>s+(c.reviewCount||0),0);
+  const tenures = base.map(c=>c.sinceYear).filter(y=>y>0).map(y=>2026-y).sort((a,b)=>a-b);
+  const medTen = tenures.length >= 5 ? tenures[Math.floor(tenures.length/2)] : 0;
+  const regN = base.filter(c=>c.registered).length;
+  const facets = (NEED_FACETS[key]||[])
+    .map(f=>({ f, n: base.filter(c=>facetMatches(c,f)).length }))
+    .filter(x=>x.n>=2).sort((a,b)=>b.n-a.n).slice(0,5);
+  const seg = (n,cls)=> n>0 ? '<span class="fr2-seg '+cls+'" style="flex:'+n+'"></span>' : '';
+  const facts = [];
+  if (reviewsRead) facts.push('<b>'+reviewsRead.toLocaleString('en-US')+'</b> reviews read');
+  if (medTen) facts.push('<b>'+medTen+'</b> yrs median tenure');
+  if (tradeSupportsReg(key) && base.length) facts.push('<b>'+Math.round(100*regN/base.length)+'%</b> state-registered');
   p.innerHTML =
-    '<div class="va-head"><span class="va-spark">'+SPARK+'</span>Vesta’s analysis</div>'+
-    '<h2 class="feedrail-h">Vetted '+esc(tradePlural(S.activeTrade))+'<br>in Fairfield County</h2>'+
-    '<p class="feedrail-p">Vesta read the public reviews and Connecticut records for every one, then ranked them by what homeowners actually say — no ads, no pay-to-play.</p>'+
-    '<div class="feedrail-stat"><span class="n">'+savedN+'</span><span class="l">saved '+(savedN===1?'pro':'pros')+(savedN?' · open Saved to reveal contact info':'')+'</span></div>'+
-    '<ul class="feedrail-how">'+
-      '<li>'+CHECK+'<span>Scroll the feed — Vesta’s best matches first.</span></li>'+
-      '<li>'+CHECK+'<span>Open <b>Vesta’s full analysis</b> on any card for the deep read.</span></li>'+
-      '<li>'+CHECK+'<span>Save the ones you like, then request through Vesta.</span></li>'+
-    '</ul>';
+    '<div class="va-head"><span class="va-spark">'+SPARK+'</span>The field at a glance</div>'+
+    '<div class="fr2-hero"><span class="fr2-n" id="fr2-n">'+base.length+'</span>'+
+      '<span class="fr2-hl">vetted '+esc(tradePlural(key))+'<br><span class="fr2-sub">of '+onRecord+' on public record in Fairfield County</span></span></div>'+
+    '<div class="fr2-bar" role="img" aria-label="Standing distribution: '+t10+' top 10%, '+t25+' top 25%, '+rest+' established base">'+
+      seg(t10,'a')+seg(t25,'b')+seg(rest,'c')+'</div>'+
+    '<div class="fr2-legend">'+
+      (t10?'<span><i class="a"></i>Top 10% · '+t10+'</span>':'')+
+      (t25?'<span><i class="b"></i>Top 25% · '+t25+'</span>':'')+
+      (rest?'<span><i class="c"></i>Established base · '+rest+'</span>':'')+'</div>'+
+    (facets.length?'<div class="fr2-lbl">What the field does</div>'+
+      facets.map(({f,n})=>{ const on=S.feedNeeds.has(f.l);
+        return '<button class="fr2-row'+(on?' on':'')+'" data-need="'+esc(f.l)+'" aria-pressed="'+on+'">'+
+          '<span class="fr2-row-l">'+esc(f.l)+'</span>'+
+          '<span class="fr2-row-track"><span class="fr2-row-fill" style="width:'+Math.round(100*n/base.length)+'%"></span></span>'+
+          '<span class="fr2-row-n">'+n+' of '+base.length+'</span></button>'; }).join(''):'')+
+    (facts.length?'<div class="fr2-facts">'+facts.join('<span class="dot">·</span>')+'</div>':'')+
+    '<p class="fr2-method">Ranked by review consensus, track record &amp; licensing — never ads, never pay-to-play.</p>';
+  p.querySelectorAll('.fr2-row').forEach(b=>b.addEventListener('click',()=>{
+    const l=b.dataset.need; if(S.feedNeeds.has(l)) S.feedNeeds.delete(l); else S.feedNeeds.add(l); applyFeed();
+  }));
+  if (_railTrade !== key){ _railTrade = key; countUp($('fr2-n'), base.length); }   // count up once per trade, not on every filter tick
 }
 // ── Silent-firm coverage tail ──────────────────────────────────────────────
 // Honest, collapsed "N more, not yet reviewed" section. Count-only firms: what's on
