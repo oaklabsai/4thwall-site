@@ -469,7 +469,9 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .vsearch-x { background:none; border:none; cursor:pointer; color:var(--ebony); width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:8px; flex-shrink:0; }
 .vsearch-x:hover { background:rgba(74,75,47,.06); }
 .vsearch-results { overflow-y:auto; padding:8px; }
-.vsearch-hint { padding:26px 16px; text-align:center; color:var(--ebony); font-size:14px; line-height:1.5; }
+.vsearch-hint { padding:22px 16px 4px; text-align:center; color:var(--ebony); font-size:14px; line-height:1.5; }
+.vsearch-sugg { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:14px 20px 24px; }
+.vsearch-sugg .chip { box-shadow:none; border:1px solid rgba(74,75,47,.14); font-size:13px; padding:9px 15px; }
 .vsr { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:none; border:none; cursor:pointer; padding:11px 12px; border-radius:14px; }
 .vsr:hover { background:var(--bg); }
 .vsr-mono { width:40px; height:40px; flex-shrink:0; border-radius:11px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:15px; font-weight:600; color:var(--ebony); }
@@ -2675,7 +2677,17 @@ function openSearch(){ const o=$('vsearch'); o.classList.add('open'); o.setAttri
 function closeSearch(){ $('vsearch').classList.remove('open'); $('vsearch').setAttribute('aria-hidden','true'); S.searchOpen=false; }
 function renderSearchResults(q){
   q = (q||'').trim().toLowerCase(); const res = $('vsearch-results');
-  if(!q){ res.innerHTML = '<p class="vsearch-hint">Search by name, town, or what you need —<br>e.g. &ldquo;roof leak,&rdquo; &ldquo;no AC,&rdquo; or &ldquo;Stamford.&rdquo;</p>'; return; }
+  if(!q){
+    // Empty state was a dead instructional sentence — give it something to tap instead,
+    // 6 real examples (same pool as the home typewriter) reshuffled each time it opens.
+    const picks = shuffle([...SEARCH_EG]).slice(0,6);
+    res.innerHTML = '<p class="vsearch-hint">Search by name, town, or what you need — or try one:</p>'+
+      '<div class="vsearch-sugg">'+picks.map(p=>'<button class="chip" data-fill="'+esc(p)+'">'+esc(p)+'</button>').join('')+'</div>';
+    res.querySelectorAll('[data-fill]').forEach(b=>b.addEventListener('click', ()=>{
+      const v=b.dataset.fill; const inp=$('vsearch-input'); if(inp) inp.value=v; renderSearchResults(v);
+    }));
+    return;
+  }
   // problem→job first (the match flow with the need preselected), problem→trade as the fallback —
   // the typed need enters the match instead of dying at generic browse.
   const seed = routeJobSeed(q);
