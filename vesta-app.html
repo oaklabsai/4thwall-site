@@ -102,19 +102,27 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @keyframes hsCaretBlink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 @media (prefers-reduced-motion: reduce){ .hs-caret { animation:none; opacity:.6; } }
 /* problem pills — homeowner needs, the instant-momentum row */
-.home-problems { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:30px; }
+.home-problems { display:flex; flex-direction:column; gap:16px; margin-bottom:30px; }
+.prob-group-lbl { margin-bottom:9px; }
+.prob-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
 .prob-pill { display:flex; align-items:center; gap:8px; width:100%; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:10px 15px 10px 13px; cursor:pointer; font-family:var(--sans); font-size:14px; font-weight:600; color:var(--olive); box-shadow:0 1px 2px rgba(74,75,47,.05); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
 .prob-pill:hover { transform:translateY(-2px); box-shadow:0 8px 18px -7px rgba(74,75,47,.26); background:var(--tea); }
 .prob-pill:active { transform:scale(.96); }
 .prob-pill:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
 .prob-pill .pp-ic { display:flex; color:var(--olive); }
 .prob-pill .pp-ic svg { width:17px; height:17px; }
-.home-browselbl { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:13px; }
+/* One kicker system, everywhere — home group labels, trade-group labels, profile section
+   kickers, and The Record's own labels were four slightly different mono treatments
+   (10 vs 10.5px, .1 vs .15em tracking, ebony vs olive). Same visual language now; only
+   the box-model (margins) differs per placement. */
+.home-browselbl, .tg-label, .prof-sec-kick, .trec-sec-lbl, .prob-group-lbl { display:block; font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--ebony); }
+.home-browselbl::before, .tg-label::before, .prof-sec-kick::before, .trec-sec-lbl::before, .prob-group-lbl::before { content:'— '; color:rgba(74,75,47,.4); }
+.home-browselbl { margin-bottom:13px; }
 /* trades demoted to compact, scannable chips */
 /* Compact icon-forward grid (like an app launcher) instead of ragged wrapped pills —
    grouped into labeled sections (TRADE_GROUPS), each a fixed 3-col grid so rows align. */
 .trades-grid { display:flex; flex-direction:column; gap:10px; }
-.tg-label { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:rgba(74,75,47,.55); margin-top:8px; }
+.tg-label { margin-top:8px; }
 .tg-label:first-child { margin-top:0; }
 .tg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
 .trade-tile { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; text-align:center; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-tile); padding:14px 6px 12px; min-height:0; cursor:pointer; box-shadow:0 1px 2px rgba(74,75,47,.04); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
@@ -133,24 +141,27 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .trade-tile { animation:ttIn both; animation-timeline:view(); animation-range:entry 5% entry 42%; }
   @keyframes ttIn { from { opacity:.001; transform:translateY(14px) scale(.97); } to { opacity:1; transform:none; } }
 }}
-/* "How it works" — desktop-only, fills the dead space left when the trade grid above
-   is hidden (sidebar owns that job there). Genuinely explains the mechanism to a cold
-   visitor rather than padding the column with decoration. */
-.how-strip { display:none; margin-top:34px; padding-top:26px; border-top:1px solid rgba(74,75,47,.1); }
+/* "How it works" — the mechanism, in three steps. Explains what makes Vesta different from
+   a directory to a cold visitor who scrolls past the pills, rather than padding the page
+   with decoration. Numbered chips reuse .prof-angle-no (the hiring-guide's treatment). */
+.how-strip { margin-top:34px; padding-top:26px; border-top:1px solid rgba(74,75,47,.1); }
 .how-steps { display:flex; flex-direction:column; gap:16px; }
 .how-step { display:flex; gap:13px; align-items:flex-start; }
-.how-ic { flex-shrink:0; width:34px; height:34px; border-radius:10px; background:linear-gradient(180deg,rgba(212,223,158,.34),rgba(212,223,158,.15)); border:1px solid rgba(74,75,47,.05); display:flex; align-items:center; justify-content:center; color:var(--olive); }
-.how-ic svg { width:17px; height:17px; }
 .how-step b { display:block; font-family:var(--serif); font-size:15.5px; font-weight:700; color:var(--olive); letter-spacing:-.008em; margin-bottom:2px; }
 .how-step p { font-size:13px; color:var(--ebony); line-height:1.5; }
 /* search-result "browse this trade" suggestion (problem→trade routing) */
 .vsr-route { background:rgba(212,223,158,.2); }
 .vsr-arrow { margin-left:auto; color:var(--olive); font-size:18px; flex-shrink:0; padding-right:4px; }
 .vsr-route .vsr-mono svg { width:20px; height:20px; color:var(--olive); }
-.home-sign { text-align:center; font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--ebony); margin-top:32px; letter-spacing:.005em; }
+.home-foot { margin-top:32px; }
+.home-sign { text-align:center; font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--ebony); letter-spacing:.005em; }
+.home-prov { text-align:center; font-size:11.5px; color:var(--ebony); opacity:.75; line-height:1.5; margin-top:8px; }
+.home-prov a { color:var(--ebony); font-weight:600; opacity:1; }
 /* Desktop-only proof beats — hidden by default (mobile keeps the trade grid as its
    "or browse" instead); shown via the desktop media query once populated with real data. */
-.home-trust, .home-sample { display:none; }
+/* Both now render on mobile too — the front door should contain one real Vesta read,
+   not just a menu of ways to choose. [hidden] (set by JS only once real data/a pool
+   exists) is what actually gates visibility; no breakpoint hides these anymore. */
 .home-trust { text-align:center; font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:rgba(74,75,47,.55); margin-top:34px; }
 .home-trust b { color:var(--olive); font-weight:600; }
 .home-sample { margin-top:18px; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-row); padding:22px 26px; }
@@ -582,10 +593,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
      center column was pure duplication (same group labels, same counts, twice). Center
      stays focused on discovery: search + problems + the personalized return band. */
   #s-home .home-browselbl, #s-home .trades-grid { display:none; }
-  #s-home .home-trust:not([hidden]) { display:block; }
-  #s-home .home-sample:not([hidden]) { display:block; }
-  #s-home .home-sign { text-align:center; margin-top:40px; }
-  #s-home .how-strip { display:block; }
+  #s-home .home-foot { text-align:center; margin-top:40px; }
   /* Entrance choreography — the hero stops looking like a static page and starts
      looking like something that just happened, each piece a beat behind the last. */
   #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems,
@@ -602,7 +610,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home .home-hero { display:grid; grid-template-columns:1.15fr .85fr; gap:64px; align-items:start; }
   #s-home .home-hero-proof { position:sticky; top:8vh; margin-top:0; }
   #s-home .home-trust { text-align:left; }
-  #s-home .home-sign { text-align:left; }
+  #s-home .home-foot, #s-home .home-sign, #s-home .home-prov { text-align:left; }
 }
 @media (min-width:900px) {
   #s-match .match-wrap { padding:30px 40px 60px; }
@@ -806,8 +814,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .prof-sig { font-family:var(--serif); font-size:20px; font-weight:500; font-style:italic; line-height:1.5; color:var(--olive); margin:24px 0 4px; padding-left:16px; border-left:3px solid var(--tea); }
 .prof-sec-h { font-family:var(--serif); font-size:29px; font-weight:700; letter-spacing:-.025em; color:var(--olive); margin:14px 0 8px; line-height:1.08; }
 .prof-sec-h.sub { font-size:20px; margin:22px 0 8px; }
-.prof-sec-kick { display:block; font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--ebony); margin:38px 0 0; }
-.prof-sec-kick::before { content:'— '; color:rgba(74,75,47,.4); }
+.prof-sec-kick { margin:38px 0 0; }
 .prof-sec-note { font-size:13px; color:var(--ebony); line-height:1.55; margin-bottom:14px; }
 .prof-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
 .prof-card { background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:18px; padding:16px 18px; box-shadow:var(--sh-row); }
@@ -841,7 +848,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .prof-chip.alt { color:var(--olive); background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(74,75,47,.04)); border-color:rgba(74,75,47,.12); box-shadow:0 1px 2px rgba(74,75,47,.05), inset 0 1px 0 rgba(255,255,255,.6); font-weight:500; }
 /* ── "The Record" — the locked dot-axis design standard (mirrors api/_render-contractor.mjs) ── */
 .trec-kicker { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--olive); margin:28px 0 14px; }
-.trec-sec-lbl { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); margin-bottom:9px; }
+.trec-sec-lbl { margin-bottom:9px; }
 .trec-dots { display:flex; align-items:center; gap:5px; flex-wrap:wrap; margin-bottom:9px; }
 .trec-dot { width:9px; height:9px; border-radius:50%; background:rgba(74,75,47,.14); }
 .trec-dot.a { background:var(--olive); }
@@ -1100,23 +1107,23 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
           <div class="home-problems" id="home-problems" role="list" aria-label="Common needs"></div>
           <div class="home-browselbl">Or browse by trade</div>
           <div class="trades-grid" id="trades-grid" role="list"></div>
-          <!-- Desktop-only — at 1200px+ the trade grid above is hidden (the sidebar already owns
-               the full taxonomy), which used to leave this column dead-ending under the pills.
-               A cold visitor also doesn't yet know HOW Vesta differs from a directory, so this
-               is real information, not filler: the mechanism, in three steps. -->
+          <!-- On every breakpoint now — a cold visitor doesn't yet know HOW Vesta differs
+               from a directory, so this is real information, not filler: the mechanism,
+               in three steps. Numbered chips match the profile hiring-guide's treatment
+               (prof-angle-no) so the front door and the profile speak one visual language. -->
           <div class="how-strip" aria-label="How Vesta works">
             <div class="prof-sec-kick" style="margin-top:0">How it works</div>
             <div class="how-steps">
               <div class="how-step">
-                <span class="how-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg></span>
+                <span class="prof-angle-no">01</span>
                 <div><b>Say what you need</b><p>Search, or tap a common job — Vesta narrows to firms that actually do that work.</p></div>
               </div>
               <div class="how-step">
-                <span class="how-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l1.4 5.1L14.5 8.5 9.4 9.9 8 15 6.6 9.9 1.5 8.5 6.6 7.1z" transform="translate(2 2) scale(1.1)"/></svg></span>
+                <span class="prof-angle-no">02</span>
                 <div><b>Read Vesta's take</b><p>A plain-language verdict on each firm, written from their public review record — not a star average.</p></div>
               </div>
               <div class="how-step">
-                <span class="how-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16a1 1 0 011 1v11a1 1 0 01-1 1H4a1 1 0 01-1-1v-11a1 1 0 011-1z"/><path d="M3.4 6.2L12 13l8.6-6.8"/></svg></span>
+                <span class="prof-angle-no">03</span>
                 <div><b>Reach out, direct</b><p>No lead auction — message the ones worth a call, on your terms.</p></div>
               </div>
             </div>
@@ -1131,7 +1138,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
           <div class="home-sample" id="home-sample" hidden></div>
         </div>
       </div>
-      <p class="home-sign">Vetted, never advertised.</p>
+      <div class="home-foot">
+        <p class="home-sign">Vetted, never advertised.</p>
+        <p class="home-prov">Everything here is drawn from public reviews and Connecticut state records — nothing self-reported, nothing paid for. <a href="/directory">Browse the full directory →</a></p>
+      </div>
     </main>
   </div>
 
@@ -1260,22 +1270,33 @@ const TRADE_GROUPS = [
 let contractors = [];
 let silentContractors = [];   // count-only firms (no Vesta Read yet) — kept out of the ranked deck/feed/match; surfaced only in the honest coverage tail
 
-// Problem-first entry: homeowner needs routed to a trade. Icons reuse the trade ICONS (no emoji).
-// hi = need-keywords the chip carries into Q1 (pre-highlights its closest jobs — the chip
-// pre-answers the question without skipping the homeowner's confirmation; a "roof leak" is
-// genuinely ambiguous between emergency and repair, so Q1 still gets the tap).
-const PROBLEMS = [
-  { label:'Roof leak', icon:'roof', trade:'roofing', hi:['leak','repair'] },
-  { label:'No AC or heat', icon:'hvac', trade:'hvac', hi:['no heat'] },
-  { label:'Water leak', icon:'pipe', trade:'plumbing', hi:['leak','burst'] },
-  { label:'Power or wiring', icon:'bolt', trade:'electrical', hi:['power','wiring','panel'] },
-  { label:'Driveway', icon:'brick', trade:'paving', hi:['driveway'] },
-  { label:'Lawn & yard', icon:'lawn', trade:'lawn', hi:['lawn'] },
-  { label:'Tree removal', icon:'tree', trade:'tree', hi:['removal'] },
-  { label:'Floors', icon:'floor', trade:'flooring', hi:['refinish','hardwood'] },
-  { label:'Windows or doors', icon:'windowdoor', trade:'windows_doors', hi:['window-replacement'] },
+// Something's-broken vs. planning-a-project — two different homeowner modes, so the pills
+// no longer pretend to be one flat trade list wearing a "problems" costume. The trades that
+// genuinely have both an emergency job AND a project job in the real Q1 bank (roofing, hvac,
+// plumbing, electrical) get a pill in each group; trades that are naturally project-only
+// (paving, lawn, tree, flooring, windows/doors, pool) appear once. hi values are matched
+// against the REAL vesta_match_options job values for that trade (see MATCH_BANK) — never
+// invented labels — so the chip's Q1 pre-highlight always lands on a job that exists.
+function heatLabel(){ const m=new Date().getMonth(); return (m<=3||m>=10) ? 'No heat' : (m>=5&&m<=8) ? 'No AC' : 'No AC or heat'; }
+const PROBLEMS_BROKEN = [
+  { label:'Roof leak', icon:'roof', trade:'roofing', hi:['active-leak'] },
+  { label:heatLabel(), icon:'hvac', trade:'hvac', hi:['no-heat','no-cool'] },
+  { label:'Water leak', icon:'pipe', trade:'plumbing', hi:['emergency-leak','burst'] },
+  { label:'Power’s out', icon:'bolt', trade:'electrical', hi:['emergency-power'] },
+];
+const PROBLEMS_PLANNING = [
+  { label:'New roof', icon:'roof', trade:'roofing', hi:['full-roof-replacement'] },
+  { label:'New AC or heating', icon:'hvac', trade:'hvac', hi:['system-replacement'] },
+  { label:'Bathroom or kitchen remodel', icon:'pipe', trade:'plumbing', hi:['bathroom-or-kitchen-remodel'] },
+  { label:'Panel upgrade', icon:'bolt', trade:'electrical', hi:['panel-or-service-upgrade'] },
+  { label:'New driveway', icon:'brick', trade:'paving', hi:['new-driveway-installation'] },
+  { label:'Lawn care', icon:'lawn', trade:'lawn', hi:['recurring-lawn-maintenance'] },
+  { label:'Tree removal', icon:'tree', trade:'tree', hi:['tree-removal'] },
+  { label:'Refinish floors', icon:'floor', trade:'flooring', hi:['hardwood-refinishing'] },
+  { label:'Replace windows or doors', icon:'windowdoor', trade:'windows_doors', hi:['window-replacement'] },
   { label:'Pool service', icon:'pool', trade:'pool', hi:['weekly-pool-service'] },
 ];
+const PROBLEMS_ALL = [...PROBLEMS_BROKEN, ...PROBLEMS_PLANNING];   // flat view for the desktop feed-entry strip
 // Free-text → trade routing for the search box (a typed problem maps to a trade). Order matters:
 // roofing before plumbing so "roof leak" lands on roofing, not the generic "leak" → plumbing.
 const PROBLEM_ROUTES = [
@@ -1865,18 +1886,30 @@ function startSearchRotator(){
   cycle();
 }
 function renderHome(){
-  // problem pills — homeowner needs, each routed straight to its trade
+  // problem pills — two modes, not one flat trade list: something's actively wrong
+  // (urgent, phrased as the problem) vs. planning a project (phrased as the job).
+  // Trades with a real emergency AND a real project job (roofing/hvac/plumbing/electrical)
+  // get a pill in each group; project-only trades appear once.
   const pr = $('home-problems');
   if (pr){
     pr.innerHTML = '';
-    PROBLEMS.forEach((p,i) => {
-      const b = document.createElement('button');
-      b.className = 'prob-pill'; b.setAttribute('role','listitem');
-      b.style.setProperty('--d', (Math.min(i,10)*24)+'ms');
-      b.setAttribute('aria-label', p.label + ' — find a pro');
-      b.innerHTML = '<span class="pp-ic">'+ICONS[p.icon]+'</span>'+esc(p.label);
-      b.addEventListener('click', () => openBrowse(p.trade, p.hi ? { hi:p.hi, hiLabel:p.label } : undefined));
-      pr.appendChild(b);
+    let di = 0;
+    [['Something’s broken', PROBLEMS_BROKEN], ['Planning a project', PROBLEMS_PLANNING]].forEach(([lbl, list]) => {
+      const sec = document.createElement('div'); sec.className = 'prob-section';
+      const h = document.createElement('div'); h.className = 'prob-group-lbl'; h.textContent = lbl;
+      sec.appendChild(h);
+      const grid = document.createElement('div'); grid.className = 'prob-grid'; grid.setAttribute('role','list'); grid.setAttribute('aria-label', lbl);
+      list.forEach(p => {
+        const b = document.createElement('button');
+        b.className = 'prob-pill'; b.setAttribute('role','listitem');
+        b.style.setProperty('--d', (Math.min(di++,10)*24)+'ms');
+        b.setAttribute('aria-label', p.label + ' — find a pro');
+        b.innerHTML = '<span class="pp-ic">'+ICONS[p.icon]+'</span>'+esc(p.label);
+        b.addEventListener('click', () => openBrowse(p.trade, p.hi ? { hi:p.hi, hiLabel:p.label } : undefined));
+        grid.appendChild(b);
+      });
+      sec.appendChild(grid);
+      pr.appendChild(sec);
     });
   }
   // trades, grouped by the homeowner's mental model (TRADE_GROUPS) — each group is a
@@ -2649,10 +2682,12 @@ function renderFeedEntry(){
       '<span>Describe a problem, or search a name…</span>'+
     '</button>'+
     '<div class="fe-problems" role="list" aria-label="Common needs">'+
-      PROBLEMS.map(p=>'<button class="fe-prob" role="listitem" data-trade="'+esc(p.trade)+'" aria-label="'+esc(p.label)+' — browse this trade"><span class="fe-prob-ic" aria-hidden="true">'+ICONS[p.icon]+'</span>'+esc(p.label)+'</button>').join('')+
+      PROBLEMS_ALL.map((p,i)=>'<button class="fe-prob" role="listitem" data-i="'+i+'" data-trade="'+esc(p.trade)+'" aria-label="'+esc(p.label)+' — browse this trade"><span class="fe-prob-ic" aria-hidden="true">'+ICONS[p.icon]+'</span>'+esc(p.label)+'</button>').join('')+
     '</div>';
   const s=$('fe-search'); if(s) s.addEventListener('click', openSearch);
-  Array.from(el.querySelectorAll('.fe-prob')).forEach(b=>b.addEventListener('click',()=>{ const p=PROBLEMS.find(x=>x.trade===b.dataset.trade); openBrowse(b.dataset.trade, p&&p.hi ? { hi:p.hi, hiLabel:p.label } : undefined); }));
+  // Look up by index, not trade — roofing/hvac/plumbing/electrical each carry two pills
+  // (broken + planning) now, so a trade alone no longer identifies which one was tapped.
+  Array.from(el.querySelectorAll('.fe-prob')).forEach(b=>b.addEventListener('click',()=>{ const p=PROBLEMS_ALL[+b.dataset.i]; openBrowse(b.dataset.trade, p&&p.hi ? { hi:p.hi, hiLabel:p.label } : undefined); }));
 }
 function renderFeedControls(){
   const c = $('feed-controls'); if(!c) return;
