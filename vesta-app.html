@@ -104,6 +104,48 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* problem pills — homeowner needs, the instant-momentum row */
 .home-problems { display:flex; flex-direction:column; gap:26px; margin-bottom:34px; }
 .prob-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+/* Mobile: the stack replaces the flat problem/browse sections below it. Desktop keeps
+   the flat layout (the sidebar already owns full browse there — no stack needed). */
+@media (max-width:899.98px){ .home-problems, .home-browse-sec { display:none !important; } }
+@media (min-width:900px){ .home-stack { display:none !important; } }
+/* ── CATEGORY STACK — one dominant card, the next peeking behind at a diagonal.
+   Same white-card / squig / gradient-chip vocabulary as everything above it. ── */
+.home-stack { margin-bottom:8px; }
+.hstk-stage { position:relative; height:392px; margin-bottom:12px; }
+.hstk-card { position:absolute; inset:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:18px 19px 16px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; }
+.hstk-card::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
+.hstk-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:2px; }
+.hstk-spot { width:52px; height:52px; flex-shrink:0; color:var(--olive); }
+.hstk-spot svg { width:100%; height:100%; }
+.hstk-kick { font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border-radius:var(--r-pill); padding:4px 9px; }
+.hstk-card h3 { font-family:var(--serif); font-size:20px; font-weight:700; margin:6px 0 4px; letter-spacing:-.012em; color:var(--olive); }
+.hstk-card p.hstk-note { font-size:11.5px; color:var(--ebony); line-height:1.5; margin:0 0 11px; }
+.hstk-band { background:var(--bg); border-radius:14px; padding:10px 12px 11px; margin-bottom:11px; }
+.hstk-band-lbl { font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); margin-bottom:7px; }
+.hstk-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.hstk-row:last-child { margin-bottom:0; }
+.hstk-row .l { font-size:10px; font-weight:600; width:64px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hstk-track { flex:1; height:5px; border-radius:99px; background:rgba(74,75,47,.1); overflow:hidden; }
+.hstk-fill { display:block; height:100%; border-radius:99px; background:var(--olive); }
+.hstk-row .n { font-family:var(--mono); font-size:8.5px; color:var(--ebony); flex-shrink:0; width:26px; text-align:right; }
+.hstk-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.hstk-chip { font-size:9.5px; font-weight:600; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:5px 9px; }
+.hstk-chip i { font-style:normal; font-family:var(--mono); font-size:8px; color:var(--ebony); margin-left:4px; }
+.hstk-stats { display:flex; gap:16px; }
+.hstk-stat b { display:block; font-family:var(--serif); font-size:18px; font-weight:700; line-height:1; letter-spacing:-.02em; color:var(--olive); }
+.hstk-stat span { display:block; font-family:var(--mono); font-size:7px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); margin-top:3px; }
+.hstk-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:auto; }
+.hstk-pill { display:flex; align-items:center; gap:6px; background:var(--bg); border-radius:var(--r-pill); padding:8px 11px; font-size:11px; font-weight:600; color:var(--olive); cursor:pointer; border:none; font-family:var(--sans); text-align:left; }
+.hstk-pill svg { width:13px; height:13px; flex-shrink:0; color:var(--olive); }
+.hstk-swipe-hint { display:flex; align-items:center; justify-content:center; gap:6px; font-size:11px; color:var(--ebony); opacity:.7; margin-bottom:10px; }
+.hstk-swipe-hint svg { width:13px; height:13px; animation:hstkHand 1.8s ease-in-out infinite; }
+@keyframes hstkHand { 0%,100%{ transform:translateX(0); opacity:.55; } 50%{ transform:translateX(6px); opacity:1; } }
+@media (prefers-reduced-motion:reduce){ .hstk-swipe-hint svg { animation:none; } }
+.hstk-dots { display:flex; justify-content:center; gap:6px; margin-bottom:22px; }
+.hstk-dot { height:6px; width:6px; border-radius:99px; background:rgba(74,75,47,.24); cursor:pointer; transition:width .28s var(--spring), background .28s; border:none; padding:0; }
+.hstk-dot.on { width:18px; background:var(--olive); }
+.hstk-arrow { position:absolute; top:50%; transform:translateY(-50%); width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.92); box-shadow:var(--sh-row); display:flex; align-items:center; justify-content:center; color:var(--olive); cursor:pointer; z-index:9; border:none; }
+.hstk-arrow.l { left:-4px; } .hstk-arrow.r { right:-4px; }
 /* Hand-drawn underline — the playful accent under key words in section headings and
    step titles. A stretched SVG squiggle, tea on paper; deliberately imperfect. */
 .squig { background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 7px; padding-bottom:6px; }
@@ -151,18 +193,25 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    because a cold visitor should know why this isn't a lead-gen site before we ask them
    to tap anything. No heading; the numbered sequence speaks for itself (a dotted route
    connects 01→02→03), and the step titles carry the hand-drawn underline. */
-.how-strip { margin:20px 0 26px; }
-/* Sequenced LEFT TO RIGHT — a horizontal scroller on mobile (a compact band, not a
-   tall stack), a fixed 3-col row on desktop where the width is free. A small chevron
-   between chips carries the 01->02->03 sequence instead of a vertical dotted line. */
-.how-steps { display:flex; gap:14px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; -webkit-mask-image:linear-gradient(to right,#000 92%,transparent); mask-image:linear-gradient(to right,#000 92%,transparent); }
-.how-steps::-webkit-scrollbar { display:none; }
-.how-step { position:relative; flex:0 0 208px; display:flex; flex-direction:column; gap:8px; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:16px; padding:13px 14px 14px; box-shadow:var(--sh-row); }
-.how-step:not(:last-child)::after { content:''; position:absolute; top:50%; right:-11px; width:8px; height:8px; border-top:2px solid rgba(74,75,47,.3); border-right:2px solid rgba(74,75,47,.3); transform:translateY(-50%) rotate(45deg); }
-.how-step .prof-angle-no { background:var(--tea); }
-.how-step b { display:block; font-family:var(--serif); font-size:15px; font-weight:700; color:var(--olive); letter-spacing:-.008em; line-height:1.2; }
-.how-step p { font-size:11.5px; color:var(--ebony); line-height:1.45; }
-@media (min-width:1200px){ .how-steps { overflow-x:visible; -webkit-mask-image:none; mask-image:none; } .how-step { flex:1 1 0; } }
+.how-strip { margin:18px 0 26px; }
+/* One glance, no scroll, no drag, no card boxes — pure typography. Three columns
+   always fit at once (numerals + squig title + a one-line caption), connected by a
+   small inline chevron carrying the 01->02->03 read order. */
+.how-steps { display:flex; align-items:flex-start; gap:7px; }
+.how-col { flex:1 1 0; min-width:0; }
+.how-col .no { display:inline-flex; width:21px; height:21px; border-radius:7px; background:var(--tea); color:var(--olive); font-family:var(--mono); font-size:9px; font-weight:600; align-items:center; justify-content:center; margin-bottom:6px; }
+.how-col b { display:block; font-family:var(--serif); font-size:12.5px; font-weight:700; color:var(--olive); letter-spacing:-.005em; line-height:1.2; margin-bottom:3px; }
+.how-col b .squig { padding-bottom:4px; background-size:100% 5px; }
+.how-col p { margin:0; font-size:9.5px; color:var(--ebony); line-height:1.35; }
+.how-arrow { flex-shrink:0; margin-top:24px; color:rgba(74,75,47,.35); }
+@media (min-width:900px){
+  .how-steps { gap:22px; }
+  .how-col .no { width:26px; height:26px; font-size:11px; }
+  .how-col b { font-size:15px; margin-bottom:4px; }
+  .how-col b .squig { background-size:100% 6px; }
+  .how-col p { font-size:12px; line-height:1.5; }
+  .how-arrow { margin-top:30px; } .how-arrow svg{ width:14px; height:14px; }
+}
 /* search-result "browse this trade" suggestion (problem→trade routing) */
 .vsr-route { background:rgba(212,223,158,.2); }
 .vsr-arrow { margin-left:auto; color:var(--olive); font-size:18px; flex-shrink:0; padding-right:4px; }
@@ -1206,20 +1255,30 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
                the 01→02→03 route speaks for itself. -->
           <div class="how-strip" aria-label="How Vesta works">
             <div class="how-steps">
-              <div class="how-step">
-                <span class="prof-angle-no">01</span>
-                <div><b><span class="squig">Say what you need</span></b><p>Search, or tap a common job — Vesta narrows to firms that actually do that work.</p></div>
+              <div class="how-col">
+                <span class="no">01</span>
+                <b><span class="squig">Say what you need</span></b>
+                <p>Search, or tap a common job.</p>
               </div>
-              <div class="how-step">
-                <span class="prof-angle-no">02</span>
-                <div><b><span class="squig">Read Vesta's take</span></b><p>A plain-language verdict on each firm, written from their public review record — not a star average.</p></div>
+              <span class="how-arrow"><svg width="11" height="11" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></span>
+              <div class="how-col">
+                <span class="no">02</span>
+                <b><span class="squig">Read Vesta's take</span></b>
+                <p>A verdict, not a star average.</p>
               </div>
-              <div class="how-step">
-                <span class="prof-angle-no">03</span>
-                <div><b><span class="squig">Reach out, direct</span></b><p>No lead auction — message the ones worth a call, on your terms.</p></div>
+              <span class="how-arrow"><svg width="11" height="11" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></span>
+              <div class="how-col">
+                <span class="no">03</span>
+                <b><span class="squig">Reach out, direct</span></b>
+                <p>No lead auction, your terms.</p>
               </div>
             </div>
           </div>
+          <!-- Mobile: the three ways in as a swipeable card stack (one dominant card,
+               the next peeking behind at a diagonal) — an explorable moment, not three
+               stacked page-sections to scroll past. Desktop keeps the flat layout below
+               (the sidebar already owns full browse there; no stack needed). -->
+          <div class="home-stack" id="home-stack" aria-label="Find your way in"></div>
           <div class="home-problems" id="home-problems" aria-label="Common needs"></div>
           <div class="home-browse-sec">
             <h2 class="home-sec-h">Or browse <span class="squig">every trade</span></h2>
@@ -1692,6 +1751,7 @@ async function loadMatchBank(){
   });
   if (S.screen==='home') renderReturn();   // bank loads after first paint — surface a stored match's resume chip
   renderFieldReport();                      // the report's emergency/scarce sections need the bank
+  renderHomeStack();                        // the broken/planning cards' data bands need it too
 }
 function tradeBank(appTrade){ return MATCH_BANK[appTrade] || null; }
 
@@ -1910,6 +1970,7 @@ async function loadContractors(){
   }
   renderHomeProof();
   renderFieldReport();
+  renderHomeStack();
   syncSavedUI();
 }
 // Home proof read — the closing exhibit beneath The Field Report (the report is the
@@ -1977,14 +2038,25 @@ function stopProofRotator(){ if (_proofRotI){ clearInterval(_proofRotI); _proofR
 // every trade row is a real door into that field. Same NO-FLUFF kill filter as the
 // per-trade panel — shares and qualitative facts only, never a vetted/depth count.
 // ONE builder renders the desktop home column AND the mobile bottom sheet.
-function fieldReportHTML(){
-  if (!contractors.length) return '';
+// Shared source of truth for every county-wide (cross-trade) number on the site — The
+// Field Report AND the home category-stack cards both call this, never recompute their
+// own version, so the two surfaces can never quietly drift into different answers.
+function countyFieldData(){
+  if (!contractors.length) return null;
   const per = trades.map(t => ({ k:t.key, label:t.label, f:fieldStats(t.key) })).filter(x => x.f.vetted);
-  if (!per.length) return '';
-  // County pulse — breadth facts (trades/towns) are allowed; depth counts never are.
+  if (!per.length) return null;
   const allTen = contractors.map(c=>c.sinceYear).filter(y=>y>0).map(y=>2026-y).sort((a,b)=>a-b);
   const countyMed = allTen.length >= 5 ? allTen[Math.floor(allTen.length/2)] : 0;
   const townCount = new Set(contractors.map(c=>c.city).filter(Boolean)).size;
+  const emerg = per.filter(x=>x.f.emergPct>0).sort((a,b)=>b.f.emergPct-a.f.emergPct);
+  const priced = per.filter(x=>x.f.priceMix).sort((a,b)=>b.f.priceMix.prem-a.f.priceMix.prem);
+  const scarce = per.flatMap(x=>x.f.scarce.map(s=>({label:s.label, pct:s.pct, k:x.k, trade:x.label}))).sort((a,b)=>a.pct-b.pct);
+  return { per, countyMed, townCount, emerg, priced, scarce };
+}
+function fieldReportHTML(){
+  const cfd = countyFieldData(); if (!cfd) return '';
+  const { per, countyMed, townCount } = cfd;
+  // County pulse — breadth facts (trades/towns) are allowed; depth counts never are.
   const pulse =
     '<div class="frep-pulse">'+
       (countyMed?'<span class="fband-stat"><span class="fb-n">'+countyMed+'</span><span class="fb-l">yrs median tenure, county-wide</span></span>':'')+
@@ -1992,7 +2064,7 @@ function fieldReportHTML(){
       (townCount?'<span class="fband-stat"><span class="fb-n">'+townCount+'</span><span class="fb-l">towns</span></span>':'')+
     '</div>';
   // Who answers an emergency — the ranked cross-trade truth nobody else publishes.
-  const emerg = per.filter(x=>x.f.emergPct>0).sort((a,b)=>b.f.emergPct-a.f.emergPct).slice(0,6);
+  const emerg = cfd.emerg.slice(0,6);
   const emergHtml = emerg.length
     ? '<div class="fr2-lbl" style="margin-top:22px">Who answers an emergency</div>'+
       '<p class="frep-note">Share of each field whose review record shows emergency response.</p>'+
@@ -2002,7 +2074,7 @@ function fieldReportHTML(){
         '<span class="frep-row-n">'+x.f.emergPct+'%</span></button>').join('')
     : '';
   // How the trades price — stacked value/mid/premium mixes, ranked premium-first.
-  const priced = per.filter(x=>x.f.priceMix).sort((a,b)=>b.f.priceMix.prem-a.f.priceMix.prem).slice(0,6);
+  const priced = cfd.priced.slice(0,6);
   const pricedHtml = priced.length
     ? '<div class="fr2-lbl" style="margin-top:22px">How the trades price</div>'+
       '<p class="frep-note">Value · mid-market · premium — where reviews show a clear pricing signal.</p>'+
@@ -2018,8 +2090,7 @@ function fieldReportHTML(){
         '<span><i class="pv"></i>Value</span><span><i class="pm"></i>Mid-market</span><span><i class="pp"></i>Premium</span></div>'
     : '';
   // The county's scarcest skills — the rarest real jobs across every trade.
-  const scarce = per.flatMap(x=>x.f.scarce.map(s=>({label:s.label, pct:s.pct, k:x.k, trade:x.label})))
-    .sort((a,b)=>a.pct-b.pct).slice(0,4);
+  const scarce = cfd.scarce.slice(0,4);
   const scarceHtml = scarce.length
     ? '<div class="fr2-lbl" style="margin-top:22px">The county’s scarcest skills</div>'+
       '<p class="frep-note">Start early if you need one — few firms carry these.</p>'+
@@ -2055,6 +2126,139 @@ function renderFieldReport(){
   }
   renderFieldReportTopPill(!!html);
 }
+// ── HOME CATEGORY STACK (mobile) — "Something broken? / Planning a project? / Or
+// browse every trade" as a swipeable card stack. Each card teaches something real
+// BEFORE it's tapped: the live-data band pulls from countyFieldData(), the exact same
+// numbers The Field Report shows — one source of truth, never a second computation. ──
+const HSTK_SPOTS = {
+  broken: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M9 31 Q9 30 10 29.4 L31 12 Q32 11.2 33 12 L54.5 29.6 Q55 30 55 31"/>
+    <path d="M14.5 31.5 L14 51 Q14 52.5 15.5 52.5 L48.5 52.3 Q50 52.3 50 50.8 L49.6 31.6"/>
+    <path d="M37 35 l-4.5 5.5 l5 4.5 l-4 6"/>
+    <path d="M22.5 39 q-3.4 5.6 -.3 8 q3.3 -1.8 .3 -8z" fill="#D4DF9E" stroke-width="2"/>
+  </svg>`,
+  plan: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 15 Q11.5 14 13 14 L44 13.5 Q45.5 13.5 45.4 15 L45.8 46 Q45.8 47.5 44.3 47.4 L13.4 47.8 Q12 47.8 12 46.3 Z"/>
+    <path d="M18 24 h14 M18 31 h20 M18 38 h11" stroke-dasharray="3.5 4" stroke-width="1.8"/>
+    <path d="M39 51 L56 32.5 l4.7 4.3 L43.5 55.5 l-6 1.6 Z" fill="#F0F1E8"/>
+    <path d="M43.5 55.5 l-6 1.6 1.6 -6.1" fill="#D4DF9E" stroke-width="2"/>
+  </svg>`,
+  compass: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M32 10.5 Q49.5 10 53.5 27 Q56 45 38.5 52.5 Q20 57 12.5 41 Q6.5 22 24 12.5 Q28 10.8 32 10.5 Z"/>
+    <path d="M39.5 21.5 L35 34.5 L24.5 42.5 L29 29.5 Z" fill="#D4DF9E" stroke-width="2"/>
+    <circle cx="32" cy="32" r="1.8" fill="currentColor" stroke="none"/>
+  </svg>`
+};
+let hstkOrder = [0,1,2];
+function hstkCardData(){
+  const cfd = countyFieldData();
+  const emergTop = cfd ? cfd.emerg.slice(0,3) : [];
+  const scarceTop = cfd ? cfd.scarce.slice(0,3) : [];
+  const brokenBand = emergTop.length
+    ? '<div class="hstk-band"><div class="hstk-band-lbl">Who answers at 11pm</div>'+
+      emergTop.map(x=>'<div class="hstk-row"><span class="l">'+esc(x.label)+'</span><span class="hstk-track"><span class="hstk-fill" style="width:'+x.f.emergPct+'%"></span></span><span class="n">'+x.f.emergPct+'%</span></div>').join('')+'</div>'
+    : '';
+  const planBand = scarceTop.length
+    ? '<div class="hstk-band"><div class="hstk-band-lbl">Start early — scarce skills</div><div class="hstk-chips">'+
+      scarceTop.map(s=>'<span class="hstk-chip">'+esc(s.label)+'<i>'+s.pct+'%</i></span>').join('')+'</div></div>'
+    : '';
+  const dirBand = cfd
+    ? '<div class="hstk-band"><div class="hstk-band-lbl">The county pulse</div><div class="hstk-stats">'+
+      (cfd.countyMed?'<span class="hstk-stat"><b>'+cfd.countyMed+'</b><span>yrs median tenure</span></span>':'')+
+      '<span class="hstk-stat"><b>'+cfd.per.length+'</b><span>trades tracked</span></span>'+
+      (cfd.townCount?'<span class="hstk-stat"><b>'+cfd.townCount+'</b><span>towns</span></span>':'')+'</div></div>'
+    : '';
+  return [
+    { spot:'broken', kick:'Urgent', h:'Something <span class="squig">broken?</span>',
+      note:'Live problems, routed to firms whose records show they answer.', band:brokenBand,
+      pills:PROBLEMS_BROKEN.map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})) },
+    { spot:'plan', kick:'Planning', h:'Planning <span class="squig">a project?</span>',
+      note:'Every job maps to real work county firms are proven to do.', band:planBand,
+      pills:[...PROBLEMS_PLANNING.slice(0,3).map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})),
+        {icon:'floor', label:'+ '+(PROBLEMS_PLANNING.length-3)+' more', trade:null}] },
+    { spot:'compass', kick:'Directory', h:'Or browse <span class="squig">every trade</span>',
+      note:'The whole field Vesta tracks — ranked by record, never ad spend.', band:dirBand,
+      pills:[...trades.slice(0,3).map(t=>({icon:t.icon, label:t.label, trade:t.key})),
+        {icon:'floor', label:'+ '+(trades.length-3)+' more', trade:null}] },
+  ];
+}
+function hstkCardHTML(d){
+  return '<div class="hstk-top"><span class="hstk-spot">'+HSTK_SPOTS[d.spot]+'</span><span class="hstk-kick">'+esc(d.kick)+'</span></div>'+
+    '<h3>'+d.h+'</h3><p class="hstk-note">'+esc(d.note)+'</p>'+
+    d.band+
+    '<div class="hstk-grid">'+d.pills.map((p,i)=>'<button class="hstk-pill" data-i="'+i+'"'+(p.trade?'':' disabled')+'>'+(ICONS[p.icon]||'')+esc(p.label)+'</button>').join('')+'</div>';
+}
+function homeStackHTML(){
+  return '<div class="hstk-stage" id="hstk-stage">'+
+      '<button class="hstk-arrow l" id="hstk-arrL" aria-label="Previous category"><svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.5L5 9L11 14.5"/></svg></button>'+
+      '<button class="hstk-arrow r" id="hstk-arrR" aria-label="Next category"><svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5L13 9L7 14.5"/></svg></button>'+
+    '</div>'+
+    '<div class="hstk-swipe-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h13M17 7l4 5-4 5"/></svg>Swipe to explore</div>'+
+    '<div class="hstk-dots" id="hstk-dots"><button class="hstk-dot on" data-i="0" aria-label="Something broken"></button><button class="hstk-dot" data-i="1" aria-label="Planning a project"></button><button class="hstk-dot" data-i="2" aria-label="Browse every trade"></button></div>';
+}
+function hstkLayout(cardEls, animate){
+  cardEls.forEach((el, p) => {
+    el.style.transition = animate ? 'transform .4s var(--spring), opacity .4s' : 'none';
+    el.style.transform = 'translate('+(p*9)+'px,-'+(p*13)+'px) scale('+(1-p*.05)+') rotate('+(p===0?0:p*2.5)+'deg)';
+    el.style.opacity = 1 - p*.22;
+    el.style.zIndex = 10-p;
+    el.style.pointerEvents = p===0 ? 'auto' : 'none';
+  });
+}
+function hstkUpdateDots(){ document.querySelectorAll('.hstk-dot').forEach((d,i)=>d.classList.toggle('on', i===hstkOrder[0])); }
+function hstkPillClick(d, p){
+  if (!p.trade) return; // "+N more" — non-interactive, informational only
+  openBrowse(p.trade, p.hi ? { hi:p.hi, hiLabel:p.hiLabel } : undefined);
+}
+function hstkBuild(){
+  const stage = $('hstk-stage'); if (!stage) return;
+  const DATA = hstkCardData();
+  stage.querySelectorAll('.hstk-card').forEach(c=>c.remove());
+  const arrL = $('hstk-arrL'), arrR = $('hstk-arrR');
+  const cardEls = hstkOrder.map(dataI => {
+    const d = DATA[dataI];
+    const el = document.createElement('div');
+    el.className = 'hstk-card';
+    el.innerHTML = hstkCardHTML(d);
+    stage.insertBefore(el, arrL);
+    el.querySelectorAll('.hstk-pill').forEach(b=>b.addEventListener('click', ()=>hstkPillClick(d, d.pills[+b.dataset.i])));
+    return el;
+  });
+  hstkLayout(cardEls, true);
+  hstkWireDrag(cardEls[0]);
+  hstkUpdateDots();
+  function hstkAdvance(dir){
+    const front = cardEls[0];
+    front.style.transition = 'transform .38s var(--spring), opacity .38s';
+    front.style.transform = 'translate('+(dir>0?340:-340)+'px,-6px) rotate('+(dir>0?14:-14)+'deg)';
+    front.style.opacity = '0';
+    setTimeout(()=>{ dir>0 ? hstkOrder.push(hstkOrder.shift()) : hstkOrder.unshift(hstkOrder.pop()); hstkBuild(); }, 220);
+  }
+  arrR.onclick = ()=>hstkAdvance(1);
+  arrL.onclick = ()=>hstkAdvance(-1);
+  document.querySelectorAll('.hstk-dot').forEach(d=>d.onclick = ()=>{
+    const target = +d.dataset.i; if (hstkOrder[0]===target) return;
+    hstkAdvance(hstkOrder.indexOf(target)===1 ? 1 : -1);
+  });
+  function hstkWireDrag(el){
+    let sx=0, dx=0, on=false;
+    const dn=x=>{ on=true; sx=x; el.style.transition='none'; };
+    const mv=x=>{ if(!on) return; dx=x-sx; el.style.transform='translate('+dx+'px,-2px) rotate('+(dx*.04)+'deg)'; };
+    const up=()=>{ if(!on) return; on=false; Math.abs(dx)>60 ? hstkAdvance(dx<0?1:-1) : hstkLayout(cardEls, true); };
+    el.addEventListener('mousedown', e=>dn(e.clientX));
+    window.addEventListener('mousemove', e=>mv(e.clientX));
+    window.addEventListener('mouseup', up);
+    el.addEventListener('touchstart', e=>dn(e.touches[0].clientX), {passive:true});
+    el.addEventListener('touchmove', e=>mv(e.touches[0].clientX), {passive:true});
+    el.addEventListener('touchend', up);
+  }
+}
+function renderHomeStack(){
+  const box = $('home-stack'); if (!box || !contractors.length) return;
+  hstkOrder = [0,1,2];
+  box.innerHTML = homeStackHTML();
+  hstkBuild();
+}
 function openFieldReportSheet(){
   const body=$('frepsheet-body'); if(!body) return;
   body.innerHTML = fieldReportHTML();
@@ -2074,7 +2278,7 @@ function closeFieldReportSheet(){
 // the pill scrolls it into view and gives the card a one-shot highlight pulse (never
 // content it hasn't already earned — same report, just pointed at).
 function renderFieldReportTopPill(has){
-  const pillHtml = has ? '<button class="frep-toppill" type="button" aria-haspopup="dialog">'+SPARK+'The Field Report</button>' : '';
+  const pillHtml = has ? '<button class="frep-toppill" type="button" aria-haspopup="dialog">'+SPARK+'Open the Field Report</button>' : '';
   const m = $('frep-toppill-mobile'), d = $('frep-toppill-desktop');
   if (m){ m.innerHTML = pillHtml; const b=m.querySelector('.frep-toppill'); if(b) b.addEventListener('click', openFieldReportSheet); }
   if (d){ d.innerHTML = pillHtml; const b=d.querySelector('.frep-toppill'); if(b) b.addEventListener('click', ()=>{
