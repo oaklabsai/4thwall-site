@@ -405,6 +405,15 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* seeded-need pins: the home chip / search words pre-highlight their closest Q1 jobs */
 .mw-opt--hit { border-color:rgba(74,75,47,.32); background:linear-gradient(180deg,rgba(212,223,158,.18),var(--white)); }
 .mw-hit-tag { display:block; font-family:var(--mono); font-size:8.5px; font-weight:500; letter-spacing:.11em; text-transform:uppercase; color:var(--ebony); margin-top:3px; }
+/* Q1 coverage share — the umbrella stat at the moment of choosing */
+.mw-opt-pct { flex-shrink:0; font-family:var(--mono); font-size:10px; color:rgba(74,75,47,.6); }
+/* The field's letterhead on the triage — same visual family as the browse teaser */
+.mw-field-band { display:inline-flex; flex-wrap:wrap; align-items:center; gap:5px 7px; margin:2px 0 16px; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:7px 13px; font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--ebony); cursor:pointer; box-shadow:var(--sh-row); }
+.mw-field-band svg { width:11px; height:11px; color:var(--olive); flex-shrink:0; }
+.mw-field-band b { color:var(--olive); }
+.mw-field-band .dot { opacity:.5; }
+.mw-field-band.static { cursor:default; }
+.mw-field-band.static .fld-more { display:none; }
 .mw-opt-ic { flex-shrink:0; color:var(--olive); opacity:.42; }
 .mw-more { width:100%; margin-top:10px; background:transparent; border:1px dashed rgba(74,75,47,.28); border-radius:13px; padding:12px; font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ebony); cursor:pointer; }
 .mw-more:hover { border-color:var(--olive); color:var(--olive); }
@@ -786,9 +795,20 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .fr2-row-fill { display:block; height:100%; border-radius:99px; background:var(--tea); }
 .fr2-row.on .fr2-row-fill { background:var(--olive); }
 .fr2-row-n { font-family:var(--mono); font-size:10px; color:var(--ebony); flex-shrink:0; }
-.fr2-facts { font-size:12px; color:var(--ebony); margin-top:18px; line-height:1.7; }
-.fr2-facts b { font-family:var(--serif); font-size:15px; color:var(--olive); }
-.fr2-facts .dot { margin:0 7px; opacity:.5; }
+/* Field signals — stacked umbrella KPIs (emergency share, registered, credentials) */
+.fr2-sigs { margin-bottom:2px; }
+.fr2-sig { display:flex; align-items:baseline; gap:9px; padding:5px 0; }
+.fr2-sig b { font-family:var(--serif); font-size:19px; font-weight:700; color:var(--olive); letter-spacing:-.02em; flex-shrink:0; min-width:44px; }
+.fr2-sig span { font-size:12.5px; color:var(--ebony); line-height:1.4; }
+/* Pricing mix — premium darkest, so the bar reads "how much of this field quotes high" */
+.fr2-seg.pv, .fr2-legend i.pv { background:var(--tea); }
+.fr2-seg.pm, .fr2-legend i.pm { background:#8a8a63; }
+.fr2-seg.pp, .fr2-legend i.pp { background:var(--olive); }
+.fr2-pbar { height:8px; }
+/* Scarce skills — informational rows (not filters; no fake affordances) */
+.fr2-scarce { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:6px 0; border-bottom:1px dashed rgba(74,75,47,.14); font-size:12.5px; font-weight:600; color:var(--olive); }
+.fr2-scarce:last-of-type { border-bottom:none; }
+.fr2-scarce .n { font-family:var(--mono); font-size:10px; font-weight:500; color:var(--ebony); flex-shrink:0; }
 .fr2-method { font-family:var(--serif); font-style:italic; font-size:12.5px; color:var(--ebony); margin-top:14px; line-height:1.5; }
 /* Mobile: the panel lives in a bottom sheet; the sheet's white card needs the row
    hover-surface flipped (white-on-white would vanish). */
@@ -1781,6 +1801,7 @@ function mapRow(r){
     volumeBand: r.volume_band || '',
     tenureBand: r.tenure_band || '',
     rankScore: r.rank_score || 0,
+    valueTier: r.value_tier || '',
     // best_for is the synthesis-authored, synthesis-gated tag set (jobs + priority axes) the match
     // engine scores against. Silenced firms expose null → empty array → score 0 (never surfaced as a match).
     bestFor: Array.isArray(r.best_for) ? r.best_for : [],
@@ -1799,7 +1820,7 @@ function standingLine(r){
   return '';
 }
 async function loadContractors(){
-  const sel = 'place_id,business_name,city,trade,registered,hic_issue_date,certifications,synthesis,synthesis_review_count,rating_count,known_for,specialties,best_for,volume_band,rating_band,tenure_band,trade_n,rank_score';
+  const sel = 'place_id,business_name,city,trade,registered,hic_issue_date,certifications,synthesis,synthesis_review_count,rating_count,known_for,specialties,best_for,volume_band,rating_band,tenure_band,trade_n,rank_score,value_tier';
   const rows = await HOME.db('/profile_enrichment_public?select=' + sel + '&order=rank_score.desc.nullslast');
   S.dataLoaded = true;
   // Substance gate: a profile only earns a place on Vesta if Vesta has something
@@ -2875,6 +2896,39 @@ function wireFeedCard(con){
 function fieldStats(key){
   const base = byTrade(key);
   const tenures = base.map(c=>c.sinceYear).filter(y=>y>0).map(y=>2026-y).sort((a,b)=>a-b);
+  // ── Umbrella KPIs beyond tenure/standing — every one computed from data already in
+  // the client, every one killed if it could mislead (town coverage was cut for exactly
+  // that: HQ town ≠ service area, it would manufacture false scarcity). ──
+  // Emergency-response share: from the live Q1 bank — the share of the field whose
+  // review record shows emergency work. Varies wildly by trade (plumbing ~90%,
+  // roofing ~35%, tree ~22%) — a real "didn't know that" for a homeowner.
+  const bank = tradeBank(key);
+  let emergPct = 0;
+  if (bank && bank.trade_n){
+    const ej = (bank.jobs||[]).filter(j=>/emergenc|no-heat-or-no-cool|active-leak/.test(j.value));
+    if (ej.length) emergPct = Math.round(100*Math.max(...ej.map(j=>j.firms))/bank.trade_n);
+  }
+  // Pricing mix: value/mid-market/premium shares among firms whose reviews show a clear
+  // pricing signal. Suppressed when fewer than 40% of the field has one — a mix computed
+  // over a sliver would misstate the market.
+  const tiers = base.map(c=>c.valueTier).filter(t=>t==='value'||t==='mid-market'||t==='premium');
+  const priceMix = (base.length && tiers.length/base.length >= .4) ? {
+    known: tiers.length,
+    value: Math.round(100*tiers.filter(t=>t==='value').length/tiers.length),
+    mid: Math.round(100*tiers.filter(t=>t==='mid-market').length/tiers.length),
+    prem: Math.round(100*tiers.filter(t=>t==='premium').length/tiers.length)
+  } : null;
+  // Credential share: only where manufacturer certs are legitimate for the trade
+  // (roofing GAF/CertainTeed, HVAC Trane/Carrier — same gate as the profile chips).
+  const certPct = (key==='roofing'||key==='hvac') && base.length
+    ? Math.round(100*base.filter(c=>c.certs && c.certs.length).length/base.length) : 0;
+  // Scarce skills: the real jobs at the bottom of field coverage (≤17%, at least 2 firms,
+  // homeowner-relevant only). Scarcity is the insight directories never give — "start
+  // early if you need one of these."
+  const scarce = (bank && bank.trade_n) ? (bank.jobs||[])
+    .filter(j=>j.firms>=2 && j.firms/bank.trade_n<=.17 && !/commercial/.test(j.value))
+    .sort((a,b)=>a.firms-b.firms).slice(0,3)
+    .map(j=>({ label:j.label, pct:Math.max(1,Math.round(100*j.firms/bank.trade_n)) })) : [];
   return {
     vetted: base.length,
     onRecord: base.length + silentByTrade(key).length,
@@ -2882,7 +2936,8 @@ function fieldStats(key){
     t25: base.filter(c=>c.ratingBand==='top25').length,
     reviewsRead: base.reduce((s,c)=>s+(c.reviewCount||0),0),
     medTen: tenures.length >= 5 ? tenures[Math.floor(tenures.length/2)] : 0,
-    regN: base.filter(c=>c.registered).length
+    regN: base.filter(c=>c.registered).length,
+    emergPct, priceMix, certPct, scarce
   };
 }
 // Mobile: the strip is now a tappable teaser (the two headline facts) that opens the FULL
@@ -2938,11 +2993,32 @@ function fieldPanelHTML(key){
   const seg = (n,cls)=> n>0 ? '<span class="fr2-seg '+cls+'" style="flex:'+n+'"></span>' : '';
   const t10Pct = Math.round(100*t10/base.length), t25Pct = Math.round(100*t25/base.length);
   const restPct = 100 - t10Pct - t25Pct;
-  const facts = [];
-  if (tradeSupportsReg(key) && base.length) facts.push('<b>'+Math.round(100*f.regN/base.length)+'%</b> state-registered');
   const hero = f.medTen
     ? '<div class="fr2-hero"><span class="fr2-n">'+f.medTen+'</span>'+
       '<span class="fr2-hl">yrs median tenure<br><span class="fr2-sub">among '+esc(tradePlural(key))+' Vesta has a full read on</span></span></div>'
+    : '';
+  // Field signals — the umbrella KPIs a homeowner wouldn't think to ask for. Each row
+  // drops independently when its data is absent; nothing here is ever padded.
+  const sigs = [];
+  if (f.emergPct) sigs.push('<div class="fr2-sig"><b>'+f.emergPct+'%</b><span>show emergency response in their review record</span></div>');
+  if (tradeSupportsReg(key) && base.length) sigs.push('<div class="fr2-sig"><b>'+Math.round(100*f.regN/base.length)+'%</b><span>state-registered</span></div>');
+  if (f.certPct) sigs.push('<div class="fr2-sig"><b>'+f.certPct+'%</b><span>hold a manufacturer credential Vesta verified</span></div>');
+  // Pricing mix — premium darkest so the bar reads "how much of this field quotes high."
+  const pm = f.priceMix;
+  const pmix = pm
+    ? '<div class="fr2-lbl" style="margin-top:20px">Pricing mix — where reviews show it</div>'+
+      '<div class="fr2-bar fr2-pbar" role="img" aria-label="Pricing mix: '+pm.value+'% value, '+pm.mid+'% mid-market, '+pm.prem+'% premium">'+
+        (pm.value?'<span class="fr2-seg pv" style="flex:'+pm.value+'"></span>':'')+
+        (pm.mid?'<span class="fr2-seg pm" style="flex:'+pm.mid+'"></span>':'')+
+        (pm.prem?'<span class="fr2-seg pp" style="flex:'+pm.prem+'"></span>':'')+'</div>'+
+      '<div class="fr2-legend" style="margin-bottom:0">'+
+        (pm.value?'<span><i class="pv"></i>Value · '+pm.value+'%</span>':'')+
+        (pm.mid?'<span><i class="pm"></i>Mid-market · '+pm.mid+'%</span>':'')+
+        (pm.prem?'<span><i class="pp"></i>Premium · '+pm.prem+'%</span>':'')+'</div>'
+    : '';
+  const scarce = f.scarce && f.scarce.length
+    ? '<div class="fr2-lbl" style="margin-top:20px">Scarce skills — start early if you need one</div>'+
+      f.scarce.map(s=>'<div class="fr2-scarce"><span>'+esc(s.label)+'</span><span class="n">'+s.pct+'% of the field</span></div>').join('')
     : '';
   return hero+
     '<div class="fr2-bar" role="img" aria-label="Standing distribution: '+t10Pct+'% top 10%, '+t25Pct+'% top 25%, '+restPct+'% established base">'+
@@ -2951,13 +3027,15 @@ function fieldPanelHTML(key){
       (t10?'<span><i class="a"></i>Top 10% · '+t10Pct+'%</span>':'')+
       (t25?'<span><i class="b"></i>Top 25% · '+t25Pct+'%</span>':'')+
       (rest?'<span><i class="c"></i>Established base · '+restPct+'%</span>':'')+'</div>'+
-    (facets.length?'<div class="fr2-lbl">What the field does</div>'+
+    (sigs.length?'<div class="fr2-lbl">Field signals</div><div class="fr2-sigs">'+sigs.join('')+'</div>':'')+
+    pmix+
+    (facets.length?'<div class="fr2-lbl" style="margin-top:20px">What the field does</div>'+
       facets.map(({f,n})=>{ const on=S.feedNeeds.has(f.l), pct=Math.round(100*n/base.length);
         return '<button class="fr2-row'+(on?' on':'')+'" data-need="'+esc(f.l)+'" aria-pressed="'+on+'">'+
           '<span class="fr2-row-l">'+esc(f.l)+'</span>'+
           '<span class="fr2-row-track"><span class="fr2-row-fill" style="width:'+pct+'%"></span></span>'+
           '<span class="fr2-row-n">'+pct+'%</span></button>'; }).join(''):'')+
-    (facts.length?'<div class="fr2-facts">'+facts.join('<span class="dot">·</span>')+'</div>':'')+
+    scarce+
     '<p class="fr2-method">Ranked by review consensus, track record &amp; licensing — never ads, never pay-to-play.</p>';
 }
 // Capability rows ARE the need-filter on both surfaces. Each surface passes its own
@@ -3956,6 +4034,22 @@ function renderMatchWalk(){
   else { wrap.innerHTML = matchWalkJobHTML(); wireMatchJob(); }
   wrap.scrollTop = 0;
 }
+// The field's letterhead on the triage — the umbrella context presents itself at the
+// moment of entry (Drew: at-a-glance first, then hand-hold into the questionnaire),
+// without ever becoming an interstitial. Tap opens the full field sheet on mobile;
+// desktop (no sheet) renders it as a static fact line.
+function fieldBandHTML(key){
+  const f = fieldStats(key);
+  if (!f.vetted) return '';
+  const bits = [];
+  if (f.medTen) bits.push('<b>'+f.medTen+'</b> yrs median tenure');
+  const topPct = Math.round(100*(f.t10+f.t25)/f.vetted);
+  if (topPct) bits.push('<b>'+topPct+'%</b> top-quartile');
+  if (tradeSupportsReg(key)) bits.push('<b>'+Math.round(100*f.regN/f.vetted)+'%</b> registered');
+  if (!bits.length) return '';
+  return '<button class="mw-field-band" id="mw-field-band" type="button" aria-haspopup="dialog">'+SPARK+
+    bits.join('<span class="dot">·</span>')+'<span class="fld-more">The field</span></button>';
+}
 function matchWalkJobHTML(){
   const b = tradeBank(S.activeTrade); let jobs = (b&&b.jobs)?b.jobs.slice():[];
   // A seeded need (home chip / typed search) pins its closest jobs to the top, tagged — the chip
@@ -3969,11 +4063,16 @@ function matchWalkJobHTML(){
   const hiTag = '<span class="mw-hit-tag">Closest to '+(S.matchHiLabel ? '&ldquo;'+esc(S.matchHiLabel)+'&rdquo;' : 'your pick')+'</span>';
   const shown = _mwMoreOpen ? jobs : jobs.slice(0, MW_TOP);
   const hasMore = jobs.length > shown.length;
-  const opt = j => '<button class="mw-opt'+(hits.has(j.value)?' mw-opt--hit':'')+'" data-job="'+esc(j.value)+'"><span class="mw-opt-l"><span class="mw-opt-name">'+esc(j.label)+'</span>'+(hits.has(j.value)?hiTag:'')+'</span>'+MW_ARROW+'</button>';
+  // Each option carries its REAL field-coverage share — scarcity teaching at the moment
+  // of choosing ("Chimneys — 15%" tells you your options thin out before you commit).
+  const opt = j => { const pct = j.pct ? Math.round(100*j.pct) : 0;
+    return '<button class="mw-opt'+(hits.has(j.value)?' mw-opt--hit':'')+'" data-job="'+esc(j.value)+'"><span class="mw-opt-l"><span class="mw-opt-name">'+esc(j.label)+'</span>'+(hits.has(j.value)?hiTag:'')+'</span>'+
+      (pct?'<span class="mw-opt-pct" aria-label="'+pct+'% of the field does this work">'+pct+'%</span>':'')+MW_ARROW+'</button>'; };
   return '<div class="mw-inner">'+
     '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step"> · Step 1 of 2</span></div>'+
+    fieldBandHTML(S.activeTrade)+
     '<h1 class="mw-q">What do you need done?</h1>'+
-    '<p class="mw-hint">Pick the closest — Vesta tailors its '+esc(tradePlural(S.activeTrade))+' to it.</p>'+
+    '<p class="mw-hint">Pick the closest — Vesta tailors its '+esc(tradePlural(S.activeTrade))+' to it. The % is how much of the field does that work.</p>'+
     '<div class="mw-opts">'+shown.map(opt).join('')+'</div>'+
     (hasMore ? '<button class="mw-more" id="mw-more">More options</button>' : '')+
     '<div class="mw-foot"><button class="mw-skip" id="mw-skip">Not sure — just show me the best</button></div>'+
@@ -3984,6 +4083,7 @@ function wireMatchJob(){
   wrap.querySelectorAll('.mw-opt').forEach(b=> b.addEventListener('click', ()=> pickJob(b.dataset.job)));
   const more=$('mw-more'); if(more) more.addEventListener('click', ()=>{ _mwMoreOpen=true; renderMatchWalk(); });
   const skip=$('mw-skip'); if(skip) skip.addEventListener('click', skipMatch);
+  const fb=$('mw-field-band'); if(fb){ if(desktop()) fb.classList.add('static'); else fb.addEventListener('click', openFieldSheet); }
 }
 function matchWalkPriorityHTML(){
   const b = tradeBank(S.activeTrade), axes = (b&&b.axes)?b.axes:[];
