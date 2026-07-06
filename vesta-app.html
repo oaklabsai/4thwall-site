@@ -304,11 +304,22 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 }
 /* Mobile field strip — the per-trade analytics layer the desktop rail carries,
    compressed to one honest mono line under the browse header. */
-.field-strip { padding:0 20px 8px; white-space:nowrap; overflow-x:auto; scrollbar-width:none; }
-.fld-teaser { display:inline-flex; align-items:center; gap:7px; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:7px 13px; font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--ebony); cursor:pointer; box-shadow:var(--sh-row); }
-.fld-teaser svg { width:11px; height:11px; color:var(--olive); flex-shrink:0; }
-.fld-teaser b { color:var(--olive); }
-.fld-more { font-weight:600; color:var(--olive); text-decoration:underline; text-underline-offset:2px; }
+.field-strip { padding:0 20px 10px; }
+/* The field band — the umbrella KPIs at display size. These numbers are the product
+   knowing its own field; they get the big-serif stat voice + the gradient signature
+   edge, never a mono whisper. Shared by the triage letterhead and the browse header. */
+.fband { position:relative; display:block; width:100%; text-align:left; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:18px; padding:13px 18px 12px; cursor:pointer; box-shadow:var(--sh-row); overflow:hidden; font-family:var(--sans); }
+.fband::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
+.fband-kick { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:10px; }
+.fband-kick svg { width:11px; height:11px; color:var(--olive); flex-shrink:0; }
+.fband-stats { display:flex; gap:8px 26px; flex-wrap:wrap; }
+.fband-stat { min-width:0; }
+.fb-n { display:block; font-family:var(--serif); font-size:27px; font-weight:700; color:var(--olive); line-height:1; letter-spacing:-.02em; }
+.fb-n i { font-style:normal; font-size:.62em; }
+.fb-l { display:block; font-family:var(--mono); font-size:8.5px; font-weight:500; letter-spacing:.11em; text-transform:uppercase; color:var(--ebony); margin-top:5px; }
+.fband-more { display:inline-block; margin-top:11px; font-size:12px; font-weight:600; color:var(--olive); text-decoration:underline; text-underline-offset:3px; }
+.fband.static { cursor:default; }
+.fband.static .fband-more { display:none; }
 .field-strip::-webkit-scrollbar { display:none; }
 .field-strip:empty { display:none; }
 .field-strip b { color:var(--olive); font-weight:600; }
@@ -363,8 +374,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .mi-kicker { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ebony); margin-bottom:18px; }
 .mi-kicker svg { color:var(--olive); }
 .mi-found { display:flex; align-items:baseline; gap:9px; justify-content:center; margin-bottom:6px; }
-.mi-n { font-family:var(--serif); font-size:56px; font-weight:700; color:var(--olive); line-height:1; letter-spacing:-.03em; }
-.mi-trade { font-family:var(--serif); font-size:22px; font-weight:600; color:var(--ebony); letter-spacing:-.01em; }
+.mi-trade-big { font-family:var(--serif); font-size:44px; font-weight:700; color:var(--olive); line-height:1.05; letter-spacing:-.025em; }
 .mi-sub { font-size:13px; color:var(--ebony); line-height:1.45; margin-bottom:24px; max-width:250px; }
 .mi-rlabel { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ebony); opacity:.72; margin-bottom:12px; }
 .mi-factors { display:flex; flex-direction:column; gap:9px; margin-bottom:27px; }
@@ -405,15 +415,11 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* seeded-need pins: the home chip / search words pre-highlight their closest Q1 jobs */
 .mw-opt--hit { border-color:rgba(74,75,47,.32); background:linear-gradient(180deg,rgba(212,223,158,.18),var(--white)); }
 .mw-hit-tag { display:block; font-family:var(--mono); font-size:8.5px; font-weight:500; letter-spacing:.11em; text-transform:uppercase; color:var(--ebony); margin-top:3px; }
-/* Q1 coverage share — the umbrella stat at the moment of choosing */
-.mw-opt-pct { flex-shrink:0; font-family:var(--mono); font-size:10px; color:rgba(74,75,47,.6); }
-/* The field's letterhead on the triage — same visual family as the browse teaser */
-.mw-field-band { display:inline-flex; flex-wrap:wrap; align-items:center; gap:5px 7px; margin:2px 0 16px; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:7px 13px; font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--ebony); cursor:pointer; box-shadow:var(--sh-row); }
-.mw-field-band svg { width:11px; height:11px; color:var(--olive); flex-shrink:0; }
-.mw-field-band b { color:var(--olive); }
-.mw-field-band .dot { opacity:.5; }
-.mw-field-band.static { cursor:default; }
-.mw-field-band.static .fld-more { display:none; }
+/* Q1 coverage share — the umbrella stat at the moment of choosing, worn as a chip
+   (proud, not a whisper) */
+.mw-opt-pct { flex-shrink:0; font-family:var(--mono); font-size:9.5px; font-weight:600; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-pill); padding:4px 9px; }
+/* The triage letterhead — the shared .fband, with breathing room in the walkthrough */
+.mw-inner .fband { margin:2px 0 18px; }
 .mw-opt-ic { flex-shrink:0; color:var(--olive); opacity:.42; }
 .mw-more { width:100%; margin-top:10px; background:transparent; border:1px dashed rgba(74,75,47,.28); border-radius:13px; padding:12px; font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ebony); cursor:pointer; }
 .mw-more:hover { border-color:var(--olive); color:var(--olive); }
@@ -795,20 +801,22 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .fr2-row-fill { display:block; height:100%; border-radius:99px; background:var(--tea); }
 .fr2-row.on .fr2-row-fill { background:var(--olive); }
 .fr2-row-n { font-family:var(--mono); font-size:10px; color:var(--ebony); flex-shrink:0; }
-/* Field signals — stacked umbrella KPIs (emergency share, registered, credentials) */
-.fr2-sigs { margin-bottom:2px; }
-.fr2-sig { display:flex; align-items:baseline; gap:9px; padding:5px 0; }
-.fr2-sig b { font-family:var(--serif); font-size:19px; font-weight:700; color:var(--olive); letter-spacing:-.02em; flex-shrink:0; min-width:44px; }
-.fr2-sig span { font-size:12.5px; color:var(--ebony); line-height:1.4; }
+/* Field signals — umbrella KPIs at display size (the same voice as the band and the
+   card stat strips; the panel's numbers never whisper either) */
+.fr2-sigs { display:flex; gap:16px 30px; flex-wrap:wrap; margin-bottom:4px; }
+.fr2-sig { display:block; max-width:150px; }
+.fr2-sig b { display:block; font-family:var(--serif); font-size:31px; font-weight:700; color:var(--olive); letter-spacing:-.02em; line-height:1; }
+.fr2-sig span { display:block; font-family:var(--mono); font-size:8.5px; font-weight:500; letter-spacing:.11em; text-transform:uppercase; color:var(--ebony); line-height:1.5; margin-top:5px; }
 /* Pricing mix — premium darkest, so the bar reads "how much of this field quotes high" */
 .fr2-seg.pv, .fr2-legend i.pv { background:var(--tea); }
 .fr2-seg.pm, .fr2-legend i.pm { background:#8a8a63; }
 .fr2-seg.pp, .fr2-legend i.pp { background:var(--olive); }
 .fr2-pbar { height:8px; }
-/* Scarce skills — informational rows (not filters; no fake affordances) */
-.fr2-scarce { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:6px 0; border-bottom:1px dashed rgba(74,75,47,.14); font-size:12.5px; font-weight:600; color:var(--olive); }
+/* Scarce skills — informational rows (not filters; no fake affordances); the share
+   worn as a chip so scarcity reads at a glance */
+.fr2-scarce { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:7px 0; border-bottom:1px dashed rgba(74,75,47,.14); font-size:13px; font-weight:600; color:var(--olive); }
 .fr2-scarce:last-of-type { border-bottom:none; }
-.fr2-scarce .n { font-family:var(--mono); font-size:10px; font-weight:500; color:var(--ebony); flex-shrink:0; }
+.fr2-scarce .n { font-family:var(--mono); font-size:9px; font-weight:600; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-pill); padding:4px 9px; flex-shrink:0; white-space:nowrap; }
 .fr2-method { font-family:var(--serif); font-style:italic; font-size:12.5px; color:var(--ebony); margin-top:14px; line-height:1.5; }
 /* Mobile: the panel lives in a bottom sheet; the sheet's white card needs the row
    hover-surface flipped (white-on-white would vanish). */
@@ -2332,26 +2340,29 @@ function deckEndHTML(){
 }
 // The anticipation beat before the deck: "We found N — ranked using…". Factors mirror the REAL
 // rank_score inputs (review consensus, track record/tenure, licensing/credentials) — never response time.
-function matchIntroHTML(n){
+// The intro beat's hero is the TRADE, not a count — "41 plumbers found" was a surviving
+// depth-count leak (how many firms Vesta has vetted), caught 7/6 after the 8-spot sweep
+// missed it. The payoff word is the field itself; the band above already carries its
+// real, allowed stats (tenure/emergency/quartile shares).
+function matchIntroHTML(){
   const plural = tradePlural(S.activeTrade);
-  const noun = n === 1 ? plural.replace(/s$/,'') : plural;   // current plurals all singularize by dropping a trailing s
+  const noun = plural.charAt(0).toUpperCase()+plural.slice(1);
   const factors = ['Review quality &amp; consensus', 'Track record &amp; tenure', 'Licensing &amp; business records'];
   return '<div class="match-intro">'+
     '<span class="mi-kicker">'+SPARK+'Vesta Match</span>'+
-    '<div class="mi-found"><span class="mi-n">'+n+'</span><span class="mi-trade">'+esc(noun)+'</span></div>'+
-    '<p class="mi-sub">Found &amp; ranked for you in Fairfield County</p>'+
+    '<div class="mi-found"><span class="mi-trade-big">'+esc(noun)+'</span></div>'+
+    '<p class="mi-sub">The Fairfield County field — found, read &amp; ranked for you</p>'+
     '<div class="mi-rlabel">Ranked using</div>'+
     '<div class="mi-factors">'+factors.map(f=>'<span class="mi-factor">'+CHECK+'<span>'+f+'</span></span>').join('')+'</div>'+
     '<button class="de-btn primary mi-go" id="mi-go">Start matching</button>'+
   '</div>';
 }
-function renderMatchIntro(n){
+function renderMatchIntro(){
   const deck = $('deck'); if(!deck) return;
   $('vbanner').style.display = 'none';              // hold the save/skip banner until matching begins
   $('deck-actions').style.visibility = 'hidden';
   $('deck-meta').textContent = '';
-  deck.innerHTML = matchIntroHTML(n);
-  countUp(deck.querySelector('.mi-n'), n);
+  deck.innerHTML = matchIntroHTML();
   const go = $('mi-go'); if(go) go.onclick = startMatching;
   if (desktop()) renderPanel(null);
 }
@@ -2380,7 +2391,7 @@ function renderDeck(){
   // leave the flag set so the post-load renderDeck shows it; an empty trade clears it and falls through.
   if (S.introPending && S.dataLoaded){
     S.introPending = false;
-    if ((S.deck||[]).length){ renderMatchIntro((S.deck||[]).length); return; }
+    if ((S.deck||[]).length){ renderMatchIntro(); return; }
   }
   const remaining = (S.deck||[]).slice(S.deckIdx);
   if (!remaining.length){
@@ -2950,19 +2961,15 @@ function renderFieldStrip(){
   if (!f.vetted){ el.innerHTML=''; return; }
   // Never a raw depth/vetted count or reviews-read total here — only qualitative
   // field facts (tenure) and shares (percentages), same rule as the desktop rail.
-  const bits = [];
-  if (f.medTen) bits.push('<b>'+f.medTen+'</b> yrs median tenure');
-  if (tradeSupportsReg(S.activeTrade)) bits.push('<b>'+Math.round(100*f.regN/f.vetted)+'%</b> registered');
-  el.innerHTML = '<button class="fld-teaser" id="fld-teaser" type="button" aria-haspopup="dialog">'+SPARK+
-    (bits.length ? bits.join('&ensp;·&ensp;')+'&ensp;·&ensp;' : '')+
-    '<span class="fld-more">The field at a glance</span></button>';
-  const t=$('fld-teaser'); if(t) t.addEventListener('click', openFieldSheet);
+  // Same display-size band as the triage letterhead — the KPIs never whisper.
+  el.innerHTML = fieldBandHTML(S.activeTrade);
+  const t=el.querySelector('.fband'); if(t) t.addEventListener('click', openFieldSheet);
 }
 // The mobile field sheet — full per-trade analytics, deck stays primary. Capability
 // rows filter the deck live behind the sheet, exactly like the desktop rail's rows.
 function renderFieldSheet(){
   const body=$('fldsheet-body'); if(!body) return;
-  body.innerHTML = '<div class="fsheet-title">The field at a glance</div>'+fieldPanelHTML(S.activeTrade);
+  body.innerHTML = '<div class="fsheet-title">The field <span class="squig">at a glance</span></div>'+fieldPanelHTML(S.activeTrade);
   wireFieldPanel(body, ()=>{ rebuildDeck(); renderDeck(); updateBrowseHead(); updateFilterTrigger(); renderNeedChips(); renderFieldSheet(); });
 }
 function openFieldSheet(){
@@ -3000,9 +3007,9 @@ function fieldPanelHTML(key){
   // Field signals — the umbrella KPIs a homeowner wouldn't think to ask for. Each row
   // drops independently when its data is absent; nothing here is ever padded.
   const sigs = [];
-  if (f.emergPct) sigs.push('<div class="fr2-sig"><b>'+f.emergPct+'%</b><span>show emergency response in their review record</span></div>');
+  if (f.emergPct) sigs.push('<div class="fr2-sig"><b>'+f.emergPct+'%</b><span>answer emergencies — per their review record</span></div>');
   if (tradeSupportsReg(key) && base.length) sigs.push('<div class="fr2-sig"><b>'+Math.round(100*f.regN/base.length)+'%</b><span>state-registered</span></div>');
-  if (f.certPct) sigs.push('<div class="fr2-sig"><b>'+f.certPct+'%</b><span>hold a manufacturer credential Vesta verified</span></div>');
+  if (f.certPct) sigs.push('<div class="fr2-sig"><b>'+f.certPct+'%</b><span>manufacturer-certified — Vesta-verified</span></div>');
   // Pricing mix — premium darkest so the bar reads "how much of this field quotes high."
   const pm = f.priceMix;
   const pmix = pm
@@ -3052,7 +3059,7 @@ function renderFeedRail(){
   const p=$('vpanel'); if(!p) return;
   const panel = fieldPanelHTML(S.activeTrade);
   if (!panel){ p.innerHTML=''; return; }
-  p.innerHTML = '<div class="va-head"><span class="va-spark">'+SPARK+'</span>The field at a glance</div>'+panel;
+  p.innerHTML = '<div class="va-head"><span class="va-spark">'+SPARK+'</span><span>The field <span class="squig">at a glance</span></span></div>'+panel;
   wireFieldPanel(p);
   const f = fieldStats(S.activeTrade);
   if (f.medTen && _railTrade !== S.activeTrade){ _railTrade = S.activeTrade; countUp(p.querySelector('.fr2-n'), f.medTen); }   // count up once per trade, not on every filter tick
@@ -4034,21 +4041,25 @@ function renderMatchWalk(){
   else { wrap.innerHTML = matchWalkJobHTML(); wireMatchJob(); }
   wrap.scrollTop = 0;
 }
-// The field's letterhead on the triage — the umbrella context presents itself at the
-// moment of entry (Drew: at-a-glance first, then hand-hold into the questionnaire),
-// without ever becoming an interstitial. Tap opens the full field sheet on mobile;
-// desktop (no sheet) renders it as a static fact line.
+// The field's letterhead — the umbrella KPIs presented at DISPLAY size (the same big-serif
+// stat voice the cards use), never a mono whisper: these numbers are the product knowing
+// its own field, so they carry themselves proudly. Used on both the triage entry and the
+// mobile browse header. Tap opens the full field sheet on mobile; desktop renders static.
 function fieldBandHTML(key){
   const f = fieldStats(key);
   if (!f.vetted) return '';
-  const bits = [];
-  if (f.medTen) bits.push('<b>'+f.medTen+'</b> yrs median tenure');
+  const stats = [];
+  const stat = (n, unit, label) => '<span class="fband-stat"><span class="fb-n">'+n+(unit?'<i>'+unit+'</i>':'')+'</span><span class="fb-l">'+label+'</span></span>';
+  if (f.medTen) stats.push(stat(f.medTen, '', 'yrs median tenure'));
+  if (f.emergPct) stats.push(stat(f.emergPct, '%', 'answer emergencies'));
+  else if (tradeSupportsReg(key)) stats.push(stat(Math.round(100*f.regN/f.vetted), '%', 'state-registered'));
   const topPct = Math.round(100*(f.t10+f.t25)/f.vetted);
-  if (topPct) bits.push('<b>'+topPct+'%</b> top-quartile');
-  if (tradeSupportsReg(key)) bits.push('<b>'+Math.round(100*f.regN/f.vetted)+'%</b> registered');
-  if (!bits.length) return '';
-  return '<button class="mw-field-band" id="mw-field-band" type="button" aria-haspopup="dialog">'+SPARK+
-    bits.join('<span class="dot">·</span>')+'<span class="fld-more">The field</span></button>';
+  if (topPct) stats.push(stat(topPct, '%', 'top-quartile'));
+  if (!stats.length) return '';
+  return '<button class="fband" type="button" aria-haspopup="dialog">'+
+    '<span class="fband-kick">'+SPARK+'The field — measured by Vesta</span>'+
+    '<span class="fband-stats">'+stats.slice(0,3).join('')+'</span>'+
+    '<span class="fband-more">See the full field →</span></button>';
 }
 function matchWalkJobHTML(){
   const b = tradeBank(S.activeTrade); let jobs = (b&&b.jobs)?b.jobs.slice():[];
@@ -4083,7 +4094,7 @@ function wireMatchJob(){
   wrap.querySelectorAll('.mw-opt').forEach(b=> b.addEventListener('click', ()=> pickJob(b.dataset.job)));
   const more=$('mw-more'); if(more) more.addEventListener('click', ()=>{ _mwMoreOpen=true; renderMatchWalk(); });
   const skip=$('mw-skip'); if(skip) skip.addEventListener('click', skipMatch);
-  const fb=$('mw-field-band'); if(fb){ if(desktop()) fb.classList.add('static'); else fb.addEventListener('click', openFieldSheet); }
+  const fb=wrap.querySelector('.fband'); if(fb){ if(desktop()) fb.classList.add('static'); else fb.addEventListener('click', openFieldSheet); }
 }
 function matchWalkPriorityHTML(){
   const b = tradeBank(S.activeTrade), axes = (b&&b.axes)?b.axes:[];
