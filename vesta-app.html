@@ -111,27 +111,33 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* ── CATEGORY STACK — one dominant card, the next peeking behind at a diagonal.
    Same white-card / squig / gradient-chip vocabulary as everything above it. ── */
 .home-stack { margin-bottom:8px; }
-.hstk-stage { position:relative; height:392px; margin-bottom:12px; }
-.hstk-card { position:absolute; inset:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:18px 19px 16px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; }
+.hstk-stage { position:relative; height:460px; margin-bottom:12px; }
+.hstk-card { position:absolute; inset:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:17px 19px 15px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; }
 .hstk-card::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
 .hstk-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:2px; }
-.hstk-spot { width:52px; height:52px; flex-shrink:0; color:var(--olive); }
+.hstk-spot { width:46px; height:46px; flex-shrink:0; color:var(--olive); }
 .hstk-spot svg { width:100%; height:100%; }
 .hstk-kick { font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border-radius:var(--r-pill); padding:4px 9px; }
-.hstk-card h3 { font-family:var(--serif); font-size:20px; font-weight:700; margin:6px 0 4px; letter-spacing:-.012em; color:var(--olive); }
-.hstk-card p.hstk-note { font-size:11.5px; color:var(--ebony); line-height:1.5; margin:0 0 11px; }
-.hstk-band { background:var(--bg); border-radius:14px; padding:10px 12px 11px; margin-bottom:11px; }
-.hstk-band-lbl { font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); margin-bottom:7px; }
-.hstk-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.hstk-card h3 { font-family:var(--serif); font-size:19px; font-weight:700; margin:5px 0 3px; letter-spacing:-.012em; color:var(--olive); }
+.hstk-card p.hstk-note { font-size:11.5px; color:var(--ebony); line-height:1.42; margin:0 0 9px; }
+.hstk-band { background:var(--bg); border-radius:14px; padding:9px 12px 10px; margin-bottom:9px; }
+.hstk-band-lbl { font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); margin-bottom:6px; }
+.hstk-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
 .hstk-row:last-child { margin-bottom:0; }
 .hstk-row .l { font-size:10px; font-weight:600; width:64px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .hstk-track { flex:1; height:5px; border-radius:99px; background:rgba(74,75,47,.1); overflow:hidden; }
 .hstk-fill { display:block; height:100%; border-radius:99px; background:var(--olive); }
 .hstk-row .n { font-family:var(--mono); font-size:8.5px; color:var(--ebony); flex-shrink:0; width:26px; text-align:right; }
+.hstk-sub { font-size:10.5px; color:var(--ebony); line-height:1.4; margin:7px 0 0; padding-top:7px; border-top:1px dashed rgba(74,75,47,.14); }
+.hstk-sub b { color:var(--olive); }
 .hstk-chips { display:flex; flex-wrap:wrap; gap:6px; }
 .hstk-chip { font-size:9.5px; font-weight:600; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:5px 9px; }
 .hstk-chip i { font-style:normal; font-family:var(--mono); font-size:8px; color:var(--ebony); margin-left:4px; }
+.hstk-row.hstk-price { margin-top:8px; padding-top:7px; border-top:1px dashed rgba(74,75,47,.14); }
+.hstk-row.hstk-price .l { width:auto; flex:0 0 auto; max-width:44%; }
+.hstk-track.frep-mix { display:flex; }
 .hstk-stats { display:flex; gap:16px; }
+.hstk-stats.hstk-groups { display:grid; grid-template-columns:repeat(2,1fr); gap:8px 14px; }
 .hstk-stat b { display:block; font-family:var(--serif); font-size:18px; font-weight:700; line-height:1; letter-spacing:-.02em; color:var(--olive); }
 .hstk-stat span { display:block; font-family:var(--mono); font-size:7px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); margin-top:3px; }
 .hstk-cta { display:flex; align-items:center; justify-content:center; gap:7px; width:100%; background:var(--olive); color:var(--white); border:none; border-radius:var(--r-pill); padding:12px 16px; font-family:var(--sans); font-size:13.5px; font-weight:700; cursor:pointer; margin:3px 0 13px; box-shadow:0 8px 18px -8px rgba(74,75,47,.55); transition:transform .18s var(--spring); }
@@ -223,8 +229,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .home-sign { text-align:center; font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--ebony); letter-spacing:.005em; }
 .home-prov { text-align:center; font-size:11.5px; color:var(--ebony); opacity:.75; line-height:1.5; margin-top:8px; }
 .home-prov a { color:var(--ebony); font-weight:600; opacity:1; }
-/* ── THE FIELD REPORT — the county-wide cross-trade layer. Rendered only inside
-   #frepsheet, opened by the top pill — never inlined into the page on any breakpoint. ── */
+/* ── THE FIELD REPORT — the county-wide cross-trade layer. Desktop: the right column's
+   resident (sticky, internally scrollable). Mobile: opens from the top pill as a sheet
+   (no room for a full column there). ── */
+#field-report { display:none; }
 .frep-card { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:20px; padding:20px 22px 18px; box-shadow:var(--sh-row); overflow:hidden; }
 .frep-card::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
 .frep-h { font-family:var(--serif); font-size:23px; font-weight:700; letter-spacing:-.02em; color:var(--olive); line-height:1.15; margin:2px 0 5px; }
@@ -254,8 +262,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @keyframes frepShimmer { to { background-position:-30% 0; } }
 @media (prefers-reduced-motion:reduce){ .frep-toppill::after { animation:none; } }
 #frep-toppill-mobile:empty { display:none; }
-/* Below 900px the topbar's own pill (#frep-toppill-mobile) already owns this job. */
-#frep-toppill-desktop { display:none; }
+/* Desktop never shows this pill — the full report already sits in the visible right
+   column there, so a "go look at it" button would just point at itself. Mobile-only. */
+#frep-toppill-desktop { display:none !important; }
+@media (min-width:900px){ #field-report { display:block; } }
 
 /* ===== RETURN BAND (Stage 1.5) — recognizes a returning homeowner: resume the last match
    + jump to the saved shortlist. Renders ONLY when there's state; a first-timer sees nothing
@@ -701,19 +711,22 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home .home-foot { text-align:center; margin-top:40px; }
   /* Entrance choreography — the hero stops looking like a static page and starts
      looking like something that just happened, each piece a beat behind the last. */
-  #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems { animation:tileIn .5s var(--spring) both; }
+  #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems,
+  #s-home .home-hero-proof { animation:tileIn .5s var(--spring) both; }
   #s-home .home-h1 { animation-delay:.03s; } #s-home .home-sub { animation-delay:.09s; }
   #s-home .home-search { animation-delay:.15s; } #s-home .home-problems { animation-delay:.21s; }
-  @media (prefers-reduced-motion:reduce){ #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems { animation:none; } }
-  /* The Field Report has exactly one door on desktop now: this top-right pill. No
-     second copy sits inline in the page — open it, or don't see it. */
-  #frep-toppill-desktop { display:flex; justify-content:flex-end; margin-bottom:16px; }
-  #frep-toppill-desktop:empty { display:none; margin-bottom:0; }
+  #s-home .home-hero-proof { animation-delay:.32s; }
+  @media (prefers-reduced-motion:reduce){ #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems, #s-home .home-hero-proof { animation:none; } }
 }
 @media (min-width:1200px) {
-  /* No right-column proof anymore — the report lives behind the top pill only.
-     Cap the text column so it doesn't stretch into document-width lines. */
-  #s-home .home-hero-main { max-width:720px; }
+  /* The actual fix for "reads like a document": an asymmetric two-column split instead
+     of one centered column drowning in side margins. Left = the action (search, the
+     job you came to do); right = proof, pinned so it stays in view while you read. */
+  #s-home .home-hero { display:grid; grid-template-columns:1.15fr .85fr; gap:64px; align-items:start; }
+  /* The report can exceed the viewport — the column scrolls internally while staying
+     pinned, so the reader can browse the report without losing the hero. */
+  #s-home .home-hero-proof { position:sticky; top:4vh; margin-top:0; max-height:92vh; overflow-y:auto; scrollbar-width:none; }
+  #s-home .home-hero-proof::-webkit-scrollbar { display:none; }
   #s-home .home-foot, #s-home .home-sign, #s-home .home-prov { text-align:left; }
 }
 @media (min-width:900px) {
@@ -903,6 +916,12 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .fsheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:min(390px,100vw); background:var(--white); border-radius:28px 28px 0 0; z-index:71; padding:10px 24px 40px; max-height:84vh; overflow-y:auto; overscroll-behavior:contain; transition:transform .45s var(--spring); box-shadow:0 -12px 40px -4px rgba(74,75,47,.18), 0 -40px 96px -12px rgba(74,75,47,.24); }
 .fsheet.open { transform:translateX(-50%) translateY(0); }
 .fsheet-title { font-family:var(--serif); font-size:23px; font-weight:700; color:var(--olive); letter-spacing:-.02em; margin:2px 0 2px; }
+.dirsheet-head { text-align:center; margin-bottom:18px; }
+.dirsheet-spot { display:block; width:44px; height:44px; margin:0 auto 10px; color:var(--olive); }
+.dirsheet-spot svg { width:100%; height:100%; }
+.dirsheet-head .fsheet-title { text-align:center; }
+.dirsheet-sub { font-size:12.5px; color:var(--ebony); line-height:1.5; margin-top:4px; }
+.dirsheet .tg-grid { grid-template-columns:repeat(3,1fr); }
 .fsheet-sec { margin-top:18px; }
 .fsheet-lbl { font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:10px; }
 .fsheet-chips { display:flex; flex-wrap:wrap; gap:8px; }
@@ -914,15 +933,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .fsheet-actions { display:flex; gap:10px; margin-top:26px; }
 .fsheet-clear { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); border-radius:var(--r-pill); padding:13px 20px; font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer; }
 .fsheet-done { flex:1; background:var(--olive); color:var(--white); border:none; border-radius:var(--r-pill); padding:13px 20px; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; }
-@media (min-width:900px){ .fscrim:not(#frepscrim), .fsheet:not(#frepsheet), .tb-filter { display:none !important; } }
-/* The Field Report sheet is the ONLY door into the report on desktop too (no inline
-   column anymore) — so unlike every other bottom sheet, it stays usable at 900px+,
-   just reshaped into a centered modal instead of a mobile bottom sheet. */
-@media (min-width:900px){
-  #frepsheet { position:fixed; top:50%; left:50%; bottom:auto; width:min(560px,90vw); max-height:82vh; border-radius:var(--r-card); transform:translate(-50%,-46%) scale(.97); transition:transform .38s var(--spring), opacity .3s; box-shadow:0 30px 90px -20px rgba(74,75,47,.35); opacity:0; pointer-events:none; }
-  #frepsheet.open { transform:translate(-50%,-50%) scale(1); opacity:1; pointer-events:auto; }
-  #frepsheet .phandle { display:none; }
-}
+@media (min-width:900px){ .fscrim, .fsheet, .tb-filter { display:none !important; } }
 
 /* ===== IN-APP PROFILE (Phase B) — the full profile, native to Vesta's light UI ===== */
 #s-profile { background:var(--bg); }
@@ -1268,6 +1279,13 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
             <div class="trades-grid" id="trades-grid" role="list"></div>
           </div>
         </div>
+        <!-- The right column is the product's BRAIN, desktop only: The Field Report,
+             cross-trade conclusions only this dataset can draw, always visible (sticky)
+             while browsing. Mobile has no room for this — it opens from the top pill
+             instead, as a sheet. -->
+        <div class="home-hero-proof" id="home-hero-proof">
+          <div id="field-report"></div>
+        </div>
       </div>
       <div class="home-foot">
         <p class="home-sign">Vetted, never advertised.</p>
@@ -1362,6 +1380,17 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   <div class="fsheet fldsheet" id="frepsheet" role="dialog" aria-modal="true" aria-label="The Field Report" tabindex="-1">
     <div class="phandle-wrap"><div class="phandle" aria-hidden="true"></div><button class="psheet-x" id="frepsheet-x" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button></div>
     <div class="fsheet-body" id="frepsheet-body"></div>
+  </div>
+
+  <!-- MOBILE DIRECTORY SHEET — the full 12-trade taxonomy, grouped by the homeowner's
+       mental model (same TRADE_GROUPS the desktop sidebar uses). This is where "Browse
+       every trade" actually leads on mobile; tapping a trade drops straight into that
+       trade's triage/walkthrough. -->
+  <div class="fscrim" id="dirscrim" aria-hidden="true"></div>
+  <div class="fsheet fldsheet dirsheet" id="dirsheet" role="dialog" aria-modal="true" aria-label="The Directory" tabindex="-1">
+    <div class="phandle-wrap"><div class="phandle" aria-hidden="true"></div><button class="psheet-x" id="dirsheet-x" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button></div>
+    <div class="dirsheet-head"><span class="dirsheet-spot"></span><h2 class="fsheet-title">The <span class="squig">Directory</span></h2><p class="dirsheet-sub">Every trade Vesta tracks in Fairfield County, ranked by record — never by ad spend.</p></div>
+    <div class="trades-grid" id="dirsheet-body" role="list"></div>
   </div>
 
   <!-- BOTTOM NAV (mobile) -->
@@ -2024,10 +2053,13 @@ function wireFieldReport(container){
     openBrowse(b.dataset.trade, { walk:false });
   }));
 }
-// The report has exactly one door now, on every breakpoint: the top pill. It's never
-// inlined into the page — rendered only into the sheet, on demand, when opened.
+// Desktop: the report renders inline into the always-visible right column. Mobile: no
+// room for a column, so it opens from the top pill as a sheet instead — never both.
 function renderFieldReport(){
-  renderFieldReportTopPill(!!countyFieldData());
+  const el = $('field-report');
+  const html = fieldReportHTML();
+  if (el){ el.innerHTML = html; if (html) wireFieldReport(el); }
+  renderFieldReportTopPill(!!html);
 }
 // ── HOME CATEGORY STACK (mobile) — "Something broken? / Planning a project? / Or
 // browse every trade" as a swipeable card stack. Each card teaches something real
@@ -2057,33 +2089,53 @@ function hstkCardData(){
   const cfd = countyFieldData();
   const emergTop = cfd ? cfd.emerg.slice(0,3) : [];
   const scarceTop = cfd ? cfd.scarce.slice(0,3) : [];
+  // Emergency share alone answers "who answers" — not "who can I trust in the moment."
+  // The top responder's median tenure is real, already-computed context (fieldStats.medTen),
+  // just never surfaced here before.
+  const topEmerg = emergTop[0];
+  const tenureLine = (topEmerg && topEmerg.f.medTen)
+    ? '<p class="hstk-sub">'+esc(topEmerg.label)+'&rsquo;s emergency crews average <b>'+topEmerg.f.medTen+' yrs</b> on record.</p>' : '';
   const brokenBand = emergTop.length
     ? '<div class="hstk-band"><div class="hstk-band-lbl">Who answers at 11pm</div>'+
-      emergTop.map(x=>'<div class="hstk-row"><span class="l">'+esc(x.label)+'</span><span class="hstk-track"><span class="hstk-fill" style="width:'+x.f.emergPct+'%"></span></span><span class="n">'+x.f.emergPct+'%</span></div>').join('')+'</div>'
+      emergTop.map(x=>'<div class="hstk-row"><span class="l">'+esc(x.label)+'</span><span class="hstk-track"><span class="hstk-fill" style="width:'+x.f.emergPct+'%"></span></span><span class="n">'+x.f.emergPct+'%</span></div>').join('')+
+      tenureLine+'</div>'
     : '';
+  // Scarce skills alone answers "what's rare" — planning also needs "what will this cost,"
+  // which we already compute (priceMix) for the Field Report. One compact mixed bar for
+  // the single most price-differentiated trade gives real budget calibration here too.
+  const topPriced = cfd ? cfd.priced[0] : null;
+  const priceLine = (topPriced && topPriced.f.priceMix)
+    ? '<div class="hstk-row hstk-price"><span class="l">'+esc(topPriced.label)+' pricing</span><span class="hstk-track frep-mix">'+
+        (topPriced.f.priceMix.value?'<span class="fr2-seg pv" style="flex:'+topPriced.f.priceMix.value+'"></span>':'')+
+        (topPriced.f.priceMix.mid?'<span class="fr2-seg pm" style="flex:'+topPriced.f.priceMix.mid+'"></span>':'')+
+        (topPriced.f.priceMix.prem?'<span class="fr2-seg pp" style="flex:'+topPriced.f.priceMix.prem+'"></span>':'')+
+      '</span><span class="n">'+topPriced.f.priceMix.prem+'%<i>prem</i></span></div>' : '';
   const planBand = scarceTop.length
     ? '<div class="hstk-band"><div class="hstk-band-lbl">Start early — scarce skills</div><div class="hstk-chips">'+
-      scarceTop.map(s=>'<span class="hstk-chip">'+esc(s.label)+'<i>'+s.pct+'%</i></span>').join('')+'</div></div>'
+      scarceTop.map(s=>'<span class="hstk-chip">'+esc(s.label)+'<i>'+s.pct+'%</i></span>').join('')+'</div>'+priceLine+'</div>'
     : '';
+  // The compass card's own "county pulse" duplicated the Field Report's opening stat
+  // verbatim — same rule Drew's already caught elsewhere. Its distinct job: preview the
+  // actual directory structure the CTA opens (grouped by TRADE_GROUPS), not repeat a
+  // county-wide number one tap away.
   const dirBand = cfd
-    ? '<div class="hstk-band"><div class="hstk-band-lbl">The county pulse</div><div class="hstk-stats">'+
-      (cfd.countyMed?'<span class="hstk-stat"><b>'+cfd.countyMed+'</b><span>yrs median tenure</span></span>':'')+
-      '<span class="hstk-stat"><b>'+cfd.per.length+'</b><span>trades tracked</span></span>'+
-      (cfd.townCount?'<span class="hstk-stat"><b>'+cfd.townCount+'</b><span>towns</span></span>':'')+'</div></div>'
+    ? '<div class="hstk-band"><div class="hstk-band-lbl">Twelve trades, four rooms</div><div class="hstk-stats hstk-groups">'+
+      TRADE_GROUPS.map(g=>'<span class="hstk-stat"><b>'+g.keys.length+'</b><span>'+esc(g.label)+'</span></span>').join('')+
+      '</div></div>'
     : '';
   return [
     { spot:'broken', kick:'Urgent', h:'Something <span class="squig">broken?</span>',
       note:'Live problems, routed to firms whose records show they answer.', band:brokenBand,
-      cta:'Get help now',
+      cta:'Get help now', ctaAction:'search', ctaSeed:PROBLEMS_BROKEN[0] ? PROBLEMS_BROKEN[0].label : '',
       pills:PROBLEMS_BROKEN.map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})) },
     { spot:'plan', kick:'Planning', h:'Planning <span class="squig">a project?</span>',
       note:'Every job maps to real work county firms are proven to do.', band:planBand,
-      cta:'Start planning',
+      cta:'Start planning', ctaAction:'search', ctaSeed:PROBLEMS_PLANNING[0] ? PROBLEMS_PLANNING[0].label : '',
       pills:[...PROBLEMS_PLANNING.slice(0,3).map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})),
         {icon:'floor', label:'+ '+(PROBLEMS_PLANNING.length-3)+' more', trade:null}] },
     { spot:'compass', kick:'Directory', h:'Or browse <span class="squig">every trade</span>',
       note:'The whole field Vesta tracks — ranked by record, never ad spend.', band:dirBand,
-      cta:'Browse the directory',
+      cta:'Browse the directory', ctaAction:'directory',
       pills:[...trades.slice(0,3).map(t=>({icon:t.icon, label:t.label, trade:t.key})),
         {icon:'floor', label:'+ '+(trades.length-3)+' more', trade:null}] },
   ];
@@ -2094,7 +2146,7 @@ function hstkCardHTML(d){
     d.band+
     '<button class="hstk-cta" type="button">'+esc(d.cta)+
       '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></button>'+
-    '<div class="hstk-grid">'+d.pills.map((p,i)=>'<button class="hstk-pill" data-i="'+i+'"'+(p.trade?'':' disabled')+'>'+(ICONS[p.icon]||'')+esc(p.label)+'</button>').join('')+'</div>';
+    '<div class="hstk-grid">'+d.pills.map((p,i)=>'<button class="hstk-pill" data-i="'+i+'">'+(ICONS[p.icon]||'')+esc(p.label)+'</button>').join('')+'</div>';
 }
 function homeStackHTML(){
   return '<div class="hstk-stage" id="hstk-stage">'+
@@ -2125,7 +2177,7 @@ function hstkApply(animate){
 }
 function hstkUpdateDots(){ document.querySelectorAll('.hstk-dot').forEach((d,i)=>d.classList.toggle('on', i===hstkOrder[0])); }
 function hstkPillClick(d, p){
-  if (!p.trade) return; // "+N more" — non-interactive, informational only
+  if (!p.trade){ openDirectorySheet(); return; } // "+N more" — see the whole field, not a dead end
   openBrowse(p.trade, p.hi ? { hi:p.hi, hiLabel:p.hiLabel } : undefined);
 }
 function hstkAdvance(dir){
@@ -2172,7 +2224,9 @@ function hstkBuild(){
     el.innerHTML = hstkCardHTML(d);
     stage.insertBefore(el, arrL);
     el.querySelectorAll('.hstk-pill').forEach(b=>b.addEventListener('click', ()=>hstkPillClick(d, d.pills[+b.dataset.i])));
-    const cta = el.querySelector('.hstk-cta'); if (cta) cta.addEventListener('click', openSearch);
+    const cta = el.querySelector('.hstk-cta'); if (cta) cta.addEventListener('click', () => {
+      d.ctaAction === 'directory' ? openDirectorySheet() : openSearch(d.ctaSeed);
+    });
     hstkWireDrag(el, dataI);
     return el;
   });
@@ -2204,14 +2258,13 @@ function closeFieldReportSheet(){
   const s=$('frepsheet'); if(!s) return;
   s.classList.remove('open'); $('frepscrim').classList.remove('open'); $('frepscrim').setAttribute('aria-hidden','true'); S.reportOpen=false;
 }
-// The one discovery pill for The Field Report — obvious at the top on every breakpoint,
-// the ONLY door into the report. Mobile version sits in the topbar; desktop version sits
-// top-right of the hero. Both open the same sheet; the report is never inlined elsewhere.
+// Mobile-only discovery pill for The Field Report (the report has no column to live in
+// on phones). Desktop never shows this — the report already sits in the visible right
+// column there, so a "go look at it" button would just point at itself.
 function renderFieldReportTopPill(has){
   const pillHtml = has ? '<button class="frep-toppill" type="button" aria-haspopup="dialog">'+SPARK+'Open the Field Report</button>' : '';
-  const m = $('frep-toppill-mobile'), d = $('frep-toppill-desktop');
+  const m = $('frep-toppill-mobile');
   if (m){ m.innerHTML = pillHtml; const b=m.querySelector('.frep-toppill'); if(b) b.addEventListener('click', openFieldReportSheet); }
-  if (d){ d.innerHTML = pillHtml; const b=d.querySelector('.frep-toppill'); if(b) b.addEventListener('click', openFieldReportSheet); }
 }
 
 /* HOME — search placeholder as a live typewriter: each example types out letter by
@@ -2281,15 +2334,22 @@ function renderHome(){
       pr.appendChild(sec);
     });
   }
-  // trades, grouped by the homeowner's mental model (TRADE_GROUPS) — each group is a
-  // labeled section with its own 3-col grid, so the list scans as rooms of a directory
-  // instead of one undifferentiated pile.
-  const grid = $('trades-grid'); grid.innerHTML = '';
+  buildTradeDirectory($('trades-grid'));
+  startSearchRotator();
+  renderReturn();
+}
+// The full 12-trade taxonomy, grouped by the homeowner's mental model (TRADE_GROUPS) —
+// each group a labeled section, so the list scans as rooms of a directory instead of one
+// undifferentiated pile. Shared by the desktop trades-grid (dead weight there today, kept
+// for parity) and the mobile Directory sheet — one builder, so both stay identical.
+function buildTradeDirectory(container){
+  if (!container) return;
+  container.innerHTML = '';
   let gi = 0;
   TRADE_GROUPS.forEach(g => {
     const lbl = document.createElement('div');
     lbl.className = 'tg-label'; lbl.textContent = g.label;
-    grid.appendChild(lbl);
+    container.appendChild(lbl);
     const sec = document.createElement('div');
     sec.className = 'tg-grid'; sec.setAttribute('role','list');
     g.keys.forEach(k => {
@@ -2299,13 +2359,24 @@ function renderHome(){
       btn.style.setProperty('--d', (Math.min(gi++,10)*24)+'ms');
       btn.setAttribute('aria-label', t.label + ' — find a pro');
       btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span><span class="tile-name">'+t.label+'</span>';
-      btn.addEventListener('click', () => { btn.classList.add('sel'); setTimeout(()=>openBrowse(t.key),120); });
+      btn.addEventListener('click', () => { btn.classList.add('sel'); closeDirectorySheet(); setTimeout(()=>openBrowse(t.key),120); });
       sec.appendChild(btn);
     });
-    grid.appendChild(sec);
+    container.appendChild(sec);
   });
-  startSearchRotator();
-  renderReturn();
+}
+function openDirectorySheet(){
+  const body = $('dirsheet-body'); if (!body) return;
+  buildTradeDirectory(body);
+  const spot = document.querySelector('.dirsheet-spot'); if (spot) spot.innerHTML = HSTK_SPOTS.compass;
+  const s = $('dirsheet'); s.classList.remove('open'); void s.offsetHeight;
+  $('dirscrim').classList.add('open'); $('dirscrim').setAttribute('aria-hidden','false');
+  s.classList.add('open');
+  setTimeout(()=>s.focus(),300);
+}
+function closeDirectorySheet(){
+  const s = $('dirsheet'); if (!s) return;
+  s.classList.remove('open'); $('dirscrim').classList.remove('open'); $('dirscrim').setAttribute('aria-hidden','true');
 }
 
 /* RETURN BAND — resume last match (primary) + saved shortlist (secondary). Renders only
@@ -3491,7 +3562,7 @@ function initSheetDrag(){
 }
 
 /* SEARCH */
-function openSearch(){ const o=$('vsearch'); o.classList.add('open'); o.setAttribute('aria-hidden','false'); const inp=$('vsearch-input'); inp.value=''; renderSearchResults(''); S.searchOpen=true; setTimeout(()=>inp.focus(),60); }
+function openSearch(seed){ const o=$('vsearch'); o.classList.add('open'); o.setAttribute('aria-hidden','false'); const inp=$('vsearch-input'); const q=(typeof seed==='string')?seed:''; inp.value=q; renderSearchResults(q); S.searchOpen=true; setTimeout(()=>{ inp.focus(); if(q) inp.select(); },60); }
 function closeSearch(){ $('vsearch').classList.remove('open'); $('vsearch').setAttribute('aria-hidden','true'); S.searchOpen=false; }
 function renderSearchResults(q){
   q = (q||'').trim().toLowerCase(); const res = $('vsearch-results');
@@ -4501,6 +4572,8 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   $('fldsheet-x').addEventListener('click', closeFieldSheet);
   $('frepscrim').addEventListener('click', closeFieldReportSheet);
   $('frepsheet-x').addEventListener('click', closeFieldReportSheet);
+  $('dirscrim').addEventListener('click', closeDirectorySheet);
+  $('dirsheet-x').addEventListener('click', closeDirectorySheet);
   ['nav-search','ds-search','home-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
