@@ -730,7 +730,6 @@ export function renderDirectoryHTML(trade, rows) {
 // byTrade sizes so each aisle states its real coverage.
 function familyAisles(byTrade) {
   const aisles = FAMILIES.map((f) => {
-    const n = f.trades.reduce((s, t) => s + (byTrade[t] || []).length, 0);
     const tradeLinks = f.trades.map((t) =>
       '<a class="aisle-trade" href="/fairfield-county/' + t + '">' +
         '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICON[t] || ICON.all) + '</svg>' +
@@ -738,8 +737,7 @@ function familyAisles(byTrade) {
     const facetLinks = (f.facets || []).map((x) =>
       '<a class="aisle-facet" href="/vesta?q=' + encodeURIComponent(x.q) + '">' + esc(x.l) + '</a>').join('');
     return '<div class="aisle">' +
-      '<div class="aisle-head"><h3 class="aisle-h">' + esc(f.name) + '</h3>' +
-        (n ? '<span class="aisle-n">' + n + ' pros</span>' : '') + '</div>' +
+      '<div class="aisle-head"><h3 class="aisle-h">' + esc(f.name) + '</h3></div>' +
       '<div class="aisle-trades">' + tradeLinks + '</div>' +
       (facetLinks ? '<div class="aisle-facets">' + facetLinks + '</div>' : '') +
     '</div>';
@@ -759,7 +757,6 @@ const HUB_CSS =
   '.aisle{border:1px solid var(--line,rgba(74,75,47,.16));border-radius:14px;padding:.95rem 1.05rem;background:rgba(255,255,255,.5);display:flex;flex-direction:column;gap:.6rem}' +
   '.aisle-head{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}' +
   '.aisle-h{margin:0;font-family:var(--serif,"Fraunces",serif);font-size:1.02rem;font-weight:600;color:var(--vink,#12100e)}' +
-  '.aisle-n{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim);white-space:nowrap}' +
   '.aisle-trades{display:flex;flex-wrap:wrap;gap:.4rem}' +
   '.aisle-trade{display:inline-flex;align-items:center;gap:.38rem;font-size:.84rem;font-weight:500;color:#3a3b24;padding:.3rem .65rem;border:1px solid var(--line,rgba(74,75,47,.22));border-radius:999px;background:rgba(212,223,158,.12);transition:color .12s ease}' +
   '.aisle-trade:hover{color:#12100e}' +
@@ -778,7 +775,6 @@ const HUB_CSS =
   '.hub-trade-head{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;padding-bottom:.7rem;margin-bottom:1.1rem;border-bottom:1px solid var(--line,rgba(74,75,47,.16))}' +
   '.hub-ico{width:1.35rem;height:1.35rem;flex:none;stroke:var(--vgreen-2,#4a4b2f);fill:none;stroke-width:1.6}' +
   '.hub-trade-h{margin:0;font-family:var(--serif,"Fraunces",serif);font-size:1.32rem;font-weight:600;color:var(--vink,#12100e)}' +
-  '.hub-trade-n{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--vdim);padding:.16rem .5rem;border:1px solid var(--line,rgba(74,75,47,.2));border-radius:999px;white-space:nowrap}' +
   '.hub-trade-link{margin-left:auto;font-size:.82rem;color:var(--vgreen-2,#4a4b2f);white-space:nowrap}' +
   '.hub-trade-link:hover{text-decoration:underline}' +
   '.hub-towns{columns:3;column-gap:2.2rem}' +
@@ -848,9 +844,8 @@ export function renderHubHTML(rows) {
   const townCount = new Set(list.map((r) => String(r.city || '').trim()).filter(Boolean)).size;
 
   const title = 'Contractor Directory — ' + COUNTY + ', CT | Vesta';
-  const description = 'Every contractor Vesta covers in ' + COUNTY + ', Connecticut — ' + total +
-    ' vetted pros across ' + orderedTrades.length + ' trades, compiled from public records. ' +
-    'Browse the full index by trade and town. No ads, no pay-to-play.';
+  const description = 'Every contractor Vesta covers in ' + COUNTY + ', Connecticut — compiled from public records ' +
+    'across every trade we track. Browse the full index by trade and town. No ads, no pay-to-play.';
 
   const hero =
     '<section class="page-hero" id="hero">' +
@@ -869,7 +864,6 @@ export function renderHubHTML(rows) {
   }
 
   const lead = '<div class="hub-lead">' +
-    '<span><b>' + total + '</b> contractors</span><span class="sep">·</span>' +
     '<span><b>' + orderedTrades.length + '</b> trades</span><span class="sep">·</span>' +
     '<span><b>' + townCount + '</b> towns</span></div>';
 
@@ -900,7 +894,6 @@ export function renderHubHTML(rows) {
       '<div class="hub-trade-head">' +
         '<svg class="hub-ico" viewBox="0 0 24 24" aria-hidden="true">' + (ICON[t] || ICON.all) + '</svg>' +
         '<h2 class="hub-trade-h">' + esc(label) + '</h2>' +
-        '<span class="hub-trade-n">' + byTrade[t].length + ' in ' + COUNTY + '</span>' +
         '<a class="hub-trade-link" href="/fairfield-county/' + t + '">The ' + esc(tLower(t)) + ' page →</a>' +
       '</div>' +
       '<div class="hub-towns">' + townBlocks + '</div>' +

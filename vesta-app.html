@@ -109,7 +109,6 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .tg-label { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:rgba(74,75,47,.55); margin-top:8px; }
 .tg-label:first-child { margin-top:0; }
 .tg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
-.tile-ct { font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; color:rgba(74,75,47,.5); min-height:12px; }
 .trade-tile { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; text-align:center; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-tile); padding:14px 6px 12px; min-height:0; cursor:pointer; box-shadow:0 1px 2px rgba(74,75,47,.04); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
 .trade-tile:hover { transform:translateY(-2px); box-shadow:0 7px 16px -7px rgba(74,75,47,.22); }
 .trade-tile:active { transform:scale(.97); }
@@ -535,8 +534,6 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
   .ds-ic { width:23px; height:23px; flex-shrink:0; display:flex; }
   .ds-ic svg { width:23px; height:23px; }
   .ds-lbl { font-size:15px; font-weight:500; flex:1; }
-  .ds-ct { font-family:var(--mono); font-size:12px; color:var(--ebony); opacity:.65; }
-  .ds-item.on .ds-ct { color:var(--olive); opacity:.8; }
   .ds-foot { display:flex; flex-direction:column; gap:2px; padding-top:14px; border-top:1px solid rgba(74,75,47,.1); flex-shrink:0; }
   .ds-foot-btn { display:flex; align-items:center; gap:13px; padding:11px 14px; border:none; background:none; cursor:pointer; border-radius:12px; color:var(--ebony); font-family:var(--sans); font-size:14px; font-weight:500; }
   .ds-foot-btn:hover { background:rgba(255,255,255,.6); color:var(--olive); }
@@ -1711,7 +1708,6 @@ async function loadContractors(){
     if (S.mode === 'saved'){ renderSaved(); }
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
   }
-  updateHomeCounts();   // fill the home tiles' depth counts if the home screen rendered before data landed
   renderHomeProof();
   syncSavedUI();
 }
@@ -1721,8 +1717,9 @@ let _proofPool = null, _proofLast = null;
 function renderHomeProof(){
   const trustEl = $('home-trust'), sampleEl = $('home-sample');
   if (!trustEl || !sampleEl || !contractors.length) return;
-  const tradeCount = new Set(contractors.map(c => c.trade)).size;
-  trustEl.innerHTML = '<b>' + contractors.length.toLocaleString('en-US') + '</b> vetted pros across <b>' + tradeCount + '</b> trades in Fairfield County';
+  // Never a depth count (how many firms Vesta tracks/vetted) — that's the one thing
+  // never shown. Breadth is communicated qualitatively instead.
+  trustEl.textContent = 'Vetted across every trade Vesta tracks in Fairfield County';
   trustEl.hidden = false;
   // Pick from the top-rated tier only, and pick RANDOMLY each load (never the same firm
   // twice in a row) — no business gets a standing "featured" slot; it's proof-of-the-read,
@@ -1812,28 +1809,14 @@ function renderHome(){
       btn.className = 'trade-tile'; btn.setAttribute('role','listitem');
       btn.style.setProperty('--d', (Math.min(gi++,10)*24)+'ms');
       btn.setAttribute('aria-label', t.label + ' — find a pro');
-      btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span><span class="tile-name">'+t.label+'</span>'+
-        '<span class="tile-ct" data-ct="'+t.key+'"></span>';
+      btn.innerHTML = '<span class="tile-icon">'+ICONS[t.icon]+'</span><span class="tile-name">'+t.label+'</span>';
       btn.addEventListener('click', () => { btn.classList.add('sel'); setTimeout(()=>openBrowse(t.key),120); });
       sec.appendChild(btn);
     });
     grid.appendChild(sec);
   });
-  updateHomeCounts();
   startSearchRotator();
   renderReturn();
-}
-// Depth line on each trade tile — the live count of vetted pros, filled once data lands.
-// Count = firms with a published read (the product's honest claim), not raw listings.
-function updateHomeCounts(){
-  if (!S.dataLoaded) return;
-  document.querySelectorAll('.tile-ct[data-ct]').forEach(el => {
-    const n = byTrade(el.dataset.ct).length;
-    el.textContent = n ? (n + ' vetted') : '';
-  });
-  document.querySelectorAll('.ds-ct[data-ct]').forEach(el => {
-    el.textContent = byTrade(el.dataset.ct).length || '';
-  });
 }
 
 /* RETURN BAND — resume last match (primary) + saved shortlist (secondary). Renders only
@@ -1880,10 +1863,13 @@ function renderNeedChips(){
   const row = $('chips-row'); if (!row) return;
   if (S.mode !== 'trade' || (S.match && S.match.job)){ row.innerHTML=''; return; }   // match mode owns "what you need" via its own walkthrough
   const base = byTrade(S.activeTrade).filter(c => !FEED_HIDDEN.has(c.placeId) && (!S.feedTown || (c.city||'') === S.feedTown));
+  // Authored NEED_FACETS order (a designed per-trade priority) drives display order —
+  // live match-count only GATES which chips qualify, never reorders them. Sorting by
+  // raw count made the row reshuffle per town/filter and read as arbitrary.
   const facets = (NEED_FACETS[S.activeTrade]||[])
-    .map(f => ({ f, n: base.filter(c => facetMatches(c, f)).length }))
+    .map((f,idx) => ({ f, idx, n: base.filter(c => facetMatches(c, f)).length }))
     .filter(x => x.n >= 2 || S.feedNeeds.has(x.f.l))
-    .sort((a,b) => b.n - a.n);
+    .sort((a,b) => a.idx - b.idx);
   if (!facets.length){ row.innerHTML=''; return; }
   row.innerHTML = facets.map(({f}) => {
     const on = S.feedNeeds.has(f.l);
@@ -1904,13 +1890,12 @@ function renderSidebar(){
       const t = trades.find(x => x.key === k); if (!t) return '';
       const on = S.screen==='browse' && S.mode==='trade' && S.activeTrade===t.key;
       return '<button class="ds-item'+(on?' on':'')+'" data-k="'+t.key+'" aria-pressed="'+on+'">'+
-        '<span class="ds-ic">'+ICONS[t.icon]+'</span><span class="ds-lbl">'+t.label+'</span><span class="ds-ct" data-ct="'+t.key+'"></span></button>';
+        '<span class="ds-ic">'+ICONS[t.icon]+'</span><span class="ds-lbl">'+t.label+'</span></button>';
     }).join('');
     return '<div class="ds-glabel">'+esc(g.label)+'</div>'+items;
   }).join('');
   Array.from(nav.querySelectorAll('.ds-item')).forEach(b => b.addEventListener('click', () => switchTrade(b.dataset.k)));
   const sv = $('ds-saved'); if(sv) sv.classList.toggle('on', S.mode==='saved');
-  updateHomeCounts();
 }
 function updateBrowseHead(){
   const banner = $('vbanner');
@@ -2608,10 +2593,11 @@ function renderFeedNeeds(){
   const el = $('feed-needs'); if(!el) return;
   if (S.match && S.match.job){ el.innerHTML=''; el.style.display='none'; return; }   // match mode owns "what you need" — no double control
   const base = byTrade(S.activeTrade).filter(c => !FEED_HIDDEN.has(c.placeId) && (!S.feedTown || (c.city||'') === S.feedTown));
+  // Same authored-order rule as renderNeedChips — count only gates inclusion, never sorts.
   const facets = (NEED_FACETS[S.activeTrade]||[])
-    .map(f => ({ f, n: base.filter(c => facetMatches(c, f)).length }))
+    .map((f,idx) => ({ f, idx, n: base.filter(c => facetMatches(c, f)).length }))
     .filter(x => x.n >= 2 || S.feedNeeds.has(x.f.l))
-    .sort((a,b) => b.n - a.n);
+    .sort((a,b) => a.idx - b.idx);
   if (!facets.length){ el.innerHTML=''; el.style.display='none'; return; }
   el.style.display='';
   el.innerHTML = '<span class="need-lbl">What you need</span>' +
@@ -2748,8 +2734,9 @@ function renderFieldStrip(){
   if (S.mode !== 'trade' || (S.match && S.match.job) || !S.dataLoaded){ el.innerHTML=''; return; }
   const f = fieldStats(S.activeTrade);
   if (!f.vetted){ el.innerHTML=''; return; }
-  const bits = ['<b>'+f.vetted+'</b> vetted · of <b>'+f.onRecord+'</b> on record'];
-  if (f.reviewsRead) bits.push('<b>'+f.reviewsRead.toLocaleString('en-US')+'</b> reviews read');
+  // Never a raw depth/vetted count or reviews-read total here — only qualitative
+  // field facts (tenure) and shares (percentages), same rule as the desktop rail.
+  const bits = [];
   if (f.medTen) bits.push('<b>'+f.medTen+'</b> yrs median tenure');
   if (tradeSupportsReg(S.activeTrade)) bits.push('<b>'+Math.round(100*f.regN/f.vetted)+'%</b> registered');
   el.innerHTML = bits.join('&ensp;·&ensp;');
@@ -2760,38 +2747,45 @@ function renderFeedRail(){
   const key = S.activeTrade, base = byTrade(key);
   if (!base.length){ p.innerHTML=''; return; }
   const f = fieldStats(key);
-  const onRecord = f.onRecord, t10 = f.t10, t25 = f.t25, rest = base.length - t10 - t25;
-  const reviewsRead = f.reviewsRead, medTen = f.medTen, regN = f.regN;
+  const t10 = f.t10, t25 = f.t25, rest = base.length - t10 - t25;
+  const medTen = f.medTen, regN = f.regN;
+  // Never a raw vetted/on-record count anywhere here — shares (percentages) and
+  // qualitative facts (tenure) only. Facet order = the authored NEED_FACETS
+  // priority (stable per trade), not live match-count — count only GATES which
+  // chips qualify (>=2 matches), so the list stops reshuffling per town/filter.
   const facets = (NEED_FACETS[key]||[])
-    .map(f=>({ f, n: base.filter(c=>facetMatches(c,f)).length }))
-    .filter(x=>x.n>=2).sort((a,b)=>b.n-a.n).slice(0,5);
+    .map((f,idx)=>({ f, idx, n: base.filter(c=>facetMatches(c,f)).length }))
+    .filter(x=>x.n>=2).sort((a,b)=>a.idx-b.idx).slice(0,5);
   const seg = (n,cls)=> n>0 ? '<span class="fr2-seg '+cls+'" style="flex:'+n+'"></span>' : '';
+  const t10Pct = Math.round(100*t10/base.length), t25Pct = Math.round(100*t25/base.length);
+  const restPct = 100 - t10Pct - t25Pct;
   const facts = [];
-  if (reviewsRead) facts.push('<b>'+reviewsRead.toLocaleString('en-US')+'</b> reviews read');
-  if (medTen) facts.push('<b>'+medTen+'</b> yrs median tenure');
   if (tradeSupportsReg(key) && base.length) facts.push('<b>'+Math.round(100*regN/base.length)+'%</b> state-registered');
+  const hero = medTen
+    ? '<div class="fr2-hero"><span class="fr2-n" id="fr2-n">'+medTen+'</span>'+
+      '<span class="fr2-hl">yrs median tenure<br><span class="fr2-sub">among '+esc(tradePlural(key))+' Vesta has a full read on</span></span></div>'
+    : '';
   p.innerHTML =
     '<div class="va-head"><span class="va-spark">'+SPARK+'</span>The field at a glance</div>'+
-    '<div class="fr2-hero"><span class="fr2-n" id="fr2-n">'+base.length+'</span>'+
-      '<span class="fr2-hl">vetted '+esc(tradePlural(key))+'<br><span class="fr2-sub">of '+onRecord+' on public record in Fairfield County</span></span></div>'+
-    '<div class="fr2-bar" role="img" aria-label="Standing distribution: '+t10+' top 10%, '+t25+' top 25%, '+rest+' established base">'+
+    hero+
+    '<div class="fr2-bar" role="img" aria-label="Standing distribution: '+t10Pct+'% top 10%, '+t25Pct+'% top 25%, '+restPct+'% established base">'+
       seg(t10,'a')+seg(t25,'b')+seg(rest,'c')+'</div>'+
     '<div class="fr2-legend">'+
-      (t10?'<span><i class="a"></i>Top 10% · '+t10+'</span>':'')+
-      (t25?'<span><i class="b"></i>Top 25% · '+t25+'</span>':'')+
-      (rest?'<span><i class="c"></i>Established base · '+rest+'</span>':'')+'</div>'+
+      (t10?'<span><i class="a"></i>Top 10% · '+t10Pct+'%</span>':'')+
+      (t25?'<span><i class="b"></i>Top 25% · '+t25Pct+'%</span>':'')+
+      (rest?'<span><i class="c"></i>Established base · '+restPct+'%</span>':'')+'</div>'+
     (facets.length?'<div class="fr2-lbl">What the field does</div>'+
-      facets.map(({f,n})=>{ const on=S.feedNeeds.has(f.l);
+      facets.map(({f,n})=>{ const on=S.feedNeeds.has(f.l), pct=Math.round(100*n/base.length);
         return '<button class="fr2-row'+(on?' on':'')+'" data-need="'+esc(f.l)+'" aria-pressed="'+on+'">'+
           '<span class="fr2-row-l">'+esc(f.l)+'</span>'+
-          '<span class="fr2-row-track"><span class="fr2-row-fill" style="width:'+Math.round(100*n/base.length)+'%"></span></span>'+
-          '<span class="fr2-row-n">'+n+' of '+base.length+'</span></button>'; }).join(''):'')+
+          '<span class="fr2-row-track"><span class="fr2-row-fill" style="width:'+pct+'%"></span></span>'+
+          '<span class="fr2-row-n">'+pct+'%</span></button>'; }).join(''):'')+
     (facts.length?'<div class="fr2-facts">'+facts.join('<span class="dot">·</span>')+'</div>':'')+
     '<p class="fr2-method">Ranked by review consensus, track record &amp; licensing — never ads, never pay-to-play.</p>';
   p.querySelectorAll('.fr2-row').forEach(b=>b.addEventListener('click',()=>{
     const l=b.dataset.need; if(S.feedNeeds.has(l)) S.feedNeeds.delete(l); else S.feedNeeds.add(l); applyFeed();
   }));
-  if (_railTrade !== key){ _railTrade = key; countUp($('fr2-n'), base.length); }   // count up once per trade, not on every filter tick
+  if (medTen && _railTrade !== key){ _railTrade = key; countUp($('fr2-n'), medTen); }   // count up once per trade, not on every filter tick
 }
 // ── Silent-firm coverage tail ──────────────────────────────────────────────
 // Honest, collapsed "N more, not yet reviewed" section. Count-only firms: what's on
@@ -2852,8 +2846,8 @@ function renderFilterSheet(){
   const body=$('fsheet-body'); if(!body) return;
   const towns=feedTowns();
   const facets=(NEED_FACETS[S.activeTrade]||[])
-    .map(f=>({ f, n: byTrade(S.activeTrade).filter(c=>(!S.feedTown||(c.city||'')===S.feedTown)&&facetMatches(c,f)).length }))
-    .filter(x=>x.n>=2 || S.feedNeeds.has(x.f.l)).sort((a,b)=>b.n-a.n);
+    .map((f,idx)=>({ f, idx, n: byTrade(S.activeTrade).filter(c=>(!S.feedTown||(c.city||'')===S.feedTown)&&facetMatches(c,f)).length }))
+    .filter(x=>x.n>=2 || S.feedNeeds.has(x.f.l)).sort((a,b)=>a.idx-b.idx);
   const sorts=[['rank','Vesta’s pick'],['tenure','Longest established'],['volume','Most reviewed'],['rating','Top rated']];
   body.innerHTML =
     '<div class="fsheet-title">Filter '+esc(tradePlural(S.activeTrade))+'</div>'+
