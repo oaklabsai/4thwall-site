@@ -515,6 +515,24 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .mw-skip:hover { color:var(--olive); }
 .mw-backbtn { display:inline-flex; align-items:center; gap:6px; background:none; border:none; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--olive); cursor:pointer; padding:6px 2px; }
 .mw-backbtn svg { width:15px; height:15px; }
+/* Triage (Step 0) — symptom/area rows carry a leading illustration; base mw-opt is a
+   space-between row, so --sym flips to flex-start and lets the label column grow, keeping
+   the trailing arrow pinned right. */
+.mw-opt--sym { justify-content:flex-start; gap:13px; }
+.mw-opt--sym .mw-opt-l { flex:1; min-width:0; }
+.mw-ic { flex-shrink:0; width:38px; height:38px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(180deg, rgba(230,238,196,.5), rgba(212,223,158,.28)); border:1px solid rgba(74,75,47,.12); color:var(--olive); }
+.mw-ic svg { width:21px; height:21px; }
+.mw-ic--q { font-family:var(--serif); font-size:18px; font-weight:600; color:var(--ebony); }
+.mw-grouplbl { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin:19px 0 8px; padding-left:2px; }
+.mw-grouplbl:first-child { margin-top:3px; }
+.mw-opts--grp { margin-bottom:2px; }
+.mw-priceband { background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:14px; padding:13px 15px 11px; margin:2px 0 18px; box-shadow:var(--sh-row); }
+.mw-pb-lbl { font-family:var(--sans); font-size:11.5px; font-weight:600; color:var(--ebony); margin-bottom:9px; }
+.mw-pb-track { display:flex; height:9px; border-radius:5px; overflow:hidden; margin-bottom:9px; }
+.mw-pb-legend { margin-bottom:0; }
+.home-walkin { display:inline-flex; align-items:center; gap:7px; margin:2px 0 2px; background:transparent; border:1px solid rgba(74,75,47,.22); border-radius:var(--r-pill); padding:9px 16px; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--olive); cursor:pointer; transition:background .16s, border-color .16s, transform .16s var(--spring); }
+.home-walkin svg { width:13px; height:13px; }
+.home-walkin:hover { background:rgba(212,223,158,.22); border-color:var(--olive); transform:translateY(-1px); }
 .browse-change { display:inline; background:none; border:none; font-family:var(--sans); font-size:inherit; font-weight:600; color:var(--olive); cursor:pointer; text-decoration:underline; text-underline-offset:2px; padding:0 0 0 2px; }
 .browse-change:hover { opacity:.72; }
 /* the data-true "why" on cards (match mode) + the best-reviewed divider */
@@ -1471,6 +1489,43 @@ const PROBLEMS_PLANNING = [
   { label:'Pool service', icon:'pool', trade:'pool', hi:['weekly-pool-service'] },
 ];
 const PROBLEMS_ALL = [...PROBLEMS_BROKEN, ...PROBLEMS_PLANNING];   // flat view for the desktop feed-entry strip
+// ── TRIAGE (Step 0) — the designed hand-hold that sits IN FRONT of the match walk. It
+// converts a symptom (broken) or a project area (planning) into enterMatch(trade,{job}),
+// after which the existing Q1/Q2 walk + locked scorer take over. NOT a new engine — the
+// front half only. Every (trade,job) is validated against the LIVE bank at render time
+// (triageEnter): an unknown job falls back to Q1 with hi-seeding, never a dead end. All
+// job values are REAL vesta_match_options values, cross-checked against JOB_ROUTES (which
+// routeJobSeed already bank-validates in production) — never invented labels.
+// Broken symptoms are phrased as what the homeowner SEES, never trade names. Emergency-
+// tagged jobs (value matches /emergency/) auto-skip Q2 in pickJob → one tap to the deck.
+const TRIAGE_BROKEN = [
+  { icon:'pipe', label:'Water where it shouldn’t be', hint:'A drip, a spreading stain, a puddle — unsure of the source',
+    q:'Where’s the water coming from?', qhint:'It points to two different trades — this picks the right one.',
+    ambiguous:[
+      { icon:'roof', label:'From the ceiling or roof', hint:'A stain spreading overhead, water after it rains', trade:'roofing', job:'active-leak-or-emergency' },
+      { icon:'pipe', label:'From a pipe or fixture', hint:'Under a sink, a burst line, the water heater, a wet floor', trade:'plumbing', job:'emergency-leak-or-burst' },
+    ] },
+  { icon:'hvac', label:(heatLabel()==='No AC'?'The AC quit — no cooling':heatLabel()==='No heat'?'No heat':'No heat or cooling'),
+    hint:'The system won’t start, or runs but nothing changes', trade:'hvac', job:'no-heat-or-no-cool-emergency' },
+  { icon:'bolt', label:'Power’s out or something’s sparking', hint:'A dead panel, a burning smell, a breaker that won’t hold',
+    trade:'electrical', job:'emergency-power-loss', hi:['emergency-power'], hiLabel:'Power’s out' },
+  { icon:'pipe', label:'A drain or sewer backing up', hint:'Slow drains everywhere — or worse, coming back up',
+    trade:'plumbing', job:'drain-or-sewer-backup' },
+  { icon:'tree', label:'A tree down or storm damage', hint:'A limb on the house, a trunk across the drive',
+    trade:'tree', job:'emergency-or-storm-damage' },
+  { icon:null, label:'Something else', hint:'Tell Vesta in your own words', action:'search' },
+];
+// Planning areas — grouped by the homeowner's mental model of the house, NOT by trade. Each
+// carries the real trades behind it (dominant/most price-differentiated first). The jobs step
+// reads those trades' live banks directly, so it can never show a job the field can't do.
+const TRIAGE_AREAS = [
+  { icon:'roof',  label:'The roof & outside shell', hint:'Roof, siding, gutters, windows & doors',        trades:['roofing','windows_doors'] },
+  { icon:'hvac',  label:'Heating & cooling',        hint:'Furnace, AC, heat pump, ductless',               trades:['hvac'] },
+  { icon:'pipe',  label:'Bath, kitchen & water',    hint:'Remodels, fixtures, water heaters',              trades:['plumbing'] },
+  { icon:'floor', label:'Floors, walls & paint',    hint:'Refinishing, new floors, interior & exterior paint', trades:['flooring','painting'] },
+  { icon:'lawn',  label:'The yard & grounds',       hint:'Lawn, trees, driveway, patio, pool',             trades:['paving','masonry','lawn','tree','pool'] },
+  { icon:'bolt',  label:'Power & wiring',           hint:'Panel upgrades, EV chargers, generators, lighting', trades:['electrical'] },
+];
 // Free-text → trade routing for the search box (a typed problem maps to a trade). Order matters:
 // roofing before plumbing so "roof leak" lands on roofing, not the generic "leak" → plumbing.
 const PROBLEM_ROUTES = [
@@ -1603,7 +1658,11 @@ const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:fa
             feedTown:'', feedSort:'rank', feedNeeds:new Set(), feedReg:false, introPending:false,
             // Match engine: when match.job is set, the deck/feed reorder by the locked scorer and the
             // head copy adapts to how selective the job is (the honesty rule). null = plain browse.
-            match:null, matchPending:false, matchStep:'job', matchSeedJob:null };
+            match:null, matchPending:false, matchStep:'job', matchSeedJob:null,
+            // Triage (Step 0): the designed hand-hold in front of the match walk. triageActive
+            // renumbers the step counter and routes the in-screen Back button; cleared on goHome
+            // and on any non-triage enterMatch (a pill/search entry).
+            triageActive:false, triageMode:null, triageAmbig:null, triageArea:null };
 const FEED_HIDDEN = new Set();   // desktop feed: "Not interested" hides for the session (not a like/dislike signal)
 // Homeowner-need facets per trade — mined from the real specialties corpus. A firm matches a
 // facet if any of its specialties / known-for strings contains one of the facet keywords (.m).
@@ -2126,11 +2185,11 @@ function hstkCardData(){
   return [
     { spot:'broken', kick:'Urgent', h:'Something <span class="squig">broken?</span>',
       note:'Live problems, routed to firms whose records show they answer.', band:brokenBand,
-      cta:'Get help now', ctaAction:'search', ctaSeed:PROBLEMS_BROKEN[0] ? PROBLEMS_BROKEN[0].label : '',
+      cta:'Get help now', ctaAction:'triage-broken', ctaSeed:PROBLEMS_BROKEN[0] ? PROBLEMS_BROKEN[0].label : '',
       pills:PROBLEMS_BROKEN.map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})) },
     { spot:'plan', kick:'Planning', h:'Planning <span class="squig">a project?</span>',
       note:'Every job maps to real work county firms are proven to do.', band:planBand,
-      cta:'Start planning', ctaAction:'search', ctaSeed:PROBLEMS_PLANNING[0] ? PROBLEMS_PLANNING[0].label : '',
+      cta:'Start planning', ctaAction:'triage-plan', ctaSeed:PROBLEMS_PLANNING[0] ? PROBLEMS_PLANNING[0].label : '',
       pills:[...PROBLEMS_PLANNING.slice(0,3).map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})),
         {icon:'floor', label:'+ '+(PROBLEMS_PLANNING.length-3)+' more', trade:null}] },
     { spot:'compass', kick:'Directory', h:'Or browse <span class="squig">every trade</span>',
@@ -2225,7 +2284,10 @@ function hstkBuild(){
     stage.insertBefore(el, arrL);
     el.querySelectorAll('.hstk-pill').forEach(b=>b.addEventListener('click', ()=>hstkPillClick(d, d.pills[+b.dataset.i])));
     const cta = el.querySelector('.hstk-cta'); if (cta) cta.addEventListener('click', () => {
-      d.ctaAction === 'directory' ? openDirectorySheet() : openSearch(d.ctaSeed);
+      if (d.ctaAction === 'directory') openDirectorySheet();
+      else if (d.ctaAction === 'triage-broken') enterTriage('broken');
+      else if (d.ctaAction === 'triage-plan') enterTriage('plan');
+      else openSearch(d.ctaSeed);
     });
     hstkWireDrag(el, dataI);
     return el;
@@ -2312,14 +2374,22 @@ function renderHome(){
     // live Q1 bank; project pills map to real jobs in each firm's review record.
     [
       ['Something <span class="squig">broken?</span>', 'Something’s broken',
-       'Live problems, routed to the firms whose records show they actually answer.', PROBLEMS_BROKEN],
+       'Live problems, routed to the firms whose records show they actually answer.', PROBLEMS_BROKEN, 'broken'],
       ['Planning <span class="squig">a project?</span>', 'Planning a project',
-       'Every job below maps to work county firms are proven to do — from their real review records, not a category menu.', PROBLEMS_PLANNING],
-    ].forEach(([html, plain, sub, list]) => {
+       'Every job below maps to work county firms are proven to do — from their real review records, not a category menu.', PROBLEMS_PLANNING, 'plan'],
+    ].forEach(([html, plain, sub, list, mode]) => {
       const sec = document.createElement('div'); sec.className = 'prob-section';
       const h = document.createElement('h2'); h.className = 'home-sec-h'; h.innerHTML = html;
       const s = document.createElement('p'); s.className = 'home-sec-sub'; s.textContent = sub;
       sec.appendChild(h); sec.appendChild(s);
+      // Desktop-only walk-in (the container is hidden <900px): the pills are the fast lane
+      // for people who know the job; this is the hand-hold for people who don't. Same Step-0
+      // interview the mobile stack CTA opens.
+      const walk = document.createElement('button'); walk.className = 'home-walkin'; walk.type = 'button';
+      walk.innerHTML = (mode==='broken'?'Not sure what’s wrong? Let Vesta walk you':'Not sure where to start? Let Vesta walk you')+
+        '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg>';
+      walk.addEventListener('click', () => enterTriage(mode));
+      sec.appendChild(walk);
       const grid = document.createElement('div'); grid.className = 'prob-grid'; grid.setAttribute('role','list'); grid.setAttribute('aria-label', plain);
       list.forEach(p => {
         const b = document.createElement('button');
@@ -4385,7 +4455,7 @@ function showBrowse(key){
   ensureDeck(key); S.introPending = !desktop() && !S.match;     // the old "We found N" beat: plain mobile browse only
   showScreen('browse'); renderNeedChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState();
 }
-function goHome(){ closeSheet(); S.mode='trade'; showScreen('home'); renderReturn(); renderSidebar(); updateNavState(); }
+function goHome(){ closeSheet(); S.mode='trade'; S.triageActive=false; S.triageMode=null; showScreen('home'); renderReturn(); renderSidebar(); updateNavState(); }
 function updateNavState(){
   const home=$('nav-home'), saved=$('nav-saved');
   if(home) home.classList.toggle('on', S.screen==='home' || S.screen==='match' || (S.screen==='browse' && S.mode==='trade'));
@@ -4407,12 +4477,20 @@ function enterMatch(key, opts){
   S.mode='trade'; S.activeTrade=key; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank';
   S.match=null; S.matchPending=true; S.matchStep='job'; _mwMoreOpen=false; _pendingJob=null;
   S.matchHi = opts.hi || null; S.matchHiLabel = opts.hiLabel || null;   // seeded need → Q1 pre-highlight
+  // A triage handoff keeps the interview's step-counter/back context; a direct pill or search
+  // entry clears it, so it can never leak "Step 2 of 3" onto a plain pill walk.
+  if (opts.fromTriage){ S.triageActive=true; } else { S.triageActive=false; S.triageMode=null; }
   renderNeedChips(); renderSidebar(); showScreen('match'); updateNavState();
   if (opts.job) pickJob(opts.job); else renderMatchWalk();
 }
 function renderMatchWalk(){
   const wrap = $('match-wrap'); if(!wrap) return;
-  if (S.matchStep==='priority'){ wrap.innerHTML = matchWalkPriorityHTML(); wireMatchPriority(); }
+  const st = S.matchStep;
+  if (st==='priority'){ wrap.innerHTML = matchWalkPriorityHTML(); wireMatchPriority(); }
+  else if (st==='triage-symptom'){ wrap.innerHTML = triageSymptomHTML(); wireTriageSymptom(); }
+  else if (st==='triage-disambig'){ wrap.innerHTML = triageDisambigHTML(); wireTriageDisambig(); }
+  else if (st==='triage-area'){ wrap.innerHTML = triageAreaHTML(); wireTriageArea(); }
+  else if (st==='triage-jobs'){ wrap.innerHTML = triageJobsHTML(); wireTriageJobs(); }
   else { wrap.innerHTML = matchWalkJobHTML(); wireMatchJob(); }
   wrap.scrollTop = 0;
 }
@@ -4455,7 +4533,7 @@ function matchWalkJobHTML(){
     return '<button class="mw-opt'+(hits.has(j.value)?' mw-opt--hit':'')+'" data-job="'+esc(j.value)+'"><span class="mw-opt-l"><span class="mw-opt-name">'+esc(j.label)+'</span>'+(hits.has(j.value)?hiTag:'')+'</span>'+
       (pct?'<span class="mw-opt-pct" aria-label="'+pct+'% of the field does this work">'+pct+'%</span>':'')+MW_ARROW+'</button>'; };
   return '<div class="mw-inner">'+
-    '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step"> · Step 1 of 2</span></div>'+
+    '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step">'+mwStepSuffix('job')+'</span></div>'+
     fieldBandHTML(S.activeTrade)+
     '<h1 class="mw-q">What do you need done?</h1>'+
     '<p class="mw-hint">Pick the closest — Vesta tailors its '+esc(tradePlural(S.activeTrade))+' to it. The % is how much of the field does that work.</p>'+
@@ -4477,7 +4555,7 @@ function matchWalkPriorityHTML(){
   const opt = a => '<button class="mw-opt" data-axis="'+esc(a.axis)+'"><span class="mw-opt-l"><span class="mw-opt-name">'+esc(a.label)+'</span><span class="mw-opt-blurb">'+esc(a.blurb)+'</span></span>'+MW_ARROW+'</button>';
   const none = '<button class="mw-opt mw-opt--wide" data-axis=""><span class="mw-opt-l"><span class="mw-opt-name">No preference</span><span class="mw-opt-blurb">Just show me the best for this job</span></span>'+MW_ARROW+'</button>';
   return '<div class="mw-inner">'+
-    '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step"> · Step 2 of 2</span></div>'+
+    '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step">'+mwStepSuffix('priority')+'</span></div>'+
     '<h1 class="mw-q">For '+esc(lc(jl))+' — what matters most?</h1>'+
     '<p class="mw-hint">Optional. This only re-orders the picks; the job always comes first.</p>'+
     '<div class="mw-opts">'+axes.map(opt).join('')+none+'</div>'+
@@ -4487,7 +4565,12 @@ function matchWalkPriorityHTML(){
 function wireMatchPriority(){
   const wrap=$('match-wrap'); if(!wrap) return;
   wrap.querySelectorAll('.mw-opt').forEach(b=> b.addEventListener('click', ()=> applyMatch(_pendingJob, b.dataset.axis||null)));
-  const back=$('mw-back2'); if(back) back.addEventListener('click', ()=>{ S.matchStep='job'; renderMatchWalk(); });
+  const back=$('mw-back2'); if(back) back.addEventListener('click', ()=>{
+    // Planning triage bypassed the single-trade Q1 (jobs came from the cross-trade area
+    // list) — so Back returns to that list, not to a Q1 the homeowner never saw.
+    S.matchStep = (S.triageActive && S.triageMode==='plan') ? 'triage-jobs' : 'job';
+    renderMatchWalk();
+  });
 }
 function pickJob(jobValue){
   _pendingJob = jobValue;
@@ -4515,6 +4598,148 @@ function skipMatch(){
   S.match=null; S.matchPending=false; _pendingJob=null;
   logMatch(S.activeTrade, null, null);
   showBrowse(S.activeTrade);
+}
+
+/* ===== TRIAGE (Step 0) UI — symptom→trade (broken) · area→job (planning) =====
+   A designed hand-hold IN FRONT of the match walk, rendered into the same #s-match screen
+   with the same mw-* vocabulary. It only produces enterMatch(trade,{job}); the existing
+   Q1/Q2 machinery + locked scorer do the rest, and the landing is always the tailored DECK
+   (match headline + per-pick why), never a fabricated single "answer." */
+// Small leading illustration for a triage row — the line-drawn ICON set (the same vocabulary
+// the problem pills use), never the big 64px hero spots.
+function triageIc(name){ return (name && ICONS[name]) ? '<span class="mw-ic">'+ICONS[name]+'</span>' : '<span class="mw-ic mw-ic--q">?</span>'; }
+// Step-counter honesty: planning is a fixed 3-screen walk (area→jobs→priority), so it shows
+// "of 3". The broken path length varies by symptom (one tap for an emergency, two if it needs
+// disambiguation), so it never claims a false total. A direct pill/search entry is unchanged.
+function mwStepSuffix(step){
+  const t = S.triageActive ? S.triageMode : null;
+  if (t==='plan')   return step==='area'?' · Step 1 of 3':step==='jobs'?' · Step 2 of 3':step==='priority'?' · Step 3 of 3':step==='job'?' · Step 2 of 3':'';
+  if (t==='broken') return step==='disambig'?' · One more thing':'';
+  return step==='job'?' · Step 1 of 2':step==='priority'?' · Step 2 of 2':'';
+}
+function enterTriage(mode){
+  S.mode='trade'; S.match=null; S.matchPending=true; _mwMoreOpen=false; _pendingJob=null;
+  S.matchHi=null; S.matchHiLabel=null;
+  S.triageActive=true; S.triageMode=mode; S.triageAmbig=null; S.triageArea=null;
+  S.matchStep = (mode==='broken') ? 'triage-symptom' : 'triage-area';
+  renderNeedChips(); renderSidebar(); showScreen('match'); updateNavState(); renderMatchWalk();
+}
+// The single resolver: hand a (trade, job) to the existing walk, BANK-VALIDATED. An unknown
+// job falls back to Q1 with hi pre-highlight — never a dead end (Hard Rule #1).
+function triageEnter(trade, job, hi, hiLabel){
+  const b = tradeBank(trade);
+  const opts = { fromTriage:true };
+  if (job && b && b.jobs && b.jobs.some(j=>j.value===job)) opts.job = job;
+  else if (hi){ opts.hi = hi; opts.hiLabel = hiLabel; }
+  enterMatch(trade, opts);
+}
+const TRI_ROW = (ic, name, blurb, attrs) => '<button class="mw-opt mw-opt--sym"'+attrs+'>'+triageIc(ic)+
+  '<span class="mw-opt-l"><span class="mw-opt-name">'+esc(name)+'</span>'+(blurb?'<span class="mw-opt-blurb">'+esc(blurb)+'</span>':'')+'</span>'+MW_ARROW+'</button>';
+const TRI_BACK = '<div class="mw-foot"><button class="mw-backbtn" id="mw-tback"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg>Back</button></div>';
+// ── BROKEN: symptom → (disambiguate if it maps to two trades) → tailored deck ──
+function triageSymptomHTML(){
+  return '<div class="mw-inner">'+
+    '<div class="mw-kicker">'+SPARK+'Vesta Match</div>'+
+    '<h1 class="mw-q">What’s <span class="squig">happening?</span></h1>'+
+    '<p class="mw-hint">Pick what fits — Vesta routes it to the field proven to handle it, fast.</p>'+
+    '<div class="mw-opts">'+TRIAGE_BROKEN.map((s,i)=>TRI_ROW(s.icon, s.label, s.hint, ' data-i="'+i+'"')).join('')+'</div>'+
+  '</div>';
+}
+function wireTriageSymptom(){
+  const wrap=$('match-wrap'); if(!wrap) return;
+  wrap.querySelectorAll('.mw-opt').forEach(b=>b.addEventListener('click', ()=>{
+    const s = TRIAGE_BROKEN[+b.dataset.i]; if(!s) return;
+    if (s.action==='search'){ openSearch(); return; }        // typed fallback stays available, never the default
+    if (s.ambiguous){ S.triageAmbig=s; S.matchStep='triage-disambig'; renderMatchWalk(); return; }
+    triageEnter(s.trade, s.job, s.hi, s.hiLabel);
+  }));
+}
+function triageDisambigHTML(){
+  const s = S.triageAmbig; if(!s) return triageSymptomHTML();
+  return '<div class="mw-inner">'+
+    '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step">'+mwStepSuffix('disambig')+'</span></div>'+
+    '<h1 class="mw-q">'+esc(s.q||'Which is it?')+'</h1>'+
+    '<p class="mw-hint">'+esc(s.qhint||'This picks the right trade.')+'</p>'+
+    '<div class="mw-opts">'+s.ambiguous.map((o,i)=>TRI_ROW(o.icon, o.label, o.hint, ' data-i="'+i+'"')).join('')+'</div>'+
+    TRI_BACK+
+  '</div>';
+}
+function wireTriageDisambig(){
+  const wrap=$('match-wrap'); if(!wrap) return;
+  const s = S.triageAmbig; if(!s) return;
+  wrap.querySelectorAll('.mw-opt').forEach(b=>b.addEventListener('click', ()=>{
+    const o = s.ambiguous[+b.dataset.i]; if(o) triageEnter(o.trade, o.job, o.hi, o.hiLabel);
+  }));
+  const back=$('mw-tback'); if(back) back.addEventListener('click', ()=>{ S.matchStep='triage-symptom'; renderMatchWalk(); });
+}
+// ── PLANNING: area → real cross-trade jobs (bank-sourced, with coverage %) → Q2 → deck ──
+function triageAreaHTML(){
+  return '<div class="mw-inner">'+
+    '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step">'+mwStepSuffix('area')+'</span></div>'+
+    '<h1 class="mw-q">What are you <span class="squig">planning?</span></h1>'+
+    '<p class="mw-hint">Pick the part of the home — Vesta shows the real jobs county firms are proven to do there.</p>'+
+    '<div class="mw-opts">'+TRIAGE_AREAS.map((a,i)=>TRI_ROW(a.icon, a.label, a.hint, ' data-i="'+i+'"')).join('')+'</div>'+
+  '</div>';
+}
+function wireTriageArea(){
+  const wrap=$('match-wrap'); if(!wrap) return;
+  wrap.querySelectorAll('.mw-opt').forEach(b=>b.addEventListener('click', ()=>{
+    S.triageArea = TRIAGE_AREAS[+b.dataset.i]; S.matchStep='triage-jobs'; renderMatchWalk();
+  }));
+}
+// The one price band on the jobs step = the area's DOMINANT trade (area.trades is ordered
+// dominant-first), falling to the next trade only if the dominant one has no real price
+// signal (priceMix needs ≥40% of the field to carry a tier). Budget calibration should
+// reflect the work the homeowner is most likely choosing — not the rarest, priciest corner.
+function areaPriceTrade(area){
+  for (const k of area.trades){ const f=fieldStats(k); if (f.priceMix) return {k, f}; }
+  return null;
+}
+function triageJobsHTML(){
+  const area = S.triageArea; if(!area) return triageAreaHTML();
+  const multi = area.trades.length > 1;
+  // Real jobs straight from each trade's LIVE bank — so a row can NEVER name work the field
+  // can't do. Emergency-tagged jobs belong to the broken path, filtered out here. Coverage %
+  // is the scarcity-teaching chip (same one Q1 uses).
+  const rowsFor = (trade, cap) => {
+    const b = tradeBank(trade); if (!(b && b.jobs)) return [];
+    return b.jobs.filter(j=>!/emergenc|active-leak|no-heat-or-no-cool/.test(j.value))
+      .slice().sort((a,b)=>(b.pct||0)-(a.pct||0)).slice(0, cap);
+  };
+  const jobRow = (trade,j) => { const pct=j.pct?Math.round(100*j.pct):0;
+    return '<button class="mw-opt" data-trade="'+esc(trade)+'" data-job="'+esc(j.value)+'"><span class="mw-opt-l"><span class="mw-opt-name">'+esc(j.label)+'</span></span>'+
+      (pct?'<span class="mw-opt-pct" aria-label="'+pct+'% of the field does this work">'+pct+'%</span>':'')+MW_ARROW+'</button>'; };
+  let body = '';
+  if (multi){
+    area.trades.forEach(k=>{ const rows=rowsFor(k, 4); if(!rows.length) return;
+      body += '<div class="mw-grouplbl">'+esc(tradeLabelOf(k))+'</div><div class="mw-opts mw-opts--grp">'+rows.map(j=>jobRow(k,j)).join('')+'</div>'; });
+  } else {
+    const rows = rowsFor(area.trades[0], MW_TOP);
+    body = '<div class="mw-opts">'+rows.map(j=>jobRow(area.trades[0],j)).join('')+'</div>';
+  }
+  // Budget calibration at the moment of choosing a real job (spec's Step-0 field context) —
+  // the price mix for the area's most price-differentiated trade. countyFieldData's law: one
+  // shared computation (fieldStats().priceMix), never a second parallel one.
+  const pt = areaPriceTrade(area);
+  const priceBand = (pt && pt.f.priceMix) ? '<div class="mw-priceband"><div class="mw-pb-lbl">'+esc(tradeLabelOf(pt.k))+' pricing across the county</div>'+
+    '<span class="mw-pb-track frep-mix">'+
+      (pt.f.priceMix.value?'<span class="fr2-seg pv" style="flex:'+pt.f.priceMix.value+'"></span>':'')+
+      (pt.f.priceMix.mid?'<span class="fr2-seg pm" style="flex:'+pt.f.priceMix.mid+'"></span>':'')+
+      (pt.f.priceMix.prem?'<span class="fr2-seg pp" style="flex:'+pt.f.priceMix.prem+'"></span>':'')+
+    '</span>'+
+    '<div class="fr2-legend mw-pb-legend"><span><i class="pv"></i>Value</span><span><i class="pm"></i>Mid</span><span><i class="pp"></i>Premium</span></div></div>' : '';
+  return '<div class="mw-inner">'+
+    '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step">'+mwStepSuffix('jobs')+'</span></div>'+
+    '<h1 class="mw-q">'+esc(area.label)+' — <span class="squig">what’s the job?</span></h1>'+
+    '<p class="mw-hint">Pick the closest. The % is how much of the field is proven to do it.</p>'+
+    priceBand+body+
+    TRI_BACK+
+  '</div>';
+}
+function wireTriageJobs(){
+  const wrap=$('match-wrap'); if(!wrap) return;
+  wrap.querySelectorAll('.mw-opt').forEach(b=>b.addEventListener('click', ()=> triageEnter(b.dataset.trade, b.dataset.job)));
+  const back=$('mw-tback'); if(back) back.addEventListener('click', ()=>{ S.matchStep='triage-area'; renderMatchWalk(); });
 }
 // Resume a stored match (return loop): rehydrate S.match from localStorage and open the
 // tailored result — the wiring behind the "pick up where you left off" chip. Defensive:
