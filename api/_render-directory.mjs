@@ -699,7 +699,7 @@ export function renderDirectoryHTML(trade, rows) {
 
   main = '<section class="section" id="body">' +
     stripHtml(trade) +
-    '<h2 class="section-h">' + rows.length + ' ' + esc(tLower(trade)) + ' contractors</h2>' +
+    '<h2 class="section-h">' + esc(label) + ' contractors in ' + COUNTY + '</h2>' +
     marketBar(rows, trade) +
     criteriaExplainer(trade) +
     '<div class="grid" style="margin-top:1rem">' + rows.map((p) => card(p, trade)).join('') + '</div>' +
@@ -782,7 +782,6 @@ const HUB_CSS =
   '@media(max-width:520px){.hub-towns{columns:1}}' +
   '.hub-town{break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;display:inline-block;width:100%;margin:0 0 1.3rem}' +
   '.hub-town-h{display:flex;align-items:baseline;gap:.4rem;font-family:var(--mono);font-size:.63rem;letter-spacing:.11em;text-transform:uppercase;color:var(--vdim);margin-bottom:.25rem}' +
-  '.hub-town-n{font-size:.58rem;opacity:.7}' +
   '.hub-firms{display:flex;flex-direction:column}' +
   // Firm links are the PRIMARY clickable content — full-strength deep olive
   // (#3a3b24 ≈ 10:1 on the cream bg, well past AA), NOT the 0.62-alpha --vmut used
@@ -885,7 +884,7 @@ export function renderHubHTML(rows) {
         '<a class="hub-firm" href="/c/' + encodeURIComponent(f.place_id) + '">' +
           esc(f.business_name) + '</a>').join('');
       return '<div class="hub-town">' +
-        '<span class="hub-town-h">' + esc(town) + '<span class="hub-town-n">' + firms.length + '</span></span>' +
+        '<span class="hub-town-h">' + esc(town) + '</span>' +
         '<div class="hub-firms">' + links + '</div>' +
       '</div>';
     }).join('');
