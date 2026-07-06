@@ -134,6 +134,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .hstk-stats { display:flex; gap:16px; }
 .hstk-stat b { display:block; font-family:var(--serif); font-size:18px; font-weight:700; line-height:1; letter-spacing:-.02em; color:var(--olive); }
 .hstk-stat span { display:block; font-family:var(--mono); font-size:7px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); margin-top:3px; }
+.hstk-cta { display:flex; align-items:center; justify-content:center; gap:7px; width:100%; background:var(--olive); color:var(--white); border:none; border-radius:var(--r-pill); padding:12px 16px; font-family:var(--sans); font-size:13.5px; font-weight:700; cursor:pointer; margin:3px 0 13px; box-shadow:0 8px 18px -8px rgba(74,75,47,.55); transition:transform .18s var(--spring); }
+.hstk-cta:active { transform:scale(.96); }
+.hstk-cta svg { width:13px; height:13px; flex-shrink:0; }
 .hstk-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:auto; }
 .hstk-pill { display:flex; align-items:center; gap:6px; background:var(--bg); border-radius:var(--r-pill); padding:8px 11px; font-size:11px; font-weight:600; color:var(--olive); cursor:pointer; border:none; font-family:var(--sans); text-align:left; }
 .hstk-pill svg { width:13px; height:13px; flex-shrink:0; color:var(--olive); }
@@ -220,15 +223,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .home-sign { text-align:center; font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--ebony); letter-spacing:.005em; }
 .home-prov { text-align:center; font-size:11.5px; color:var(--ebony); opacity:.75; line-height:1.5; margin-top:8px; }
 .home-prov a { color:var(--ebony); font-weight:600; opacity:1; }
-/* Desktop-only proof beats — hidden by default (mobile keeps the trade grid as its
-   "or browse" instead); shown via the desktop media query once populated with real data. */
-/* Both now render on mobile too — the front door should contain one real Vesta read,
-   not just a menu of ways to choose. [hidden] (set by JS only once real data/a pool
-   exists) is what actually gates visibility; no breakpoint hides these anymore. */
-/* ── THE FIELD REPORT — the county-wide cross-trade layer. Desktop: the right column's
-   resident (sticky, internally scrollable). Mobile: a teaser card opening the same
-   report in a bottom sheet. One builder, both surfaces. ── */
-#field-report { display:none; }
+/* ── THE FIELD REPORT — the county-wide cross-trade layer. Rendered only inside
+   #frepsheet, opened by the top pill — never inlined into the page on any breakpoint. ── */
 .frep-card { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:20px; padding:20px 22px 18px; box-shadow:var(--sh-row); overflow:hidden; }
 .frep-card::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
 .frep-h { font-family:var(--serif); font-size:23px; font-weight:700; letter-spacing:-.02em; color:var(--olive); line-height:1.15; margin:2px 0 5px; }
@@ -249,9 +245,6 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .frep-scarce-l { font-family:var(--sans); font-size:13px; font-weight:600; color:var(--olive); line-height:1.3; }
 .frep-scarce-l i { display:block; font-style:normal; font-family:var(--mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); margin-top:2px; }
 .frep-chip { font-family:var(--mono); font-size:9px; font-weight:600; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-pill); padding:4px 9px; flex-shrink:0; white-space:nowrap; }
-#frep-teaser { margin-top:30px; }
-.frep-tz-line { display:block; font-size:13px; font-weight:600; color:var(--olive); line-height:1.45; }
-@media (min-width:900px){ #frep-teaser { display:none; } #field-report { display:block; } }
 /* The top discovery pill — obvious the moment the page loads, not buried below the
    fold. Same brand gradient as every other chip, plus a slow one-shot shimmer sweep
    so it reads as "worth tapping" without ever feeling like an ad unit. */
@@ -261,22 +254,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @keyframes frepShimmer { to { background-position:-30% 0; } }
 @media (prefers-reduced-motion:reduce){ .frep-toppill::after { animation:none; } }
 #frep-toppill-mobile:empty { display:none; }
-/* Desktop never shows this pill — the full report already sits in the visible right
-   column there, so a "go look at it" button would just point at itself. Mobile-only. */
-#frep-toppill-desktop { display:none !important; }
-/* One-shot pulse when the top pill scrolls the report into view on desktop */
-@keyframes frepPulseHit { 0%,100% { box-shadow:0 1px 2px rgba(74,75,47,.07); } 35% { box-shadow:0 0 0 5px rgba(212,223,158,.55), 0 8px 24px -6px rgba(74,75,47,.3); } }
-.frep-pulse-hit { animation:frepPulseHit 1.1s ease-out; }
-@media (prefers-reduced-motion:reduce){ .frep-pulse-hit { animation:none; } }
-.home-sample { margin-top:18px; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-row); padding:22px 26px; }
-.home-sample .hsp-kicker { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--olive); margin-bottom:10px; }
-.hsp-shuffle { margin-left:auto; display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; border:1px solid rgba(74,75,47,.14); background:var(--bg); color:var(--olive); cursor:pointer; transition:transform .3s var(--spring), background .15s; }
-.hsp-shuffle:hover { background:var(--tea); }
-.hsp-shuffle:active svg { transform:rotate(180deg); }
-.hsp-shuffle svg { transition:transform .3s var(--spring); }
-.home-sample .read-quote p.read { font-family:var(--serif); font-size:15px; line-height:1.6; color:var(--olive); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-.home-sample .hsp-attr { margin-top:12px; font-size:12.5px; color:var(--ebony); }
-.home-sample .hsp-attr b { color:var(--olive); }
+/* Below 900px the topbar's own pill (#frep-toppill-mobile) already owns this job. */
+#frep-toppill-desktop { display:none; }
 
 /* ===== RETURN BAND (Stage 1.5) — recognizes a returning homeowner: resume the last match
    + jump to the saved shortlist. Renders ONLY when there's state; a first-timer sees nothing
@@ -722,22 +701,19 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home .home-foot { text-align:center; margin-top:40px; }
   /* Entrance choreography — the hero stops looking like a static page and starts
      looking like something that just happened, each piece a beat behind the last. */
-  #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems,
-  #s-home .home-hero-proof { animation:tileIn .5s var(--spring) both; }
+  #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems { animation:tileIn .5s var(--spring) both; }
   #s-home .home-h1 { animation-delay:.03s; } #s-home .home-sub { animation-delay:.09s; }
   #s-home .home-search { animation-delay:.15s; } #s-home .home-problems { animation-delay:.21s; }
-  #s-home .home-hero-proof { animation-delay:.32s; }
-  @media (prefers-reduced-motion:reduce){ #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems, #s-home .home-hero-proof { animation:none; } }
+  @media (prefers-reduced-motion:reduce){ #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems { animation:none; } }
+  /* The Field Report has exactly one door on desktop now: this top-right pill. No
+     second copy sits inline in the page — open it, or don't see it. */
+  #frep-toppill-desktop { display:flex; justify-content:flex-end; margin-bottom:16px; }
+  #frep-toppill-desktop:empty { display:none; margin-bottom:0; }
 }
 @media (min-width:1200px) {
-  /* The actual fix for "reads like a document": an asymmetric two-column split instead
-     of one centered column drowning in side margins. Left = the action (search, the
-     job you came to do); right = proof, pinned so it stays in view while you read. */
-  #s-home .home-hero { display:grid; grid-template-columns:1.15fr .85fr; gap:64px; align-items:start; }
-  /* The report + read can exceed the viewport — the column scrolls internally while
-     staying pinned, so the reader can browse the report without losing the hero. */
-  #s-home .home-hero-proof { position:sticky; top:4vh; margin-top:0; max-height:92vh; overflow-y:auto; scrollbar-width:none; }
-  #s-home .home-hero-proof::-webkit-scrollbar { display:none; }
+  /* No right-column proof anymore — the report lives behind the top pill only.
+     Cap the text column so it doesn't stretch into document-width lines. */
+  #s-home .home-hero-main { max-width:720px; }
   #s-home .home-foot, #s-home .home-sign, #s-home .home-prov { text-align:left; }
 }
 @media (min-width:900px) {
@@ -938,7 +914,15 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .fsheet-actions { display:flex; gap:10px; margin-top:26px; }
 .fsheet-clear { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); border-radius:var(--r-pill); padding:13px 20px; font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer; }
 .fsheet-done { flex:1; background:var(--olive); color:var(--white); border:none; border-radius:var(--r-pill); padding:13px 20px; font-family:var(--sans); font-size:15px; font-weight:600; cursor:pointer; }
-@media (min-width:900px){ .fscrim, .fsheet, .tb-filter { display:none !important; } }
+@media (min-width:900px){ .fscrim:not(#frepscrim), .fsheet:not(#frepsheet), .tb-filter { display:none !important; } }
+/* The Field Report sheet is the ONLY door into the report on desktop too (no inline
+   column anymore) — so unlike every other bottom sheet, it stays usable at 900px+,
+   just reshaped into a centered modal instead of a mobile bottom sheet. */
+@media (min-width:900px){
+  #frepsheet { position:fixed; top:50%; left:50%; bottom:auto; width:min(560px,90vw); max-height:82vh; border-radius:var(--r-card); transform:translate(-50%,-46%) scale(.97); transition:transform .38s var(--spring), opacity .3s; box-shadow:0 30px 90px -20px rgba(74,75,47,.35); opacity:0; pointer-events:none; }
+  #frepsheet.open { transform:translate(-50%,-50%) scale(1); opacity:1; pointer-events:auto; }
+  #frepsheet .phandle { display:none; }
+}
 
 /* ===== IN-APP PROFILE (Phase B) — the full profile, native to Vesta's light UI ===== */
 #s-profile { background:var(--bg); }
@@ -977,9 +961,6 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .read-quote .rq-mark { position:absolute; left:-4px; top:-16px; font-family:var(--serif); font-size:56px; font-weight:700; color:var(--tea); line-height:1; user-select:none; z-index:0; }
 .read-quote .rq-lede { position:relative; font-family:var(--serif); font-style:italic; font-size:21px; font-weight:600; line-height:1.42; letter-spacing:-.012em; color:var(--olive); margin-bottom:8px; }
 .read-quote p.read { position:relative; }
-.home-sample .read-quote { padding-left:26px; }
-.home-sample .read-quote .rq-mark { font-size:40px; left:-2px; top:-12px; }
-.home-sample .read-quote .rq-lede { font-size:16px; margin-bottom:5px; }
 .prof-kv { display:flex; justify-content:space-between; gap:14px; padding:10px 0; border-top:1px solid rgba(74,75,47,.08); font-size:13.5px; }
 .prof-kv:first-child { border-top:none; padding-top:0; }
 .prof-kv span { color:var(--ebony); flex-shrink:0; }
@@ -1286,18 +1267,6 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
             <p class="home-sec-sub">The whole field Vesta tracks in Fairfield County — ranked by record, never by ad spend.</p>
             <div class="trades-grid" id="trades-grid" role="list"></div>
           </div>
-          <!-- Mobile entry to The Field Report — the county-wide layer lives in a bottom
-               sheet on phones (same one-builder law as the per-trade field panel). -->
-          <div id="frep-teaser"></div>
-        </div>
-        <!-- The right column is the product's BRAIN: The Field Report — cross-trade
-             conclusions only this dataset can draw (who answers emergencies, how the
-             trades price, the county's scarcest skills), every number computed live
-             from the loaded data. The rotating read sits beneath as the closing
-             exhibit — the report is the brain, the read is the voice. -->
-        <div class="home-hero-proof" id="home-hero-proof">
-          <div id="field-report"></div>
-          <div class="home-sample" id="home-sample" hidden></div>
         </div>
       </div>
       <div class="home-foot">
@@ -1969,68 +1938,10 @@ async function loadContractors(){
     if (S.mode === 'saved'){ renderSaved(); }
     else { ensureDeck(S.activeTrade); updateBrowseHead(); renderDeck(); }
   }
-  renderHomeProof();
   renderFieldReport();
   renderHomeStack();
   syncSavedUI();
 }
-// Home proof read — the closing exhibit beneath The Field Report (the report is the
-// brain, the read is the voice). No-ops silently if data hasn't landed yet.
-let _proofPool = null, _proofLast = null;
-function renderHomeProof(){
-  const sampleEl = $('home-sample');
-  if (!sampleEl || !contractors.length) return;
-  // Pick from the top-rated tier only, and pick RANDOMLY each load (never the same firm
-  // twice in a row) — no business gets a standing "featured" slot; it's proof-of-the-read,
-  // not an ad placement. A shuffle control makes that randomness visible/usable, not just
-  // an implementation detail — the one genuinely interactive thing on the page.
-  _proofPool = contractors.filter(c => c.ratingBand === 'top10' && c.read && c.read.length > 80);
-  if (!_proofPool.length){ sampleEl.hidden = true; return; }
-  paintProofSample();
-  sampleEl.hidden = false;
-  if (!sampleEl.dataset.hoverWired){
-    sampleEl.dataset.hoverWired = '1';
-    sampleEl.addEventListener('mouseenter', stopProofRotator);
-    sampleEl.addEventListener('mouseleave', startProofRotator);
-  }
-  if (S.screen === 'home') startProofRotator();
-}
-function paintProofSample(){
-  const sampleEl = $('home-sample'); if (!sampleEl || !_proofPool || !_proofPool.length) return;
-  let pick = _proofPool[Math.floor(Math.random() * _proofPool.length)];
-  if (_proofPool.length > 1) while (pick === _proofLast) pick = _proofPool[Math.floor(Math.random() * _proofPool.length)];
-  _proofLast = pick;
-  const s = splitRead(pick.read || '');
-  sampleEl.innerHTML = '<div class="hsp-kicker">'+SPARK+'Vesta’s read — a real example'+
-      '<button class="hsp-shuffle" id="hsp-shuffle" type="button" aria-label="Show another example">'+SHUFFLE+'</button></div>'+
-    '<div class="read-quote"><span class="rq-mark" aria-hidden="true">&ldquo;</span>'+
-    (s.lede ? '<p class="rq-lede">'+esc(s.lede)+'</p>' : '')+
-    '<p class="read">'+esc(s.rest)+'</p></div>'+
-    '<p class="hsp-attr"><b>'+esc(pick.name)+'</b> · '+esc(tradeLabelOf(pick.trade))+' · '+esc(pick.town)+'</p>'+
-    '<a class="va-full" href="/c/'+encodeURIComponent(pick.placeId)+'" data-place="'+esc(pick.placeId)+'" style="margin-top:4px">See the full profile →</a>';
-  const sh = $('hsp-shuffle'); if (sh) sh.addEventListener('click', () => {
-    sampleEl.style.animation = 'none'; void sampleEl.offsetHeight;
-    sampleEl.style.animation = 'tileIn .34s var(--spring) both';
-    paintProofSample();
-    startProofRotator();   // manual shuffle resets the auto-cycle so it doesn't double up
-  });
-}
-// Auto-rotate the proof card on desktop so the right column reads as alive, not a static
-// poster — pauses on hover (the reader is mid-sentence) and stops entirely off the home
-// screen / under reduced-motion. Manual shuffle (above) always wins and resets the clock.
-let _proofRotI = null;
-function startProofRotator(){
-  stopProofRotator();
-  if (!desktop() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const sampleEl = $('home-sample'); if (!sampleEl) return;
-  _proofRotI = setInterval(() => {
-    if (!_proofPool || _proofPool.length < 2) return;
-    sampleEl.style.animation = 'none'; void sampleEl.offsetHeight;
-    sampleEl.style.animation = 'tileIn .34s var(--spring) both';
-    paintProofSample();
-  }, 9000);
-}
-function stopProofRotator(){ if (_proofRotI){ clearInterval(_proofRotI); _proofRotI = null; } }
 
 // ═══ THE FIELD REPORT — the county-wide layer over the per-trade "field at a glance" ═══
 // Cross-trade conclusions only this dataset can draw: who answers an emergency (ranked),
@@ -2113,19 +2024,10 @@ function wireFieldReport(container){
     openBrowse(b.dataset.trade, { walk:false });
   }));
 }
+// The report has exactly one door now, on every breakpoint: the top pill. It's never
+// inlined into the page — rendered only into the sheet, on demand, when opened.
 function renderFieldReport(){
-  const el = $('field-report'), tz = $('frep-teaser');
-  const html = fieldReportHTML();
-  if (el){ el.innerHTML = html; if (html) wireFieldReport(el); }
-  // Mobile teaser — a compact door into the same report, opened as a bottom sheet.
-  if (tz){
-    tz.innerHTML = html ? '<button class="fband frep-tz" type="button" aria-haspopup="dialog">'+
-      '<span class="fband-kick">'+SPARK+'The Field Report — Fairfield County</span>'+
-      '<span class="frep-tz-line">Who answers emergencies · how the trades price · the county’s scarcest skills</span>'+
-      '<span class="fband-more">Read the report →</span></button>' : '';
-    const b = tz.querySelector('.fband'); if (b) b.addEventListener('click', openFieldReportSheet);
-  }
-  renderFieldReportTopPill(!!html);
+  renderFieldReportTopPill(!!countyFieldData());
 }
 // ── HOME CATEGORY STACK (mobile) — "Something broken? / Planning a project? / Or
 // browse every trade" as a swipeable card stack. Each card teaches something real
@@ -2172,13 +2074,16 @@ function hstkCardData(){
   return [
     { spot:'broken', kick:'Urgent', h:'Something <span class="squig">broken?</span>',
       note:'Live problems, routed to firms whose records show they answer.', band:brokenBand,
+      cta:'Get help now',
       pills:PROBLEMS_BROKEN.map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})) },
     { spot:'plan', kick:'Planning', h:'Planning <span class="squig">a project?</span>',
       note:'Every job maps to real work county firms are proven to do.', band:planBand,
+      cta:'Start planning',
       pills:[...PROBLEMS_PLANNING.slice(0,3).map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})),
         {icon:'floor', label:'+ '+(PROBLEMS_PLANNING.length-3)+' more', trade:null}] },
     { spot:'compass', kick:'Directory', h:'Or browse <span class="squig">every trade</span>',
       note:'The whole field Vesta tracks — ranked by record, never ad spend.', band:dirBand,
+      cta:'Browse the directory',
       pills:[...trades.slice(0,3).map(t=>({icon:t.icon, label:t.label, trade:t.key})),
         {icon:'floor', label:'+ '+(trades.length-3)+' more', trade:null}] },
   ];
@@ -2187,6 +2092,8 @@ function hstkCardHTML(d){
   return '<div class="hstk-top"><span class="hstk-spot">'+HSTK_SPOTS[d.spot]+'</span><span class="hstk-kick">'+esc(d.kick)+'</span></div>'+
     '<h3>'+d.h+'</h3><p class="hstk-note">'+esc(d.note)+'</p>'+
     d.band+
+    '<button class="hstk-cta" type="button">'+esc(d.cta)+
+      '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></button>'+
     '<div class="hstk-grid">'+d.pills.map((p,i)=>'<button class="hstk-pill" data-i="'+i+'"'+(p.trade?'':' disabled')+'>'+(ICONS[p.icon]||'')+esc(p.label)+'</button>').join('')+'</div>';
 }
 function homeStackHTML(){
@@ -2197,10 +2104,20 @@ function homeStackHTML(){
     '<div class="hstk-swipe-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h13M17 7l4 5-4 5"/></svg>Swipe to explore</div>'+
     '<div class="hstk-dots" id="hstk-dots"><button class="hstk-dot on" data-i="0" aria-label="Something broken"></button><button class="hstk-dot" data-i="1" aria-label="Planning a project"></button><button class="hstk-dot" data-i="2" aria-label="Browse every trade"></button></div>';
 }
-function hstkLayout(cardEls, animate){
-  cardEls.forEach((el, p) => {
-    el.style.transition = animate ? 'transform .4s var(--spring), opacity .4s' : 'none';
-    el.style.transform = 'translate('+(p*9)+'px,-'+(p*13)+'px) scale('+(1-p*.05)+') rotate('+(p===0?0:p*2.5)+'deg)';
+// The stage position (0=front .. 2=back, 3=a staged "just off-stage" slot used only
+// during the re-entry step of an advance) → the card's resting transform.
+function hstkPosTransform(p){
+  return 'translate('+(p*9)+'px,-'+(p*13)+'px) scale('+(1-p*.05)+') rotate('+(p===0?0:p*2.5)+'deg)';
+}
+// Reusable elements, persistent across advances — nothing is torn down and rebuilt on
+// swipe, so the promoted cards ease smoothly into their new slots instead of popping in.
+let hstkEls = null;
+let hstkAnimating = false;
+function hstkApply(animate){
+  hstkOrder.forEach((dataI, p) => {
+    const el = hstkEls[dataI]; if (!el) return;
+    el.style.transition = animate ? 'transform .42s var(--spring), opacity .32s' : 'none';
+    el.style.transform = hstkPosTransform(p);
     el.style.opacity = 1 - p*.22;
     el.style.zIndex = 10-p;
     el.style.pointerEvents = p===0 ? 'auto' : 'none';
@@ -2211,52 +2128,66 @@ function hstkPillClick(d, p){
   if (!p.trade) return; // "+N more" — non-interactive, informational only
   openBrowse(p.trade, p.hi ? { hi:p.hi, hiLabel:p.hiLabel } : undefined);
 }
+function hstkAdvance(dir){
+  if (hstkAnimating || !hstkEls) return;
+  hstkAnimating = true;
+  const frontDataI = hstkOrder[0];
+  const front = hstkEls[frontDataI];
+  front.style.transition = 'transform .4s cubic-bezier(.22,.61,.36,1), opacity .32s ease-in';
+  front.style.transform = 'translate('+(dir>0?360:-360)+'px,-4px) rotate('+(dir>0?16:-16)+'deg) scale(.94)';
+  front.style.opacity = '0';
+  front.style.pointerEvents = 'none';
+  setTimeout(() => {
+    dir>0 ? hstkOrder.push(hstkOrder.shift()) : hstkOrder.unshift(hstkOrder.pop());
+    // Stage the departed card directly behind the stack (never sweep it back across
+    // the front) — snap it there instantly, then ease every card into its real slot.
+    front.style.transition = 'none';
+    front.style.transform = hstkPosTransform(3);
+    void front.offsetWidth;
+    hstkApply(true);
+    hstkUpdateDots();
+    setTimeout(() => { hstkAnimating = false; }, 420);
+  }, 400);
+}
+function hstkWireDrag(el, dataI){
+  let sx=0, dx=0, on=false;
+  const isFront = () => hstkOrder[0]===dataI;
+  const dn=x=>{ if (!isFront() || hstkAnimating) return; on=true; sx=x; dx=0; el.style.transition='none'; };
+  const mv=x=>{ if(!on) return; dx=x-sx; el.style.transform='translate('+dx+'px,-2px) rotate('+(dx*.05)+'deg) scale(.985)'; };
+  const up=()=>{ if(!on) return; on=false; Math.abs(dx)>60 ? hstkAdvance(dx<0?1:-1) : hstkApply(true); };
+  el.addEventListener('mousedown', e=>dn(e.clientX));
+  window.addEventListener('mousemove', e=>mv(e.clientX));
+  window.addEventListener('mouseup', up);
+  el.addEventListener('touchstart', e=>dn(e.touches[0].clientX), {passive:true});
+  el.addEventListener('touchmove', e=>mv(e.touches[0].clientX), {passive:true});
+  el.addEventListener('touchend', up);
+}
 function hstkBuild(){
   const stage = $('hstk-stage'); if (!stage) return;
   const DATA = hstkCardData();
-  stage.querySelectorAll('.hstk-card').forEach(c=>c.remove());
   const arrL = $('hstk-arrL'), arrR = $('hstk-arrR');
-  const cardEls = hstkOrder.map(dataI => {
-    const d = DATA[dataI];
+  hstkEls = DATA.map((d, dataI) => {
     const el = document.createElement('div');
     el.className = 'hstk-card';
     el.innerHTML = hstkCardHTML(d);
     stage.insertBefore(el, arrL);
     el.querySelectorAll('.hstk-pill').forEach(b=>b.addEventListener('click', ()=>hstkPillClick(d, d.pills[+b.dataset.i])));
+    const cta = el.querySelector('.hstk-cta'); if (cta) cta.addEventListener('click', openSearch);
+    hstkWireDrag(el, dataI);
     return el;
   });
-  hstkLayout(cardEls, true);
-  hstkWireDrag(cardEls[0]);
+  hstkApply(false);
   hstkUpdateDots();
-  function hstkAdvance(dir){
-    const front = cardEls[0];
-    front.style.transition = 'transform .38s var(--spring), opacity .38s';
-    front.style.transform = 'translate('+(dir>0?340:-340)+'px,-6px) rotate('+(dir>0?14:-14)+'deg)';
-    front.style.opacity = '0';
-    setTimeout(()=>{ dir>0 ? hstkOrder.push(hstkOrder.shift()) : hstkOrder.unshift(hstkOrder.pop()); hstkBuild(); }, 220);
-  }
   arrR.onclick = ()=>hstkAdvance(1);
   arrL.onclick = ()=>hstkAdvance(-1);
   document.querySelectorAll('.hstk-dot').forEach(d=>d.onclick = ()=>{
-    const target = +d.dataset.i; if (hstkOrder[0]===target) return;
+    const target = +d.dataset.i; if (hstkOrder[0]===target || hstkAnimating) return;
     hstkAdvance(hstkOrder.indexOf(target)===1 ? 1 : -1);
   });
-  function hstkWireDrag(el){
-    let sx=0, dx=0, on=false;
-    const dn=x=>{ on=true; sx=x; el.style.transition='none'; };
-    const mv=x=>{ if(!on) return; dx=x-sx; el.style.transform='translate('+dx+'px,-2px) rotate('+(dx*.04)+'deg)'; };
-    const up=()=>{ if(!on) return; on=false; Math.abs(dx)>60 ? hstkAdvance(dx<0?1:-1) : hstkLayout(cardEls, true); };
-    el.addEventListener('mousedown', e=>dn(e.clientX));
-    window.addEventListener('mousemove', e=>mv(e.clientX));
-    window.addEventListener('mouseup', up);
-    el.addEventListener('touchstart', e=>dn(e.touches[0].clientX), {passive:true});
-    el.addEventListener('touchmove', e=>mv(e.touches[0].clientX), {passive:true});
-    el.addEventListener('touchend', up);
-  }
 }
 function renderHomeStack(){
   const box = $('home-stack'); if (!box || !contractors.length) return;
-  hstkOrder = [0,1,2];
+  hstkOrder = [0,1,2]; hstkAnimating = false;
   box.innerHTML = homeStackHTML();
   hstkBuild();
 }
@@ -2273,20 +2204,14 @@ function closeFieldReportSheet(){
   const s=$('frepsheet'); if(!s) return;
   s.classList.remove('open'); $('frepscrim').classList.remove('open'); $('frepscrim').setAttribute('aria-hidden','true'); S.reportOpen=false;
 }
-// A discovery pill at the top of the home screen — "obvious at the top," not buried in
-// the teaser below the trades grid or sitting quietly in the right column. Mobile: opens
-// the sheet directly. Desktop: the report already lives inline in the right column, so
-// the pill scrolls it into view and gives the card a one-shot highlight pulse (never
-// content it hasn't already earned — same report, just pointed at).
+// The one discovery pill for The Field Report — obvious at the top on every breakpoint,
+// the ONLY door into the report. Mobile version sits in the topbar; desktop version sits
+// top-right of the hero. Both open the same sheet; the report is never inlined elsewhere.
 function renderFieldReportTopPill(has){
   const pillHtml = has ? '<button class="frep-toppill" type="button" aria-haspopup="dialog">'+SPARK+'Open the Field Report</button>' : '';
   const m = $('frep-toppill-mobile'), d = $('frep-toppill-desktop');
   if (m){ m.innerHTML = pillHtml; const b=m.querySelector('.frep-toppill'); if(b) b.addEventListener('click', openFieldReportSheet); }
-  if (d){ d.innerHTML = pillHtml; const b=d.querySelector('.frep-toppill'); if(b) b.addEventListener('click', ()=>{
-    const col = $('home-hero-proof'); if(!col) return;
-    col.scrollIntoView({behavior:'smooth', block:'start'});
-    const card = col.querySelector('.frep-card'); if(card){ card.classList.remove('frep-pulse-hit'); void card.offsetWidth; card.classList.add('frep-pulse-hit'); }
-  }); }
+  if (d){ d.innerHTML = pillHtml; const b=d.querySelector('.frep-toppill'); if(b) b.addEventListener('click', openFieldReportSheet); }
 }
 
 /* HOME — search placeholder as a live typewriter: each example types out letter by
@@ -4373,7 +4298,7 @@ function showSaved(){
 function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('/vesta'); }
 
 /* NAV */
-function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; if (name==='home') startProofRotator(); else stopProofRotator(); }
+function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; }
 // User picked a trade/problem: run the triage first (when the trade has a bank + the entry is
 // user-initiated), else go straight to browse. opts.walk===false = passive land (desktop auto/resize).
 function openBrowse(key, opts){
