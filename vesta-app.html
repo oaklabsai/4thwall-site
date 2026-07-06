@@ -916,20 +916,50 @@ body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-
 .claim-panel-inner { overflow:hidden; min-height:0; }
 .claim-panel .atlas-moment { margin:8px 0 0; }
 
-/* "What sets them apart" — specialty capability cards, redesigned to match The Record's
-   visual sophistication: gradient top edge, hover lift, monospace tag, scroll-driven reveal. */
-.trec-spec-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
-.trec-spec-card { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:18px; padding:17px 18px 16px; box-shadow:var(--sh-row); overflow:hidden; transition:transform .18s var(--spring), box-shadow .18s, border-color .18s; }
-.trec-spec-card::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); opacity:.85; }
-.trec-spec-card:hover, .trec-spec-card:active { transform:translateY(-3px); box-shadow:var(--sh-row-h); border-color:rgba(74,75,47,.22); }
-.trec-spec-tag { display:inline-flex; align-items:center; gap:4px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.13em; text-transform:uppercase; color:var(--olive); background:rgba(212,223,158,.4); border-radius:999px; padding:3px 9px; margin-bottom:9px; }
-.trec-spec-card h3 { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); margin-bottom:5px; letter-spacing:-.01em; }
-.trec-spec-card p { font-size:13px; color:var(--ebony); line-height:1.55; }
-@media (max-width:560px){ .trec-spec-cards { grid-template-columns:1fr; } }
+/* "Known for" — the numbered feature tiles under the read (the scannable/marketing layer) */
+.known-band { margin-top:20px; }
+.known-tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.known-tile { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:18px; padding:18px 18px 16px; box-shadow:var(--sh-row); overflow:hidden; transition:transform .18s var(--spring), box-shadow .18s, border-color .18s; }
+.known-tile::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); opacity:.85; }
+.known-tile:hover { transform:translateY(-3px); box-shadow:var(--sh-row-h); border-color:rgba(74,75,47,.22); }
+.kt-n { display:block; font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.14em; color:var(--ebony); opacity:.75; margin-bottom:8px; }
+.known-tile h3 { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); margin-bottom:5px; letter-spacing:-.01em; }
+.known-tile p { font-size:13px; color:var(--ebony); line-height:1.55; }
+@media (max-width:640px){ .known-tiles { grid-template-columns:1fr; } }
 @supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {
-  .trec-spec-card { animation:trecSpecIn both; animation-timeline:view(); animation-range:entry 8% entry 42%; }
-  @keyframes trecSpecIn { from { opacity:.001; transform:translateY(14px); } to { opacity:1; transform:none; } }
+  .known-tile { animation:ktIn both; animation-timeline:view(); animation-range:entry 8% entry 42%; }
+  @keyframes ktIn { from { opacity:.001; transform:translateY(14px); } to { opacity:1; transform:none; } }
 }}
+
+/* Scarcity badge on operate rows — the one payload kept from the old spec-card section */
+.trec-scarce { display:inline-flex; align-items:center; margin-left:7px; vertical-align:2px; font-family:var(--mono); font-size:8.5px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--olive); background:rgba(212,223,158,.45); border-radius:999px; padding:2px 8px; }
+
+/* Track record — stat figures + verified-credential rows (criterion + source) */
+.trec-stats { display:flex; gap:28px; flex-wrap:wrap; }
+.trec-stat .n { display:block; font-family:var(--serif); font-size:27px; font-weight:700; letter-spacing:-.02em; color:var(--olive); line-height:1.1; }
+.trec-stat .u { display:block; font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); margin-top:4px; }
+.trec-cred { display:flex; gap:12px; align-items:flex-start; padding:10px 0; }
+.trec-cred + .trec-cred { border-top:1px solid rgba(74,75,47,.07); }
+.trec-cred-ic { flex-shrink:0; width:34px; height:34px; border-radius:10px; background:rgba(212,223,158,.4); display:flex; align-items:center; justify-content:center; color:var(--olive); }
+.trec-cred-h { display:block; font-size:14px; font-weight:600; color:var(--olive); line-height:1.3; }
+.trec-cred-s { display:block; font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; color:var(--ebony); margin-top:3px; }
+
+/* Firm file — the spec-sheet ID plate (replaces the 2013 label:value table) */
+.idplate { background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:18px; padding:18px 20px; box-shadow:var(--sh-row); margin-top:28px; }
+.idp-head { display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:6px; }
+.idp-head::after { content:''; flex:1; height:1px; background:rgba(74,75,47,.12); }
+.idp-row { display:grid; grid-template-columns:104px 1fr; gap:14px; padding:10px 0; align-items:baseline; }
+.idp-row + .idp-row { border-top:1px dashed rgba(74,75,47,.16); }
+.idp-k { font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); }
+.idp-v { font-size:13.5px; color:var(--olive); font-weight:500; line-height:1.55; }
+
+/* Fold depth — stacked title + mono subtitle inside fold summaries / the claim toggle */
+.fold-tw { display:flex; flex-direction:column; gap:3px; text-align:left; }
+.fold-sub { font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ebony); }
+
+/* Contact rows — icon-led */
+.pc-ic { flex-shrink:0; width:28px; height:28px; border-radius:9px; background:rgba(212,223,158,.35); display:flex; align-items:center; justify-content:center; color:var(--olive); }
+.prof-contactrow { align-items:center; }
 
 /* In-app request — light Vesta palette (the homeowner's side; the Atlas moment stays dark, this does not) */
 .req-form { max-width:560px; margin-top:20px; }
@@ -3134,8 +3164,7 @@ function profReadHTML(){
   let inner='';
   if (enr.signature) inner += '<p class="prof-sig">'+esc(enr.signature)+'</p>';
   if (enr.synthesis) inner += '<div class="prof-block prof-block-hi"><p class="read">'+esc(enr.synthesis)+'</p>'+
-    '<p class="prof-fine" style="margin-top:12px">Based on '+((enr.rating_count||enr.deep_review_count)?esc((enr.rating_count||enr.deep_review_count).toLocaleString('en-US'))+' ':'')+
-    'public homeowner reviews on record — Vesta’s own wording, never a copy of any single review.</p></div>';
+    '<p class="prof-fine" style="margin-top:12px">Drawn from this firm’s public review history — Vesta’s own wording, never a copy of any single review.</p></div>';
   return '<details class="prof-fold prof-fold-hi" open>'+
     '<summary class="prof-fold-sum prof-fold-sum-hi"><span class="fold-title"><span class="fold-spark">'+SPARK+'</span>Vesta’s read</span>'+
     '<span class="prof-fold-chev">'+CHEV+'</span></summary>'+
@@ -3251,25 +3280,11 @@ const STANDING_SPECIALTY = {
     green_pool_recovery:      ['Specialty','Green-pool recovery','One of the few %F we track known for rescuing a neglected or green pool rather than recommending a drain-and-restart.']
   }
 };
-// Specialty capabilities only — NOT a standing/rank claim, so it can sit
-// alongside "The Record" without repeating the dot-strip's percentile language.
-// (This used to also carry volume/rating/tenure-band "Where it stands" cards
-// that restated standing in prose on every profile — cut per Drew's rule:
-// standing appears in exactly ONE place, the dot strip in profTheRecordHTML.)
-function profStandingHTML(){
-  const enr=profData.enr; if (!enr) return '';
-  const trade=pTradeKey();
-  const firms = PTRADE_FIRMS[trade] || 'pros';
-  const caps = (enr.capabilities && typeof enr.capabilities==='object') ? enr.capabilities : {};
-  const items=[];   // [kicker, title, desc] — capped at 4
-  const specMap = STANDING_SPECIALTY[trade] || {};
-  for (const key in specMap){ if (caps[key]){ const s=specMap[key]; items.push([s[0], s[1], s[2].replace(/%F/g, firms)]); } }
-  if (!items.length) return '';
-  const cards = items.slice(0,4).map(it=>'<div class="trec-spec-card"><span class="trec-spec-tag">'+esc(it[0])+'</span><h3>'+it[1]+'</h3><p>'+esc(it[2])+'</p></div>').join('');
-  return '<h2 class="prof-sec-h">What sets them apart</h2>'+
-    '<p class="prof-sec-note">Specialty capability confirmed in the review record — not every '+esc((PTRADE_LABEL[trade]||'firm').toLowerCase())+' Vesta tracks takes this on.</p>'+
-    '<div class="trec-spec-cards">'+cards+'</div>';
-}
+// NOTE: the old "What sets them apart" section is GONE — it restated the same
+// capabilities the read, known_for, and the operate rows already carry (verified
+// as a 5x repetition on Smart Electrical Solutions). Its one unique payload —
+// scarcity — survives as the "few in county" badge on curated operate rows.
+// STANDING_SPECIALTY stays: it's the curated label + scarcity source for those rows.
 
 // === "The Record" — the locked dot-axis design standard (mirrors the SSR
 // build in api/_render-contractor.mjs; same fields, same rules, same visual
@@ -3339,12 +3354,15 @@ function profOperateHTML(){
     const c = caps[key]; if (!c || !c.ev || String(c.ev).length<12) continue;
     const curated = specMap[key];
     const label = curated ? String(curated[1]).replace(/&amp;/g,'&') : trecHumanize(key);
-    items.push({label, quote:c.ev, pri: curated?2:(String(c.ev).length>60?1:0)});
+    // curated = a capability scarce in the trade's live data — carries the badge
+    items.push({label, quote:c.ev, scarce:!!curated, pri: curated?2:(String(c.ev).length>60?1:0)});
   }
   items.sort((a,b)=> b.pri-a.pri || String(b.quote).length-String(a.quote).length);
   const top = items.slice(0,3);
   if (!top.length) return '';
-  const rows = top.map(it=>'<div class="trec-ev"><span class="trec-ev-h">'+esc(it.label)+'</span><span class="trec-ev-q">“'+esc(it.quote)+'”</span></div>').join('');
+  const rows = top.map(it=>'<div class="trec-ev"><span class="trec-ev-h">'+esc(it.label)+
+    (it.scarce?' <span class="trec-scarce">Few in county</span>':'')+
+    '</span><span class="trec-ev-q">“'+esc(it.quote)+'”</span></div>').join('');
   return '<h2 class="prof-sec-h sub">How they operate — from the review record</h2><div class="prof-block">'+rows+'</div>';
 }
 function trecChipsHTML(heading, tags, altStyle){
@@ -3359,23 +3377,37 @@ function profCrewProvenanceHTML(){
   return (crew.length ? '<p class="trec-crew">Crew homeowners name: <b>'+crew.map(esc).join(', ')+'</b></p>' : '')+
     '<p class="prof-fine" style="margin-top:8px">Everything above is drawn from public reviews and Connecticut state records — nothing self-reported, nothing paid for.</p>';
 }
-// Track record — verified credentials (registered/licensed/certified, same
-// facts profGlanceHTML used to show as loose badges) + the dot-axis meters.
+// Track record — the depth block: public stat figures (the firm's OWN public
+// review count + years on the state record — public and provable, never Vesta's
+// depth) → verified-credential rows, each naming the public source it's checked
+// against (the SSR verifiedBlock's criterion+source discipline, compact) → the
+// dot-axis meters. Every layer drops independently when its field is absent.
+const TREC_SHIELD = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V5z"/><path d="M9 12l2 2 4-4"/></svg>';
 function profTrackRecordHTML(){
   const enr=profData.enr; if (!enr) return '';
   const trade=pTradeKey(); const tLower = trade==='hvac' ? 'HVAC' : ((PTRADE_LABEL[trade]||'trade').toLowerCase());
-  const chips=[];
-  if (enr.registered){ const yr=enr.hic_issue_date?+String(enr.hic_issue_date).slice(0,4):0; chips.push('<span class="prof-badge">Registered CT contractor'+(yr&&yr!==1999?' · since '+yr:'')+' ✓</span>'); }
-  if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if (c&&c.issuer&&c.level) chips.push('<span class="prof-badge">'+esc(c.issuer+' '+c.level)+' ✓</span>'); }
-  if (Array.isArray(enr.trade_license)&&enr.trade_license.length) chips.push('<span class="prof-badge">Licensed '+esc(tLower)+' ✓</span>');
+  const stats=[];
+  const pubN = Number(enr.rating_count)||0;
+  if (pubN) stats.push('<span class="trec-stat"><span class="n">'+pubN.toLocaleString('en-US')+'</span><span class="u">public reviews on record</span></span>');
+  if (enr.registered && enr.hic_issue_date){
+    const yr = +String(enr.hic_issue_date).slice(0,4);
+    const yrs = (yr && yr!==1999) ? (new Date().getFullYear()-yr) : 0;
+    if (yrs>0) stats.push('<span class="trec-stat"><span class="n">'+yrs+'</span><span class="u">years on the state record</span></span>');
+  }
+  const creds=[];
+  if (enr.registered){ const yr=enr.hic_issue_date?+String(enr.hic_issue_date).slice(0,4):0;
+    creds.push(['Registered CT contractor'+(yr&&yr!==1999?' · since '+yr:''), 'CT Dept. of Consumer Protection registry']); }
+  if (Array.isArray(enr.trade_license)&&enr.trade_license.length) creds.push(['Licensed '+tLower, 'CT eLicense state registry']);
+  if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if (c&&c.issuer&&c.level) creds.push([c.issuer+' '+c.level, c.issuer+'’s own contractor directory']); }
+  const credHtml = creds.map(c=>'<div class="trec-cred"><span class="trec-cred-ic">'+TREC_SHIELD+'</span>'+
+    '<span><span class="trec-cred-h">'+esc(c[0])+'</span><span class="trec-cred-s">Verified · '+esc(c[1])+'</span></span></div>').join('');
   const meters = profMetersHTML();
-  if (!chips.length && !meters) return '';
-  let inner='';
-  if (chips.length) inner += '<div class="prof-badges" style="margin:0">'+chips.join('')+'</div>'+
-    '<p class="prof-fine" style="margin-top:11px">Checked against public CT state registries and manufacturer directories · June 2026. Vesta vouches only what a public record confirms.</p>';
-  if (chips.length && meters) inner += '<div class="prof-glance-rule"></div>';
-  inner += meters;
-  return '<h2 class="prof-sec-h">Track record</h2><div class="prof-block">'+inner+'</div>';
+  if (!stats.length && !creds.length && !meters) return '';
+  const parts=[];
+  if (stats.length) parts.push('<div class="trec-stats">'+stats.join('')+'</div>');
+  if (creds.length) parts.push(credHtml);
+  if (meters) parts.push(meters);
+  return '<h2 class="prof-sec-h">Track record</h2><div class="prof-block">'+parts.join('<div class="prof-glance-rule"></div>')+'</div>';
 }
 function profTheRecordHTML(){
   const enr=profData.enr; if (!enr) return '';
@@ -3391,32 +3423,42 @@ function profTheRecordHTML(){
     track+operate+praise+scope+hiredFor+
     profCrewProvenanceHTML();
 }
-// At a glance = the remaining business facts not already covered by The Record
-// (specialties / service area / owner). Verified credentials live in The
-// Record's Track record section now — kept in exactly one place, not repeated.
+// Firm file — the ID-plate replacement for the old key-value "At a glance": the
+// remaining business facts not already covered anywhere else (specialties /
+// service area / owner), styled as a spec sheet (mono microlabels, dashed
+// leaders) instead of a 2013 label:value table.
 function profGlanceHTML(){
   const enr=profData.enr; if (!enr) return '';
   const rows=[];
-  if (Array.isArray(enr.specialties)&&enr.specialties.length) rows.push('<div class="prof-kv"><span>Specialties</span><b>'+enr.specialties.map(esc).join(' · ')+'</b></div>');
-  if (Array.isArray(enr.service_area)&&enr.service_area.length) rows.push('<div class="prof-kv"><span>Service area</span><b>'+enr.service_area.map(esc).join(', ')+'</b></div>');
-  if (enr.owner_name) rows.push('<div class="prof-kv"><span>Owner</span><b>'+esc(enr.owner_name)+'</b></div>');
+  if (Array.isArray(enr.specialties)&&enr.specialties.length) rows.push(['Specialties', enr.specialties.map(esc).join(' · ')]);
+  if (Array.isArray(enr.service_area)&&enr.service_area.length) rows.push(['Service area', enr.service_area.map(esc).join(', ')]);
+  if (enr.owner_name) rows.push(['Owner', esc(enr.owner_name)]);
   if (!rows.length) return '';
-  return '<h2 class="prof-sec-h">At a glance</h2><div class="prof-block">'+rows.join('')+'</div>';
+  return '<div class="idplate"><div class="idp-head">Firm file · public details</div>'+
+    rows.map(r=>'<div class="idp-row"><span class="idp-k">'+r[0]+'</span><span class="idp-v">'+r[1]+'</span></div>').join('')+
+  '</div>';
 }
+// "Known for" — the always-visible headline band directly under the read: the
+// three structured claims as numbered feature tiles. This is the scannable /
+// marketing layer; the prose verdict lives in the dropdown above it.
 function profKnownHTML(){
   const enr=profData.enr; if (!enr) return '';
   const known = Array.isArray(enr.known_for) ? enr.known_for.filter(k=>k && (k.label||k.detail)) : [];
   if (!known.length) return '';
-  return '<h2 class="prof-sec-h">What they’re known for</h2>'+
-    '<div class="prof-cards">'+known.map(k=>'<div class="prof-card"><h3>'+esc(k.label||'')+'</h3><p>'+esc(k.detail||'')+'</p></div>').join('')+'</div>';
+  return '<div class="known-band"><div class="trec-sec-lbl">Known for</div>'+
+    '<div class="known-tiles">'+known.slice(0,3).map((k,i)=>
+      '<div class="known-tile"><span class="kt-n">0'+(i+1)+'</span><h3>'+esc(k.label||'')+'</h3><p>'+esc(k.detail||'')+'</p></div>').join('')+
+    '</div></div>';
 }
 // Generic trade education — kept for depth, but collapsed by default so it doesn't crowd the firm-specific read.
 function profGuideHTML(){
   const g = PGUIDE[pTradeKey()]; if (!g) return '';
   const rows = g.map((it,i)=>'<div class="prof-angle"><div class="no">'+String(i+1).padStart(2,'0')+'</div><div><h3>'+esc(it.t)+'</h3><p>'+esc(it.d)+'</p></div></div>').join('');
-  return '<details class="prof-fold"><summary class="prof-fold-sum"><span>What to check before you hire</span>'+
+  return '<details class="prof-fold"><summary class="prof-fold-sum">'+
+    '<span class="fold-tw"><span class="fold-title">What to check before you hire</span>'+
+    '<span class="fold-sub">'+g.length+' checks · Vesta’s checklist for '+esc(PTRADE_PROS[pTradeKey()]||'this trade')+'</span></span>'+
     '<span class="prof-fold-chev">'+CHEV+'</span></summary>'+
-    '<div class="prof-fold-body"><p class="prof-sec-note" style="margin-top:0">Vesta’s plain checklist for '+esc(PTRADE_PROS[pTradeKey()]||'this trade')+'. General guidance about the trade — not a claim about this business.</p>'+
+    '<div class="prof-fold-body"><p class="prof-sec-note" style="margin-top:0">General guidance about the trade — not a claim about this business.</p>'+
     '<div class="prof-guide">'+rows+'</div></div></details>';
 }
 function profGoogleHTML(){
@@ -3429,11 +3471,17 @@ function profGoogleHTML(){
     (p.maps_uri?' · <a href="'+esc(p.maps_uri)+'" target="_blank" rel="noopener nofollow">on Maps ↗</a>':'')+
     '<br><span style="font-size:11px;color:var(--ebony)">Shown live and unaltered — a marketing signal, not a Vesta rating. Vesta’s read above is our own analysis.</span></div>';
 }
+const PC_IC = {
+  phone:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 2 .7 2.9a2 2 0 01-.5 2.1L8 10a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.5c.9.3 1.9.6 2.9.7a2 2 0 011.7 2z"/></svg>',
+  globe:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>',
+  at:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-3.9 7.9"/></svg>'
+};
 function profContactRows(u){
   const rows=[];
-  if (u.phone) rows.push('<div class="prof-contactrow"><b>Phone</b><a href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">'+esc(u.phone)+'</a></div>');
-  if (u.website) rows.push('<div class="prof-contactrow"><b>Website</b><a href="'+esc(u.website)+'" rel="nofollow noopener" target="_blank">'+esc(String(u.website).replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))+'</a></div>');
-  if (u.socials) for (const k in u.socials){ if (u.socials[k]) rows.push('<div class="prof-contactrow"><b>'+esc(HOME.tradeLabel(k))+'</b><a href="'+esc(u.socials[k])+'" rel="nofollow noopener" target="_blank">'+esc(String(u.socials[k]).replace(/^https?:\/\/(www\.)?/,''))+'</a></div>'); }
+  const row = (ic, label, a) => '<div class="prof-contactrow"><span class="pc-ic">'+ic+'</span><b>'+label+'</b>'+a+'</div>';
+  if (u.phone) rows.push(row(PC_IC.phone, 'Phone', '<a href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">'+esc(u.phone)+'</a>'));
+  if (u.website) rows.push(row(PC_IC.globe, 'Website', '<a href="'+esc(u.website)+'" rel="nofollow noopener" target="_blank">'+esc(String(u.website).replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))+'</a>'));
+  if (u.socials) for (const k in u.socials){ if (u.socials[k]) rows.push(row(PC_IC.at, esc(HOME.tradeLabel(k)), '<a href="'+esc(u.socials[k])+'" rel="nofollow noopener" target="_blank">'+esc(String(u.socials[k]).replace(/^https?:\/\/(www\.)?/,''))+'</a>')); }
   return rows.length ? rows.join('') : '<p class="prof-fine">No public contact details surfaced for this pro — they may be phone-unlisted. Try the request flow instead.</p>';
 }
 function profContactHTML(){
@@ -3484,7 +3532,8 @@ function profClaimHTML(){
   // record now earn instead. Animated via the .claim-panel grid-rows trick (wireProfile).
   return '<div class="claimwrap">'+
     '<button class="claim-toggle" id="claim-toggle" type="button" aria-expanded="false" aria-controls="claim-panel">'+
-      '<span class="claim-q fold-title"><span class="fold-spark">'+SPARK+'</span>Is this your business?</span>'+
+      '<span class="fold-tw"><span class="claim-q fold-title"><span class="fold-spark">'+SPARK+'</span>Is this your business?</span>'+
+      '<span class="fold-sub">Claim it free · ownership verified before anything changes</span></span>'+
       '<span class="claim-chev">'+CHEV+'</span>'+
     '</button>'+
     '<div class="claim-panel" id="claim-panel"><div class="claim-panel-inner">'+panel+'</div></div>'+
@@ -3503,11 +3552,13 @@ function profPhotosHTML(){
   return '<div class="vph vph-profile" id="prof-photos" data-ph="1">'+galleryHTML(photos,'profile')+'</div>';
 }
 function renderProfile(){
-  // Reader/marketing flow: identity+CTA → work photos → The Record (standing dot-
-  // strip, track record, how they operate, chips) → the verdict → what sets them
-  // apart → remaining facts → homeowner proof → external reference → contact →
-  // (collapsed) generic guide → claim. Mirrors api/_render-contractor.mjs's order.
-  $('prof-wrap').innerHTML = profHeroHTML()+profPhotosHTML()+profTheRecordHTML()+profReadHTML()+profStandingHTML()+profGlanceHTML()+profKnownHTML()+
+  // Reader/marketing flow — one home per fact, verdict first:
+  //   identity+CTA → photos → VESTA'S READ (the verdict — signature + synthesis in
+  //   the highlighted dropdown, top of the page) → "Known for" headline tiles (the
+  //   scannable layer) → The Record (dot strip · track record · how they operate ·
+  //   chips — the provable data) → firm file → external reference → contact →
+  //   (collapsed) hire checklist → (collapsed) claim.
+  $('prof-wrap').innerHTML = profHeroHTML()+profPhotosHTML()+profReadHTML()+profKnownHTML()+profTheRecordHTML()+profGlanceHTML()+
     profGoogleHTML()+profContactHTML()+profGuideHTML()+profClaimHTML()+profRemovalHTML();
   wireProfile();
 }
