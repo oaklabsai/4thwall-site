@@ -102,9 +102,16 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @keyframes hsCaretBlink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 @media (prefers-reduced-motion: reduce){ .hs-caret { animation:none; opacity:.6; } }
 /* problem pills — homeowner needs, the instant-momentum row */
-.home-problems { display:flex; flex-direction:column; gap:16px; margin-bottom:30px; }
-.prob-group-lbl { margin-bottom:9px; }
+.home-problems { display:flex; flex-direction:column; gap:26px; margin-bottom:34px; }
 .prob-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+/* Hand-drawn underline — the playful accent under key words in section headings and
+   step titles. A stretched SVG squiggle, tea on paper; deliberately imperfect. */
+.squig { background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 7px; padding-bottom:6px; }
+/* Section headings — the categories are the sell, so they get real display type
+   (serif + scribble) instead of a whisper of mono microtext, plus one honest line
+   of what's actually behind them. */
+.home-sec-h { font-family:var(--serif); font-size:23px; font-weight:700; letter-spacing:-.02em; color:var(--olive); line-height:1.2; margin-bottom:5px; }
+.home-sec-sub { font-size:13px; color:var(--ebony); line-height:1.5; margin-bottom:13px; max-width:52ch; }
 .prob-pill { display:flex; align-items:center; gap:8px; width:100%; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:10px 15px 10px 13px; cursor:pointer; font-family:var(--sans); font-size:14px; font-weight:600; color:var(--olive); box-shadow:0 1px 2px rgba(74,75,47,.05); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
 .prob-pill:hover { transform:translateY(-2px); box-shadow:0 8px 18px -7px rgba(74,75,47,.26); background:var(--tea); }
 .prob-pill:active { transform:scale(.96); }
@@ -115,9 +122,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    kickers, and The Record's own labels were four slightly different mono treatments
    (10 vs 10.5px, .1 vs .15em tracking, ebony vs olive). Same visual language now; only
    the box-model (margins) differs per placement. */
-.home-browselbl, .tg-label, .prof-sec-kick, .trec-sec-lbl, .prob-group-lbl { display:block; font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--ebony); }
-.home-browselbl::before, .tg-label::before, .prof-sec-kick::before, .trec-sec-lbl::before, .prob-group-lbl::before { content:'— '; color:rgba(74,75,47,.4); }
-.home-browselbl { margin-bottom:13px; }
+.tg-label, .prof-sec-kick, .trec-sec-lbl { display:block; font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--ebony); }
+.tg-label::before, .prof-sec-kick::before, .trec-sec-lbl::before { content:'— '; color:rgba(74,75,47,.4); }
 /* trades demoted to compact, scannable chips */
 /* Compact icon-forward grid (like an app launcher) instead of ragged wrapped pills —
    grouped into labeled sections (TRADE_GROUPS), each a fixed 3-col grid so rows align. */
@@ -141,14 +147,17 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .trade-tile { animation:ttIn both; animation-timeline:view(); animation-range:entry 5% entry 42%; }
   @keyframes ttIn { from { opacity:.001; transform:translateY(14px) scale(.97); } to { opacity:1; transform:none; } }
 }}
-/* "How it works" — the mechanism, in three steps. Explains what makes Vesta different from
-   a directory to a cold visitor who scrolls past the pills, rather than padding the page
-   with decoration. Numbered chips reuse .prof-angle-no (the hiring-guide's treatment). */
-.how-strip { margin-top:34px; padding-top:26px; border-top:1px solid rgba(74,75,47,.1); }
-.how-steps { display:flex; flex-direction:column; gap:16px; }
+/* The mechanism, in three steps — sits right under the search, BEFORE the categories,
+   because a cold visitor should know why this isn't a lead-gen site before we ask them
+   to tap anything. No heading; the numbered sequence speaks for itself (a dotted route
+   connects 01→02→03), and the step titles carry the hand-drawn underline. */
+.how-strip { margin:24px 0 30px; }
+.how-steps { position:relative; display:flex; flex-direction:column; gap:15px; }
+.how-steps::before { content:''; position:absolute; left:14px; top:26px; bottom:22px; border-left:2px dotted rgba(74,75,47,.28); }
 .how-step { display:flex; gap:13px; align-items:flex-start; }
-.how-step b { display:block; font-family:var(--serif); font-size:15.5px; font-weight:700; color:var(--olive); letter-spacing:-.008em; margin-bottom:2px; }
-.how-step p { font-size:13px; color:var(--ebony); line-height:1.5; }
+.how-step .prof-angle-no { position:relative; z-index:1; background:var(--tea); }
+.how-step b { display:block; font-family:var(--serif); font-size:16px; font-weight:700; color:var(--olive); letter-spacing:-.008em; margin-bottom:3px; }
+.how-step p { font-size:12.5px; color:var(--ebony); line-height:1.5; }
 /* search-result "browse this trade" suggestion (problem→trade routing) */
 .vsr-route { background:rgba(212,223,158,.2); }
 .vsr-arrow { margin-left:auto; color:var(--olive); font-size:18px; flex-shrink:0; padding-right:4px; }
@@ -295,7 +304,11 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 }
 /* Mobile field strip — the per-trade analytics layer the desktop rail carries,
    compressed to one honest mono line under the browse header. */
-.field-strip { font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--ebony); padding:0 20px 8px; white-space:nowrap; overflow-x:auto; scrollbar-width:none; -webkit-mask-image:linear-gradient(to right,#000 88%,transparent); mask-image:linear-gradient(to right,#000 88%,transparent); }
+.field-strip { padding:0 20px 8px; white-space:nowrap; overflow-x:auto; scrollbar-width:none; }
+.fld-teaser { display:inline-flex; align-items:center; gap:7px; background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:7px 13px; font-family:var(--mono); font-size:10px; letter-spacing:.04em; color:var(--ebony); cursor:pointer; box-shadow:var(--sh-row); }
+.fld-teaser svg { width:11px; height:11px; color:var(--olive); flex-shrink:0; }
+.fld-teaser b { color:var(--olive); }
+.fld-more { font-weight:600; color:var(--olive); text-decoration:underline; text-underline-offset:2px; }
 .field-strip::-webkit-scrollbar { display:none; }
 .field-strip:empty { display:none; }
 .field-strip b { color:var(--olive); font-weight:600; }
@@ -592,7 +605,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   /* The sidebar is the full trade taxonomy on desktop — repeating it as tiles in the
      center column was pure duplication (same group labels, same counts, twice). Center
      stays focused on discovery: search + problems + the personalized return band. */
-  #s-home .home-browselbl, #s-home .trades-grid { display:none; }
+  #s-home .home-browse-sec { display:none; }
   #s-home .home-foot { text-align:center; margin-top:40px; }
   /* Entrance choreography — the hero stops looking like a static page and starts
      looking like something that just happened, each piece a beat behind the last. */
@@ -727,31 +740,6 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .feedrail-how li { display:flex; gap:9px; font-size:12.5px; color:var(--ebony); line-height:1.5; margin-bottom:11px; }
   .feedrail-how li svg { color:var(--olive); flex-shrink:0; margin-top:2px; }
   .feedrail-how b { color:var(--olive); font-weight:600; }
-  /* Field-at-a-glance rail — per-trade analytics, all real. Hero count, band-share bar,
-     tappable capability rows (they ARE the need-filter), fact line, methodology sign-off. */
-  .fr2-hero { display:flex; align-items:baseline; gap:12px; margin:16px 0 18px; }
-  .fr2-n { font-family:var(--serif); font-size:52px; font-weight:700; color:var(--olive); line-height:.95; letter-spacing:-.03em; }
-  .fr2-hl { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); line-height:1.25; }
-  .fr2-sub { font-family:var(--sans); font-size:12px; font-weight:400; color:var(--ebony); }
-  .fr2-bar { display:flex; gap:3px; height:10px; border-radius:99px; overflow:hidden; margin-bottom:10px; }
-  .fr2-seg { border-radius:99px; } .fr2-seg.a { background:var(--olive); } .fr2-seg.b { background:#8a8a63; } .fr2-seg.c { background:rgba(74,75,47,.18); }
-  .fr2-legend { display:flex; flex-wrap:wrap; gap:7px 14px; font-size:11.5px; color:var(--ebony); margin-bottom:22px; }
-  .fr2-legend i { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
-  .fr2-legend i.a { background:var(--olive); } .fr2-legend i.b { background:#8a8a63; } .fr2-legend i.c { background:rgba(74,75,47,.22); }
-  .fr2-lbl { font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:9px; }
-  .fr2-row { display:flex; align-items:center; gap:10px; width:100%; border:none; background:none; cursor:pointer; padding:8px 10px; margin:0 -10px 2px; border-radius:12px; font-family:var(--sans); text-align:left; transition:background .14s; }
-  .fr2-row:hover { background:rgba(255,255,255,.65); }
-  .fr2-row.on { background:var(--white); box-shadow:var(--sh-row); }
-  .fr2-row-l { font-size:12.5px; font-weight:600; color:var(--olive); flex-shrink:0; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:46%; }
-  .fr2-row-track { flex:1; height:5px; border-radius:99px; background:rgba(74,75,47,.1); overflow:hidden; }
-  .fr2-row-fill { display:block; height:100%; border-radius:99px; background:var(--tea); }
-  .fr2-row.on .fr2-row-fill { background:var(--olive); }
-  .fr2-row-n { font-family:var(--mono); font-size:10px; color:var(--ebony); flex-shrink:0; }
-  .fr2-facts { font-size:12px; color:var(--ebony); margin-top:18px; line-height:1.7; }
-  .fr2-facts b { font-family:var(--serif); font-size:15px; color:var(--olive); }
-  .fr2-facts .dot { margin:0 7px; opacity:.5; }
-  .fr2-method { font-family:var(--serif); font-style:italic; font-size:12.5px; color:var(--ebony); margin-top:14px; line-height:1.5; }
-
   .pscrim, .psheet { display:none; }
 
   /* desktop feed-control inline labels (Sort · Town) */
@@ -776,6 +764,36 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* the [hidden] attribute must beat the explicit display above, or empty/zero badges leak through */
 .ds-badge[hidden], .bnav-badge[hidden], .tb-filter-ct[hidden] { display:none !important; }
 /* mobile filter sheet */
+/* Field-at-a-glance panel — per-trade analytics, all real. Hero count, band-share bar,
+   tappable capability rows (they ARE the need-filter), fact line, methodology sign-off.
+   Global scope (not desktop-only): one builder renders it into the desktop rail AND the
+   mobile field sheet, so the two surfaces can never drift apart. */
+.fr2-hero { display:flex; align-items:baseline; gap:12px; margin:16px 0 18px; }
+.fr2-n { font-family:var(--serif); font-size:52px; font-weight:700; color:var(--olive); line-height:.95; letter-spacing:-.03em; }
+.fr2-hl { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); line-height:1.25; }
+.fr2-sub { font-family:var(--sans); font-size:12px; font-weight:400; color:var(--ebony); }
+.fr2-bar { display:flex; gap:3px; height:10px; border-radius:99px; overflow:hidden; margin-bottom:10px; }
+.fr2-seg { border-radius:99px; } .fr2-seg.a { background:var(--olive); } .fr2-seg.b { background:#8a8a63; } .fr2-seg.c { background:rgba(74,75,47,.18); }
+.fr2-legend { display:flex; flex-wrap:wrap; gap:7px 14px; font-size:11.5px; color:var(--ebony); margin-bottom:22px; }
+.fr2-legend i { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
+.fr2-legend i.a { background:var(--olive); } .fr2-legend i.b { background:#8a8a63; } .fr2-legend i.c { background:rgba(74,75,47,.22); }
+.fr2-lbl { font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:9px; }
+.fr2-row { display:flex; align-items:center; gap:10px; width:100%; border:none; background:none; cursor:pointer; padding:8px 10px; margin:0 -10px 2px; border-radius:12px; font-family:var(--sans); text-align:left; transition:background .14s; }
+.fr2-row:hover { background:rgba(255,255,255,.65); }
+.fr2-row.on { background:var(--white); box-shadow:var(--sh-row); }
+.fr2-row-l { font-size:12.5px; font-weight:600; color:var(--olive); flex-shrink:0; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:46%; }
+.fr2-row-track { flex:1; height:5px; border-radius:99px; background:rgba(74,75,47,.1); overflow:hidden; }
+.fr2-row-fill { display:block; height:100%; border-radius:99px; background:var(--tea); }
+.fr2-row.on .fr2-row-fill { background:var(--olive); }
+.fr2-row-n { font-family:var(--mono); font-size:10px; color:var(--ebony); flex-shrink:0; }
+.fr2-facts { font-size:12px; color:var(--ebony); margin-top:18px; line-height:1.7; }
+.fr2-facts b { font-family:var(--serif); font-size:15px; color:var(--olive); }
+.fr2-facts .dot { margin:0 7px; opacity:.5; }
+.fr2-method { font-family:var(--serif); font-style:italic; font-size:12.5px; color:var(--ebony); margin-top:14px; line-height:1.5; }
+/* Mobile: the panel lives in a bottom sheet; the sheet's white card needs the row
+   hover-surface flipped (white-on-white would vanish). */
+.fldsheet .fr2-row:hover { background:rgba(74,75,47,.05); }
+.fldsheet .fr2-row.on { background:rgba(212,223,158,.3); box-shadow:none; }
 .fscrim { position:fixed; inset:0; z-index:70; background:rgba(74,75,47,.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity .3s; }
 .fscrim.open { opacity:1; pointer-events:auto; }
 .fsheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:min(390px,100vw); background:var(--white); border-radius:28px 28px 0 0; z-index:71; padding:10px 24px 40px; max-height:84vh; overflow-y:auto; overscroll-behavior:contain; transition:transform .45s var(--spring); box-shadow:0 -12px 40px -4px rgba(74,75,47,.18), 0 -40px 96px -12px rgba(74,75,47,.24); }
@@ -1104,29 +1122,30 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
             <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg>
             <span class="hs-ph">&ldquo;<span id="home-search-ph"></span><span class="hs-caret" aria-hidden="true"></span>&rdquo;</span>
           </button>
-          <div class="home-problems" id="home-problems" role="list" aria-label="Common needs"></div>
-          <div class="home-browselbl">Or browse by trade</div>
-          <div class="trades-grid" id="trades-grid" role="list"></div>
-          <!-- On every breakpoint now — a cold visitor doesn't yet know HOW Vesta differs
-               from a directory, so this is real information, not filler: the mechanism,
-               in three steps. Numbered chips match the profile hiring-guide's treatment
-               (prof-angle-no) so the front door and the profile speak one visual language. -->
+          <!-- The mechanism FIRST, then the categories — a cold visitor should know why
+               this isn't a lead-gen site before we ask them to tap anything. No heading;
+               the 01→02→03 route speaks for itself. -->
           <div class="how-strip" aria-label="How Vesta works">
-            <div class="prof-sec-kick" style="margin-top:0">How it works</div>
             <div class="how-steps">
               <div class="how-step">
                 <span class="prof-angle-no">01</span>
-                <div><b>Say what you need</b><p>Search, or tap a common job — Vesta narrows to firms that actually do that work.</p></div>
+                <div><b><span class="squig">Say what you need</span></b><p>Search, or tap a common job — Vesta narrows to firms that actually do that work.</p></div>
               </div>
               <div class="how-step">
                 <span class="prof-angle-no">02</span>
-                <div><b>Read Vesta's take</b><p>A plain-language verdict on each firm, written from their public review record — not a star average.</p></div>
+                <div><b><span class="squig">Read Vesta's take</span></b><p>A plain-language verdict on each firm, written from their public review record — not a star average.</p></div>
               </div>
               <div class="how-step">
                 <span class="prof-angle-no">03</span>
-                <div><b>Reach out, direct</b><p>No lead auction — message the ones worth a call, on your terms.</p></div>
+                <div><b><span class="squig">Reach out, direct</span></b><p>No lead auction — message the ones worth a call, on your terms.</p></div>
               </div>
             </div>
+          </div>
+          <div class="home-problems" id="home-problems" aria-label="Common needs"></div>
+          <div class="home-browse-sec">
+            <h2 class="home-sec-h">Or browse <span class="squig">every trade</span></h2>
+            <p class="home-sec-sub">The whole field Vesta tracks in Fairfield County — ranked by record, never by ad spend.</p>
+            <div class="trades-grid" id="trades-grid" role="list"></div>
           </div>
         </div>
         <!-- Desktop-only proof panel (sidebar already owns full browse) — a real aggregate
@@ -1217,6 +1236,13 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   <div class="fsheet" id="fsheet" role="dialog" aria-modal="true" aria-label="Filter pros" tabindex="-1">
     <div class="phandle-wrap" id="fhandle"><div class="phandle" aria-hidden="true"></div><button class="psheet-x" id="fsheet-x" aria-label="Close filters"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button></div>
     <div class="fsheet-body" id="fsheet-body"></div>
+  </div>
+
+  <!-- MOBILE FIELD SHEET — the full field-at-a-glance panel (same builder as the desktop rail) -->
+  <div class="fscrim" id="fldscrim" aria-hidden="true"></div>
+  <div class="fsheet fldsheet" id="fldsheet" role="dialog" aria-modal="true" aria-label="The field at a glance" tabindex="-1">
+    <div class="phandle-wrap"><div class="phandle" aria-hidden="true"></div><button class="psheet-x" id="fldsheet-x" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></button></div>
+    <div class="fsheet-body" id="fldsheet-body"></div>
   </div>
 
   <!-- BOTTOM NAV (mobile) -->
@@ -1894,11 +1920,21 @@ function renderHome(){
   if (pr){
     pr.innerHTML = '';
     let di = 0;
-    [['Something’s broken', PROBLEMS_BROKEN], ['Planning a project', PROBLEMS_PLANNING]].forEach(([lbl, list]) => {
+    // Each category is a designed moment (display heading + hand-drawn accent + one honest
+    // line about what's behind it), not a whisper of microtext — the categories ARE the
+    // sell. Subcopy is data-true: emergency pills seed emergency jobs that exist in the
+    // live Q1 bank; project pills map to real jobs in each firm's review record.
+    [
+      ['Something <span class="squig">broken?</span>', 'Something’s broken',
+       'Live problems, routed to the firms whose records show they actually answer.', PROBLEMS_BROKEN],
+      ['Planning <span class="squig">a project?</span>', 'Planning a project',
+       'Every job below maps to work county firms are proven to do — from their real review records, not a category menu.', PROBLEMS_PLANNING],
+    ].forEach(([html, plain, sub, list]) => {
       const sec = document.createElement('div'); sec.className = 'prob-section';
-      const h = document.createElement('div'); h.className = 'prob-group-lbl'; h.textContent = lbl;
-      sec.appendChild(h);
-      const grid = document.createElement('div'); grid.className = 'prob-grid'; grid.setAttribute('role','list'); grid.setAttribute('aria-label', lbl);
+      const h = document.createElement('h2'); h.className = 'home-sec-h'; h.innerHTML = html;
+      const s = document.createElement('p'); s.className = 'home-sec-sub'; s.textContent = sub;
+      sec.appendChild(h); sec.appendChild(s);
+      const grid = document.createElement('div'); grid.className = 'prob-grid'; grid.setAttribute('role','list'); grid.setAttribute('aria-label', plain);
       list.forEach(p => {
         const b = document.createElement('button');
         b.className = 'prob-pill'; b.setAttribute('role','listitem');
@@ -2849,8 +2885,9 @@ function fieldStats(key){
     regN: base.filter(c=>c.registered).length
   };
 }
-// Mobile mirror of the rail's headline numbers — one mono line under the header.
-// Suppressed in match mode (the match header owns that space) and saved mode.
+// Mobile: the strip is now a tappable teaser (the two headline facts) that opens the FULL
+// field-at-a-glance panel in a bottom sheet — the same panel the desktop rail renders,
+// from the same builder. Suppressed in match mode (the match header owns that space).
 function renderFieldStrip(){
   const el = $('field-strip'); if (!el) return;
   if (S.mode !== 'trade' || (S.match && S.match.job) || !S.dataLoaded){ el.innerHTML=''; return; }
@@ -2861,20 +2898,40 @@ function renderFieldStrip(){
   const bits = [];
   if (f.medTen) bits.push('<b>'+f.medTen+'</b> yrs median tenure');
   if (tradeSupportsReg(S.activeTrade)) bits.push('<b>'+Math.round(100*f.regN/f.vetted)+'%</b> registered');
-  el.innerHTML = bits.join('&ensp;·&ensp;');
+  el.innerHTML = '<button class="fld-teaser" id="fld-teaser" type="button" aria-haspopup="dialog">'+SPARK+
+    (bits.length ? bits.join('&ensp;·&ensp;')+'&ensp;·&ensp;' : '')+
+    '<span class="fld-more">The field at a glance</span></button>';
+  const t=$('fld-teaser'); if(t) t.addEventListener('click', openFieldSheet);
 }
-let _railTrade = null;
-function renderFeedRail(){
-  const p=$('vpanel'); if(!p) return;
-  const key = S.activeTrade, base = byTrade(key);
-  if (!base.length){ p.innerHTML=''; return; }
+// The mobile field sheet — full per-trade analytics, deck stays primary. Capability
+// rows filter the deck live behind the sheet, exactly like the desktop rail's rows.
+function renderFieldSheet(){
+  const body=$('fldsheet-body'); if(!body) return;
+  body.innerHTML = '<div class="fsheet-title">The field at a glance</div>'+fieldPanelHTML(S.activeTrade);
+  wireFieldPanel(body, ()=>{ rebuildDeck(); renderDeck(); updateBrowseHead(); updateFilterTrigger(); renderNeedChips(); renderFieldSheet(); });
+}
+function openFieldSheet(){
+  renderFieldSheet();
+  const s=$('fldsheet'); if(!s) return;
+  s.classList.remove('open'); void s.offsetHeight;
+  $('fldscrim').classList.add('open'); $('fldscrim').setAttribute('aria-hidden','false');
+  s.classList.add('open'); S.fieldOpen=true;
+  setTimeout(()=>s.focus(),300);
+}
+function closeFieldSheet(){
+  const s=$('fldsheet'); if(!s) return;
+  s.classList.remove('open'); $('fldscrim').classList.remove('open'); $('fldscrim').setAttribute('aria-hidden','true'); S.fieldOpen=false;
+}
+// The panel body, shared verbatim by the desktop rail and the mobile field sheet — one
+// builder, so the two surfaces can never drift. Never a raw vetted/on-record count
+// anywhere here — shares (percentages) and qualitative facts (tenure) only. Facet order =
+// the authored NEED_FACETS priority (stable per trade), not live match-count — count only
+// GATES which chips qualify (>=2 matches), so the list stops reshuffling per town/filter.
+function fieldPanelHTML(key){
+  const base = byTrade(key);
+  if (!base.length) return '';
   const f = fieldStats(key);
   const t10 = f.t10, t25 = f.t25, rest = base.length - t10 - t25;
-  const medTen = f.medTen, regN = f.regN;
-  // Never a raw vetted/on-record count anywhere here — shares (percentages) and
-  // qualitative facts (tenure) only. Facet order = the authored NEED_FACETS
-  // priority (stable per trade), not live match-count — count only GATES which
-  // chips qualify (>=2 matches), so the list stops reshuffling per town/filter.
   const facets = (NEED_FACETS[key]||[])
     .map((f,idx)=>({ f, idx, n: base.filter(c=>facetMatches(c,f)).length }))
     .filter(x=>x.n>=2).sort((a,b)=>a.idx-b.idx).slice(0,5);
@@ -2882,14 +2939,12 @@ function renderFeedRail(){
   const t10Pct = Math.round(100*t10/base.length), t25Pct = Math.round(100*t25/base.length);
   const restPct = 100 - t10Pct - t25Pct;
   const facts = [];
-  if (tradeSupportsReg(key) && base.length) facts.push('<b>'+Math.round(100*regN/base.length)+'%</b> state-registered');
-  const hero = medTen
-    ? '<div class="fr2-hero"><span class="fr2-n" id="fr2-n">'+medTen+'</span>'+
+  if (tradeSupportsReg(key) && base.length) facts.push('<b>'+Math.round(100*f.regN/base.length)+'%</b> state-registered');
+  const hero = f.medTen
+    ? '<div class="fr2-hero"><span class="fr2-n">'+f.medTen+'</span>'+
       '<span class="fr2-hl">yrs median tenure<br><span class="fr2-sub">among '+esc(tradePlural(key))+' Vesta has a full read on</span></span></div>'
     : '';
-  p.innerHTML =
-    '<div class="va-head"><span class="va-spark">'+SPARK+'</span>The field at a glance</div>'+
-    hero+
+  return hero+
     '<div class="fr2-bar" role="img" aria-label="Standing distribution: '+t10Pct+'% top 10%, '+t25Pct+'% top 25%, '+restPct+'% established base">'+
       seg(t10,'a')+seg(t25,'b')+seg(rest,'c')+'</div>'+
     '<div class="fr2-legend">'+
@@ -2904,10 +2959,25 @@ function renderFeedRail(){
           '<span class="fr2-row-n">'+pct+'%</span></button>'; }).join(''):'')+
     (facts.length?'<div class="fr2-facts">'+facts.join('<span class="dot">·</span>')+'</div>':'')+
     '<p class="fr2-method">Ranked by review consensus, track record &amp; licensing — never ads, never pay-to-play.</p>';
-  p.querySelectorAll('.fr2-row').forEach(b=>b.addEventListener('click',()=>{
-    const l=b.dataset.need; if(S.feedNeeds.has(l)) S.feedNeeds.delete(l); else S.feedNeeds.add(l); applyFeed();
+}
+// Capability rows ARE the need-filter on both surfaces. Each surface passes its own
+// apply pipeline: desktop = applyFeed (re-renders feed + rail); mobile = the deck
+// pipeline (rebuild/render deck + repaint the sheet's own rows).
+function wireFieldPanel(container, apply){
+  container.querySelectorAll('.fr2-row').forEach(b=>b.addEventListener('click',()=>{
+    const l=b.dataset.need; if(S.feedNeeds.has(l)) S.feedNeeds.delete(l); else S.feedNeeds.add(l);
+    (apply || applyFeed)();
   }));
-  if (medTen && _railTrade !== key){ _railTrade = key; countUp($('fr2-n'), medTen); }   // count up once per trade, not on every filter tick
+}
+let _railTrade = null;
+function renderFeedRail(){
+  const p=$('vpanel'); if(!p) return;
+  const panel = fieldPanelHTML(S.activeTrade);
+  if (!panel){ p.innerHTML=''; return; }
+  p.innerHTML = '<div class="va-head"><span class="va-spark">'+SPARK+'</span>The field at a glance</div>'+panel;
+  wireFieldPanel(p);
+  const f = fieldStats(S.activeTrade);
+  if (f.medTen && _railTrade !== S.activeTrade){ _railTrade = S.activeTrade; countUp(p.querySelector('.fr2-n'), f.medTen); }   // count up once per trade, not on every filter tick
 }
 // ── Silent-firm coverage tail ──────────────────────────────────────────────
 // Honest, collapsed "N more, not yet reviewed" section. Count-only firms: what's on
@@ -4012,6 +4082,8 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   $('tb-filter').addEventListener('click', openFilterSheet);
   $('fscrim').addEventListener('click', closeFilterSheet);
   $('fsheet-x').addEventListener('click', closeFilterSheet);
+  $('fldscrim').addEventListener('click', closeFieldSheet);
+  $('fldsheet-x').addEventListener('click', closeFieldSheet);
   ['nav-search','ds-search','home-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
@@ -4019,7 +4091,7 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   $('vsearch-input').addEventListener('input', e => renderSearchResults(e.target.value));
   $('vsearch').addEventListener('click', e => { if (e.target===$('vsearch')) closeSearch(); });
   document.addEventListener('keydown', e => {
-    if (e.key==='Escape') { closeFeedMenus(); if (S.filterOpen){ closeFilterSheet(); return; } if (S.searchOpen){ closeSearch(); return; } if (S.sheetOpen){ closeSheet(); return; } }
+    if (e.key==='Escape') { closeFeedMenus(); if (S.fieldOpen){ closeFieldSheet(); return; } if (S.filterOpen){ closeFilterSheet(); return; } if (S.searchOpen){ closeSearch(); return; } if (S.sheetOpen){ closeSheet(); return; } }
     if (S.screen==='browse' && S.mode==='trade' && !S.sheetOpen && !S.searchOpen && !desktop()){
       const c = topCon();
       if (e.key==='ArrowRight' && c){ e.preventDefault(); commit('save', c); }
