@@ -764,20 +764,39 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   animation:tcShim 1.8s linear infinite; transition:opacity .2s; }
 @keyframes tcShim { 0%{background-position:210% 0} 100%{background-position:-210% 0} }
 /* deck landing — real picks, real reasons (whyLine + record), photo tile w/ monogram fallback */
-.tc-deck { margin:2px 0 6px 37px; background:rgba(255,255,255,.96); border:1px solid rgba(74,75,47,.1); border-radius:18px; padding:16px; box-shadow:var(--sh-card); animation:tcMsgIn .4s var(--spring) both; }
+.tc-deck { margin:2px 0 6px 37px; background:var(--nm); border:none; border-radius:24px; padding:17px 16px 18px; box-shadow:var(--nm-out); animation:tcMsgIn .4s var(--spring) both; }
 .tc-deck-kick { display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.13em; text-transform:uppercase; color:var(--ebony); margin-bottom:8px; }
-.tc-deck-pct { font-family:var(--mono); font-size:9px; font-weight:500; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-pill); padding:3px 8px; margin-left:auto; }
+.tc-deck-pct { font-family:var(--mono); font-size:9px; font-weight:500; color:var(--olive); background:var(--tea-grad); border:none; border-radius:var(--r-pill); padding:4px 9px; margin-left:auto; box-shadow:var(--nm-sm); white-space:nowrap; }
 .tc-deck h2 { font-family:var(--serif); font-size:19px; font-weight:700; letter-spacing:-.015em; color:var(--olive); line-height:1.18; margin-bottom:3px; }
 .tc-deck h2 em { font-style:italic; font-weight:600; }
 .tc-deck .tc-why { font-size:12.25px; color:var(--ebony); line-height:1.5; margin-bottom:12px; }
 .tc-firm { display:flex; align-items:center; gap:11px; width:100%; text-align:left; background:none; border:none; border-top:1px solid rgba(74,75,47,.08); padding:10px 0; cursor:pointer; }
-.tc-firm .tc-mono { flex-shrink:0; width:29px; height:29px; border-radius:9px; background:rgba(212,223,158,.32); color:var(--olive); font-family:var(--serif); font-weight:700; font-size:13.5px; display:grid; place-items:center; overflow:hidden; }
+.tc-firm .tc-mono { flex-shrink:0; width:31px; height:31px; border-radius:10px; background:var(--nm); box-shadow:var(--nm-in); color:var(--olive); font-family:var(--serif); font-weight:700; font-size:13.5px; display:grid; place-items:center; overflow:hidden; }
 .tc-firm .tc-mono img { width:100%; height:100%; object-fit:cover; }
 .tc-firm .tc-fl { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
 .tc-firm .tc-fn { font-size:13.25px; font-weight:600; color:var(--olive); line-height:1.2; }
 .tc-firm .tc-fw { font-size:11.25px; color:var(--ebony); line-height:1.35; }
 .tc-firm .tc-fg { margin-left:auto; flex-shrink:0; color:var(--ebony); opacity:.5; }
-.tc-deck-all { display:block; width:100%; margin-top:12px; background:var(--olive); color:var(--white); border:none; border-radius:13px; padding:12px; font-family:var(--sans); font-size:13.5px; font-weight:600; cursor:pointer; box-shadow:0 2px 6px rgba(74,75,47,.2), 0 10px 26px -6px rgba(74,75,47,.38); }
+.tc-deck-all { display:block; width:100%; margin-top:14px; background:var(--dark-grad); color:var(--white); border:none; border-radius:15px; padding:13px; font-family:var(--sans); font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 13px -3px rgba(67,68,42,.5); }
+.tc-deck-all:active { box-shadow:var(--nm-in); transform:scale(.99); }
+/* ── Vesta Live RESOLVE → fixed verdict view ── On match, the conversation history
+   collapses so the picks deck (a self-contained verdict: the read, the coverage, the
+   per-pick why) lands centered in the fixed frame — no scroll to reach it, still visibly
+   "in the chat." Same class on both threads: desktop #tc-thread + mobile #vm-thread. From
+   here a pick opens that match; "See all your matches →" opens the browse deck. */
+.tc-resolved { overflow:hidden !important; justify-content:center; }
+.tc-resolved::before { display:none; }
+.tc-resolved > *:not(.tc-verdict) { display:none !important; }
+.tc-resolved > .tc-verdict { margin:0 auto; width:100%; max-width:560px; animation:tcDeckLand .5s var(--spring) both; }
+/* the deck rides inside a real Vesta message row (avatar/"Vesta." signature to its left),
+   so the picks read as a message FROM Vesta — not a detached card. Desktop has width to
+   spare for the left-avatar row; mobile stacks the signature on top so the card stays full
+   width (no header wrap). */
+.tc-verdict .tc-deck { margin:0; flex:1; min-width:0; }
+.vmsg.tc-verdict { flex-direction:column; align-items:stretch; gap:5px; }
+.vmsg.tc-verdict .vav { align-self:flex-start; margin-left:4px; }
+.vmsg.tc-verdict .tc-deck { width:100%; flex:none; }
+@keyframes tcDeckLand { from { opacity:0; transform:translateY(14px) scale(.985); } to { opacity:1; transform:none; } }
 /* composer — floating card; clears the mobile bottom nav */
 .tc-composer { flex-shrink:0; padding:8px 13px 96px; }
 @media (min-width:900px){ .tc-composer { padding-bottom:18px; } }
@@ -5176,7 +5195,7 @@ let vmBusy=false, vmDone=false, vmMsgs=[], vmTurns=0;
 function enterConverseMobile(){
   const h=$('s-home'); if(!h) return;
   vmMsgs=[]; vmTurns=0; vmDone=false; vmBusy=false;
-  const th=$('vm-thread'); if(th) th.innerHTML='';
+  const th=$('vm-thread'); if(th){ th.innerHTML=''; th.classList.remove('tc-resolved'); }
   const inp=$('hs-cin'); if(inp){ inp.value=''; inp.disabled=false; inp.placeholder='Describe it in your own words…'; }
   h.classList.add('vconv');
   const st=$('vstarters'); if(st) st.classList.add('show');
@@ -5186,6 +5205,7 @@ function exitConverseMobile(){
   const h=$('s-home'); if(!h) return;
   h.classList.remove('vconv');
   const st=$('vstarters'); if(st) st.classList.remove('show');
+  const th=$('vm-thread'); if(th) th.classList.remove('tc-resolved');
   const inp=$('hs-cin'); if(inp){ inp.value=''; inp.disabled=false; inp.blur(); }
   vmBusy=false; vmDone=false;
 }
@@ -5230,7 +5250,7 @@ function vmDeckLand(trade, job, deckMeta, mode){
   vmThink('Checking who covers this in your county');
   setTimeout(()=>{ vmThinkWord('Lining up your picks');
     setTimeout(()=>{ vmThinkOff(); vmDeck(trade,job,deckMeta,mode); vmDone=true;
-      const inp=$('hs-cin'); if(inp){ inp.placeholder='Matched — your picks are above ↑'; inp.disabled=true; }
+      const inp=$('hs-cin'); if(inp){ inp.placeholder='Matched — your picks are ready'; inp.disabled=true; }
     }, 620);
   }, 720);
 }
@@ -5250,7 +5270,8 @@ function vmDeck(trade, job, deckMeta, mode){
   const rows=picks.map(p=>'<button class="tc-firm" type="button" data-place="'+esc(p.placeId)+'"><span class="tc-mono">'+esc((p.name||'?')[0])+'</span><span class="tc-fl"><span class="tc-fn">'+esc(p.name)+'</span><span class="tc-fw">'+esc(reason(p))+'</span></span><span class="tc-fg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></button>').join('');
   const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='tc-deck';
   el.innerHTML='<div class="tc-deck-kick">Why these '+(picks.length===3?'three':'picks')+(pct?'<span class="tc-deck-pct">'+pct+'% of '+esc(lc(tradeLabelOf(trade)))+' do this</span>':'')+'</div><h2>For your <em>'+esc(jl)+'</em></h2><p class="tc-why">'+lead+'</p>'+rows+'<button class="tc-deck-all" type="button">See all your matches →</button>';
-  t.appendChild(el); vmScroll();
+  const row=document.createElement('div'); row.className='vmsg tc-verdict'; row.innerHTML='<span class="vav">Vesta.</span>'; row.appendChild(el);
+  t.appendChild(row); t.classList.add('tc-resolved'); vmScroll();   // Vesta's message: picks in-chat, history collapsed → fixed verdict
   el.querySelectorAll('.tc-firm').forEach(btn=>btn.addEventListener('click',()=>openProfile(btn.dataset.place)));
   const all=el.querySelector('.tc-deck-all'); if(all) all.addEventListener('click',()=>{ const h=$('s-home'); if(h) h.classList.remove('vconv'); S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank'; S.match={job:job,axis:axis}; S.matchPending=false; S.triageActive=false; S.triageMode=null; renderNeedChips(); renderSidebar(); showBrowse(trade); });
 }
@@ -5410,7 +5431,7 @@ function triDeckLand(bubble, trade, job, deckMeta, mode){
       tcThinkOff();
       triDeckCard(trade, job, deckMeta, mode);
       if (c){ c.done = true; }
-      const inp=$('tc-input'); if(inp){ inp.placeholder='Matched — your picks are above ↑'; inp.disabled=true; }
+      const inp=$('tc-input'); if(inp){ inp.placeholder='Matched — your picks are ready'; inp.disabled=true; }
     }, 620);
   }, 720);
 }
@@ -5457,7 +5478,8 @@ function triDeckCard(trade, job, deckMeta, mode){
     '<h2>For your <em>'+esc(jl)+'</em></h2>'+
     '<p class="tc-why">'+lead+'</p>'+rows+
     '<button class="tc-deck-all" type="button" id="tc-all">See all your matches →</button>';
-  t.appendChild(el); tcScroll();
+  const row=document.createElement('div'); row.className='tc-msg v tc-verdict'; row.innerHTML='<div class="tc-avatar">Vesta.</div>'; row.appendChild(el);
+  t.appendChild(row); t.classList.add('tc-resolved'); tcScroll();   // Vesta's message: picks in-chat, history collapsed → fixed verdict
   el.querySelectorAll('.tc-firm').forEach(btn => btn.addEventListener('click', ()=> openProfile(btn.dataset.place)));
   const all = el.querySelector('#tc-all');
   if (all) all.addEventListener('click', ()=>{
