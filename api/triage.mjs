@@ -35,8 +35,10 @@ const DB_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_IEQcNbThGZblpzqN
 
 function loadKeys(){
   const keys = [];
-  for (const name of ['NVIDIA_TRIAGE_KEY_1','NVIDIA_TRIAGE_KEY_2','NVIDIA_TRIAGE_KEY_3','NVIDIA_TRIAGE_KEY_4','NVIDIA_TRIAGE_KEY_5']){
-    const v = process.env[name];
+  for (let i = 1; i <= 5; i++){
+    // both naming schemes: NVIDIA_TRIAGE_KEY_N (the documented contract) and nvidiakeyN
+    // (how the vars actually exist in Vercel — the operator's convention, honored)
+    const v = process.env['NVIDIA_TRIAGE_KEY_' + i] || process.env['nvidiakey' + i];
     if (v && v.startsWith('nvapi-')) keys.push(v);
   }
   return keys;
