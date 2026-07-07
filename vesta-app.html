@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://vinytnzzgryodyrftabg.supabase.co">
 <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
 <link rel="dns-prefetch" href="https://places.googleusercontent.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:#F0F1E8; --olive:#4A4B2F; --ebony:#6B654B; --tea:#D4DF9E; --white:#FFFFFF;
@@ -26,11 +26,18 @@
   --sh-card: 0 2px 6px rgba(74,75,47,.07), 0 18px 44px -10px rgba(74,75,47,.22), 0 40px 90px -24px rgba(74,75,47,.2);
   --sh-panel: 0 1px 3px rgba(74,75,47,.05), 0 18px 48px -16px rgba(74,75,47,.18);
   --sh-nav: 0 1px 0 rgba(74,75,47,.04), 0 4px 14px -2px rgba(74,75,47,.12), 0 18px 48px -8px rgba(74,75,47,.22);
-  --serif:'Fraunces',Georgia,serif; --sans:'Inter Tight',system-ui,-apple-system,sans-serif; --mono:'JetBrains Mono','Courier New',monospace;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter Tight',system-ui,-apple-system,sans-serif; --mono:'JetBrains Mono','Courier New',monospace; --script:'Caveat',cursive;
   /* A real (sampled) spring for the felt moments — slight overshoot, soft settle.
      Falls back to the old cubic-bezier where linear() is unsupported. */
   --spring: cubic-bezier(.32,1.08,.62,1);
   --spring: linear(0, 0.01, 0.04 2.2%, 0.16 4.8%, 0.71 12.6%, 0.92 16.2%, 1.02 19.7%, 1.09 23.6%, 1.115 27.4%, 1.106 31.3%, 1.06 38%, 1.008 46.5%, 0.988 53.2%, 0.985 60.1%, 0.996 76.4%, 1);
+  /* soft-UI — one material, shaped by light. Vesta Live redesign (2026-07). */
+  --nm:#ECEDE2;
+  --nm-out:7px 7px 15px rgba(74,75,47,.15), -7px -7px 15px rgba(255,255,255,.9);
+  --nm-sm:4px 4px 9px rgba(74,75,47,.12), -4px -4px 9px rgba(255,255,255,.85);
+  --nm-in:inset 3px 3px 6px rgba(74,75,47,.13), inset -3px -3px 6px rgba(255,255,255,.9);
+  --tea-grad:linear-gradient(180deg, #dfe8ac, #cdd88f);
+  --dark-grad:linear-gradient(180deg, #565738, #43442a);
 }
 /* Cross-document view transitions: tapping into a contractor's /c/ profile morphs the
    name/monogram instead of a hard cut. Progressive enhancement — unsupported browsers
@@ -86,14 +93,23 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
 /* HOME */
 .home-body { padding:14px 20px 130px; flex:1; }
-.home-h1 { font-family:var(--serif); font-size:35px; font-weight:700; line-height:1.08; letter-spacing:-.02em; color:var(--olive); margin-bottom:10px; }
-.home-sub { font-size:14px; color:var(--ebony); margin-bottom:18px; }
-/* search hero — the front door is search, not categories */
-.home-search { display:flex; align-items:center; gap:11px; width:100%; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:var(--r-pill); padding:15px 18px; cursor:text; box-shadow:0 2px 6px rgba(74,75,47,.05), 0 14px 30px -16px rgba(74,75,47,.2); margin-bottom:18px; text-align:left; outline:none; }
-.home-search:hover { border-color:rgba(74,75,47,.22); }
+.home-h1 { font-family:var(--serif); font-size:28px; font-weight:700; line-height:1.14; letter-spacing:-.02em; color:var(--olive); margin-bottom:10px; }
+/* the lead-in — Vesta Live signs the headline, warm and classy, Caveat & slanted */
+.hl-vlive { font-family:var(--script); font-size:34px; font-weight:700; color:var(--olive); line-height:1; display:inline-block; transform:rotate(-2.5deg); padding-bottom:4px; margin-right:1px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px; }
+.home-sub { font-size:14px; color:var(--ebony); line-height:1.5; margin-bottom:18px; }
+/* VESTA LIVE — the front door. Soft, muted sage (not glossy), raised from the page's
+   own material. Ungendered: "we'll point you to the right pro," not diagnosis-only —
+   Vesta helps with anything home-related, not just active problems. */
+.home-search { display:flex; align-items:center; gap:13px; width:100%; background:var(--tea-grad); border:none; border-radius:22px; padding:14px 17px; cursor:pointer; box-shadow:var(--nm-out); margin-bottom:18px; text-align:left; outline:none; }
+.home-search:active { box-shadow:var(--nm-in); }
 .home-search:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
-.home-search > svg { width:19px; height:19px; color:var(--ebony); flex-shrink:0; }
-.hs-ph { font-size:15px; color:rgba(74,75,47,.5); min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.home-search .hs-spark { width:30px; height:30px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.6); box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 2px 2px 5px rgba(74,75,47,.14), -2px -2px 5px rgba(255,255,255,.7); }
+.home-search .hs-spark svg { width:15px; height:15px; color:var(--olive); }
+.home-search .hs-tx { flex:1; min-width:0; }
+.hs-vlive { display:inline-block; font-family:var(--script); font-size:17px; font-weight:700; color:var(--olive); line-height:1; transform:rotate(-2deg); padding-bottom:3px; margin-bottom:2px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%234A4B2F' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px; }
+.hs-ph { display:block; font-size:12px; color:rgba(74,75,47,.65); min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .hs-ph #home-search-ph { color:var(--ebony); }
 /* Typewriter caret — blinks steadily at rest, held solid while a character is being typed
    (toggled via .typing from the rotator) so it never blinks mid-keystroke. */
@@ -107,53 +123,53 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* Mobile: the stack replaces the flat problem/browse sections below it. Desktop keeps
    the flat layout (the sidebar already owns full browse there — no stack needed). */
 @media (max-width:899.98px){ .home-problems, .home-browse-sec { display:none !important; } }
+/* The broken/planning content now lives in the desktop sidebar's two accordions
+   (dsProblemAccHTML) — the center column no longer repeats it. renderHome() still
+   populates #home-problems harmlessly; this just keeps it out of view everywhere. */
+.home-problems { display:none !important; }
 @media (min-width:900px){ .home-stack { display:none !important; } }
-/* ── CATEGORY STACK — one dominant card, the next peeking behind at a diagonal.
-   Same white-card / squig / gradient-chip vocabulary as everything above it. ── */
+/* ── CATEGORY STACK — soft-UI cards: a defined rim + a short, blended shadow (never
+   a hard edge), inset from the sides so it reads as a floating card. Content is
+   centred (drawing → title → one-liner) with a "Vesta's read" hint and a single
+   CTA sized to its own text — no data band, no pill grid (moved to the sidebar
+   on desktop; mobile's fast-path is the CTA → the tap-flow walkthrough). ── */
 .home-stack { margin-bottom:8px; }
-.hstk-stage { position:relative; height:460px; margin-bottom:12px; }
-.hstk-card { position:absolute; inset:0; background:var(--white); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:17px 19px 15px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; }
-.hstk-card::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
-.hstk-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:2px; }
-.hstk-spot { width:46px; height:46px; flex-shrink:0; color:var(--olive); }
+.hstk-stage { position:relative; height:min(39vh, 306px); margin:0 6px 16px; }
+.hstk-card { position:absolute; inset:0; background:var(--nm); border:1.5px solid rgba(74,75,47,.13); border-radius:26px; padding:15px 19px 15px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; user-select:none;
+  box-shadow:0 1px 2px rgba(74,75,47,.08), 0 6px 12px -4px rgba(74,75,47,.12), 0 14px 22px -10px rgba(74,75,47,.14); }
+.hstk-card::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
+/* the stamp — rubber-ink page marker, top LEFT */
+.hstk-stamp { position:absolute; top:14px; left:16px; transform:rotate(-2.5deg); font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.18em; color:rgba(74,75,47,.5); border:1.5px solid rgba(74,75,47,.3); border-radius:5px; padding:2.5px 8px 2px; }
+.hstk-top { display:flex; align-items:flex-start; justify-content:flex-end; gap:10px; }
+.hstk-kick { font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--olive); padding:5px 10px; border-radius:999px; background:var(--nm); box-shadow:var(--nm-in); }
+/* drawing + title + one-liner, centred — min-height:0 is load-bearing: without it a
+   flex:1 column child won't shrink below its content's natural size, which on the
+   longest card (browse-every-trade) pushed the CTA past the card's clipped edge. */
+.hstk-center { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:9px; padding:6px 4px; overflow:hidden; }
+.hstk-spot { width:54px; height:54px; flex-shrink:0; color:var(--olive); }
 .hstk-spot svg { width:100%; height:100%; }
-.hstk-kick { font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border-radius:var(--r-pill); padding:4px 9px; }
-.hstk-card h3 { font-family:var(--serif); font-size:19px; font-weight:700; margin:5px 0 3px; letter-spacing:-.012em; color:var(--olive); }
-.hstk-card p.hstk-note { font-size:11.5px; color:var(--ebony); line-height:1.42; margin:0 0 9px; }
-.hstk-band { background:var(--bg); border-radius:14px; padding:9px 12px 10px; margin-bottom:9px; }
-.hstk-band-lbl { font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); margin-bottom:6px; }
-.hstk-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
-.hstk-row:last-child { margin-bottom:0; }
-.hstk-row .l { font-size:10px; font-weight:600; width:64px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.hstk-track { flex:1; height:5px; border-radius:99px; background:rgba(74,75,47,.1); overflow:hidden; }
-.hstk-fill { display:block; height:100%; border-radius:99px; background:var(--olive); }
-.hstk-row .n { font-family:var(--mono); font-size:8.5px; color:var(--ebony); flex-shrink:0; width:26px; text-align:right; }
-.hstk-sub { font-size:10.5px; color:var(--ebony); line-height:1.4; margin:7px 0 0; padding-top:7px; border-top:1px dashed rgba(74,75,47,.14); }
-.hstk-sub b { color:var(--olive); }
-.hstk-chips { display:flex; flex-wrap:wrap; gap:6px; }
-.hstk-chip { font-size:9.5px; font-weight:600; color:var(--olive); background:var(--white); border:1px solid rgba(74,75,47,.1); border-radius:var(--r-pill); padding:5px 9px; }
-.hstk-chip i { font-style:normal; font-family:var(--mono); font-size:8px; color:var(--ebony); margin-left:4px; }
-.hstk-row.hstk-price { margin-top:8px; padding-top:7px; border-top:1px dashed rgba(74,75,47,.14); }
-.hstk-row.hstk-price .l { width:auto; flex:0 0 auto; max-width:44%; }
-.hstk-track.frep-mix { display:flex; }
-.hstk-stats { display:flex; gap:16px; }
-.hstk-stats.hstk-groups { display:grid; grid-template-columns:repeat(2,1fr); gap:8px 14px; }
-.hstk-stat b { display:block; font-family:var(--serif); font-size:18px; font-weight:700; line-height:1; letter-spacing:-.02em; color:var(--olive); }
-.hstk-stat span { display:block; font-family:var(--mono); font-size:7px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); margin-top:3px; }
-.hstk-cta { display:flex; align-items:center; justify-content:center; gap:7px; width:100%; background:var(--olive); color:var(--white); border:none; border-radius:var(--r-pill); padding:12px 16px; font-family:var(--sans); font-size:13.5px; font-weight:700; cursor:pointer; margin:3px 0 13px; box-shadow:0 8px 18px -8px rgba(74,75,47,.55); transition:transform .18s var(--spring); }
-.hstk-cta:active { transform:scale(.96); }
-.hstk-cta svg { width:13px; height:13px; flex-shrink:0; }
-.hstk-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:auto; }
-.hstk-pill { display:flex; align-items:center; gap:6px; background:var(--bg); border-radius:var(--r-pill); padding:8px 11px; font-size:11px; font-weight:600; color:var(--olive); cursor:pointer; border:none; font-family:var(--sans); text-align:left; }
-.hstk-pill svg { width:13px; height:13px; flex-shrink:0; color:var(--olive); }
-.hstk-swipe-hint { display:flex; align-items:center; justify-content:center; gap:6px; font-size:11px; color:var(--ebony); opacity:.7; margin-bottom:10px; }
-.hstk-swipe-hint svg { width:13px; height:13px; animation:hstkHand 1.8s ease-in-out infinite; }
-@keyframes hstkHand { 0%,100%{ transform:translateX(0); opacity:.55; } 50%{ transform:translateX(6px); opacity:1; } }
+.hstk-card h3 { font-family:var(--serif); font-size:22px; font-weight:700; margin:2px 0 0; letter-spacing:-.015em; color:var(--olive); flex-shrink:0; }
+.hstk-card p.hstk-note { font-size:12px; color:var(--ebony); line-height:1.4; max-width:240px; }
+/* Vesta's read — the useful hint, grouped with the centred content */
+.hstk-take { display:flex; align-items:flex-start; gap:8px; margin-top:2px; max-width:280px; padding-left:12px; border-left:2.5px solid var(--tea); flex-shrink:0; }
+.hstk-take .sig { font-family:var(--script); font-size:15px; font-weight:700; color:var(--olive); line-height:1; flex-shrink:0; transform:rotate(-6deg); margin-top:1px; }
+.hstk-take p { font-size:11.5px; line-height:1.38; color:var(--olive); font-weight:500; text-align:left; margin:0; }
+/* one CTA per card, sized to its own text — never stretched to the card's width */
+.hstk-ctas { display:flex; justify-content:center; flex-shrink:0; }
+.hstk-cta { display:flex; align-items:center; justify-content:center; gap:7px; width:auto; background:var(--dark-grad); color:var(--white); border:none; border-radius:999px; padding:13px 22px; font-family:var(--sans); font-size:13px; font-weight:700; white-space:nowrap; cursor:pointer; box-shadow:0 4px 13px -3px rgba(67,68,42,.5); }
+.hstk-cta:active { transform:scale(.985); }
+.hstk-cta svg { width:14px; height:14px; flex-shrink:0; color:var(--tea); }
+/* swipe hint — Caveat, given real presence and clearance from the card's shadow */
+.hstk-swipe-hint { display:flex; align-items:center; justify-content:center; gap:9px; margin:16px 0 6px; }
+.hstk-swipe-hint span { font-family:var(--script); font-size:19px; font-weight:700; color:var(--olive); line-height:1; padding-bottom:4px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 6px; }
+.hstk-swipe-hint svg { width:16px; height:16px; color:var(--olive); flex-shrink:0; animation:hstkHand 1.8s ease-in-out infinite; }
+@keyframes hstkHand { 0%,100%{ transform:translateX(0); opacity:.55; } 50%{ transform:translateX(4px); opacity:1; } }
 @media (prefers-reduced-motion:reduce){ .hstk-swipe-hint svg { animation:none; } }
 .hstk-dots { display:flex; justify-content:center; gap:6px; margin-bottom:22px; }
 .hstk-dot { height:6px; width:6px; border-radius:99px; background:rgba(74,75,47,.24); cursor:pointer; transition:width .28s var(--spring), background .28s; border:none; padding:0; }
 .hstk-dot.on { width:18px; background:var(--olive); }
-.hstk-arrow { position:absolute; top:50%; transform:translateY(-50%); width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.92); box-shadow:var(--sh-row); display:flex; align-items:center; justify-content:center; color:var(--olive); cursor:pointer; z-index:9; border:none; }
+.hstk-arrow { position:absolute; top:50%; transform:translateY(-50%); width:28px; height:28px; border-radius:50%; background:var(--nm); box-shadow:var(--nm-sm); display:flex; align-items:center; justify-content:center; color:var(--olive); cursor:pointer; z-index:9; border:none; }
 .hstk-arrow.l { left:-4px; } .hstk-arrow.r { right:-4px; }
 /* Hand-drawn underline — the playful accent under key words in section headings and
    step titles. A stretched SVG squiggle, tea on paper; deliberately imperfect. */
@@ -208,18 +224,34 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    small inline chevron carrying the 01->02->03 read order. */
 .how-steps { display:flex; align-items:flex-start; gap:7px; }
 .how-col { flex:1 1 0; min-width:0; }
-.how-col .no { display:inline-flex; width:21px; height:21px; border-radius:7px; background:var(--tea); color:var(--olive); font-family:var(--mono); font-size:9px; font-weight:600; align-items:center; justify-content:center; margin-bottom:6px; }
-.how-col b { display:block; font-family:var(--serif); font-size:12.5px; font-weight:700; color:var(--olive); letter-spacing:-.005em; line-height:1.2; margin-bottom:3px; }
+.how-col .no { display:inline-flex; width:19px; height:19px; border-radius:6px; background:none; color:rgba(74,75,47,.5); font-family:var(--mono); font-size:9px; font-weight:600; align-items:center; justify-content:center; margin-bottom:4px; padding:0; }
+/* the route, in Vesta's own hand — Caveat, bigger, given real weight instead of
+   a whispered mono caption. */
+.how-col b { display:block; font-family:var(--script); font-size:19px; font-weight:700; color:var(--olive); letter-spacing:0; line-height:1.05; margin-bottom:3px; }
 .how-col b .squig { padding-bottom:4px; background-size:100% 5px; }
 .how-col p { margin:0; font-size:9.5px; color:var(--ebony); line-height:1.35; }
-.how-arrow { flex-shrink:0; margin-top:24px; color:rgba(74,75,47,.35); }
+.how-arrow { flex-shrink:0; margin-top:22px; color:rgba(74,75,47,.35); }
 @media (min-width:900px){
   .how-steps { gap:22px; }
-  .how-col .no { width:26px; height:26px; font-size:11px; }
-  .how-col b { font-size:15px; margin-bottom:4px; }
+  .how-col .no { width:24px; height:24px; font-size:10px; }
+  .how-col b { font-size:23px; margin-bottom:4px; }
   .how-col b .squig { background-size:100% 6px; }
   .how-col p { font-size:12px; line-height:1.5; }
-  .how-arrow { margin-top:30px; } .how-arrow svg{ width:14px; height:14px; }
+  .how-arrow { margin-top:28px; } .how-arrow svg{ width:14px; height:14px; }
+}
+/* the 4 example messages — desktop only, demonstrating real range (emergency,
+   planning, a price question, whole-home advice) before the composer. Mobile has
+   no room; the swipe-card stack covers this job there instead. */
+.home-starters { display:none; }
+@media (min-width:900px){
+  .home-starters { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+  .hstart { display:flex; align-items:center; gap:14px; text-align:left; border:none; border-radius:20px; padding:14px 18px;
+    background:var(--nm); box-shadow:var(--nm-sm); transition:box-shadow .25s ease, transform .25s var(--spring); cursor:pointer; }
+  .hstart:hover { box-shadow:var(--nm-out); transform:translateY(-1px); }
+  .hstart:active { box-shadow:var(--nm-in); transform:none; }
+  .hstart .spot { width:38px; height:38px; flex-shrink:0; color:var(--olive); }
+  .hstart .spot svg { width:100%; height:100%; }
+  .hstart b { font-size:13px; font-weight:600; color:var(--olive); line-height:1.4; }
 }
 /* search-result "browse this trade" suggestion (problem→trade routing) */
 .vsr-route { background:rgba(212,223,158,.2); }
@@ -233,8 +265,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    resident (sticky, internally scrollable). Mobile: opens from the top pill as a sheet
    (no room for a full column there). ── */
 #field-report { display:none; }
-.frep-card { position:relative; background:var(--white); border:1px solid rgba(74,75,47,.12); border-radius:20px; padding:20px 22px 18px; box-shadow:var(--sh-row); overflow:hidden; }
-.frep-card::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
+/* soft-UI: a raised panel of the page's own material, no white card / gradient bar */
+.frep-card { position:relative; background:var(--nm); border:none; border-radius:26px; padding:22px 24px 20px; box-shadow:var(--nm-out); overflow:hidden; }
 .frep-h { font-family:var(--serif); font-size:23px; font-weight:700; letter-spacing:-.02em; color:var(--olive); line-height:1.15; margin:2px 0 5px; }
 .frep-sub { font-size:12.5px; color:var(--ebony); line-height:1.5; margin-bottom:16px; }
 .frep-pulse { display:flex; gap:8px 26px; flex-wrap:wrap; padding-bottom:4px; }
@@ -242,7 +274,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .frep-row { display:flex; align-items:center; gap:10px; width:100%; border:none; background:none; cursor:pointer; padding:7px 8px; margin:0 -8px 1px; border-radius:11px; font-family:var(--sans); text-align:left; transition:background .14s; }
 .frep-row:hover { background:rgba(74,75,47,.05); }
 .frep-row-l { font-size:12.5px; font-weight:600; color:var(--olive); flex-shrink:0; width:88px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.frep-row-track { flex:1; height:7px; border-radius:99px; background:rgba(74,75,47,.08); overflow:hidden; display:flex; }
+.frep-row-track { flex:1; height:8px; border-radius:99px; background:var(--nm); box-shadow:inset 2px 2px 4px rgba(74,75,47,.16), inset -2px -2px 4px rgba(255,255,255,.85); overflow:hidden; display:flex; padding:1.5px; }
 .frep-row-fill { display:block; height:100%; border-radius:99px; background:var(--olive); }
 .frep-mix { gap:2px; }
 .frep-row-n { font-family:var(--mono); font-size:10px; font-weight:600; color:var(--olive); flex-shrink:0; min-width:34px; text-align:right; }
@@ -256,8 +288,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* The top discovery pill — obvious the moment the page loads, not buried below the
    fold. Same brand gradient as every other chip, plus a slow one-shot shimmer sweep
    so it reads as "worth tapping" without ever feeling like an ad unit. */
-.frep-toppill { display:inline-flex; align-items:center; gap:7px; font-family:var(--sans); font-size:12.5px; font-weight:700; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border:1px solid rgba(74,75,47,.12); box-shadow:0 1px 3px rgba(74,75,47,.1), inset 0 1px 0 rgba(255,255,255,.55); border-radius:var(--r-pill); padding:8px 15px; cursor:pointer; position:relative; overflow:hidden; }
-.frep-toppill svg { flex-shrink:0; }
+/* soft, neutral — not tea-glossy. It's a utility pill, not a CTA competing with Vesta Live. */
+.frep-toppill { display:inline-flex; align-items:center; gap:7px; font-family:var(--sans); font-size:12px; font-weight:700; color:var(--olive); background:var(--nm); border:none; box-shadow:var(--nm-sm); border-radius:var(--r-pill); padding:9px 15px; cursor:pointer; position:relative; overflow:hidden; transition:opacity .4s ease, transform .4s ease; }
+.frep-toppill:active { box-shadow:var(--nm-in); }
+.frep-toppill svg { flex-shrink:0; color:var(--olive); }
 .frep-toppill::after { content:''; position:absolute; inset:0; background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.55) 50%, transparent 60%); background-size:220% 100%; background-position:130% 0; animation:frepShimmer 3.6s ease-in-out 1s 2; }
 @keyframes frepShimmer { to { background-position:-30% 0; } }
 @media (prefers-reduced-motion:reduce){ .frep-toppill::after { animation:none; } }
@@ -793,8 +827,27 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
      its content size) — brand + footer stay pinned even if the trade list overflows a
      short viewport, instead of the whole sidebar clipping. */
   .ds-nav { display:flex; flex-direction:column; gap:3px; flex:1; min-height:0; overflow-y:auto; scrollbar-width:thin; }
-  .ds-glabel { font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.13em; text-transform:uppercase; color:rgba(74,75,47,.5); padding:12px 14px 4px; }
+  .ds-glabel { padding:18px 14px 6px; }
   .ds-glabel:first-child { padding-top:4px; }
+  /* one title style, uniform across the whole sidebar — the two entry accordions AND
+     the four trade-group labels. The weight comes from the Caveat+underline treatment
+     itself, never from a loud container. */
+  .sb-title { display:inline-block; font-family:var(--script); font-size:19px; font-weight:700; color:var(--olive); line-height:1; transform:rotate(-2deg); padding-bottom:4px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px; }
+  /* the two entry accordions — container stays subtle (a plain row like the trade
+     rows below), the title's own typography carries the weight. */
+  .ds-acc { margin-bottom:2px; }
+  .ds-acc-h { display:flex; align-items:center; width:100%; gap:11px; border:none; background:none; padding:11px 13px; margin-bottom:1px; border-radius:14px; color:var(--olive); text-align:left; cursor:pointer; transition:background .18s ease; }
+  .ds-acc-h:hover { background:rgba(255,255,255,.5); }
+  .ds-acc.open .ds-acc-h { background:rgba(255,255,255,.65); }
+  .ds-acc-h .ds-ic { color:var(--olive); }
+  .ds-acc-h .car { margin-left:auto; width:11px; height:11px; color:var(--ebony); transition:transform .3s var(--spring); flex-shrink:0; }
+  .ds-acc.open .ds-acc-h .car { transform:rotate(90deg); }
+  .ds-acc-body { display:none; padding-bottom:6px; }
+  .ds-acc.open .ds-acc-body { display:block; animation:dsAccIn .3s var(--spring) both; }
+  @keyframes dsAccIn { from{ opacity:0; transform:translateY(-5px); } to{ opacity:1; transform:none; } }
+  .ds-acc-more { display:flex; align-items:center; justify-content:center; gap:5px; width:100%; border:none; background:none; padding:8px; margin-top:2px; font-family:var(--sans); font-size:11.5px; font-weight:600; color:var(--ebony); cursor:pointer; }
+  .ds-acc-more:hover { color:var(--olive); }
   .ds-item { display:flex; align-items:center; gap:13px; width:100%; padding:11px 14px; border:none; background:none; cursor:pointer; border-radius:13px; text-align:left; color:var(--ebony); transition:background .14s, color .14s; }
   .ds-item:hover { background:rgba(255,255,255,.6); color:var(--olive); }
   .ds-item.on { background:var(--white); color:var(--olive); box-shadow:0 1px 3px rgba(74,75,47,.06), 0 6px 16px -6px rgba(74,75,47,.16); }
@@ -818,7 +871,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
      the hero (depth, not decoration) and content that spans further before wrapping. */
   #s-home .home-body { max-width:1120px; margin:0 auto; padding:8vh 40px 80px; flex:none;
     background:radial-gradient(720px 420px at 88% -8%, rgba(212,223,158,.32), transparent 62%); }
-  #s-home .home-h1 { font-size:46px; }
+  #s-home .home-h1 { font-size:40px; line-height:1.15; max-width:600px; }
+  #s-home .hl-vlive { font-size:50px; }
   /* The sidebar is the full trade taxonomy on desktop — repeating it as tiles in the
      center column was pure duplication (same group labels, same counts, twice). Center
      stays focused on discovery: search + problems + the personalized return band. */
@@ -1351,11 +1405,33 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
         <div class="home-hero-main">
           <div id="frep-toppill-desktop"></div>
           <div class="home-return" id="home-return"></div>
-          <h1 class="home-h1">Find a contractor you can actually trust.</h1>
-          <p class="home-sub">Fairfield County&rsquo;s verified contractor network.</p>
-          <button class="home-search" id="home-search" type="button" aria-label="Search contractors or describe what you need">
-            <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg>
-            <span class="hs-ph">&ldquo;<span id="home-search-ph"></span><span class="hs-caret" aria-hidden="true"></span>&rdquo;</span>
+          <h1 class="home-h1"><span class="hl-vlive">Vesta Live</span> &mdash; an honest answer, <span class="squig">not a sales pitch.</span></h1>
+          <p class="home-sub">Ask about anything home-related &mdash; Vesta reads the county&rsquo;s own record and answers you straight.</p>
+          <!-- desktop only: 4 example messages, demonstrating real range before the composer -->
+          <div class="home-starters" aria-label="Example questions for Vesta">
+            <button class="hstart" data-say="Water is coming through my kitchen ceiling — who actually picks up on a Sunday?">
+              <span class="spot"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 31 Q9 30 10 29.4 L31 12 Q32 11.2 33 12 L54.5 29.6 Q55 30 55 31"/><path d="M14.5 31.5 L14 51 Q14 52.5 15.5 52.5 L48.5 52.3 Q50 52.3 50 50.8 L49.6 31.6"/><path d="M37 35 l-4.5 5.5 l5 4.5 l-4 6"/><path d="M22.5 39 q-3.4 5.6 -.3 8 q3.3 -1.8 .3 -8z" fill="#D4DF9E" stroke-width="2"/></svg></span>
+              <b>&ldquo;Water&rsquo;s coming through the&nbsp;ceiling&rdquo;</b>
+            </button>
+            <button class="hstart" data-say="I want to redo my driveway next spring. Where do I even start?">
+              <span class="spot"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15 Q11.5 14 13 14 L44 13.5 Q45.5 13.5 45.4 15 L45.8 46 Q45.8 47.5 44.3 47.4 L13.4 47.8 Q12 47.8 12 46.3 Z"/><path d="M18 24 h14 M18 31 h20 M18 38 h11" stroke-dasharray="3.5 4" stroke-width="1.8"/><path d="M39 51 L56 32.5 l4.7 4.3 L43.5 55.5 l-6 1.6 Z" fill="#F0F1E8"/><path d="M43.5 55.5 l-6 1.6 1.6 -6.1" fill="#D4DF9E" stroke-width="2"/></svg></span>
+              <b>&ldquo;I&rsquo;m redoing my driveway next&nbsp;spring&rdquo;</b>
+            </button>
+            <button class="hstart" data-say="What does a fair price for a new roof look like in Fairfield County?">
+              <span class="spot"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 10.5 Q49.5 10 53.5 27 Q56 45 38.5 52.5 Q20 57 12.5 41 Q6.5 22 24 12.5 Q28 10.8 32 10.5 Z"/><path d="M25.5 25.5 q0 -7 6.5 -7 q6.5 0 6.5 6 q0 4.5 -4.5 6.2 q-2.5 1 -2.5 4.3"/><circle cx="31.5" cy="42.5" r="2" fill="#D4DF9E" stroke-width="2"/></svg></span>
+              <b>&ldquo;What&rsquo;s a fair price for a new&nbsp;roof?&rdquo;</b>
+            </button>
+            <button class="hstart" data-say="We just bought a 1962 colonial — old furnace, 100-amp panel, chimney needs repointing. What order do we tackle it?">
+              <span class="spot"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 31 Q9 30 10 29.4 L31 12 Q32 11.2 33 12 L54.5 29.6 Q55 30 55 31"/><path d="M14.5 31.5 L14 51 Q14 52.5 15.5 52.5 L48.5 52.3 Q50 52.3 50 50.8 L49.6 31.6"/><path d="M32 34.5 l1.7 5.6 5.6 1.7 -5.6 1.7 -1.7 5.6 -1.7 -5.6 -5.6 -1.7 5.6 -1.7z" fill="#D4DF9E" stroke-width="2"/></svg></span>
+              <b>&ldquo;We just bought an older colonial &mdash; where do we&nbsp;start?&rdquo;</b>
+            </button>
+          </div>
+          <button class="home-search" id="home-search" type="button" aria-label="Vesta Live — ask about anything home-related, or search">
+            <span class="hs-spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v10H9l-4 4V5z"/></svg></span>
+            <span class="hs-tx">
+              <b class="hs-vlive">Vesta Live</b>
+              <span class="hs-ph">&ldquo;<span id="home-search-ph"></span><span class="hs-caret" aria-hidden="true"></span>&rdquo;</span>
+            </span>
           </button>
           <!-- The mechanism FIRST, then the categories — a cold visitor should know why
                this isn't a lead-gen site before we ask them to tap anything. No heading;
@@ -2163,7 +2239,7 @@ function fieldReportHTML(){
   const emerg = cfd.emerg.slice(0,6);
   const emergHtml = emerg.length
     ? '<div class="fr2-lbl" style="margin-top:22px">Who answers an emergency</div>'+
-      '<p class="frep-note">Share of each field whose review record shows emergency response.</p>'+
+      '<p class="frep-note">Share of each field with emergency response on record.</p>'+
       emerg.map(x=>'<button class="frep-row" data-trade="'+esc(x.k)+'">'+
         '<span class="frep-row-l">'+esc(x.label)+'</span>'+
         '<span class="frep-row-track"><span class="frep-row-fill" style="width:'+x.f.emergPct+'%"></span></span>'+
@@ -2173,7 +2249,7 @@ function fieldReportHTML(){
   const priced = cfd.priced.slice(0,6);
   const pricedHtml = priced.length
     ? '<div class="fr2-lbl" style="margin-top:22px">How the trades price</div>'+
-      '<p class="frep-note">Value · mid-market · premium — where reviews show a clear pricing signal.</p>'+
+      '<p class="frep-note">Value · mid-market · premium — where pricing is clear on the record.</p>'+
       priced.map(x=>{ const m=x.f.priceMix;
         return '<button class="frep-row" data-trade="'+esc(x.k)+'">'+
         '<span class="frep-row-l">'+esc(x.label)+'</span>'+
@@ -2244,71 +2320,43 @@ function hstkCardData(){
   const cfd = countyFieldData();
   const emergTop = cfd ? cfd.emerg.slice(0,3) : [];
   const scarceTop = cfd ? cfd.scarce.slice(0,3) : [];
-  // Emergency share alone answers "who answers" — not "who can I trust in the moment."
-  // The top responder's median tenure is real, already-computed context (fieldStats.medTen),
-  // just never surfaced here before.
   const topEmerg = emergTop[0];
-  const tenureLine = (topEmerg && topEmerg.f.medTen)
-    ? '<p class="hstk-sub">'+esc(topEmerg.label)+'&rsquo;s emergency crews average <b>'+topEmerg.f.medTen+' yrs</b> on record.</p>' : '';
-  const brokenBand = emergTop.length
-    ? '<div class="hstk-band"><div class="hstk-band-lbl">Who answers at 11pm</div>'+
-      emergTop.map(x=>'<div class="hstk-row"><span class="l">'+esc(x.label)+'</span><span class="hstk-track"><span class="hstk-fill" style="width:'+x.f.emergPct+'%"></span></span><span class="n">'+x.f.emergPct+'%</span></div>').join('')+
-      tenureLine+'</div>'
-    : '';
-  // Scarce skills alone answers "what's rare" — planning also needs "what will this cost,"
-  // which we already compute (priceMix) for the Field Report. One compact mixed bar for
-  // the single most price-differentiated trade gives real budget calibration here too.
   const topPriced = cfd ? cfd.priced[0] : null;
-  const priceLine = (topPriced && topPriced.f.priceMix)
-    ? '<div class="hstk-row hstk-price"><span class="l">'+esc(topPriced.label)+' pricing</span><span class="hstk-track frep-mix">'+
-        (topPriced.f.priceMix.value?'<span class="fr2-seg pv" style="flex:'+topPriced.f.priceMix.value+'"></span>':'')+
-        (topPriced.f.priceMix.mid?'<span class="fr2-seg pm" style="flex:'+topPriced.f.priceMix.mid+'"></span>':'')+
-        (topPriced.f.priceMix.prem?'<span class="fr2-seg pp" style="flex:'+topPriced.f.priceMix.prem+'"></span>':'')+
-      '</span><span class="n">'+topPriced.f.priceMix.prem+'%<i>prem</i></span></div>' : '';
-  const planBand = scarceTop.length
-    ? '<div class="hstk-band"><div class="hstk-band-lbl">Start early — scarce skills</div><div class="hstk-chips">'+
-      scarceTop.map(s=>'<span class="hstk-chip">'+esc(s.label)+'<i>'+s.pct+'%</i></span>').join('')+'</div>'+priceLine+'</div>'
-    : '';
-  // The compass card's own "county pulse" duplicated the Field Report's opening stat
-  // verbatim — same rule Drew's already caught elsewhere. Its distinct job: preview the
-  // actual directory structure the CTA opens (grouped by TRADE_GROUPS), not repeat a
-  // county-wide number one tap away.
-  const dirBand = cfd
-    ? '<div class="hstk-band"><div class="hstk-band-lbl">Twelve trades, four rooms</div><div class="hstk-stats hstk-groups">'+
-      TRADE_GROUPS.map(g=>'<span class="hstk-stat"><b>'+g.keys.length+'</b><span>'+esc(g.label)+'</span></span>').join('')+
-      '</div></div>'
-    : '';
+  // Vesta's read — one real, data-true hint per card, replacing the old data band.
+  const brokenTake = topEmerg
+    ? esc(topEmerg.label)+' answers emergencies most often here &mdash; '+topEmerg.f.emergPct+'% of the field responds.'
+    : 'Every firm here is checked against real emergency response records.';
+  const planTake = (scarceTop[0] && topPriced && topPriced.f.priceMix)
+    ? esc(scarceTop[0].label)+' is the scarcest skill in the county right now &mdash; worth booking early.'
+    : 'Every job maps to real work county firms are proven to do.';
+  const dirTake = 'Every firm here earns its place on record alone &mdash; none paid to appear.';
   return [
     { spot:'broken', kick:'Urgent', h:'Something <span class="squig">broken?</span>',
-      note:'Live problems, routed to firms whose records show they answer.', band:brokenBand,
-      cta:'Get help now', ctaAction:'triage-broken', ctaSeed:PROBLEMS_BROKEN[0] ? PROBLEMS_BROKEN[0].label : '',
-      pills:PROBLEMS_BROKEN.map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})) },
+      note:'Live problems, routed to firms whose records show they answer.', take:brokenTake,
+      cta:'Walk me through it', ctaAction:'triage-broken' },
     { spot:'plan', kick:'Planning', h:'Planning <span class="squig">a project?</span>',
-      note:'Every job maps to real work county firms are proven to do.', band:planBand,
-      cta:'Start planning', ctaAction:'triage-plan', ctaSeed:PROBLEMS_PLANNING[0] ? PROBLEMS_PLANNING[0].label : '',
-      pills:[...PROBLEMS_PLANNING.slice(0,3).map(p=>({icon:p.icon, label:p.label, trade:p.trade, hi:p.hi, hiLabel:p.label})),
-        {icon:'floor', label:'+ '+(PROBLEMS_PLANNING.length-3)+' more', trade:null}] },
+      note:'Every job maps to real work county firms are proven to do.', take:planTake,
+      cta:'Start planning', ctaAction:'triage-plan' },
     { spot:'compass', kick:'Directory', h:'Or browse <span class="squig">every trade</span>',
-      note:'The whole field Vesta tracks — ranked by record, never ad spend.', band:dirBand,
-      cta:'Browse the directory', ctaAction:'directory',
-      pills:[...trades.slice(0,3).map(t=>({icon:t.icon, label:t.label, trade:t.key})),
-        {icon:'floor', label:'+ '+(trades.length-3)+' more', trade:null}] },
+      note:'The whole field Vesta tracks — ranked by record, never ad spend.', take:dirTake,
+      cta:'Take me to the directory', ctaAction:'directory' },
   ];
 }
-function hstkCardHTML(d){
-  return '<div class="hstk-top"><span class="hstk-spot">'+HSTK_SPOTS[d.spot]+'</span><span class="hstk-kick">'+esc(d.kick)+'</span></div>'+
-    '<h3>'+d.h+'</h3><p class="hstk-note">'+esc(d.note)+'</p>'+
-    d.band+
-    '<button class="hstk-cta" type="button">'+esc(d.cta)+
-      '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></button>'+
-    '<div class="hstk-grid">'+d.pills.map((p,i)=>'<button class="hstk-pill" data-i="'+i+'">'+(ICONS[p.icon]||'')+esc(p.label)+'</button>').join('')+'</div>';
+const HSTK_WALK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l4-4 4 3 5-6 3 2"/></svg>';
+function hstkCardHTML(d, i){
+  return '<span class="hstk-stamp">'+(i+1)+' / 3</span>'+
+    '<div class="hstk-top"><span class="hstk-kick">'+esc(d.kick)+'</span></div>'+
+    '<div class="hstk-center"><span class="hstk-spot">'+HSTK_SPOTS[d.spot]+'</span>'+
+      '<h3>'+d.h+'</h3><p class="hstk-note">'+esc(d.note)+'</p>'+
+      '<div class="hstk-take"><span class="sig">Vesta.</span><p>'+d.take+'</p></div></div>'+
+    '<div class="hstk-ctas"><button class="hstk-cta" type="button">'+HSTK_WALK_ICON+esc(d.cta)+'</button></div>';
 }
 function homeStackHTML(){
   return '<div class="hstk-stage" id="hstk-stage">'+
       '<button class="hstk-arrow l" id="hstk-arrL" aria-label="Previous category"><svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.5L5 9L11 14.5"/></svg></button>'+
       '<button class="hstk-arrow r" id="hstk-arrR" aria-label="Next category"><svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5L13 9L7 14.5"/></svg></button>'+
     '</div>'+
-    '<div class="hstk-swipe-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h13M17 7l4 5-4 5"/></svg>Swipe to explore</div>'+
+    '<div class="hstk-swipe-hint"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.5L5 9L11 14.5"/></svg><span>Swipe for more</span><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5L13 9L7 14.5"/></svg></div>'+
     '<div class="hstk-dots" id="hstk-dots"><button class="hstk-dot on" data-i="0" aria-label="Something broken"></button><button class="hstk-dot" data-i="1" aria-label="Planning a project"></button><button class="hstk-dot" data-i="2" aria-label="Browse every trade"></button></div>';
 }
 // The stage position (0=front .. 2=back, 3=a staged "just off-stage" slot used only
@@ -2356,18 +2404,41 @@ function hstkAdvance(dir){
     setTimeout(() => { hstkAnimating = false; }, 420);
   }, 400);
 }
+// Retuned gesture: direction-locked (a 12px dead zone decides horizontal-swipe vs.
+// vertical-scroll intent so the deck never fights the page), rAF-batched (one transform
+// write per frame instead of per pointermove event — this was the "laggy" complaint),
+// velocity-aware commit (a firm distance OR a flick advances; small jitters spring back).
 function hstkWireDrag(el, dataI){
-  let sx=0, dx=0, on=false;
+  let sx=0, sy=0, dx=0, on=false, lock=null, raf=0, lastX=0, lastT=0, vx=0;
   const isFront = () => hstkOrder[0]===dataI;
-  const dn=x=>{ if (!isFront() || hstkAnimating) return; on=true; sx=x; dx=0; el.style.transition='none'; };
-  const mv=x=>{ if(!on) return; dx=x-sx; el.style.transform='translate('+dx+'px,-2px) rotate('+(dx*.05)+'deg) scale(.985)'; };
-  const up=()=>{ if(!on) return; on=false; Math.abs(dx)>60 ? hstkAdvance(dx<0?1:-1) : hstkApply(true); };
-  el.addEventListener('mousedown', e=>dn(e.clientX));
-  window.addEventListener('mousemove', e=>mv(e.clientX));
-  window.addEventListener('mouseup', up);
-  el.addEventListener('touchstart', e=>dn(e.touches[0].clientX), {passive:true});
-  el.addEventListener('touchmove', e=>mv(e.touches[0].clientX), {passive:true});
-  el.addEventListener('touchend', up);
+  const paint = () => { raf=0; if (lock!=='h') return;
+    el.style.transform = 'translate('+(dx*.92)+'px,-2px) rotate('+(dx*.045)+'deg) scale(.985)'; };
+  el.addEventListener('pointerdown', e=>{
+    if (!isFront() || hstkAnimating) return;
+    on=true; lock=null; sx=lastX=e.clientX; sy=e.clientY; dx=0; vx=0; lastT=performance.now();
+    try{ el.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  el.addEventListener('pointermove', e=>{
+    if (!on) return;
+    const mx=e.clientX-sx, my=e.clientY-sy;
+    if (lock===null){
+      if (Math.abs(mx)<12 && Math.abs(my)<12) return;
+      lock = Math.abs(mx) > Math.abs(my)*1.2 ? 'h' : 'v';
+      if (lock==='h') el.style.transition='none';
+    }
+    if (lock!=='h') return;
+    dx=mx;
+    const now=performance.now(); if (now-lastT>0){ vx=(e.clientX-lastX)/(now-lastT); lastX=e.clientX; lastT=now; }
+    if (!raf) raf=requestAnimationFrame(paint);
+  });
+  const up=()=>{
+    if (!on) return; on=false; if (raf){ cancelAnimationFrame(raf); raf=0; }
+    if (lock!=='h'){ lock=null; return; }
+    lock=null;
+    (Math.abs(dx)>60 || (Math.abs(vx)>.55 && Math.abs(dx)>30)) ? hstkAdvance(dx<0?1:-1) : hstkApply(true);
+  };
+  el.addEventListener('pointerup', up);
+  el.addEventListener('pointercancel', up);
 }
 function hstkBuild(){
   const stage = $('hstk-stage'); if (!stage) return;
@@ -2376,14 +2447,12 @@ function hstkBuild(){
   hstkEls = DATA.map((d, dataI) => {
     const el = document.createElement('div');
     el.className = 'hstk-card';
-    el.innerHTML = hstkCardHTML(d);
+    el.innerHTML = hstkCardHTML(d, dataI);
     stage.insertBefore(el, arrL);
-    el.querySelectorAll('.hstk-pill').forEach(b=>b.addEventListener('click', ()=>hstkPillClick(d, d.pills[+b.dataset.i])));
     const cta = el.querySelector('.hstk-cta'); if (cta) cta.addEventListener('click', () => {
       if (d.ctaAction === 'directory') openDirectorySheet();
       else if (d.ctaAction === 'triage-broken') enterTriage('broken');
       else if (d.ctaAction === 'triage-plan') enterTriage('plan');
-      else openSearch(d.ctaSeed);
     });
     hstkWireDrag(el, dataI);
     return el;
@@ -2609,18 +2678,50 @@ function renderNeedChips(){
 // Same grouping as the mobile home grid (TRADE_GROUPS) — a homeowner's mental model of
 // the house, not a flat alphabetic-ish list of 12. Highlight only tracks an actual browse
 // view of that trade, not just the stored default while sitting on the home screen.
+// The two entry accordions — "Something broken? / Planning a project?" — moved here
+// from the center column (were `#home-problems`, desktop-only) so the sidebar owns
+// the full front door, not just the trade taxonomy. Same real data (PROBLEMS_BROKEN/
+// PROBLEMS_PLANNING) and real click behavior (openBrowse/enterTriage) as before.
+let dsAccOpen = 'broken';
+function dsProblemAccHTML(){
+  const secs = [
+    { key:'broken', label:'Something broken?', icon:'roof', list:PROBLEMS_BROKEN, mode:'broken' },
+    { key:'plan', label:'Planning a project?', icon:'floor', list:PROBLEMS_PLANNING, mode:'plan' },
+  ];
+  return secs.map(s => {
+    const open = dsAccOpen===s.key;
+    const items = s.list.map(p=>'<button class="ds-item ds-prob-item" data-trade="'+esc(p.trade)+'" data-hi="'+esc((p.hi||[]).join(','))+'" data-hilabel="'+esc(p.label)+'">'+
+      '<span class="ds-ic">'+ICONS[p.icon]+'</span><span class="ds-lbl">'+esc(p.label)+'</span></button>').join('');
+    return '<div class="ds-acc'+(open?' open':'')+'" data-acc-key="'+s.key+'">'+
+      '<button class="ds-acc-h" type="button" aria-expanded="'+open+'"><span class="ds-ic">'+ICONS[s.icon]+'</span><span class="sb-title">'+esc(s.label)+'</span>'+
+      '<svg class="car" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></button>'+
+      '<div class="ds-acc-body">'+items+
+        '<button class="ds-acc-more" type="button" data-mode="'+s.mode+'">Not sure? Let Vesta walk you &rarr;</button>'+
+      '</div></div>';
+  }).join('');
+}
 function renderSidebar(){
   const nav = $('ds-nav'); if(!nav) return;
-  nav.innerHTML = TRADE_GROUPS.map(g => {
+  nav.innerHTML = dsProblemAccHTML() + TRADE_GROUPS.map(g => {
     const items = g.keys.map(k => {
       const t = trades.find(x => x.key === k); if (!t) return '';
       const on = S.screen==='browse' && S.mode==='trade' && S.activeTrade===t.key;
       return '<button class="ds-item'+(on?' on':'')+'" data-k="'+t.key+'" aria-pressed="'+on+'">'+
         '<span class="ds-ic">'+ICONS[t.icon]+'</span><span class="ds-lbl">'+t.label+'</span></button>';
     }).join('');
-    return '<div class="ds-glabel">'+esc(g.label)+'</div>'+items;
+    return '<div class="ds-glabel"><span class="sb-title">'+esc(g.label)+'</span></div>'+items;
   }).join('');
-  Array.from(nav.querySelectorAll('.ds-item')).forEach(b => b.addEventListener('click', () => switchTrade(b.dataset.k)));
+  Array.from(nav.querySelectorAll('.ds-item[data-k]')).forEach(b => b.addEventListener('click', () => switchTrade(b.dataset.k)));
+  nav.querySelectorAll('.ds-acc-h').forEach(h=>h.addEventListener('click', ()=>{
+    const key = h.closest('.ds-acc').dataset.accKey;
+    dsAccOpen = (dsAccOpen===key) ? null : key;
+    renderSidebar();
+  }));
+  nav.querySelectorAll('.ds-prob-item').forEach(b=>b.addEventListener('click', ()=>{
+    const hi = b.dataset.hi ? b.dataset.hi.split(',') : null;
+    openBrowse(b.dataset.trade, hi ? { hi, hiLabel:b.dataset.hilabel } : undefined);
+  }));
+  nav.querySelectorAll('.ds-acc-more').forEach(b=>b.addEventListener('click', ()=>enterTriage(b.dataset.mode)));
   const sv = $('ds-saved'); if(sv) sv.classList.toggle('on', S.mode==='saved');
 }
 function updateBrowseHead(){
@@ -5156,6 +5257,12 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   // the home bar is the conversation's front door when the LLM lane is healthy; typed
   // search otherwise — the feature being off just looks like today's app.
   { const hs=$('home-search'); if(hs) hs.addEventListener('click', ()=> { if (TRI_OK) enterConverse(); else openSearch(); }); }
+  // the 4 example messages (desktop) — tapping one opens the real conversation and
+  // submits that example as the first turn, demonstrating actual range immediately.
+  document.querySelectorAll('.hstart').forEach(b => b.addEventListener('click', () => {
+    const text = b.dataset.say;
+    if (TRI_OK){ enterConverse(); triTurn(text); } else openSearch(text);
+  }));
   triProbe();
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
