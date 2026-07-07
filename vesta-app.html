@@ -46,6 +46,13 @@
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 html,body { height:100%; overscroll-behavior:none; }
+/* iOS page-"extension" fix: an inner scroll region that reaches its end chains the scroll to
+   the document, which pumps Safari's URL bar and makes a locked page read as if it grew. The
+   bottom sheets already stop this (.psheet/.fsheet have overscroll-behavior:contain) — every
+   in-app scroller needs the same. This is the actual cause of the walk-through / directory→trade
+   / profile "extends the page" reports, not the height lock. */
+.home-body, .vth-scroll, .match-wrap, .tc-thread, .favwrap, .prof-scroll,
+.deck-end.has-tail, .feed, .ds-nav, .vpanel, .home-hero-proof, .vsearch-results { overscroll-behavior:contain; }
 body { background:#DDDECB; font-family:var(--sans); color:var(--olive); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 /* Universal tap feedback — the single biggest "this feels like an app" tell most sites
    skip. A bare fallback so every button gets a press-state even where no per-component
@@ -59,7 +66,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 #app { width:390px; min-height:100vh; margin:0 auto; background:var(--bg); position:relative; overflow-x:hidden; }
 @media (min-width:470px) and (max-width:899px) {
   body { display:flex; justify-content:center; align-items:flex-start; padding:28px 0 48px; }
-  #app { border-radius:50px; overflow:hidden; min-height:844px; box-shadow:0 0 0 1px rgba(74,75,47,.08), 0 40px 80px -16px rgba(74,75,47,.32); }
+  #app { border-radius:50px; overflow:hidden; height:844px; box-shadow:0 0 0 1px rgba(74,75,47,.08), 0 40px 80px -16px rgba(74,75,47,.32); }
 }
 
 .screen { display:none; flex-direction:column; min-height:100vh; background:var(--bg); position:relative; }
@@ -70,12 +77,13 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @media (max-width:469px) {
   html, body { height:100%; overflow:hidden; }
   body { position:fixed; inset:0; width:100%; }
-  #app { min-height:0; height:100vh; height:100dvh; }
-  /* svh (smallest viewport height) not dvh: the walk-through / browse / profile screens must
-     size to the URL-bar-VISIBLE viewport so their content never hides behind the iOS URL bar
-     or reads as "the page extended" when the bar animates. #s-home keeps its own dvh rule
-     below (tuned to a pixel-perfect one-screen fit; svh would shrink it and risk a clip). */
-  .screen { min-height:0; height:100vh; height:100svh; overflow:hidden; }
+  /* Lock the whole shell to the fixed body with height:100% — NOT vh/dvh/svh. body is
+     position:fixed inset:0 (above), so 100% cascades to the exact visual viewport with zero
+     viewport-unit ambiguity. Mixing dvh/svh here is what let the walk-through / browse /
+     profile screens "extend" on iOS as the URL bar animated (the units disagree with the
+     fixed body). overflow:hidden on #app is the backstop; inner scrollers own their scroll. */
+  #app { min-height:0; height:100%; overflow:hidden; }
+  .screen { min-height:0; height:100%; overflow:hidden; }
   .home-body { min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
   #deck { min-height:0; }
 }
@@ -154,7 +162,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home.active ~ .bnav { display:none; }
   /* the home front door is locked to the viewport at every mobile width — the page
      itself never scrolls (only the conversation thread does, once it opens). */
-  #s-home.screen { height:100vh; height:100dvh; overflow:hidden; display:flex; flex-direction:column; }
+  #s-home.screen { height:100%; overflow:hidden; display:flex; flex-direction:column; }
   #s-home .home-body { flex:1; min-height:0; overflow:hidden; display:flex; padding:6px 20px calc(12px + env(safe-area-inset-bottom)); }
   #s-home .home-hero { flex:1; min-height:0; display:flex; flex-direction:column; gap:0; }
   #s-home .home-hero-main { flex:1; min-height:0; display:flex; flex-direction:column; }
@@ -362,7 +370,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @media (min-width:900px){
   .home-starters { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
   .hstart { display:flex; align-items:center; gap:14px; text-align:left; border:none; border-radius:20px; padding:20px 20px;
-    background:var(--nm); box-shadow:var(--nm-sm); transition:box-shadow .25s ease, transform .25s var(--spring); cursor:pointer; }
+    /* a soft, diffuse raise — not the tight --nm-sm, which on the same-color desktop surface
+       read as a hard "boxed-in" edge. More blur + lower contrast = smoothed over. */
+    background:var(--nm); box-shadow:7px 7px 20px rgba(74,75,47,.07), -7px -7px 18px rgba(255,255,255,.7); transition:box-shadow .25s ease, transform .25s var(--spring); cursor:pointer; }
   .hstart:hover { box-shadow:var(--nm-out); transform:translateY(-1px); }
   .hstart:active { box-shadow:var(--nm-in); transform:none; }
   .hstart .spot { width:38px; height:38px; flex-shrink:0; color:var(--olive); }
@@ -4294,6 +4304,11 @@ function backFromProfile(){
     showScreen('browse'); renderNeedChips(); renderSidebar();
     if (f.mode==='saved'){ showFav(); renderSaved(); } else { showDeck(); updateBrowseHead(); renderDeck(); }
     updateNavState();
+  } else if (f && f.screen==='home'){
+    // opened from a Vesta Live pick — return to the conversation, which is still intact in
+    // #s-home (.vconv + #vm-thread persist; showScreen only toggles the active class). The
+    // user lands back on their picks + the whole thread, free to chisel further or tap another.
+    showScreen('home'); renderSidebar(); updateNavState();
   } else {
     const appTrade = (profData && TRADE_APP[pTradeKey()]) || S.activeTrade || 'roofing';
     openBrowse(appTrade);
@@ -5296,8 +5311,11 @@ function vmDeckLand(trade, job, deckMeta, mode){
       vmThinkWord('Pulling up their recent work');    // photos load under this beat, so the picks land already showing
       const ok=await vmDeck(trade,job,deckMeta,mode);
       vmThinkOff();
-      if(ok!==false){ vmDone=true;
-        const inp=$('hs-cin'); if(inp){ inp.placeholder='Matched — your picks are ready'; inp.disabled=true; }
+      if(ok!==false){
+        // DON'T lock the conversation — the picks are a waypoint, not the end. The user can
+        // keep chatting to chisel further (a follow-up appends below the verdict as a new turn)
+        // or tap a pick to open its profile and come back. (vmDone stays false so vmTurn runs.)
+        const inp=$('hs-cin'); if(inp){ inp.placeholder='Ask a follow-up, or tap a pick to open it'; inp.disabled=false; }
       }
     }, 620);
   }, 720);
