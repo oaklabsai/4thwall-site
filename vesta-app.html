@@ -75,14 +75,18 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* PHONE: lock the page to the viewport so the deck swipe never fights a page scroll.
    Each screen fills the viewport exactly; inner regions (home grid, saved list) own their scroll. */
 @media (max-width:469px) {
-  html, body { height:100%; overflow:hidden; }
-  body { position:fixed; inset:0; width:100%; }
-  /* Lock the whole shell to the fixed body with height:100% — NOT vh/dvh/svh. body is
-     position:fixed inset:0 (above), so 100% cascades to the exact visual viewport with zero
-     viewport-unit ambiguity. Mixing dvh/svh here is what let the walk-through / browse /
-     profile screens "extend" on iOS as the URL bar animated (the units disagree with the
-     fixed body). overflow:hidden on #app is the backstop; inner scrollers own their scroll. */
-  #app { min-height:0; height:100%; overflow:hidden; }
+  /* Lock the shell to the SMALL viewport (svh) — the viewport height when Safari's URL bar is
+     SHOWN. Sizing to svh guarantees every screen fits inside the smallest possible viewport,
+     so bottom-anchored content (feed-from-bottom threads, the composer, deck controls) is
+     NEVER placed in the strip behind the URL bar, where a locked page can't scroll to reveal
+     it. The old `position:fixed; inset:0` was the real bug: inset:0 pins to the LAYOUT viewport
+     (URL-bar-HIDDEN size), so height:100% cascaded TALLER than the visible area and the bottom
+     of each screen hid behind the URL bar — that's the "content spawns below the lock" report.
+     NOT 100vh (== layout viewport, identical bug) and NOT dvh (reflows every URL-bar animation
+     = jank). svh is the one unit that's always fully visible. */
+  html, body { height:100svh; overflow:hidden; }
+  body { position:fixed; top:0; left:0; right:0; height:100svh; width:100%; }
+  #app { min-height:0; height:100svh; overflow:hidden; }
   .screen { min-height:0; height:100%; overflow:hidden; }
   .home-body { min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
   #deck { min-height:0; }
@@ -370,11 +374,13 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @media (min-width:900px){
   .home-starters { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
   .hstart { display:flex; align-items:center; gap:14px; text-align:left; border:none; border-radius:20px; padding:20px 20px;
-    /* a soft, diffuse raise — not the tight --nm-sm, which on the same-color desktop surface
-       read as a hard "boxed-in" edge. More blur + lower contrast = smoothed over. */
-    background:var(--nm); box-shadow:7px 7px 20px rgba(74,75,47,.07), -7px -7px 18px rgba(255,255,255,.7); transition:box-shadow .25s ease, transform .25s var(--spring); cursor:pointer; }
-  .hstart:hover { box-shadow:var(--nm-out); transform:translateY(-1px); }
-  .hstart:active { box-shadow:var(--nm-in); transform:none; }
+    /* Blended, not boxed. The old dual neumorphic shadow put a bright white counter-glow on the
+       top-left of every card — on a same-color surface that reads as an embossed OUTLINE (the
+       "ugly border" report). A single, soft, purely-downward shadow with no white counter-light
+       floats the card gently and lets its edges melt into the surface. */
+    background:var(--nm); box-shadow:0 6px 18px -8px rgba(74,75,47,.16); transition:box-shadow .25s ease, transform .25s var(--spring); cursor:pointer; }
+  .hstart:hover { box-shadow:0 10px 24px -8px rgba(74,75,47,.22); transform:translateY(-1px); }
+  .hstart:active { box-shadow:0 3px 10px -6px rgba(74,75,47,.16); transform:none; }
   .hstart .spot { width:38px; height:38px; flex-shrink:0; color:var(--olive); }
   .hstart .spot svg { width:100%; height:100%; }
   .hstart b { font-size:13px; font-weight:600; color:var(--olive); line-height:1.4; }
