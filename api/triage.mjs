@@ -15,13 +15,17 @@
 //   data: {"t":"f","say","ask","chips","mode","resolved","deck"} — final, validated
 //   data: {"t":"e","error":"..."}                          — failure → client falls to the tap-tree
 //
-// KEYS: NVIDIA_TRIAGE_KEY_1/2/3 (Vercel env, Production+Preview). Never logged, never echoed.
+// KEYS: NVIDIA_TRIAGE_KEY_1..5 (Vercel env, Production+Preview). Never logged, never echoed.
+// NVIDIA keys are account-level, not model-scoped — every key in the pool works with
+// whichever MODEL is active, so all keys rotate together regardless of which model is primary.
 // Rotation is FAILURE-based (401/429/5xx, no first token by the ceiling) — never latency-based;
 // normal model slowness is absorbed by the stream, not punished (spec: the 2.5s rule is retired).
 // Kill switch: set TRIAGE_OFF=1 → GET returns 503 and the client never offers the conversation.
 
-const MODEL = process.env.TRIAGE_MODEL || 'z-ai/glm-5.2';
-const IS_NEMOTRON = /nemotron/.test(MODEL); // verified fallback (eval 2026-07-07); dormant unless TRIAGE_MODEL is set
+// Nemotron-3-super promoted to DEFAULT 2026-07-07 — proven more responsive than GLM 5.2 across
+// 3 separate congestion windows this week. GLM remains available via TRIAGE_MODEL override.
+const MODEL = process.env.TRIAGE_MODEL || 'nvidia/nemotron-3-super-120b-a12b';
+const IS_NEMOTRON = /nemotron/.test(MODEL);
 const ENDPOINT = 'https://integrate.api.nvidia.com/v1/chat/completions';
 const FIRST_TOKEN_CEILING_MS = 20000;  // no first byte by then → this key has failed, rotate
 const TOTAL_CEILING_MS = 55000;        // hard stop under the function's 60s maxDuration
@@ -31,7 +35,7 @@ const DB_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_IEQcNbThGZblpzqN
 
 function loadKeys(){
   const keys = [];
-  for (const name of ['NVIDIA_TRIAGE_KEY_1','NVIDIA_TRIAGE_KEY_2','NVIDIA_TRIAGE_KEY_3']){
+  for (const name of ['NVIDIA_TRIAGE_KEY_1','NVIDIA_TRIAGE_KEY_2','NVIDIA_TRIAGE_KEY_3','NVIDIA_TRIAGE_KEY_4','NVIDIA_TRIAGE_KEY_5']){
     const v = process.env[name];
     if (v && v.startsWith('nvapi-')) keys.push(v);
   }
