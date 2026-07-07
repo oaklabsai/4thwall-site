@@ -117,6 +117,89 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .hs-ph.typing .hs-caret { animation:none; opacity:1; }
 @keyframes hsCaretBlink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 @media (prefers-reduced-motion: reduce){ .hs-caret { animation:none; opacity:.6; } }
+
+/* ════════ VESTA LIVE — one immovable mobile screen + the in-place conversation morph.
+   The home fills the screen exactly (no scroll); tapping Vesta Live folds the header,
+   cards and route away and grows the conversation thread in their place, the bar itself
+   becoming the composer. Wired to the real /api/triage stream (vmTurn). ════════ */
+.hs-cin { display:none; flex:1; min-width:0; border:none; background:none; outline:none; font-family:var(--sans); font-size:14.5px; color:var(--olive); padding:2px 0; }
+.hs-cin::placeholder { color:rgba(74,75,47,.5); }
+.hs-csend { display:none; width:38px; height:38px; border-radius:50%; border:none; background:var(--olive); color:var(--white); align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 6px 14px -5px rgba(74,75,47,.5); cursor:pointer; }
+.hs-csend svg { width:16px; height:16px; }
+/* the folds are transparent on desktop (children flow normally); only mobile morphs */
+.vfold { display:contents; }
+.vthread-fold { display:none; }
+@media (min-width:900px){
+  /* desktop composer — a carved cream input with a raised send, per the mockup */
+  #s-home .home-search { max-width:600px; background:var(--nm); box-shadow:var(--nm-in); border-radius:var(--r-pill); padding:8px 8px 8px 22px; cursor:text; margin-bottom:26px; }
+  #s-home .home-search .hs-tx, #s-home .home-search .hs-spark { display:none; }
+  #s-home .home-search .hs-cin, #s-home .home-search .hs-csend { display:flex; }
+}
+@media (max-width:899.98px){
+  /* ── one immovable screen ── */
+  /* the home is a focused front door — no floating bottom nav over it (matches the
+     Vesta Live design); the nav returns on browse / match / saved / profile. */
+  #s-home.active ~ .bnav { display:none; }
+  #s-home { display:flex; flex-direction:column; }
+  #s-home .home-body { flex:1; min-height:0; overflow:hidden; display:flex; padding:6px 20px calc(14px + env(safe-area-inset-bottom)); }
+  #s-home .home-hero { flex:1; min-height:0; display:flex; flex-direction:column; gap:0; }
+  #s-home .home-hero-main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  #frep-toppill-desktop, #s-home .home-return, #s-home .home-starters, #s-home .home-browse-sec, #s-home .home-hero-proof, #s-home .home-foot { display:none !important; }
+  /* the folds become flex items, ordered into the mockup sequence */
+  .vfold { display:grid; grid-template-rows:1fr; transition:grid-template-rows .7s cubic-bezier(.45,0,.18,1) .08s; }
+  .vfold > .vfold-in { overflow:hidden; min-height:0; transition:opacity .48s ease, transform .55s cubic-bezier(.45,0,.18,1); }
+  #vfold-a { order:1; flex:0 0 auto; padding-top:4px; }
+  #vfold-b { order:2; flex:1 1 auto; min-height:0; }
+  #vfold-b > .vfold-in { display:flex; flex-direction:column; height:100%; justify-content:flex-end; padding-bottom:8px; }
+  #vfold-b .home-stack { margin-bottom:0; }
+  .vthread-fold { order:3; display:grid; grid-template-rows:0fr; flex:0 0 auto; transition:grid-template-rows .75s cubic-bezier(.45,0,.18,1) .26s; }
+  .vthread-fold > .vfold-in { opacity:0; }
+  #home-search { order:4; flex:0 0 auto; }
+  #vfold-c { order:5; flex:0 0 auto; }
+  #s-home .home-h1 { font-size:29px; line-height:1.14; }
+  /* ── the morph ── */
+  #s-home.vconv #vfold-a, #s-home.vconv #vfold-b, #s-home.vconv #vfold-c { grid-template-rows:0fr; flex:0 0 auto; }
+  #s-home.vconv #vfold-a > .vfold-in { opacity:0; transform:translateY(-18px); }
+  #s-home.vconv #vfold-b > .vfold-in, #s-home.vconv #vfold-c > .vfold-in { opacity:0; transform:translateY(20px); }
+  #s-home.vconv .vthread-fold { grid-template-rows:1fr; flex:1 1 auto; min-height:0; }
+  #s-home.vconv .vthread-fold > .vfold-in { opacity:1; height:100%; }
+  #s-home.vconv #frep-toppill-mobile { opacity:0; pointer-events:none; transition:opacity .4s ease; }
+  #s-home.vconv .home-search { padding:9px 9px 9px 18px; border-radius:var(--r-pill); cursor:text; margin-bottom:12px; }
+  #s-home.vconv .home-search .hs-tx { display:none; }
+  #s-home.vconv .home-search .hs-cin, #s-home.vconv .home-search .hs-csend { display:flex; }
+  #s-home.vconv .home-search .hs-spark { width:24px; height:24px; }
+  #s-home.vconv .home-search .hs-spark svg { width:12px; height:12px; }
+}
+/* ── the conversation thread (mobile morph) ── */
+.vthread { position:relative; height:100%; display:flex; flex-direction:column; }
+#s-home.vconv .vthread { background:var(--nm); box-shadow:var(--nm-in); border-radius:24px; padding:14px 12px 10px; }
+.vth-x { position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; color:var(--ebony); background:var(--nm); box-shadow:var(--nm-sm); z-index:3; cursor:pointer; }
+.vth-x:active { box-shadow:var(--nm-in); }
+.vth-x svg { width:12px; height:12px; }
+.vth-scroll { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; display:flex; flex-direction:column; padding:2px; }
+.vth-scroll::before { content:''; flex:1 0 0; }
+.vth-scroll::-webkit-scrollbar { display:none; }
+.vmsg { display:flex; gap:9px; margin-bottom:12px; animation:vmsgIn .4s var(--spring) both; }
+@keyframes vmsgIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+.vmsg .vav { flex-shrink:0; align-self:flex-start; font-family:var(--script); font-size:16px; font-weight:700; color:var(--olive); transform:rotate(-7deg); margin-top:5px; padding:0 3px 4px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px; }
+.vmsg .vbub { max-width:82%; border-radius:18px; border-bottom-left-radius:6px; padding:10px 13px; font-size:13.5px; line-height:1.5; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); }
+.vmsg.me { justify-content:flex-end; }
+.vmsg.me .vbub { border-bottom-left-radius:18px; border-bottom-right-radius:6px; background:linear-gradient(180deg, rgba(74,75,47,.94), rgba(58,59,36,.9)); color:var(--white); box-shadow:4px 4px 10px rgba(74,75,47,.22), -3px -3px 8px rgba(255,255,255,.6); }
+.vthink { display:flex; align-items:center; gap:8px; margin:2px 0 12px 40px; font-size:11.5px; color:var(--ebony); animation:vmsgIn .3s ease both; }
+.vthink .sq { width:9px; height:9px; border-radius:3px; background:var(--tea); animation:sqSpin 1.1s ease-in-out infinite; }
+@keyframes sqSpin { 0%,100%{ transform:rotate(0) scale(1);} 50%{ transform:rotate(135deg) scale(.82);} }
+.vthink .tl { color:var(--ebony); }
+/* the 2×2 starters — centred in the thread until the chat begins */
+.vstarters { display:none; }
+#s-home.vconv .vstarters.show { display:flex; flex-direction:column; gap:14px; position:absolute; left:14px; right:14px; top:50%; transform:translateY(-50%); animation:vmsgIn .5s var(--spring) .4s both; }
+.vst-head { text-align:center; font-size:13.5px; color:var(--ebony); font-weight:500; }
+.vst-head .sig { font-family:var(--script); font-size:17px; font-weight:700; color:var(--olive); transform:rotate(-6deg); display:inline-block; margin-right:3px; padding-bottom:3px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px; }
+.vst-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+.vst { display:flex; flex-direction:column; align-items:flex-start; gap:9px; padding:14px 14px 13px; border:none; border-radius:18px; text-align:left; font-size:12px; font-weight:600; color:var(--olive); line-height:1.25; background:var(--nm); box-shadow:var(--nm-sm); cursor:pointer; }
+.vst:active { box-shadow:var(--nm-in); }
+.vst svg { width:19px; height:19px; color:var(--olive); }
 /* problem pills — homeowner needs, the instant-momentum row */
 .home-problems { display:flex; flex-direction:column; gap:26px; margin-bottom:34px; }
 .prob-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
@@ -1405,6 +1488,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
         <div class="home-hero-main">
           <div id="frep-toppill-desktop"></div>
           <div class="home-return" id="home-return"></div>
+          <!-- fold-a: the header. On mobile it folds away when the conversation opens. -->
+          <div class="vfold" id="vfold-a"><div class="vfold-in">
           <h1 class="home-h1"><span class="hl-vlive">Vesta Live</span> &mdash; an honest answer, <span class="squig">not a sales pitch.</span></h1>
           <p class="home-sub">Ask about anything home-related &mdash; Vesta reads the county&rsquo;s own record and answers you straight.</p>
           <!-- desktop only: 4 example messages, demonstrating real range before the composer -->
@@ -1426,42 +1511,64 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
               <b>&ldquo;We just bought an older colonial &mdash; where do we&nbsp;start?&rdquo;</b>
             </button>
           </div>
-          <button class="home-search" id="home-search" type="button" aria-label="Vesta Live — ask about anything home-related, or search">
+          </div></div><!-- /vfold-a -->
+
+          <!-- the thread — grows in place when the conversation opens (mobile morph) -->
+          <div class="vfold vthread-fold" id="vthread-fold"><div class="vfold-in">
+            <div class="vthread">
+              <button class="vth-x" id="vth-x" type="button" aria-label="Close conversation"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14"/></svg></button>
+              <div class="vth-scroll" id="vm-thread"></div>
+              <div class="vstarters" id="vstarters">
+                <div class="vst-head"><span class="sig">Vesta.</span> How can I help?</div>
+                <div class="vst-grid">
+                  <button class="vst" type="button" data-say="Water is coming through my kitchen ceiling — who actually picks up on a Sunday?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3L5 13.5h5L10 21l8-10.5h-5z"/></svg><span>Something&rsquo;s leaking</span></button>
+                  <button class="vst" type="button" data-say="I want to redo my driveway next spring. Where do I even start?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.2-4.2L16 5l3 3L8.2 18.8z"/><path d="M14 7l3 3"/></svg><span>Planning a project</span></button>
+                  <button class="vst" type="button" data-say="What does a fair price for a new roof look like in Fairfield County?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v10H9l-4 4V5z"/></svg><span>Just a question</span></button>
+                  <button class="vst" type="button" data-say="We just bought a 1962 colonial — old furnace, 100-amp panel, chimney needs repointing. What order do we tackle it?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12l9-8 9 8"/><path d="M6 10.5V20h12v-9.5"/></svg><span>Whole-home advice</span></button>
+                </div>
+              </div>
+            </div>
+          </div></div><!-- /vthread-fold -->
+
+          <!-- VESTA LIVE — the front door. At rest it invites; in conversation it IS the composer. -->
+          <div class="home-search" id="home-search" role="button" tabindex="0" aria-label="Vesta Live — ask about anything home-related">
             <span class="hs-spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v10H9l-4 4V5z"/></svg></span>
             <span class="hs-tx">
               <b class="hs-vlive">Vesta Live</b>
               <span class="hs-ph">&ldquo;<span id="home-search-ph"></span><span class="hs-caret" aria-hidden="true"></span>&rdquo;</span>
             </span>
-          </button>
-          <!-- The mechanism FIRST, then the categories — a cold visitor should know why
-               this isn't a lead-gen site before we ask them to tap anything. No heading;
-               the 01→02→03 route speaks for itself. -->
+            <input class="hs-cin" id="hs-cin" type="text" placeholder="Describe it in your own words&hellip;" autocomplete="off" maxlength="500" aria-label="Describe what you need" tabindex="-1">
+            <button class="hs-csend" id="hs-csend" type="button" tabindex="-1" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+          </div>
+          <!-- fold-c: the trust triad (route). Folds away in the mobile conversation. -->
+          <div class="vfold" id="vfold-c"><div class="vfold-in">
           <div class="how-strip" aria-label="How Vesta works">
             <div class="how-steps">
               <div class="how-col">
                 <span class="no">01</span>
-                <b><span class="squig">Say what you need</span></b>
-                <p>Search, or tap a common job.</p>
+                <b>On the record</b>
+                <p>built from public data, never ads</p>
               </div>
               <span class="how-arrow"><svg width="11" height="11" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></span>
               <div class="how-col">
                 <span class="no">02</span>
-                <b><span class="squig">Read Vesta's take</span></b>
-                <p>A verdict, not a star average.</p>
+                <b>A real verdict</b>
+                <p>ranked by proof, not a star average</p>
               </div>
               <span class="how-arrow"><svg width="11" height="11" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></span>
               <div class="how-col">
                 <span class="no">03</span>
-                <b><span class="squig">Reach out, direct</span></b>
-                <p>No lead auction, your terms.</p>
+                <b>Yours to contact, direct</b>
+                <p>no lead auction, your terms</p>
               </div>
             </div>
           </div>
-          <!-- Mobile: the three ways in as a swipeable card stack (one dominant card,
-               the next peeking behind at a diagonal) — an explorable moment, not three
-               stacked page-sections to scroll past. Desktop keeps the flat layout below
-               (the sidebar already owns full browse there; no stack needed). -->
+          </div></div><!-- /vfold-c -->
+          <!-- Mobile: the three ways in as a swipeable card stack. On desktop the sidebar
+               owns full browse, so this whole fold is hidden there. -->
+          <div class="vfold" id="vfold-b"><div class="vfold-in">
           <div class="home-stack" id="home-stack" aria-label="Find your way in"></div>
+          </div></div><!-- /vfold-b -->
           <div class="home-problems" id="home-problems" aria-label="Common needs"></div>
           <div class="home-browse-sec">
             <h2 class="home-sec-h">Or browse <span class="squig">every trade</span></h2>
@@ -2501,13 +2608,15 @@ let _searchRotI = null;
 function startSearchRotator(){
   const el = $('home-search-ph'); if(!el || _searchRotI) return;
   const wrap = el.closest('.hs-ph');
+  const cin = $('hs-cin');   // desktop composer: the rotator drives its placeholder too
+  const feed = s => { el.textContent = s; if (cin && !$('s-home').classList.contains('vconv') && !cin.disabled && document.activeElement !== cin) cin.placeholder = s || 'Describe it in your own words…'; };
   let i = 0;
   const TYPE_MS = 42, TYPE_JITTER = 26, ERASE_MS = 20, HOLD_MS = 1900, GAP_MS = 350;
   const typeOut = (text, done) => {
     let ci = 0;
     if (wrap) wrap.classList.add('typing');
     (function step(){
-      ci++; el.textContent = text.slice(0, ci);
+      ci++; feed(text.slice(0, ci));
       if (ci < text.length) _searchRotI = setTimeout(step, TYPE_MS + Math.random()*TYPE_JITTER);
       else { if (wrap) wrap.classList.remove('typing'); _searchRotI = setTimeout(done, HOLD_MS); }
     })();
@@ -2516,7 +2625,7 @@ function startSearchRotator(){
     let ci = text.length;
     if (wrap) wrap.classList.add('typing');
     (function step(){
-      ci--; el.textContent = text.slice(0, ci);
+      ci--; feed(text.slice(0, ci));
       if (ci > 0) _searchRotI = setTimeout(step, ERASE_MS);
       else { if (wrap) wrap.classList.remove('typing'); _searchRotI = setTimeout(done, GAP_MS); }
     })();
@@ -4979,12 +5088,113 @@ function tcTopic(msg){
 }
 
 function enterConverse(){
+  // Mobile: the conversation morphs in place on the home screen (Vesta Live redesign) —
+  // the header/cards/route fold away, the thread grows, the bar becomes the composer.
+  // Desktop: the existing screen-swap into the match-screen chat.
+  if (!desktop()){ enterConverseMobile(); return; }
   S.mode='trade'; S.match=null; S.matchPending=true; _mwMoreOpen=false; _pendingJob=null;
   S.matchHi=null; S.matchHiLabel=null;
   S.triageActive=false; S.triageMode=null; S.triageAmbig=null; S.triageArea=null;
   S.matchStep='triage-chat';
   S.triChat = { msgs:[], turns:0, done:false, started:false, mode:null, busy:false };
   renderNeedChips(); renderSidebar(); showScreen('match'); updateNavState(); renderMatchWalk();
+}
+
+/* ═══ MOBILE IN-PLACE CONVERSATION MORPH — the home screen becomes the chat, wired to the
+   real /api/triage stream. Own thread (#vm-thread) + turn fn so it never collides with the
+   desktop match-screen chat (#tc-thread); reuses the same bank gate + pick machinery. ═══ */
+let vmBusy=false, vmDone=false, vmMsgs=[], vmTurns=0;
+function enterConverseMobile(){
+  const h=$('s-home'); if(!h) return;
+  vmMsgs=[]; vmTurns=0; vmDone=false; vmBusy=false;
+  const th=$('vm-thread'); if(th) th.innerHTML='';
+  const inp=$('hs-cin'); if(inp){ inp.value=''; inp.disabled=false; inp.placeholder='Describe it in your own words…'; }
+  h.classList.add('vconv');
+  const st=$('vstarters'); if(st) st.classList.add('show');
+  setTimeout(()=>{ const i=$('hs-cin'); if(i) i.focus(); }, 420);
+}
+function exitConverseMobile(){
+  const h=$('s-home'); if(!h) return;
+  h.classList.remove('vconv');
+  const st=$('vstarters'); if(st) st.classList.remove('show');
+  const inp=$('hs-cin'); if(inp){ inp.value=''; inp.disabled=false; inp.blur(); }
+  vmBusy=false; vmDone=false;
+}
+const vmScroll=()=>{ const t=$('vm-thread'); if(t) t.scrollTop=t.scrollHeight; };
+function vmUser(text){ const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='vmsg me'; el.innerHTML='<span class="vbub"></span>'; el.querySelector('.vbub').textContent=text; t.appendChild(el); vmScroll(); }
+function vmVesta(){ const t=$('vm-thread'); if(!t) return null; const el=document.createElement('div'); el.className='vmsg'; el.innerHTML='<span class="vav">Vesta.</span><span class="vbub"></span>'; t.appendChild(el); vmScroll(); return el.querySelector('.vbub'); }
+function vmThink(label){ vmThinkOff(); const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='vthink'; el.id='vm-think'; el.innerHTML='<span class="sq"></span><span class="tl">'+esc(label)+'</span>'; t.appendChild(el); vmScroll(); }
+function vmThinkWord(label){ const w=document.querySelector('#vm-think .tl'); if(w) w.textContent=label; else vmThink(label); }
+function vmThinkOff(){ const el=$('vm-think'); if(el) el.remove(); }
+async function vmTurn(text){
+  if(vmDone||vmBusy) return; vmBusy=true; vmTurns++;
+  const st=$('vstarters'); if(st) st.classList.remove('show');
+  vmUser(text); vmMsgs.push({role:'user',content:text});
+  vmThink('Reading what you described');
+  const preTimer=setTimeout(()=>vmThinkWord('Making sense of '+tcTopic(text)),2600);
+  let bubble=null, streamed='';
+  try{
+    const r=await fetch('/api/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:vmMsgs})});
+    if(!r.ok||!r.body) throw new Error('http');
+    const reader=r.body.getReader(), dec=new TextDecoder(); let buf='', final=null, evErr=null;
+    for(;;){ const {done,value}=await reader.read(); if(done) break; buf+=dec.decode(value,{stream:true});
+      let nl; while((nl=buf.indexOf('\n'))!==-1){ const line=buf.slice(0,nl).trim(); buf=buf.slice(nl+1);
+        if(!line.startsWith('data:')) continue; let ev; try{ev=JSON.parse(line.slice(5));}catch(_){continue;}
+        if(ev.t==='d'){ clearTimeout(preTimer); if(!bubble){ vmThinkOff(); bubble=vmVesta(); } streamed+=ev.c; if(bubble){ bubble.textContent=streamed; vmScroll(); } }
+        else if(ev.t==='f') final=ev; else if(ev.t==='e') evErr=ev.error;
+      }
+    }
+    clearTimeout(preTimer);
+    if(evErr||!final) throw new Error(evErr||'no final');
+    if(!bubble){ vmThinkOff(); bubble=vmVesta(); }
+    if(bubble && final.say) bubble.textContent=final.say;
+    vmMsgs.push({role:'assistant',content:JSON.stringify({say:(final.say||'').slice(0,600),resolved:final.resolved||null})});
+    const res=final.resolved;
+    const gate=res&&res.trade&&res.job&&tradeMatchable(res.trade)&&tradeBank(res.trade).jobs.some(j=>j.value===res.job);
+    if(gate){ vmBusy=false; vmDeckLand(res.trade,res.job,final.deck,final.mode||'fix'); return; }
+    if(final.chips&&final.chips.length) vmChips(final.chips);
+    vmBusy=false;
+    if(vmTurns>=4&&!vmDone) vmHandoff(final.mode);
+  }catch(_){ clearTimeout(preTimer); vmBusy=false; vmHandoff('broken'); }
+}
+function vmDeckLand(trade, job, deckMeta, mode){
+  vmThink('Checking who covers this in your county');
+  setTimeout(()=>{ vmThinkWord('Lining up your picks');
+    setTimeout(()=>{ vmThinkOff(); vmDeck(trade,job,deckMeta,mode); vmDone=true;
+      const inp=$('hs-cin'); if(inp){ inp.placeholder='Matched — your picks are above ↑'; inp.disabled=true; }
+    }, 620);
+  }, 720);
+}
+function vmDeck(trade, job, deckMeta, mode){
+  const b=tradeBank(trade);
+  const emergency=/emergency/.test(job)||!!(deckMeta&&deckMeta.emergency);
+  const axis=(emergency&&b&&b.axes&&b.axes.some(a=>a.axis==='fast'))?'fast':null;
+  const m={job:job,axis:axis};
+  const picks=byTrade(trade).slice().sort((x,y)=>matchScore(y,m)-matchScore(x,m)||(y.rankScore-x.rankScore)).slice(0,3);
+  if(!picks.length){ vmHandoff(mode); return; }
+  logMatch(trade,job,axis); saveLastMatch(trade,job,axis);
+  const jl=lc(deckMeta&&deckMeta.label?deckMeta.label:jobLabel(job));
+  const pct=deckMeta&&deckMeta.pct!=null?deckMeta.pct:Math.round(100*jobCoverage(trade,job));
+  const lead=emergency?'For an emergency, Vesta led with who answers fastest, then weighed record:':mode==='plan'?'No rush — but when you’re ready, these are worth the call:':'These rose to the top for your '+esc(jl)+':';
+  const used=new Set();
+  const reason=con=>{ let r=whyLine(con,m); if(used.has(r)&&con.knownFor&&con.knownFor.length){ const kf=con.knownFor.find(k=>!used.has('Known for '+lc(k))); if(kf) r='Known for '+lc(kf); } used.add(r); return r; };
+  const rows=picks.map(p=>'<button class="tc-firm" type="button" data-place="'+esc(p.placeId)+'"><span class="tc-mono">'+esc((p.name||'?')[0])+'</span><span class="tc-fl"><span class="tc-fn">'+esc(p.name)+'</span><span class="tc-fw">'+esc(reason(p))+'</span></span><span class="tc-fg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></button>').join('');
+  const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='tc-deck';
+  el.innerHTML='<div class="tc-deck-kick">Why these '+(picks.length===3?'three':'picks')+(pct?'<span class="tc-deck-pct">'+pct+'% of '+esc(lc(tradeLabelOf(trade)))+' do this</span>':'')+'</div><h2>For your <em>'+esc(jl)+'</em></h2><p class="tc-why">'+lead+'</p>'+rows+'<button class="tc-deck-all" type="button">See all your matches →</button>';
+  t.appendChild(el); vmScroll();
+  el.querySelectorAll('.tc-firm').forEach(btn=>btn.addEventListener('click',()=>openProfile(btn.dataset.place)));
+  const all=el.querySelector('.tc-deck-all'); if(all) all.addEventListener('click',()=>{ const h=$('s-home'); if(h) h.classList.remove('vconv'); S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank'; S.match={job:job,axis:axis}; S.matchPending=false; S.triageActive=false; S.triageMode=null; renderNeedChips(); renderSidebar(); showBrowse(trade); });
+}
+function vmChips(chips){
+  const t=$('vm-thread'); if(!t||!chips||!chips.length) return;
+  const wrap=document.createElement('div'); wrap.className='tc-chips';
+  chips.forEach(c=>{ const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.textContent=c; bt.onclick=()=>{ if(!vmBusy&&!vmDone){ wrap.remove(); vmTurn(c); } }; wrap.appendChild(bt); });
+  t.appendChild(wrap); vmScroll();
+}
+function vmHandoff(mode){
+  if(vmDone) return; vmDone=true; vmThinkOff();
+  const b=vmVesta(); if(b) b.textContent='Let me walk you through it another way — a couple of taps and I’ll have your picks.';
+  setTimeout(()=>{ const h=$('s-home'); if(h) h.classList.remove('vconv'); enterTriage(mode==='plan'?'plan':'broken'); }, 950);
 }
 function triageChatHTML(){
   const pill = s => '<button class="tc-pill" type="button" data-text="'+esc(s.t)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+s.ic+'</svg>'+s.l+'</button>';
@@ -5254,9 +5464,27 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   $('dirscrim').addEventListener('click', closeDirectorySheet);
   $('dirsheet-x').addEventListener('click', closeDirectorySheet);
   ['nav-search','ds-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
-  // the home bar is the conversation's front door when the LLM lane is healthy; typed
-  // search otherwise — the feature being off just looks like today's app.
-  { const hs=$('home-search'); if(hs) hs.addEventListener('click', ()=> { if (TRI_OK) enterConverse(); else openSearch(); }); }
+  // Vesta Live — the front door. Desktop: a live composer (submit → the chat). Mobile: a
+  // resting bar that morphs into the composer in place. LLM lane off → today's typed search.
+  function vSubmit(){
+    const inp=$('hs-cin'); if(!inp) return; const v=(inp.value||'').trim(); if(!v) return; inp.value='';
+    if (!TRI_OK){ openSearch(v); return; }
+    if (desktop()){ enterConverse(); triTurn(v); }
+    else { if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(v); }
+  }
+  { const hs=$('home-search'); if(hs) hs.addEventListener('click', e=>{
+      if (e.target.closest('.hs-cin, .hs-csend')) return;
+      if (desktop()){ const i=$('hs-cin'); if(i) i.focus(); return; }
+      if ($('s-home').classList.contains('vconv')) return;
+      if (TRI_OK) enterConverseMobile(); else openSearch();
+    }); }
+  { const ci=$('hs-cin'); if(ci) ci.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); vSubmit(); } }); }
+  { const cs=$('hs-csend'); if(cs) cs.addEventListener('click', vSubmit); }
+  { const x=$('vth-x'); if(x) x.addEventListener('click', exitConverseMobile); }
+  document.querySelectorAll('#vstarters .vst').forEach(b => b.addEventListener('click', ()=>{
+    const text=b.dataset.say; if(!TRI_OK){ openSearch(text); return; }
+    if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(text);
+  }));
   // the 4 example messages (desktop) — tapping one opens the real conversation and
   // submits that example as the first turn, demonstrating actual range immediately.
   document.querySelectorAll('.hstart').forEach(b => b.addEventListener('click', () => {
