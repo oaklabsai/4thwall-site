@@ -544,6 +544,103 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .feed-divider::before, .feed-divider::after { content:''; flex:1; height:1px; background:rgba(74,75,47,.14); }
 .feed-divider span { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); opacity:.66; white-space:nowrap; }
 @media (min-width:600px){ .mw-opts { grid-template-columns:1fr 1fr; } .mw-opt--wide { grid-column:1 / -1; } }
+/* quiet "or just describe it" affordance at the foot of the triage screens (LLM lane) */
+.mw-describe { display:block; margin:18px auto 0; background:none; border:none; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--ebony); cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:6px 4px; }
+.mw-describe:hover { color:var(--olive); }
+
+/* ===== CONVERSATIONAL TRIAGE (matchStep 'triage-chat') — the LOCKED interface, ported.
+   Spec: 4thwall-wiki/business/vesta-conversational-triage.md § LOCKED INTERFACE. The chat
+   renders into #match-wrap (same screen as the tap walk); .mw--chat flips the wrap from a
+   scroll container to a full-height flex column so the thread owns the scroll and the
+   composer floats. All tokens are the site's own; no new font loads. ===== */
+#match-wrap.mw--chat { overflow:hidden; padding:0; display:flex; flex-direction:column; }
+.tc { position:relative; flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden; width:100%; }
+/* atmosphere — living watercolor blobs under a soft radial aura; the conversation floats over it */
+.tc-water { position:absolute; inset:-14%; z-index:0; pointer-events:none; overflow:hidden; filter:blur(48px) saturate(1.04); opacity:.9; }
+.tc-blob { position:absolute; border-radius:50%; opacity:.42; will-change:transform; }
+.tc-b1 { width:280px; height:280px; background:#D4DF9E; left:-12%; top:40%; animation:tcF1 30s ease-in-out infinite; }
+.tc-b2 { width:250px; height:250px; background:#AEB87A; right:-10%; top:54%; animation:tcF2 37s ease-in-out infinite; }
+.tc-b3 { width:310px; height:310px; background:#C9C08E; left:16%; bottom:-16%; animation:tcF3 44s ease-in-out infinite; }
+.tc-b4 { width:190px; height:190px; background:#E4DEBE; right:14%; top:24%; animation:tcF4 33s ease-in-out infinite; }
+@keyframes tcF1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(42px,-30px) scale(1.14)} }
+@keyframes tcF2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-38px,26px) scale(1.09)} }
+@keyframes tcF3 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(32px,-22px) scale(1.16)} }
+@keyframes tcF4 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-26px,32px) scale(1.11)} }
+@media (prefers-reduced-motion:reduce){ .tc-blob { animation:none; } }
+.tc-aura { position:absolute; inset:0; pointer-events:none; z-index:0;
+  background: radial-gradient(88% 52% at 50% 74%, rgba(212,223,158,.4), rgba(212,223,158,0) 62%),
+    radial-gradient(64% 42% at 50% 100%, rgba(74,75,47,.14), transparent 72%),
+    radial-gradient(120% 90% at 50% 6%, rgba(255,255,255,.55), transparent 46%); }
+.tc-opener, .tc-thread, .tc-err, .tc-composer { position:relative; z-index:1; width:100%; max-width:600px; margin:0 auto; }
+/* opener — homeowner speaks first; serif header rolls out letter-by-letter */
+.tc-opener { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px 22px; }
+.tc-eyebrow { font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.22em; text-transform:uppercase; color:var(--ebony); opacity:.7; margin-bottom:16px; }
+.tc-q { font-family:var(--serif); font-size:33px; font-weight:600; color:var(--olive); letter-spacing:-.025em; line-height:1.06; margin-bottom:38px; }
+.tc-ch { display:inline-block; opacity:0; transform:translateY(.5em); animation:tcChIn .6s cubic-bezier(.2,.72,.3,1) forwards; }
+@keyframes tcChIn { to { opacity:1; transform:none; } }
+.tc-pills { display:flex; flex-wrap:wrap; justify-content:center; gap:9px; max-width:340px; opacity:0; animation:tcFadeUp .6s .5s var(--spring) forwards; }
+@keyframes tcFadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.tc-pill { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.66); border:1px solid rgba(74,75,47,.16); border-radius:var(--r-pill); padding:9px 15px 9px 13px; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--olive); cursor:pointer; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); box-shadow:var(--sh-row); transition:border-color .16s, transform .16s, background .16s; }
+.tc-pill svg { width:15px; height:15px; color:var(--ebony); flex-shrink:0; }
+.tc-pill:hover { border-color:var(--olive); background:var(--white); transform:translateY(-2px); }
+.tc-pill:hover svg { color:var(--olive); }
+/* thread */
+.tc-thread { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px 18px 6px; display:flex; flex-direction:column; gap:13px; }
+.tc-msg { display:flex; gap:9px; max-width:100%; animation:tcMsgIn .34s var(--spring) both; }
+@keyframes tcMsgIn { from { opacity:0; transform:translateY(7px); } to { opacity:1; transform:none; } }
+.tc-msg.u { flex-direction:row-reverse; }
+.tc-avatar { flex-shrink:0; width:28px; height:28px; border-radius:9px; background:linear-gradient(180deg, rgba(230,238,196,.65), rgba(212,223,158,.34)); border:1px solid rgba(74,75,47,.12); color:var(--olive); display:grid; place-items:center; margin-top:2px; }
+.tc-avatar svg { width:18px; height:18px; }
+.tc-bubble { border-radius:14px; padding:10px 14px; font-size:13.75px; line-height:1.52; box-shadow:var(--sh-row); }
+.tc-msg.v .tc-bubble { background:rgba(255,255,255,.94); color:var(--olive); border:1px solid rgba(74,75,47,.08); border-bottom-left-radius:6px; }
+.tc-msg.u .tc-bubble { background:var(--olive); color:#F1F2E6; border-bottom-right-radius:6px; max-width:78%; font-weight:500; }
+/* the resolving line = read pull-quote (applied when the final event carries a resolve) */
+.tc-bubble.tc-read { padding:14px 15px 13px; position:relative; }
+.tc-bubble.tc-read .tc-rqm { position:absolute; left:7px; top:-6px; font-family:var(--serif); font-size:33px; font-weight:700; color:var(--tea); line-height:1; }
+.tc-bubble.tc-read .tc-rql { position:relative; font-family:var(--serif); font-style:italic; font-size:15px; font-weight:500; line-height:1.46; letter-spacing:-.006em; color:var(--olive); padding-left:18px; }
+/* in-flow answer chips */
+.tc-chips { display:flex; flex-wrap:wrap; gap:8px; padding:2px 0 2px 37px; }
+.tc-chip { background:rgba(255,255,255,.9); border:1px solid rgba(74,75,47,.14); border-radius:11px; padding:8px 13px; font-family:var(--sans); font-size:12.75px; font-weight:600; color:var(--olive); cursor:pointer; box-shadow:var(--sh-row); transition:border-color .16s, transform .16s, background .16s; }
+.tc-chip:hover { border-color:var(--olive); transform:translateY(-1px); background:var(--white); }
+/* thinking — square two-inset loader + shimmering trace of thought (fires on real events) */
+.tc-think { display:flex; align-items:center; gap:10px; padding-top:3px; }
+.tc-sq { position:relative; width:19px; height:19px; flex-shrink:0; }
+.tc-sq span { position:absolute; border-radius:50px; box-shadow:inset 0 0 0 2px var(--olive); animation:tcSq 2.5s infinite; }
+.tc-sq span:nth-child(2) { animation-delay:-1.25s; }
+@keyframes tcSq {
+  0%{inset:0 10px 10px 0} 12.5%{inset:0 10px 0 0} 25%{inset:10px 10px 0 0} 37.5%{inset:10px 0 0 0}
+  50%{inset:10px 0 0 10px} 62.5%{inset:0 0 0 10px} 75%{inset:0 0 10px 10px} 87.5%{inset:0 0 10px 0} 100%{inset:0 10px 10px 0} }
+.tc-shimmer { font-family:var(--sans); font-size:13px; font-weight:500; letter-spacing:-.008em;
+  background:linear-gradient(90deg,#a4a288 0%,#a4a288 34%,#43452b 50%,#a4a288 66%,#a4a288 100%);
+  background-size:220% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+  animation:tcShim 1.8s linear infinite; transition:opacity .2s; }
+@keyframes tcShim { 0%{background-position:210% 0} 100%{background-position:-210% 0} }
+/* deck landing — real picks, real reasons (whyLine + record), photo tile w/ monogram fallback */
+.tc-deck { margin:2px 0 6px 37px; background:rgba(255,255,255,.96); border:1px solid rgba(74,75,47,.1); border-radius:18px; padding:16px; box-shadow:var(--sh-card); animation:tcMsgIn .4s var(--spring) both; }
+.tc-deck-kick { display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.13em; text-transform:uppercase; color:var(--ebony); margin-bottom:8px; }
+.tc-deck-pct { font-family:var(--mono); font-size:9px; font-weight:500; color:var(--olive); background:linear-gradient(180deg, rgba(230,238,196,.95), var(--tea)); border:1px solid rgba(74,75,47,.08); border-radius:var(--r-pill); padding:3px 8px; margin-left:auto; }
+.tc-deck h2 { font-family:var(--serif); font-size:19px; font-weight:700; letter-spacing:-.015em; color:var(--olive); line-height:1.18; margin-bottom:3px; }
+.tc-deck h2 em { font-style:italic; font-weight:600; }
+.tc-deck .tc-why { font-size:12.25px; color:var(--ebony); line-height:1.5; margin-bottom:12px; }
+.tc-firm { display:flex; align-items:center; gap:11px; width:100%; text-align:left; background:none; border:none; border-top:1px solid rgba(74,75,47,.08); padding:10px 0; cursor:pointer; }
+.tc-firm .tc-mono { flex-shrink:0; width:29px; height:29px; border-radius:9px; background:rgba(212,223,158,.32); color:var(--olive); font-family:var(--serif); font-weight:700; font-size:13.5px; display:grid; place-items:center; overflow:hidden; }
+.tc-firm .tc-mono img { width:100%; height:100%; object-fit:cover; }
+.tc-firm .tc-fl { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+.tc-firm .tc-fn { font-size:13.25px; font-weight:600; color:var(--olive); line-height:1.2; }
+.tc-firm .tc-fw { font-size:11.25px; color:var(--ebony); line-height:1.35; }
+.tc-firm .tc-fg { margin-left:auto; flex-shrink:0; color:var(--ebony); opacity:.5; }
+.tc-deck-all { display:block; width:100%; margin-top:12px; background:var(--olive); color:var(--white); border:none; border-radius:13px; padding:12px; font-family:var(--sans); font-size:13.5px; font-weight:600; cursor:pointer; box-shadow:0 2px 6px rgba(74,75,47,.2), 0 10px 26px -6px rgba(74,75,47,.38); }
+/* composer — floating card; clears the mobile bottom nav */
+.tc-composer { flex-shrink:0; padding:8px 13px 96px; }
+@media (min-width:900px){ .tc-composer { padding-bottom:18px; } }
+.tc-card { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.82); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1.5px solid rgba(74,75,47,.14); border-radius:22px; padding:6px 6px 6px 16px; box-shadow:0 14px 34px -12px rgba(74,75,47,.34), 0 2px 6px rgba(74,75,47,.08); }
+.tc-card:focus-within { border-color:rgba(74,75,47,.42); }
+.tc-input { flex:1; min-width:0; border:none; background:transparent; outline:none; font-family:var(--sans); font-size:16px; color:var(--olive); padding:0; }
+.tc-input::placeholder { color:var(--ebony); opacity:.62; font-size:14px; }
+.tc-send { width:37px; height:37px; flex-shrink:0; border-radius:13px; border:none; display:grid; place-items:center; cursor:pointer; background:rgba(74,75,47,.1); color:var(--ebony); transition:background .16s, transform .12s, color .16s; }
+.tc-send:active { transform:scale(.94); }
+.tc-send.hot { background:var(--olive); color:var(--white); }
+.tc-err { font-size:11.5px; color:#9a3b2f; padding:2px 16px 4px 54px; }
 
 /* ===== SAVED LIST ===== */
 .favwrap { flex:1; min-height:0; overflow-y:auto; padding:2px 20px 130px; display:flex; flex-direction:column; gap:12px; }
@@ -749,6 +846,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 }
 @media (min-width:900px) {
   #s-match .match-wrap { padding:30px 40px 60px; }
+  #s-match .match-wrap.mw--chat { padding:0; }
   .mw-q { font-size:31px; }
   #s-browse .browse-hdr { padding:34px 40px 4px; }
   .browse-h1 { font-size:46px; }
@@ -4444,7 +4542,7 @@ function showBrowse(key){
   ensureDeck(key); S.introPending = !desktop() && !S.match;     // the old "We found N" beat: plain mobile browse only
   showScreen('browse'); renderNeedChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState();
 }
-function goHome(){ closeSheet(); S.mode='trade'; S.triageActive=false; S.triageMode=null; showScreen('home'); renderReturn(); renderSidebar(); updateNavState(); }
+function goHome(){ closeSheet(); S.mode='trade'; S.triageActive=false; S.triageMode=null; S.triChat=null; showScreen('home'); renderReturn(); renderSidebar(); updateNavState(); }
 function updateNavState(){
   const home=$('nav-home'), saved=$('nav-saved');
   if(home) home.classList.toggle('on', S.screen==='home' || S.screen==='match' || (S.screen==='browse' && S.mode==='trade'));
@@ -4475,7 +4573,9 @@ function enterMatch(key, opts){
 function renderMatchWalk(){
   const wrap = $('match-wrap'); if(!wrap) return;
   const st = S.matchStep;
-  if (st==='priority'){ wrap.innerHTML = matchWalkPriorityHTML(); wireMatchPriority(); }
+  wrap.classList.toggle('mw--chat', st==='triage-chat');
+  if (st==='triage-chat'){ wrap.innerHTML = triageChatHTML(); wireTriageChat(); }
+  else if (st==='priority'){ wrap.innerHTML = matchWalkPriorityHTML(); wireMatchPriority(); }
   else if (st==='triage-symptom'){ wrap.innerHTML = triageSymptomHTML(); wireTriageSymptom(); }
   else if (st==='triage-disambig'){ wrap.innerHTML = triageDisambigHTML(); wireTriageDisambig(); }
   else if (st==='triage-area'){ wrap.innerHTML = triageAreaHTML(); wireTriageArea(); }
@@ -4632,13 +4732,16 @@ function triageSymptomHTML(){
     '<h1 class="mw-q">What’s <span class="squig">happening?</span></h1>'+
     '<p class="mw-hint">Pick what fits — Vesta routes it to the field proven to handle it, fast.</p>'+
     '<div class="mw-opts">'+TRIAGE_BROKEN.map((s,i)=>TRI_ROW(s.icon, s.label, s.hint, ' data-i="'+i+'"')).join('')+'</div>'+
+    (TRI_OK ? '<button class="mw-describe" id="mw-desc" type="button">or just describe it →</button>' : '')+
   '</div>';
 }
 function wireTriageSymptom(){
   const wrap=$('match-wrap'); if(!wrap) return;
+  { const d=$('mw-desc'); if(d) d.addEventListener('click', enterConverse); }
   wrap.querySelectorAll('.mw-opt').forEach(b=>b.addEventListener('click', ()=>{
     const s = TRIAGE_BROKEN[+b.dataset.i]; if(!s) return;
-    if (s.action==='search'){ openSearch(); return; }        // typed fallback stays available, never the default
+    // "Something else" → the conversation when the LLM lane is healthy; typed search otherwise
+    if (s.action==='search'){ if (TRI_OK) enterConverse(); else openSearch(); return; }
     if (s.ambiguous){ S.triageAmbig=s; S.matchStep='triage-disambig'; renderMatchWalk(); return; }
     triageEnter(s.trade, s.job, s.hi, s.hiLabel);
   }));
@@ -4668,10 +4771,12 @@ function triageAreaHTML(){
     '<h1 class="mw-q">What are you <span class="squig">planning?</span></h1>'+
     '<p class="mw-hint">Pick the part of the home — Vesta shows the real jobs county firms are proven to do there.</p>'+
     '<div class="mw-opts">'+TRIAGE_AREAS.map((a,i)=>TRI_ROW(a.icon, a.label, a.hint, ' data-i="'+i+'"')).join('')+'</div>'+
+    (TRI_OK ? '<button class="mw-describe" id="mw-desc" type="button">or just describe it →</button>' : '')+
   '</div>';
 }
 function wireTriageArea(){
   const wrap=$('match-wrap'); if(!wrap) return;
+  { const d=$('mw-desc'); if(d) d.addEventListener('click', enterConverse); }
   wrap.querySelectorAll('.mw-opt').forEach(b=>b.addEventListener('click', ()=>{
     S.triageArea = TRIAGE_AREAS[+b.dataset.i]; S.matchStep='triage-jobs'; renderMatchWalk();
   }));
@@ -4729,6 +4834,265 @@ function wireTriageJobs(){
   const wrap=$('match-wrap'); if(!wrap) return;
   wrap.querySelectorAll('.mw-opt').forEach(b=>b.addEventListener('click', ()=> triageEnter(b.dataset.trade, b.dataset.job)));
   const back=$('mw-tback'); if(back) back.addEventListener('click', ()=>{ S.matchStep='triage-area'; renderMatchWalk(); });
+}
+
+/* ===== CONVERSATIONAL TRIAGE (matchStep 'triage-chat') ==========================
+   The LLM front door to the match walk — spec: business/vesta-conversational-triage.md
+   § LOCKED INTERFACE. The model (api/triage) interprets free text into {say, ask, chips,
+   mode, resolved}; every resolve is bank-validated SERVER-side and re-gated CLIENT-side
+   (same check triageEnter runs) before anything lands. The deck card's picks, order and
+   per-pick whys come from the app's own machinery (matchScore/whyLine/fetchPhotos) —
+   never from the model. Streaming: {t:'d'} say-deltas → {t:'f'} validated final →
+   {t:'e'} error (falls to the tap flow). Health-gated: TRI_OK=false → every entry point
+   behaves exactly like today's app. */
+let TRI_OK = false;
+function triProbe(){ fetch('/api/triage').then(r => { TRI_OK = r.ok; }).catch(()=>{}); }
+
+const TC_AVATAR = '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>';
+// starter pills — lean icon + 2-3 words, each mapping to a natural utterance (locked set)
+const TC_STARTERS = [
+  { t:"There's a brown stain on my ceiling that keeps getting bigger", l:'Ceiling leak',  ic:'<path d="M3 6h18"/><path d="M12 10s3 3.6 3 5.6a3 3 0 0 1-6 0C9 13.6 12 10 12 10z"/>' },
+  { t:'My water heater is making a popping noise', l:'Water heater', ic:'<rect x="6" y="3" width="12" height="18" rx="3"/><path d="M9 8h6"/><path d="M12 13v3"/>' },
+  { t:"I have no heat and it's freezing in the house", l:'No heat', ic:'<path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/>' },
+  { t:'The power went out in part of my house', l:'Power&rsquo;s out', ic:'<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/>' },
+  { t:'One of my drains is backing up', l:'Clogged drain', ic:'<path d="M4 5h16M7 5l1.4 8a3.6 3.6 0 0 0 7.2 0L17 5M12 20v-3"/>' },
+  { t:"I'm planning to redo my driveway this spring", l:'Redo driveway', ic:'<path d="M4 21 9 3h6l5 18M10 3 9 21M14 3l1 18"/>' },
+];
+// trace of thought — names the homeowner's own problem (keyword → topic map)
+function tcTopic(msg){
+  const m = (msg||'').toLowerCase();
+  if(/ceiling|stain|leak|drip|water spot|brown ring|water mark/.test(m)) return 'the ceiling leak';
+  if(/water heater|hot water|\bheater\b/.test(m)) return 'the water heater';
+  if(/no heat|furnace|freezing|heating|won.?t warm|cold house/.test(m)) return 'the heating issue';
+  if(/\bac\b|air condition|cooling|no cool|won.?t cool/.test(m)) return 'the cooling issue';
+  if(/power|outlet|spark|breaker|electric|wiring|panel/.test(m)) return 'the electrical issue';
+  if(/drain|sewer|clog|toilet|backing up|back ?up|sump/.test(m)) return 'the drain backup';
+  if(/driveway|pave|asphalt|blacktop|sealcoat/.test(m)) return 'the driveway project';
+  if(/roof|shingle|gutter|flashing/.test(m)) return 'the roof issue';
+  if(/paint/.test(m)) return 'the painting project';
+  if(/tree|branch|storm|limb/.test(m)) return 'the tree work';
+  if(/floor|hardwood|tile|laminate/.test(m)) return 'the flooring project';
+  if(/window|door|siding/.test(m)) return 'the exterior project';
+  if(/pool|hot ?tub|\bspa\b/.test(m)) return 'the pool work';
+  return 'what you described';
+}
+
+function enterConverse(){
+  S.mode='trade'; S.match=null; S.matchPending=true; _mwMoreOpen=false; _pendingJob=null;
+  S.matchHi=null; S.matchHiLabel=null;
+  S.triageActive=false; S.triageMode=null; S.triageAmbig=null; S.triageArea=null;
+  S.matchStep='triage-chat';
+  S.triChat = { msgs:[], turns:0, done:false, started:false, mode:null, busy:false };
+  renderNeedChips(); renderSidebar(); showScreen('match'); updateNavState(); renderMatchWalk();
+}
+function triageChatHTML(){
+  const pill = s => '<button class="tc-pill" type="button" data-text="'+esc(s.t)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+s.ic+'</svg>'+s.l+'</button>';
+  return '<div class="tc">'+
+    '<div class="tc-water"><span class="tc-blob tc-b1"></span><span class="tc-blob tc-b2"></span><span class="tc-blob tc-b3"></span><span class="tc-blob tc-b4"></span></div>'+
+    '<div class="tc-aura"></div>'+
+    '<div class="tc-opener" id="tc-opener">'+
+      '<span class="tc-eyebrow">Vesta &middot; Home Triage</span>'+
+      '<h1 class="tc-q" id="tc-head" data-text="Let’s get it handled."></h1>'+
+      '<div class="tc-pills">'+TC_STARTERS.map(pill).join('')+'</div>'+
+    '</div>'+
+    '<div class="tc-thread" id="tc-thread" hidden></div>'+
+    '<div class="tc-err" id="tc-err" hidden></div>'+
+    '<form class="tc-composer" id="tc-form"><div class="tc-card">'+
+      '<input class="tc-input" id="tc-input" placeholder="Describe it in your own words…" autocomplete="off" maxlength="500" aria-label="Describe what you need">'+
+      '<button type="submit" class="tc-send" id="tc-send" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>'+
+    '</div></form>'+
+  '</div>';
+}
+function wireTriageChat(){
+  const head = $('tc-head');
+  if (head){ const text = head.dataset.text; head.textContent='';
+    [...text].forEach((ch,i)=>{ const s=document.createElement('span'); s.className='tc-ch'; s.textContent = ch===' ' ? ' ' : ch; s.style.animationDelay=(0.18 + i*0.045)+'s'; head.appendChild(s); }); }
+  const op = $('tc-opener');
+  if (op) op.addEventListener('click', e => { const b=e.target.closest('.tc-pill'); if(b) triTurn(b.dataset.text); });
+  const inp = $('tc-input'), snd = $('tc-send');
+  if (inp) inp.addEventListener('input', ()=> snd.classList.toggle('hot', !!inp.value.trim()));
+  const form = $('tc-form');
+  if (form) form.addEventListener('submit', e => { e.preventDefault(); const v=(inp.value||'').trim();
+    if (v && S.triChat && !S.triChat.done && !S.triChat.busy){ inp.value=''; snd.classList.remove('hot'); triTurn(v); } });
+}
+const tcScroll = () => { const t=$('tc-thread'); if(t) t.scrollTop = t.scrollHeight; };
+function tcUser(text){
+  const t=$('tc-thread'); if(!t) return;
+  const el=document.createElement('div'); el.className='tc-msg u';
+  el.innerHTML='<div class="tc-bubble">'+esc(text)+'</div>'; t.appendChild(el); tcScroll();
+}
+function tcVesta(){
+  const t=$('tc-thread'); if(!t) return null;
+  const el=document.createElement('div'); el.className='tc-msg v';
+  el.innerHTML='<div class="tc-avatar">'+TC_AVATAR+'</div><div class="tc-bubble"></div>';
+  t.appendChild(el); tcScroll(); return el.querySelector('.tc-bubble');
+}
+function tcThink(label){
+  tcThinkOff();
+  const t=$('tc-thread'); if(!t) return;
+  const el=document.createElement('div'); el.className='tc-msg v'; el.id='tc-typing';
+  el.innerHTML='<div class="tc-avatar">'+TC_AVATAR+'</div><div class="tc-think"><div class="tc-sq"><span></span><span></span></div><span class="tc-shimmer" id="tc-word">'+esc(label)+'</span></div>';
+  t.appendChild(el); tcScroll();
+}
+function tcThinkWord(label){
+  const w=$('tc-word'); if(!w){ tcThink(label); return; }
+  w.style.opacity=0; setTimeout(()=>{ const w2=$('tc-word'); if(w2){ w2.textContent=label; w2.style.opacity=1; } },160);
+}
+function tcThinkOff(){ const el=$('tc-typing'); if(el) el.remove(); }
+function tcChips(chips){
+  const t=$('tc-thread'); if(!t || !chips || !chips.length) return;
+  const wrap=document.createElement('div'); wrap.className='tc-chips';
+  chips.forEach(c=>{ const b=document.createElement('button'); b.className='tc-chip'; b.type='button'; b.textContent=c;
+    b.onclick=()=>{ if(S.triChat && !S.triChat.busy){ t.querySelectorAll('.tc-chips').forEach(x=>x.remove()); triTurn(c); } }; wrap.appendChild(b); });
+  t.appendChild(wrap); tcScroll();
+}
+// Graceful handoff to the tap flow — the fallback choreography for API failure, garbage
+// JSON, or the 4-turn cap. One Vesta line, then the guided steps. Never a dead end.
+function tcHandoff(mode){
+  if (!S.triChat || S.triChat.done) return;
+  S.triChat.done = true;
+  tcThinkOff();
+  const b = tcVesta(); if (b) b.textContent = 'Let me walk you through it another way — a couple of taps and I’ll have your picks.';
+  setTimeout(()=> enterTriage(mode === 'plan' ? 'plan' : 'broken'), 950);
+}
+
+async function triTurn(text){
+  const c = S.triChat; if (!c || c.done || c.busy) return;
+  if (!c.started){ c.started = true; const op=$('tc-opener'); if(op) op.style.display='none'; const t=$('tc-thread'); if(t) t.hidden=false; }
+  c.busy = true; c.turns++;
+  const err=$('tc-err'); if(err) err.hidden=true;
+  tcUser(text); c.msgs.push({ role:'user', content:text });
+  tcThink('Reading what you described');
+  // pre-first-token: one timed advance keeps the wait honest-feeling on a slow start
+  const preTimer = setTimeout(()=> tcThinkWord('Making sense of '+tcTopic(text)), 2600);
+  let bubble = null, streamed = '';
+  try {
+    const r = await fetch('/api/triage', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ messages: c.msgs }) });
+    if (!r.ok || !r.body) throw new Error('http');
+    const reader = r.body.getReader(), dec = new TextDecoder();
+    let buf = '', final = null, evErr = null;
+    for (;;){
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream:true });
+      let nl;
+      while ((nl = buf.indexOf('\n')) !== -1){
+        const line = buf.slice(0, nl).trim(); buf = buf.slice(nl + 1);
+        if (!line.startsWith('data:')) continue;
+        let ev; try { ev = JSON.parse(line.slice(5)); } catch(_){ continue; }
+        if (ev.t === 'd'){
+          clearTimeout(preTimer);
+          if (!bubble){ tcThinkOff(); bubble = tcVesta(); }
+          streamed += ev.c; if (bubble){ bubble.textContent = streamed; tcScroll(); }
+        }
+        else if (ev.t === 'f') final = ev;
+        else if (ev.t === 'e') evErr = ev.error;
+      }
+    }
+    clearTimeout(preTimer);
+    if (evErr || !final) throw new Error(evErr || 'no final');
+    if (!bubble){ tcThinkOff(); bubble = tcVesta(); }
+    if (bubble && final.say && bubble.textContent !== final.say) bubble.textContent = final.say;
+    c.mode = final.mode || 'fix';
+    // history stays under the server's 1200-char message cap; the model needs continuity, not verbatim
+    c.msgs.push({ role:'assistant', content: JSON.stringify({ say:(final.say||'').slice(0,600), resolved: final.resolved||null }) });
+    // client-side gate — the same bank check triageEnter runs; the server already validated,
+    // this catches a bank drift or a not-yet-loaded bank (fails back into the conversation)
+    const res = final.resolved;
+    const gate = res && res.trade && res.job && tradeMatchable(res.trade) && tradeBank(res.trade).jobs.some(j => j.value === res.job);
+    if (gate){
+      c.busy = false;
+      triDeckLand(bubble, res.trade, res.job, final.deck, c.mode);
+      return;
+    }
+    if (final.chips && final.chips.length) tcChips(final.chips);
+    c.busy = false;
+    if (c.turns >= 4 && !c.done) tcHandoff(c.mode);   // the cap: 4 user turns, then the guided steps
+  } catch(_){
+    clearTimeout(preTimer);
+    c.busy = false;
+    tcHandoff(c.mode);
+  }
+}
+// The resolve landing: read-restyle the resolving line, advance the trace on REAL events
+// (bank gate passed → county check → deck computed), then land the card.
+function triDeckLand(bubble, trade, job, deckMeta, mode){
+  const c = S.triChat;
+  if (bubble && !bubble.classList.contains('tc-read')){
+    const say = bubble.textContent;
+    bubble.classList.add('tc-read');
+    bubble.innerHTML = '<span class="tc-rqm">&ldquo;</span><div class="tc-rql">'+esc(say)+'</div>';
+  }
+  tcThink('Checking who covers this in your county');
+  setTimeout(()=>{
+    tcThinkWord('Lining up your picks');
+    setTimeout(()=>{
+      tcThinkOff();
+      triDeckCard(trade, job, deckMeta, mode);
+      if (c){ c.done = true; }
+      const inp=$('tc-input'); if(inp){ inp.placeholder='Matched — your picks are above ↑'; inp.disabled=true; }
+    }, 620);
+  }, 720);
+}
+// The in-chat deck card — REAL picks from the app's own machinery: the locked scorer's
+// order (matchers first, rank_score tiebreak), whyLine + known-for for distinct per-pick
+// reasons, work photos where they exist (monogram fallback). Emergency mirrors pickJob:
+// the fast axis auto-answers Q2 when the trade's bank carries it.
+function triDeckCard(trade, job, deckMeta, mode){
+  const b = tradeBank(trade);
+  const emergency = /emergency/.test(job) || !!(deckMeta && deckMeta.emergency);
+  const axis = (emergency && b && b.axes && b.axes.some(a=>a.axis==='fast')) ? 'fast' : null;
+  const m = { job:job, axis:axis };
+  const picks = byTrade(trade).slice()
+    .sort((x,y)=> matchScore(y,m)-matchScore(x,m) || (y.rankScore-x.rankScore)).slice(0,3);
+  if (!picks.length){ tcHandoff(mode); return; }   // a trade with no browsable firms — walk them instead
+  logMatch(trade, job, axis);                       // the resolve IS the match (same signal as applyMatch's)
+  saveLastMatch(trade, job, axis);                  // return loop: resumable like any tap-flow match
+  const jl = lc(deckMeta && deckMeta.label ? deckMeta.label : jobLabel(job));
+  const pct = deckMeta && deckMeta.pct != null ? deckMeta.pct : Math.round(100*jobCoverage(trade, job));
+  const lead = emergency
+    ? 'For an emergency, Vesta led with who answers fastest, then weighed record. Why each made your shortlist:'
+    : mode === 'plan'
+      ? 'No rush on your end — but when you’re ready to talk, these are worth the call, each for a different reason:'
+      : 'These rose to the top for your '+esc(jl)+' — each for a different reason:';
+  const used = new Set();
+  const reason = con => {
+    let r = whyLine(con, m);
+    if (used.has(r) && con.knownFor && con.knownFor.length){
+      const kf = con.knownFor.find(k => !used.has('Known for '+lc(k)));
+      if (kf) r = 'Known for '+lc(kf);
+    }
+    used.add(r); return r;
+  };
+  const rows = picks.map(p =>
+    '<button class="tc-firm" type="button" data-place="'+esc(p.placeId)+'">'+
+      '<span class="tc-mono" data-ph-place="'+esc(p.placeId)+'">'+esc((p.name||'?')[0])+'</span>'+
+      '<span class="tc-fl"><span class="tc-fn">'+esc(p.name)+'</span><span class="tc-fw">'+esc(reason(p))+'</span></span>'+
+      '<span class="tc-fg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>'+
+    '</button>').join('');
+  const t = $('tc-thread'); if (!t) return;
+  const el = document.createElement('div'); el.className='tc-deck';
+  el.innerHTML = '<div class="tc-deck-kick">Why these '+(picks.length===3?'three':picks.length===2?'two':'picks')+
+      (pct ? '<span class="tc-deck-pct">'+pct+'% of '+esc(lc(deckMeta && deckMeta.tradeLabel ? deckMeta.tradeLabel : tradeLabelOf(trade)))+' do this</span>' : '')+'</div>'+
+    '<h2>For your <em>'+esc(jl)+'</em></h2>'+
+    '<p class="tc-why">'+lead+'</p>'+rows+
+    '<button class="tc-deck-all" type="button" id="tc-all">See all your matches →</button>';
+  t.appendChild(el); tcScroll();
+  el.querySelectorAll('.tc-firm').forEach(btn => btn.addEventListener('click', ()=> openProfile(btn.dataset.place)));
+  const all = el.querySelector('#tc-all');
+  if (all) all.addEventListener('click', ()=>{
+    // the full-deck handoff — applyMatch's state, minus its log/save (both fired at card render)
+    S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank';
+    S.match = { job:job, axis:axis }; S.matchPending=false;
+    S.triageActive=false; S.triageMode=null;
+    renderNeedChips(); renderSidebar(); showBrowse(trade);
+  });
+  // photo slots light up where the firm has real work photos (same lazy /photos machinery as the deck)
+  picks.forEach(p => { fetchPhotos(p.placeId).then(ph => {
+    if (!ph || !ph.length) return;
+    const mount = el.querySelector('.tc-mono[data-ph-place="'+CSS.escape(p.placeId)+'"]');
+    if (mount) mount.innerHTML = '<img src="'+esc(photoUrl(ph[0].ref, 96))+'" alt="" loading="eager" decoding="async">';
+  }).catch(()=>{}); });
 }
 // Resume a stored match (return loop): rehydrate S.match from localStorage and open the
 // tailored result — the wiring behind the "pick up where you left off" chip. Defensive:
@@ -4788,7 +5152,11 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   $('frepsheet-x').addEventListener('click', closeFieldReportSheet);
   $('dirscrim').addEventListener('click', closeDirectorySheet);
   $('dirsheet-x').addEventListener('click', closeDirectorySheet);
-  ['nav-search','ds-search','home-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
+  ['nav-search','ds-search'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', openSearch); });
+  // the home bar is the conversation's front door when the LLM lane is healthy; typed
+  // search otherwise — the feature being off just looks like today's app.
+  { const hs=$('home-search'); if(hs) hs.addEventListener('click', ()=> { if (TRI_OK) enterConverse(); else openSearch(); }); }
+  triProbe();
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
   $('vsearch-x').addEventListener('click', closeSearch);
