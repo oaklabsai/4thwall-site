@@ -1057,6 +1057,24 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home .home-search { animation-delay:.15s; } #s-home .home-problems { animation-delay:.21s; }
   #s-home .home-hero-proof { animation-delay:.32s; }
   @media (prefers-reduced-motion:reduce){ #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems, #s-home .home-hero-proof { animation:none; } }
+  /* ── DESKTOP CONVERSATION MORPH ── Vesta Live now opens in place on desktop too (unified
+     with the mobile morph). The hero smoothly animates away — medallion, sub-line, the 4
+     starters, the trust route — leaving only the "Vesta Live" Caveat mark at the top; the
+     thread grows in place and the composer pins below it. Nothing scrolls the page. */
+  #s-home .home-h1, #s-home .hl-vlive { transition:font-size .4s ease; }
+  #s-home .home-medallion, #s-home .home-sub, #s-home .home-starters, #s-home #vfold-c {
+    max-height:440px; transition:opacity .4s ease, max-height .55s cubic-bezier(.45,0,.18,1), margin .5s ease; }
+  #s-home.vconv .home-hero-main { justify-content:flex-start; padding-top:3.6vh; }
+  #s-home.vconv .home-medallion,
+  #s-home.vconv .home-sub,
+  #s-home.vconv .home-starters,
+  #s-home.vconv #vfold-c { opacity:0; max-height:0; margin-top:0; margin-bottom:0; overflow:hidden; pointer-events:none; }
+  #s-home.vconv .home-h1 { font-size:0; margin:0 0 14px; }
+  #s-home.vconv .hl-vlive { font-size:30px; }
+  #s-home.vconv #vfold-a { flex:0 0 auto; }
+  #s-home.vconv .vthread-fold { display:flex; flex:1 1 auto; min-height:0; width:100%; max-width:600px; margin:0 auto; }
+  #s-home.vconv .vthread-fold > .vfold-in { height:100%; }
+  #s-home.vconv #home-search { margin-top:0; }
 }
 @media (min-width:1200px) {
   /* the 3-column 270/1fr/400 grid is defined in the ≥900 block; the report column holds
@@ -5176,16 +5194,12 @@ function tcTopic(msg){
 }
 
 function enterConverse(){
-  // Mobile: the conversation morphs in place on the home screen (Vesta Live redesign) —
-  // the header/cards/route fold away, the thread grows, the bar becomes the composer.
-  // Desktop: the existing screen-swap into the match-screen chat.
-  if (!desktop()){ enterConverseMobile(); return; }
-  S.mode='trade'; S.match=null; S.matchPending=true; _mwMoreOpen=false; _pendingJob=null;
-  S.matchHi=null; S.matchHiLabel=null;
-  S.triageActive=false; S.triageMode=null; S.triageAmbig=null; S.triageArea=null;
-  S.matchStep='triage-chat';
-  S.triChat = { msgs:[], turns:0, done:false, started:false, mode:null, busy:false };
-  renderNeedChips(); renderSidebar(); showScreen('match'); updateNavState(); renderMatchWalk();
+  // Vesta Live morphs the home in place on BOTH breakpoints now — desktop is unified onto
+  // the proven mobile morph (the hero animates away, only the "Vesta" Caveat mark stays, the
+  // thread grows in place). If we're on another screen (e.g. the tap-flow "describe it in
+  // your own words" escape), return to the home card first, then morph.
+  if (S.screen !== 'home'){ showScreen('home'); renderSidebar(); updateNavState(); }
+  enterConverseMobile();
 }
 
 /* ═══ MOBILE IN-PLACE CONVERSATION MORPH — the home screen becomes the chat, wired to the
@@ -5560,8 +5574,7 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   function vSubmit(){
     const inp=$('hs-cin'); if(!inp) return; const v=(inp.value||'').trim(); if(!v) return; inp.value='';
     if (!TRI_OK){ openSearch(v); return; }
-    if (desktop()){ enterConverse(); triTurn(v); }
-    else { if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(v); }
+    if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(v);
   }
   { const hs=$('home-search'); if(hs) hs.addEventListener('click', e=>{
       if (e.target.closest('.hs-cin, .hs-csend')) return;
@@ -5580,7 +5593,7 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   // submits that example as the first turn, demonstrating actual range immediately.
   document.querySelectorAll('.hstart').forEach(b => b.addEventListener('click', () => {
     const text = b.dataset.say;
-    if (TRI_OK){ enterConverse(); triTurn(text); } else openSearch(text);
+    if (TRI_OK){ if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(text); } else openSearch(text);
   }));
   triProbe();
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
