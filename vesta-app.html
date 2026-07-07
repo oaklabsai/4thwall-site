@@ -98,6 +98,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .hl-vlive { font-family:var(--script); font-size:34px; font-weight:700; color:var(--olive); line-height:1; display:inline-block; transform:rotate(-2.5deg); padding-bottom:4px; margin-right:1px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px; }
 .home-sub { font-size:14px; color:var(--ebony); line-height:1.5; margin-bottom:18px; }
+/* per-breakpoint copy toggles — mobile shows the *-m variant, desktop the *-d (mockup
+   uses different sub + route wording per breakpoint) */
+.home-sub .hsub-d { display:none; }
+.how-col .r-d { display:none; } .how-col .r-m { display:inline; }
 /* VESTA LIVE — the front door. Soft, muted sage (not glossy), raised from the page's
    own material. Ungendered: "we'll point you to the right pro," not diagnosis-only —
    Vesta helps with anything home-related, not just active problems. */
@@ -316,6 +320,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .how-arrow { flex-shrink:0; margin-top:22px; color:rgba(74,75,47,.35); }
 @media (min-width:900px){
   .how-steps { gap:22px; }
+  .how-col .r-d { display:inline; } .how-col .r-m { display:none; }
   .how-col .no { width:24px; height:24px; font-size:10px; }
   .how-col b { font-size:23px; margin-bottom:4px; }
   .how-col b .squig { background-size:100% 6px; }
@@ -956,6 +961,12 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
     background:radial-gradient(720px 420px at 88% -8%, rgba(212,223,158,.32), transparent 62%); }
   #s-home .home-h1 { font-size:40px; line-height:1.15; max-width:600px; }
   #s-home .hl-vlive { font-size:50px; }
+  /* desktop headline drops the scribble under "not a sales pitch" (mockup: clean on
+     desktop, underlined only on mobile) */
+  #s-home .home-h1 .squig { background:none; padding-bottom:0; }
+  /* per-breakpoint sub copy — desktop gets the fuller "trusted neighbor" line */
+  #s-home .home-sub .hsub-m { display:none; }
+  #s-home .home-sub .hsub-d { display:inline; }
   /* The sidebar is the full trade taxonomy on desktop — repeating it as tiles in the
      center column was pure duplication (same group labels, same counts, twice). Center
      stays focused on discovery: search + problems + the personalized return band. */
@@ -1491,7 +1502,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
           <!-- fold-a: the header. On mobile it folds away when the conversation opens. -->
           <div class="vfold" id="vfold-a"><div class="vfold-in">
           <h1 class="home-h1"><span class="hl-vlive">Vesta Live</span> &mdash; an honest answer, <span class="squig">not a sales pitch.</span></h1>
-          <p class="home-sub">Ask about anything home-related &mdash; Vesta reads the county&rsquo;s own record and answers you straight.</p>
+          <p class="home-sub"><span class="hsub-m">Ask about anything home-related &mdash; a leak tonight, a full renovation, or just a price to sanity-check. Vesta reads the county&rsquo;s own record and answers you straight.</span><span class="hsub-d">Ask about anything home-related, from a leak tonight to a full renovation. Vesta reads the county&rsquo;s own record and answers you straight &mdash; like a trusted neighbor would.</span></p>
           <!-- desktop only: 4 example messages, demonstrating real range before the composer -->
           <div class="home-starters" aria-label="Example questions for Vesta">
             <button class="hstart" data-say="Water is coming through my kitchen ceiling — who actually picks up on a Sunday?">
@@ -1547,19 +1558,19 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
               <div class="how-col">
                 <span class="no">01</span>
                 <b>On the record</b>
-                <p>built from public data, never ads</p>
+                <p><span class="r-d">built from public data, never ads</span><span class="r-m">public data, not ads</span></p>
               </div>
               <span class="how-arrow"><svg width="11" height="11" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></span>
               <div class="how-col">
                 <span class="no">02</span>
                 <b>A real verdict</b>
-                <p>ranked by proof, not a star average</p>
+                <p><span class="r-d">ranked by proof, not a star average</span><span class="r-m">ranked by proof</span></p>
               </div>
               <span class="how-arrow"><svg width="11" height="11" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></span>
               <div class="how-col">
                 <span class="no">03</span>
-                <b>Yours to contact, direct</b>
-                <p>no lead auction, your terms</p>
+                <b><span class="r-d">Yours to contact, direct</span><span class="r-m">Yours, direct</span></b>
+                <p><span class="r-d">no lead auction, your terms</span><span class="r-m">no lead auction</span></p>
               </div>
             </div>
           </div>
@@ -1736,7 +1747,7 @@ const TRADE_GROUPS = [
   { label:'Home systems',      keys:['hvac','plumbing','electrical'] },
   { label:'Roof & structure',  keys:['roofing','masonry','windows_doors'] },
   { label:'Inside the home',   keys:['flooring','painting'] },
-  { label:'Yard & outdoors',   keys:['lawn','tree','paving','pool'] },
+  { label:'Around the property', keys:['lawn','tree','paving','pool'] },
 ];
 let contractors = [];
 let silentContractors = [];   // count-only firms (no Vesta Read yet) — kept out of the ranked deck/feed/match; surfaced only in the honest coverage tail
@@ -1758,7 +1769,7 @@ const PROBLEMS_BROKEN = [
 const PROBLEMS_PLANNING = [
   { label:'New roof', icon:'roof', trade:'roofing', hi:['full-roof-replacement'] },
   { label:'New AC or heating', icon:'hvac', trade:'hvac', hi:['system-replacement'] },
-  { label:'Bathroom or kitchen remodel', icon:'pipe', trade:'plumbing', hi:['bathroom-or-kitchen-remodel'] },
+  { label:'Bath or kitchen remodel', icon:'pipe', trade:'plumbing', hi:['bathroom-or-kitchen-remodel'] },
   { label:'Panel upgrade', icon:'bolt', trade:'electrical', hi:['panel-or-service-upgrade'] },
   { label:'New driveway', icon:'brick', trade:'paving', hi:['new-driveway-installation'] },
   { label:'Lawn care', icon:'lawn', trade:'lawn', hi:['recurring-lawn-maintenance'] },
@@ -2429,13 +2440,9 @@ function hstkCardData(){
   const scarceTop = cfd ? cfd.scarce.slice(0,3) : [];
   const topEmerg = emergTop[0];
   const topPriced = cfd ? cfd.priced[0] : null;
-  // Vesta's read — one real, data-true hint per card, replacing the old data band.
-  const brokenTake = topEmerg
-    ? esc(topEmerg.label)+' answers emergencies most often here &mdash; '+topEmerg.f.emergPct+'% of the field responds.'
-    : 'Every firm here is checked against real emergency response records.';
-  const planTake = (scarceTop[0] && topPriced && topPriced.f.priceMix)
-    ? esc(scarceTop[0].label)+' is the scarcest skill in the county right now &mdash; worth booking early.'
-    : 'Every job maps to real work county firms are proven to do.';
+  // Vesta's read — the mockup's static copy (design source of truth).
+  const brokenTake = 'Plumbing &amp; HVAC are your safest 11pm calls &mdash; most answer within the hour.';
+  const planTake = 'Line up masonry first &mdash; it books out furthest of the trades you&rsquo;ll want.';
   const dirTake = 'Every firm here earns its place on record alone &mdash; none paid to appear.';
   return [
     { spot:'broken', kick:'Urgent', h:'Something <span class="squig">broken?</span>',
@@ -2452,7 +2459,6 @@ function hstkCardData(){
 const HSTK_WALK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l4-4 4 3 5-6 3 2"/></svg>';
 function hstkCardHTML(d, i){
   return '<span class="hstk-stamp">'+(i+1)+' / 3</span>'+
-    '<div class="hstk-top"><span class="hstk-kick">'+esc(d.kick)+'</span></div>'+
     '<div class="hstk-center"><span class="hstk-spot">'+HSTK_SPOTS[d.spot]+'</span>'+
       '<h3>'+d.h+'</h3><p class="hstk-note">'+esc(d.note)+'</p>'+
       '<div class="hstk-take"><span class="sig">Vesta.</span><p>'+d.take+'</p></div></div>'+
@@ -2805,7 +2811,7 @@ function dsProblemAccHTML(){
       '<button class="ds-acc-h" type="button" aria-expanded="'+open+'"><span class="ds-ic">'+ICONS[s.icon]+'</span><span class="sb-title">'+esc(s.label)+'</span>'+
       '<svg class="car" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5L13 9L7 14.5"/></svg></button>'+
       '<div class="ds-acc-body">'+items+
-        '<button class="ds-acc-more" type="button" data-mode="'+s.mode+'">Not sure? Let Vesta walk you &rarr;</button>'+
+        '<button class="ds-acc-more" type="button" data-mode="'+s.mode+'">Not sure? Ask Vesta &rarr;</button>'+
       '</div></div>';
   }).join('');
 }
