@@ -31,11 +31,16 @@
      Falls back to the old cubic-bezier where linear() is unsupported. */
   --spring: cubic-bezier(.32,1.08,.62,1);
   --spring: linear(0, 0.01, 0.04 2.2%, 0.16 4.8%, 0.71 12.6%, 0.92 16.2%, 1.02 19.7%, 1.09 23.6%, 1.115 27.4%, 1.106 31.3%, 1.06 38%, 1.008 46.5%, 0.988 53.2%, 0.985 60.1%, 0.996 76.4%, 1);
-  /* soft-UI — one material, shaped by light. Vesta Live redesign (2026-07). */
-  --nm:#ECEDE2;
-  --nm-out:7px 7px 15px rgba(74,75,47,.15), -7px -7px 15px rgba(255,255,255,.9);
-  --nm-sm:4px 4px 9px rgba(74,75,47,.12), -4px -4px 9px rgba(255,255,255,.85);
-  --nm-in:inset 3px 3px 6px rgba(74,75,47,.13), inset -3px -3px 6px rgba(255,255,255,.9);
+  /* soft-UI — clean cards lifted off the cream table, warm-neutral. Vesta Live redesign (2026-07).
+     --nm is a warm near-white a clear step ABOVE the --bg cream, so any surface painted --nm
+     reads as raised the moment it also carries --sh-card/--sh-row (a soft directional drop).
+     The neumorphic dual shadows (--nm-out/-sm) keep the top-left white highlight for pillowy
+     controls; --nm-in carves inputs INTO the surface. This is the wallet-reference look in-palette. */
+  --nm:#FAFBF5;
+  --nm-edge:.5px solid rgba(74,75,47,.055);
+  --nm-out:6px 6px 14px rgba(74,75,47,.13), -6px -6px 13px rgba(255,255,255,.85);
+  --nm-sm:4px 4px 9px rgba(74,75,47,.11), -4px -4px 9px rgba(255,255,255,.8);
+  --nm-in:inset 3px 3px 6px rgba(74,75,47,.12), inset -3px -3px 6px rgba(255,255,255,.85);
   --tea-grad:linear-gradient(180deg, #dfe8ac, #cdd88f);
   --dark-grad:linear-gradient(180deg, #565738, #43442a);
 }
@@ -251,8 +256,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    on desktop; mobile's fast-path is the CTA → the tap-flow walkthrough). ── */
 .home-stack { margin-bottom:8px; }
 .hstk-stage { position:relative; height:min(37vh, 288px); margin:6px 6px 8px; }
-.hstk-card { position:absolute; inset:0; background:var(--nm); border:1.5px solid rgba(74,75,47,.13); border-radius:26px; padding:13px 19px 13px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; user-select:none;
-  box-shadow:0 1px 2px rgba(74,75,47,.08), 0 6px 12px -4px rgba(74,75,47,.12), 0 14px 22px -10px rgba(74,75,47,.14); }
+.hstk-card { position:absolute; inset:0; background:var(--nm); border:var(--nm-edge); border-radius:26px; padding:13px 19px 13px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; user-select:none;
+  box-shadow:var(--sh-card); }
 .hstk-card::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
 /* the stamp — rubber-ink page marker, top LEFT */
 .hstk-stamp { position:absolute; top:14px; left:16px; transform:rotate(-2.5deg); font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.18em; color:rgba(74,75,47,.5); border:1.5px solid rgba(74,75,47,.3); border-radius:5px; padding:2.5px 8px 2px; }
