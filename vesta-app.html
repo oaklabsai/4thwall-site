@@ -71,7 +71,11 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   html, body { height:100%; overflow:hidden; }
   body { position:fixed; inset:0; width:100%; }
   #app { min-height:0; height:100vh; height:100dvh; }
-  .screen { min-height:0; height:100vh; height:100dvh; overflow:hidden; }
+  /* svh (smallest viewport height) not dvh: the walk-through / browse / profile screens must
+     size to the URL-bar-VISIBLE viewport so their content never hides behind the iOS URL bar
+     or reads as "the page extended" when the bar animates. #s-home keeps its own dvh rule
+     below (tuned to a pixel-perfect one-screen fit; svh would shrink it and risk a clip). */
+  .screen { min-height:0; height:100vh; height:100svh; overflow:hidden; }
   .home-body { min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
   #deck { min-height:0; }
 }
@@ -780,20 +784,20 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-firm .tc-fg { margin-left:auto; flex-shrink:0; color:var(--ebony); opacity:.5; }
 .tc-deck-all { display:block; width:100%; margin-top:14px; background:var(--dark-grad); color:var(--white); border:none; border-radius:15px; padding:13px; font-family:var(--sans); font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 13px -3px rgba(67,68,42,.5); }
 .tc-deck-all:active { box-shadow:var(--nm-in); transform:scale(.99); }
-/* ── Vesta Live RESOLVE → fixed verdict view ── On match, the conversation history
-   collapses so the picks deck (a self-contained verdict: the read, the coverage, the
-   per-pick why) lands centered in the fixed frame — no scroll to reach it, still visibly
-   "in the chat." Same class on both threads: desktop #tc-thread + mobile #vm-thread. From
-   here a pick opens that match; "See all your matches →" opens the browse deck. */
-.tc-resolved { overflow:hidden !important; }
-/* the thread feeds from the bottom — the picks land at the bottom of the window, right
-   above the composer, where the newest message sits (the ::before flex spacer pushes the
-   collapsed verdict down). */
-.tc-resolved::before { flex:1 0 0; }
-.tc-resolved > *:not(.tc-verdict) { display:none !important; }
+/* ── Vesta Live RESOLVE → verdict lands as Vesta's closing message ── On match, the
+   picks deck (a self-contained verdict: the read, the coverage, the per-pick why) is
+   appended as the FINAL message in the live thread — the conversation that produced it
+   stays visible above it, so the window reads as a real chat that resolved into picks
+   (NOT an empty box with a card floating at the bottom — that void was the "minimizing"
+   Drew flagged). The thread keeps its full height and scrolls internally; the page never
+   moves. Same class on both threads: desktop #tc-thread + mobile #vm-thread. From here a
+   pick opens that match; "See all your matches →" opens the browse deck. */
+/* the thread still feeds from the bottom (base .vth-scroll::before flex:1 spacer): the
+   verdict, as the newest message, sits at the bottom right above the composer, with the
+   conversation history filling the space above it. Long threads scroll internally. */
+.tc-resolved > .tc-verdict { animation:tcDeckLand .5s var(--spring) both; }
 /* once the picks land, the opening starter cards (a sibling of the thread) never linger */
 #vm-thread.tc-resolved ~ .vstarters, #tc-thread.tc-resolved ~ .vstarters { display:none !important; }
-.tc-resolved > .tc-verdict { margin:0 auto; width:100%; max-width:560px; animation:tcDeckLand .5s var(--spring) both; }
 /* the deck rides inside a real Vesta message row (avatar/"Vesta." signature to its left),
    so the picks read as a message FROM Vesta — not a detached card. Desktop has width to
    spare for the left-avatar row; mobile stacks the signature on top so the card stays full
@@ -1091,9 +1095,14 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home.vconv .hl-vlive { font-size:30px; }
   #s-home.vconv #vfold-a { flex:0 0 auto; }
   /* the window holds a definite min-height so it can never collapse to a sliver around a
-     tall verdict — flex-grow still expands it to fill when the hero clutter animates away. */
-  #s-home.vconv .vthread-fold { display:flex; flex:1 1 auto; min-height:min(54vh,520px); width:100%; max-width:600px; margin:0 auto; }
-  #s-home.vconv .vthread-fold > .vfold-in { height:100%; }
+     tall verdict — flex-grow still expands it to fill when the hero clutter animates away.
+     flex-direction:column (+ the child pinned to width:100%) keeps the panel FULL-WIDTH even
+     when the thread is EMPTY — e.g. entering via "or just describe it", which opens the
+     starter grid with no messages yet. A row flex let the lone .vfold-in child shrink to its
+     ~28px content width, collapsing the panel to a narrow strip on desktop (the "broken
+     describe button"). */
+  #s-home.vconv .vthread-fold { display:flex; flex-direction:column; flex:1 1 auto; min-height:min(54vh,520px); width:100%; max-width:600px; margin:0 auto; }
+  #s-home.vconv .vthread-fold > .vfold-in { height:100%; width:100%; }
   #s-home.vconv #home-search { margin-top:0; }
 }
 @media (min-width:1200px) {
