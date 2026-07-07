@@ -771,8 +771,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-deck h2 em { font-style:italic; font-weight:600; }
 .tc-deck .tc-why { font-size:12.25px; color:var(--ebony); line-height:1.5; margin-bottom:12px; }
 .tc-firm { display:flex; align-items:center; gap:11px; width:100%; text-align:left; background:none; border:none; border-top:1px solid rgba(74,75,47,.08); padding:10px 0; cursor:pointer; }
-.tc-firm .tc-mono { flex-shrink:0; width:31px; height:31px; border-radius:10px; background:var(--nm); box-shadow:var(--nm-in); color:var(--olive); font-family:var(--serif); font-weight:700; font-size:13.5px; display:grid; place-items:center; overflow:hidden; }
-.tc-firm .tc-mono img { width:100%; height:100%; object-fit:cover; }
+.tc-firm .tc-mono { flex-shrink:0; width:44px; height:44px; border-radius:13px; background:var(--nm); box-shadow:var(--nm-in); color:var(--olive); font-family:var(--serif); font-weight:700; font-size:17px; display:grid; place-items:center; overflow:hidden; }
+.tc-firm .tc-mono:has(img) { box-shadow:var(--nm-sm); }
+.tc-firm .tc-mono img { width:100%; height:100%; object-fit:cover; display:block; }
 .tc-firm .tc-fl { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
 .tc-firm .tc-fn { font-size:13.25px; font-weight:600; color:var(--olive); line-height:1.2; }
 .tc-firm .tc-fw { font-size:11.25px; color:var(--ebony); line-height:1.35; }
@@ -784,9 +785,14 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    per-pick why) lands centered in the fixed frame — no scroll to reach it, still visibly
    "in the chat." Same class on both threads: desktop #tc-thread + mobile #vm-thread. From
    here a pick opens that match; "See all your matches →" opens the browse deck. */
-.tc-resolved { overflow:hidden !important; justify-content:center; }
-.tc-resolved::before { display:none; }
+.tc-resolved { overflow:hidden !important; }
+/* the thread feeds from the bottom — the picks land at the bottom of the window, right
+   above the composer, where the newest message sits (the ::before flex spacer pushes the
+   collapsed verdict down). */
+.tc-resolved::before { flex:1 0 0; }
 .tc-resolved > *:not(.tc-verdict) { display:none !important; }
+/* once the picks land, the opening starter cards (a sibling of the thread) never linger */
+#vm-thread.tc-resolved ~ .vstarters, #tc-thread.tc-resolved ~ .vstarters { display:none !important; }
 .tc-resolved > .tc-verdict { margin:0 auto; width:100%; max-width:560px; animation:tcDeckLand .5s var(--spring) both; }
 /* the deck rides inside a real Vesta message row (avatar/"Vesta." signature to its left),
    so the picks read as a message FROM Vesta — not a detached card. Desktop has width to
@@ -990,11 +996,14 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .ds-ic { width:23px; height:23px; flex-shrink:0; display:flex; }
   .ds-ic svg { width:23px; height:23px; }
   .ds-lbl { font-size:15px; font-weight:500; flex:1; }
-  .ds-foot { display:flex; flex-direction:column; gap:2px; padding-top:14px; border-top:1px solid rgba(74,75,47,.1); flex-shrink:0; }
-  .ds-foot-btn { display:flex; align-items:center; gap:13px; padding:11px 14px; border:none; background:none; cursor:pointer; border-radius:12px; color:var(--ebony); font-family:var(--sans); font-size:14px; font-weight:500; }
+  /* the three account entries sit shoulder-to-shoulder along the sidebar foot — a compact
+     icon-over-label row, not a stacked list. */
+  .ds-foot { display:flex; flex-direction:row; gap:6px; padding-top:14px; border-top:1px solid rgba(74,75,47,.1); flex-shrink:0; }
+  .ds-foot-btn { position:relative; flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:10px 6px; border:none; background:none; cursor:pointer; border-radius:12px; color:var(--ebony); font-family:var(--sans); font-size:11.5px; font-weight:500; }
   .ds-foot-btn:hover { background:rgba(255,255,255,.6); color:var(--olive); }
   .ds-foot-btn.on { background:var(--white); color:var(--olive); }
   .ds-foot-btn svg { width:20px; height:20px; }
+  .ds-foot-btn .ds-badge { position:absolute; top:5px; right:calc(50% - 20px); margin:0; min-width:17px; height:17px; font-size:10px; }
   /* the resume band lives here as a small highlighted tab (moved off the center so it
      never crowds the medallion); Saved already has its own foot button below. */
   #ds-return { flex-shrink:0; margin:0 0 12px; }
@@ -1062,17 +1071,28 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
      starters, the trust route — leaving only the "Vesta Live" Caveat mark at the top; the
      thread grows in place and the composer pins below it. Nothing scrolls the page. */
   #s-home .home-h1, #s-home .hl-vlive { transition:font-size .4s ease; }
-  #s-home .home-medallion, #s-home .home-sub, #s-home .home-starters, #s-home #vfold-c {
-    max-height:440px; transition:opacity .4s ease, max-height .55s cubic-bezier(.45,0,.18,1), margin .5s ease; }
+  #s-home .home-medallion { max-height:440px; transition:opacity .4s ease, max-height .55s cubic-bezier(.45,0,.18,1), margin .5s ease; }
+  /* Collapse the hero clutter on the REAL boxes. #vfold-a/#vfold-c are display:contents,
+     so max-height set on the fold (or via it) is a no-op — the window never reclaimed the
+     space and a tall verdict burst out the top. Target the .vfold-in children directly
+     (higher specificity), so the thread genuinely flex-grows to fill and the picks land
+     inside a stable-sized window. */
+  #s-home #vfold-a > .vfold-in > .home-sub,
+  #s-home #vfold-a > .vfold-in > .home-starters,
+  #s-home #vfold-c > .vfold-in {
+    max-height:460px; overflow:hidden;
+    transition:opacity .35s ease, max-height .5s cubic-bezier(.45,0,.18,1), margin .4s ease; }
   #s-home.vconv .home-hero-main { justify-content:flex-start; padding-top:3.6vh; }
   #s-home.vconv .home-medallion,
-  #s-home.vconv .home-sub,
-  #s-home.vconv .home-starters,
-  #s-home.vconv #vfold-c { opacity:0; max-height:0; margin-top:0; margin-bottom:0; overflow:hidden; pointer-events:none; }
+  #s-home.vconv #vfold-a > .vfold-in > .home-sub,
+  #s-home.vconv #vfold-a > .vfold-in > .home-starters,
+  #s-home.vconv #vfold-c > .vfold-in { opacity:0; max-height:0; margin-top:0; margin-bottom:0; overflow:hidden; pointer-events:none; }
   #s-home.vconv .home-h1 { font-size:0; margin:0 0 14px; }
   #s-home.vconv .hl-vlive { font-size:30px; }
   #s-home.vconv #vfold-a { flex:0 0 auto; }
-  #s-home.vconv .vthread-fold { display:flex; flex:1 1 auto; min-height:0; width:100%; max-width:600px; margin:0 auto; }
+  /* the window holds a definite min-height so it can never collapse to a sliver around a
+     tall verdict — flex-grow still expands it to fill when the hero clutter animates away. */
+  #s-home.vconv .vthread-fold { display:flex; flex:1 1 auto; min-height:min(54vh,520px); width:100%; max-width:600px; margin:0 auto; }
   #s-home.vconv .vthread-fold > .vfold-in { height:100%; }
   #s-home.vconv #home-search { margin-top:0; }
 }
@@ -5263,25 +5283,42 @@ async function vmTurn(text){
 function vmDeckLand(trade, job, deckMeta, mode){
   vmThink('Checking who covers this in your county');
   setTimeout(()=>{ vmThinkWord('Lining up your picks');
-    setTimeout(()=>{ vmThinkOff(); vmDeck(trade,job,deckMeta,mode); vmDone=true;
-      const inp=$('hs-cin'); if(inp){ inp.placeholder='Matched — your picks are ready'; inp.disabled=true; }
+    setTimeout(async ()=>{
+      vmThinkWord('Pulling up their recent work');    // photos load under this beat, so the picks land already showing
+      const ok=await vmDeck(trade,job,deckMeta,mode);
+      vmThinkOff();
+      if(ok!==false){ vmDone=true;
+        const inp=$('hs-cin'); if(inp){ inp.placeholder='Matched — your picks are ready'; inp.disabled=true; }
+      }
     }, 620);
   }, 720);
 }
-function vmDeck(trade, job, deckMeta, mode){
+async function vmDeck(trade, job, deckMeta, mode){
   const b=tradeBank(trade);
   const emergency=/emergency/.test(job)||!!(deckMeta&&deckMeta.emergency);
   const axis=(emergency&&b&&b.axes&&b.axes.some(a=>a.axis==='fast'))?'fast':null;
   const m={job:job,axis:axis};
   const picks=byTrade(trade).slice().sort((x,y)=>matchScore(y,m)-matchScore(x,m)||(y.rankScore-x.rankScore)).slice(0,3);
-  if(!picks.length){ vmHandoff(mode); return; }
+  if(!picks.length){ vmHandoff(mode); return false; }
+  // Fetch + decode each pick's lead work-photo BEFORE rendering, so the picks appear with
+  // real work already showing — never a monogram that swaps to a photo a beat later. A
+  // firm with no photos (or a failed fetch) keeps the monogram fallback.
+  const photo={};
+  await Promise.all(picks.map(async p=>{
+    try{ const ph=await fetchPhotos(p.placeId);
+      if(ph&&ph.length){ const url=photoUrl(ph[0].ref,120);
+        await new Promise(res=>{ const im=new Image(); im.onload=res; im.onerror=res; im.src=url; });
+        photo[p.placeId]=url; }
+    }catch(_){}
+  }));
   logMatch(trade,job,axis); saveLastMatch(trade,job,axis);
   const jl=lc(deckMeta&&deckMeta.label?deckMeta.label:jobLabel(job));
   const pct=deckMeta&&deckMeta.pct!=null?deckMeta.pct:Math.round(100*jobCoverage(trade,job));
   const lead=emergency?'For an emergency, Vesta led with who answers fastest, then weighed record:':mode==='plan'?'No rush — but when you’re ready, these are worth the call:':'These rose to the top for your '+esc(jl)+':';
   const used=new Set();
   const reason=con=>{ let r=whyLine(con,m); if(used.has(r)&&con.knownFor&&con.knownFor.length){ const kf=con.knownFor.find(k=>!used.has('Known for '+lc(k))); if(kf) r='Known for '+lc(kf); } used.add(r); return r; };
-  const rows=picks.map(p=>'<button class="tc-firm" type="button" data-place="'+esc(p.placeId)+'"><span class="tc-mono">'+esc((p.name||'?')[0])+'</span><span class="tc-fl"><span class="tc-fn">'+esc(p.name)+'</span><span class="tc-fw">'+esc(reason(p))+'</span></span><span class="tc-fg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></button>').join('');
+  const mono=p=> photo[p.placeId] ? '<span class="tc-mono"><img src="'+esc(photo[p.placeId])+'" alt="" decoding="async"></span>' : '<span class="tc-mono">'+esc((p.name||'?')[0])+'</span>';
+  const rows=picks.map(p=>'<button class="tc-firm" type="button" data-place="'+esc(p.placeId)+'">'+mono(p)+'<span class="tc-fl"><span class="tc-fn">'+esc(p.name)+'</span><span class="tc-fw">'+esc(reason(p))+'</span></span><span class="tc-fg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></button>').join('');
   const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='tc-deck';
   el.innerHTML='<div class="tc-deck-kick">Why these '+(picks.length===3?'three':'picks')+(pct?'<span class="tc-deck-pct">'+pct+'% of '+esc(lc(tradeLabelOf(trade)))+' do this</span>':'')+'</div><h2>For your <em>'+esc(jl)+'</em></h2><p class="tc-why">'+lead+'</p>'+rows+'<button class="tc-deck-all" type="button">See all your matches →</button>';
   const row=document.createElement('div'); row.className='vmsg tc-verdict'; row.innerHTML='<span class="vav">Vesta.</span>'; row.appendChild(el);
