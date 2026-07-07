@@ -3,6 +3,9 @@
     "autoAlias": true,
     "productionBranch": "main"
   },
+  "functions": {
+    "api/triage.mjs": { "maxDuration": 60 }
+  },
   "rewrites": [
     { "source": "/atlas",         "destination": "/atlas.html" },
     { "source": "/vesta",         "destination": "/vesta-app.html" },
