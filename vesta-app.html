@@ -98,6 +98,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .hl-vlive { font-family:var(--script); font-size:34px; font-weight:700; color:var(--olive); line-height:1; display:inline-block; transform:rotate(-2.5deg); padding-bottom:4px; margin-right:1px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px; }
 .home-sub { font-size:14px; color:var(--ebony); line-height:1.5; margin-bottom:18px; }
+.home-medallion { display:none; }  /* desktop-only centered mark (shown in the ≥900 block) */
 /* per-breakpoint copy toggles — mobile shows the *-m variant, desktop the *-d (mockup
    uses different sub + route wording per breakpoint) */
 .home-sub .hsub-d { display:none; }
@@ -113,7 +114,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .home-search .hs-tx { flex:1; min-width:0; }
 .hs-vlive { display:inline-block; font-family:var(--script); font-size:17px; font-weight:700; color:var(--olive); line-height:1; transform:rotate(-2deg); padding-bottom:3px; margin-bottom:2px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%234A4B2F' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px; }
-.hs-ph { display:block; font-size:12px; color:rgba(74,75,47,.65); min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+/* mobile Vesta Live bar shows the static invitation (image 4), not the rotating quote;
+   the rotator still drives the desktop composer placeholder, so #home-search-ph stays. */
+.hs-ph { display:none; }
+.hs-tag { display:block; font-size:12px; color:var(--ebony); line-height:1.4; }
 .hs-ph #home-search-ph { color:var(--ebony); }
 /* Typewriter caret — blinks steadily at rest, held solid while a character is being typed
    (toggled via .typing from the rotator) so it never blinks mid-keystroke. */
@@ -144,8 +148,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   /* the home is a focused front door — no floating bottom nav over it (matches the
      Vesta Live design); the nav returns on browse / match / saved / profile. */
   #s-home.active ~ .bnav { display:none; }
-  #s-home { display:flex; flex-direction:column; }
-  #s-home .home-body { flex:1; min-height:0; overflow:hidden; display:flex; padding:6px 20px calc(14px + env(safe-area-inset-bottom)); }
+  /* the home front door is locked to the viewport at every mobile width — the page
+     itself never scrolls (only the conversation thread does, once it opens). */
+  #s-home.screen { height:100vh; height:100dvh; overflow:hidden; display:flex; flex-direction:column; }
+  #s-home .home-body { flex:1; min-height:0; overflow:hidden; display:flex; padding:6px 20px calc(12px + env(safe-area-inset-bottom)); }
   #s-home .home-hero { flex:1; min-height:0; display:flex; flex-direction:column; gap:0; }
   #s-home .home-hero-main { flex:1; min-height:0; display:flex; flex-direction:column; }
   #frep-toppill-desktop, #s-home .home-return, #s-home .home-starters, #s-home .home-browse-sec, #s-home .home-hero-proof, #s-home .home-foot { display:none !important; }
@@ -160,7 +166,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .vthread-fold > .vfold-in { opacity:0; }
   #home-search { order:4; flex:0 0 auto; }
   #vfold-c { order:5; flex:0 0 auto; }
-  #s-home .home-h1 { font-size:29px; line-height:1.14; }
+  #s-home .home-h1 { font-size:26px; line-height:1.14; margin-bottom:8px; }
+  #s-home .home-sub { font-size:13.5px; line-height:1.45; margin-bottom:0; }
+  #vfold-a { padding-top:2px; }
   /* ── the morph ── */
   #s-home.vconv #vfold-a, #s-home.vconv #vfold-b, #s-home.vconv #vfold-c { grid-template-rows:0fr; flex:0 0 auto; }
   #s-home.vconv #vfold-a > .vfold-in { opacity:0; transform:translateY(-18px); }
@@ -221,8 +229,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    CTA sized to its own text — no data band, no pill grid (moved to the sidebar
    on desktop; mobile's fast-path is the CTA → the tap-flow walkthrough). ── */
 .home-stack { margin-bottom:8px; }
-.hstk-stage { position:relative; height:min(39vh, 306px); margin:0 6px 16px; }
-.hstk-card { position:absolute; inset:0; background:var(--nm); border:1.5px solid rgba(74,75,47,.13); border-radius:26px; padding:15px 19px 15px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; user-select:none;
+.hstk-stage { position:relative; height:min(37vh, 288px); margin:6px 6px 8px; }
+.hstk-card { position:absolute; inset:0; background:var(--nm); border:1.5px solid rgba(74,75,47,.13); border-radius:26px; padding:13px 19px 13px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; user-select:none;
   box-shadow:0 1px 2px rgba(74,75,47,.08), 0 6px 12px -4px rgba(74,75,47,.12), 0 14px 22px -10px rgba(74,75,47,.14); }
 .hstk-card::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
 /* the stamp — rubber-ink page marker, top LEFT */
@@ -232,10 +240,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* drawing + title + one-liner, centred — min-height:0 is load-bearing: without it a
    flex:1 column child won't shrink below its content's natural size, which on the
    longest card (browse-every-trade) pushed the CTA past the card's clipped edge. */
-.hstk-center { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:9px; padding:6px 4px; overflow:hidden; }
-.hstk-spot { width:54px; height:54px; flex-shrink:0; color:var(--olive); }
+.hstk-center { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:6px; padding:2px 4px; overflow:hidden; }
+.hstk-spot { width:46px; height:46px; flex-shrink:0; color:var(--olive); }
 .hstk-spot svg { width:100%; height:100%; }
-.hstk-card h3 { font-family:var(--serif); font-size:22px; font-weight:700; margin:2px 0 0; letter-spacing:-.015em; color:var(--olive); flex-shrink:0; }
+.hstk-card h3 { font-family:var(--serif); font-size:20px; font-weight:700; margin:1px 0 0; letter-spacing:-.015em; color:var(--olive); flex-shrink:0; }
 .hstk-card p.hstk-note { font-size:12px; color:var(--ebony); line-height:1.4; max-width:240px; }
 /* Vesta's read — the useful hint, grouped with the centred content */
 .hstk-take { display:flex; align-items:flex-start; gap:8px; margin-top:2px; max-width:280px; padding-left:12px; border-left:2.5px solid var(--tea); flex-shrink:0; }
@@ -243,21 +251,37 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .hstk-take p { font-size:11.5px; line-height:1.38; color:var(--olive); font-weight:500; text-align:left; margin:0; }
 /* one CTA per card, sized to its own text — never stretched to the card's width */
 .hstk-ctas { display:flex; justify-content:center; flex-shrink:0; }
-.hstk-cta { display:flex; align-items:center; justify-content:center; gap:7px; width:auto; background:var(--dark-grad); color:var(--white); border:none; border-radius:999px; padding:13px 22px; font-family:var(--sans); font-size:13px; font-weight:700; white-space:nowrap; cursor:pointer; box-shadow:0 4px 13px -3px rgba(67,68,42,.5); }
+.hstk-cta { display:flex; align-items:center; justify-content:center; gap:7px; width:auto; background:var(--dark-grad); color:var(--white); border:none; border-radius:999px; padding:11px 20px; font-family:var(--sans); font-size:13px; font-weight:700; white-space:nowrap; cursor:pointer; box-shadow:0 4px 13px -3px rgba(67,68,42,.5); }
 .hstk-cta:active { transform:scale(.985); }
 .hstk-cta svg { width:14px; height:14px; flex-shrink:0; color:var(--tea); }
 /* swipe hint — Caveat, given real presence and clearance from the card's shadow */
-.hstk-swipe-hint { display:flex; align-items:center; justify-content:center; gap:9px; margin:16px 0 6px; }
+.hstk-swipe-hint { display:flex; align-items:center; justify-content:center; gap:9px; margin:10px 0 4px; }
 .hstk-swipe-hint span { font-family:var(--script); font-size:19px; font-weight:700; color:var(--olive); line-height:1; padding-bottom:4px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 6px; }
 .hstk-swipe-hint svg { width:16px; height:16px; color:var(--olive); flex-shrink:0; animation:hstkHand 1.8s ease-in-out infinite; }
 @keyframes hstkHand { 0%,100%{ transform:translateX(0); opacity:.55; } 50%{ transform:translateX(4px); opacity:1; } }
 @media (prefers-reduced-motion:reduce){ .hstk-swipe-hint svg { animation:none; } }
-.hstk-dots { display:flex; justify-content:center; gap:6px; margin-bottom:22px; }
+.hstk-dots { display:flex; justify-content:center; gap:6px; margin-bottom:10px; }
 .hstk-dot { height:6px; width:6px; border-radius:99px; background:rgba(74,75,47,.24); cursor:pointer; transition:width .28s var(--spring), background .28s; border:none; padding:0; }
 .hstk-dot.on { width:18px; background:var(--olive); }
 .hstk-arrow { position:absolute; top:50%; transform:translateY(-50%); width:28px; height:28px; border-radius:50%; background:var(--nm); box-shadow:var(--nm-sm); display:flex; align-items:center; justify-content:center; color:var(--olive); cursor:pointer; z-index:9; border:none; }
 .hstk-arrow.l { left:-4px; } .hstk-arrow.r { right:-4px; }
+/* short phones (SE-class / browser chrome showing): shrink the card + header so the
+   whole front door still fits one immovable screen with nothing clipped. */
+@media (max-width:899.98px) and (max-height:770px) {
+  #s-home .home-h1 { font-size:23px; margin-bottom:5px; }
+  #s-home .home-sub { font-size:12.5px; line-height:1.4; }
+  .hstk-stage { height:min(35vh, 226px); margin:2px 6px 4px; }
+  .hstk-spot { width:40px; height:40px; }
+  .hstk-card h3 { font-size:19px; }
+  .hstk-swipe-hint { margin:4px 0 2px; }
+  .hstk-dots { margin-bottom:4px; }
+}
+/* very short (iPhone SE): the swipe hint yields to the dots so the card never clips */
+@media (max-width:899.98px) and (max-height:700px) {
+  .hstk-swipe-hint { display:none; }
+  .hstk-stage { height:min(33vh, 214px); margin:0 6px 3px; }
+}
 /* Hand-drawn underline — the playful accent under key words in section headings and
    step titles. A stretched SVG squiggle, tea on paper; deliberately imperfect. */
 .squig { background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 7px; padding-bottom:6px; }
@@ -708,11 +732,13 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-pill:hover svg { color:var(--olive); }
 /* thread */
 .tc-thread { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px 18px 6px; display:flex; flex-direction:column; gap:13px; }
+.tc-thread::before { content:''; flex:1 0 0; }   /* conversation fills from the bottom up */
 .tc-msg { display:flex; gap:9px; max-width:100%; animation:tcMsgIn .34s var(--spring) both; }
 @keyframes tcMsgIn { from { opacity:0; transform:translateY(7px); } to { opacity:1; transform:none; } }
 .tc-msg.u { flex-direction:row-reverse; }
-.tc-avatar { flex-shrink:0; width:28px; height:28px; border-radius:9px; background:linear-gradient(180deg, rgba(230,238,196,.65), rgba(212,223,158,.34)); border:1px solid rgba(74,75,47,.12); color:var(--olive); display:grid; place-items:center; margin-top:2px; }
-.tc-avatar svg { width:18px; height:18px; }
+/* Vesta signs her lines in her own hand — Caveat, slanted, underlined — instead of a logo tile */
+.tc-avatar { flex-shrink:0; align-self:flex-start; width:auto; height:auto; border:none; background:none; border-radius:0; margin-top:4px; padding:0 3px 4px; font-family:var(--script); font-size:16px; font-weight:700; color:var(--olive); line-height:1; transform:rotate(-7deg); white-space:nowrap;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px; }
 .tc-bubble { border-radius:14px; padding:10px 14px; font-size:13.75px; line-height:1.52; box-shadow:var(--sh-row); }
 .tc-msg.v .tc-bubble { background:rgba(255,255,255,.94); color:var(--olive); border:1px solid rgba(74,75,47,.08); border-bottom-left-radius:6px; }
 .tc-msg.u .tc-bubble { background:var(--olive); color:#F1F2E6; border-bottom-right-radius:6px; max-width:78%; font-weight:500; }
@@ -906,9 +932,12 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @media (min-width:900px) {
   html, body { height:100%; overflow:hidden; }   /* desktop: Vesta is a fixed app shell — lock the page, inner columns own their scroll */
   body { display:block; padding:0; background:var(--bg); }
-  #app { width:100%; max-width:none; min-height:100vh; margin:0; border-radius:0; overflow:visible; box-shadow:none; display:flex; flex-direction:row; background:var(--bg); }
-  #dsidebar { display:flex; flex-direction:column; width:248px; flex-shrink:0; padding:26px 14px 22px; background:#ECEEE0; border-right:1px solid rgba(74,75,47,.1); position:sticky; top:0; height:100vh; }
-  .ds-brand { display:flex; align-items:center; gap:9px; padding:2px 10px 26px; flex-shrink:0; }
+  #app { width:100%; max-width:none; height:100vh; margin:0; border-radius:0; overflow:hidden; box-shadow:none; display:flex; flex-direction:row; background:#ECEDE2; }
+  /* SIDEBAR — open, unboxed: no panel background, no divider; just the page. Only its
+     option list scrolls; the frame and the Search/Saved/You foot stay put. */
+  #dsidebar { display:flex; flex-direction:column; width:270px; flex-shrink:0; padding:26px 22px 16px; background:none; border-right:none; position:sticky; top:0; height:100vh; overflow:hidden; }
+  .ds-brand { display:none; }  /* the 4THWALL mark lives in the center medallion now, not here */
+  .ds-brand-was { display:flex; align-items:center; gap:9px; padding:2px 10px 26px; flex-shrink:0; }
   .ds-logo { display:flex; align-items:center; justify-content:center; width:32px; height:32px; color:var(--olive); }
   .ds-logo svg { width:27px; height:27px; }
   /* The nav list owns its own scroll (min-height:0 is what lets a flex child shrink below
@@ -953,13 +982,24 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   /* Home now renders on desktop too (inside the sidebar+content shell) instead of being
      hidden and force-skipped straight into a trade — first landing should feel like an
      invitation, not a pre-picked list. */
-  #s-browse.screen, #s-match.screen, #s-home.screen { flex:1; min-width:0; height:100vh; overflow-y:auto; }
-  /* A fixed narrow column centered in a wide viewport reads as a printed letter — huge
-     dead gutters either side. Use the actual width instead: a soft radial glow behind
-     the hero (depth, not decoration) and content that spans further before wrapping. */
-  #s-home .home-body { max-width:1120px; margin:0 auto; padding:8vh 40px 80px; flex:none;
-    background:radial-gradient(720px 420px at 88% -8%, rgba(212,223,158,.32), transparent 62%); }
-  #s-home .home-h1 { font-size:40px; line-height:1.15; max-width:600px; }
+  #s-browse.screen, #s-match.screen { flex:1; min-width:0; height:100vh; overflow-y:auto; }
+  /* HOME = the mockup's full-viewport grid: center (1fr) | Field Report (400). Combined
+     with the 270 sidebar, that's the exact 270/1fr/400 proportions. The page never
+     scrolls — the center is vertically centered and static, only the report column scrolls. */
+  #s-home.screen { flex:1; min-width:0; height:100vh; overflow:hidden; }
+  #s-home .home-body { max-width:none; margin:0; padding:0; height:100vh; overflow:hidden; flex:none; display:block; background:none; }
+  #s-home .home-hero { display:grid; grid-template-columns:1fr 400px; gap:0; height:100vh; align-items:stretch; }
+  #s-home .home-hero-main { min-width:0; height:100vh; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 56px; }
+  #s-home .home-hero-main > .vfold, #s-home .home-hero-main > #home-search, #s-home .home-hero-main > .vthread-fold { width:100%; max-width:600px; }
+  /* Field Report = its own 400 column, scrolls internally, floats as a soft card */
+  #s-home .home-hero-proof { width:400px; height:100vh; overflow-y:auto; scrollbar-width:none; padding:30px 30px 40px 12px; margin:0; position:static; align-self:stretch; }
+  #s-home .home-hero-proof::-webkit-scrollbar { display:none; }
+  /* the centered medallion — the 4THWALL mark, soft-raised, at the top of the center column */
+  #s-home .home-medallion { display:flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:50%; margin:0 auto 18px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-out); flex-shrink:0; }
+  #s-home .home-medallion svg { width:24px; height:24px; }
+  #s-home .home-h1 { font-size:40px; line-height:1.15; max-width:600px; text-align:center; }
+  #s-home .home-sub { text-align:center; }
+  #s-home .how-strip { width:100%; max-width:600px; }
   #s-home .hl-vlive { font-size:50px; }
   /* desktop headline drops the scribble under "not a sales pitch" (mockup: clean on
      desktop, underlined only on mobile) */
@@ -982,15 +1022,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   @media (prefers-reduced-motion:reduce){ #s-home .home-return, #s-home .home-h1, #s-home .home-sub, #s-home .home-search, #s-home .home-problems, #s-home .home-hero-proof { animation:none; } }
 }
 @media (min-width:1200px) {
-  /* The actual fix for "reads like a document": an asymmetric two-column split instead
-     of one centered column drowning in side margins. Left = the action (search, the
-     job you came to do); right = proof, pinned so it stays in view while you read. */
-  #s-home .home-hero { display:grid; grid-template-columns:1.15fr .85fr; gap:64px; align-items:start; }
-  /* The report can exceed the viewport — the column scrolls internally while staying
-     pinned, so the reader can browse the report without losing the hero. */
-  #s-home .home-hero-proof { position:sticky; top:4vh; margin-top:0; max-height:92vh; overflow-y:auto; scrollbar-width:none; }
-  #s-home .home-hero-proof::-webkit-scrollbar { display:none; }
-  #s-home .home-foot, #s-home .home-sign, #s-home .home-prov { text-align:left; }
+  /* the 3-column 270/1fr/400 grid is defined in the ≥900 block; the report column holds
+     a fixed 400 so the proportions stay exactly the mockup's on wide screens too. */
+  #s-home .home-hero-main { padding:0 72px; }
 }
 @media (min-width:900px) {
   #s-match .match-wrap { padding:30px 40px 60px; }
@@ -1497,6 +1531,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
     <main class="home-body">
       <div class="home-hero">
         <div class="home-hero-main">
+          <div class="home-medallion" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></div>
           <div id="frep-toppill-desktop"></div>
           <div class="home-return" id="home-return"></div>
           <!-- fold-a: the header. On mobile it folds away when the conversation opens. -->
@@ -1546,6 +1581,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
             <span class="hs-spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v10H9l-4 4V5z"/></svg></span>
             <span class="hs-tx">
               <b class="hs-vlive">Vesta Live</b>
+              <span class="hs-tag">Ask about anything home-related &mdash; we&rsquo;ll point you to the right pro.</span>
               <span class="hs-ph">&ldquo;<span id="home-search-ph"></span><span class="hs-caret" aria-hidden="true"></span>&rdquo;</span>
             </span>
             <input class="hs-cin" id="hs-cin" type="text" placeholder="Describe it in your own words&hellip;" autocomplete="off" maxlength="500" aria-label="Describe what you need" tabindex="-1">
@@ -1596,7 +1632,6 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
         </div>
       </div>
       <div class="home-foot">
-        <p class="home-sign">Vetted, never advertised.</p>
         <p class="home-prov">Everything here is drawn from public reviews and Connecticut state records — nothing self-reported, nothing paid for. <a href="/directory">Browse the full directory →</a></p>
       </div>
     </main>
@@ -2797,7 +2832,7 @@ function renderNeedChips(){
 // from the center column (were `#home-problems`, desktop-only) so the sidebar owns
 // the full front door, not just the trade taxonomy. Same real data (PROBLEMS_BROKEN/
 // PROBLEMS_PLANNING) and real click behavior (openBrowse/enterTriage) as before.
-let dsAccOpen = 'broken';
+let dsAccOpen = null;   // both entry accordions spawn closed on landing
 function dsProblemAccHTML(){
   const secs = [
     { key:'broken', label:'Something broken?', icon:'roof', list:PROBLEMS_BROKEN, mode:'broken' },
@@ -5241,14 +5276,14 @@ function tcUser(text){
 function tcVesta(){
   const t=$('tc-thread'); if(!t) return null;
   const el=document.createElement('div'); el.className='tc-msg v';
-  el.innerHTML='<div class="tc-avatar">'+TC_AVATAR+'</div><div class="tc-bubble"></div>';
+  el.innerHTML='<div class="tc-avatar">Vesta.</div><div class="tc-bubble"></div>';
   t.appendChild(el); tcScroll(); return el.querySelector('.tc-bubble');
 }
 function tcThink(label){
   tcThinkOff();
   const t=$('tc-thread'); if(!t) return;
   const el=document.createElement('div'); el.className='tc-msg v'; el.id='tc-typing';
-  el.innerHTML='<div class="tc-avatar">'+TC_AVATAR+'</div><div class="tc-think"><div class="tc-sq"><span></span><span></span></div><span class="tc-shimmer" id="tc-word">'+esc(label)+'</span></div>';
+  el.innerHTML='<div class="tc-avatar">Vesta.</div><div class="tc-think"><div class="tc-sq"><span></span><span></span></div><span class="tc-shimmer" id="tc-word">'+esc(label)+'</span></div>';
   t.appendChild(el); tcScroll();
 }
 function tcThinkWord(label){
