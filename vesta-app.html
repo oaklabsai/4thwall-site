@@ -357,7 +357,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .home-starters { display:none; }
 @media (min-width:900px){
   .home-starters { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
-  .hstart { display:flex; align-items:center; gap:14px; text-align:left; border:none; border-radius:20px; padding:14px 18px;
+  .hstart { display:flex; align-items:center; gap:14px; text-align:left; border:none; border-radius:20px; padding:20px 20px;
     background:var(--nm); box-shadow:var(--nm-sm); transition:box-shadow .25s ease, transform .25s var(--spring); cursor:pointer; }
   .hstart:hover { box-shadow:var(--nm-out); transform:translateY(-1px); }
   .hstart:active { box-shadow:var(--nm-in); transform:none; }
@@ -976,27 +976,45 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .ds-foot-btn:hover { background:rgba(255,255,255,.6); color:var(--olive); }
   .ds-foot-btn.on { background:var(--white); color:var(--olive); }
   .ds-foot-btn svg { width:20px; height:20px; }
+  /* the resume band lives here as a small highlighted tab (moved off the center so it
+     never crowds the medallion); Saved already has its own foot button below. */
+  #ds-return { flex-shrink:0; margin:0 0 12px; }
+  #ds-return:empty { display:none; }
+  #ds-return .hr-resume { padding:10px 12px; gap:10px; border-radius:15px; box-shadow:0 1px 4px rgba(74,75,47,.14), 0 10px 22px -12px rgba(74,75,47,.5); }
+  #ds-return .hr-ic { width:30px; height:30px; border-radius:9px; }
+  #ds-return .hr-ic svg { width:15px; height:15px; }
+  #ds-return .hr-kick { font-size:8px; letter-spacing:.11em; margin-bottom:2px; }
+  #ds-return .hr-job { font-size:14px; }
+  #ds-return .hr-meta { font-size:10.5px; margin-top:1px; }
+  #ds-return .hr-arrow svg { width:16px; height:16px; }
 
   .topbar, .bnav { display:none; }
 
   /* Home now renders on desktop too (inside the sidebar+content shell) instead of being
      hidden and force-skipped straight into a trade — first landing should feel like an
      invitation, not a pre-picked list. */
-  #s-browse.screen, #s-match.screen { flex:1; min-width:0; height:100vh; overflow-y:auto; }
+  /* no Vesta screen scrolls the page — each is locked to the viewport; the swipe deck
+     and the conversation thread own their own (internal) scroll. */
+  #s-browse.screen, #s-match.screen { flex:1; min-width:0; height:100vh; overflow:hidden; }
   /* HOME = the mockup's full-viewport grid: center (1fr) | Field Report (400). Combined
      with the 270 sidebar, that's the exact 270/1fr/400 proportions. The page never
      scrolls — the center is vertically centered and static, only the report column scrolls. */
   #s-home.screen { flex:1; min-width:0; height:100vh; overflow:hidden; }
   #s-home .home-body { max-width:none; margin:0; padding:0; height:100vh; overflow:hidden; flex:none; display:block; background:none; }
   #s-home .home-hero { display:grid; grid-template-columns:1fr 400px; gap:0; height:100vh; align-items:stretch; }
-  #s-home .home-hero-main { min-width:0; height:100vh; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 56px; }
+  #s-home .home-hero-main { min-width:0; height:100vh; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:6vh 56px 5.5vh; }
   #s-home .home-hero-main > .vfold, #s-home .home-hero-main > #home-search, #s-home .home-hero-main > .vthread-fold { width:100%; max-width:600px; }
+  /* the header (medallion + h1 + sub) stays a tight cluster at top; the space opens up
+     below it so the 4 options breathe and the composer + route sit lower on the screen */
+  #s-home .home-medallion { margin-bottom:16px; }
+  #s-home .home-starters { gap:16px; margin:10px 0 0; }
+  #s-home #home-search { margin-top:auto; }
   /* Field Report = its own 400 column, scrolls internally, floats as a soft card */
   #s-home .home-hero-proof { width:400px; height:100vh; overflow-y:auto; scrollbar-width:none; padding:30px 30px 40px 12px; margin:0; position:static; align-self:stretch; }
   #s-home .home-hero-proof::-webkit-scrollbar { display:none; }
   /* the centered medallion — the 4THWALL mark, soft-raised, at the top of the center column */
-  #s-home .home-medallion { display:flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:50%; margin:0 auto 18px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-out); flex-shrink:0; }
-  #s-home .home-medallion svg { width:24px; height:24px; }
+  #s-home .home-medallion { display:flex; align-items:center; justify-content:center; width:54px; height:54px; border-radius:50%; margin:0 auto 18px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-out); flex-shrink:0; }
+  #s-home .home-medallion svg { width:30px; height:30px; }
   #s-home .home-h1 { font-size:40px; line-height:1.15; max-width:600px; text-align:center; }
   #s-home .home-sub { text-align:center; }
   #s-home .how-strip { width:100%; max-width:600px; }
@@ -1517,6 +1535,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   <!-- DESKTOP SIDEBAR -->
   <aside id="dsidebar" aria-label="Trades">
     <div class="ds-brand"><a class="ds-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a></div>
+    <div id="ds-return" aria-label="Resume"></div>
     <nav class="ds-nav" id="ds-nav"></nav>
     <div class="ds-foot">
       <button class="ds-foot-btn" id="ds-search" aria-label="Search"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg><span>Search</span></button>
@@ -2769,14 +2788,15 @@ function closeDirectorySheet(){
    only offers a resume the bank can actually honor. Re-called on every return to home and
    once the match bank finishes loading (async, after first paint). */
 function renderReturn(){
-  const box = $('home-return'); if(!box) return;
-  let html = '';
+  const box = $('home-return');            // center band (mobile)
+  const dsBox = $('ds-return');             // compact sidebar tab (desktop)
+  let resumeHtml = '', savedHtml = '';
   const m = lastMatch();
   if (m && tradeMatchable(m.trade)){
     const b = tradeBank(m.trade);
     if (b && b.jobs && b.jobs.some(j => j.value === m.job)){
       const tp = tradePlural(m.trade), tpCap = tp.charAt(0).toUpperCase()+tp.slice(1);
-      html += '<button class="hr-resume" id="hr-resume" type="button" aria-label="Resume your Vesta match">'+
+      resumeHtml = '<button class="hr-resume" id="hr-resume" type="button" aria-label="Resume your Vesta match">'+
         '<span class="hr-ic">'+SPARK+'</span>'+
         '<span class="hr-tx">'+
           '<span class="hr-kick"><span class="sp">'+SPARK+'</span>Pick up where you left off</span>'+
@@ -2789,13 +2809,21 @@ function renderReturn(){
   }
   const n = savedCount();
   if (n > 0){
-    html += '<button class="hr-saved" id="hr-saved" type="button" aria-label="Open your saved shortlist">'+
+    savedHtml = '<button class="hr-saved" id="hr-saved" type="button" aria-label="Open your saved shortlist">'+
       '<span class="hr-bk"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"/></svg></span>'+
       '<span class="hr-saved-tx"><b>'+n+'</b> saved '+(n===1?'pro':'pros')+'</span>'+
       '<span class="hr-go">Open shortlist <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l6 6-6 6"/></svg></span>'+
     '</button>';
   }
-  box.innerHTML = html;
+  // desktop → the resume tab lives compactly in the sidebar (Saved already lives in the foot);
+  // mobile → the full band lives in the center hero.
+  if (desktop()){
+    if (dsBox) dsBox.innerHTML = resumeHtml;
+    if (box) box.innerHTML = '';
+  } else {
+    if (box) box.innerHTML = resumeHtml + savedHtml;
+    if (dsBox) dsBox.innerHTML = '';
+  }
   const r = $('hr-resume'); if(r) r.addEventListener('click', ()=>{ if(!resumeMatch()){ clearLastMatch(); renderReturn(); } });
   const s = $('hr-saved'); if(s) s.addEventListener('click', showSaved);
 }
