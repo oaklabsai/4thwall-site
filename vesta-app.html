@@ -166,7 +166,12 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home.active ~ .bnav { display:none; }
   /* the home front door is locked to the viewport at every mobile width — the page
      itself never scrolls (only the conversation thread does, once it opens). */
-  #s-home.screen { height:100%; overflow:hidden; display:flex; flex-direction:column; }
+  /* MUST be gated on .active. #s-home.screen out-specifies the base `.screen{display:none}`,
+     so without `.active` here the home stays display:flex even after you navigate away — the
+     newly-activated screen (walk-through / match / profile) then stacks BELOW the still-present
+     home at top:100svh, one full viewport down, below the fixed-body lock and unreachable. THAT
+     is the "pages spawn below the lock / extend / pick doesn't work" bug (not viewport units). */
+  #s-home.screen.active { height:100%; overflow:hidden; display:flex; flex-direction:column; }
   #s-home .home-body { flex:1; min-height:0; overflow:hidden; display:flex; padding:6px 20px calc(12px + env(safe-area-inset-bottom)); }
   #s-home .home-hero { flex:1; min-height:0; display:flex; flex-direction:column; gap:0; }
   #s-home .home-hero-main { flex:1; min-height:0; display:flex; flex-direction:column; }
