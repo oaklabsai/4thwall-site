@@ -80,17 +80,51 @@ async function getBank(){
   return bank;
 }
 function bankValidate(bank, trade, job){
+  // trade normalization — models emit near-ids under pressure ("plumber", "Plumbing ").
+  // A reject must mean a WRONG answer, not a spelling of the right one.
+  trade = String(trade || '').toLowerCase().trim();
+  if (!bank[trade]){
+    const t = Object.keys(bank).find(k => k.startsWith(trade.slice(0, 5)) || trade.startsWith(k.slice(0, 5)));
+    if (t) trade = t;
+  }
   const jobs = bank[trade]; if (!jobs) return null;
   // normalize before rejecting: models copy the prompt's "*" emergency marker into the id
   // (Nemotron does — caught 2026-07-07). A reject must mean a WRONG answer, not a format quirk.
-  const clean = String(job || '').replace(/\*+$/,'').trim();
-  const row = jobs.find(j => j.job === clean); if (!row) return null;
-  const label = clean.replace(/-/g,' ');
-  return { trade, job: clean, label, emergency: row.emergency, pct: row.pct, tradeLabel: TRADE_LABEL[trade] || trade };
+  const clean = String(job || '').replace(/\*+$/,'').trim().toLowerCase().replace(/[\s_]+/g,'-');
+  let row = jobs.find(j => j.job === clean);
+  // Near-miss rescue: the model names the RIGHT job in its own words ("emergency leak repair"
+  // for "emergency-leak-or-burst" — caught live 7/7). Two+ shared meaningful tokens with a
+  // single best candidate is that intent; an exact-match-only gate was discarding it.
+  if (!row){
+    const toks = new Set(clean.split('-').filter(w => w.length > 2));
+    let best = null, bestN = 0, tie = false;
+    for (const j of jobs){
+      const n = j.job.split('-').filter(w => w.length > 2).reduce((s, w) => s + (toks.has(w) ? 1 : 0), 0);
+      if (n > bestN){ best = j; bestN = n; tie = false; } else if (n === bestN && n > 0) tie = true;
+    }
+    if (bestN >= 2 && !tie) row = best;
+  }
+  if (!row) return null;
+  const label = row.job.replace(/-/g,' ');
+  return { trade, job: row.job, label, emergency: row.emergency, pct: row.pct, tradeLabel: TRADE_LABEL[trade] || trade };
+}
+
+// ── the resolver: a single-task second opinion, structurally immune to interview drift ──
+// The conversational model (Nemotron) keeps asking past its question budget no matter how
+// the prompt is worded (proven 2026-07-07: TURN PRESSURE ignored ~half the time). Duty
+// separation fixes what prompt pressure can't: when the talker fails to resolve past the
+// budget, this tiny one-job prompt reads the same conversation and names the (trade, job).
+function resolverPrompt(bank){
+  const bankLines = Object.entries(bank)
+    .map(([t, jobs]) => `${t}: ` + jobs.map(j => j.job + (j.emergency ? '*' : '')).join(', '))
+    .join('\n');
+  return `You are a triage resolver. Read the homeowner conversation and output ONLY one JSON object: {"trade": string, "job": string} — the single best match, both ids copied VERBATIM from this bank (a * marks an emergency job; the * is never part of the id):
+${bankLines}
+Rules: pick the closest job even if details are unconfirmed (best read beats no read; a pro confirms on site). A * emergency job ONLY for active danger or damage happening right now (water actively flowing, sparking, gas, no heat in freezing weather) — a stain, a noise, dampness, or anything being monitored takes the ROUTINE job, never the * one. If and ONLY if the conversation gives no usable signal about any trade, output {"trade": null, "job": null}. No prose, no markdown — the JSON object only.`;
 }
 
 // ── the system prompt (mirrors the locked prototype; bank injected live) ──
-function systemPrompt(bank, model, followUp){
+function systemPrompt(bank, model, followUp, userTurns){
   const bankLines = Object.entries(bank)
     .map(([t, jobs]) => `${t}: ` + jobs.map(j => j.job + (j.emergency ? '*' : '')).join(', '))
     .join('\n');
@@ -104,20 +138,22 @@ ${bankLines}
 RULES:
 - Reply ONLY with a JSON object, no prose around it:
   {"say": string, "ask": string|null, "chips": string[]|null, "mode": "emergency"|"fix"|"plan"|"learn", "resolved": {"trade","job","urgency":"emergency"|"routine"}|null}
-- "say": 2-4 warm, genuinely helpful sentences — teach, don't just acknowledge. When you can, weave in: what the symptom USUALLY indicates, what a good pro will likely check first, and how urgent it is. You may add ONE practical "in the meantime" note when it helps (especially safety: shut the water off at the valve, don't touch a sparking outlet, leave if you smell gas). THE BALANCE: as useful as a knowledgeable neighbor who's seen this before — but never REDLINING. Redlining = a definitive diagnosis, step-by-step repair instructions, or any price/timeline promise. Stay hedged ("usually", "often", "likely", "a pro will want to confirm") and always land on the idea that a pro should assess it.
+- "say": warm and genuinely helpful, UNDER 55 WORDS — teach, don't just acknowledge. Weave in what the symptom USUALLY indicates and how urgent it is. You may add ONE practical "in the meantime" note when it helps (especially safety: shut the water off at the valve, don't touch a sparking outlet, leave if you smell gas). THE BALANCE: as useful as a knowledgeable neighbor who's seen this before — but never REDLINING. Redlining = a definitive diagnosis, step-by-step repair instructions, or any price/timeline promise. Stay hedged ("usually", "often", "likely") and land on a pro assessing it.
+- STRUCTURE inside "say" (use real \\n newlines in the JSON string): when you have 2+ distinct FACTS or safety steps, break them into "- " dash bullets (max 4, each under 12 words) after a one-line lead; you may bold ONE key phrase per message with **…**. BULLETS ARE NEVER QUESTIONS — your one question lives in "ask" (with chips), nowhere else. A single-thought reply stays one short paragraph. Structure is for teaching, not for interviewing.
 - "mode": classify the conversation every turn.
   emergency = danger or active damage right now. Resolve in ONE turn.
   fix = something is wrong but not urgent. The core triage case.
   plan = a future project ("this spring", "thinking about", "getting quotes"). NEVER ask urgency questions. Once the job is known, RESOLVE — do not gather scope details (size, length, material, brand, budget, timing); those are the pro's questions, not yours. Your final "say" is patient and no-pressure — they're early, and that's fine.
   learn = they're asking a question, not hiring ("is this normal?", "what does this usually involve?"). Answer genuinely within the redlining rules, keep resolved null, and END your "say" with a soft offer to line up the right pros whenever they're ready. If they take you up on it, the mode becomes fix or plan.
 - WHEN TO ASK vs RESOLVE — run this test before every "ask": would the answer change the trade, the job, or the urgency? If not, do NOT ask — resolve to your best read. When the homeowner has already NAMED the job ("replace my whole roof", "redo the driveway", "repaint the living room"), that IS the job — resolve it immediately; asking why they want it is friction, not triage. Size, length, square footage, material, brand, color, budget, and timing NEVER change the (trade, job) — never ask about them. If two jobs route to the same kind of pro anyway, pick the closer one and resolve. HARD CAP: 3 questions per conversation; at the cap, resolve to your best read or offer a final two-option chip choice.
-- "ask": ONE short discriminating question if you are not yet sure which trade/job — else null.
-- "chips": 2-4 short tappable answers to your "ask" (e.g. ["Under a bathroom","Under the roofline"]) — else null. When you offer chips, your "say" must make clear WHY these particular options are the ones that matter — the expert distinction they draw out (e.g. "where the stain sits is what separates a roof leak from a plumbing leak, so it points me to the right pro"). Tailored, expert reasoning is what Vesta is known for; never offer bare options without the thinking behind them.
+- "ask": ONE short discriminating question if you are not yet sure which trade/job — else null. NEVER a diagnostic a pro would run on site (soft floors, flush tests, breaker flips, pressure checks) — once the trade and job are clear, those belong to the pro's visit, and your move is to RESOLVE.
+- "chips": 2-4 short tappable answers to your "ask" (2-5 words each, PARALLEL in form — same grammatical shape, e.g. ["Under a bathroom","Under the roofline"]) — else null. When you offer chips, your "say" must make clear WHY these particular options are the ones that matter — the expert distinction they draw out (e.g. "where the stain sits is what separates a roof leak from a plumbing leak, so it points me to the right pro"). Tailored, expert reasoning is what Vesta is known for; never offer bare options without the thinking behind them.
 - "resolved": fill ONLY when you are confident of a real (trade, job) from the bank. Use the EXACT job-id (no *). Set urgency "emergency" for * jobs or clear emergency language. When resolved, "say" is your final reassuring line and "ask"/"chips" must be null.
 - Emergencies (active leak, burst pipe, sparking, no heat in winter): mode "emergency", resolve in ONE turn, do not ask extra questions.
-- Ambiguous water-from-ceiling (a stain, dampness — NOT actively flowing): ask whether it's under a bathroom/plumbing or under the roofline BEFORE resolving.
+- Ambiguous water-from-ceiling (a stain, dampness — NOT actively flowing): ask whether it's under a bathroom/plumbing or under the roofline BEFORE resolving. But if they already SAID where it is ("under the upstairs bathroom", "top-floor ceiling under the roof"), that ambiguity is ANSWERED — resolve NOW; which fixture it's under never changes the (trade, job).
 - If the input is off-topic or not a home problem: gently redirect once in "say", resolved null.
-- Never mention firm names, ratings, or counts. You route to matches; you don't list them.`
+- Never mention firm names, ratings, or counts. You route to matches; you don't list them.
+- YOU ARE THE MATCHING SERVICE. Filling "resolved" is literally how the homeowner gets their vetted local pros — one tap away. NEVER tell them to search Google, Angie's List, Yelp, or "local directories", never explain how to find a contractor elsewhere, and never quote dollar amounts. If they accept an offer of help ("yes", "sure", "please do") or ask you to find someone, that IS the moment: fill "resolved" with your best (trade, job) THIS TURN.`
   + (followUp ? `
 
 FOLLOW-UP MODE — ACTIVE NOW: the homeowner has already been matched and is LOOKING AT the picks in the history's "picks" array. Each pick carries REAL reasoning material — use it:
@@ -126,7 +162,11 @@ FOLLOW-UP MODE — ACTIVE NOW: the homeowner has already been matched and is LOO
 - "record" + "known_for": the firm's verifiable facts and recurring themes. Ground every claim in these fields.
 - "More options?" → the "See all your matches" button under the picks opens every match ("more_matches" = how many more).
 - HARD RULE: you have NO pricing, availability, or schedule data on any firm — asked "which is cheapest/best value/fastest," the ONLY honest answer is that Vesta's record doesn't rank them on that, plus the smart move (ask each for an itemized quote and compare line by line). Claiming a firm is "competitive on price" or "quick to schedule" is fabrication and forbidden.
-- Keep "resolved" null for anything about the already-matched problem. Fill it ONLY for a genuinely NEW problem (different system/job), which is a fresh triage. Never re-interview the matched problem; never echo history bookkeeping.` : '')
+- Keep "resolved" null for anything about the already-matched problem. Fill it ONLY for a genuinely NEW problem (different system/job), which is a fresh triage. Never re-interview the matched problem; never echo history bookkeeping.
+- LENGTH & SHAPE here: under 90 words. Explaining the picks = a one-line lead, then one "- " dash bullet PER FIRM (name + the reason its slot was earned), separated by \\n. Anything else = one tight paragraph.` : '')
+  + (!followUp && userTurns >= 2 ? `
+
+TURN PRESSURE — YOUR QUESTION BUDGET IS SPENT: the homeowner has already answered ${userTurns - 1} message(s). Unless you genuinely cannot name the TRADE, you MUST fill "resolved" THIS TURN — and "trade" and "job" MUST be ids copied VERBATIM from THE BANK above (never invented labels like "plumber" or "toilet repair"). Asking anything more — a fixture detail, a diagnostic, a confirmation — is a rule violation now. Your best read beats another question; the pro confirms specifics on site.` : '')
   + `
 
 OUTPUT CONTRACT: your ENTIRE reply is exactly ONE JSON object matching the schema in the RULES. No prose before or after it, no markdown fences, no bullet lists outside JSON strings. Anything you want to tell the homeowner goes INSIDE "say"; any question goes INSIDE "ask". If you notice yourself writing plain prose, stop and emit the JSON instead.`
@@ -308,10 +348,12 @@ export default async function handler(req, res){
   // follow-up mode (the design-loop-validated conversationalist — Nemotron fabricates
   // pick attributes ~1-in-3 under the honesty rule, GLM obeys it).
   const chainModels = followUp && MODELS.length > 1 ? [...MODELS].reverse() : MODELS;
+  let servedBy = '';
   chain:
   for (const model of chainModels){
     for (let attempt = 0; attempt < 2; attempt++){
-      out = await callModelStreaming(model, keys, systemPrompt(bank, model, followUp), messages, onDelta);
+      servedBy = model;
+      out = await callModelStreaming(model, keys, systemPrompt(bank, model, followUp, messages.filter(m => m.role === 'user').length), messages, onDelta);
       if (out.error === 'degenerate'){
         if (streamedAny){ send({ t:'r' }); streamedAny = false; pend = ''; }
         continue;                                   // fresh generation, same model
@@ -332,7 +374,7 @@ export default async function handler(req, res){
   if (!parsed){
     const prose = String(out.raw || '').replace(/<unk>/g, '').replace(/```[a-z]*|```/gi, '').trim();
     if (prose.length >= 40 && prose.indexOf('{') === -1 && !streamedAny){
-      parsed = { say: prose.slice(0, 900), ask: null, chips: null, mode: 'fix', resolved: null };
+      parsed = { say: prose.slice(0, 900), ask: null, chips: null, mode: 'fix', resolved: null, _salvaged: true };
       send({ t:'d', c: parsed.say });   // the say never streamed — deliver it now, then the final
     } else {
       send({ t:'e', error:'bad model json' }); return res.end();
@@ -341,12 +383,37 @@ export default async function handler(req, res){
   parsed.say = String(parsed.say).replace(/<unk>/g, '').trim();
   if (!parsed.say){ send({ t:'e', error:'bad model json' }); return res.end(); }
 
-  // the final authority: validate resolved against the live bank (the triageEnter gate)
+  // the final authority: validate resolved against the live bank (the triageEnter gate).
+  // Normalize the shape FIRST — a resolved that isn't {trade, job} (the model has emitted
+  // arrays under pressure) must never pass through unvalidated to the client.
   let deck = null;
-  if (parsed.resolved && parsed.resolved.trade && parsed.resolved.job){
+  const rawResolved = parsed.resolved ? JSON.stringify(parsed.resolved).slice(0, 120) : 'null';
+  if (parsed.resolved && (typeof parsed.resolved !== 'object' || Array.isArray(parsed.resolved) || !parsed.resolved.trade || !parsed.resolved.job)){
+    parsed.resolved = null;
+  }
+  if (parsed.resolved){
     const v = bankValidate(bank, parsed.resolved.trade, parsed.resolved.job);
-    if (v){ deck = v; if (v.emergency) parsed.resolved.urgency = 'emergency'; parsed.resolved.job = v.job; }
+    if (v){ deck = v; if (v.emergency) parsed.resolved.urgency = 'emergency'; parsed.resolved.trade = v.trade; parsed.resolved.job = v.job; }
     else { parsed.resolved = null; parsed.ask = parsed.ask || "Tell me a bit more about what's going on?"; }
+  }
+  // Duty separation: past the question budget, an unresolved fix/plan turn gets a second
+  // opinion from the single-task resolver (GLM-first — the instruction-follower). Its pick
+  // still passes the same bank gate; a null keeps the conversation alive as before.
+  let resolverUsed = 'no';
+  const userTurns = messages.filter(m => m.role === 'user').length;
+  if (!followUp && !parsed.resolved && (userTurns >= 2 || parsed.mode === 'emergency') && parsed.mode !== 'learn'){
+    try {
+      const rOut = await callModelStreaming(MODELS[MODELS.length - 1], keys, resolverPrompt(bank), messages, ()=>{});
+      const rj = rOut && !rOut.error ? extractJSON(rOut.raw) : null;
+      const v = rj && rj.trade && rj.job ? bankValidate(bank, rj.trade, rj.job) : null;
+      if (v){
+        deck = v; resolverUsed = 'hit';
+        parsed.resolved = { trade: v.trade, job: v.job, urgency: v.emergency ? 'emergency' : 'routine' };
+        parsed.ask = null; parsed.chips = null;
+      } else {
+        resolverUsed = rOut && rOut.error ? 'err:' + rOut.error : 'miss:' + JSON.stringify(rj).slice(0, 80);
+      }
+    } catch (e){ resolverUsed = 'err:' + (e && e.message || 'throw'); }
   }
   send({ t:'f',
     say: parsed.say,
@@ -356,5 +423,8 @@ export default async function handler(req, res){
     resolved: parsed.resolved || null,
     deck,
   });
+  // one diagnostic line per turn (no user text): which model served, mode, and the outcome —
+  // the only way to attribute a bad production turn to a specific model in the chain
+  console.log(`triage: model=${servedBy} followUp=${followUp} turns=${userTurns} resolved=${parsed.resolved ? parsed.resolved.trade + '/' + parsed.resolved.job : 'null'} raw=${rawResolved} resolver=${resolverUsed} salvaged=${!!parsed._salvaged}`);
   res.end();
 }

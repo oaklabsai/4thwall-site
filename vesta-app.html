@@ -594,6 +594,15 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .fband:hover .fband-more { transform:translateY(-1px); box-shadow:0 4px 10px -3px rgba(74,75,47,.3); }
 .fband.static { cursor:default; }
 .fband.static .fband-more { display:none; }
+/* slim variant — the browse-strip band: one compact row, the deck's first card stays the hero.
+   "Full field →" folds into the kicker row (top-right) so it can never collide with what's below. */
+.fband--slim { padding:11px 16px 12px; border-radius:16px; }
+.fband--slim .fband-kick { margin-bottom:8px; padding-right:132px; }
+.fband--slim .fband-more { font-size:10.5px; padding:6px 10px; }
+.fband--slim .fband-stats { flex-wrap:nowrap; gap:6px 20px; }
+.fband--slim .fb-n { font-size:21px; }
+.fband--slim .fb-l { margin-top:3px; }
+.fband--slim .fband-more { position:absolute; top:9px; right:10px; margin:0; padding:6px 11px; font-size:11px; }
 .field-strip::-webkit-scrollbar { display:none; }
 .field-strip:empty { display:none; }
 .field-strip b { color:var(--olive); font-weight:600; }
@@ -643,24 +652,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .de-btn.primary { background:var(--olive); color:var(--white); }
 .de-btn.ghost { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); }
 
-/* ===== MATCH INTRO (the "We found N / ranked using" anticipation beat) ===== */
-.match-intro { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px 26px; background:var(--nm); border:var(--nm-edge); border-radius:var(--r-card); box-shadow:var(--sh-card); animation:miIn .44s cubic-bezier(.2,.7,.3,1) both; }
-.mi-kicker { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ebony); margin-bottom:18px; }
-.mi-kicker svg { color:var(--olive); }
-.mi-found { display:flex; align-items:baseline; gap:9px; justify-content:center; margin-bottom:6px; }
-.mi-trade-big { font-family:var(--serif); font-size:44px; font-weight:700; color:var(--olive); line-height:1.05; letter-spacing:-.025em; }
-.mi-sub { font-size:13px; color:var(--ebony); line-height:1.45; margin-bottom:24px; max-width:250px; }
-.mi-rlabel { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ebony); opacity:.72; margin-bottom:12px; }
-.mi-factors { display:flex; flex-direction:column; gap:9px; margin-bottom:27px; }
-/* Offset & delay: the ranking factors check in one after another (after the card lands),
-   so "ranked using" reads as a sequence of checks rather than a static list. */
-.mi-factor { display:flex; align-items:center; gap:9px; font-size:13.5px; font-weight:500; color:var(--olive); animation:tileIn .4s cubic-bezier(.2,.7,.3,1) both; }
-.mi-factor:nth-child(1){ animation-delay:.5s; } .mi-factor:nth-child(2){ animation-delay:.68s; } .mi-factor:nth-child(3){ animation-delay:.86s; }
-@media (prefers-reduced-motion: reduce){ .mi-factor { animation:none; } }
-.mi-factor svg { color:var(--olive); flex-shrink:0; }
-.mi-go { min-width:210px; }
 @keyframes miIn { from { opacity:0; transform:translateY(12px) scale(.985); } to { opacity:1; transform:none; } }
-@media (prefers-reduced-motion: reduce){ .match-intro { animation:none; } }
 
 /* Entrance stagger for home pills/tiles + feed cards — each item fades/lifts in with a
    small per-index delay (set inline as --d), same spring curve as miIn for consistency. */
@@ -788,10 +780,20 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-bubble.tc-read { padding:14px 15px 13px; position:relative; }
 .tc-bubble.tc-read .tc-rqm { position:absolute; left:7px; top:-6px; font-family:var(--serif); font-size:33px; font-weight:700; color:var(--tea); line-height:1; }
 .tc-bubble.tc-read .tc-rql { position:relative; font-family:var(--serif); font-style:italic; font-size:15px; font-weight:500; line-height:1.46; letter-spacing:-.006em; color:var(--olive); padding-left:18px; }
-/* in-flow answer chips */
-.tc-chips { display:flex; flex-wrap:wrap; gap:8px; padding:2px 0 2px 37px; }
-.tc-chip { background:rgba(255,255,255,.9); border:1px solid rgba(74,75,47,.14); border-radius:11px; padding:8px 13px; font-family:var(--sans); font-size:12.75px; font-weight:600; color:var(--olive); cursor:pointer; box-shadow:var(--sh-row); transition:border-color .16s, transform .16s, background .16s; }
+/* in-flow answer chips — Vesta's own hand (Caveat, slanted, underlined), laid out as an
+   even grid so a row of options reads parallel and symmetrical, never a ragged wrap */
+.tc-chips { display:grid; grid-template-columns:repeat(auto-fit, minmax(148px, 1fr)); gap:9px; padding:2px 0 2px 37px; }
+.tc-chip { display:flex; align-items:center; justify-content:center; text-align:center; min-height:42px; background:rgba(255,255,255,.9); border:1px solid rgba(74,75,47,.14); border-radius:13px; padding:7px 13px;
+  font-family:var(--script); font-size:18px; font-weight:700; line-height:1.05; color:var(--olive); font-style:oblique 7deg; cursor:pointer; box-shadow:var(--sh-row); transition:border-color .16s, transform .16s, background .16s; }
+.tc-chip > span { padding-bottom:3px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px; }
 .tc-chip:hover { border-color:var(--olive); transform:translateY(-1px); background:var(--white); }
+/* structured say — light markdown inside Vesta's bubbles: lead lines, bullets, breathing room */
+.tc-bubble p, .vbub p { margin:0 0 8px; } .tc-bubble p:last-child, .vbub p:last-child { margin-bottom:0; }
+.tc-bubble .md-h, .vbub .md-h { display:block; font-weight:700; color:var(--olive); margin:2px 0 5px; }
+.tc-bubble .md-li, .vbub .md-li { display:flex; gap:8px; margin:0 0 5px; } .tc-bubble .md-li:last-child, .vbub .md-li:last-child { margin-bottom:0; }
+.tc-bubble .md-li .d, .vbub .md-li .d { flex-shrink:0; color:var(--ebony); opacity:.75; font-weight:700; }
+.tc-bubble b, .vbub b { font-weight:700; color:var(--olive); }
+.vmsg.me .vbub b { color:inherit; }
 /* thinking — square two-inset loader + shimmering trace of thought (fires on real events) */
 .tc-think { display:flex; align-items:center; gap:10px; padding-top:3px; }
 .tc-sq { position:relative; width:19px; height:19px; flex-shrink:0; }
@@ -1621,7 +1623,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .card-cover{ display:block; position:relative; width:100%; height:104px; flex:0 0 auto; padding:0; border:0; margin:1px 0 11px; border-radius:14px; overflow:hidden; cursor:pointer; background:rgba(74,75,47,.06); }
 .card-cover .vph-cover{ width:100%; height:100%; object-fit:cover; display:block; }
 /* feed card: ONE lazy hero (native loading=lazy), full gallery opens on tap */
-.vph-cover-btn{ display:block; position:relative; width:100%; padding:0; border:0; margin:13px 0 4px; border-radius:14px; overflow:hidden; cursor:pointer; background:rgba(74,75,47,.06); aspect-ratio:16/9; }
+.vph-cover-btn{ display:block; position:relative; width:100%; padding:0; border:0; margin:13px 0 4px; border-radius:14px; overflow:hidden; cursor:pointer; background:rgba(74,75,47,.06); aspect-ratio:16/9; max-height:290px; }
 .vph-cover{ width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .4s ease; }
 .vph-cover--on .vph-cover{ opacity:1; }
 .vph-cover-badge{ position:absolute; right:10px; bottom:10px; background:rgba(20,20,14,.6); color:#fff; font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; padding:4px 8px; border-radius:999px; pointer-events:none; }
@@ -2122,7 +2124,7 @@ const LOCK = `<svg width="13" height="14" viewBox="0 0 14 16" fill="none" stroke
 
 const S = { screen:'home', activeTrade:'roofing', sheetOpen:false, searchOpen:false, filterOpen:false, dataLoaded:false, mode:'trade',
             shuffles:{}, pos:{}, deck:[], deckIdx:0, deckSig:{}, unlocked:{}, history:[], savedTab:'saved',
-            feedTown:'', feedSort:'rank', feedNeeds:new Set(), feedReg:false, introPending:false,
+            feedTown:'', feedSort:'rank', feedNeeds:new Set(), feedReg:false,
             // Match engine: when match.job is set, the deck/feed reorder by the locked scorer and the
             // head copy adapts to how selective the job is (the honesty rule). null = plain browse.
             match:null, matchPending:false, matchStep:'job', matchSeedJob:null,
@@ -2225,7 +2227,7 @@ const JOB_LABELS = {
   'above-ground-pools':'Above-ground pools','new-pool-construction':'New pool construction',
   'hot-tub-or-spa-service':'Hot tub or spa service','weekly-pool-service':'Weekly pool service',   // pool (Phase D campaign 4)
 };
-function jobLabel(v){ return JOB_LABELS[v] || String(v||'').replace(/-/g,' ').replace(/\b\w/g, c=>c.toUpperCase()); }
+function jobLabel(v){ return JOB_LABELS[v] || String(v||'').replace(/[-_]/g,' ').replace(/\b\w/g, c=>c.toUpperCase()); }
 // Lowercase a label for mid-sentence use, but keep leading acronyms (EV, AC) intact.
 function lc(s){ s=String(s||''); const m=s.match(/^(\S+)/); if (m && m[1]===m[1].toUpperCase() && /[A-Z]/.test(m[1])) return s; return s.charAt(0).toLowerCase()+s.slice(1); }
 
@@ -3354,37 +3356,8 @@ function deckEndHTML(){
     '<div class="de-row"><button class="de-btn primary" id="de-saved">'+(liked?'See saved · '+liked:'See saved')+'</button><button class="de-btn ghost" id="de-restart">Start over</button></div>'+
     tail+'</div>';
 }
-// The anticipation beat before the deck: "We found N — ranked using…". Factors mirror the REAL
-// rank_score inputs (review consensus, track record/tenure, licensing/credentials) — never response time.
-// The intro beat's hero is the TRADE, not a count — "41 plumbers found" was a surviving
-// depth-count leak (how many firms Vesta has vetted), caught 7/6 after the 8-spot sweep
-// missed it. The payoff word is the field itself; the band above already carries its
-// real, allowed stats (tenure/emergency/quartile shares).
-function matchIntroHTML(){
-  const plural = tradePlural(S.activeTrade);
-  const noun = plural.charAt(0).toUpperCase()+plural.slice(1);
-  const factors = ['Review quality &amp; consensus', 'Track record &amp; tenure', 'Licensing &amp; business records'];
-  return '<div class="match-intro">'+
-    '<span class="mi-kicker">'+SPARK+'Vesta Match</span>'+
-    '<div class="mi-found"><span class="mi-trade-big">'+esc(noun)+'</span></div>'+
-    '<p class="mi-sub">The Fairfield County field — found, read &amp; ranked for you</p>'+
-    '<div class="mi-rlabel">Ranked using</div>'+
-    '<div class="mi-factors">'+factors.map(f=>'<span class="mi-factor">'+CHECK+'<span>'+f+'</span></span>').join('')+'</div>'+
-    '<button class="de-btn primary mi-go" id="mi-go">Start matching</button>'+
-  '</div>';
-}
-function renderMatchIntro(){
-  const deck = $('deck'); if(!deck) return;
-  $('vbanner').style.display = 'none';              // hold the save/skip banner until matching begins
-  $('deck-actions').style.visibility = 'hidden';
-  $('deck-meta').textContent = '';
-  deck.innerHTML = matchIntroHTML();
-  const go = $('mi-go'); if(go) go.onclick = startMatching;
-  if (desktop()) renderPanel(null);
-}
-// Value-change beat: the found-count rolls up to its total instead of appearing fully
-// formed — the number is the payoff of the intro card, so it gets a moment. Eased
-// (fast start, soft landing), ~0.8s, skipped under prefers-reduced-motion.
+// Value-change beat: a KPI rolls up to its total instead of appearing fully formed.
+// Eased (fast start, soft landing), ~0.8s, skipped under prefers-reduced-motion.
 function countUp(el, n){
   if (!el || !n) return;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent = n; return; }
@@ -3395,20 +3368,12 @@ function countUp(el, n){
     if (p < 1) requestAnimationFrame(tick);
   })(t0);
 }
-function startMatching(){
-  $('vbanner').style.display = '';
-  renderDeck();
-}
 function renderDeck(){
   if (S.mode !== 'trade') return;
   if (desktop()){ renderFeed(); return; }   // ≥900px renders the scroll feed instead of the swipe deck
   const deck = $('deck'); if(!deck) return;
-  // Once per fresh trade entry: the "We found N / ranked using" beat. If data hasn't loaded yet,
-  // leave the flag set so the post-load renderDeck shows it; an empty trade clears it and falls through.
-  if (S.introPending && S.dataLoaded){
-    S.introPending = false;
-    if ((S.deck||[]).length){ renderMatchIntro(); return; }
-  }
+  // The old "Start matching" interstitial is gone — the first vetted card IS the landing
+  // (Drew, 7/7: the trade landing must neatly present the first card, not a preamble).
   const remaining = (S.deck||[]).slice(S.deckIdx);
   if (!remaining.length){
     if (!S.dataLoaded){ deck.innerHTML = '<div class="deck-end"><span class="de-spark">'+SPARK+'</span><p>Loading vetted pros…</p></div>'; $('deck-actions').style.visibility='hidden'; $('deck-meta').textContent=''; return; }
@@ -3982,7 +3947,9 @@ function renderFieldStrip(){
   // field facts (tenure) and shares (percentages), same rule as the desktop rail.
   // Same display-size band as the triage letterhead — the KPIs never whisper.
   el.innerHTML = fieldBandHTML(S.activeTrade);
-  const t=el.querySelector('.fband'); if(t) t.addEventListener('click', openFieldSheet);
+  const t=el.querySelector('.fband'); if(t){ t.classList.add('fband--slim');
+    const k=t.querySelector('.fband-kick'); if(k) k.innerHTML=k.innerHTML.replace('The field — measured by Vesta','The field — by Vesta');
+    t.addEventListener('click', openFieldSheet); }
 }
 // The mobile field sheet — full per-trade analytics, deck stays primary. Capability
 // rows filter the deck live behind the sheet, exactly like the desktop rail's rows.
@@ -5038,10 +5005,20 @@ function openBrowse(key, opts){
 function showBrowse(key){
   S.mode='trade'; S.activeTrade=key; S.matchPending=false;
   if (!S.match){ S.feedTown=''; S.feedNeeds=new Set(); }        // a live match keeps its context; a plain open resets
-  ensureDeck(key); S.introPending = !desktop() && !S.match;     // the old "We found N" beat: plain mobile browse only
+  ensureDeck(key);   // no interstitial — the first vetted card is the landing
   showScreen('browse'); renderNeedChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState();
 }
-function goHome(){ closeSheet(); S.mode='trade'; S.triageActive=false; S.triageMode=null; S.triChat=null; showScreen('home'); renderReturn(); renderSidebar(); updateNavState(); }
+function goHome(){ S.chatReturn=false; closeSheet(); S.mode='trade'; S.triageActive=false; S.triageMode=null; S.triChat=null; showScreen('home'); renderReturn(); renderSidebar(); updateNavState(); }
+// Back that remembers a live conversation: if this screen was entered FROM Vesta Live,
+// back returns to the chat with the whole thread intact (mobile morph or desktop replay).
+function navBack(){
+  if (S.chatReturn){
+    S.chatReturn=false;
+    // both breakpoints run the unified home-morph conversation (#vm-thread persists in DOM)
+    if (vmMsgs.length){ resumeConverse(); return; }
+  }
+  goHome();
+}
 function updateNavState(){
   const home=$('nav-home'), saved=$('nav-saved');
   if(home) home.classList.toggle('on', S.screen==='home' || S.screen==='match' || (S.screen==='browse' && S.mode==='trade'));
@@ -5376,6 +5353,82 @@ function tcTopic(msg){
   return 'what you described';
 }
 
+/* ═══ SHARED CHAT ENGINE — structure, pacing, the trace of thought ═══ */
+// Light markdown for Vesta's say: **bold**, "- " bullets, "1." numbered steps, a short
+// **Lead line** alone on a line becomes a block heading, blank lines split paragraphs.
+// Input is escaped FIRST — the model can never inject markup.
+function mdLite(t){
+  const lines = esc(String(t||'')).split(/\n/);
+  const out=[]; let para=[];
+  const inline = s => s.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/(^|\s)\*([^*\n]{1,40})\*(?=[\s.,;:!?)]|$)/g,'$1<b>$2</b>');
+  const flush = ()=>{ if(para.length){ out.push('<p>'+para.join('<br>')+'</p>'); para=[]; } };
+  for (const raw of lines){
+    const s = raw.trim();
+    if (!s){ flush(); continue; }
+    let m = s.match(/^[-•·]\s+(.*)/);
+    if (m){ flush(); out.push('<span class="md-li"><span class="d">–</span><span>'+inline(m[1])+'</span></span>'); continue; }
+    m = s.match(/^(\d{1,2})[.)]\s+(.*)/);
+    if (m){ flush(); out.push('<span class="md-li"><span class="d">'+m[1]+'.</span><span>'+inline(m[2])+'</span></span>'); continue; }
+    m = s.match(/^(?:#{1,3}\s+(.+)|\*\*([^*]{2,44})\*\*:?$)/);
+    if (m){ flush(); out.push('<span class="md-h">'+inline(m[1]||m[2])+'</span>'); continue; }
+    para.push(inline(s));
+  }
+  flush();
+  return out.join('');
+}
+// Word-by-word reveal — deltas buffer into a target; the paint walks toward it at a word
+// cadence (bigger strides when the stream runs far ahead), so words roll out with finesse
+// instead of chunk-dumping at network rhythm. finish() accelerates and resolves when landed.
+function mkTyper(bubble, scroll){
+  const st = { target:'', shown:0, timer:null, fast:false, done:null };
+  const paint = ()=>{ bubble.innerHTML = mdLite(st.target.slice(0, st.shown)); scroll(); };
+  function tick(){
+    st.timer = null;
+    if (st.shown >= st.target.length){ if (st.done){ const f=st.done; st.done=null; paint(); f(); } return; }
+    const lag = st.target.length - st.shown;
+    let next;
+    if (st.fast || lag > 260) next = st.shown + Math.max(24, Math.round(lag/6));
+    else { next = st.target.indexOf(' ', st.shown+1); if (next === -1) next = st.target.length; }
+    st.shown = Math.min(st.target.length, next);
+    paint();
+    st.timer = setTimeout(tick, st.fast ? 14 : lag > 260 ? 26 : 34 + Math.random()*36);
+  }
+  return {
+    push(c){ st.target += c; if (!st.timer) tick(); },
+    reset(){ st.target=''; st.shown=0; if (st.timer){ clearTimeout(st.timer); st.timer=null; } bubble.innerHTML=''; },
+    finish(finalText){ return new Promise(res=>{
+      if (finalText != null && finalText !== st.target){ st.target = finalText; if (st.shown > st.target.length) st.shown = st.target.length; }
+      st.fast = true; st.done = res; if (!st.timer) tick();
+    }); }
+  };
+}
+// The trace of thought — a real bank, contextual to the message and the moment, never just
+// "Reading what you described" on loop. Advances on a beat until the reveal takes over.
+const MIN_THINK = 1800;   // honest minimum: only pads when the model came back FASTER than this
+function traceSeq(text, followUp){
+  const pick = a => a[Math.floor(Math.random()*a.length)];
+  const topic = tcTopic(text);
+  const short = topic.replace(/^the /,'');
+  if (followUp) return [
+    pick(['Reading your question','Taking your question in']),
+    'Looking back over your picks',
+    'Re-reading the records behind them',
+    'Lining up an honest answer'
+  ];
+  return [
+    pick(['Reading what you described','Taking that in','Going over your words']),
+    'Making sense of '+topic,
+    pick(['Sorting which trade owns this','Narrowing down what this points to']),
+    'Checking the Fairfield County field',
+    'Weighing who’s proven on '+short
+  ];
+}
+function mkTraceAdvancer(seq, showWord){
+  let i = 1;
+  const t = setInterval(()=>{ if (i < seq.length) showWord(seq[i++]); else clearInterval(t); }, 1250);
+  return ()=> clearInterval(t);
+}
+
 function enterConverse(){
   // Vesta Live morphs the home in place on BOTH breakpoints now — desktop is unified onto
   // the proven mobile morph (the hero animates away, only the "Vesta" Caveat mark stays, the
@@ -5418,9 +5471,14 @@ async function vmTurn(text){
   if(vmDone||vmBusy) return; vmBusy=true; vmTurns++;
   const st=$('vstarters'); if(st) st.classList.remove('show');
   vmUser(text); vmMsgs.push({role:'user',content:text});
-  vmThink('Reading what you described');
-  const preTimer=setTimeout(()=>vmThinkWord('Making sense of '+tcTopic(text)),2600);
-  let bubble=null, streamed='';
+  const seq=traceSeq(text, vmDeckShown);
+  vmThink(seq[0]);
+  const stopTrace=mkTraceAdvancer(seq, vmThinkWord);
+  // Honest pacing: the reveal never starts before MIN_THINK — but if the model is ALREADY
+  // slower than that, no extra delay is stacked on top of a real wait.
+  const t0=performance.now();
+  let bubble=null, typer=null, pend='', streamed='', revealTimer=null;
+  const reveal=()=>{ if(typer) return; stopTrace(); vmThinkOff(); bubble=vmVesta(); typer=mkTyper(bubble, vmScroll); if(pend){ typer.push(pend); pend=''; } };
   try{
     const r=await fetch('/api/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:vmMsgs.slice(-12)})});
     if(!r.ok||!r.body) throw new Error('http');
@@ -5428,33 +5486,62 @@ async function vmTurn(text){
     for(;;){ const {done,value}=await reader.read(); if(done) break; buf+=dec.decode(value,{stream:true});
       let nl; while((nl=buf.indexOf('\n'))!==-1){ const line=buf.slice(0,nl).trim(); buf=buf.slice(nl+1);
         if(!line.startsWith('data:')) continue; let ev; try{ev=JSON.parse(line.slice(5));}catch(_){continue;}
-        if(ev.t==='d'){ clearTimeout(preTimer); if(!bubble){ vmThinkOff(); bubble=vmVesta(); } streamed+=ev.c; if(bubble){ bubble.textContent=streamed; vmScroll(); } }
-        else if(ev.t==='r'){ streamed=''; if(bubble) bubble.textContent=''; }   // server reset: a bad generation was killed and retried fresh
+        if(ev.t==='d'){ streamed+=ev.c;
+          if(typer) typer.push(ev.c);
+          else { pend+=ev.c; const wait=MIN_THINK-(performance.now()-t0);
+            if(wait<=0) reveal(); else if(!revealTimer) revealTimer=setTimeout(reveal, wait); } }
+        else if(ev.t==='r'){ streamed=''; pend=''; if(typer) typer.reset(); }   // server reset: a bad generation was killed and retried fresh
         else if(ev.t==='f') final=ev; else if(ev.t==='e') evErr=ev.error;
       }
     }
-    clearTimeout(preTimer);
+    clearTimeout(revealTimer);
     if(evErr||!final){
-      // salvage: if Vesta's words already streamed into the bubble, a backend hiccup on the
-      // final frame shouldn't yank the user to the tap-tree — keep the conversation alive.
-      if(streamed&&bubble){ vmMsgs.push({role:'assistant',content:JSON.stringify({say:streamed.slice(0,600),resolved:null})}); vmBusy=false; return; }
+      // salvage: if Vesta's words already streamed, a backend hiccup on the final frame
+      // shouldn't yank the user to the tap-tree — land what she said, keep the conversation.
+      if(streamed){ if(!typer) reveal(); await typer.finish(streamed);
+        vmMsgs.push({role:'assistant',content:JSON.stringify({say:streamed.slice(0,220),resolved:null})}); vmBusy=false; return; }
       throw new Error(evErr||'no final');
     }
-    if(!bubble){ vmThinkOff(); bubble=vmVesta(); }
-    if(bubble && final.say) bubble.textContent=final.say;
-    vmMsgs.push({role:'assistant',content:JSON.stringify({say:(final.say||'').slice(0,600),resolved:final.resolved||null})});
+    if(!typer){ if(!streamed && !final.say){ stopTrace(); vmThinkOff(); } else reveal(); }
+    if(typer) await typer.finish(final.say||streamed);
+    vmMsgs.push({role:'assistant',content:JSON.stringify({say:(final.say||'').slice(0,220),resolved:final.resolved||null})});
     const res=final.resolved;
     const gate=res&&res.trade&&res.job&&tradeMatchable(res.trade)&&tradeBank(res.trade).jobs.some(j=>j.value===res.job)
       && !(vmDeckShown && vmDeckKey===res.trade+'|'+res.job);   // re-affirming the SAME match in a follow-up never re-lands a duplicate deck
     if(gate){ vmBusy=false; vmDeckLand(res.trade,res.job,final.deck,final.mode||'fix'); return; }
     if(final.chips&&final.chips.length) vmChips(final.chips);
     vmBusy=false;
-    // the 4-turn cap only guards the PRE-resolve interview; once picks are on screen the
-    // conversation is follow-up mode and must never dump the user into the generic walk-through
-    if(vmTurns>=4&&!vmDone&&!vmDeckShown) vmHandoff(final.mode);
-  }catch(_){ clearTimeout(preTimer); vmBusy=false;
-    if(vmDeckShown){ const b=vmVesta(); if(b) b.textContent='I hit a snag on that one — your picks above still stand. Tap one to open it, or “See all your matches.”'; }
-    else vmHandoff('broken'); }
+    // the 4-turn cap only guards the PRE-resolve interview; and leaving the chat is now an
+    // OFFER, never an ambush — the user says yes before any screen change (Drew, 7/7)
+    if(vmTurns>=4&&!vmDone&&!vmDeckShown) vmOffer(final.mode,'cap');
+  }catch(_){ clearTimeout(revealTimer); stopTrace(); vmBusy=false;
+    if(vmDeckShown){ vmThinkOff(); const b=vmVesta(); if(b) b.textContent='I hit a snag on that one — your picks above still stand. Tap one to open it, or “See all your matches.”'; }
+    else vmOffer('broken','error'); }
+}
+// Leaving the chat is a question, not a move — and the walkthrough keeps a way back
+// (S.chatReturn: the destination's back button returns HERE with the thread intact).
+function vmOffer(mode, reason){
+  if(vmDone) return; vmThinkOff();
+  const b=vmVesta();
+  if(b) b.textContent = reason==='error'
+    ? 'I hit a snag reaching my full read there. Want me to walk you through it with a couple of taps instead — or keep going right here?'
+    : 'I can keep chatting — or walk you through it with a couple of taps and get your picks faster. Your call.';
+  const t=$('vm-thread'); if(!t) return;
+  const wrap=document.createElement('div'); wrap.className='tc-chips';
+  const mk=(label,fn)=>{ const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.innerHTML='<span>'+esc(label)+'</span>'; bt.onclick=()=>{ wrap.remove(); fn(); }; wrap.appendChild(bt); };
+  mk('Walk me through it', ()=>{ S.chatReturn=true; const h=$('s-home'); if(h) h.classList.remove('vconv'); enterTriage(mode==='plan'?'plan':'broken'); });
+  mk('Keep chatting', ()=>{ vmTurns=Math.max(0,vmTurns-2); const inp=$('hs-cin'); if(inp) inp.focus(); });
+  t.appendChild(wrap); vmScroll();
+}
+// Return to a live mobile conversation without losing a word — the thread DOM persists in
+// #s-home; this just re-enters the morph around it.
+function resumeConverse(){
+  const h=$('s-home'); if(!h || !vmMsgs.length){ goHome(); return; }
+  closeSheet(); S.mode='trade'; S.triageActive=false; S.triageMode=null;
+  showScreen('home'); renderSidebar(); updateNavState();
+  h.classList.add('vconv');
+  const th=$('vm-thread'); if(th && vmDeckShown) th.classList.add('tc-resolved');
+  vmScroll();
 }
 function vmDeckLand(trade, job, deckMeta, mode){
   vmThink('Checking who covers this in your county');
@@ -5478,7 +5565,7 @@ async function vmDeck(trade, job, deckMeta, mode){
   const axis=modeAxis(b, mode, emergency);
   const m={job:job,axis:axis};
   const picks=pickPortfolio(byTrade(trade), m).slice(0,3);
-  if(!picks.length){ vmHandoff(mode); return false; }
+  if(!picks.length){ vmOffer(mode,'cap'); return false; }
   // Fetch + decode each pick's lead work-photo BEFORE rendering, so the picks appear with
   // real work already showing — never a monogram that swaps to a photo a beat later. A
   // firm with no photos (or a failed fetch) keeps the monogram fallback.
@@ -5525,18 +5612,13 @@ async function vmDeck(trade, job, deckMeta, mode){
   const row=document.createElement('div'); row.className='vmsg tc-verdict'; row.innerHTML='<span class="vav">Vesta.</span>'; row.appendChild(el);
   t.appendChild(row); t.classList.add('tc-resolved'); vmScroll();   // Vesta's message: picks in-chat, history collapsed → fixed verdict
   el.querySelectorAll('.tc-firm').forEach(btn=>btn.addEventListener('click',()=>openProfile(btn.dataset.place)));
-  const all=el.querySelector('.tc-deck-all'); if(all) all.addEventListener('click',()=>{ const h=$('s-home'); if(h) h.classList.remove('vconv'); S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank'; S.match={job:job,axis:axis}; S.matchPending=false; S.triageActive=false; S.triageMode=null; renderNeedChips(); renderSidebar(); showBrowse(trade); });
+  const all=el.querySelector('.tc-deck-all'); if(all) all.addEventListener('click',()=>{ S.chatReturn=true; const h=$('s-home'); if(h) h.classList.remove('vconv'); S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank'; S.match={job:job,axis:axis}; S.matchPending=false; S.triageActive=false; S.triageMode=null; renderNeedChips(); renderSidebar(); showBrowse(trade); });
 }
 function vmChips(chips){
   const t=$('vm-thread'); if(!t||!chips||!chips.length) return;
   const wrap=document.createElement('div'); wrap.className='tc-chips';
-  chips.forEach(c=>{ const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.textContent=c; bt.onclick=()=>{ if(!vmBusy&&!vmDone){ wrap.remove(); vmTurn(c); } }; wrap.appendChild(bt); });
+  chips.forEach(c=>{ const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.innerHTML='<span>'+esc(c)+'</span>'; bt.onclick=()=>{ if(!vmBusy&&!vmDone){ wrap.remove(); vmTurn(c); } }; wrap.appendChild(bt); });
   t.appendChild(wrap); vmScroll();
-}
-function vmHandoff(mode){
-  if(vmDone) return; vmDone=true; vmThinkOff();
-  const b=vmVesta(); if(b) b.textContent='Let me walk you through it another way — a couple of taps and I’ll have your picks.';
-  setTimeout(()=>{ const h=$('s-home'); if(h) h.classList.remove('vconv'); enterTriage(mode==='plan'?'plan':'broken'); }, 950);
 }
 function triageChatHTML(){
   const pill = s => '<button class="tc-pill" type="button" data-text="'+esc(s.t)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+s.ic+'</svg>'+s.l+'</button>';
@@ -5567,6 +5649,19 @@ function wireTriageChat(){
   const form = $('tc-form');
   if (form) form.addEventListener('submit', e => { e.preventDefault(); const v=(inp.value||'').trim();
     if (v && S.triChat && !S.triChat.done && !S.triChat.busy){ inp.value=''; snd.classList.remove('hot'); triTurn(v); } });
+  // Returning to a conversation (back from the walkthrough): replay the thread from the
+  // kept history so nothing said is lost — the DOM was rebuilt, the words weren't.
+  const c = S.triChat;
+  if (c && c.started && c.msgs && c.msgs.length){
+    const op2=$('tc-opener'); if(op2) op2.style.display='none';
+    const th=$('tc-thread'); if(th) th.hidden=false;
+    c.msgs.forEach(m=>{
+      if (m.role==='user'){ tcUser(m.content); return; }
+      let say=''; try{ say=JSON.parse(m.content).say||''; }catch(_){ say=''; }
+      if (say){ const b=tcVesta(); if(b) b.innerHTML=mdLite(say); }
+    });
+    tcScroll();
+  }
 }
 const tcScroll = () => { const t=$('tc-thread'); if(t) t.scrollTop = t.scrollHeight; };
 function tcUser(text){
@@ -5595,18 +5690,25 @@ function tcThinkOff(){ const el=$('tc-typing'); if(el) el.remove(); }
 function tcChips(chips){
   const t=$('tc-thread'); if(!t || !chips || !chips.length) return;
   const wrap=document.createElement('div'); wrap.className='tc-chips';
-  chips.forEach(c=>{ const b=document.createElement('button'); b.className='tc-chip'; b.type='button'; b.textContent=c;
+  chips.forEach(c=>{ const b=document.createElement('button'); b.className='tc-chip'; b.type='button'; b.innerHTML='<span>'+esc(c)+'</span>';
     b.onclick=()=>{ if(S.triChat && !S.triChat.busy){ t.querySelectorAll('.tc-chips').forEach(x=>x.remove()); triTurn(c); } }; wrap.appendChild(b); });
   t.appendChild(wrap); tcScroll();
 }
-// Graceful handoff to the tap flow — the fallback choreography for API failure, garbage
-// JSON, or the 4-turn cap. One Vesta line, then the guided steps. Never a dead end.
-function tcHandoff(mode){
-  if (!S.triChat || S.triChat.done) return;
-  S.triChat.done = true;
+// Leaving the chat is a question, not a move — an in-chat offer with a way to stay.
+// Accepting sets S.chatReturn so the walkthrough's back button returns to the thread.
+function tcOffer(mode, reason){
+  const c = S.triChat; if (!c || c.done) return;
   tcThinkOff();
-  const b = tcVesta(); if (b) b.textContent = 'Let me walk you through it another way — a couple of taps and I’ll have your picks.';
-  setTimeout(()=> enterTriage(mode === 'plan' ? 'plan' : 'broken'), 950);
+  const b = tcVesta();
+  if (b) b.textContent = reason==='error'
+    ? 'I hit a snag reaching my full read there. Want me to walk you through it with a couple of taps instead — or keep going right here?'
+    : 'I can keep chatting — or walk you through it with a couple of taps and get your picks faster. Your call.';
+  const t=$('tc-thread'); if(!t) return;
+  const wrap=document.createElement('div'); wrap.className='tc-chips';
+  const mk=(label,fn)=>{ const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.innerHTML='<span>'+esc(label)+'</span>'; bt.onclick=()=>{ wrap.remove(); fn(); }; wrap.appendChild(bt); };
+  mk('Walk me through it', ()=>{ S.chatReturn=true; enterTriage(mode==='plan'?'plan':'broken'); });
+  mk('Keep chatting', ()=>{ c.turns=Math.max(0,c.turns-2); const inp=$('tc-input'); if(inp) inp.focus(); });
+  t.appendChild(wrap); tcScroll();
 }
 
 async function triTurn(text){
@@ -5615,10 +5717,12 @@ async function triTurn(text){
   c.busy = true; c.turns++;
   const err=$('tc-err'); if(err) err.hidden=true;
   tcUser(text); c.msgs.push({ role:'user', content:text });
-  tcThink('Reading what you described');
-  // pre-first-token: one timed advance keeps the wait honest-feeling on a slow start
-  const preTimer = setTimeout(()=> tcThinkWord('Making sense of '+tcTopic(text)), 2600);
-  let bubble = null, streamed = '';
+  const seq = traceSeq(text, false);
+  tcThink(seq[0]);
+  const stopTrace = mkTraceAdvancer(seq, tcThinkWord);
+  const t0 = performance.now();
+  let bubble = null, typer = null, pend = '', streamed = '', revealTimer = null;
+  const reveal = ()=>{ if (typer) return; stopTrace(); tcThinkOff(); bubble = tcVesta(); typer = mkTyper(bubble, tcScroll); if (pend){ typer.push(pend); pend=''; } };
   try {
     const r = await fetch('/api/triage', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ messages: c.msgs }) });
     if (!r.ok || !r.body) throw new Error('http');
@@ -5633,27 +5737,27 @@ async function triTurn(text){
         const line = buf.slice(0, nl).trim(); buf = buf.slice(nl + 1);
         if (!line.startsWith('data:')) continue;
         let ev; try { ev = JSON.parse(line.slice(5)); } catch(_){ continue; }
-        if (ev.t === 'd'){
-          clearTimeout(preTimer);
-          if (!bubble){ tcThinkOff(); bubble = tcVesta(); }
-          streamed += ev.c; if (bubble){ bubble.textContent = streamed; tcScroll(); }
-        }
-        else if (ev.t === 'r'){ streamed=''; if (bubble) bubble.textContent=''; }
+        if (ev.t === 'd'){ streamed += ev.c;
+          if (typer) typer.push(ev.c);
+          else { pend += ev.c; const wait = MIN_THINK - (performance.now() - t0);
+            if (wait <= 0) reveal(); else if (!revealTimer) revealTimer = setTimeout(reveal, wait); } }
+        else if (ev.t === 'r'){ streamed=''; pend=''; if (typer) typer.reset(); }
         else if (ev.t === 'f') final = ev;
         else if (ev.t === 'e') evErr = ev.error;
       }
     }
-    clearTimeout(preTimer);
+    clearTimeout(revealTimer);
     if (evErr || !final){
-      // salvage: words already streamed → keep chatting, don't dump to the tap-tree
-      if (streamed && bubble){ c.msgs.push({ role:'assistant', content: JSON.stringify({ say: streamed.slice(0,600), resolved:null }) }); c.busy = false; return; }
+      // salvage: words already streamed → land them, keep chatting, don't dump to the tap-tree
+      if (streamed){ if (!typer) reveal(); await typer.finish(streamed);
+        c.msgs.push({ role:'assistant', content: JSON.stringify({ say: streamed.slice(0,220), resolved:null }) }); c.busy = false; return; }
       throw new Error(evErr || 'no final');
     }
-    if (!bubble){ tcThinkOff(); bubble = tcVesta(); }
-    if (bubble && final.say && bubble.textContent !== final.say) bubble.textContent = final.say;
+    if (!typer){ if (!streamed && !final.say){ stopTrace(); tcThinkOff(); } else reveal(); }
+    if (typer) await typer.finish(final.say || streamed);
     c.mode = final.mode || 'fix';
-    // history stays under the server's 1200-char message cap; the model needs continuity, not verbatim
-    c.msgs.push({ role:'assistant', content: JSON.stringify({ say:(final.say||'').slice(0,600), resolved: final.resolved||null }) });
+    // history stays under the server's message cap; the model needs continuity, not verbatim
+    c.msgs.push({ role:'assistant', content: JSON.stringify({ say:(final.say||'').slice(0,220), resolved: final.resolved||null }) });
     // client-side gate — the same bank check triageEnter runs; the server already validated,
     // this catches a bank drift or a not-yet-loaded bank (fails back into the conversation)
     const res = final.resolved;
@@ -5665,11 +5769,11 @@ async function triTurn(text){
     }
     if (final.chips && final.chips.length) tcChips(final.chips);
     c.busy = false;
-    if (c.turns >= 4 && !c.done) tcHandoff(c.mode);   // the cap: 4 user turns, then the guided steps
+    if (c.turns >= 4 && !c.done) tcOffer(c.mode, 'cap');   // the cap: an OFFER, never an ambush
   } catch(_){
-    clearTimeout(preTimer);
+    clearTimeout(revealTimer); stopTrace();
     c.busy = false;
-    tcHandoff(c.mode);
+    tcOffer(c.mode, 'error');
   }
 }
 // The resolve landing: read-restyle the resolving line, advance the trace on REAL events
@@ -5702,7 +5806,7 @@ function triDeckCard(trade, job, deckMeta, mode){
   const axis = modeAxis(b, mode, emergency);
   const m = { job:job, axis:axis };
   const picks = pickPortfolio(byTrade(trade), m).slice(0,3);
-  if (!picks.length){ tcHandoff(mode); return; }   // a trade with no browsable firms — walk them instead
+  if (!picks.length){ tcOffer(mode, 'cap'); return; }   // a trade with no browsable firms — offer the walkthrough
   logMatch(trade, job, axis);                       // the resolve IS the match (same signal as applyMatch's)
   saveLastMatch(trade, job, axis);                  // return loop: resumable like any tap-flow match
   const jl = lc(deckMeta && deckMeta.label ? deckMeta.label : jobLabel(job));
@@ -5740,6 +5844,7 @@ function triDeckCard(trade, job, deckMeta, mode){
   const all = el.querySelector('#tc-all');
   if (all) all.addEventListener('click', ()=>{
     // the full-deck handoff — applyMatch's state, minus its log/save (both fired at card render)
+    S.chatReturn=true;
     S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank';
     S.match = { job:job, axis:axis }; S.matchPending=false;
     S.triageActive=false; S.triageMode=null;
@@ -5807,12 +5912,12 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
     vv.addEventListener('resize', setKb);
     vv.addEventListener('scroll', setKb);
   }
-  $('btn-back').addEventListener('click', goHome);
-  { const mb=$('match-back'); if(mb) mb.addEventListener('click', goHome); }
+  $('btn-back').addEventListener('click', navBack);
+  { const mb=$('match-back'); if(mb) mb.addEventListener('click', navBack); }
   { const pb=$('prof-float-back'); if(pb) pb.addEventListener('click', backFromProfile); }
   { const rb=$('req-float-back'); if(rb) rb.addEventListener('click', backFromRequest); }
-  { const bb=$('browse-float-back'); if(bb) bb.addEventListener('click', goHome); }
-  { const mfb=$('match-float-back'); if(mfb) mfb.addEventListener('click', goHome); }
+  { const bb=$('browse-float-back'); if(bb) bb.addEventListener('click', navBack); }
+  { const mfb=$('match-float-back'); if(mfb) mfb.addEventListener('click', navBack); }
   $('nav-home').addEventListener('click', () => { if (S.screen!=='home' || S.mode!=='trade'){ S.mode='trade'; goHome(); } });
   $('act-rewind').addEventListener('click', rewindDeck);
   $('act-pass').addEventListener('click', () => { const c=topCon(); if(c) commit('pass', c); });
