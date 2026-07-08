@@ -20,9 +20,11 @@
 :root {
   --bg:#F0F1E8; --olive:#4A4B2F; --ebony:#6B654B; --tea:#D4DF9E; --white:#FFFFFF;
   --r-card:26px; --r-tile:22px; --r-pill:999px;
-  --sh-tile: 0 1px 3px rgba(74,75,47,.06), 0 6px 18px -4px rgba(74,75,47,.13), 0 20px 56px -12px rgba(74,75,47,.14);
-  --sh-row: 0 1px 3px rgba(74,75,47,.05), 0 6px 18px -6px rgba(74,75,47,.12);
-  --sh-row-h: 0 2px 6px rgba(74,75,47,.08), 0 14px 34px -8px rgba(74,75,47,.2);
+  /* row/tile shadows are ALIASED to the neumorphic duals — every soft surface in the app
+     inherits the same-tone pillowed look from one place (the wallet-reference grammar) */
+  --sh-tile: var(--nm-sm);
+  --sh-row: var(--nm-sm);
+  --sh-row-h: var(--nm-out);
   --sh-card: 0 2px 6px rgba(74,75,47,.07), 0 18px 44px -10px rgba(74,75,47,.22), 0 40px 90px -24px rgba(74,75,47,.2);
   --sh-panel: 0 1px 3px rgba(74,75,47,.05), 0 18px 48px -16px rgba(74,75,47,.18);
   --sh-nav: 0 1px 0 rgba(74,75,47,.04), 0 4px 14px -2px rgba(74,75,47,.12), 0 18px 48px -8px rgba(74,75,47,.22);
@@ -31,16 +33,17 @@
      Falls back to the old cubic-bezier where linear() is unsupported. */
   --spring: cubic-bezier(.32,1.08,.62,1);
   --spring: linear(0, 0.01, 0.04 2.2%, 0.16 4.8%, 0.71 12.6%, 0.92 16.2%, 1.02 19.7%, 1.09 23.6%, 1.115 27.4%, 1.106 31.3%, 1.06 38%, 1.008 46.5%, 0.988 53.2%, 0.985 60.1%, 0.996 76.4%, 1);
-  /* soft-UI — clean cards lifted off the cream table, warm-neutral. Vesta Live redesign (2026-07).
-     --nm is a warm near-white a clear step ABOVE the --bg cream, so any surface painted --nm
-     reads as raised the moment it also carries --sh-card/--sh-row (a soft directional drop).
-     The neumorphic dual shadows (--nm-out/-sm) keep the top-left white highlight for pillowy
-     controls; --nm-in carves inputs INTO the surface. This is the wallet-reference look in-palette. */
-  --nm:#FAFBF5;
-  --nm-edge:.5px solid rgba(74,75,47,.055);
-  --nm-out:6px 6px 14px rgba(74,75,47,.13), -6px -6px 13px rgba(255,255,255,.85);
-  --nm-sm:4px 4px 9px rgba(74,75,47,.11), -4px -4px 9px rgba(255,255,255,.8);
-  --nm-in:inset 3px 3px 6px rgba(74,75,47,.12), inset -3px -3px 6px rgba(255,255,255,.85);
+  /* soft-UI — TRUE neumorphism, per the approved redesign mockup (_triage-preview/redesign.html).
+     --nm sits in the SAME tone family as --bg (not a lighter step); the lift comes entirely from
+     the dual shadows — a dark drop bottom-right + a bright white highlight top-left at ~90%.
+     That white highlight is what makes same-tone surfaces read as pillowed (the wallet reference).
+     Grammar: controls rest on --nm-sm, lift to --nm-out on hover, PRESS to --nm-in on tap;
+     inputs/thread are carved with --nm-in; big showcase cards keep a 1.5px olive border + layered drop. */
+  --nm:#ECEDE2;
+  --nm-edge:1.5px solid rgba(74,75,47,.13);
+  --nm-out:7px 7px 15px rgba(74,75,47,.15), -7px -7px 15px rgba(255,255,255,.9);
+  --nm-sm:4px 4px 9px rgba(74,75,47,.12), -4px -4px 9px rgba(255,255,255,.85);
+  --nm-in:inset 3px 3px 6px rgba(74,75,47,.13), inset -3px -3px 6px rgba(255,255,255,.9);
   --tea-grad:linear-gradient(180deg, #dfe8ac, #cdd88f);
   --dark-grad:linear-gradient(180deg, #565738, #43442a);
 }
@@ -257,7 +260,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .home-stack { margin-bottom:8px; }
 .hstk-stage { position:relative; height:min(37vh, 288px); margin:6px 6px 8px; }
 .hstk-card { position:absolute; inset:0; background:var(--nm); border:var(--nm-edge); border-radius:26px; padding:13px 19px 13px; display:flex; flex-direction:column; touch-action:pan-y; will-change:transform,opacity; overflow:hidden; user-select:none;
-  box-shadow:var(--sh-card); }
+  box-shadow:0 1px 2px rgba(74,75,47,.08), 0 6px 12px -4px rgba(74,75,47,.12), 0 14px 22px -10px rgba(74,75,47,.14); }
 .hstk-card::before { content:''; position:absolute; inset:0 0 auto 0; height:4px; background:linear-gradient(90deg, var(--olive), var(--tea)); }
 /* the stamp — rubber-ink page marker, top LEFT */
 .hstk-stamp { position:absolute; top:14px; left:16px; transform:rotate(-2.5deg); font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.18em; color:rgba(74,75,47,.5); border:1.5px solid rgba(74,75,47,.3); border-radius:5px; padding:2.5px 8px 2px; }
@@ -316,9 +319,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    of what's actually behind them. */
 .home-sec-h { font-family:var(--serif); font-size:23px; font-weight:700; letter-spacing:-.02em; color:var(--olive); line-height:1.2; margin-bottom:5px; }
 .home-sec-sub { font-size:13px; color:var(--ebony); line-height:1.5; margin-bottom:13px; max-width:52ch; }
-.prob-pill { display:flex; align-items:center; gap:8px; width:100%; background:var(--nm); border:none; border-radius:var(--r-pill); padding:10px 15px 10px 13px; cursor:pointer; font-family:var(--sans); font-size:14px; font-weight:600; color:var(--olive); box-shadow:0 1px 2px rgba(74,75,47,.05); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
-.prob-pill:hover { transform:translateY(-2px); box-shadow:0 8px 18px -7px rgba(74,75,47,.26); background:var(--tea); }
-.prob-pill:active { transform:scale(.96); }
+.prob-pill { display:flex; align-items:center; gap:8px; width:100%; background:var(--nm); border:none; border-radius:var(--r-pill); padding:10px 15px 10px 13px; cursor:pointer; font-family:var(--sans); font-size:14px; font-weight:600; color:var(--olive); box-shadow:var(--nm-sm); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
+.prob-pill:hover { transform:translateY(-2px); box-shadow:var(--nm-out); background:var(--tea); }
+.prob-pill:active { transform:scale(.96); box-shadow:var(--nm-in); }
 .prob-pill:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
 .prob-pill .pp-ic { display:flex; color:var(--olive); }
 .prob-pill .pp-ic svg { width:17px; height:17px; }
@@ -336,8 +339,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tg-label:first-child { margin-top:0; }
 .tg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
 .trade-tile { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; text-align:center; background:var(--nm); border:none; border-radius:var(--r-tile); padding:14px 6px 12px; min-height:0; cursor:pointer; box-shadow:0 1px 2px rgba(74,75,47,.04); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
-.trade-tile:hover { transform:translateY(-2px); box-shadow:0 7px 16px -7px rgba(74,75,47,.22); }
-.trade-tile:active { transform:scale(.97); }
+.trade-tile:hover { transform:translateY(-2px); box-shadow:var(--nm-out); }
+.trade-tile:active { transform:scale(.97); box-shadow:var(--nm-in); }
 .trade-tile.sel { background:var(--tea); }
 .trade-tile:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
 .tile-icon { width:34px; height:34px; flex-shrink:0; border-radius:10px; background:linear-gradient(180deg,rgba(212,223,158,.34),rgba(212,223,158,.15)); border:1px solid rgba(74,75,47,.05); display:flex; align-items:center; justify-content:center; color:var(--olive); }
@@ -465,8 +468,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .hr-arrow { flex-shrink:0; color:var(--tea); display:flex; }
 /* secondary — jump to the saved shortlist (lighter, sits under the resume card) */
 .hr-saved { display:flex; align-items:center; gap:11px; width:100%; text-align:left; cursor:pointer; background:var(--nm); border:none; border-radius:var(--r-pill); padding:12px 16px; box-shadow:0 1px 2px rgba(74,75,47,.05); transition:transform .14s, box-shadow .14s, background .14s; outline:none; }
-.hr-saved:hover { transform:translateY(-2px); box-shadow:0 8px 18px -7px rgba(74,75,47,.26); background:var(--tea); }
-.hr-saved:active { transform:scale(.98); }
+.hr-saved:hover { transform:translateY(-2px); box-shadow:var(--nm-out); background:var(--tea); }
+.hr-saved:active { transform:scale(.98); box-shadow:var(--nm-in); }
 .hr-saved:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
 .hr-bk { display:flex; color:var(--olive); flex-shrink:0; }
 .hr-bk svg { width:18px; height:18px; }
@@ -506,7 +509,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .deckwrap { flex:1; display:flex; flex-direction:column; min-height:0; padding-bottom:96px; }
 .feedwrap { display:none; }   /* desktop-only scroll feed; the phone always uses the swipe deck */
 .deck { position:relative; flex:1; min-height:300px; margin:6px 20px 0; }
-.card { position:absolute; left:0; right:0; top:0; bottom:0; background:var(--nm); border:none; border-radius:var(--r-card); box-shadow:var(--sh-card); padding:20px 20px 17px; display:flex; flex-direction:column; will-change:transform; touch-action:none; -webkit-user-select:none; user-select:none; overflow:hidden; transform-origin:top center; }
+.card { position:absolute; left:0; right:0; top:0; bottom:0; background:var(--nm); border:var(--nm-edge); border-radius:var(--r-card); box-shadow:var(--sh-card); padding:20px 20px 17px; display:flex; flex-direction:column; will-change:transform; touch-action:none; -webkit-user-select:none; user-select:none; overflow:hidden; transform-origin:top center; }
 .card[data-k="0"] { z-index:30; cursor:grab; }
 .card[data-k="0"]:active { cursor:grabbing; }
 /* Visible stack peek (top-anchored scale, so the sliver shows at the BOTTOM) — reads as a
@@ -604,7 +607,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .deck-meta { text-align:center; font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:rgba(74,75,47,.5); padding:6px 0 0; }
 
 /* end-of-deck */
-.deck-end { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; background:var(--nm); border:none; border-radius:var(--r-card); box-shadow:var(--sh-card); }
+.deck-end { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; background:var(--nm); border:var(--nm-edge); border-radius:var(--r-card); box-shadow:var(--sh-card); }
 .deck-end .de-spark { color:var(--olive); margin-bottom:14px; }
 .deck-end h3 { font-family:var(--serif); font-size:26px; font-weight:700; color:var(--olive); margin-bottom:9px; letter-spacing:-.02em; }
 .deck-end p { font-size:13.5px; color:var(--ebony); line-height:1.55; margin-bottom:22px; max-width:270px; }
@@ -633,7 +636,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .de-btn.ghost { background:var(--white); color:var(--olive); border:1.5px solid rgba(74,75,47,.18); }
 
 /* ===== MATCH INTRO (the "We found N / ranked using" anticipation beat) ===== */
-.match-intro { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px 26px; background:var(--nm); border:none; border-radius:var(--r-card); box-shadow:var(--sh-card); animation:miIn .44s cubic-bezier(.2,.7,.3,1) both; }
+.match-intro { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px 26px; background:var(--nm); border:var(--nm-edge); border-radius:var(--r-card); box-shadow:var(--sh-card); animation:miIn .44s cubic-bezier(.2,.7,.3,1) both; }
 .mi-kicker { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ebony); margin-bottom:18px; }
 .mi-kicker svg { color:var(--olive); }
 .mi-found { display:flex; align-items:baseline; gap:9px; justify-content:center; margin-bottom:6px; }
@@ -669,7 +672,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .mw-hint { font-size:13px; color:var(--ebony); line-height:1.5; margin-bottom:19px; }
 .mw-opts { display:grid; grid-template-columns:1fr; gap:9px; }
 .mw-opt { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; text-align:left; background:var(--nm); border:none; border-radius:15px; padding:15px 17px; cursor:pointer; box-shadow:var(--sh-row); transition:border-color .16s, transform .16s, background .16s; }
-.mw-opt:hover { border-color:rgba(74,75,47,.34); transform:translateY(-1px); }
+.mw-opt:hover { box-shadow:var(--nm-out); transform:translateY(-1px); }
+.mw-opt:active { box-shadow:var(--nm-in); transform:none; }
 .mw-opt:focus-visible { outline:2px solid var(--olive); outline-offset:2px; }
 .mw-opt.sel { border-color:var(--olive); background:rgba(212,223,158,.2); }
 .mw-opt-l { display:flex; flex-direction:column; gap:2px; min-width:0; }
@@ -893,7 +897,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .ss-btn.on { background:var(--white); color:var(--olive); box-shadow:0 1px 3px rgba(74,75,47,.1); }
 .histrow { display:flex; align-items:center; gap:13px; width:100%; text-align:left; background:var(--nm); border:none; border-radius:18px; padding:13px 15px; box-shadow:var(--sh-row); cursor:pointer; font-family:var(--sans); transition:transform .14s, box-shadow .14s; }
 .histrow:hover { transform:translateY(-1px); box-shadow:var(--sh-row-h); }
-.histrow:active { transform:scale(.99); }
+.histrow:active { transform:scale(.99); box-shadow:var(--nm-in); }
 .hist-id { min-width:0; flex:1; display:flex; flex-direction:column; }
 .hist-saved { color:var(--olive); display:flex; flex-shrink:0; }
 .hist-go { color:rgba(74,75,47,.32); display:flex; flex-shrink:0; }
@@ -985,6 +989,11 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* DESKTOP (≥900px) — sidebar | deck | analysis panel */
 #dsidebar { display:none; }
 @media (min-width:900px) {
+  /* desktop deepens the neumorphic duals slightly (the mockup's ≥900px block) — bigger
+     surfaces need a longer throw for the same felt lift */
+  :root { --nm-out:8px 8px 18px rgba(74,75,47,.16), -8px -8px 18px rgba(255,255,255,.92);
+          --nm-sm:4px 4px 10px rgba(74,75,47,.13), -4px -4px 10px rgba(255,255,255,.88);
+          --nm-in:inset 3px 3px 7px rgba(74,75,47,.13), inset -3px -3px 7px rgba(255,255,255,.9); }
   html, body { height:100%; overflow:hidden; }   /* desktop: Vesta is a fixed app shell — lock the page, inner columns own their scroll */
   body { display:block; padding:0; background:var(--bg); }
   #app { width:100%; max-width:none; height:100vh; margin:0; border-radius:0; overflow:hidden; box-shadow:none; display:flex; flex-direction:row; background:#ECEDE2; }
@@ -1345,8 +1354,15 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
 /* ===== IN-APP PROFILE (Phase B) — the full profile, native to Vesta's light UI ===== */
 #s-profile { background:var(--bg); }
+#s-profile, #s-request { position:relative; }
+/* the persistent way back — floats above the scroll on profile + request, so the user is
+   never stranded mid-page with only the logo (which exits the app). Soft-UI: rests on the
+   surface, presses in on tap. */
+.float-back { position:absolute; top:calc(12px + env(safe-area-inset-top, 0px)); left:14px; z-index:6; width:40px; height:40px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); cursor:pointer; transition:box-shadow .15s ease; }
+.float-back:hover { box-shadow:var(--nm-out); }
+.float-back:active { box-shadow:var(--nm-in); }
 .prof-scroll { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
-.prof-wrap { max-width:720px; margin:0 auto; padding:14px 20px 130px; }
+.prof-wrap { max-width:720px; margin:0 auto; padding:60px 20px 130px; }  /* top clears the floating back */
 .prof-loading, .prof-error { padding:60px 22px; text-align:center; color:var(--ebony); font-size:14px; line-height:1.6; }
 .prof-error a, .prof-loading a { color:var(--olive); font-weight:600; }
 .prof-crumb { display:inline-flex; align-items:center; gap:7px; background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ebony); padding:6px 0 8px; }
@@ -1796,6 +1812,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
   <!-- PROFILE (in-app full profile — same Vesta UI, no external page) -->
   <div id="s-profile" class="screen" role="main" aria-label="Contractor profile">
+    <button class="float-back" id="prof-float-back" aria-label="Back"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
     <div class="prof-scroll" id="prof-scroll">
       <div class="prof-wrap" id="prof-wrap"></div>
     </div>
@@ -1803,6 +1820,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
   <!-- REQUEST (in-app — Vesta carries your request to one pro, no external page) -->
   <div id="s-request" class="screen" role="main" aria-label="Request through Vesta">
+    <button class="float-back" id="req-float-back" aria-label="Back"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
     <div class="prof-scroll" id="req-scroll">
       <div class="prof-wrap" id="req-wrap"></div>
     </div>
@@ -2286,6 +2304,41 @@ function whyLine(con, m){
   if (m && m.axis && (con.bestFor||[]).some(t => priorityAxis(t) === m.axis)) bits.push(PRIORITY_AXES[m.axis].blurb);
   return bits.slice(0,3).join(' · ');
 }
+// #60 fix — the portfolio pick. The locked scorer (match 3.0 → rankScore) is honest but
+// IDENTICAL for every job in a trade: the broadest high-rank firms match everything, so every
+// walk-through landed on the same shortlist. This composes the head of the order as a
+// PORTFOLIO of matchers, each surfaced for a different, data-true reason:
+//   1. the PROOF pick — the best-reviewed matcher (the locked order's own #1, unchanged);
+//   2. the SPECIALIST — the matcher whose best_for is most CONCENTRATED on this job (a short
+//      tag set means the job is core work, not one line of twenty — real selectivity, no RNG);
+//   3. the NAMED FIT — a matcher whose own specialties/known-for text names the job.
+// Everything else follows in the locked order. No randomness — same question, same answer;
+// different jobs now genuinely produce different shortlists. Thin fields (≤3 matchers) are
+// left exactly as the locked order — there is nothing honest to compose.
+function pickPortfolio(list, m){
+  const scored = [...list].sort((x,y)=> matchScore(y,m)-matchScore(x,m) || (y.rankScore-x.rankScore));
+  if (!m || !m.job) return scored;
+  const matchers = scored.filter(c => jobMatches(c, m.job));
+  if (matchers.length <= 3) return scored;
+  const picks = [matchers[0]];
+  const rest = matchers.slice(1);
+  const spec = [...rest].sort((a,b)=> (a.bestFor.length - b.bestFor.length) || (b.rankScore - a.rankScore))[0];
+  if (spec && spec.bestFor.length < matchers[0].bestFor.length) picks.push(spec);
+  const words = lc(jobLabel(m.job)).split(/[^a-z]+/).filter(w => w.length > 3);
+  const named = rest.find(c => picks.indexOf(c) === -1 && words.some(w => c.specs.some(s => s.indexOf(w) !== -1)));
+  if (named && picks.length < 3) picks.push(named);
+  for (const c of rest){ if (picks.length >= 3) break; if (picks.indexOf(c) === -1) picks.push(c); }
+  return picks.concat(scored.filter(c => picks.indexOf(c) === -1));
+}
+// Conversation-mode → priority axis: an emergency wants who answers fastest; a planner is
+// best served by firms tagged for guidance/relationship. Data-true — the axis only weighs
+// firms the synthesis actually tagged that way, and only when the trade's bank carries it.
+function modeAxis(b, mode, emergency){
+  const has = a => !!(b && b.axes && b.axes.some(x => x.axis === a));
+  if (emergency && has('fast')) return 'fast';
+  if (mode === 'plan'){ if (has('guided')) return 'guided'; if (has('relationship')) return 'relationship'; }
+  return null;
+}
 
 const $ = id => document.getElementById(id);
 const desktop = () => window.innerWidth >= 900;
@@ -2487,7 +2540,15 @@ function countyFieldData(){
   const emerg = per.filter(x=>x.f.emergPct>0).sort((a,b)=>b.f.emergPct-a.f.emergPct);
   const priced = per.filter(x=>x.f.priceMix).sort((a,b)=>b.f.priceMix.prem-a.f.priceMix.prem);
   const scarce = per.flatMap(x=>x.f.scarce.map(s=>({label:s.label, pct:s.pct, k:x.k, trade:x.label}))).sort((a,b)=>a.pct-b.pct);
-  return { per, countyMed, townCount, emerg, priced, scarce };
+  // Deepest benches — the inverse read of the same bank: real jobs ≥50% of their field
+  // carries, ONE per trade (the deepest), ranked. The homeowner-leverage insight.
+  const seenTrade = new Set();
+  const deep = per.flatMap(x=>{ const b=tradeBank(x.k); if(!b||!b.trade_n) return [];
+      return (b.jobs||[]).filter(j=>j.firms/b.trade_n>=.5 && !/commercial|emergenc/.test(j.value))
+        .map(j=>({label:j.label, pct:Math.round(100*j.firms/b.trade_n), k:x.k, trade:x.label})); })
+    .sort((a,b)=>b.pct-a.pct)
+    .filter(d=>{ if(seenTrade.has(d.k)) return false; seenTrade.add(d.k); return true; });
+  return { per, countyMed, townCount, emerg, priced, scarce, deep };
 }
 function fieldReportHTML(){
   const cfd = countyFieldData(); if (!cfd) return '';
@@ -2534,11 +2595,22 @@ function fieldReportHTML(){
         '<span class="frep-scarce-l">'+esc(s.label)+'<i>'+esc(s.trade)+'</i></span>'+
         '<span class="frep-chip">'+s.pct+'% of the field</span></button>').join('')
     : '';
+  // Where you can shop around — the OTHER end of the same coverage data: the jobs with the
+  // deepest bench. Scarcity says "start early"; depth says "you have leverage — get three
+  // quotes and let them compete." Same live bank numbers, homeowner-negotiation framing.
+  const deep = cfd.deep.slice(0,4);
+  const deepHtml = deep.length
+    ? '<div class="fr2-lbl" style="margin-top:22px">Where you can shop around</div>'+
+      '<p class="frep-note">The deepest benches in the county — get multiple quotes, the leverage is yours.</p>'+
+      deep.map(s=>'<button class="frep-scarce" data-trade="'+esc(s.k)+'">'+
+        '<span class="frep-scarce-l">'+esc(s.label)+'<i>'+esc(s.trade)+'</i></span>'+
+        '<span class="frep-chip">'+s.pct+'% of the field</span></button>').join('')
+    : '';
   return '<div class="frep-card">'+
     '<div class="fband-kick">'+SPARK+'The Field Report — Fairfield County</div>'+
     '<h2 class="frep-h">The county, <span class="squig">measured</span></h2>'+
     '<p class="frep-sub">Cross-trade conclusions from Vesta’s own read of the field — public records, zero self-reporting.</p>'+
-    pulse+emergHtml+pricedHtml+scarceHtml+
+    pulse+emergHtml+pricedHtml+scarceHtml+deepHtml+
     '<p class="fr2-method">Every number recomputed live from the field Vesta tracks — never ads, never pay-to-play.</p>'+
   '</div>';
 }
@@ -3053,9 +3125,10 @@ function sortList(list, mode, allowShuffle){
   if (mode==='volume') return [...list].sort(by('volumeBand'));
   if (mode==='tenure') return [...list].sort((a,b)=> band(b.tenureBand)-band(a.tenureBand) || ((a.sinceYear||9999)-(b.sinceYear||9999)) || (b.rankScore-a.rankScore));
   if (mode==='registered') return [...list].sort((a,b)=> (b.registered?1:0)-(a.registered?1:0) || (b.rankScore-a.rankScore));
-  // Default 'rank' = Vesta's pick. In match mode the locked scorer orders it (matchers first, then by
-  // rank_score); a match is never shuffled — the order carries meaning.
-  if (S.match && S.match.job) return [...list].sort((a,b)=> matchScore(b,S.match)-matchScore(a,S.match) || (b.rankScore-a.rankScore));
+  // Default 'rank' = Vesta's pick. In match mode the portfolio orders it (proof → specialist →
+  // named fit, then the locked matchers-first order); a match is never shuffled — the order
+  // carries meaning, and different jobs now genuinely lead with different firms (#60).
+  if (S.match && S.match.job) return pickPortfolio(list, S.match);
   return allowShuffle ? shuffle(list) : [...list].sort((a,b)=> b.rankScore-a.rankScore);
 }
 // The match is part of the deck signature — changing the job/axis must rebuild the cached deck
@@ -4105,7 +4178,8 @@ function initSheetDrag(){
 function openSearch(seed){ const o=$('vsearch'); o.classList.add('open'); o.setAttribute('aria-hidden','false'); const inp=$('vsearch-input'); const q=(typeof seed==='string')?seed:''; inp.value=q; renderSearchResults(q); S.searchOpen=true; setTimeout(()=>{ inp.focus(); if(q) inp.select(); },60); }
 function closeSearch(){ $('vsearch').classList.remove('open'); $('vsearch').setAttribute('aria-hidden','true'); S.searchOpen=false; }
 function renderSearchResults(q){
-  q = (q||'').trim().toLowerCase(); const res = $('vsearch-results');
+  const raw = (q||'').trim();       // original casing — handed to Vesta Live verbatim on a dead end
+  q = raw.toLowerCase(); const res = $('vsearch-results');
   if(!q){
     // Empty state was a dead instructional sentence — give it something to tap instead,
     // 6 real examples (same pool as the home typewriter) reshuffled each time it opens.
@@ -4140,7 +4214,25 @@ function renderSearchResults(q){
     (tradeLabelOf(c.trade) || '').toLowerCase().includes(q) ||
     (c.specs || []).some(s => s.includes(q))
   ).slice(0,40);
-  if(!sug && !matches.length){ res.innerHTML = '<p class="vsearch-hint">No matches yet — try a trade like &ldquo;roofing&rdquo; or a town.</p>'; return; }
+  if(!sug && !matches.length){
+    // The old dead end told the user to guess better keywords. If the LLM lane is up, the
+    // smarter route is the conversation itself — Vesta Live can read the words search couldn't.
+    if (TRI_OK && raw.length >= 3){
+      res.innerHTML = '<button class="vsr vsr-route" id="vsr-ask">'+
+        '<span class="vsr-mono" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>'+
+        '<span class="vsr-main"><span class="vsr-name">Ask Vesta Live</span><span class="vsr-town">&ldquo;'+esc(raw.slice(0,60))+'&rdquo; &middot; describe it, Vesta routes it</span></span>'+
+        '<span class="vsr-arrow" aria-hidden="true">&rarr;</span></button>';
+      const ask=$('vsr-ask'); if(ask) ask.addEventListener('click', ()=>{
+        closeSearch();
+        if (S.screen!=='home'){ S.mode='trade'; S.triageActive=false; S.triageMode=null; showScreen('home'); renderSidebar(); updateNavState(); }
+        if(!$('s-home').classList.contains('vconv')) enterConverseMobile();
+        vmTurn(raw);
+      });
+    } else {
+      res.innerHTML = '<p class="vsearch-hint">No matches yet — try a trade like &ldquo;roofing&rdquo; or a town.</p>';
+    }
+    return;
+  }
   res.innerHTML = sug + matches.map(c =>
     '<button class="vsr" data-place="'+esc(c.placeId)+'" data-trade="'+esc(c.trade)+'">'+
       '<span class="vsr-mono" aria-hidden="true">'+esc(monogram(c.name))+'</span>'+
@@ -4291,7 +4383,7 @@ async function openProfile(placeId){
   showScreen('profile'); updateNavState();
   const sc=$('prof-scroll'); if(sc) sc.scrollTop=0;
   window.scrollTo(0,0);   // desktop scrolls the document, not prof-scroll — without this the profile opens blank at the deck's old offset
-  $('prof-wrap').innerHTML = '<button class="prof-crumb" id="prof-back">'+BACKARROW+'<span>Back</span></button><div class="prof-loading">Loading profile…</div>';
+  $('prof-wrap').innerHTML = '<div class="prof-loading">Loading profile…</div>';
   wireProfBack();
   try {
     const resp = await HOME.api('/c/'+encodeURIComponent(placeId));
@@ -4310,7 +4402,7 @@ async function openProfile(placeId){
   }
 }
 function profErrorHTML(){
-  return '<button class="prof-crumb" id="prof-back">'+BACKARROW+'<span>Back</span></button>'+
+  return ''+
     '<div class="prof-error">We couldn’t load that profile.<br>It may have moved — <a href="/vesta">back to Vesta</a>.</div>';
 }
 function backFromProfile(){
@@ -4339,7 +4431,7 @@ function profHeroHTML(){
   badges.push(enr ? '<span class="prof-badge plain">◆ Vesta-analyzed from public records</span>' : '<span class="prof-badge plain">Listed — not yet verified</span>');
   if (profData.claimed) badges.push('<span class="prof-badge">Profile claimed</span>');
   if (p.business_status==='CLOSED_TEMPORARILY') badges.push('<span class="prof-badge plain">Temporarily closed</span>');
-  return '<button class="prof-crumb" id="prof-back">'+BACKARROW+'<span>Back</span></button>'+
+  return ''+
     '<h1 class="prof-name">'+esc(p.name)+'</h1>'+
     '<p class="prof-sub">'+(tName?esc(tName)+' · ':'')+esc(String(p.address||'').replace(/,?\s*(USA|United States)\.?$/i,''))+'</p>'+
     '<div class="prof-badges">'+badges.join('')+'</div>'+
@@ -4812,7 +4904,7 @@ function enterRequest(ctx){
 function requestHTML(){
   const name = reqData.name ? esc(reqData.name) : 'this pro';
   const tl = reqData.trade ? esc(tradeLabelOf(reqData.trade)) : '';
-  return '<button class="prof-crumb" id="req-back">'+BACKARROW+'<span>Back</span></button>'+
+  return ''+
     '<h1 class="prof-name">Request through Vesta</h1>'+
     '<p class="prof-sub">Your request goes to <b style="color:var(--olive)">'+name+'</b>'+(tl?' · '+tl:'')+'. Say it once — Vesta carries it over, and replies come straight to you.</p>'+
     '<form id="req-form" class="req-form">'+
@@ -5273,7 +5365,9 @@ function enterConverseMobile(){
   const inp=$('hs-cin'); if(inp){ inp.value=''; inp.disabled=false; inp.placeholder='Describe it in your own words…'; }
   h.classList.add('vconv');
   const st=$('vstarters'); if(st) st.classList.add('show');
-  setTimeout(()=>{ const i=$('hs-cin'); if(i) i.focus(); }, 420);
+  // focus SYNCHRONOUSLY, inside the tap's own call stack — iOS only raises the keyboard for
+  // an in-gesture focus; the old setTimeout(420) focus was silently ignored on the phone.
+  if(inp) inp.focus();
 }
 function exitConverseMobile(){
   const h=$('s-home'); if(!h) return;
@@ -5308,7 +5402,12 @@ async function vmTurn(text){
       }
     }
     clearTimeout(preTimer);
-    if(evErr||!final) throw new Error(evErr||'no final');
+    if(evErr||!final){
+      // salvage: if Vesta's words already streamed into the bubble, a backend hiccup on the
+      // final frame shouldn't yank the user to the tap-tree — keep the conversation alive.
+      if(streamed&&bubble){ vmMsgs.push({role:'assistant',content:JSON.stringify({say:streamed.slice(0,600),resolved:null})}); vmBusy=false; return; }
+      throw new Error(evErr||'no final');
+    }
     if(!bubble){ vmThinkOff(); bubble=vmVesta(); }
     if(bubble && final.say) bubble.textContent=final.say;
     vmMsgs.push({role:'assistant',content:JSON.stringify({say:(final.say||'').slice(0,600),resolved:final.resolved||null})});
@@ -5339,9 +5438,9 @@ function vmDeckLand(trade, job, deckMeta, mode){
 async function vmDeck(trade, job, deckMeta, mode){
   const b=tradeBank(trade);
   const emergency=/emergency/.test(job)||!!(deckMeta&&deckMeta.emergency);
-  const axis=(emergency&&b&&b.axes&&b.axes.some(a=>a.axis==='fast'))?'fast':null;
+  const axis=modeAxis(b, mode, emergency);
   const m={job:job,axis:axis};
-  const picks=byTrade(trade).slice().sort((x,y)=>matchScore(y,m)-matchScore(x,m)||(y.rankScore-x.rankScore)).slice(0,3);
+  const picks=pickPortfolio(byTrade(trade), m).slice(0,3);
   if(!picks.length){ vmHandoff(mode); return false; }
   // Fetch + decode each pick's lead work-photo BEFORE rendering, so the picks appear with
   // real work already showing — never a monogram that swaps to a photo a beat later. A
@@ -5485,7 +5584,11 @@ async function triTurn(text){
       }
     }
     clearTimeout(preTimer);
-    if (evErr || !final) throw new Error(evErr || 'no final');
+    if (evErr || !final){
+      // salvage: words already streamed → keep chatting, don't dump to the tap-tree
+      if (streamed && bubble){ c.msgs.push({ role:'assistant', content: JSON.stringify({ say: streamed.slice(0,600), resolved:null }) }); c.busy = false; return; }
+      throw new Error(evErr || 'no final');
+    }
     if (!bubble){ tcThinkOff(); bubble = tcVesta(); }
     if (bubble && final.say && bubble.textContent !== final.say) bubble.textContent = final.say;
     c.mode = final.mode || 'fix';
@@ -5536,10 +5639,9 @@ function triDeckLand(bubble, trade, job, deckMeta, mode){
 function triDeckCard(trade, job, deckMeta, mode){
   const b = tradeBank(trade);
   const emergency = /emergency/.test(job) || !!(deckMeta && deckMeta.emergency);
-  const axis = (emergency && b && b.axes && b.axes.some(a=>a.axis==='fast')) ? 'fast' : null;
+  const axis = modeAxis(b, mode, emergency);
   const m = { job:job, axis:axis };
-  const picks = byTrade(trade).slice()
-    .sort((x,y)=> matchScore(y,m)-matchScore(x,m) || (y.rankScore-x.rankScore)).slice(0,3);
+  const picks = pickPortfolio(byTrade(trade), m).slice(0,3);
   if (!picks.length){ tcHandoff(mode); return; }   // a trade with no browsable firms — walk them instead
   logMatch(trade, job, axis);                       // the resolve IS the match (same signal as applyMatch's)
   saveLastMatch(trade, job, axis);                  // return loop: resumable like any tap-flow match
@@ -5633,6 +5735,8 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   updateNavState();
   $('btn-back').addEventListener('click', goHome);
   { const mb=$('match-back'); if(mb) mb.addEventListener('click', goHome); }
+  { const pb=$('prof-float-back'); if(pb) pb.addEventListener('click', backFromProfile); }
+  { const rb=$('req-float-back'); if(rb) rb.addEventListener('click', backFromRequest); }
   $('nav-home').addEventListener('click', () => { if (S.screen!=='home' || S.mode!=='trade'){ S.mode='trade'; goHome(); } });
   $('act-rewind').addEventListener('click', rewindDeck);
   $('act-pass').addEventListener('click', () => { const c=topCon(); if(c) commit('pass', c); });
