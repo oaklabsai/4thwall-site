@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Vesta — Find a contractor worth hiring. | 4THWALL</title>
 <meta name="description" content="Vesta matches you with vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care, painters, masons, tree crews, flooring pros, window & door installers, pool pros. Each one read and summarized by Vesta. No ads, no pay-to-play.">
 <link rel="canonical" href="https://4thwall.solutions/vesta">
@@ -54,6 +54,14 @@
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 html,body { height:100%; overscroll-behavior:none; }
+/* Keyboard-flush composer: --kb = the live keyboard inset (visualViewport watcher below).
+   The svh-locked shell doesn't shrink when iOS raises the keyboard, so the conversation
+   column and the triage-chat composer pad up by exactly the keyboard height — the composer
+   sits flush ON the keyboard, Claude-app style, and relaxes back when it dismisses. */
+@media (max-width:899.98px){
+  #s-home.vconv { padding-bottom:var(--kb, 0px); }
+  .tc-composer { margin-bottom:var(--kb, 0px); }
+}
 /* iOS page-"extension" fix: an inner scroll region that reaches its end chains the scroll to
    the document, which pumps Safari's URL bar and makes a locked page read as if it grew. The
    bottom sheets already stop this (.psheet/.fsheet have overscroll-behavior:contain) — every
@@ -805,6 +813,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-deck h2 em { font-style:italic; font-weight:600; }
 .tc-deck .tc-why { font-size:12.25px; color:var(--ebony); line-height:1.5; margin-bottom:12px; }
 .tc-firm { display:flex; align-items:center; gap:11px; width:100%; text-align:left; background:none; border:none; border-top:1px solid rgba(74,75,47,.08); padding:10px 0; cursor:pointer; }
+.tc-frole { display:block; font-family:var(--mono); font-size:7.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); opacity:.8; margin-bottom:2px; }
 .tc-firm .tc-mono { flex-shrink:0; width:44px; height:44px; border-radius:13px; background:var(--nm); box-shadow:var(--nm-in); color:var(--olive); font-family:var(--serif); font-weight:700; font-size:17px; display:grid; place-items:center; overflow:hidden; }
 .tc-firm .tc-mono:has(img) { box-shadow:var(--nm-sm); }
 .tc-firm .tc-mono img { width:100%; height:100%; object-fit:cover; display:block; }
@@ -1354,7 +1363,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
 /* ===== IN-APP PROFILE (Phase B) — the full profile, native to Vesta's light UI ===== */
 #s-profile { background:var(--bg); }
-#s-profile, #s-request { position:relative; }
+#s-profile, #s-request, #s-browse, #s-match { position:relative; }
+/* browse/match backs exist only on desktop — their mobile topbars already carry one */
+.float-back--desk { display:none; }
+@media (min-width:900px){ .float-back--desk { display:flex; } }
 /* the persistent way back — floats above the scroll on profile + request, so the user is
    never stranded mid-page with only the logo (which exits the app). Soft-UI: rests on the
    surface, presses in on tap. */
@@ -1523,10 +1535,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* "Known for" — the numbered feature tiles under the read (the scannable/marketing layer) */
 .known-band { margin-top:20px; }
 .known-tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-.known-tile { position:relative; background:var(--nm); border:none; border-radius:18px; padding:18px 18px 16px; box-shadow:var(--sh-row); overflow:hidden; transition:transform .18s var(--spring), box-shadow .18s, border-color .18s; }
-.known-tile::before { content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, var(--olive), var(--tea)); opacity:.85; }
-.known-tile:hover { transform:translateY(-3px); box-shadow:var(--sh-row-h); border-color:rgba(74,75,47,.22); }
-.kt-n { display:block; font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.14em; color:var(--ebony); opacity:.75; margin-bottom:8px; }
+.known-tile { position:relative; background:var(--nm); border:none; border-radius:18px; padding:16px 17px 15px; box-shadow:var(--nm-sm); overflow:hidden; transition:transform .18s var(--spring), box-shadow .18s; }
+.known-tile:hover { transform:translateY(-3px); box-shadow:var(--nm-out); }
+.kt-n { display:inline-block; font-family:var(--mono); font-size:8.5px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--olive); background:var(--nm); box-shadow:var(--nm-in); border-radius:999px; padding:4px 9px 3.5px; margin-bottom:10px; }
 .known-tile h3 { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); margin-bottom:5px; letter-spacing:-.01em; }
 .known-tile p { font-size:13px; color:var(--ebony); line-height:1.55; }
 @media (max-width:640px){ .known-tiles { grid-template-columns:1fr; } }
@@ -1766,6 +1777,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
   <!-- BROWSE -->
   <div id="s-browse" class="screen" role="main" aria-label="Browse contractors">
+    <button class="float-back float-back--desk" id="browse-float-back" aria-label="Back"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
     <header class="topbar">
       <button class="tb-back" id="btn-back" aria-label="Back to trades"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
       <a class="tb-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a><span class="tb-spacer"></span>
@@ -1803,6 +1815,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
   <!-- MATCH WALKTHROUGH (Q1 the job → Q2 what matters) — the tailored triage -->
   <div id="s-match" class="screen" role="main" aria-label="Tell Vesta what you need">
+    <button class="float-back float-back--desk" id="match-float-back" aria-label="Back"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
     <header class="topbar">
       <button class="tb-back" id="match-back" aria-label="Back to trades"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5L5 9L11 14.5"/></svg></button>
       <a class="tb-logo" href="/" aria-label="4THWALL home"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg></a><span class="tb-spacer"></span>
@@ -2315,21 +2328,33 @@ function whyLine(con, m){
 // Everything else follows in the locked order. No randomness — same question, same answer;
 // different jobs now genuinely produce different shortlists. Thin fields (≤3 matchers) are
 // left exactly as the locked order — there is nothing honest to compose.
+let PICK_ROLES = new Map();   // placeId → composition role of the LAST pickPortfolio call
+const PICK_ROLE_KICKER = { proof:'Strongest record', specialist:'This job is their core work', named:'Their record names this job' };
+const PICK_ROLE_LONG = {
+  proof:'the proof pick — of every firm whose record shows this job, theirs carries the strongest county standing',
+  specialist:'the specialist — this job is not one line of many on their record, it is the core of it',
+  named:'the named fit — homeowners\u2019 own reviews of them describe exactly this work' };
 function pickPortfolio(list, m){
+  PICK_ROLES = new Map();
   const scored = [...list].sort((x,y)=> matchScore(y,m)-matchScore(x,m) || (y.rankScore-x.rankScore));
   if (!m || !m.job) return scored;
   const matchers = scored.filter(c => jobMatches(c, m.job));
   if (matchers.length <= 3) return scored;
   const picks = [matchers[0]];
+  PICK_ROLES.set(matchers[0].placeId, 'proof');
   const rest = matchers.slice(1);
   const spec = [...rest].sort((a,b)=> (a.bestFor.length - b.bestFor.length) || (b.rankScore - a.rankScore))[0];
-  if (spec && spec.bestFor.length < matchers[0].bestFor.length) picks.push(spec);
+  if (spec && spec.bestFor.length < matchers[0].bestFor.length){ picks.push(spec); PICK_ROLES.set(spec.placeId, 'specialist'); }
   const words = lc(jobLabel(m.job)).split(/[^a-z]+/).filter(w => w.length > 3);
   const named = rest.find(c => picks.indexOf(c) === -1 && words.some(w => c.specs.some(s => s.indexOf(w) !== -1)));
-  if (named && picks.length < 3) picks.push(named);
+  if (named && picks.length < 3){ picks.push(named); PICK_ROLES.set(named.placeId, 'named'); }
   for (const c of rest){ if (picks.length >= 3) break; if (picks.indexOf(c) === -1) picks.push(c); }
   return picks.concat(scored.filter(c => picks.indexOf(c) === -1));
 }
+// clip a synthesis to its first sentence(s) under ~230 chars — enough of the read to reason from
+function readClip(s){ s=String(s||'').trim(); if(s.length<=230) return s;
+  const cut=s.slice(0,230), pd=cut.lastIndexOf('. ');
+  return pd>90 ? cut.slice(0,pd+1) : cut+'\u2026'; }
 // Conversation-mode → priority axis: an emergency wants who answers fastest; a planner is
 // best served by firms tagged for guidance/relationship. Data-true — the axis only weighs
 // firms the synthesis actually tagged that way, and only when the trade's bank carries it.
@@ -2662,16 +2687,17 @@ function hstkCardData(){
   const brokenTake = 'Plumbing &amp; HVAC are your safest 11pm calls &mdash; most answer within the hour.';
   const planTake = 'Line up masonry first &mdash; it books out furthest of the trades you&rsquo;ll want.';
   const dirTake = 'Every firm here earns its place on record alone &mdash; none paid to appear.';
+  // Order is Drew's call (2026-07-07): browse leads, planning second, emergency triage third.
   return [
-    { spot:'broken', kick:'Urgent', h:'Something <span class="squig">broken?</span>',
-      note:'Live problems, routed to firms whose records show they answer.', take:brokenTake,
-      cta:'Walk me through it', ctaAction:'triage-broken' },
+    { spot:'compass', kick:'Directory', h:'Browse <span class="squig">every trade</span>',
+      note:'The whole field Vesta tracks — ranked by record, never ad spend.', take:dirTake,
+      cta:'Take me to the directory', ctaAction:'directory' },
     { spot:'plan', kick:'Planning', h:'Planning <span class="squig">a project?</span>',
       note:'Every job maps to real work county firms are proven to do.', take:planTake,
       cta:'Start planning', ctaAction:'triage-plan' },
-    { spot:'compass', kick:'Directory', h:'Or browse <span class="squig">every trade</span>',
-      note:'The whole field Vesta tracks — ranked by record, never ad spend.', take:dirTake,
-      cta:'Take me to the directory', ctaAction:'directory' },
+    { spot:'broken', kick:'Urgent', h:'Something <span class="squig">broken?</span>',
+      note:'Live problems, routed to firms whose records show they answer.', take:brokenTake,
+      cta:'Walk me through it', ctaAction:'triage-broken' },
   ];
 }
 const HSTK_WALK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l4-4 4 3 5-6 3 2"/></svg>';
@@ -2688,7 +2714,7 @@ function homeStackHTML(){
       '<button class="hstk-arrow r" id="hstk-arrR" aria-label="Next category"><svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5L13 9L7 14.5"/></svg></button>'+
     '</div>'+
     '<div class="hstk-swipe-hint"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.5L5 9L11 14.5"/></svg><span>Swipe for more</span><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5L13 9L7 14.5"/></svg></div>'+
-    '<div class="hstk-dots" id="hstk-dots"><button class="hstk-dot on" data-i="0" aria-label="Something broken"></button><button class="hstk-dot" data-i="1" aria-label="Planning a project"></button><button class="hstk-dot" data-i="2" aria-label="Browse every trade"></button></div>';
+    '<div class="hstk-dots" id="hstk-dots"><button class="hstk-dot on" data-i="0" aria-label="Browse every trade"></button><button class="hstk-dot" data-i="1" aria-label="Planning a project"></button><button class="hstk-dot" data-i="2" aria-label="Something broken"></button></div>';
 }
 // The stage position (0=front .. 2=back, 3=a staged "just off-stage" slot used only
 // during the re-entry step of an advance) → the card's resting transform.
@@ -2719,8 +2745,10 @@ function hstkAdvance(dir){
   hstkAnimating = true;
   const frontDataI = hstkOrder[0];
   const front = hstkEls[frontDataI];
-  front.style.transition = 'transform .4s cubic-bezier(.22,.61,.36,1), opacity .32s ease-in';
-  front.style.transform = 'translate('+(dir>0?360:-360)+'px,-4px) rotate('+(dir>0?16:-16)+'deg) scale(.94)';
+  // exit continues from wherever the drag left the card (transition eases from the current
+  // transform) — short and decisive, so back-to-back swipes never feel gated
+  front.style.transition = 'transform .26s cubic-bezier(.22,.61,.36,1), opacity .22s ease-in';
+  front.style.transform = 'translate('+(dir>0?360:-360)+'px,-4px) rotate('+(dir>0?16:-16)+'deg)';
   front.style.opacity = '0';
   front.style.pointerEvents = 'none';
   setTimeout(() => {
@@ -2732,8 +2760,8 @@ function hstkAdvance(dir){
     void front.offsetWidth;
     hstkApply(true);
     hstkUpdateDots();
-    setTimeout(() => { hstkAnimating = false; }, 420);
-  }, 400);
+    setTimeout(() => { hstkAnimating = false; }, 260);
+  }, 240);
 }
 // Retuned gesture: direction-locked (a 12px dead zone decides horizontal-swipe vs.
 // vertical-scroll intent so the deck never fights the page), rAF-batched (one transform
@@ -2742,20 +2770,22 @@ function hstkAdvance(dir){
 function hstkWireDrag(el, dataI){
   let sx=0, sy=0, dx=0, on=false, lock=null, raf=0, lastX=0, lastT=0, vx=0;
   const isFront = () => hstkOrder[0]===dataI;
+  // 1:1 under the finger — no damping, no shrink. The card is a physical object being held.
   const paint = () => { raf=0; if (lock!=='h') return;
-    el.style.transform = 'translate('+(dx*.92)+'px,-2px) rotate('+(dx*.045)+'deg) scale(.985)'; };
+    el.style.transform = 'translate('+dx+'px,-2px) rotate('+(dx*.05)+'deg)'; };
   el.addEventListener('pointerdown', e=>{
     if (!isFront() || hstkAnimating) return;
     on=true; lock=null; sx=lastX=e.clientX; sy=e.clientY; dx=0; vx=0; lastT=performance.now();
+    el.style.transition='none';               // grab responds instantly, even mid-settle
     try{ el.setPointerCapture(e.pointerId); }catch(_){}
   });
   el.addEventListener('pointermove', e=>{
     if (!on) return;
     const mx=e.clientX-sx, my=e.clientY-sy;
     if (lock===null){
-      if (Math.abs(mx)<12 && Math.abs(my)<12) return;
-      lock = Math.abs(mx) > Math.abs(my)*1.2 ? 'h' : 'v';
-      if (lock==='h') el.style.transition='none';
+      if (Math.abs(mx)<6 && Math.abs(my)<6) return;   // 6px intent zone (12 felt unresponsive)
+      lock = Math.abs(mx) > Math.abs(my) ? 'h' : 'v';
+      if (lock==='v') hstkApply(true);                // scrolling — let the card resettle
     }
     if (lock!=='h') return;
     dx=mx;
@@ -2764,9 +2794,10 @@ function hstkWireDrag(el, dataI){
   });
   const up=()=>{
     if (!on) return; on=false; if (raf){ cancelAnimationFrame(raf); raf=0; }
-    if (lock!=='h'){ lock=null; return; }
+    if (lock!=='h'){ lock=null; hstkApply(true); return; }
     lock=null;
-    (Math.abs(dx)>60 || (Math.abs(vx)>.55 && Math.abs(dx)>30)) ? hstkAdvance(dx<0?1:-1) : hstkApply(true);
+    // commit on a deliberate distance OR a real flick; small jitters spring back
+    (Math.abs(dx)>72 || (Math.abs(vx)>.6 && Math.abs(dx)>32)) ? hstkAdvance(dx<0?1:-1) : hstkApply(true);
   };
   el.addEventListener('pointerup', up);
   el.addEventListener('pointercancel', up);
@@ -5357,10 +5388,10 @@ function enterConverse(){
 /* ═══ MOBILE IN-PLACE CONVERSATION MORPH — the home screen becomes the chat, wired to the
    real /api/triage stream. Own thread (#vm-thread) + turn fn so it never collides with the
    desktop match-screen chat (#tc-thread); reuses the same bank gate + pick machinery. ═══ */
-let vmBusy=false, vmDone=false, vmMsgs=[], vmTurns=0;
+let vmBusy=false, vmDone=false, vmMsgs=[], vmTurns=0, vmDeckShown=false, vmDeckKey='';
 function enterConverseMobile(){
   const h=$('s-home'); if(!h) return;
-  vmMsgs=[]; vmTurns=0; vmDone=false; vmBusy=false;
+  vmMsgs=[]; vmTurns=0; vmDone=false; vmBusy=false; vmDeckShown=false; vmDeckKey='';
   const th=$('vm-thread'); if(th){ th.innerHTML=''; th.classList.remove('tc-resolved'); }
   const inp=$('hs-cin'); if(inp){ inp.value=''; inp.disabled=false; inp.placeholder='Describe it in your own words…'; }
   h.classList.add('vconv');
@@ -5391,13 +5422,14 @@ async function vmTurn(text){
   const preTimer=setTimeout(()=>vmThinkWord('Making sense of '+tcTopic(text)),2600);
   let bubble=null, streamed='';
   try{
-    const r=await fetch('/api/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:vmMsgs})});
+    const r=await fetch('/api/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:vmMsgs.slice(-12)})});
     if(!r.ok||!r.body) throw new Error('http');
     const reader=r.body.getReader(), dec=new TextDecoder(); let buf='', final=null, evErr=null;
     for(;;){ const {done,value}=await reader.read(); if(done) break; buf+=dec.decode(value,{stream:true});
       let nl; while((nl=buf.indexOf('\n'))!==-1){ const line=buf.slice(0,nl).trim(); buf=buf.slice(nl+1);
         if(!line.startsWith('data:')) continue; let ev; try{ev=JSON.parse(line.slice(5));}catch(_){continue;}
         if(ev.t==='d'){ clearTimeout(preTimer); if(!bubble){ vmThinkOff(); bubble=vmVesta(); } streamed+=ev.c; if(bubble){ bubble.textContent=streamed; vmScroll(); } }
+        else if(ev.t==='r'){ streamed=''; if(bubble) bubble.textContent=''; }   // server reset: a bad generation was killed and retried fresh
         else if(ev.t==='f') final=ev; else if(ev.t==='e') evErr=ev.error;
       }
     }
@@ -5412,12 +5444,17 @@ async function vmTurn(text){
     if(bubble && final.say) bubble.textContent=final.say;
     vmMsgs.push({role:'assistant',content:JSON.stringify({say:(final.say||'').slice(0,600),resolved:final.resolved||null})});
     const res=final.resolved;
-    const gate=res&&res.trade&&res.job&&tradeMatchable(res.trade)&&tradeBank(res.trade).jobs.some(j=>j.value===res.job);
+    const gate=res&&res.trade&&res.job&&tradeMatchable(res.trade)&&tradeBank(res.trade).jobs.some(j=>j.value===res.job)
+      && !(vmDeckShown && vmDeckKey===res.trade+'|'+res.job);   // re-affirming the SAME match in a follow-up never re-lands a duplicate deck
     if(gate){ vmBusy=false; vmDeckLand(res.trade,res.job,final.deck,final.mode||'fix'); return; }
     if(final.chips&&final.chips.length) vmChips(final.chips);
     vmBusy=false;
-    if(vmTurns>=4&&!vmDone) vmHandoff(final.mode);
-  }catch(_){ clearTimeout(preTimer); vmBusy=false; vmHandoff('broken'); }
+    // the 4-turn cap only guards the PRE-resolve interview; once picks are on screen the
+    // conversation is follow-up mode and must never dump the user into the generic walk-through
+    if(vmTurns>=4&&!vmDone&&!vmDeckShown) vmHandoff(final.mode);
+  }catch(_){ clearTimeout(preTimer); vmBusy=false;
+    if(vmDeckShown){ const b=vmVesta(); if(b) b.textContent='I hit a snag on that one — your picks above still stand. Tap one to open it, or “See all your matches.”'; }
+    else vmHandoff('broken'); }
 }
 function vmDeckLand(trade, job, deckMeta, mode){
   vmThink('Checking who covers this in your county');
@@ -5459,8 +5496,30 @@ async function vmDeck(trade, job, deckMeta, mode){
   const lead=emergency?'For an emergency, Vesta led with who answers fastest, then weighed record:':mode==='plan'?'No rush — but when you’re ready, these are worth the call:':'These rose to the top for your '+esc(jl)+':';
   const used=new Set();
   const reason=con=>{ let r=whyLine(con,m); if(used.has(r)&&con.knownFor&&con.knownFor.length){ const kf=con.knownFor.find(k=>!used.has('Known for '+lc(k))); if(kf) r='Known for '+lc(kf); } used.add(r); return r; };
+  const reasons=picks.map(p=>reason(p));
+  const roles=picks.map(p=>PICK_ROLES.get(p.placeId)||null);
   const mono=p=> photo[p.placeId] ? '<span class="tc-mono"><img src="'+esc(photo[p.placeId])+'" alt="" decoding="async"></span>' : '<span class="tc-mono">'+esc((p.name||'?')[0])+'</span>';
-  const rows=picks.map(p=>'<button class="tc-firm" type="button" data-place="'+esc(p.placeId)+'">'+mono(p)+'<span class="tc-fl"><span class="tc-fn">'+esc(p.name)+'</span><span class="tc-fw">'+esc(reason(p))+'</span></span><span class="tc-fg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></button>').join('');
+  const rows=picks.map((p,i)=>'<button class="tc-firm" type="button" data-place="'+esc(p.placeId)+'">'+mono(p)+'<span class="tc-fl">'+(roles[i]?'<span class="tc-frole">'+esc(PICK_ROLE_KICKER[roles[i]])+'</span>':'')+'<span class="tc-fn">'+esc(p.name)+'</span><span class="tc-fw">'+esc(reasons[i])+'</span></span><span class="tc-fg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></button>').join('');
+  // Follow-up mode: the model must KNOW what the homeowner is looking at. MERGE the shown
+  // picks — names, the reason each carries, how many more matches exist — into the model's
+  // own assistant turn (ONE coherent turn; a separate bookkeeping message got parroted).
+  // "Why did you pick those three?" becomes answerable by name instead of an unanswerable
+  // question about invisible state (the <unk>-flood conversation, 2026-07-07).
+  // DEEP context, not tautologies: each pick carries the ROLE it earned in the composition
+  // (proof / specialist / named fit), its record facts, an excerpt of Vesta's own read, and
+  // its known-for themes — so a "why these three" answer can show real reasoning.
+  const pickCtx = { picks:picks.map((p,i)=>({ name:p.name,
+      slot_earned_because: roles[i] ? PICK_ROLE_LONG[roles[i]] : 'next-strongest record among the firms matched to this job',
+      record:reasons[i], vestas_read:readClip(p.read), known_for:(p.knownFor||[]).slice(0,3) })),
+    trade:trade, job:job,
+    more_matches:Math.max(0, byTrade(trade).length - picks.length) };
+  const lastA = vmMsgs[vmMsgs.length-1];
+  let merged=false;
+  if (lastA && lastA.role==='assistant'){
+    try { const o=JSON.parse(lastA.content); if(o.say) o.say=String(o.say).slice(0,300); Object.assign(o, pickCtx); lastA.content=JSON.stringify(o).slice(0,2900); merged=true; } catch(_){}
+  }
+  if (!merged) vmMsgs.push({role:'assistant',content:JSON.stringify(Object.assign({say:'Here are your matched picks.'},pickCtx)).slice(0,2900)});
+  vmDeckShown=true; vmDeckKey=trade+'|'+job;
   const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='tc-deck';
   el.innerHTML='<div class="tc-deck-kick">Why these '+(picks.length===3?'three':'picks')+(pct?'<span class="tc-deck-pct">'+pct+'% of '+esc(lc(tradeLabelOf(trade)))+' do this</span>':'')+'</div><h2>For your <em>'+esc(jl)+'</em></h2><p class="tc-why">'+lead+'</p>'+rows+'<button class="tc-deck-all" type="button">See all your matches →</button>';
   const row=document.createElement('div'); row.className='vmsg tc-verdict'; row.innerHTML='<span class="vav">Vesta.</span>'; row.appendChild(el);
@@ -5579,6 +5638,7 @@ async function triTurn(text){
           if (!bubble){ tcThinkOff(); bubble = tcVesta(); }
           streamed += ev.c; if (bubble){ bubble.textContent = streamed; tcScroll(); }
         }
+        else if (ev.t === 'r'){ streamed=''; if (bubble) bubble.textContent=''; }
         else if (ev.t === 'f') final = ev;
         else if (ev.t === 'e') evErr = ev.error;
       }
@@ -5664,7 +5724,7 @@ function triDeckCard(trade, job, deckMeta, mode){
   const rows = picks.map(p =>
     '<button class="tc-firm" type="button" data-place="'+esc(p.placeId)+'">'+
       '<span class="tc-mono" data-ph-place="'+esc(p.placeId)+'">'+esc((p.name||'?')[0])+'</span>'+
-      '<span class="tc-fl"><span class="tc-fn">'+esc(p.name)+'</span><span class="tc-fw">'+esc(reason(p))+'</span></span>'+
+      '<span class="tc-fl">'+(PICK_ROLES.get(p.placeId)?'<span class="tc-frole">'+esc(PICK_ROLE_KICKER[PICK_ROLES.get(p.placeId)])+'</span>':'')+'<span class="tc-fn">'+esc(p.name)+'</span><span class="tc-fw">'+esc(reason(p))+'</span></span>'+
       '<span class="tc-fg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>'+
     '</button>').join('');
   const t = $('tc-thread'); if (!t) return;
@@ -5733,10 +5793,26 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   const _loads = Promise.all([loadContractors(), loadMatchBank()]);
   syncLikes();
   updateNavState();
+  // Keyboard inset watcher — iOS never resizes the layout viewport for the keyboard, only
+  // the VISUAL viewport. Track the difference into --kb so the conversation shell can sit
+  // its composer flush on the keyboard (see the keyboard-flush CSS). Fires continuously
+  // through the keyboard's show/hide animation, so the composer rides it smoothly.
+  if (window.visualViewport){
+    const vv = window.visualViewport;
+    const setKb = () => {
+      const kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+      document.documentElement.style.setProperty('--kb', kb + 'px');
+      if (kb > 0){ const t = $('vm-thread') || $('tc-thread'); if (t) t.scrollTop = t.scrollHeight; }
+    };
+    vv.addEventListener('resize', setKb);
+    vv.addEventListener('scroll', setKb);
+  }
   $('btn-back').addEventListener('click', goHome);
   { const mb=$('match-back'); if(mb) mb.addEventListener('click', goHome); }
   { const pb=$('prof-float-back'); if(pb) pb.addEventListener('click', backFromProfile); }
   { const rb=$('req-float-back'); if(rb) rb.addEventListener('click', backFromRequest); }
+  { const bb=$('browse-float-back'); if(bb) bb.addEventListener('click', goHome); }
+  { const mfb=$('match-float-back'); if(mfb) mfb.addEventListener('click', goHome); }
   $('nav-home').addEventListener('click', () => { if (S.screen!=='home' || S.mode!=='trade'){ S.mode='trade'; goHome(); } });
   $('act-rewind').addEventListener('click', rewindDeck);
   $('act-pass').addEventListener('click', () => { const c=topCon(); if(c) commit('pass', c); });
