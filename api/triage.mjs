@@ -24,8 +24,16 @@
 
 // Nemotron-3-super promoted to DEFAULT 2026-07-07 — proven more responsive than GLM 5.2 across
 // 3 separate congestion windows this week. GLM remains available via TRIAGE_MODEL override.
+// SECOND-MODEL FALLBACK (activated 2026-07-07, was considered-and-deferred in the spec): a live
+// Nemotron brownout (generations dying at 1 char, all keys, mid-testing) met the spec's own
+// activation bar — "don't build it until a real outage shows the tap-tree handoff losing people."
+// GLM 5.2 is the fully-design-loop-validated original primary; it runs the same prompt + bank
+// gate. Chain: primary → fallback → tap-tree (the client's deterministic floor).
 const MODEL = process.env.TRIAGE_MODEL || 'nvidia/nemotron-3-super-120b-a12b';
-const IS_NEMOTRON = /nemotron/.test(MODEL);
+const MODEL_FALLBACK = process.env.TRIAGE_MODEL_FALLBACK || 'z-ai/glm-5.2';
+const MODELS = MODEL_FALLBACK && MODEL_FALLBACK !== MODEL ? [MODEL, MODEL_FALLBACK] : [MODEL];
+const isNemotron = m => /nemotron/.test(m);
+const IS_NEMOTRON = isNemotron(MODEL);
 const ENDPOINT = 'https://integrate.api.nvidia.com/v1/chat/completions';
 const FIRST_TOKEN_CEILING_MS = 20000;  // no first byte by then → this key has failed, rotate
 const TOTAL_CEILING_MS = 55000;        // hard stop under the function's 60s maxDuration
@@ -82,7 +90,7 @@ function bankValidate(bank, trade, job){
 }
 
 // ── the system prompt (mirrors the locked prototype; bank injected live) ──
-function systemPrompt(bank){
+function systemPrompt(bank, model, followUp){
   const bankLines = Object.entries(bank)
     .map(([t, jobs]) => `${t}: ` + jobs.map(j => j.job + (j.emergency ? '*' : '')).join(', '))
     .join('\n');
@@ -102,7 +110,7 @@ RULES:
   fix = something is wrong but not urgent. The core triage case.
   plan = a future project ("this spring", "thinking about", "getting quotes"). NEVER ask urgency questions. Once the job is known, RESOLVE — do not gather scope details (size, length, material, brand, budget, timing); those are the pro's questions, not yours. Your final "say" is patient and no-pressure — they're early, and that's fine.
   learn = they're asking a question, not hiring ("is this normal?", "what does this usually involve?"). Answer genuinely within the redlining rules, keep resolved null, and END your "say" with a soft offer to line up the right pros whenever they're ready. If they take you up on it, the mode becomes fix or plan.
-- WHEN TO ASK vs RESOLVE — run this test before every "ask": would the answer change the trade, the job, or the urgency? If not, do NOT ask — resolve to your best read. Size, length, square footage, material, brand, color, budget, and timing NEVER change the (trade, job) — never ask about them. If two jobs route to the same kind of pro anyway, pick the closer one and resolve. HARD CAP: 3 questions per conversation; at the cap, resolve to your best read or offer a final two-option chip choice.
+- WHEN TO ASK vs RESOLVE — run this test before every "ask": would the answer change the trade, the job, or the urgency? If not, do NOT ask — resolve to your best read. When the homeowner has already NAMED the job ("replace my whole roof", "redo the driveway", "repaint the living room"), that IS the job — resolve it immediately; asking why they want it is friction, not triage. Size, length, square footage, material, brand, color, budget, and timing NEVER change the (trade, job) — never ask about them. If two jobs route to the same kind of pro anyway, pick the closer one and resolve. HARD CAP: 3 questions per conversation; at the cap, resolve to your best read or offer a final two-option chip choice.
 - "ask": ONE short discriminating question if you are not yet sure which trade/job — else null.
 - "chips": 2-4 short tappable answers to your "ask" (e.g. ["Under a bathroom","Under the roofline"]) — else null. When you offer chips, your "say" must make clear WHY these particular options are the ones that matter — the expert distinction they draw out (e.g. "where the stain sits is what separates a roof leak from a plumbing leak, so it points me to the right pro"). Tailored, expert reasoning is what Vesta is known for; never offer bare options without the thinking behind them.
 - "resolved": fill ONLY when you are confident of a real (trade, job) from the bank. Use the EXACT job-id (no *). Set urgency "emergency" for * jobs or clear emergency language. When resolved, "say" is your final reassuring line and "ask"/"chips" must be null.
@@ -110,10 +118,22 @@ RULES:
 - Ambiguous water-from-ceiling (a stain, dampness — NOT actively flowing): ask whether it's under a bathroom/plumbing or under the roofline BEFORE resolving.
 - If the input is off-topic or not a home problem: gently redirect once in "say", resolved null.
 - Never mention firm names, ratings, or counts. You route to matches; you don't list them.`
-  + (IS_NEMOTRON ? `
+  + (followUp ? `
+
+FOLLOW-UP MODE — ACTIVE NOW: the homeowner has already been matched and is LOOKING AT the picks in the history's "picks" array. Each pick carries REAL reasoning material — use it:
+- "slot_earned_because": the shortlist is a deliberate COMPOSITION, not a top-3 — one pick for the strongest proven record, one because this job is the core of their record (not one line of many), one because homeowners' own reviews of them describe exactly this work. When asked "why these three," EXPLAIN THAT COMPOSITION per firm — never a generic "they all do this job and review well."
+- "vestas_read": an excerpt of Vesta's own read of the firm — its character, what its reputation actually answers. Quote or paraphrase it when explaining a pick; this is the depth a directory can't give.
+- "record" + "known_for": the firm's verifiable facts and recurring themes. Ground every claim in these fields.
+- "More options?" → the "See all your matches" button under the picks opens every match ("more_matches" = how many more).
+- HARD RULE: you have NO pricing, availability, or schedule data on any firm — asked "which is cheapest/best value/fastest," the ONLY honest answer is that Vesta's record doesn't rank them on that, plus the smart move (ask each for an itemized quote and compare line by line). Claiming a firm is "competitive on price" or "quick to schedule" is fabrication and forbidden.
+- Keep "resolved" null for anything about the already-matched problem. Fill it ONLY for a genuinely NEW problem (different system/job), which is a fresh triage. Never re-interview the matched problem; never echo history bookkeeping.` : '')
+  + `
+
+OUTPUT CONTRACT: your ENTIRE reply is exactly ONE JSON object matching the schema in the RULES. No prose before or after it, no markdown fences, no bullet lists outside JSON strings. Anything you want to tell the homeowner goes INSIDE "say"; any question goes INSIDE "ask". If you notice yourself writing plain prose, stop and emit the JSON instead.`
+  + (isNemotron(model) ? `
 
 EMERGENCY COMMITMENT — THIS RULE OUTRANKS EVERY OTHER RULE:
-When the situation is an active emergency (water actively flowing/pouring, burst pipe, sewage backing up, sparking or burning smell, gas smell, no heat in freezing weather), you MUST fill "resolved" THIS TURN with your best (trade, job) from the bank, "ask" and "chips" null. Asking ANY question during an active emergency is a failure — the homeowner needs a pro dispatched, not an interview. You do not need certainty; you need the best read. Commit. The pro confirms the rest on site.` : '');
+When the situation is an active emergency (water actively flowing/pouring, burst pipe, sewage backing up, sparking or burning smell, gas smell, no heat in freezing weather), you MUST fill "resolved" THIS TURN with your best (trade, job) from the bank, "ask" and "chips" null. Asking ANY question during an active emergency is a failure — the homeowner needs a pro dispatched, not an interview. You do not need certainty; you need the best read. Commit — in ONE JSON object, resolved filled. The pro confirms the rest on site.` : '');
 }
 
 // ── incremental "say" extractor — streams the string value of "say" out of JSON as it arrives ──
@@ -154,19 +174,19 @@ function extractJSON(text){
 
 // Streamed model call with key rotation. onDelta receives say-text as it generates.
 // Returns { raw } on success or { error } after every key has failed.
-async function callModelStreaming(keys, system, messages, onDelta){
+async function callModelStreaming(model, keys, system, messages, onDelta){
   const body = JSON.stringify({
-    model: MODEL, stream: true,
+    model: model, stream: true,
     messages: [{ role:'system', content: system }, ...messages],
     temperature: 0.35, max_tokens: 520,
-    ...(IS_NEMOTRON ? { chat_template_kwargs: { enable_thinking: false } } : {}),
+    ...(isNemotron(model) ? { chat_template_kwargs: { enable_thinking: false } } : {}),
   });
   let lastErr = 'no keys';
   for (const key of keys){
     const ctl = new AbortController();
     let firstTimer = setTimeout(() => ctl.abort(), FIRST_TOKEN_CEILING_MS);
     const totalTimer = setTimeout(() => ctl.abort(), TOTAL_CEILING_MS);
-    let raw = '', gotBytes = false;
+    let raw = '', gotBytes = false, degen = false;
     try {
       const r = await fetch(ENDPOINT, { method:'POST', signal: ctl.signal,
         headers: { 'Authorization': `Bearer ${key}`, 'Content-Type':'application/json' }, body });
@@ -193,11 +213,25 @@ async function callModelStreaming(keys, system, messages, onDelta){
           if (payload === '[DONE]') continue;
           try {
             const delta = JSON.parse(payload).choices?.[0]?.delta?.content;
-            if (delta){ raw += delta; feed(delta); }
+            if (delta){
+              raw += delta; feed(delta);
+              // degenerate-output guard: Nemotron can collapse into an <unk> token loop
+              // (seen live 2026-07-07 on a post-resolve follow-up — a full bubble of
+              // "<unk><unk><unk>…"). Kill the stream early; the handler retries fresh.
+              if (raw.length > 40 && (raw.match(/<unk>/g) || []).length >= 5){
+                degen = true; break;
+              }
+            }
           } catch { /* partial SSE frame — ignore */ }
         }
+        if (degen) break;
       }
       clearTimeout(totalTimer);
+      try { if (degen) ctl.abort(); } catch {}
+      if (degen) return { error: 'degenerate' };
+      // brownout guard: a generation that dies after a character or two ("{" then silence —
+      // seen live 2026-07-07) is a FAILED key attempt, not an answer. Rotate to the next key.
+      if (raw.trim().length < 8){ lastErr = 'empty'; continue; }
       return { raw };
     } catch (e){
       clearTimeout(firstTimer); clearTimeout(totalTimer);
@@ -233,8 +267,8 @@ export default async function handler(req, res){
     });
     messages = JSON.parse(raw).messages;
   } catch { res.statusCode = 400; return res.end('{"error":"bad json"}'); }
-  if (!Array.isArray(messages) || messages.length === 0 || messages.length > 8
-      || !messages.every(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.length <= 1200)){
+  if (!Array.isArray(messages) || messages.length === 0 || messages.length > 12
+      || !messages.every(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.length <= 3000)){
     res.statusCode = 400; return res.end('{"error":"bad messages"}');
   }
 
@@ -248,23 +282,64 @@ export default async function handler(req, res){
   try { bank = await getBank(); }
   catch { send({ t:'e', error:'bank' }); return res.end(); }
 
-  // One invisible retry: a model can burn its whole budget on a hidden reasoning preamble and
-  // emit no JSON at all (seen live 2026-07-07, Nemotron, ~1-in-3 on emergency phrasings). If
-  // NOTHING was streamed to the client yet, a fresh generation is indistinguishable from a slow
-  // one — retry once before failing. Once deltas have gone out, never restart (double-voice).
-  let streamedAny = false;
-  const onDelta = text => { streamedAny = true; send({ t:'d', c:text }); };
+  // Forwarded deltas are SCRUBBED: <unk> tokens are stripped before anything reaches the
+  // client (a split "<un|k>" across two deltas is held back until it completes). The user
+  // must never see tokenizer garbage, even for the beat before the degeneracy guard trips.
+  let streamedAny = false, pend = '';
+  const onDelta = text => {
+    let t = pend + text; pend = '';
+    const tail = t.match(/<u?n?k?>?$/);           // a suffix that could grow into "<unk>"
+    if (tail && tail[0] !== '<unk>'){ pend = tail[0]; t = t.slice(0, t.length - tail[0].length); }
+    t = t.replace(/<unk>/g, '');
+    if (!t) return;
+    streamedAny = true; send({ t:'d', c:t });
+  };
+  // One invisible retry: a model can burn its whole budget on a hidden reasoning preamble
+  // (no JSON at all) or collapse into an <unk> loop (killed by the stream guard). If nothing
+  // user-visible streamed, a fresh generation is indistinguishable from a slow one; if some
+  // text DID land before a degenerate kill, send {t:'r'} so the client resets the bubble
+  // before the retry streams — never a double-voice, never a garbage bubble.
+  // follow-up mode is a structural fact, not a judgment call: the client's deck-landing
+  // wrote a "picks" array into an assistant turn. Only then does the prompt carry the
+  // follow-up section — the plain interview path never sees it (it was diluting resolves).
+  const followUp = messages.some(m => m.role === 'assistant' && m.content.indexOf('"picks"') !== -1);
   let out = null, parsed = null;
-  for (let attempt = 0; attempt < 2; attempt++){
-    out = await callModelStreaming(keys, systemPrompt(bank), messages, onDelta);
-    if (out.error) break;
-    parsed = extractJSON(out.raw);
-    if (parsed && typeof parsed.say === 'string' && parsed.say) break;
-    parsed = null;
+  // Model order per mode: Nemotron leads the interview (speed is the UX there); GLM leads
+  // follow-up mode (the design-loop-validated conversationalist — Nemotron fabricates
+  // pick attributes ~1-in-3 under the honesty rule, GLM obeys it).
+  const chainModels = followUp && MODELS.length > 1 ? [...MODELS].reverse() : MODELS;
+  chain:
+  for (const model of chainModels){
+    for (let attempt = 0; attempt < 2; attempt++){
+      out = await callModelStreaming(model, keys, systemPrompt(bank, model, followUp), messages, onDelta);
+      if (out.error === 'degenerate'){
+        if (streamedAny){ send({ t:'r' }); streamedAny = false; pend = ''; }
+        continue;                                   // fresh generation, same model
+      }
+      if (out.error) break;                         // keys exhausted on this model → next model
+      parsed = extractJSON(out.raw);
+      if (parsed && typeof parsed.say === 'string' && parsed.say) break chain;
+      parsed = null;
+      if (streamedAny) break chain;                 // words are on screen — never silently restart
+    }
     if (streamedAny) break;
   }
   if (out.error){ send({ t:'e', error: out.error }); return res.end(); }
-  if (!parsed){ send({ t:'e', error:'bad model json' }); return res.end(); }
+  // Prose salvage — the floor under the format contract: if the model answered in plain
+  // prose (no JSON anywhere, so nothing streamed and both attempts missed the schema), the
+  // words are usually still good triage talk. Wrap them as a plain conversational turn —
+  // no resolve, conversation stays alive — instead of erroring the user to the tap-tree.
+  if (!parsed){
+    const prose = String(out.raw || '').replace(/<unk>/g, '').replace(/```[a-z]*|```/gi, '').trim();
+    if (prose.length >= 40 && prose.indexOf('{') === -1 && !streamedAny){
+      parsed = { say: prose.slice(0, 900), ask: null, chips: null, mode: 'fix', resolved: null };
+      send({ t:'d', c: parsed.say });   // the say never streamed — deliver it now, then the final
+    } else {
+      send({ t:'e', error:'bad model json' }); return res.end();
+    }
+  }
+  parsed.say = String(parsed.say).replace(/<unk>/g, '').trim();
+  if (!parsed.say){ send({ t:'e', error:'bad model json' }); return res.end(); }
 
   // the final authority: validate resolved against the live bank (the triageEnter gate)
   let deck = null;
