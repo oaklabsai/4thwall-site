@@ -141,8 +141,15 @@ function extractJSON(text){
   const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i);
   if (fence) t = fence[1].trim();
   const s = t.indexOf('{'), e = t.lastIndexOf('}');
-  if (s === -1 || e === -1 || e < s) return null;
-  try { return JSON.parse(t.slice(s, e + 1)); } catch { return null; }
+  if (s === -1) return null;
+  if (e > s){ try { return JSON.parse(t.slice(s, e + 1)); } catch { /* fall through to salvage */ } }
+  // salvage a token-cap truncation (generation died mid-string/mid-object): progressively
+  // close what's open. A salvaged object still passes the same bank validation downstream.
+  const frag = t.slice(s);
+  for (const tail of ['"}', '"]}', '"}}', ']}', '}}', '}']){
+    try { return JSON.parse(frag + tail); } catch { /* next */ }
+  }
+  return null;
 }
 
 // Streamed model call with key rotation. onDelta receives say-text as it generates.
@@ -151,7 +158,7 @@ async function callModelStreaming(keys, system, messages, onDelta){
   const body = JSON.stringify({
     model: MODEL, stream: true,
     messages: [{ role:'system', content: system }, ...messages],
-    temperature: 0.35, max_tokens: 360,
+    temperature: 0.35, max_tokens: 520,
     ...(IS_NEMOTRON ? { chat_template_kwargs: { enable_thinking: false } } : {}),
   });
   let lastErr = 'no keys';
@@ -241,11 +248,23 @@ export default async function handler(req, res){
   try { bank = await getBank(); }
   catch { send({ t:'e', error:'bank' }); return res.end(); }
 
-  const out = await callModelStreaming(keys, systemPrompt(bank), messages, text => send({ t:'d', c:text }));
+  // One invisible retry: a model can burn its whole budget on a hidden reasoning preamble and
+  // emit no JSON at all (seen live 2026-07-07, Nemotron, ~1-in-3 on emergency phrasings). If
+  // NOTHING was streamed to the client yet, a fresh generation is indistinguishable from a slow
+  // one — retry once before failing. Once deltas have gone out, never restart (double-voice).
+  let streamedAny = false;
+  const onDelta = text => { streamedAny = true; send({ t:'d', c:text }); };
+  let out = null, parsed = null;
+  for (let attempt = 0; attempt < 2; attempt++){
+    out = await callModelStreaming(keys, systemPrompt(bank), messages, onDelta);
+    if (out.error) break;
+    parsed = extractJSON(out.raw);
+    if (parsed && typeof parsed.say === 'string' && parsed.say) break;
+    parsed = null;
+    if (streamedAny) break;
+  }
   if (out.error){ send({ t:'e', error: out.error }); return res.end(); }
-
-  const parsed = extractJSON(out.raw);
-  if (!parsed || typeof parsed.say !== 'string'){ send({ t:'e', error:'bad model json' }); return res.end(); }
+  if (!parsed){ send({ t:'e', error:'bad model json' }); return res.end(); }
 
   // the final authority: validate resolved against the live bank (the triageEnter gate)
   let deck = null;
