@@ -69,8 +69,12 @@ html,body { height:100%; overscroll-behavior:none; -webkit-text-size-adjust:100%
    column and the triage-chat composer pad up by exactly the keyboard height — the composer
    sits flush ON the keyboard, Claude-app style, and relaxes back when it dismisses. */
 @media (max-width:899.98px){
-  #s-home.vconv { padding-bottom:var(--kb, 0px); }
-  .tc-composer { margin-bottom:var(--kb, 0px); }
+  /* iOS reports the keyboard height in a few DISCRETE resize ticks during its ~250ms slide —
+     without a transition the composer jumps up in steps. A short ease interpolates between
+     ticks so the composer GLIDES with the keyboard, native-app style. (Drew, 7/10 — "keyboard
+     looks smooth on claude, we should be as smooth and seamless") */
+  #s-home.vconv { padding-bottom:var(--kb, 0px); transition:padding-bottom .22s cubic-bezier(.33,.11,.16,1); }
+  .tc-composer { margin-bottom:var(--kb, 0px); transition:margin-bottom .22s cubic-bezier(.33,.11,.16,1); }
 }
 /* iOS page-"extension" fix: an inner scroll region that reaches its end chains the scroll to
    the document, which pumps Safari's URL bar and makes a locked page read as if it grew. The
@@ -172,7 +176,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    The home fills the screen exactly (no scroll); tapping Vesta Live folds the header,
    cards and route away and grows the conversation thread in their place, the bar itself
    becoming the composer. Wired to the real /api/triage stream (vmTurn). ════════ */
-.hs-cin { display:none; flex:1; min-width:0; border:none; background:none; outline:none; font-family:var(--sans); font-size:14.5px; color:var(--olive); padding:2px 0; }
+.hs-cin { display:none; flex:1; min-width:0; border:none; background:none; outline:none; -webkit-appearance:none; appearance:none; border-radius:0; font-family:var(--sans); font-size:14.5px; color:var(--olive); padding:2px 0; }   /* appearance:none — border:none alone doesn't remove iOS's native text-field chrome (the light box Drew saw) */
 .hs-cin::placeholder { color:rgba(74,75,47,.5); }
 .hs-csend { display:none; width:38px; height:38px; border-radius:50%; border:none; background:var(--olive); color:var(--white); align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 6px 14px -5px rgba(74,75,47,.5); cursor:pointer; }
 .hs-csend svg { width:16px; height:16px; }
@@ -978,7 +982,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @media (min-width:900px){ .tc-composer { padding-bottom:18px; } }
 .tc-card { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.82); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1.5px solid rgba(74,75,47,.14); border-radius:22px; padding:6px 6px 6px 16px; box-shadow:0 14px 34px -12px rgba(74,75,47,.34), 0 2px 6px rgba(74,75,47,.08); }
 .tc-card:focus-within { border-color:rgba(74,75,47,.42); }
-.tc-input { flex:1; min-width:0; border:none; background:transparent; outline:none; font-family:var(--sans); font-size:16px; color:var(--olive); padding:0; }
+.tc-input { flex:1; min-width:0; border:none; background:transparent; outline:none; -webkit-appearance:none; appearance:none; border-radius:0; font-family:var(--sans); font-size:16px; color:var(--olive); padding:0; }
 .tc-input::placeholder { color:var(--ebony); opacity:.62; font-size:14px; }
 .tc-send { width:37px; height:37px; flex-shrink:0; border-radius:13px; border:none; display:grid; place-items:center; cursor:pointer; background:rgba(74,75,47,.1); color:var(--ebony); transition:background .16s, transform .12s, color .16s; }
 .tc-send:active { transform:scale(.94); }
@@ -6670,7 +6674,11 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
       // shortened viewport and spill over the composer — collapse them so only the Vesta
       // wordmark stays at the top. (Drew, 7/10 — "should just say vesta at the top")
       const sh = $('s-home'); if (sh) sh.classList.toggle('kb-open', kb > 0);
-      if (kb > 0){ const t = $('vm-thread') || $('tc-thread'); if (t) t.scrollTop = t.scrollHeight; }
+      // the composer now GLIDES to the new inset (see the keyboard-flush CSS transition), so a
+      // one-shot scroll fires before layout settles — pin the thread to bottom through the glide.
+      if (kb > 0){ const until = performance.now() + 320;
+        const pin = () => { const t = $('vm-thread') || $('tc-thread'); if (t) t.scrollTop = t.scrollHeight; if (performance.now() < until) requestAnimationFrame(pin); };
+        pin(); }
     };
     vv.addEventListener('resize', setKb);
     vv.addEventListener('scroll', setKb);
