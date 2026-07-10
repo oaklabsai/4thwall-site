@@ -22,7 +22,7 @@ const DB_BASE = process.env.SUPABASE_URL || 'https://vinytnzzgryodyrftabg.supaba
 const DB_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_IEQcNbThGZblpzqNnEeDeg_r5LXSyzt';
 
 const CANONICAL = SITE + '/fairfield-county-contractor-report';
-const SELECT = 'trade,city,registered,hic_issue_date,rating_count';
+const SELECT = 'trade,city,registered,hic_issue_date,rating_count,enriched_at';
 
 // CT Home Improvement Contractor registration meaningfully applies to these
 // trades; plumbing/HVAC/electrical work is licensed under separate CT trade
@@ -64,6 +64,14 @@ function computeStats(rows) {
   }
   const all = Object.values(byTrade).flat();
   const allHicYears = Object.values(trades).flatMap((t) => t.hicYears);
+  // County-wide review coverage: over firms we actually have a public review
+  // count for (nulls excluded so the denominator is honest), how many are hired
+  // nearly blind. The aggregate version of the per-trade review-gap table.
+  const reviewed = all
+    .filter((r) => r.rating_count !== null && r.rating_count !== undefined && r.rating_count !== '')
+    .map((r) => Number(r.rating_count))
+    .filter((n) => Number.isFinite(n));
+  const hicYearsRaw = all.map((r) => r.hic_issue_date).filter(Boolean).map((d) => new Date(d).getFullYear());
   return {
     trades,
     total: all.length,
@@ -72,6 +80,15 @@ function computeStats(rows) {
     hicTotal: allHicYears.length,
     hic20plus: allHicYears.filter((y) => y >= 20).length,
     hicUnder3: allHicYears.filter((y) => y < 3).length,
+    reviewedN: reviewed.length,
+    le4Total: reviewed.filter((n) => n <= 4).length,
+    oldestHicYear: hicYearsRaw.length ? Math.min(...hicYearsRaw) : null,
+    // Real last-modified of the underlying dataset (max enrichment timestamp) —
+    // an honest freshness signal for a cited dataset, not the request time.
+    lastModified: (() => {
+      const ts = all.map((r) => r.enriched_at).filter(Boolean).map((d) => new Date(d).getTime()).filter(Number.isFinite);
+      return ts.length ? new Date(Math.max(...ts)).toISOString().slice(0, 10) : null;
+    })(),
   };
 }
 
@@ -108,6 +125,7 @@ function renderReport(stats) {
       statCard(s.towns, 'Fairfield County towns') +
       (roofing ? statCard(pct(roofing.registered, roofing.firms) + '%', 'of roofers hold a CT HIC registration') : '') +
       (masonry && masonry.medianReviews !== null ? statCard(masonry.medianReviews, 'median Google reviews for a masonry firm') : '') +
+      (s.reviewedN ? statCard(pct(s.le4Total, s.reviewedN) + '%', 'of all firms have 4 or fewer public reviews') : '') +
     '</div>';
 
   // ── section 1: HIC registration by trade ──
@@ -134,7 +152,10 @@ function renderReport(stats) {
     '<section class="rp-sec"><h2>Registration tenure — how long these firms have been on the record</h2>' +
     '<p>Of the <b>' + s.hicTotal + '</b> firms with an HIC registration date on record: <b>' + s.hic20plus +
     '</b> (' + pct(s.hic20plus, s.hicTotal) + '%) have held it for 20+ years, while <b>' + s.hicUnder3 +
-    '</b> (' + pct(s.hicUnder3, s.hicTotal) + '%) registered within the last 3 years. Registration tenure is a ' +
+    '</b> (' + pct(s.hicUnder3, s.hicTotal) + '%) registered within the last 3 years.' +
+    (s.oldestHicYear ? ' The longest-standing firm in the corpus has held its CT registration continuously since <b>' +
+      s.oldestHicYear + '</b>.' : '') +
+    ' Registration tenure is a ' +
     'conservative floor on how long a firm has operated formally — a business can predate its registration, ' +
     'so we report it as exactly what it is.</p></section>';
 
@@ -150,10 +171,15 @@ function renderReport(stats) {
   const contrast = (hvacMed && masMed) ?
     ' A homeowner hiring for HVAC has roughly <b>' + Math.round(hvacMed / Math.max(masMed, 1)) +
     '× more public review signal</b> to work with than one hiring a mason.' : '';
+  const countyBlind = s.reviewedN
+    ? ' Across all ' + s.tradeCount + ' trades, <b>' + s.le4Total + ' of ' + s.reviewedN +
+      ' firms (' + pct(s.le4Total, s.reviewedN) + '%)</b> have four or fewer public Google reviews — meaning ' +
+      'roughly one in five contractors homeowners hire in ' + COUNTY + ' is chosen nearly blind.'
+    : '';
   const reviewSection =
     '<section class="rp-sec"><h2>The review gap — some trades are hired nearly blind</h2>' +
     '<p>Public reviews are the main signal homeowners use, and their depth varies enormously by trade.' +
-    contrast + ' (Counts are public Google review totals at analysis time; consistent with our editorial ' +
+    countyBlind + contrast + ' (Counts are public Google review totals at analysis time; consistent with our editorial ' +
     'rules, this report never republishes star ratings — only how much signal exists.)</p>' +
     '<table class="rp-table"><thead><tr><th>Trade</th><th>Median review count</th><th>Firms with ≤4 reviews</th></tr></thead>' +
     '<tbody>' + revRows + '</tbody></table></section>';
@@ -190,8 +216,16 @@ function renderReport(stats) {
       description,
       url: CANONICAL,
       license: 'https://creativecommons.org/licenses/by/4.0/',
+      isAccessibleForFree: true,
       creator: { '@id': SITE + '#org' },
+      publisher: { '@id': SITE + '#org' },
       spatialCoverage: COUNTY + ', Connecticut',
+      datePublished: '2026-07-01',
+      ...(s.lastModified ? { dateModified: s.lastModified } : {}),
+      keywords: [
+        'Fairfield County contractors', 'CT Home Improvement Contractor registration',
+        'contractor registration rates', 'home-service contractor data', 'Connecticut contractors',
+      ],
       variableMeasured: ['CT HIC registration rate by trade', 'registration tenure', 'public review counts by trade'],
     },
   ];

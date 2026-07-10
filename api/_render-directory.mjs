@@ -86,14 +86,15 @@ export const ORG = {
   telephone: '+1-203-670-9477',
   address: { '@type': 'PostalAddress', addressLocality: 'Stamford', addressRegion: 'CT', addressCountry: 'US' },
   areaServed: COUNTY + ', CT',
-  description: '4th Wall Solutions builds AI back-office infrastructure for trades and service businesses. ' +
-    'It operates Vesta, a public-record contractor recommendation service for ' + COUNTY + ', CT, and Atlas, ' +
-    'a managed AI back office for contractors.',
+  description: '4th Wall Solutions is a Stamford, Connecticut company that runs the back office for trades and ' +
+    'home-service businesses — answering every call and text, booking jobs, and following up for reviews so they ' +
+    'never miss work. It operates Vesta, a free public-record contractor recommendation service for ' + COUNTY +
+    ', CT, and Atlas, its done-for-you service for contractors.',
   brand: [
     { '@type': 'Brand', name: 'Vesta', url: SITE + '/vesta',
       description: 'A public-record recommendation service that ranks ' + COUNTY + ' contractors by homeowner consensus and verified credentials — no ads, no pay-to-play.' },
     { '@type': 'Brand', name: 'Atlas', url: SITE + '/atlas',
-      description: 'A managed AI back office that answers every call and text, books the job, and earns the review for trades contractors.' }
+      description: 'A done-for-you back office that answers every call and text, books the job, and earns the review for trades contractors — built and operated, not another app to run.' }
   ],
   ...(PUBLISHER_SAMEAS.length ? { sameAs: PUBLISHER_SAMEAS } : {})
 };

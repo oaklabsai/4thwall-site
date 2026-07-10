@@ -642,13 +642,23 @@ function credentials(enr, trade) {
 }
 
 function profileJsonLd(enr, trade, label, canonical) {
+  // knowsAbout = the head trade + the firm's OWN specialties/known-for topics
+  // (flat roof, EV chargers, slate & cedar, …). Entity engines use these
+  // sub-topics to decide who "owns" a topic (topic-ownership lever, seo/field-intel
+  // § Backlinks). Sourced ONLY from fields that RENDER on this page — the visible
+  // "known_for" cards + "Specialties" row — so schema never claims a topic the
+  // reader can't see (the no-hidden-field honesty rule).
+  const topics = [label];
+  if (Array.isArray(enr.known_for)) for (const k of enr.known_for) if (k && k.label) topics.push(String(k.label));
+  if (Array.isArray(enr.specialties)) for (const s of enr.specialties) if (s) topics.push(String(s));
+  const knowsAbout = [...new Set(topics.map((t) => t.trim()).filter(Boolean))];
   const biz = {
     '@type': bizType(trade),
     '@id': canonical + '#business',
     name: enr.business_name,
     url: canonical,
     areaServed: COUNTY + ', CT',
-    knowsAbout: label,
+    knowsAbout: knowsAbout.length > 1 ? knowsAbout : label,
     sameAs: ['https://www.google.com/maps/place/?q=place_id:' + encodeURIComponent(enr.place_id)]
   };
   if (enr.city) biz.address = { '@type': 'PostalAddress', addressLocality: enr.city, addressRegion: 'CT', addressCountry: 'US' };
