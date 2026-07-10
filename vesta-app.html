@@ -2955,7 +2955,10 @@ function hstkWireDrag(el, dataI){
     if (!isFront() || hstkAnimating) return;
     on=true; lock=null; sx=lastX=e.clientX; sy=e.clientY; dx=0; vx=0; lastT=performance.now();
     el.style.transition='none';               // grab responds instantly, even mid-settle
-    try{ el.setPointerCapture(e.pointerId); }catch(_){}
+    // NOTE: do NOT capture here. Capturing on pointerdown means a plain TAP (or a tap on a child
+    // button/CTA) captures the pointer; if that tap navigates and detaches the card before
+    // pointerup, iOS never fires pointerup → capture sticks on a dead node → every later tap is
+    // swallowed until a pinch-zoom fires pointercancel. Capture ONLY once a real drag starts.
   });
   el.addEventListener('pointermove', e=>{
     if (!on) return;
@@ -2963,6 +2966,7 @@ function hstkWireDrag(el, dataI){
     if (lock===null){
       if (Math.abs(mx)<6 && Math.abs(my)<6) return;   // 6px intent zone (12 felt unresponsive)
       lock = Math.abs(mx) > Math.abs(my) ? 'h' : 'v';
+      if (lock==='h'){ try{ el.setPointerCapture(e.pointerId); }catch(_){} }   // real horizontal drag → capture now (a tap never reaches here)
       if (lock==='v') hstkApply(true);                // scrolling — let the card resettle
     }
     if (lock!=='h') return;
@@ -3621,13 +3625,13 @@ function wireTopCard(con){
     if(txt&&why) requestAnimationFrame(()=>{ if(txt.scrollHeight <= txt.clientHeight + 2) why.style.display='none'; }); }
   let active=false, downX=0, downY=0, dx=0, dy=0, moved=0, t0=0, mode=null, startedInSyn=false, downOnWhy=false, lastY=0, lastX=0, lastT=0, vx=0;
   const reset = anim => { card.style.transition = anim ? 'transform .3s cubic-bezier(.34,1.1,.64,1)' : 'none'; card.style.transform=''; if(save)save.style.opacity=0; if(pass)pass.style.opacity=0; };
-  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; lastY=e.clientY; lastX=e.clientX; lastT=Date.now(); vx=0; t0=Date.now(); moved=0; dx=0; dy=0; mode=null; startedInSyn = !!(synEl && synEl.contains(e.target) && synEl.scrollHeight > synEl.clientHeight + 2); downOnWhy = !!(e.target && e.target.closest && e.target.closest('.syn-why')); card.style.transition='none'; try{card.setPointerCapture(e.pointerId);}catch(_){} });
+  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; lastY=e.clientY; lastX=e.clientX; lastT=Date.now(); vx=0; t0=Date.now(); moved=0; dx=0; dy=0; mode=null; startedInSyn = !!(synEl && synEl.contains(e.target) && synEl.scrollHeight > synEl.clientHeight + 2); downOnWhy = !!(e.target && e.target.closest && e.target.closest('.syn-why')); card.style.transition='none'; /* capture is deferred to the first swipe move (below) — capturing on a tap can strand the pointer if the tap navigates and detaches the card before pointerup */ });
   card.addEventListener('pointermove', e => {
     if(!active) return;
     dx=e.clientX-downX; dy=e.clientY-downY; moved=Math.max(moved, Math.abs(dx)+Math.abs(dy));
     // decide intent once: a vertical drag that began on the (scrollable) read scrolls it;
     // anything else swipes the card exactly as before — the core gesture is untouched.
-    if(mode===null && moved>6){ mode = (startedInSyn && Math.abs(dy) > Math.abs(dx)) ? 'scroll' : 'swipe'; }
+    if(mode===null && moved>6){ mode = (startedInSyn && Math.abs(dy) > Math.abs(dx)) ? 'scroll' : 'swipe'; if(mode==='swipe'){ try{card.setPointerCapture(e.pointerId);}catch(_){} } }   // capture only on a real swipe — never on a tap
     if(mode==='scroll'){ if(synEl) synEl.scrollTop -= (e.clientY - lastY); lastY=e.clientY; return; }
     lastY=e.clientY;
     if(mode!=='swipe') return;
