@@ -831,6 +831,18 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-firm .tc-fg { margin-left:auto; flex-shrink:0; color:var(--ebony); opacity:.5; }
 .tc-deck-all { display:block; width:100%; margin-top:14px; background:var(--dark-grad); color:var(--white); border:none; border-radius:15px; padding:13px; font-family:var(--sans); font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 13px -3px rgba(67,68,42,.5); }
 .tc-deck-all:active { box-shadow:var(--nm-in); transform:scale(.99); }
+/* ── CONVERSATIONAL INTAKE (the chat IS the form) — after the picks land, Vesta offers to
+   carry the request; accepting materializes a request card in the thread that fills itself
+   in from the conversation (the work brief types in, then the gap fields stagger in).
+   Rides the .tc-deck shell so it lands as a Vesta message like the verdict itself. ── */
+.vq-card .vq-fields { display:flex; flex-direction:column; gap:11px; margin-top:6px; }
+.vq-f { display:none; }
+.vq-f.in { display:block; animation:tcDeckLand .38s var(--spring) both; }
+.vq-pair.in { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.vq-work { min-height:76px; }
+.vq-work.vq-writing { animation:vqPulse 1.4s ease-in-out infinite; }
+@keyframes vqPulse { 0%,100% { opacity:1; } 50% { opacity:.62; } }
+.vq-cancel { background:none; border:none; color:var(--ebony); opacity:.65; font-family:var(--sans); font-size:10.5px; text-decoration:underline; cursor:pointer; padding:0; }
 /* ── Vesta Live RESOLVE → verdict lands as Vesta's closing message ── On match, the
    picks deck (a self-contained verdict: the read, the coverage, the per-pick why) is
    appended as the FINAL message in the live thread — the conversation that produced it
@@ -5668,7 +5680,10 @@ async function vmDeck(trade, job, deckMeta, mode){
       slot_earned_because: roles[i] ? PICK_ROLE_LONG[roles[i]] : 'next-strongest record among the firms matched to this job',
       record:reasons[i], vestas_read:readClip(p.read), known_for:(p.knownFor||[]).slice(0,3) })),
     trade:trade, job:job,
-    more_matches:Math.max(0, byTrade(trade).length - picks.length) };
+    more_matches:Math.max(0, byTrade(trade).length - picks.length),
+    // conversational intake: the offer below is UI-only — this line keeps the model coherent
+    // if the homeowner answers it in words instead of tapping
+    intake:'You offered to write up and send their request to one of the picks. If they accept in chat, point them to the "Send to" buttons under your offer — you cannot send it from a message.' };
   const lastA = vmMsgs[vmMsgs.length-1];
   let merged=false;
   if (lastA && lastA.role==='assistant'){
@@ -5682,6 +5697,8 @@ async function vmDeck(trade, job, deckMeta, mode){
   t.appendChild(row); t.classList.add('tc-resolved'); vmScroll();   // Vesta's message: picks in-chat, history collapsed → fixed verdict
   el.querySelectorAll('.tc-firm').forEach(btn=>btn.addEventListener('click',()=>openProfile(btn.dataset.place)));
   const all=el.querySelector('.tc-deck-all'); if(all) all.addEventListener('click',()=>{ S.chatReturn=true; const h=$('s-home'); if(h) h.classList.remove('vconv'); S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank'; S.match={job:job,axis:axis}; S.matchPending=false; S.triageActive=false; S.triageMode=null; renderNeedChips(); renderSidebar(); showBrowse(trade); });
+  // conversational intake — the offer lands a beat after the picks, as its own question
+  setTimeout(()=>{ if(vmDeckShown && !vmBusy) intakeOffer(vmIntakeCtx(), picks, trade, job, mode, emergency); }, 700);
 }
 function vmChips(chips){
   const t=$('vm-thread'); if(!t||!chips||!chips.length) return;
@@ -5925,7 +5942,137 @@ function triDeckCard(trade, job, deckMeta, mode){
     const mount = el.querySelector('.tc-mono[data-ph-place="'+CSS.escape(p.placeId)+'"]');
     if (mount) mount.innerHTML = '<img src="'+esc(photoUrl(ph[0].ref, 96))+'" alt="" loading="eager" decoding="async">';
   }).catch(()=>{}); });
+  // conversational intake — the offer lands a beat after the picks, as its own question
+  setTimeout(()=> intakeOffer(tcIntakeCtx(), picks, trade, job, mode, emergency), 700);
 }
+/* ═══ CONVERSATIONAL INTAKE (Rung 1) — the chat IS the form. After the picks land, Vesta
+   offers to carry the request herself: tap a firm → a request card materializes in the
+   thread and fills itself in from the conversation. The work brief is written by the
+   intake op (/api/triage op:'writeup'); the deterministic floor is the homeowner's own
+   words verbatim — a writeup failure never blocks a send. Only the gaps are asked, inline
+   on the card. One explicit Send = the consent gate → the same /request dispatch bridge
+   as the form (email to the pro + the direct-contact fallback). Offer + card are DOM-only
+   (never pushed into the model history); the vm lane merges bookkeeping into the last
+   assistant turn so follow-up chat stays coherent. The tc lane's back-and-return replay
+   rebuilds words only — a lost offer isn't a broken state (the profile's request button
+   remains the standing path). ═══ */
+const vmIntakeCtx = () => ({ lane:'vm', thread:()=>$('vm-thread'), scroll:vmScroll, bubble:vmVesta, msgs:()=>vmMsgs,
+  msg:()=>{ const t=$('vm-thread'); if(!t) return null; const el=document.createElement('div'); el.className='vmsg tc-verdict'; el.innerHTML='<span class="vav">Vesta.</span>'; t.appendChild(el); return el; } });
+const tcIntakeCtx = () => ({ lane:'tc', thread:()=>$('tc-thread'), scroll:tcScroll, bubble:tcVesta, msgs:()=>(S.triChat&&S.triChat.msgs)||[],
+  msg:()=>{ const t=$('tc-thread'); if(!t) return null; const el=document.createElement('div'); el.className='tc-msg v tc-verdict'; el.innerHTML='<div class="tc-avatar">Vesta.</div>'; t.appendChild(el); return el; } });
+function intakeOffer(ctx, picks, trade, job, mode, emergency){
+  const t = ctx.thread(); if (!t || !picks.length) return;
+  const b = ctx.bubble();
+  if (b) b.textContent = emergency
+    ? 'For an emergency, calling is fastest — tap a pick above for their number. I can also send your details ahead, so whoever you reach already has the picture. Want me to?'
+    : 'Want me to get this in front of one of them? I’ll write your request up from what you’ve told me — you check it, tell me where replies should land, and I’ll send it.';
+  const wrap = document.createElement('div'); wrap.className = 'tc-chips vq-offer';
+  const mk = (label, fn) => { const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.innerHTML='<span>'+esc(label)+'</span>'; bt.onclick=()=>{ wrap.remove(); fn(); }; wrap.appendChild(bt); };
+  picks.slice(0,3).forEach(p => mk('Send to '+p.name, ()=> intakeCard(ctx, p, trade, mode, emergency)));
+  mk('I’ll reach out myself', ()=>{ const bb=ctx.bubble(); if(bb) bb.textContent='All good — each pick above opens their full profile, direct contact included.'; ctx.scroll(); });
+  t.appendChild(wrap); ctx.scroll();
+}
+async function intakeWriteup(msgs){
+  try {
+    const r = await fetch('/api/triage', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ op:'writeup', messages: msgs.slice(-12) }),
+      signal: (window.AbortSignal && AbortSignal.timeout) ? AbortSignal.timeout(14000) : undefined });
+    if (!r.ok) return '';
+    const j = await r.json();
+    return (j && j.ok && typeof j.work === 'string') ? j.work : '';
+  } catch(_){ return ''; }
+}
+async function intakeCard(ctx, pick, trade, mode, emergency){
+  const t = ctx.thread(); if (!t) return;
+  if (t.querySelector('.vq-card.vq-open')) return;   // one live (un-sent) card per thread
+  logRequest(pick.placeId, trade);                    // same funnel semantic as enterRequest
+  const row = ctx.msg(); if (!row) return;
+  const em = !!emergency;
+  const card = document.createElement('div'); card.className = 'tc-deck vq-card vq-open';
+  card.innerHTML =
+    '<div class="tc-deck-kick">Your request · nothing sends until you say so<span class="tc-deck-pct">'+esc(tradeLabelOf(trade))+'</span></div>'+
+    '<h2>To <em>'+esc(pick.name)+'</em></h2>'+
+    '<div class="vq-fields">'+
+      '<div class="vq-f in"><label class="req-label">What’s going on — in your words</label><textarea class="req-textarea vq-work vq-writing" maxlength="1200" placeholder="Writing it up from what you told me…" aria-label="Your request"></textarea></div>'+
+      '<div class="vq-f"><label class="req-label">How soon</label><select class="req-select vq-urg" aria-label="How soon">'+
+        '<option value="planning"'+(mode==='plan'&&!em?' selected':'')+'>Planning ahead</option>'+
+        '<option value="soon"'+(mode!=='plan'&&!em?' selected':'')+'>In the next few weeks</option>'+
+        '<option value="emergency"'+(em?' selected':'')+'>It’s urgent</option></select></div>'+
+      '<div class="vq-f vq-pair">'+
+        '<div><label class="req-label">Your name</label><input class="req-input vq-name" maxlength="80" autocomplete="name"></div>'+
+        '<div><label class="req-label">Email — replies land here *</label><input class="req-input vq-email" type="email" maxlength="254" autocomplete="email" placeholder="you@example.com"></div></div>'+
+      '<div class="vq-f vq-pair">'+
+        '<div><label class="req-label">Phone — optional</label><input class="req-input vq-phone" type="tel" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="(203) 555-0148"></div>'+
+        '<div><label class="req-label">ZIP code</label><input class="req-input vq-zip" maxlength="5" inputmode="numeric" autocomplete="postal-code" placeholder="06824"></div></div>'+
+      '<div class="vq-f"><button type="button" class="tc-deck-all vq-send">Send to '+esc(pick.name)+' →</button>'+
+        '<span class="prof-status vq-st"></span>'+
+        '<p class="prof-fine" style="margin-top:10px">Vesta sends '+esc(pick.name)+' a one-time introduction with your note; their reply comes straight to your email. Your details go only to this pro. <button type="button" class="vq-cancel">Never mind</button></p></div>'+
+    '</div>';
+  row.appendChild(card); ctx.scroll();
+  card.querySelector('.vq-cancel').addEventListener('click', ()=> row.remove());
+  // the self-fill: intake writer first, the homeowner's raw words as the floor
+  const ta = card.querySelector('.vq-work');
+  const grow = ()=>{ ta.style.height='auto'; ta.style.height = Math.min(300, ta.scrollHeight)+'px'; };
+  ta.addEventListener('input', grow);
+  const msgs = ctx.msgs();
+  let work = await intakeWriteup(msgs);
+  if (!work) work = msgs.filter(m=>m.role==='user').map(m=>m.content).join('\n').slice(0,1200);
+  if (!row.isConnected) return;                       // cancelled while the writeup generated
+  ta.classList.remove('vq-writing');
+  await new Promise(res=>{ let i=0; (function step(){
+    i = Math.min(work.length, i + 3 + Math.floor(Math.random()*4));
+    ta.value = work.slice(0,i); grow(); ctx.scroll();
+    if (i < work.length) setTimeout(step, 14 + Math.random()*22); else res();
+  })(); });
+  // the gaps surface one beat apart — the card asks only what the conversation couldn't know
+  card.querySelectorAll('.vq-f:not(.in)').forEach((f,i)=> setTimeout(()=>{ f.classList.add('in'); ctx.scroll(); }, 140 + i*170));
+  card.querySelector('.vq-send').addEventListener('click', ()=> intakeSend(ctx, row, card, pick, trade));
+}
+async function intakeSend(ctx, row, card, pick, trade){
+  const q = s => card.querySelector(s);
+  const st = q('.vq-st'), sb = q('.vq-send');
+  const fail = m => { st.className='prof-status is-error vq-st'; st.textContent=m; sb.disabled=false; };
+  const summary=(q('.vq-work').value||'').trim().slice(0,1200);
+  const name=(q('.vq-name').value||'').trim().slice(0,80);
+  const email=(q('.vq-email').value||'').trim();
+  const phone=(q('.vq-phone').value||'').trim();
+  const zip=(q('.vq-zip').value||'').replace(/[^\d]/g,'').slice(0,5);
+  const urgency=q('.vq-urg').value||'soon';
+  if (!summary) return fail('The write-up is empty — say what’s going on first.');
+  if (!/.+@.+\..+/.test(email)) return fail('Add an email — replies land there.');
+  if (phone && phone.replace(/\D/g,'').length<10) return fail('Check the phone number, or leave it blank.');
+  sb.disabled=true; st.className='prof-status vq-st'; st.textContent='Sending…';
+  try {
+    const { data:r } = await HOME.api('/request', { method:'POST', body:{ trade:TRADE_DB[trade]||trade||'', zip, summary, urgency, name, email, phone, place_ids:[pick.placeId] } });
+    if (r && r.ok){
+      const tgt=(r.targets||[])[0]||{};
+      const tel = tgt.phone ? String(tgt.phone).replace(/[^\d+]/g,'') : '';
+      const site = tgt.website ? String(tgt.website) : '';
+      const links=[];
+      if (tel) links.push('<a href="tel:'+esc(tel)+'" style="display:inline-block;padding:10px 18px;border-radius:10px;background:var(--olive);color:var(--white);font-weight:600;text-decoration:none;font-size:14px">Call '+esc(tgt.phone)+'</a>');
+      if (site) links.push('<a href="'+esc(site)+'" target="_blank" rel="noopener nofollow" style="display:inline-block;padding:10px 18px;border-radius:10px;border:1.5px solid var(--olive);color:var(--olive);font-weight:600;text-decoration:none;font-size:14px">Visit their site</a>');
+      let msg;
+      if (tgt.emailed) msg='<b>'+esc(pick.name)+'</b> just received it — a reply will come to <b>'+esc(email)+'</b>.';
+      else if (!r.email_configured) msg='Your request is saved.'+(links.length?' In the meantime, you can reach them yourself:':'');
+      else msg='We couldn’t find a public inbox for them'+(links.length?' — here’s the fastest way to reach them:':' — your request is saved.');
+      card.classList.remove('vq-open');
+      card.innerHTML='<div class="tc-deck-kick">Request sent ✓</div><h2>On its way to <em>'+esc(pick.name)+'</em></h2>'+
+        '<p class="tc-why" style="margin-bottom:0">'+msg+'</p>'+
+        (links.length?'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">'+links.join('')+'</div>':'')+
+        '<p class="prof-fine" style="margin-top:12px">Whoever answers, you talk to them directly — Vesta steps out of the conversation.</p>';
+      ctx.scroll();
+      // vm lane keeps chatting — the model must KNOW the request went out (same merge idiom
+      // as pickCtx), so a follow-up never re-offers what was already sent.
+      if (ctx.lane === 'vm'){
+        const lastA = vmMsgs[vmMsgs.length-1];
+        if (lastA && lastA.role==='assistant'){ try { const o=JSON.parse(lastA.content);
+          o.request_sent='You already wrote up and sent the homeowner’s request to '+pick.name+'; replies go to their email. Never offer to send it again unless it’s a genuinely new problem.';
+          lastA.content=JSON.stringify(o).slice(0,2900); } catch(_){} }
+      }
+    } else fail(r && r.error==='rate_limited' ? 'Daily send limit reached — try again tomorrow.' : 'Couldn’t send — try again.');
+  } catch(_){ fail('Couldn’t send — try again.'); }
+}
+
 // Resume a stored match (return loop): rehydrate S.match from localStorage and open the
 // tailored result — the wiring behind the "pick up where you left off" chip. Defensive:
 // bails (returns false) if the bank isn't loaded yet or the stored job no longer exists,

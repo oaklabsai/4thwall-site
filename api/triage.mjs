@@ -123,6 +123,15 @@ ${bankLines}
 Rules: pick the closest job even if details are unconfirmed (best read beats no read; a pro confirms on site). A * emergency job ONLY for active danger or damage happening right now (water actively flowing, sparking, gas, no heat in freezing weather) — a stain, a noise, dampness, or anything being monitored takes the ROUTINE job, never the * one. If and ONLY if the conversation gives no usable signal about any trade, output {"trade": null, "job": null}. No prose, no markdown — the JSON object only.`;
 }
 
+// ── the intake writer: a second single-task duty (Rung 1 — conversational intake). Reads
+// the same conversation and distills the homeowner's words into the work brief the request
+// card sends the contractor. Same architecture line as the resolver: one job, no interview
+// authority, no bank needed. The client types the result into the card; on any failure it
+// falls back to the homeowner's raw words verbatim — this op can never block a send.
+function writeupPrompt(){
+  return `You are an intake writer for a home-services request. Read the homeowner conversation and output ONLY one JSON object: {"work": string} — the work request a contractor will receive, written in the homeowner's own first-person voice ("I", "my"), 40-80 words, plain sentences. Include only facts the homeowner actually gave: what's happening, where on the property, how long it's been going on, anything a pro should know before coming out. Invent NOTHING — no diagnosis, no prices, no measurements or details they didn't give, no urgency words they didn't use. No greeting, no sign-off, no markdown. The JSON object only.`;
+}
+
 // ── the system prompt (mirrors the locked prototype; bank injected live) ──
 function systemPrompt(bank, model, followUp, userTurns){
   const bankLines = Object.entries(bank)
@@ -299,17 +308,36 @@ export default async function handler(req, res){
   if (!alive){ res.statusCode = 503; res.setHeader('Content-Type','application/json'); return res.end('{"error":"off"}'); }
 
   // validate input: short conversation of user/assistant turns, modest sizes
-  let messages;
+  let messages, op;
   try {
     const raw = await new Promise((resolve, reject) => {
       let b = ''; req.on('data', c => { b += c; if (b.length > 20000) reject(new Error('too big')); });
       req.on('end', () => resolve(b)); req.on('error', reject);
     });
-    messages = JSON.parse(raw).messages;
+    const body = JSON.parse(raw);
+    messages = body.messages;
+    op = body.op === 'writeup' ? 'writeup' : null;
   } catch { res.statusCode = 400; return res.end('{"error":"bad json"}'); }
   if (!Array.isArray(messages) || messages.length === 0 || messages.length > 12
       || !messages.every(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.length <= 3000)){
     res.statusCode = 400; return res.end('{"error":"bad messages"}');
+  }
+
+  // ── op:'writeup' — the intake writer (plain JSON, not SSE). GLM leads (the
+  // instruction-follower, same reasoning as the resolver); no bank, no stream. The
+  // client owns the fallback (raw words), so any failure here is just {ok:false}.
+  if (op === 'writeup'){
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'no-store');
+    let work = '';
+    try {
+      const wOut = await callModelStreaming(MODELS[MODELS.length - 1], keys, writeupPrompt(), messages, ()=>{});
+      const wj = wOut && !wOut.error ? extractJSON(wOut.raw) : null;
+      if (wj && typeof wj.work === 'string') work = wj.work.trim().slice(0, 1200);
+    } catch { /* fail-soft — client falls back to raw words */ }
+    console.log(`triage: writeup ${work ? 'ok len=' + work.length : 'miss'}`);
+    res.statusCode = 200;
+    return res.end(JSON.stringify(work ? { ok: true, work } : { ok: false }));
   }
 
   res.statusCode = 200;
