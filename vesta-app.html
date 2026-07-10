@@ -288,6 +288,15 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home.vconv .hs-cin { color:#fff; }
   #s-home.vconv .hs-cin::placeholder { color:rgba(255,255,255,.55); }
   #s-home.vconv .hs-csend { background:var(--tea-grad); color:var(--olive); box-shadow:0 4px 12px -3px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.5); }
+  /* ── Ask Vesta as a dismissible OVERLAY. Opened from a trade/directory, the chat floats over
+     the current screen instead of navigating home (which buried it under the swipe deck and locked
+     the page). The underlying screen is never unmounted, so its scroll survives; X minimizes back
+     to it; reopening resumes (the #vm-thread DOM persists). The big swipe deck is suppressed here —
+     this is a real conversation surface, not the home empty-state. */
+  body.ask-ov #s-home.ask-ov-home { position:fixed; inset:0; z-index:80; display:flex; flex-direction:column; overflow:hidden; }
+  body.ask-ov .bnav { display:none; }                                   /* the overlay owns the screen; no double nav */
+  body.ask-ov .home-stack { display:none !important; }                  /* no big deck in the overlay */
+  body.ask-ov #s-home.vconv .vthread:has(.vstarters.show) .vth-x { display:flex !important; }  /* X always reachable to minimize */
   /* boot guard: land already-morphed with no visible collapse/fade on first paint */
   #s-home.vboot .vfold, #s-home.vboot .vfold > .vfold-in,
   #s-home.vboot .vthread-fold, #s-home.vboot .vthread-fold > .vfold-in,
@@ -628,7 +637,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .syn-why { display:inline-flex; align-items:center; margin-top:11px; background:none; border:none; padding:2px 0; cursor:pointer; font-family:var(--script); font-size:18px; font-weight:700; color:var(--olive); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1.5px; line-height:1; }
 .syn-why:active { opacity:.65; }
 .syn-collapsed .syn-txt { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; overflow:hidden; }
-.card-synwrap.syn-collapsed::after { display:none; }   /* nothing to scroll when collapsed → no fade */
+.card-synwrap.syn-collapsed::after,
+.card-synwrap:has(.card-glance)::after { display:none; }   /* nothing to scroll (collapsed / at-a-glance) → no fade */
 /* Swipe card read fills the freed space (photo hero removed) and scrolls if long — no 2-line
    teaser + expander, which now just left a void. The full reasoning is one tap away on the profile. */
 .card .syn-why { display:none; }
@@ -3435,23 +3445,8 @@ function splitRead(read){
   const m = read.match(/^(.{60,240}?[.!?])\s+(?=[A-Z“"'])/);
   return m ? { lede: m[1], rest: read.slice(m[0].length) } : { lede: '', rest: read };
 }
-function statStripHTML(con){
-  // Firm-facts only — NEVER our review sample. "65 reviews read" on a shop with 700 reviews frames
-  // OUR reading depth as THEIR reputation and quietly dilutes the read's credibility; a raw total
-  // would just reintroduce the popularity-contest signal Vesta rejects. Every cell here is about the
-  // contractor — tenure · county standing (our rank percentile) · registration · certification —
-  // added in priority order; the first three that apply render.
-  const pool = [];
-  if (con.sinceYear && (2026-con.sinceYear) >= 1) pool.push('<b>'+(2026-con.sinceYear)+'</b><i>years in business</i>');
-  if (con.ratingBand==='top10' || con.ratingBand==='top25')
-    pool.push('<b>'+(con.ratingBand==='top10'?'Top 10%':'Top 25%')+'</b><i>county standing</i>');
-  if (con.registered && tradeSupportsReg(con.trade))
-    pool.push('<b>CT</b><i>state-registered</i>');
-  if (con.certs && con.certs.length && (con.trade==='roofing'||con.trade==='hvac'))
-    pool.push('<b>'+esc(String(con.certs[0]).split(/[ (—–]/)[0].trim())+'</b><i>certified installer</i>');
-  if (!pool.length) return '';
-  return '<div class="statstrip">'+pool.slice(0,3).map(c=>'<span class="stat">'+c+'</span>').join('<span class="statdiv" aria-hidden="true"></span>')+'</div>';
-}
+// (statStripHTML removed 7/10 — the card is now photo + name + at-a-glance read; every firm-fact
+//  — tenure, county standing, registration, certs — lives on the full profile.)
 function readHTML(con, cls){
   const s = splitRead(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.');
   // Progressive disclosure (#1/#6): lead with the one-line verdict; the evidence sits one tap
@@ -3463,6 +3458,15 @@ function readHTML(con, cls){
     '</div>'+
     '<button type="button" class="syn-why">Why Vesta says this &rarr;</button>'+
   '</div>';
+}
+// Card = photo + name + an AT-A-GLANCE read (Drew, 7/10): the swipe/feed card is a scannable
+// preview, not the full profile. We lead with the read's first sentence (the verdict) — the whole
+// synthesis + every firm-fact lives on the full profile a tap away. No stat strip, no "Why →"
+// expander here; the card's job is one clean, honest line.
+function cardGlanceHTML(con){
+  const read = con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.';
+  const s = splitRead(read);
+  return '<div class="card-syn card-glance"><p>'+esc(s.lede || readClip(read))+'</p></div>';
 }
 // Expand/collapse the card read in place (the "Why →" tap). Kept out of the swipe path by the
 // tap handler in wireTopCard, which routes a tap on .syn-why here instead of opening the profile.
@@ -3489,10 +3493,9 @@ function cardHTML(con, k){
         'onload="this.parentElement.classList.add(\'has-img\')" onerror="this.remove()">'+
       ICONS[tradeIconOf(con.trade)]+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
-    statStripHTML(con)+
     (mw ? '<div class="card-matchwhy">'+SPARK+'<span>'+esc(mw)+'</span></div>' : '')+
     '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
-    '<div class="card-synwrap">'+readHTML(con,'card-syn')+'</div>'+
+    '<div class="card-synwrap">'+cardGlanceHTML(con)+'</div>'+
     '<div class="card-hint">'+(desktop()?'← skip · save →':'Tap for the full profile')+'</div>'+
   '</article>';
 }
@@ -3966,8 +3969,9 @@ function feedCardHTML(con, i){
   // when the stat strip below doesn't already carry it (top10/top25 render as a strip cell;
   // repeating the same claim as a pill read as noise, not emphasis).
   const isM = !!(S.match && S.match.job && jobMatches(con, S.match.job));
-  const stripHasStanding = con.ratingBand==='top10' || con.ratingBand==='top25';
-  const bandText = (S.match && S.match.job) ? whyLine(con, S.match) : (stripHasStanding ? '' : con.standing);
+  // stat strip removed (Drew, 7/10 — the card is photo + name + read); standing returns to the
+  // name-band, where it used to be suppressed only because the strip already carried it.
+  const bandText = (S.match && S.match.job) ? whyLine(con, S.match) : con.standing;
   const bandHTML = bandText ? '<div class="fcard-band'+(isM?' fcard-why':'')+'">'+(isM?SPARK:'')+esc(bandText)+'</div>' : '';
   return '<article class="fcard" data-place="'+esc(con.placeId)+'" style="--d:'+(Math.min(i||0,8)*30)+'ms">'+
     '<div class="fcard-top">'+
@@ -3987,10 +3991,9 @@ function feedCardHTML(con, i){
           '</div></div>'+
       '</div>'+
     '</div>'+
-    // Lead with the idea, not the picture. Stats + Vesta's read sit directly under the name so the
-    // whole verdict reads without scrolling; the work photo follows as proof (it used to be a
-    // 290px banner that shoved the read below the fold — the read IS the product, so it leads).
-    statStripHTML(con)+
+    // Lead with the idea, not the picture. Vesta's read sits directly under the name so the whole
+    // verdict reads without scrolling; the work photo follows as proof (it used to be a 290px banner
+    // that shoved the read below the fold — the read IS the product, so it leads).
     '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
     readHTML(con,'fcard-syn clamp')+
     (trust.length?'<div class="fcard-chips">'+trust.map(v=>'<span class="fcard-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
@@ -4831,8 +4834,11 @@ function profTrackRecordHTML(){
   const enr=profData.enr; if (!enr) return '';
   const trade=pTradeKey(); const tLower = trade==='hvac' ? 'HVAC' : ((PTRADE_LABEL[trade]||'trade').toLowerCase());
   const stats=[];
-  const pubN = Number(enr.rating_count)||0;
-  if (pubN) stats.push('<span class="trec-stat"><span class="n">'+pubN.toLocaleString('en-US')+'</span><span class="u">public reviews on record</span></span>');
+  // Review COUNT pulled (Drew, 7/10): "N public reviews on record" is Vesta framing a count as the
+  // firm's standing — the exact credibility dilution we avoid on cards ("8 on record" undersells a
+  // 700-review shop and hints at our sampling depth). The Google reference block keeps the number,
+  // attributed to Google as a marketing signal. Years-on-the-state-record stays — that's provable
+  // public record, not a review tally.
   if (enr.registered && enr.hic_issue_date){
     const yr = +String(enr.hic_issue_date).slice(0,4);
     const yrs = (yr && yr!==1999) ? (new Date().getFullYear()-yr) : 0;
@@ -5163,7 +5169,11 @@ function showSaved(){
 function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('/vesta'); }
 
 /* NAV */
-function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; if (name!=='home') stopSearchRotator(); }
+function showScreen(name){
+  // any real navigation tears down the Ask Vesta overlay cleanly (e.g. a resolved match lands a deck)
+  if (document.body.classList.contains('ask-ov')){ document.body.classList.remove('ask-ov'); const hh=$('s-home'); if(hh) hh.classList.remove('ask-ov-home'); }
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; if (name!=='home') stopSearchRotator();
+}
 // User picked a trade/problem: run the triage first (when the trade has a bank + the entry is
 // user-initiated), else go straight to browse. opts.walk===false = passive land (desktop auto/resize).
 function openBrowse(key, opts){
@@ -5611,6 +5621,35 @@ function enterConverse(){
   // your own words" escape), return to the home card first, then morph.
   if (S.screen !== 'home'){ showScreen('home'); renderSidebar(); updateNavState(); }
   enterConverseMobile();
+}
+// ── Ask Vesta OVERLAY (mobile). The bottom-nav "Ask Vesta" from inside a trade used to
+// showScreen('home') and morph the home — which on a phone dumped you onto the swipe deck with
+// the chat collapsed behind it, and the deck's swipe-capture ate every tap ("page locks"). Now
+// the chat floats OVER the current screen: the browse/directory stays mounted underneath (scroll
+// intact), X minimizes back to it, reopening resumes the same thread. Desktop is unchanged (home
+// IS Vesta Live there, and the bnav is hidden).
+let askReturnScreen = null;
+function openAskOverlay(){
+  if (desktop()){ openVestaLive(); return; }
+  const h = $('s-home'); if(!h) return;
+  if (document.body.classList.contains('ask-ov')){ const inp=$('hs-cin'); if(inp) inp.focus(); return; }
+  askReturnScreen = S.screen;
+  document.body.classList.add('ask-ov');
+  h.classList.add('ask-ov-home','vconv');
+  if (vmMsgs.length){                                   // resume — never reset a live thread
+    const st=$('vstarters'); if(st) st.classList.remove('show');
+    const th=$('vm-thread'); if(th && vmDeckShown) th.classList.add('tc-resolved');
+    const inp=$('hs-cin'); if(inp){ inp.disabled=false; inp.focus(); }
+    vmScroll();
+  } else {
+    enterConverseMobile();                              // fresh — reset + starters + focus
+  }
+}
+function closeAskOverlay(){
+  const h = $('s-home'); if(h) h.classList.remove('ask-ov-home');
+  document.body.classList.remove('ask-ov');
+  const inp=$('hs-cin'); if(inp) inp.blur();
+  // the underlying screen was never unmounted — its scroll position is exactly as left
 }
 
 /* ═══ MOBILE IN-PLACE CONVERSATION MORPH — the home screen becomes the chat, wired to the
@@ -6241,7 +6280,7 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   { const bb=$('browse-float-back'); if(bb) bb.addEventListener('click', navBack); }
   { const mfb=$('match-float-back'); if(mfb) mfb.addEventListener('click', navBack); }
   $('nav-home').addEventListener('click', () => { if (S.screen!=='home' || S.mode!=='trade'){ S.mode='trade'; goHome(); } });
-  { const na=$('nav-ask'); if(na) na.addEventListener('click', openVestaLive); }
+  { const na=$('nav-ask'); if(na) na.addEventListener('click', openAskOverlay); }
   $('act-rewind').addEventListener('click', rewindDeck);
   $('act-pass').addEventListener('click', () => { const c=topCon(); if(c) commit('pass', c); });
   $('act-save').addEventListener('click', () => { const c=topCon(); if(c) commit('save', c); });
@@ -6274,7 +6313,9 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   { const cs=$('hs-csend'); if(cs) cs.addEventListener('click', vSubmit); }
   // The thread X: desktop exits the morph back to the rest home (unchanged). Mobile has no
   // rest home anymore — the chat IS the home — so X resets to a fresh conversation (cards back).
-  { const x=$('vth-x'); if(x) x.addEventListener('click', ()=>{ if (desktop()) exitConverseMobile(); else enterConverseMobile(true); }); }
+  { const x=$('vth-x'); if(x) x.addEventListener('click', ()=>{
+      if (document.body.classList.contains('ask-ov')){ closeAskOverlay(); return; }   // overlay: X = minimize back to where you were
+      if (desktop()) exitConverseMobile(); else enterConverseMobile(true); }); }
   // desktop 2×2 starters (.vst) prefill+send a full example message.
   document.querySelectorAll('#vstarters .vst').forEach(b => b.addEventListener('click', ()=>{
     const text=b.dataset.say; if(!TRI_OK){ openSearch(text); return; }

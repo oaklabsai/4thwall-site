@@ -472,11 +472,9 @@ function homeownersBlock(enr) {
   const hasKnown = Array.isArray(enr && enr.known_for) && enr.known_for.length;
   if (!enr || (!enr.synthesis && !hasKnown)) return '';
   let html = '<h2 class="section-h">What homeowners say</h2>';
-  const total = Number(enr.rating_count) || 0;
-  if (total > 0) {
-    html += '<p class="hw-count"><strong>' + esc(total.toLocaleString('en-US')) +
-      '</strong> public reviews on record</p>';
-  }
+  // Review COUNT pulled (Drew, 7/10) — Vesta never frames a review tally as the firm's standing
+  // (it dilutes credibility and hints at our sampling depth). The Google reference block below keeps
+  // the number, attributed to Google as a live marketing signal.
   if (enr.synthesis) {
     const analyzed = monthYear(enr.enriched_at);
     // The read is the product — same voice as the app card: spark kicker + the serif.
