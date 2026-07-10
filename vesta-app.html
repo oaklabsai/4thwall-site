@@ -907,6 +907,19 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-deck-save:hover { border-color:rgba(74,75,47,.55); background:rgba(74,75,47,.05); }
 .tc-deck-save:active { transform:scale(.99); }
 .tc-deck-save svg { width:15px; height:15px; }
+/* opt-in resume band — the returning-user "pick up where you left off" affordance */
+.vresume { display:flex; align-items:stretch; gap:0; width:100%; max-width:520px; margin:0 auto 14px; background:var(--card,#fff); border:1.5px solid rgba(74,75,47,.22); border-radius:16px; overflow:hidden; box-shadow:0 2px 10px -4px rgba(74,75,47,.28); }
+.vr-main { flex:1; display:flex; align-items:center; gap:11px; background:transparent; border:none; padding:13px 6px 13px 15px; cursor:pointer; text-align:left; min-width:0; }
+.vr-ic { flex:0 0 auto; width:30px; height:30px; border-radius:50%; background:rgba(74,75,47,.1); display:flex; align-items:center; justify-content:center; color:var(--olive); }
+.vr-ic svg { width:16px; height:16px; }
+.vr-tx { display:flex; flex-direction:column; min-width:0; }
+.vr-tx b { font-family:var(--sans); font-size:13.5px; font-weight:700; color:var(--ebony,#12100e); line-height:1.2; }
+.vr-preview { font-family:var(--sans); font-size:12px; color:var(--olive); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vr-go { flex:0 0 auto; color:var(--olive); display:flex; align-items:center; }
+.vr-go svg { width:17px; height:17px; }
+.vr-x { flex:0 0 auto; width:38px; background:transparent; border:none; border-left:1px solid rgba(74,75,47,.14); color:var(--muted,#8a866f); font-size:14px; cursor:pointer; }
+.vr-x:active, .vr-main:active { background:rgba(74,75,47,.05); }
+@media (min-width:900px){ .vresume { display:none !important; } }
 /* ── CONVERSATIONAL INTAKE (the chat IS the form) — after the picks land, Vesta offers to
    carry the request; accepting materializes a request card in the thread that fills itself
    in from the conversation (the work brief types in, then the gap fields stagger in).
@@ -1820,6 +1833,16 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
               <div class="vth-hero" id="vth-hero"><span class="vst-mark">Vesta</span></div>
               <div class="vth-scroll" id="vm-thread"></div>
               <div class="vstarters" id="vstarters">
+                <!-- opt-in resume band (mobile) — only shown on cold boot when a recent thread
+                     exists; the empty state below is otherwise untouched. -->
+                <div class="vresume" id="vresume" hidden>
+                  <button class="vr-main" id="vr-main" type="button">
+                    <span class="vr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.7 3M3 3v4h4"/></svg></span>
+                    <span class="vr-tx"><b>Pick up where you left off</b><span class="vr-preview" id="vr-preview"></span></span>
+                    <span class="vr-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                  </button>
+                  <button class="vr-x" id="vr-x" type="button" aria-label="Dismiss">✕</button>
+                </div>
                 <!-- desktop empty state keeps "Vesta. How can I help?" + the 2×2 grid (untouched) -->
                 <div class="vst-head"><span class="sig">Vesta.</span> How can I help?</div>
                 <!-- mobile: the explorable cards, centred, ARE the empty state (the chat is the whole
@@ -5670,12 +5693,14 @@ function closeAskOverlay(){
 // profile, thread persists); desktop → the in-place home morph (home IS Vesta Live there).
 function askVestaAboutFirm(firm){
   if(!firm || !firm.name) return;
+  hideResumeBand();
   const greeting = 'Ask me anything about '+firm.name+' — whether their record fits your job, what their reputation is strong on, or what to ask them before you hire.';
   const focus = { name:firm.name, vestas_read:readClip(firm.read||''), known_for:(firm.knownFor||[]).slice(0,3) };
   // the assistant's focus turn is the first thing the model sees; its "say" matches the
   // rendered greeting so the stored history and the screen are one coherent voice.
   vmMsgs = [{ role:'assistant', content: JSON.stringify({ say:greeting, focus:focus }).slice(0,2900) }];
   vmTurns=0; vmDone=false; vmBusy=false; vmDeckShown=false; vmDeckKey='';
+  vmFocusName = firm.name; vmLastDeck = null;   // this thread is contractor-aware; persistence keeps it so
   // future-ready: a focus chat can also produce a saveable "notes on this firm" plan
   vmPlan = { kind:'firm', trade:firm.trade||'', tradeLabel:firm.tradeLabel||'', firm:{ name:firm.name, read:firm.read||'', knownFor:(firm.knownFor||[]).slice(0,4) } };
   const h=$('s-home'); if(!h) return;
@@ -5807,6 +5832,93 @@ function downloadPlan(plan){
   }
 }
 
+/* ═══ CROSS-SESSION THREAD PERSISTENCE (increment 2b) — the returning user's last Ask Vesta
+   conversation isn't gone. Opt-in: cold boot stays the calm explorable empty state (Drew's
+   deliberate design); if a recent thread exists, a dismissible "Pick up where you left off"
+   band offers it. Restoring rebuilds the text bubbles and, if a matched deck was the LAST
+   thing, re-lands it live; a deck that wasn't last gets a "Reopen your picks" affordance
+   instead (never mis-merges pick context). The transcript is stored with deck pick-data
+   stripped — the deck re-lands from its (trade, job), so storage stays small and the model's
+   context never double-holds picks. Focus context (the firm) is preserved verbatim. ═══ */
+let vmLastDeck = null;   // {trade,job,mode} of the last landed deck
+let vmFocusName = null;  // firm name if this is a focus (contractor-aware) thread, else null
+const THREAD_KEY = 'vesta_thread';
+const THREAD_TTL = 7*24*3600*1000;   // 7 days
+// keep the transcript small + safe to re-land: a deck turn (carries "picks") collapses to its
+// say; every other turn (incl. the focus turn, which the model needs to stay contractor-aware)
+// is preserved verbatim.
+function strippedMsgs(){
+  return vmMsgs.map(m=>{
+    if(m.role==='assistant'){
+      try { const o=JSON.parse(m.content); if(o && o.picks) return {role:'assistant', content:JSON.stringify({say:o.say||''})}; } catch(_){}
+    }
+    return {role:m.role, content:String(m.content)};
+  });
+}
+function isDeckLast(){
+  if(!vmDeckShown) return false;
+  const last = vmMsgs[vmMsgs.length-1];
+  if(!last || last.role!=='assistant') return false;
+  try { return !!JSON.parse(last.content).picks; } catch(_){ return false; }
+}
+function persistThread(){
+  try {
+    if (desktop()) return;   // persistence drives the mobile resume band; desktop is unchanged
+    const users = vmMsgs.filter(m=>m.role==='user').length;
+    if (users < 1) return;   // only real conversations are worth resuming
+    const snap = { v:1, ts:Date.now(), msgs:strippedMsgs(), deck:vmLastDeck||null,
+      deckLast:isDeckLast(), focus:vmFocusName?{name:vmFocusName}:null };
+    const s = JSON.stringify(snap);
+    if (s.length < 100000) localStorage.setItem(THREAD_KEY, s);
+  } catch(_){}
+}
+function clearThread(){ try { localStorage.removeItem(THREAD_KEY); } catch(_){} }
+function hideResumeBand(){ const rb=$('vresume'); if(rb) rb.hidden=true; }
+function vmReopenPicks(deck){
+  const t=$('vm-thread'); if(!t||!deck) return;
+  const wrap=document.createElement('div'); wrap.className='tc-chips';
+  const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.innerHTML='<span>Reopen your picks →</span>';
+  bt.onclick=()=>{ wrap.remove(); vmDeckLand(deck.trade, deck.job, null, deck.mode||'fix'); };
+  wrap.appendChild(bt); t.appendChild(wrap); vmScroll();
+}
+function restoreThread(snap){
+  if(!snap || !Array.isArray(snap.msgs) || !snap.msgs.length) return false;
+  enterConverseMobile(true);                         // clean slate (resets vmMsgs, focus, deck)
+  const st=$('vstarters'); if(st) st.classList.remove('show');   // leave the empty state
+  vmMsgs = snap.msgs.map(m=>({role:m.role, content:String(m.content)}));
+  vmTurns = vmMsgs.filter(m=>m.role==='user').length;
+  vmFocusName = (snap.focus && snap.focus.name) ? snap.focus.name : null;
+  vmLastDeck = snap.deck || null;
+  vmDeckShown=false; vmDeckKey='';
+  const th=$('vm-thread'); if(th) th.innerHTML='';
+  vmMsgs.forEach(m=>{
+    if(m.role==='user'){ vmUser(m.content); return; }
+    let say=''; try{ say=(JSON.parse(m.content).say)||''; }catch(_){ say=m.content; }
+    if(say){ const b=vmVesta(); if(b) b.innerHTML=mdLite(say); }   // mdLite = the same renderer the live typer uses
+  });
+  const inp=$('hs-cin'); if(inp){ inp.disabled=false; inp.placeholder = vmFocusName ? ('Ask about '+vmFocusName+'…') : 'Ask a follow-up…'; }
+  // re-land the deck live only if it was the last thing (clean pickCtx merge); otherwise offer it
+  if (vmLastDeck && snap.deckLast) vmDeck(vmLastDeck.trade, vmLastDeck.job, null, vmLastDeck.mode||'fix', true);
+  else if (vmLastDeck) vmReopenPicks(vmLastDeck);
+  vmScroll();
+  return true;
+}
+function maybeShowResumeBand(){
+  if (desktop()) return;
+  let snap=null;
+  try { snap = JSON.parse(localStorage.getItem(THREAD_KEY)||'null'); } catch(_){ snap=null; }
+  const band=$('vresume'); if(!band) return;
+  if(!snap || snap.v!==1 || !Array.isArray(snap.msgs) || !snap.msgs.length){ band.hidden=true; return; }
+  if(Date.now() - (snap.ts||0) > THREAD_TTL){ clearThread(); band.hidden=true; return; }
+  let preview='';
+  for(let i=snap.msgs.length-1;i>=0;i--){ if(snap.msgs[i].role==='user'){ preview=String(snap.msgs[i].content||''); break; } }
+  if(!preview && snap.focus && snap.focus.name) preview='About '+snap.focus.name;
+  const pv=$('vr-preview'); if(pv) pv.textContent = preview ? ('“'+preview.slice(0,54)+(preview.length>54?'…':'')+'”') : 'Your last conversation';
+  band.hidden=false;
+  const main=$('vr-main'); if(main) main.onclick=()=>{ band.hidden=true; restoreThread(snap); };
+  const x=$('vr-x'); if(x) x.onclick=(e)=>{ e.stopPropagation(); band.hidden=true; clearThread(); };
+}
+
 /* ═══ MOBILE IN-PLACE CONVERSATION MORPH — the home screen becomes the chat, wired to the
    real /api/triage stream. Own thread (#vm-thread) + turn fn so it never collides with the
    desktop match-screen chat (#tc-thread); reuses the same bank gate + pick machinery. ═══ */
@@ -5814,6 +5926,7 @@ let vmBusy=false, vmDone=false, vmMsgs=[], vmTurns=0, vmDeckShown=false, vmDeckK
 function enterConverseMobile(noFocus){
   const h=$('s-home'); if(!h) return;
   vmMsgs=[]; vmTurns=0; vmDone=false; vmBusy=false; vmDeckShown=false; vmDeckKey='';
+  vmFocusName=null; vmLastDeck=null;   // a fresh conversation carries no firm-focus or prior deck
   const th=$('vm-thread'); if(th){ th.innerHTML=''; th.classList.remove('tc-resolved'); }
   const inp=$('hs-cin'); if(inp){ inp.value=''; inp.disabled=false; inp.placeholder='Describe it in your own words…'; }
   h.classList.add('vconv');
@@ -5843,6 +5956,7 @@ function vmThinkOff(){ const el=$('vm-think'); if(el) el.remove(); }
 // user's own words. The cards + hints glide away, the Vesta header stays.
 function vmVestaOpener(promptText){
   const h=$('s-home'); if(!h || !promptText) return;
+  hideResumeBand();
   if(!h.classList.contains('vconv')) enterConverseMobile();
   const st=$('vstarters'); if(st) st.classList.remove('show');
   const bubble=vmVesta(); if(bubble){ const typer=mkTyper(bubble, vmScroll); typer.push(promptText); }
@@ -5850,6 +5964,7 @@ function vmVestaOpener(promptText){
 }
 async function vmTurn(text){
   if(vmDone||vmBusy) return; vmBusy=true; vmTurns++;
+  hideResumeBand();
   const st=$('vstarters'); if(st) st.classList.remove('show');
   vmUser(text); vmMsgs.push({role:'user',content:text});
   const seq=traceSeq(text, vmDeckShown);
@@ -5880,12 +5995,13 @@ async function vmTurn(text){
       // salvage: if Vesta's words already streamed, a backend hiccup on the final frame
       // shouldn't yank the user to the tap-tree — land what she said, keep the conversation.
       if(streamed){ if(!typer) reveal(); await typer.finish(streamed);
-        vmMsgs.push({role:'assistant',content:JSON.stringify({say:streamed.slice(0,220),resolved:null})}); vmBusy=false; return; }
+        vmMsgs.push({role:'assistant',content:JSON.stringify({say:streamed.slice(0,220),resolved:null})}); persistThread(); vmBusy=false; return; }
       throw new Error(evErr||'no final');
     }
     if(!typer){ if(!streamed && !final.say){ stopTrace(); vmThinkOff(); } else reveal(); }
     if(typer) await typer.finish(final.say||streamed);
     vmMsgs.push({role:'assistant',content:JSON.stringify({say:(final.say||'').slice(0,220),resolved:final.resolved||null})});
+    persistThread();
     const res=final.resolved;
     const gate=res&&res.trade&&res.job&&tradeMatchable(res.trade)&&tradeBank(res.trade).jobs.some(j=>j.value===res.job)
       && !(vmDeckShown && vmDeckKey===res.trade+'|'+res.job);   // re-affirming the SAME match in a follow-up never re-lands a duplicate deck
@@ -5940,7 +6056,7 @@ function vmDeckLand(trade, job, deckMeta, mode){
     }, 620);
   }, 720);
 }
-async function vmDeck(trade, job, deckMeta, mode){
+async function vmDeck(trade, job, deckMeta, mode, quiet){
   const b=tradeBank(trade);
   const emergency=/emergency/.test(job)||!!(deckMeta&&deckMeta.emergency);
   const axis=modeAxis(b, mode, emergency);
@@ -5958,7 +6074,7 @@ async function vmDeck(trade, job, deckMeta, mode){
         photo[p.placeId]=url; }
     }catch(_){}
   }));
-  logMatch(trade,job,axis); saveLastMatch(trade,job,axis);
+  if(!quiet){ logMatch(trade,job,axis); saveLastMatch(trade,job,axis); }   // quiet = a restore re-land, don't double-log
   const jl=lc(deckMeta&&deckMeta.label?deckMeta.label:jobLabel(job));
   const pct=deckMeta&&deckMeta.pct!=null?deckMeta.pct:Math.round(100*jobCoverage(trade,job));
   const lead=emergency?'For an emergency, Vesta led with who answers fastest, then weighed record:':mode==='plan'?'No rush — but when you’re ready, these are worth the call:':'These rose to the top for your '+esc(jl)+':';
@@ -5989,6 +6105,7 @@ async function vmDeck(trade, job, deckMeta, mode){
   vmPlan = { kind:'match', trade:trade, tradeLabel:tradeLabelOf(trade),
     job:job, jobLabel:(deckMeta&&deckMeta.label?deckMeta.label:jobLabel(job)),
     picks: picks.map((p,i)=>({ name:p.name, why:reasons[i], read:p.read||'', knownFor:(p.knownFor||[]).slice(0,4) })) };
+  vmLastDeck = { trade:trade, job:job, mode:mode||'fix' };   // for cross-session restore
   const lastA = vmMsgs[vmMsgs.length-1];
   let merged=false;
   if (lastA && lastA.role==='assistant'){
@@ -6004,6 +6121,7 @@ async function vmDeck(trade, job, deckMeta, mode){
   el.querySelectorAll('.tc-firm').forEach(btn=>btn.addEventListener('click',()=>openProfile(btn.dataset.place)));
   const all=el.querySelector('.tc-deck-all'); if(all) all.addEventListener('click',()=>{ S.chatReturn=true; const h=$('s-home'); if(h) h.classList.remove('vconv'); S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank'; S.match={job:job,axis:axis}; S.matchPending=false; S.triageActive=false; S.triageMode=null; renderNeedChips(); renderSidebar(); showBrowse(trade); });
   const planSnap=vmPlan; const sv=el.querySelector('.tc-deck-save'); if(sv) sv.addEventListener('click', ()=>downloadPlan(planSnap));
+  persistThread();   // the matched deck is now part of the resumable thread
   // conversational intake — the offer lands a beat after the picks, as its own question
   setTimeout(()=>{ if(vmDeckShown && !vmBusy) intakeOffer(vmIntakeCtx(), picks, trade, job, mode, emergency); }, 700);
 }
@@ -6477,7 +6595,9 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   // rest home anymore — the chat IS the home — so X resets to a fresh conversation (cards back).
   { const x=$('vth-x'); if(x) x.addEventListener('click', ()=>{
       if (document.body.classList.contains('ask-ov')){ closeAskOverlay(); return; }   // overlay: X = minimize back to where you were
-      if (desktop()) exitConverseMobile(); else enterConverseMobile(true); }); }
+      if (desktop()) exitConverseMobile();
+      else { clearThread(); enterConverseMobile(true); const rb=$('vresume'); if(rb) rb.hidden=true; }   // mobile X = start fresh → drop the saved thread + band
+    }); }
   // desktop 2×2 starters (.vst) prefill+send a full example message.
   document.querySelectorAll('#vstarters .vst').forEach(b => b.addEventListener('click', ()=>{
     const text=b.dataset.say; if(!TRI_OK){ openSearch(text); return; }
@@ -6503,6 +6623,7 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
     const h=$('s-home');
     h.classList.add('vboot');
     enterConverseMobile(true);
+    maybeShowResumeBand();   // offer to resume a recent conversation (opt-in; empty state otherwise untouched)
     requestAnimationFrame(()=>requestAnimationFrame(()=>h.classList.remove('vboot')));
   }
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
