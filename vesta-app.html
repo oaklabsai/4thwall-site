@@ -53,7 +53,7 @@
 @view-transition { navigation: auto; }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-html,body { height:100%; overscroll-behavior:none; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+html,body { height:100%; overscroll-behavior:none; -webkit-text-size-adjust:100%; text-size-adjust:100%; touch-action:manipulation; }   /* manipulation = pan + tap, no double-tap zoom (pinch is cancelled in JS); keeps taps instant, never swallows them */
 /* MOBILE VIEWPORT STABILITY: iOS auto-zooms when a text field with font-size <16px is focused,
    and never cleanly zooms back — so navigating between screens leaves the app "loosened"/off-
    centre until you pinch to reset. 16px on every focusable field kills the auto-zoom (the
@@ -6535,6 +6535,13 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
 
 /* INIT */
 (function init(){
+  // iOS Safari IGNORES `user-scalable=no`/`maximum-scale` in the viewport meta — so a stray
+  // PINCH zooms the fixed app shell and it gets stuck offset (Drew's device report: "have to
+  // zoom in then out to use the screen again"). Cancel the pinch gesture in JS; double-tap
+  // zoom is killed by `touch-action:manipulation` (CSS, below) which — unlike a touchend hack
+  // — never swallows a legitimate tap. Inputs are ≥16px on mobile so focus never auto-zooms.
+  ['gesturestart','gesturechange','gestureend'].forEach(ev =>
+    document.addEventListener(ev, e => e.preventDefault(), {passive:false}));
   renderHome(); renderSidebar(); initSheetDrag();
   const _loads = Promise.all([loadContractors(), loadMatchBank()]);
   syncLikes();
