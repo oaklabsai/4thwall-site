@@ -1186,6 +1186,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .favwrap { padding:24px 40px 48px; }
 
   .vpanel { display:block; width:392px; flex-shrink:0; align-self:stretch; min-height:0; max-height:100%; overflow-y:auto; background:var(--nm); border-left:.5px solid rgba(74,75,47,.05); padding:34px 32px 48px; box-shadow:var(--sh-panel); }
+  .vpanel:empty { display:none; }   /* field rail pulled (or no contractor selected) → deck takes the full width */
   .va-firm { font-size:32px; }
 
   /* ===== DESKTOP FEED (X/Twitter-style scroll) — replaces the swipe deck ≥900px ===== */
@@ -2560,6 +2561,13 @@ async function loadContractors(){
   syncSavedUI();
 }
 
+// FIELD-DATA FLAG — the field-at-a-glance band, the desktop field rail, and the Field Report are
+// aggregate "how the whole field looks" surfaces. A homeowner picking one contractor reads them as
+// noise (they answer a market question, not a pick-one question), so they're pulled from the
+// consumer path. NOT deleted — flip this to true to bring every surface back at once. The one field
+// signal that stays is the per-job coverage % on the match options ("91% of the field does this"),
+// which is contextual and actually aids the choice. (Homeowner review, 2026-07-09.)
+const SHOW_FIELD_DATA = false;
 // ═══ THE FIELD REPORT — the county-wide layer over the per-trade "field at a glance" ═══
 // Cross-trade conclusions only this dataset can draw: who answers an emergency (ranked),
 // how the trades price (stacked mixes), the county's scarcest skills. Every number is
@@ -2866,6 +2874,7 @@ function closeFieldReportSheet(){
 // on phones). Desktop never shows this — the report already sits in the visible right
 // column there, so a "go look at it" button would just point at itself.
 function renderFieldReportTopPill(has){
+  if (!SHOW_FIELD_DATA) has = false;   // Field Report pulled from the consumer path
   const pillHtml = has ? '<button class="frep-toppill" type="button" aria-haspopup="dialog">'+SPARK+'Open the Field Report</button>' : '';
   const m = $('frep-toppill-mobile');
   if (m){ m.innerHTML = pillHtml; const b=m.querySelector('.frep-toppill'); if(b) b.addEventListener('click', openFieldReportSheet); }
@@ -4084,6 +4093,7 @@ function wireFieldPanel(container, apply){
 let _railTrade = null;
 function renderFeedRail(){
   const p=$('vpanel'); if(!p) return;
+  if (!SHOW_FIELD_DATA){ p.innerHTML=''; return; }   // field rail pulled — .vpanel:empty hides the column
   const panel = fieldPanelHTML(S.activeTrade);
   if (!panel){ p.innerHTML=''; return; }
   p.innerHTML = '<div class="va-head"><span class="va-spark">'+SPARK+'</span><span>The field <span class="squig">at a glance</span></span></div>'+panel;
@@ -5105,6 +5115,7 @@ function renderMatchWalk(){
 // its own field, so they carry themselves proudly. Used on both the triage entry and the
 // mobile browse header. Tap opens the full field sheet on mobile; desktop renders static.
 function fieldBandHTML(key){
+  if (!SHOW_FIELD_DATA) return '';   // pulled from the consumer path — see SHOW_FIELD_DATA
   const f = fieldStats(key);
   if (!f.vetted) return '';
   const stats = [];
