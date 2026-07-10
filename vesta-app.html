@@ -4959,18 +4959,19 @@ function requestHTML(){
     '<form id="req-form" class="req-form">'+
       '<div class="req-row"><label class="req-label" for="rq-sum">What’s going on? *</label>'+
         (reqData.match ? '<span class="req-match">'+SPARK+'Your Vesta match — '+esc(jobLabel(reqData.match.job))+'</span>' : '')+
-        '<textarea class="req-textarea" id="rq-sum" maxlength="500" placeholder="A short note about the work you need — what’s happening, and where on the property.">'+(reqData.match ? esc(jobLabel(reqData.match.job)) : '')+'</textarea></div>'+
+        '<textarea class="req-textarea" id="rq-sum" maxlength="1200" placeholder="Describe the work — what’s happening, where on the property, how old it is, and anything a pro should know before they come out. The more detail, the better the reply.">'+(reqData.match ? esc(jobLabel(reqData.match.job)) : '')+'</textarea></div>'+
       '<div class="req-row req-pair">'+
         '<div><label class="req-label" for="rq-name">Your name</label><input class="req-input" id="rq-name" maxlength="80" autocomplete="name"></div>'+
         '<div><label class="req-label" for="rq-email">Email — replies land here *</label><input class="req-input" id="rq-email" type="email" maxlength="254" autocomplete="email" placeholder="you@example.com"></div>'+
       '</div>'+
       '<div class="req-row req-pair">'+
+        '<div><label class="req-label" for="rq-phone">Phone — optional, lets them call</label><input class="req-input" id="rq-phone" type="tel" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="(203) 555-0148"></div>'+
         '<div><label class="req-label" for="rq-zip">ZIP code</label><input class="req-input" id="rq-zip" maxlength="5" inputmode="numeric" autocomplete="postal-code" placeholder="06824"></div>'+
-        '<div><label class="req-label" for="rq-urg">How soon</label><select class="req-select" id="rq-urg">'+
-          (function(){ const em = reqData.match && /emergency/.test(reqData.match.job);   // an emergency match pre-answers urgency
-            return '<option value="planning">Planning ahead</option><option value="soon"'+(em?'':' selected')+'>In the next few weeks</option><option value="emergency"'+(em?' selected':'')+'>It’s urgent</option>'; })()+
-        '</select></div>'+
       '</div>'+
+      '<div class="req-row"><label class="req-label" for="rq-urg">How soon</label><select class="req-select" id="rq-urg" style="width:100%">'+
+        (function(){ const em = reqData.match && /emergency/.test(reqData.match.job);   // an emergency match pre-answers urgency
+          return '<option value="planning">Planning ahead</option><option value="soon"'+(em?'':' selected')+'>In the next few weeks</option><option value="emergency"'+(em?' selected':'')+'>It’s urgent</option>'; })()+
+      '</select></div>'+
       '<button class="prof-req" type="submit" style="margin-top:4px">Send request <span aria-hidden="true">→</span></button>'+
       '<span class="prof-status" id="rq-status"></span>'+
       '<p class="prof-fine" style="margin-top:14px">Vesta sends '+name+' a one-time introduction with your note and your email as the reply-to. Your details go only to this pro — never sold, never a mailing list.</p>'+
@@ -4991,18 +4992,20 @@ async function requestSubmit(e){
   e.preventDefault();
   const st=$('rq-status'), out=$('req-result'), btn=e.target.querySelector('button[type=submit]');
   const fail=(m)=>{ st.className='prof-status is-error'; st.textContent=m; btn.disabled=false; };
-  const summary=(($('rq-sum')||{}).value||'').trim().slice(0,500);
+  const summary=(($('rq-sum')||{}).value||'').trim().slice(0,1200);
   const name=(($('rq-name')||{}).value||'').trim().slice(0,80);
   const email=(($('rq-email')||{}).value||'').trim();
+  const phone=(($('rq-phone')||{}).value||'').trim();
   const zip=(($('rq-zip')||{}).value||'').replace(/[^\d]/g,'').slice(0,5);
   const urgency=($('rq-urg')||{}).value||'soon';
   if (!summary) return fail('Say what’s going on first.');
   if (!/.+@.+\..+/.test(email)) return fail('Add an email — replies land there.');
+  if (phone && (phone.replace(/\D/g,'').length<10)) return fail('Check the phone number, or leave it blank.');
   btn.disabled=true; st.className='prof-status'; st.textContent='Sending…';
   const trade = TRADE_DB[reqData.trade] || reqData.trade || '';
   const who = esc(reqData.name||'this pro');
   try {
-    const { data:r } = await HOME.api('/request', { method:'POST', body:{ trade, zip, summary, urgency, name, email, place_ids:[reqData.placeId] } });
+    const { data:r } = await HOME.api('/request', { method:'POST', body:{ trade, zip, summary, urgency, name, email, phone, place_ids:[reqData.placeId] } });
     if (r && r.ok){
       const t = (r.targets||[])[0] || {};
       let msg;
