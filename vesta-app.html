@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Vesta — Find a contractor worth hiring. | 4THWALL</title>
 <meta name="description" content="Vesta matches you with vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care, painters, masons, tree crews, flooring pros, window & door installers, pool pros. Each one read and summarized by Vesta. No ads, no pay-to-play.">
 <link rel="canonical" href="https://4thwall.solutions/vesta">
@@ -53,7 +53,17 @@
 @view-transition { navigation: auto; }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-html,body { height:100%; overscroll-behavior:none; }
+html,body { height:100%; overscroll-behavior:none; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+/* MOBILE VIEWPORT STABILITY: iOS auto-zooms when a text field with font-size <16px is focused,
+   and never cleanly zooms back — so navigating between screens leaves the app "loosened"/off-
+   centre until you pinch to reset. 16px on every focusable field kills the auto-zoom (the
+   viewport meta locks pinch + double-tap). touch-action:manipulation drops the double-tap-zoom
+   gesture app-wide; the swipe deck keeps its own pan-y. */
+#app { touch-action:manipulation; }
+@media (max-width:899.98px){
+  input[type="text"], input[type="email"], input[type="tel"], input[type="search"],
+  input[type="number"], input:not([type]), textarea, select { font-size:16px; }
+}
 /* Keyboard-flush composer: --kb = the live keyboard inset (visualViewport watcher below).
    The svh-locked shell doesn't shrink when iOS raises the keyboard, so the conversation
    column and the triage-chat composer pad up by exactly the keyboard height — the composer
