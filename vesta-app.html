@@ -577,6 +577,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .card[data-k="2"] { z-index:10; transform:translateY(56px) scale(.92); }
 .card-top { display:flex; align-items:center; gap:12px; margin-bottom:13px; }
 .card-mono { width:46px; height:46px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:18px; font-weight:600; color:var(--ebony); }
+.card-mono svg { width:23px; height:23px; color:var(--olive); }
 .card-id { min-width:0; flex:1; }
 .card-name { font-family:var(--serif); font-size:22px; font-weight:700; line-height:1.12; letter-spacing:-.02em; color:var(--olive); }
 .card-town { font-size:12px; color:var(--ebony); margin-top:2px; }
@@ -942,6 +943,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .favrow { position:relative; background:var(--nm); border:none; border-radius:20px; padding:16px 16px 15px; box-shadow:var(--sh-row); }
 .favrow-top { display:flex; gap:13px; align-items:flex-start; cursor:pointer; }
 .fav-mono { width:44px; height:44px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:16px; font-weight:600; color:var(--ebony); }
+.fav-mono svg { width:22px; height:22px; color:var(--olive); }
 .fav-id { min-width:0; flex:1; padding-right:34px; }
 .fav-name { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--olive); line-height:1.2; letter-spacing:-.01em; }
 .fav-town { font-size:11.5px; color:var(--ebony); margin-top:2px; }
@@ -1068,6 +1070,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .vsr { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:none; border:none; cursor:pointer; padding:11px 12px; border-radius:14px; }
 .vsr:hover { background:var(--bg); }
 .vsr-mono { width:40px; height:40px; flex-shrink:0; border-radius:11px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:15px; font-weight:600; color:var(--ebony); }
+.vsr-mono svg { width:20px; height:20px; color:var(--olive); }
 .vsr-main { min-width:0; }
 .vsr-name { display:block; font-family:var(--serif); font-size:16px; font-weight:600; color:var(--olive); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .vsr-town { display:block; font-size:12px; color:var(--ebony); }
@@ -1307,6 +1310,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .fcard.flash { box-shadow:0 0 0 2px var(--olive) !important; }
   .fcard-top { display:flex; align-items:flex-start; gap:13px; }
   .fcard-mono { width:46px; height:46px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:17px; font-weight:600; color:var(--ebony); }
+  .fcard-mono svg { width:23px; height:23px; color:var(--olive); }
   .fcard-id { flex:1; min-width:0; }
   .fcard-name { font-family:var(--serif); font-size:20px; font-weight:700; letter-spacing:-.02em; color:var(--olive); line-height:1.14; }
   .fcard-town { font-size:12.5px; color:var(--ebony); margin-top:3px; }
@@ -3422,14 +3426,21 @@ function splitRead(read){
   return m ? { lede: m[1], rest: read.slice(m[0].length) } : { lede: '', rest: read };
 }
 function statStripHTML(con){
-  const cells = [];
-  if (con.sinceYear) cells.push('<span class="stat"><b>'+(2026-con.sinceYear)+'</b><i>yrs in business</i></span>');
-  if (con.reviewCount) cells.push('<span class="stat"><b>'+con.reviewCount+'</b><i>reviews read</i></span>');
+  // Firm-facts only — NEVER our review sample. "65 reviews read" on a shop with 700 reviews frames
+  // OUR reading depth as THEIR reputation and quietly dilutes the read's credibility; a raw total
+  // would just reintroduce the popularity-contest signal Vesta rejects. Every cell here is about the
+  // contractor — tenure · county standing (our rank percentile) · registration · certification —
+  // added in priority order; the first three that apply render.
+  const pool = [];
+  if (con.sinceYear && (2026-con.sinceYear) >= 1) pool.push('<b>'+(2026-con.sinceYear)+'</b><i>years in business</i>');
   if (con.ratingBand==='top10' || con.ratingBand==='top25')
-    cells.push('<span class="stat"><b>'+(con.ratingBand==='top10'?'Top 10%':'Top 25%')+'</b><i>county standing</i></span>');
-  if (con.registered && tradeSupportsReg(con.trade)) cells.push('<span class="stat"><b>CT</b><i>registered</i></span>');
-  if (!cells.length) return '';
-  return '<div class="statstrip">'+cells.slice(0,3).join('<span class="statdiv" aria-hidden="true"></span>')+'</div>';
+    pool.push('<b>'+(con.ratingBand==='top10'?'Top 10%':'Top 25%')+'</b><i>county standing</i>');
+  if (con.registered && tradeSupportsReg(con.trade))
+    pool.push('<b>CT</b><i>state-registered</i>');
+  if (con.certs && con.certs.length && (con.trade==='roofing'||con.trade==='hvac'))
+    pool.push('<b>'+esc(String(con.certs[0]).split(/[ (—–]/)[0].trim())+'</b><i>certified installer</i>');
+  if (!pool.length) return '';
+  return '<div class="statstrip">'+pool.slice(0,3).map(c=>'<span class="stat">'+c+'</span>').join('<span class="statdiv" aria-hidden="true"></span>')+'</div>';
 }
 function readHTML(con, cls){
   const s = splitRead(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.');
@@ -3464,7 +3475,7 @@ function cardHTML(con, k){
       '<img class="vph-cover" decoding="async" alt="" src="'+esc(HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=720'))+'" '+
         'onload="this.parentElement.classList.add(\'vph-cover--on\')" onerror="this.closest(\'.card-cover\').remove()">'+
       '<span class="vph-cover-badge">Photos</span></button>':'')+
-    '<div class="card-top"><div class="card-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
+    '<div class="card-top"><div class="card-mono" aria-hidden="true">'+ICONS[tradeIconOf(con.trade)]+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
     statStripHTML(con)+
     (mw ? '<div class="card-matchwhy">'+SPARK+'<span>'+esc(mw)+'</span></div>' : '')+
@@ -3653,7 +3664,7 @@ function favRowHTML(con){
   return '<div class="favrow" data-place="'+esc(con.placeId)+'">'+
     '<button class="fav-unlike" data-unlike="'+esc(con.placeId)+'" aria-label="Remove '+esc(con.name)+' from saved">'+BOOKMARK_FILL+'</button>'+
     '<div class="favrow-top">'+
-      '<div class="fav-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
+      '<div class="fav-mono" aria-hidden="true">'+ICONS[tradeIconOf(con.trade)]+'</div>'+
       '<div class="fav-id"><div class="fav-name">'+esc(con.name)+'</div><div class="fav-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
         (con.standing?'<div class="fav-band">'+esc(con.standing)+'</div>':'')+'</div>'+
     '</div>'+
@@ -3726,7 +3737,7 @@ function renderFav(){
 function histRowHTML(con){
   const saved = isLiked(con.placeId);
   return '<button class="histrow" data-place="'+esc(con.placeId)+'" data-trade="'+esc(con.trade)+'" aria-label="Take another look at '+esc(con.name)+'">'+
-    '<span class="fav-mono" aria-hidden="true">'+esc(monogram(con.name))+'</span>'+
+    '<span class="fav-mono" aria-hidden="true">'+ICONS[tradeIconOf(con.trade)]+'</span>'+
     '<span class="hist-id"><span class="fav-name">'+esc(con.name)+'</span><span class="fav-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</span></span>'+
     (saved ? '<span class="hist-saved" title="Saved" aria-label="Saved">'+BOOKMARK_FILL+'</span>' : '<span class="hist-go" aria-hidden="true">'+SKIP+'</span>')+
   '</button>';
@@ -3948,7 +3959,7 @@ function feedCardHTML(con, i){
   const bandHTML = bandText ? '<div class="fcard-band'+(isM?' fcard-why':'')+'">'+(isM?SPARK:'')+esc(bandText)+'</div>' : '';
   return '<article class="fcard" data-place="'+esc(con.placeId)+'" style="--d:'+(Math.min(i||0,8)*30)+'ms">'+
     '<div class="fcard-top">'+
-      '<div class="fcard-mono" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
+      '<div class="fcard-mono" aria-hidden="true">'+ICONS[tradeIconOf(con.trade)]+'</div>'+
       '<div class="fcard-id"><div class="fcard-name" style="view-transition-name:'+vtName(con.placeId)+'">'+esc(con.name)+'</div>'+
         '<div class="fcard-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
         bandHTML+'</div>'+
@@ -4367,7 +4378,7 @@ function renderSearchResults(q){
   }
   res.innerHTML = sug + matches.map(c =>
     '<button class="vsr" data-place="'+esc(c.placeId)+'" data-trade="'+esc(c.trade)+'">'+
-      '<span class="vsr-mono" aria-hidden="true">'+esc(monogram(c.name))+'</span>'+
+      '<span class="vsr-mono" aria-hidden="true">'+ICONS[tradeIconOf(c.trade)]+'</span>'+
       '<span class="vsr-main"><span class="vsr-name">'+esc(c.name)+'</span><span class="vsr-town">'+esc(c.town)+' · '+esc(tradeLabelOf(c.trade))+'</span></span>'+
     '</button>').join('');
   const rt = res.querySelector('.vsr-route'); if(rt) rt.addEventListener('click', () => {
