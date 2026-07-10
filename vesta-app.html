@@ -1154,17 +1154,21 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
      scrolls — the center is vertically centered and static, only the report column scrolls. */
   #s-home.screen { flex:1; min-width:0; height:100vh; overflow:hidden; }
   #s-home .home-body { max-width:none; margin:0; padding:0; height:100vh; overflow:hidden; flex:none; display:block; background:none; }
-  #s-home .home-hero { display:grid; grid-template-columns:1fr 400px; gap:0; height:100vh; align-items:stretch; }
-  #s-home .home-hero-main { min-width:0; height:100vh; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:6vh 56px 5.5vh; }
-  #s-home .home-hero-main > .vfold, #s-home .home-hero-main > #home-search, #s-home .home-hero-main > .vthread-fold { width:100%; max-width:600px; }
-  /* the header (medallion + h1 + sub) stays a tight cluster at top; the space opens up
-     below it so the 4 options breathe and the composer + route sit lower on the screen */
-  #s-home .home-medallion { margin-bottom:16px; }
-  #s-home .home-starters { gap:16px; margin:10px 0 0; }
-  #s-home #home-search { margin-top:auto; }
-  /* Field Report = its own 400 column, scrolls internally, floats as a soft card */
-  #s-home .home-hero-proof { width:400px; height:100vh; overflow-y:auto; scrollbar-width:none; padding:30px 30px 40px 12px; margin:0; position:static; align-self:stretch; }
-  #s-home .home-hero-proof::-webkit-scrollbar { display:none; }
+  #s-home .home-hero { display:grid; grid-template-columns:1fr; gap:0; height:100vh; align-items:stretch; }
+  #s-home .home-hero-main { min-width:0; height:100vh; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:6vh 56px 5.5vh; }
+  /* one 600px column — every section aligns to it, centred, so nothing straggles wide now
+     that the Field Report column is gone. sub + starters had no cap and were stretching to
+     ~866px; pin them like the h1/composer/route. */
+  #s-home .home-hero-main > .vfold, #s-home .home-hero-main > #home-search, #s-home .home-hero-main > .vthread-fold,
+  #s-home .home-sub, #s-home .home-starters { width:100%; max-width:600px; margin-left:auto; margin-right:auto; }
+  #s-home .home-medallion { margin-bottom:18px; }
+  #s-home .home-sub { margin-top:14px; }
+  #s-home .home-starters { gap:16px; margin-top:26px; }
+  #s-home #home-search { margin-top:30px; }
+  /* Field Report pulled from the desktop home — county aggregates are the wrong altitude
+     for a homeowner picking one contractor (same call as the mobile Round-4 pull). The
+     centre column now owns the full width; the conversation is the hero. */
+  #s-home .home-hero-proof { display:none; }
   /* the centered medallion — the 4THWALL mark, soft-raised, at the top of the center column */
   #s-home .home-medallion { display:flex; align-items:center; justify-content:center; width:54px; height:54px; border-radius:50%; margin:0 auto 18px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-out); flex-shrink:0; }
   #s-home .home-medallion svg { width:30px; height:30px; }
