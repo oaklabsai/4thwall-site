@@ -6708,7 +6708,10 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
       if (TRI_OK) enterConverseMobile(); else openSearch();
     }); }
   { const ci=$('hs-cin'); if(ci) ci.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); vSubmit(); } }); }
-  { const cs=$('hs-csend'); if(cs) cs.addEventListener('click', vSubmit); }
+  // mousedown-preventDefault so tapping Send never pulls focus off the composer — the keyboard
+  // stays up and the input stays hot for the next message. preventDefault on mousedown does NOT
+  // block the click, so vSubmit still fires. (Drew, 7/10 — "typed hey, couldn't type anymore")
+  { const cs=$('hs-csend'); if(cs){ cs.addEventListener('mousedown', e=>e.preventDefault()); cs.addEventListener('click', vSubmit); } }
   // The thread X: desktop exits the morph back to the rest home (unchanged). Mobile has no
   // rest home anymore — the chat IS the home — so X resets to a fresh conversation (cards back).
   { const x=$('vth-x'); if(x) x.addEventListener('click', ()=>{
