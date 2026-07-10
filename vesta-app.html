@@ -564,6 +564,12 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .statstrip .statdiv { width:1px; background:rgba(74,75,47,.14); flex-shrink:0; }
 .syn-lede { font-size:1.12em; font-weight:600; letter-spacing:-.012em; }
 .syn-body { opacity:.86; }
+/* "Why Vesta says this →" — the read collapses to its one-line verdict; this reveals the rest in
+   place. Caveat + underline, matching the app's button voice. */
+.syn-why { display:inline-flex; align-items:center; margin-top:11px; background:none; border:none; padding:2px 0; cursor:pointer; font-family:var(--script); font-size:18px; font-weight:700; color:var(--olive); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1.5px; line-height:1; }
+.syn-why:active { opacity:.65; }
+.syn-collapsed .syn-txt { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; overflow:hidden; }
+.card-synwrap.syn-collapsed::after { display:none; }   /* nothing to scroll when collapsed → no fade */
 /* The rollout beat: a freshly promoted top card cascades its layers in —
    identity, then the numbers, then the read. Replays on every promotion. */
 .card[data-k="0"] .card-top { animation:tileIn .4s var(--spring) both; }
@@ -971,6 +977,12 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .bnav-btn { background:none; border:none; cursor:pointer; color:var(--ebony); min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
 .bnav-btn:hover { color:var(--olive); }
 .bnav-btn.on { color:var(--olive); }
+/* Ask Vesta — the persistent way back to the chat once you're inside a trade (#5). The bottom
+   nav only appears off the home screen, so this is the one always-visible handle on Vesta Live.
+   Filled + labelled so it reads as the primary action and a boomer can't miss it. */
+.bnav-ask { display:flex; align-items:center; gap:7px; background:var(--dark-grad); color:var(--white); border:none; cursor:pointer; padding:10px 17px; border-radius:var(--r-pill); font-family:var(--sans); font-size:13px; font-weight:700; white-space:nowrap; box-shadow:0 5px 14px -4px rgba(67,68,42,.55); }
+.bnav-ask svg { width:17px; height:17px; color:var(--tea); flex-shrink:0; }
+.bnav-ask:active { transform:scale(.97); }
 
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms!important; animation-duration:.01ms!important; } }
 :focus-visible { outline:2.5px solid var(--tea); outline-offset:2px; }
@@ -1786,7 +1798,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
       <button class="tb-filter" id="tb-filter" aria-label="Filter pros"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="17" y2="6"/><line x1="3" y1="14" x2="17" y2="14"/><circle cx="8" cy="6" r="2.3" fill="var(--white)"/><circle cx="13" cy="14" r="2.3" fill="var(--white)"/></svg><span>Filters</span><span class="tb-filter-ct" hidden></span></button>
     </header>
     <div class="browse-hdr">
-      <h1 class="browse-h1" id="browse-h1" aria-live="polite">Recommended roofers</h1>
+      <h1 class="browse-h1" id="browse-h1" aria-live="polite">Recommended pros</h1>
       <p class="browse-sub" id="browse-sub">Save the ones worth a call</p>
     </div>
     <div class="chips-row" id="chips-row" role="group" aria-label="Filter by what you need"></div>
@@ -1884,6 +1896,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   <nav class="bnav" aria-label="Main navigation">
     <button class="bnav-btn" id="nav-home" aria-label="Browse trades"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="8" height="8" rx="2"></rect><rect x="12" y="2" width="8" height="8" rx="2"></rect><rect x="2" y="12" width="8" height="8" rx="2"></rect><rect x="12" y="12" width="8" height="8" rx="2"></rect></svg></button>
     <button class="bnav-btn" id="nav-search" aria-label="Search"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg></button>
+    <button class="bnav-ask" id="nav-ask" aria-label="Ask Vesta — open the chat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v10H9l-4 4V5z"/></svg>Ask Vesta</button>
     <button class="bnav-btn" id="nav-saved" aria-label="Saved"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h10a1 1 0 011 1v16l-6-4-6 4V4a1 1 0 011-1z"></path></svg><span class="bnav-badge" id="nav-saved-ct" hidden></span></button>
     <button class="bnav-btn" id="nav-you" aria-label="Your profile"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="8" r="4"></circle><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8"></path></svg></button>
   </nav>
@@ -2867,7 +2880,9 @@ function startSearchRotator(){
   const wrap = el.closest('.hs-ph');
   const cin = $('hs-cin');   // desktop composer: the rotator drives its placeholder too
   const feed = s => { el.textContent = s; if (cin && !$('s-home').classList.contains('vconv') && !cin.disabled && document.activeElement !== cin) cin.placeholder = s || 'Describe it in your own words…'; };
-  let i = 0;
+  // Don't always lead with the same example ("roof leak after a storm"): vary the first
+  // impression so a lawn/paint/HVAC-minded visitor doesn't feel the search is about roofing.
+  let i = Math.floor(Math.random() * SEARCH_EG.length);
   const TYPE_MS = 42, TYPE_JITTER = 26, ERASE_MS = 20, HOLD_MS = 1900, GAP_MS = 350;
   const typeOut = (text, done) => {
     let ci = 0;
@@ -2890,6 +2905,10 @@ function startSearchRotator(){
   const cycle = () => { typeOut(SEARCH_EG[i], () => eraseOut(SEARCH_EG[i], () => { i = (i+1) % SEARCH_EG.length; cycle(); })); };
   cycle();
 }
+// The rotator is a recursive setTimeout chain — left running it churns forever after you leave
+// home, and (on desktop) keeps rewriting the composer placeholder. Stop it when we navigate off
+// home; startSearchRotator() restarts cleanly (guards on _searchRotI) when we come back.
+function stopSearchRotator(){ if (_searchRotI){ clearTimeout(_searchRotI); _searchRotI = null; } }
 function renderHome(){
   // problem pills — two modes, not one flat trade list: something's actively wrong
   // (urgent, phrased as the problem) vs. planning a project (phrased as the job).
@@ -3323,9 +3342,24 @@ function statStripHTML(con){
 }
 function readHTML(con, cls){
   const s = splitRead(con.read || 'Analyzed from public homeowner reviews and Connecticut contractor records.');
+  // Progressive disclosure (#1/#6): lead with the one-line verdict; the evidence sits one tap
+  // away, so a homeowner who "just wants their lawn cut" isn't met with a wall of text.
   return '<div class="'+cls+'">'+
-    (s.lede ? '<span class="syn-lede">'+esc(s.lede)+'</span> ' : '')+
-    '<span class="syn-body">'+esc(s.rest)+'</span></div>';
+    '<div class="syn-txt">'+
+      (s.lede ? '<span class="syn-lede">'+esc(s.lede)+'</span> ' : '')+
+      '<span class="syn-body">'+esc(s.rest)+'</span>'+
+    '</div>'+
+    '<button type="button" class="syn-why">Why Vesta says this &rarr;</button>'+
+  '</div>';
+}
+// Expand/collapse the card read in place (the "Why →" tap). Kept out of the swipe path by the
+// tap handler in wireTopCard, which routes a tap on .syn-why here instead of opening the profile.
+// Collapse = a 2-line clamp on .syn-txt (works for every read, split or not); expand shows it all.
+function toggleCardRead(card, btn){
+  const wrap = card.querySelector('.card-synwrap'); if(!wrap) return;
+  const collapsed = wrap.classList.toggle('syn-collapsed');
+  btn.innerHTML = collapsed ? 'Why Vesta says this &rarr;' : 'Show less';
+  if(collapsed){ const syn=card.querySelector('.card-syn'); if(syn) syn.scrollTop=0; }
 }
 function cardHTML(con, k){
   // Read-led card: the "Why this contractor?" stack (rank band + credentials) lives on the
@@ -3344,8 +3378,8 @@ function cardHTML(con, k){
     statStripHTML(con)+
     (mw ? '<div class="card-matchwhy">'+SPARK+'<span>'+esc(mw)+'</span></div>' : '')+
     '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
-    '<div class="card-synwrap">'+readHTML(con,'card-syn')+'</div>'+
-    '<div class="card-hint">'+(desktop()?'← skip · save →':'Scroll to read · tap for the full profile')+'</div>'+
+    '<div class="card-synwrap syn-collapsed">'+readHTML(con,'card-syn')+'</div>'+
+    '<div class="card-hint">'+(desktop()?'← skip · save →':'Tap for the full profile')+'</div>'+
   '</article>';
 }
 function deckEndHTML(){
@@ -3414,9 +3448,13 @@ function wireTopCard(con){
   const card = $('deck').querySelector('.card[data-k="0"]'); if(!card) return;
   const save = card.querySelector('.stamp-save'), pass = card.querySelector('.stamp-pass');
   const synEl = card.querySelector('.card-syn');
-  let active=false, downX=0, downY=0, dx=0, dy=0, moved=0, t0=0, mode=null, startedInSyn=false, lastY=0, lastX=0, lastT=0, vx=0;
+  // Only offer "Why →" when the read is actually longer than its 2-line preview — a short read
+  // shows whole, no dead toggle.
+  { const txt=card.querySelector('.syn-txt'), why=card.querySelector('.syn-why');
+    if(txt&&why) requestAnimationFrame(()=>{ if(txt.scrollHeight <= txt.clientHeight + 2) why.style.display='none'; }); }
+  let active=false, downX=0, downY=0, dx=0, dy=0, moved=0, t0=0, mode=null, startedInSyn=false, downOnWhy=false, lastY=0, lastX=0, lastT=0, vx=0;
   const reset = anim => { card.style.transition = anim ? 'transform .3s cubic-bezier(.34,1.1,.64,1)' : 'none'; card.style.transform=''; if(save)save.style.opacity=0; if(pass)pass.style.opacity=0; };
-  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; lastY=e.clientY; lastX=e.clientX; lastT=Date.now(); vx=0; t0=Date.now(); moved=0; dx=0; dy=0; mode=null; startedInSyn = !!(synEl && synEl.contains(e.target) && synEl.scrollHeight > synEl.clientHeight + 2); card.style.transition='none'; try{card.setPointerCapture(e.pointerId);}catch(_){} });
+  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; lastY=e.clientY; lastX=e.clientX; lastT=Date.now(); vx=0; t0=Date.now(); moved=0; dx=0; dy=0; mode=null; startedInSyn = !!(synEl && synEl.contains(e.target) && synEl.scrollHeight > synEl.clientHeight + 2); downOnWhy = !!(e.target && e.target.closest && e.target.closest('.syn-why')); card.style.transition='none'; try{card.setPointerCapture(e.pointerId);}catch(_){} });
   card.addEventListener('pointermove', e => {
     if(!active) return;
     dx=e.clientX-downX; dy=e.clientY-downY; moved=Math.max(moved, Math.abs(dx)+Math.abs(dy));
@@ -3436,6 +3474,9 @@ function wireTopCard(con){
   });
   const up = (e) => { if(!active) return; active=false; const dt=Date.now()-t0;
     if(moved<8 && dt<300){ reset(false);
+      // pointer capture redirects the pointerup target to the card, so use the DOWN target (read
+      // before setPointerCapture) to know a tap landed on "Why →".
+      if(downOnWhy){ const why=card.querySelector('.syn-why'); if(why) toggleCardRead(card, why); return; }
       const tile = e && e.target && e.target.closest && e.target.closest('.vph-tile');
       if(tile){ const ph=PHOTO_CACHE.get(con.placeId)||[]; if(ph.length){ openPhotoLightbox(ph, +tile.dataset.i||0); return; } }
       const cover = e && e.target && e.target.closest && e.target.closest('.card-cover');
@@ -4992,7 +5033,7 @@ function showSaved(){
 function goAccount(){ location.href = signedIn() ? '/myhome' : HOME.signinHref('/vesta'); }
 
 /* NAV */
-function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; }
+function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; if (name!=='home') stopSearchRotator(); }
 // User picked a trade/problem: run the triage first (when the trade has a bank + the entry is
 // user-initiated), else go straight to browse. opts.walk===false = passive land (desktop auto/resize).
 function openBrowse(key, opts){
@@ -5008,7 +5049,7 @@ function showBrowse(key){
   ensureDeck(key);   // no interstitial — the first vetted card is the landing
   showScreen('browse'); renderNeedChips(); renderSidebar(); showDeck(); updateBrowseHead(); renderDeck(); updateNavState();
 }
-function goHome(){ S.chatReturn=false; closeSheet(); S.mode='trade'; S.triageActive=false; S.triageMode=null; S.triChat=null; showScreen('home'); renderReturn(); renderSidebar(); updateNavState(); }
+function goHome(){ S.chatReturn=false; closeSheet(); S.mode='trade'; S.triageActive=false; S.triageMode=null; S.triChat=null; showScreen('home'); startSearchRotator(); renderReturn(); renderSidebar(); updateNavState(); }
 // Back that remembers a live conversation: if this screen was entered FROM Vesta Live,
 // back returns to the chat with the whole thread intact (mobile morph or desktop replay).
 function navBack(){
@@ -5429,6 +5470,9 @@ function mkTraceAdvancer(seq, showWord){
   return ()=> clearInterval(t);
 }
 
+// The bottom-nav "Ask Vesta" (#5): from any trade screen, get back to Vesta Live in one tap.
+// Resume an existing thread if there is one (never lose the conversation), else open a fresh one.
+function openVestaLive(){ if (vmMsgs.length) resumeConverse(); else enterConverse(); }
 function enterConverse(){
   // Vesta Live morphs the home in place on BOTH breakpoints now — desktop is unified onto
   // the proven mobile morph (the hero animates away, only the "Vesta" Caveat mark stays, the
@@ -5919,6 +5963,7 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   { const bb=$('browse-float-back'); if(bb) bb.addEventListener('click', navBack); }
   { const mfb=$('match-float-back'); if(mfb) mfb.addEventListener('click', navBack); }
   $('nav-home').addEventListener('click', () => { if (S.screen!=='home' || S.mode!=='trade'){ S.mode='trade'; goHome(); } });
+  { const na=$('nav-ask'); if(na) na.addEventListener('click', openVestaLive); }
   $('act-rewind').addEventListener('click', rewindDeck);
   $('act-pass').addEventListener('click', () => { const c=topCon(); if(c) commit('pass', c); });
   $('act-save').addEventListener('click', () => { const c=topCon(); if(c) commit('save', c); });
