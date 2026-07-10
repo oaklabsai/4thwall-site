@@ -242,6 +242,24 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* the 2×2 starters — centred in the thread until the chat begins */
 .vstarters { display:none; }
 #s-home.vconv .vstarters.show { display:flex; flex-direction:column; gap:14px; position:absolute; left:14px; right:14px; top:50%; transform:translateY(-50%); animation:vmsgIn .5s var(--spring) .4s both; }
+/* the one-line invitation under "How can I help?" — mobile-only (it points at the cards) */
+.vst-sub { text-align:center; font-size:11.5px; line-height:1.45; color:var(--ebony); margin:-6px auto 0; max-width:300px; }
+@media (min-width:900px){ .vst-sub { display:none; } }
+/* MOBILE CHAT-FIRST HOME: the chat is Vesta's entire mobile UI. The empty state shows the
+   explorable card stack instead of the 2×2 text starters (which stay desktop-only), and the
+   thread X hides on a fresh chat — there's nothing behind the chat to close back to. */
+@media (max-width:899.98px){
+  .vstarters .vst-grid { display:none; }
+  .vstarters .home-stack { margin-top:2px; }
+  /* the empty state flows in the thread column instead of absolute-centering (the card
+     stack is taller than the 2×2 grid the centering was built for — it clipped under the
+     composer). .vth-scroll above is flex:1, so this naturally bottom-anchors, chat-like. */
+  #s-home.vconv .vstarters.show { position:static; transform:none; padding:0 2px 2px; gap:11px; }
+  #s-home.vconv .vthread:has(.vstarters.show) .vth-x { display:none; }
+  /* boot guard: land already-morphed with no visible collapse animation on first paint */
+  #s-home.vboot .vfold, #s-home.vboot .vfold > .vfold-in,
+  #s-home.vboot .vthread-fold, #s-home.vboot .vthread-fold > .vfold-in { transition:none !important; }
+}
 .vst-head { text-align:center; font-size:13.5px; color:var(--ebony); font-weight:500; }
 .vst-head .sig { font-family:var(--script); font-size:17px; font-weight:700; color:var(--olive); transform:rotate(-6deg); display:inline-block; margin-right:3px; padding-bottom:3px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px; }
@@ -1701,8 +1719,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
           <div class="home-return" id="home-return"></div>
           <!-- fold-a: the header. On mobile it folds away when the conversation opens. -->
           <div class="vfold" id="vfold-a"><div class="vfold-in">
-          <h1 class="home-h1"><span class="hl-vlive">Vesta Live</span> &mdash; an honest answer, <span class="squig">not a sales pitch.</span></h1>
-          <p class="home-sub"><span class="hsub-m">Ask about anything home-related &mdash; a leak tonight, a full renovation, or just a price to sanity-check. Vesta reads the county&rsquo;s own record and answers you straight.</span><span class="hsub-d">Ask about anything home-related, from a leak tonight to a full renovation. Vesta reads the county&rsquo;s own record and answers you straight &mdash; like a trusted neighbor would.</span></p>
+          <h1 class="home-h1"><span class="hl-vlive">Vesta Live</span> &mdash; straight answers <span class="squig">about your home.</span></h1>
+          <p class="home-sub">A leak tonight, a renovation next spring, a price you want to sanity-check &mdash; ask anything. Vesta answers from the county&rsquo;s own record.</p>
           <!-- desktop only: 4 example messages, demonstrating real range before the composer -->
           <div class="home-starters" aria-label="Example questions for Vesta">
             <button class="hstart" data-say="Water is coming through my kitchen ceiling — who actually picks up on a Sunday?">
@@ -1731,6 +1749,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
               <div class="vth-scroll" id="vm-thread"></div>
               <div class="vstarters" id="vstarters">
                 <div class="vst-head"><span class="sig">Vesta.</span> How can I help?</div>
+                <p class="vst-sub">A leak tonight, a project next spring, a price to sanity-check &mdash; ask anything, or start from a card.</p>
+                <!-- mobile: the three explorable cards ARE the empty state (the chat is the whole UI);
+                     desktop keeps the 2×2 starters below and never shows the stack -->
+                <div class="home-stack" id="home-stack" aria-label="Find your way in"></div>
                 <div class="vst-grid">
                   <button class="vst" type="button" data-say="Water is coming through my kitchen ceiling — who actually picks up on a Sunday?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3L5 13.5h5L10 21l8-10.5h-5z"/></svg><span>Something&rsquo;s leaking</span></button>
                   <button class="vst" type="button" data-say="I want to redo my driveway next spring. Where do I even start?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.2-4.2L16 5l3 3L8.2 18.8z"/><path d="M14 7l3 3"/></svg><span>Planning a project</span></button>
@@ -1776,10 +1798,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
             </div>
           </div>
           </div></div><!-- /vfold-c -->
-          <!-- Mobile: the three ways in as a swipeable card stack. On desktop the sidebar
-               owns full browse, so this whole fold is hidden there. -->
+          <!-- fold-b: emptied — the swipeable card stack moved INTO the chat empty-state
+               (#vstarters), since the mobile home now boots straight into the conversation.
+               The fold shell stays so the morph's flex ordering is untouched. -->
           <div class="vfold" id="vfold-b"><div class="vfold-in">
-          <div class="home-stack" id="home-stack" aria-label="Find your way in"></div>
           </div></div><!-- /vfold-b -->
           <div class="home-problems" id="home-problems" aria-label="Common needs"></div>
           <div class="home-browse-sec">
@@ -5523,7 +5545,7 @@ function enterConverse(){
    real /api/triage stream. Own thread (#vm-thread) + turn fn so it never collides with the
    desktop match-screen chat (#tc-thread); reuses the same bank gate + pick machinery. ═══ */
 let vmBusy=false, vmDone=false, vmMsgs=[], vmTurns=0, vmDeckShown=false, vmDeckKey='';
-function enterConverseMobile(){
+function enterConverseMobile(noFocus){
   const h=$('s-home'); if(!h) return;
   vmMsgs=[]; vmTurns=0; vmDone=false; vmBusy=false; vmDeckShown=false; vmDeckKey='';
   const th=$('vm-thread'); if(th){ th.innerHTML=''; th.classList.remove('tc-resolved'); }
@@ -5532,7 +5554,9 @@ function enterConverseMobile(){
   const st=$('vstarters'); if(st) st.classList.add('show');
   // focus SYNCHRONOUSLY, inside the tap's own call stack — iOS only raises the keyboard for
   // an in-gesture focus; the old setTimeout(420) focus was silently ignored on the phone.
-  if(inp) inp.focus();
+  // noFocus = the cold-land boot (mobile home IS the chat now): no keyboard until the user
+  // taps the composer themselves — a raised keyboard over the explorable cards is hostile.
+  if(inp && !noFocus) inp.focus();
 }
 function exitConverseMobile(){
   const h=$('s-home'); if(!h) return;
@@ -6166,7 +6190,9 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
     }); }
   { const ci=$('hs-cin'); if(ci) ci.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); vSubmit(); } }); }
   { const cs=$('hs-csend'); if(cs) cs.addEventListener('click', vSubmit); }
-  { const x=$('vth-x'); if(x) x.addEventListener('click', exitConverseMobile); }
+  // The thread X: desktop exits the morph back to the rest home (unchanged). Mobile has no
+  // rest home anymore — the chat IS the home — so X resets to a fresh conversation (cards back).
+  { const x=$('vth-x'); if(x) x.addEventListener('click', ()=>{ if (desktop()) exitConverseMobile(); else enterConverseMobile(true); }); }
   document.querySelectorAll('#vstarters .vst').forEach(b => b.addEventListener('click', ()=>{
     const text=b.dataset.say; if(!TRI_OK){ openSearch(text); return; }
     if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(text);
@@ -6178,6 +6204,16 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
     if (TRI_OK){ if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(text); } else openSearch(text);
   }));
   triProbe();
+  // MOBILE: the chat IS Vesta's entire UI — boot straight into the conversation surface
+  // (no "Vesta Live" tap-through, no rest home). The explorable cards are the empty state;
+  // no keyboard on a cold land. .vboot suppresses the fold transitions for the first paint
+  // so the home doesn't visibly collapse into the chat on load. Desktop is untouched.
+  if (!desktop()){
+    const h=$('s-home');
+    h.classList.add('vboot');
+    enterConverseMobile(true);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>h.classList.remove('vboot')));
+  }
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
   $('vsearch-x').addEventListener('click', closeSearch);
