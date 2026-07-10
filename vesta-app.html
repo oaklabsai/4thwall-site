@@ -579,8 +579,12 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* Swipe card is read-first (no photo hero) — tighten the fixed chrome so the read wins the inches,
    especially on short viewports. Scoped to .card so the desktop feed's shared .statstrip is untouched. */
 .card .statstrip { padding:4px 0 7px; }
-.card-mono { width:46px; height:46px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:18px; font-weight:600; color:var(--ebony); }
+.card-mono { position:relative; width:46px; height:46px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:18px; font-weight:600; color:var(--ebony); overflow:hidden; }
 .card-mono svg { width:23px; height:23px; color:var(--olive); }
+.card-mono-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .3s ease; }
+.card-mono.has-img .card-mono-img { opacity:1; }
+.card-mono.has-img svg { display:none; }          /* photo loaded → drop the fallback icon */
+.card-mono.has-img { background:none; border-color:transparent; }
 .card-id { min-width:0; flex:1; }
 .card-name { font-family:var(--serif); font-size:22px; font-weight:700; line-height:1.12; letter-spacing:-.02em; color:var(--olive); }
 .card-town { font-size:12px; color:var(--ebony); margin-top:2px; }
@@ -3478,7 +3482,12 @@ function cardHTML(con, k){
     // Swipe card = read-first. On a phone the photo hero and the read were fighting for the same
     // vertical inches and the read — the product — lost, clipping to one line. Photos live on the
     // full profile (tap the card) + the lightbox; the swipe card gives every inch to the verdict.
-    '<div class="card-top"><div class="card-mono" aria-hidden="true">'+ICONS[tradeIconOf(con.trade)]+'</div>'+
+    // Mobile-only: the avatar is a single cover photo (visual identity with zero vertical cost now
+    // that the hero is gone). Trade icon is the fallback when a firm has no photo (img onerror).
+    '<div class="card-top"><div class="card-mono" aria-hidden="true">'+
+      '<img class="card-mono-img" decoding="async" alt="" src="'+esc(HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=160'))+'" '+
+        'onload="this.parentElement.classList.add(\'has-img\')" onerror="this.remove()">'+
+      ICONS[tradeIconOf(con.trade)]+'</div>'+
       '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
     statStripHTML(con)+
     (mw ? '<div class="card-matchwhy">'+SPARK+'<span>'+esc(mw)+'</span></div>' : '')+
