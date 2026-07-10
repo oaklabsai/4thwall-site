@@ -1260,26 +1260,25 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .deckwrap { display:none; }                 /* the swipe deck is mobile-only */
   .vbanner { display:none; }                  /* the deck's save/skip banner doesn't apply to a feed */
   .feedwrap { display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
-  /* desktop problem-first entry: search box + problem pills above the feed controls */
-  .feed-entry { display:flex; align-items:center; gap:12px; padding:18px 40px 4px; flex-shrink:0; }
-  .fe-search { flex:0 0 auto; width:min(440px,54%); min-width:200px; display:flex; align-items:center; gap:10px; background:var(--nm); border:none; border-radius:var(--r-pill); padding:11px 18px; cursor:text; box-shadow:var(--sh-row); font-family:var(--sans); font-size:14px; color:var(--ebony); text-align:left; outline:none; }
-  .fe-search:hover { border-color:rgba(74,75,47,.24); }
+  /* desktop entry: one calm, full-width search/describe box (the cross-trade pill row was removed —
+     it showed other trades' problems inside a chosen trade; the sidebar owns trade navigation). */
+  .feed-entry { display:flex; align-items:center; padding:18px 40px 6px; flex-shrink:0; }
+  .fe-search { flex:1 1 auto; width:100%; display:flex; align-items:center; gap:11px; background:var(--nm); border:none; border-radius:var(--r-pill); padding:14px 20px; cursor:text; box-shadow:var(--sh-row); font-family:var(--sans); font-size:15px; color:var(--ebony); text-align:left; outline:none; transition:box-shadow .16s; }
+  .fe-search:hover { box-shadow:var(--sh-row-h); }
   .fe-search:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
-  .fe-search > svg { width:17px; height:17px; flex-shrink:0; }
+  .fe-search > svg { width:18px; height:18px; flex-shrink:0; }
   .fe-search span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .fe-problems { flex:1 1 0; min-width:0; display:flex; align-items:center; gap:8px; overflow-x:auto; scrollbar-width:none; -webkit-mask-image:linear-gradient(to right,#000 90%,transparent); mask-image:linear-gradient(to right,#000 90%,transparent); }
-  .fe-problems::-webkit-scrollbar { display:none; }
-  .fe-prob { flex-shrink:0; display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--olive); background:var(--nm); border:none; border-radius:var(--r-pill); padding:8px 14px; cursor:pointer; white-space:nowrap; box-shadow:var(--sh-row); }
-  .fe-prob:hover { border-color:rgba(74,75,47,.3); }
-  .fe-prob-ic { display:flex; }
-  .fe-prob-ic svg { width:15px; height:15px; }
 
-  .feed-controls { display:flex; align-items:center; gap:10px; padding:14px 40px 12px; flex-shrink:0; }
+  /* Sort · Town · Registered = quiet refinements, demoted below the friendly need chips.
+     A hairline top rule + muted controls read them as secondary, not a fourth primary bar. */
+  .feed-controls { display:flex; align-items:center; gap:9px; padding:12px 40px; margin-top:2px; border-top:1px solid rgba(74,75,47,.07); flex-shrink:0; }
   .feed-select { position:relative; display:inline-flex; }
-  .feed-select select { appearance:none; -webkit-appearance:none; font-family:var(--sans); font-size:13.5px; font-weight:500; color:var(--olive); background:var(--nm); border:none; border-radius:var(--r-pill); padding:9px 36px 9px 16px; cursor:pointer; box-shadow:var(--sh-row); outline:none; }
+  .feed-select select { appearance:none; -webkit-appearance:none; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--ebony); background:transparent; border:1px solid rgba(74,75,47,.14); border-radius:var(--r-pill); padding:8px 34px 8px 15px; cursor:pointer; box-shadow:none; outline:none; transition:border-color .14s, color .14s; }
+  .feed-select select:hover { border-color:rgba(74,75,47,.3); color:var(--olive); }
   .feed-select select:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
-  .feed-select::after { content:''; position:absolute; right:15px; top:50%; width:7px; height:7px; border-right:1.7px solid var(--ebony); border-bottom:1.7px solid var(--ebony); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
-  .feed-toggle { display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-size:13.5px; font-weight:500; color:var(--olive); background:var(--nm); border:none; border-radius:var(--r-pill); padding:8px 15px; cursor:pointer; box-shadow:var(--sh-row); transition:background .15s,border-color .15s; }
+  .feed-select::after { content:''; position:absolute; right:14px; top:50%; width:6px; height:6px; border-right:1.6px solid var(--ebony); border-bottom:1.6px solid var(--ebony); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+  .feed-toggle { display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--ebony); background:transparent; border:1px solid rgba(74,75,47,.14); border-radius:var(--r-pill); padding:7px 14px; cursor:pointer; box-shadow:none; transition:background .15s,border-color .15s,color .14s; }
+  .feed-toggle:hover { border-color:rgba(74,75,47,.3); color:var(--olive); }
   .feed-toggle:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
   .feed-toggle .ft-dot { width:15px; height:15px; border-radius:50%; border:1.7px solid rgba(74,75,47,.32); position:relative; flex-shrink:0; transition:.15s; }
   .feed-toggle.on { background:var(--tea); border-color:transparent; font-weight:600; }
@@ -1288,14 +1287,15 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .feed-count { margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:rgba(74,75,47,.55); }
   .feed { flex:1; min-height:0; overflow-y:auto; padding:4px 40px 64px; display:flex; flex-direction:column; gap:14px; }
   .feed-empty { padding:54px 22px; text-align:center; color:var(--ebony); font-size:14px; }
-  /* need-filter chips (homeowner specifics, mined from real specialties) */
-  .feed-needs { display:flex; align-items:center; gap:8px; padding:0 40px 14px; overflow-x:auto; scrollbar-width:none; flex-shrink:0; -webkit-mask-image:linear-gradient(to right,#000 90%,transparent); mask-image:linear-gradient(to right,#000 90%,transparent); }
+  /* need-filter chips (homeowner specifics, mined from real specialties) — the primary,
+     friendly in-trade filter. Bigger tap targets + plain language for an older homeowner. */
+  .feed-needs { display:flex; align-items:center; gap:9px; padding:14px 40px 4px; overflow-x:auto; scrollbar-width:none; flex-shrink:0; -webkit-mask-image:linear-gradient(to right,#000 90%,transparent); mask-image:linear-gradient(to right,#000 90%,transparent); }
   .feed-needs::-webkit-scrollbar { display:none; }
-  .need-lbl { font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(74,75,47,.55); flex-shrink:0; margin-right:2px; }
-  .need-chip { flex-shrink:0; font-family:var(--sans); font-size:12.5px; font-weight:500; color:var(--olive); background:var(--nm); border:none; border-radius:var(--r-pill); padding:7px 14px; cursor:pointer; white-space:nowrap; box-shadow:var(--sh-row); }
-  .need-chip:hover { border-color:rgba(74,75,47,.3); }
+  .need-lbl { font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(74,75,47,.55); flex-shrink:0; margin-right:3px; }
+  .need-chip { flex-shrink:0; font-family:var(--sans); font-size:14px; font-weight:500; color:var(--olive); background:var(--nm); border:none; border-radius:var(--r-pill); padding:9px 17px; cursor:pointer; white-space:nowrap; box-shadow:var(--sh-row); transition:box-shadow .14s; }
+  .need-chip:hover { box-shadow:var(--sh-row-h); }
   .need-chip.on { background:var(--tea); border-color:transparent; }
-  .need-clear { flex-shrink:0; background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:12.5px; font-weight:600; color:var(--ebony); text-decoration:underline; text-underline-offset:2px; padding:7px 6px; }
+  .need-clear { flex-shrink:0; background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ebony); text-decoration:underline; text-underline-offset:2px; padding:7px 6px; }
   .need-clear:hover { color:var(--olive); }
   /* top-right cluster on a feed card: the See-full-profile pill + the overflow menu */
   .fcard-actions-top { display:flex; align-items:center; gap:8px; flex-shrink:0; }
@@ -1703,7 +1703,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .card-cover{ display:block; position:relative; width:100%; height:104px; flex:0 0 auto; padding:0; border:0; margin:1px 0 11px; border-radius:14px; overflow:hidden; cursor:pointer; background:rgba(74,75,47,.06); }
 .card-cover .vph-cover{ width:100%; height:100%; object-fit:cover; display:block; }
 /* feed card: ONE lazy hero (native loading=lazy), full gallery opens on tap */
-.vph-cover-btn{ display:block; position:relative; width:100%; padding:0; border:0; margin:13px 0 4px; border-radius:14px; overflow:hidden; cursor:pointer; background:rgba(74,75,47,.06); aspect-ratio:16/9; max-height:290px; }
+.vph-cover-btn{ display:block; position:relative; width:100%; padding:0; border:0; margin:15px 0 2px; border-radius:14px; overflow:hidden; cursor:pointer; background:rgba(74,75,47,.06); aspect-ratio:16/9; max-height:190px; }
 .vph-cover{ width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .4s ease; }
 .vph-cover--on .vph-cover{ opacity:1; }
 .vph-cover-badge{ position:absolute; right:10px; bottom:10px; background:rgba(20,20,14,.6); color:#fff; font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; padding:4px 8px; border-radius:999px; pointer-events:none; }
@@ -1899,8 +1899,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
         </div>
         <div class="feedwrap" id="feedwrap" hidden>
           <div class="feed-entry" id="feed-entry"></div>
-          <div class="feed-controls" id="feed-controls"></div>
           <div class="feed-needs" id="feed-needs"></div>
+          <div class="feed-controls" id="feed-controls"></div>
           <div class="feed" id="feed" aria-label="Contractor feed"></div>
         </div>
         <div class="favwrap" id="favwrap" hidden></div>
@@ -3860,18 +3860,16 @@ function applyFeed(){
 // feed, but the diagnosis entry is always one glance away). Search → the overlay; pill → its trade.
 function renderFeedEntry(){
   const el = $('feed-entry'); if(!el) return;
+  // One calm entry, full-width: search or describe. The cross-trade problem pills (Roof leak /
+  // No AC / …) used to sit here, but inside a chosen trade they showed OTHER trades' problems —
+  // pure confusion for an older homeowner already on the plumbing page. Trade navigation lives in
+  // the sidebar; "what you need" (below) is the in-trade filter. So the feed opens with one thing.
   el.innerHTML =
     '<button class="fe-search" id="fe-search" type="button" aria-label="Search or describe what you need">'+
       '<svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="9.5" r="6.5"></circle><line x1="14.5" y1="14.5" x2="20" y2="20"></line></svg>'+
       '<span>Describe a problem, or search a name…</span>'+
-    '</button>'+
-    '<div class="fe-problems" role="list" aria-label="Common needs">'+
-      PROBLEMS_ALL.map((p,i)=>'<button class="fe-prob" role="listitem" data-i="'+i+'" data-trade="'+esc(p.trade)+'" aria-label="'+esc(p.label)+' — browse this trade"><span class="fe-prob-ic" aria-hidden="true">'+ICONS[p.icon]+'</span>'+esc(p.label)+'</button>').join('')+
-    '</div>';
+    '</button>';
   const s=$('fe-search'); if(s) s.addEventListener('click', openSearch);
-  // Look up by index, not trade — roofing/hvac/plumbing/electrical each carry two pills
-  // (broken + planning) now, so a trade alone no longer identifies which one was tapped.
-  Array.from(el.querySelectorAll('.fe-prob')).forEach(b=>b.addEventListener('click',()=>{ const p=PROBLEMS_ALL[+b.dataset.i]; openBrowse(b.dataset.trade, p&&p.hi ? { hi:p.hi, hiLabel:p.label } : undefined); }));
 }
 function renderFeedControls(){
   const c = $('feed-controls'); if(!c) return;
@@ -3966,6 +3964,13 @@ function feedCardHTML(con, i){
           '</div></div>'+
       '</div>'+
     '</div>'+
+    // Lead with the idea, not the picture. Stats + Vesta's read sit directly under the name so the
+    // whole verdict reads without scrolling; the work photo follows as proof (it used to be a
+    // 290px banner that shoved the read below the fold — the read IS the product, so it leads).
+    statStripHTML(con)+
+    '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
+    readHTML(con,'fcard-syn clamp')+
+    (trust.length?'<div class="fcard-chips">'+trust.map(v=>'<span class="fcard-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
     // One lazy hero per card (native loading="lazy"): a feed is a many-card list, so
     // 5 photos x 40 cards froze the renderer + burned the Places budget. The hero loads
     // only when scrolled near; tapping it opens the full gallery (all photos).
@@ -3974,10 +3979,6 @@ function feedCardHTML(con, i){
         'onload="this.parentElement.classList.add(\'vph-cover--on\')" onerror="this.closest(\'.vph-cover-btn\').remove()">'+
       '<span class="vph-cover-badge">Photos</span>'+
     '</button>'+
-    statStripHTML(con)+
-    '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
-    readHTML(con,'fcard-syn clamp')+
-    (trust.length?'<div class="fcard-chips">'+trust.map(v=>'<span class="fcard-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
     '<button class="fcard-disclose" aria-expanded="false"><span>Vesta’s full analysis</span><span class="chev">'+CHEV+'</span></button>'+
     '<div class="fcard-more"><div class="fcard-more-inner">'+feedMoreHTML(con)+'</div></div>'+
     '<div class="fcard-actions">'+
