@@ -307,6 +307,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home.vconv .vstarters.show .vst-hints { margin-top:auto; }
   #s-home.vconv .vthread:has(.vstarters.show) #vm-thread { flex:0 0 auto; min-height:0; }
   #s-home.vconv .vthread:has(.vstarters.show) .vth-x { display:none; }
+  /* keyboard up: hide the explorable cards + hints (they overflow the shortened viewport and
+     spill over the composer) — leaves the Vesta wordmark clean at the top. (Drew, 7/10) */
+  #s-home.vconv.kb-open .home-stack, #s-home.vconv.kb-open .vst-hints { display:none; }
   /* the composer "text bubble" — de-greened to the dark tone (matches the sent bubbles),
      soft-lifted. Light text + a tea send button pop against the dark. */
   #s-home.vconv .home-search { background:var(--dark-grad); box-shadow:0 2px 6px rgba(40,41,22,.18), 0 14px 30px -10px rgba(40,41,22,.45), inset 0 1px 0 rgba(255,255,255,.08); }
@@ -6652,6 +6655,10 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
     const setKb = () => {
       const kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
       document.documentElement.style.setProperty('--kb', kb + 'px');
+      // keyboard up on the mobile home empty-state: the explorable cards + hints don't fit the
+      // shortened viewport and spill over the composer — collapse them so only the Vesta
+      // wordmark stays at the top. (Drew, 7/10 — "should just say vesta at the top")
+      const sh = $('s-home'); if (sh) sh.classList.toggle('kb-open', kb > 0);
       if (kb > 0){ const t = $('vm-thread') || $('tc-thread'); if (t) t.scrollTop = t.scrollHeight; }
     };
     vv.addEventListener('resize', setKb);
