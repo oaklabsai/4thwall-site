@@ -300,6 +300,8 @@ a,button{transition:transform .14s}
 }
 
 /* ════════════════ PRODUCTS — Atlas dark / Vesta tea ════════════════ */
+/* products lead the body (right under the hero) — the fork; needs its own top breathing room since .sec has none */
+.sec-products-top{padding-top:clamp(2.8rem,5vh,4rem)}
 .prod-grid{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
 .prod-card{position:relative;display:flex;flex-direction:column;border-radius:var(--r-card);padding:clamp(1.7rem,2.6vw,2.4rem);overflow:hidden;min-height:430px;transition:transform .3s var(--spring),box-shadow .3s ease}
 .prod-card:hover{transform:translateY(-4px)}
@@ -383,9 +385,9 @@ a,button{transition:transform .14s}
     4THWALL
   </a>
   <div class="nav-links" aria-label="Primary">
+    <a href="#products" class="nav-a">Products</a>
     <a href="#how" class="nav-a">How it works</a>
     <a href="#features" class="nav-a">What you get</a>
-    <a href="#products" class="nav-a">Products</a>
     <a href="/vesta" class="nav-a">Vesta</a>
   </div>
   <div class="nav-right">
@@ -423,8 +425,49 @@ a,button{transition:transform .14s}
   </div>
 </section>
 
-<!-- ════════════════ SHOWCASE ════════════════ -->
+<!-- ════════════════ PRODUCTS — the fork, right under the hero ════════════════ -->
+<section class="sec sec-products-top" id="products">
+  <div class="sec-head rv">
+    <span class="kicker">two products, one system</span>
+    <h2 class="sec-h">Both sides of the market,<br><em>under one roof.</em></h2>
+    <p class="sec-sub">4THWALL runs the back office that wins contractors the job — and the directory where homeowners find the pros who actually deliver. Two sides of the same flywheel.</p>
+  </div>
+  <div class="prod-grid">
+    <a class="prod-card prod-atlas rv" href="/atlas">
+      <div class="prod-tag">For Contractors</div>
+      <div class="prod-name">Atlas<span class="dot">.</span></div>
+      <p class="prod-line">The back office your business has been missing.</p>
+      <ul class="prod-feats">
+        <li>Leads captured &amp; qualified automatically</li>
+        <li>Estimates booked, jobs tracked</li>
+        <li>Reviews collected after every close</li>
+        <li>Campaigns that run in slow months</li>
+        <li>AI search visibility built in</li>
+      </ul>
+      <span class="prod-btn">Explore Atlas <span class="arr">→</span></span>
+    </a>
+    <a class="prod-card prod-vesta rv rv-d1" href="/vesta">
+      <div class="prod-tag">For Homeowners</div>
+      <div class="prod-name">Vesta<span class="dot">.</span></div>
+      <p class="prod-line">Find trusted pros. Get the job done.</p>
+      <ul class="prod-feats">
+        <li>Find local contractors</li>
+        <li>Verified work records</li>
+        <li>Search by trade &amp; ZIP</li>
+        <li>No ads, no pay-to-play</li>
+        <li>Free to search</li>
+      </ul>
+      <span class="prod-btn">Explore Vesta <span class="arr">→</span></span>
+    </a>
+  </div>
+</section>
+
+<!-- ════════════════ SHOWCASE — Atlas, working (proof after the offer) ════════════════ -->
 <section class="showcase" id="showcase">
+  <div class="sec-head rv">
+    <span class="kicker">see it work</span>
+    <h2 class="sec-h">Atlas, on the job<br><em>in under ten seconds.</em></h2>
+  </div>
   <div class="showcase-stage rv">
     <div class="showcase-card" id="showcaseCard">
       <div class="showcase-chrome">
@@ -541,42 +584,6 @@ a,button{transition:transform .14s}
       <p class="b-d">Atlas clients surface in Vesta — our homeowner recommendation engine — when Fairfield County asks who to hire.</p>
       <span class="b-kpi"><b>Vesta</b> · the demand side, built in</span>
     </div>
-  </div>
-</section>
-
-<!-- ════════════════ PRODUCTS ════════════════ -->
-<section class="sec" id="products">
-  <div class="sec-head rv">
-    <span class="kicker">two products, one system</span>
-    <h2 class="sec-h">Both sides of the market,<br><em>under one roof.</em></h2>
-  </div>
-  <div class="prod-grid">
-    <a class="prod-card prod-atlas rv" href="/atlas">
-      <div class="prod-tag">For Contractors</div>
-      <div class="prod-name">Atlas<span class="dot">.</span></div>
-      <p class="prod-line">The back office your business has been missing.</p>
-      <ul class="prod-feats">
-        <li>Leads captured &amp; qualified automatically</li>
-        <li>Estimates booked, jobs tracked</li>
-        <li>Reviews collected after every close</li>
-        <li>Campaigns that run in slow months</li>
-        <li>AI search visibility built in</li>
-      </ul>
-      <span class="prod-btn">Explore Atlas <span class="arr">→</span></span>
-    </a>
-    <a class="prod-card prod-vesta rv rv-d1" href="/vesta">
-      <div class="prod-tag">For Homeowners</div>
-      <div class="prod-name">Vesta<span class="dot">.</span></div>
-      <p class="prod-line">Find trusted pros. Get the job done.</p>
-      <ul class="prod-feats">
-        <li>Find local contractors</li>
-        <li>Verified work records</li>
-        <li>Search by trade &amp; ZIP</li>
-        <li>No ads, no pay-to-play</li>
-        <li>Free to search</li>
-      </ul>
-      <span class="prod-btn">Explore Vesta <span class="arr">→</span></span>
-    </a>
   </div>
 </section>
 
