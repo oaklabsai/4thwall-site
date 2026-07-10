@@ -473,8 +473,9 @@ function homeownersBlock(enr) {
   if (!enr || (!enr.synthesis && !hasKnown)) return '';
   let html = '<h2 class="section-h">What homeowners say</h2>';
   // Review COUNT pulled (Drew, 7/10) — Vesta never frames a review tally as the firm's standing
-  // (it dilutes credibility and hints at our sampling depth). The Google reference block below keeps
-  // the number, attributed to Google as a live marketing signal.
+  // (it dilutes credibility and hints at our sampling depth). The count now lives only in the live
+  // Google block (client-injected via profile.js with the Powered-by-Google attribution), never in
+  // this crawlable HTML.
   if (enr.synthesis) {
     const analyzed = monthYear(enr.enriched_at);
     // The read is the product — same voice as the app card: spark kicker + the serif.
