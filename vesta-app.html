@@ -5008,14 +5008,25 @@ async function requestSubmit(e){
     const { data:r } = await HOME.api('/request', { method:'POST', body:{ trade, zip, summary, urgency, name, email, phone, place_ids:[reqData.placeId] } });
     if (r && r.ok){
       const t = (r.targets||[])[0] || {};
+      // The bridge always completes on your side: whether or not the email
+      // reached an inbox, you leave with a direct way to reach them.
+      const tel = t.phone ? String(t.phone).replace(/[^\d+]/g,'') : '';
+      const site = t.website ? String(t.website) : '';
+      const links=[];
+      if (tel) links.push('<a href="tel:'+esc(tel)+'" style="display:inline-block;padding:10px 18px;border-radius:10px;background:var(--olive);color:var(--white);font-weight:600;text-decoration:none;font-size:14px">Call '+esc(t.phone)+'</a>');
+      if (site) links.push('<a href="'+esc(site)+'" target="_blank" rel="noopener nofollow" style="display:inline-block;padding:10px 18px;border-radius:10px;border:1.5px solid var(--olive);color:var(--olive);font-weight:600;text-decoration:none;font-size:14px">Visit their site</a>');
+      const direct = links.length
+        ? '<div style="margin-top:16px"><p class="prof-fine" style="margin-bottom:10px">'+(t.emailed?'Prefer to reach them now?':'Reach <b style="color:var(--olive)">'+who+'</b> directly:')+'</p><div style="display:flex;gap:10px;flex-wrap:wrap">'+links.join('')+'</div></div>'
+        : '';
       let msg;
       if (t.emailed) msg = '<b style="color:var(--olive)">'+who+'</b> just received your request — a reply will come to <b style="color:var(--olive)">'+esc(email)+'</b>.';
-      else if (!r.email_configured) msg = 'Your request to <b style="color:var(--olive)">'+who+'</b> is in — direct delivery is coming online, and we’ll route it to them the moment it does.';
-      else msg = 'We couldn’t find a public inbox for <b style="color:var(--olive)">'+who+'</b> yet — your request is saved, and we’ll relay it as soon as we can reach them.';
+      else if (!r.email_configured) msg = 'Your request to <b style="color:var(--olive)">'+who+'</b> is saved.'+(links.length?' In the meantime, you can reach them yourself:':'');
+      else msg = 'We couldn’t find a public inbox for <b style="color:var(--olive)">'+who+'</b>'+(links.length?', so here’s the fastest way to reach them:':' — your request is saved.');
       $('req-form').hidden = true;
       out.innerHTML = '<h2 class="prof-sec-h">Request on its way ✓</h2>'+
         '<div class="prof-block"><p style="font-size:15px;line-height:1.6;color:var(--olive)">'+msg+'</p>'+
-        '<p class="prof-fine" style="margin-top:12px">Whoever answers, you talk to them directly — Vesta steps out of the conversation.</p>'+
+        direct+
+        '<p class="prof-fine" style="margin-top:14px">Whoever answers, you talk to them directly — Vesta steps out of the conversation.</p>'+
         '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><button type="button" class="de-btn ghost" id="rq-back2">Done</button></div></div>';
       const bb=$('rq-back2'); if(bb) bb.addEventListener('click', backFromRequest);
       const sc=$('req-scroll'); if(sc) sc.scrollTop=0;
