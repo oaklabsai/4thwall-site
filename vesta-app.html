@@ -2970,8 +2970,9 @@ function hstkWireDrag(el, dataI){
     const now=performance.now(); if (now-lastT>0){ vx=(e.clientX-lastX)/(now-lastT); lastX=e.clientX; lastT=now; }
     if (!raf) raf=requestAnimationFrame(paint);
   });
-  const up=()=>{
+  const up=(e)=>{
     if (!on) return; on=false; if (raf){ cancelAnimationFrame(raf); raf=0; }
+    try{ if(e && el.releasePointerCapture) el.releasePointerCapture(e.pointerId); }catch(_){}   // release before hstkAdvance detaches/reorders (stuck-capture barrier fix)
     if (lock!=='h'){ lock=null; hstkApply(true); return; }
     lock=null;
     // commit on a deliberate distance OR a real flick; small jitters spring back
@@ -3638,7 +3639,13 @@ function wireTopCard(con){
     if(save)save.style.opacity=Math.max(0,Math.min(1,dx/90));
     if(pass)pass.style.opacity=Math.max(0,Math.min(1,-dx/90));
   });
-  const up = (e) => { if(!active) return; active=false; const dt=Date.now()-t0;
+  const up = (e) => { if(!active) return; active=false;
+    // Release pointer capture WHILE the card is still attached. tapCard/commit below can detach
+    // or hide this card; iOS Safari then fails to implicitly release the capture, leaving it stuck
+    // on a dead element that swallows every later tap — the "unclickable barrier" (a pinch-zoom
+    // force-cleared it). Explicit up-front release is the fix. (Drew, 7/10)
+    try{ if(e && card.releasePointerCapture) card.releasePointerCapture(e.pointerId); }catch(_){}
+    const dt=Date.now()-t0;
     if(moved<8 && dt<300){ reset(false);
       // pointer capture redirects the pointerup target to the card, so use the DOWN target (read
       // before setPointerCapture) to know a tap landed on "Why →".
@@ -3658,7 +3665,7 @@ function wireTopCard(con){
     reset(true);
   };
   card.addEventListener('pointerup', up);
-  card.addEventListener('pointercancel', () => { active=false; reset(true); });
+  card.addEventListener('pointercancel', e => { active=false; try{ if(e && card.releasePointerCapture) card.releasePointerCapture(e.pointerId); }catch(_){} reset(true); });
   card.addEventListener('keydown', e => {
     if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tapCard(con); }
     else if(e.key==='ArrowRight'){ e.preventDefault(); commit('save', con); }
@@ -4374,11 +4381,11 @@ function initSheetDrag(){
   const handle = $('phandle'), sheet = $('psheet'); let on=false, y0=0, y=0;
   handle.addEventListener('pointerdown', e => { if(desktop()) return; if(e.target.closest('.psheet-x')) return; on=true; y0=y=e.clientY; handle.setPointerCapture(e.pointerId); sheet.style.transition='none'; });
   handle.addEventListener('pointermove', e => { if(!on) return; y=e.clientY; sheet.style.transform='translateX(-50%) translateY('+Math.max(0,y-y0)+'px)'; });
-  handle.addEventListener('pointerup', () => { if(!on) return; on=false; const dy=y-y0;
+  handle.addEventListener('pointerup', e => { if(!on) return; on=false; try{ if(e && handle.releasePointerCapture) handle.releasePointerCapture(e.pointerId); }catch(_){} const dy=y-y0;
     if(dy>80){ sheet.style.transition='transform .3s ease'; sheet.style.transform='translateX(-50%) translateY(110%)'; $('pscrim').classList.remove('open'); S.sheetOpen=false; setTimeout(()=>{sheet.style.transform='';sheet.style.transition='';sheet.classList.remove('open');},300); }
     else { sheet.style.transition='transform .3s cubic-bezier(.34,1.1,.64,1)'; sheet.style.transform='translateX(-50%) translateY(0)'; setTimeout(()=>{sheet.style.transform='';sheet.style.transition='';},300); }
   });
-  handle.addEventListener('pointercancel', () => { on=false; sheet.style.transform=''; sheet.style.transition=''; });
+  handle.addEventListener('pointercancel', e => { on=false; try{ if(e && handle.releasePointerCapture) handle.releasePointerCapture(e.pointerId); }catch(_){} sheet.style.transform=''; sheet.style.transition=''; });
 }
 
 /* SEARCH */
