@@ -242,21 +242,31 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* the 2×2 starters — centred in the thread until the chat begins */
 .vstarters { display:none; }
 #s-home.vconv .vstarters.show { display:flex; flex-direction:column; gap:14px; position:absolute; left:14px; right:14px; top:50%; transform:translateY(-50%); animation:vmsgIn .5s var(--spring) .4s both; }
-/* the mobile empty-state Vesta wordmark — Caveat, tea-scribble underline, slanted; sits at
-   the top of the thread so the top room is used and the cards speak for themselves. */
-.vst-hero { text-align:center; }
+/* the mobile Vesta wordmark — Caveat, tea-scribble underline, slanted. Lives in the PERSISTENT
+   thread header (.vth-hero) so it's the one thing that stays when a conversation begins. */
+.vth-hero { text-align:center; flex:0 0 auto; padding:6px 0 8px; }
 .vst-mark { display:inline-block; font-family:var(--script); font-weight:700; font-size:40px; line-height:1; color:var(--olive); transform:rotate(-3deg); padding-bottom:9px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 9px; }
-@media (min-width:900px){ .vst-hero { display:none; } }
-/* MOBILE CHAT-FIRST HOME: the chat is Vesta's entire mobile UI. The empty state shows the
-   Vesta wordmark + explorable card stack instead of the 2×2 text starters (desktop-only), and
-   the thread X hides on a fresh chat — there's nothing behind the chat to close back to. */
+@media (min-width:900px){ .vth-hero { display:none; } }
+/* 3 handwritten hints on how to text Vesta — Caveat + tea underline, tappable (prefill+send) */
+.vst-hints { display:flex; flex-direction:column; align-items:center; gap:10px; }
+@media (min-width:900px){ .vst-hints { display:none; } }
+.vst-hint { font-family:var(--script); font-size:18px; font-weight:600; color:var(--olive); line-height:1; padding:0 2px 4px; border:none; background:none; cursor:pointer;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='3.4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px; transition:opacity .15s, transform .15s; }
+.vst-hint:active { opacity:.6; transform:scale(.97); }
+/* MOBILE CHAT-FIRST HOME: the chat is Vesta's entire mobile UI. The empty state (cards + hints)
+   fills the thread and glides away as a whole when the conversation begins — the Vesta header
+   above it stays put. Desktop keeps its 2×2 empty state (.vstarters.show absolute-centred). */
 @media (max-width:899.98px){
   .vstarters .vst-head, .vstarters .vst-grid { display:none; }   /* desktop-only empty state */
-  /* the empty state flows TOP-aligned in the thread — Vesta wordmark at the top, then the
-     cards + swipe hint, then the composer beneath. Collapsing the (empty) message scroller is
-     what lifts it off the bottom into the roomy top. */
-  #s-home.vconv .vstarters.show { position:static; transform:none; padding:12px 2px 2px; gap:16px; justify-content:flex-start; }
+  /* out-of-flow + faded by default so it can transition; .show brings it into flow, opaque */
+  #s-home.vconv .vstarters { display:flex; position:absolute; left:0; right:0; bottom:0; padding:2px 2px 4px; gap:14px;
+    opacity:0; transform:translateY(22px); pointer-events:none;
+    transition:opacity .4s ease, transform .46s cubic-bezier(.45,0,.18,1); }
+  #s-home.vconv .vstarters.show { position:static; flex:1 1 auto; opacity:1; transform:none; pointer-events:auto; }
+  /* cards centred + lowered, hints pinned right above the composer (two auto gaps split space) */
+  #s-home.vconv .vstarters.show .home-stack { margin-top:auto; }
+  #s-home.vconv .vstarters.show .vst-hints { margin-top:auto; }
   #s-home.vconv .vthread:has(.vstarters.show) #vm-thread { flex:0 0 auto; min-height:0; }
   #s-home.vconv .vthread:has(.vstarters.show) .vth-x { display:none; }
   /* the composer "text bubble" — de-greened to the dark tone (matches the sent bubbles),
@@ -268,9 +278,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-home.vconv .hs-cin { color:#fff; }
   #s-home.vconv .hs-cin::placeholder { color:rgba(255,255,255,.55); }
   #s-home.vconv .hs-csend { background:var(--tea-grad); color:var(--olive); box-shadow:0 4px 12px -3px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.5); }
-  /* boot guard: land already-morphed with no visible collapse animation on first paint */
+  /* boot guard: land already-morphed with no visible collapse/fade on first paint */
   #s-home.vboot .vfold, #s-home.vboot .vfold > .vfold-in,
-  #s-home.vboot .vthread-fold, #s-home.vboot .vthread-fold > .vfold-in { transition:none !important; }
+  #s-home.vboot .vthread-fold, #s-home.vboot .vthread-fold > .vfold-in,
+  #s-home.vboot .vstarters { transition:none !important; }
 }
 .vst-head { text-align:center; font-size:13.5px; color:var(--ebony); font-weight:500; }
 .vst-head .sig { font-family:var(--script); font-size:17px; font-weight:700; color:var(--olive); transform:rotate(-6deg); display:inline-block; margin-right:3px; padding-bottom:3px;
@@ -1758,16 +1769,23 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
           <div class="vfold vthread-fold" id="vthread-fold"><div class="vfold-in">
             <div class="vthread">
               <button class="vth-x" id="vth-x" type="button" aria-label="Close conversation"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14"/></svg></button>
+              <!-- mobile: the Vesta wordmark is a PERSISTENT header — it's the one thing that stays
+                   when a text conversation begins; the cards + hints below animate away. Desktop
+                   hides it (desktop keeps its own in-thread "Vesta. How can I help?"). -->
+              <div class="vth-hero" id="vth-hero"><span class="vst-mark">Vesta</span></div>
               <div class="vth-scroll" id="vm-thread"></div>
               <div class="vstarters" id="vstarters">
                 <!-- desktop empty state keeps "Vesta. How can I help?" + the 2×2 grid (untouched) -->
                 <div class="vst-head"><span class="sig">Vesta.</span> How can I help?</div>
-                <!-- mobile empty state: just the Vesta wordmark at the top, then the cards speak
-                     for themselves. No subheader. -->
-                <div class="vst-hero"><span class="vst-mark">Vesta</span></div>
-                <!-- mobile: the three explorable cards ARE the empty state (the chat is the whole UI);
-                     desktop keeps the 2×2 starters below and never shows the stack -->
+                <!-- mobile: the explorable cards, centred, ARE the empty state (the chat is the whole
+                     UI); desktop keeps the 2×2 starters below and never shows the stack -->
                 <div class="home-stack" id="home-stack" aria-label="Find your way in"></div>
+                <!-- mobile: 3 handwritten hints on how to text Vesta, right above the composer -->
+                <div class="vst-hints" id="vst-hints" aria-label="Try texting Vesta">
+                  <button class="vst-hint" type="button" data-say="Water is coming through my ceiling — who actually picks up right now?">Describe an emergency</button>
+                  <button class="vst-hint" type="button" data-say="What does a fair price for a new roof look like in Fairfield County?">Sanity-check a price</button>
+                  <button class="vst-hint" type="button" data-say="I'm planning a bigger project this year — where do I even start?">Think through a project</button>
+                </div>
                 <div class="vst-grid">
                   <button class="vst" type="button" data-say="Water is coming through my kitchen ceiling — who actually picks up on a Sunday?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3L5 13.5h5L10 21l8-10.5h-5z"/></svg><span>Something&rsquo;s leaking</span></button>
                   <button class="vst" type="button" data-say="I want to redo my driveway next spring. Where do I even start?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.2-4.2L16 5l3 3L8.2 18.8z"/><path d="M14 7l3 3"/></svg><span>Planning a project</span></button>
@@ -6208,7 +6226,8 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   // The thread X: desktop exits the morph back to the rest home (unchanged). Mobile has no
   // rest home anymore — the chat IS the home — so X resets to a fresh conversation (cards back).
   { const x=$('vth-x'); if(x) x.addEventListener('click', ()=>{ if (desktop()) exitConverseMobile(); else enterConverseMobile(true); }); }
-  document.querySelectorAll('#vstarters .vst').forEach(b => b.addEventListener('click', ()=>{
+  // desktop 2×2 starters (.vst) + mobile handwritten hints (.vst-hint) both prefill+send.
+  document.querySelectorAll('#vstarters .vst, #vst-hints .vst-hint').forEach(b => b.addEventListener('click', ()=>{
     const text=b.dataset.say; if(!TRI_OK){ openSearch(text); return; }
     if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(text);
   }));
