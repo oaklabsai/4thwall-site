@@ -903,6 +903,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-firm .tc-fg { margin-left:auto; flex-shrink:0; color:var(--ebony); opacity:.5; }
 .tc-deck-all { display:block; width:100%; margin-top:14px; background:var(--dark-grad); color:var(--white); border:none; border-radius:15px; padding:13px; font-family:var(--sans); font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 4px 13px -3px rgba(67,68,42,.5); }
 .tc-deck-all:active { box-shadow:var(--nm-in); transform:scale(.99); }
+.tc-deck-save { display:flex; align-items:center; justify-content:center; gap:7px; width:100%; margin-top:9px; background:transparent; color:var(--olive); border:1.5px solid rgba(74,75,47,.3); border-radius:15px; padding:12px; font-family:var(--sans); font-size:13px; font-weight:600; cursor:pointer; transition:border-color .12s, background .12s; }
+.tc-deck-save:hover { border-color:rgba(74,75,47,.55); background:rgba(74,75,47,.05); }
+.tc-deck-save:active { transform:scale(.99); }
+.tc-deck-save svg { width:15px; height:15px; }
 /* ── CONVERSATIONAL INTAKE (the chat IS the form) — after the picks land, Vesta offers to
    carry the request; accepting materializes a request card in the thread that fills itself
    in from the conversation (the work brief types in, then the gap fields stagger in).
@@ -5029,7 +5033,7 @@ function wireProfile(){
   const pm=$('prof-photos'); if(pm){ const ph=((profData.p&&profData.p.photos)||[]).filter(x=>x&&x.ref); pm.addEventListener('click', e=>{ const t=e.target.closest('.vph-tile'); if(t) openPhotoLightbox(ph, +t.dataset.i||0); }); }
   const claim=$('prof-claim'); if(claim) claim.addEventListener('submit', profClaimSubmit);
   const req=$('prof-req-btn'); if(req) req.addEventListener('click', () => enterRequest({ placeId:profData.placeId, trade:(TRADE_APP[pTradeKey()]||pTradeKey()), name:(profData.p&&profData.p.name)||'' }));
-  const ask=$('prof-ask-btn'); if(ask) ask.addEventListener('click', () => { const e=profData.enr||{}; askVestaAboutFirm({ name:(profData.p&&profData.p.name)||'this firm', read:e.synthesis||'', knownFor:(e.known_for||[]), signature:e.signature||'' }); });
+  const ask=$('prof-ask-btn'); if(ask) ask.addEventListener('click', () => { const e=profData.enr||{}, tk=pTradeKey(); askVestaAboutFirm({ name:(profData.p&&profData.p.name)||'this firm', read:e.synthesis||'', knownFor:(e.known_for||[]), signature:e.signature||'', trade:tk, tradeLabel:(PTRADE_LABEL[tk]||'') }); });
   const ct=$('claim-toggle'); if(ct) ct.addEventListener('click', () => {
     const panel=$('claim-panel'); if(!panel) return;
     const opening = !panel.classList.contains('open');
@@ -5672,6 +5676,8 @@ function askVestaAboutFirm(firm){
   // rendered greeting so the stored history and the screen are one coherent voice.
   vmMsgs = [{ role:'assistant', content: JSON.stringify({ say:greeting, focus:focus }).slice(0,2900) }];
   vmTurns=0; vmDone=false; vmBusy=false; vmDeckShown=false; vmDeckKey='';
+  // future-ready: a focus chat can also produce a saveable "notes on this firm" plan
+  vmPlan = { kind:'firm', trade:firm.trade||'', tradeLabel:firm.tradeLabel||'', firm:{ name:firm.name, read:firm.read||'', knownFor:(firm.knownFor||[]).slice(0,4) } };
   const h=$('s-home'); if(!h) return;
   const th=$('vm-thread'); if(th){ th.innerHTML=''; th.classList.remove('tc-resolved'); }
   const st=$('vstarters'); if(st) st.classList.remove('show');
@@ -5687,6 +5693,118 @@ function askVestaAboutFirm(firm){
   const bubble=vmVesta(); if(bubble){ const typer=mkTyper(bubble, vmScroll); typer.push(greeting); }
   if(inp) inp.focus();
   vmScroll();
+}
+
+/* ═══ THE PROJECT PLAN — a self-contained HTML artifact the homeowner downloads/saves/prints.
+   Deterministic client-side assembly from the conversation's own state (no model call): the
+   matched shortlist with Vesta's read + why each was chosen, what to ask before hiring (the
+   per-trade checklist), how to compare quotes, and provenance. Also serves a single-firm
+   "notes" plan from a focus chat. `vmPlan` is captured when a deck lands / a focus chat opens. ═══ */
+let vmPlan = null;
+// PGUIDE / PTRADE_* are keyed by the enrichment trade (roofing, lawn_care, tree_service…); the
+// resolved deck trade can arrive in either the enrichment key OR the app key (TRADE_APP maps
+// enrichment→app). Resolve both ways so the checklist never silently drops out.
+function guideFor(trade){
+  if (PGUIDE[trade]) return { key:trade, guide:PGUIDE[trade] };
+  const inv = Object.keys(TRADE_APP).find(k=>TRADE_APP[k]===trade);
+  if (inv && PGUIDE[inv]) return { key:inv, guide:PGUIDE[inv] };
+  return { key:trade, guide:null };
+}
+const kfPart = k => (k && typeof k==='object') ? {label:String(k.label||''), detail:String(k.detail||'')} : {label:String(k||''), detail:''};
+function buildPlanHTML(plan){
+  const E = s => String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let date=''; try { date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}); } catch(_){}
+  const g = guideFor(plan.trade);
+  const tradeLabel = plan.tradeLabel || (g.key && PTRADE_LABEL[g.key]) || '';
+  const pros = (g.key && PTRADE_PROS[g.key]) || 'contractors';
+  const heading = plan.kind==='firm' ? E(plan.firm.name)
+    : (plan.jobLabel ? E(plan.jobLabel) : E(tradeLabel||'Your project'));
+  const sub = plan.kind==='firm'
+    ? (tradeLabel ? E(tradeLabel)+' · Fairfield County, CT' : 'Fairfield County, CT')
+    : (tradeLabel ? E(tradeLabel)+' · Fairfield County, CT' : 'Fairfield County, CT');
+  // ── firm block (read + known-for) ──
+  const firmBlock = f => {
+    const kf = (f.knownFor||[]).map(kfPart).filter(k=>k.label);
+    return '<section class="firm">'+
+      '<h3>'+E(f.name)+'</h3>'+
+      (f.why ? '<p class="why"><span>Why Vesta chose them</span> '+E(f.why)+'</p>' : '')+
+      (f.read ? '<div class="read"><p class="rlbl">Vesta’s read</p><p>'+E(f.read)+'</p></div>' : '')+
+      (kf.length ? '<ul class="kf">'+kf.map(k=>'<li><b>'+E(k.label)+'</b>'+(k.detail?' — '+E(k.detail):'')+'</li>').join('')+'</ul>' : '')+
+    '</section>';
+  };
+  let body='';
+  if (plan.kind==='firm'){
+    body += '<p class="lede">Here is what Vesta’s analysis shows on this firm, plus what to confirm before you hire.</p>';
+    body += firmBlock(plan.firm);
+  } else {
+    const picks = plan.picks||[];
+    body += '<p class="lede">Vesta’s shortlist for your '+E(plan.jobLabel||tradeLabel||'project')+', drawn from public review histories and Connecticut contractor records — not a paid ranking.</p>';
+    body += '<h2>Your shortlist'+(picks.length?' — '+picks.length+' '+(picks.length===1?'firm':'firms'):'')+'</h2>';
+    body += picks.map(firmBlock).join('');
+  }
+  // ── what to ask ──
+  if (g.guide && g.guide.length){
+    body += '<h2>What to ask '+E(pros)+' before you hire</h2>';
+    body += '<ol class="checks">'+g.guide.map(it=>'<li><b>'+E(it.t)+'</b><span>'+E(it.d)+'</span></li>').join('')+'</ol>';
+    body += '<p class="note">General guidance for the trade — not a claim about any one business.</p>';
+  }
+  // ── compare quotes (Vesta's standing advice) ──
+  body += '<h2>How to compare quotes</h2>'+
+    '<p>Vesta doesn’t rank firms on price or speed — no honest directory can, without your specifics. The move that protects you:</p>'+
+    '<ul class="tips">'+
+    '<li>Ask each for an <b>itemized</b> quote — scope, materials, and labor listed separately, not one lump sum.</li>'+
+    '<li>Compare the quotes <b>line by line</b>; a low total often means something was left out.</li>'+
+    '<li>Confirm licensing, insurance, and the written scope <b>before</b> any work or deposit.</li>'+
+    '</ul>';
+  const styles = ''+
+    ':root{color-scheme:light}*{box-sizing:border-box}'+
+    'body{margin:0;background:#f3f4ec;color:#26271b;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}'+
+    '.wrap{max-width:720px;margin:0 auto;padding:40px 22px 64px}'+
+    'header{border-bottom:2px solid #4a4b2f;padding-bottom:20px;margin-bottom:28px}'+
+    '.brand{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#6b654b;font-weight:700}'+
+    'h1{font-size:30px;line-height:1.15;margin:10px 0 4px;color:#12100e}'+
+    '.sub{color:#6b654b;font-size:15px;margin:0}'+
+    '.meta{margin-top:10px;font-size:12.5px;color:#8a866f}'+
+    '.lede{font-size:16px;color:#3a3b28;margin:0 0 26px}'+
+    'h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#4a4b2f;border-bottom:1px solid rgba(74,75,47,.2);padding-bottom:7px;margin:36px 0 18px}'+
+    '.firm{background:#fff;border:1px solid rgba(74,75,47,.14);border-radius:14px;padding:20px 22px;margin-bottom:16px}'+
+    '.firm h3{font-size:19px;margin:0 0 8px;color:#12100e}'+
+    '.why{font-size:14px;color:#4a4b2f;margin:0 0 12px}.why span{font-weight:700;color:#6b654b;text-transform:uppercase;font-size:11px;letter-spacing:.05em;margin-right:5px}'+
+    '.read{background:#f3f4ec;border-left:3px solid #d4df9e;border-radius:0 10px 10px 0;padding:12px 16px;margin:0 0 12px}'+
+    '.read .rlbl{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#6b654b;font-weight:700;margin:0 0 5px}.read p{margin:0;font-size:14.5px;color:#2f301f}'+
+    '.kf{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:7px}.kf li{font-size:13.5px;color:#3a3b28;padding-left:16px;position:relative}.kf li:before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:#4a4b2f}.kf b{color:#12100e}'+
+    'ol.checks{padding:0;margin:0;list-style:none;counter-reset:c}ol.checks li{counter-increment:c;position:relative;padding:0 0 16px 40px;margin-bottom:16px;border-bottom:1px solid rgba(74,75,47,.1)}ol.checks li:last-child{border-bottom:none;margin-bottom:0}ol.checks li:before{content:counter(c,decimal-leading-zero);position:absolute;left:0;top:0;font-weight:700;color:#6b654b;font-size:15px}ol.checks b{display:block;font-size:15px;color:#12100e;margin-bottom:3px}ol.checks span{font-size:13.5px;color:#4a4b3a}'+
+    'ul.tips{padding-left:18px;margin:0}ul.tips li{font-size:14.5px;margin-bottom:9px}ul.tips b{color:#12100e}'+
+    '.note{font-size:12px;color:#8a866f;font-style:italic;margin-top:12px}'+
+    'footer{margin-top:44px;padding-top:20px;border-top:1px solid rgba(74,75,47,.2);font-size:12px;color:#8a866f}footer a{color:#4a4b2f}'+
+    '@media print{body{background:#fff}.firm{break-inside:avoid}ol.checks li{break-inside:avoid}}';
+  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
+    '<title>Your Vesta plan — '+heading+'</title><style>'+styles+'</style></head><body><div class="wrap">'+
+    '<header><div class="brand">Vesta · 4THWALL</div><h1>'+heading+'</h1><p class="sub">'+sub+'</p>'+
+    (date?'<p class="meta">Prepared '+E(date)+'</p>':'')+'</header>'+
+    body+
+    '<footer>Vesta analyzes every firm from its public review history and Connecticut contractor records — a read, not a paid ranking. '+
+    'Ratings shown elsewhere in the app come live from Google, unaltered, as a reference signal. '+
+    'Regenerate or refine this plan any time at <a href="https://4thwall.solutions/vesta">4thwall.solutions/vesta</a>.</footer>'+
+    '</div></body></html>';
+}
+function downloadPlan(plan){
+  plan = (plan && plan.kind) ? plan : vmPlan;   // deck buttons pass a snapshot; guard against an Event arg
+  if(!plan) return;
+  let html; try { html = buildPlanHTML(plan); } catch(_){ return; }
+  const slugSrc = plan.kind==='firm' ? (plan.firm&&plan.firm.name) : (plan.jobLabel||plan.tradeLabel||'plan');
+  const slug = String(slugSrc||'plan').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48) || 'contractors';
+  try {
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='vesta-plan-'+slug+'.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>{ try{URL.revokeObjectURL(url);}catch(_){} }, 5000);
+  } catch(_){
+    // last-ditch fallback (some in-app webviews block blob downloads): open the doc in a new tab
+    try { const w=window.open('','_blank'); if(w){ w.document.write(html); w.document.close(); } } catch(__){}
+  }
 }
 
 /* ═══ MOBILE IN-PLACE CONVERSATION MORPH — the home screen becomes the chat, wired to the
@@ -5866,6 +5984,11 @@ async function vmDeck(trade, job, deckMeta, mode){
     // conversational intake: the offer below is UI-only — this line keeps the model coherent
     // if the homeowner answers it in words instead of tapping
     intake:'You offered to write up and send their request to one of the picks. If they accept in chat, point them to the "Send to" buttons under your offer — you cannot send it from a message.' };
+  // capture the downloadable project plan from THIS shortlist (full read, not the model-clipped
+  // excerpt — the artifact has room). "Save this plan" below assembles the HTML from this.
+  vmPlan = { kind:'match', trade:trade, tradeLabel:tradeLabelOf(trade),
+    job:job, jobLabel:(deckMeta&&deckMeta.label?deckMeta.label:jobLabel(job)),
+    picks: picks.map((p,i)=>({ name:p.name, why:reasons[i], read:p.read||'', knownFor:(p.knownFor||[]).slice(0,4) })) };
   const lastA = vmMsgs[vmMsgs.length-1];
   let merged=false;
   if (lastA && lastA.role==='assistant'){
@@ -5874,11 +5997,13 @@ async function vmDeck(trade, job, deckMeta, mode){
   if (!merged) vmMsgs.push({role:'assistant',content:JSON.stringify(Object.assign({say:'Here are your matched picks.'},pickCtx)).slice(0,2900)});
   vmDeckShown=true; vmDeckKey=trade+'|'+job;
   const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='tc-deck';
-  el.innerHTML='<div class="tc-deck-kick">Why these '+(picks.length===3?'three':'picks')+(pct?'<span class="tc-deck-pct">'+pct+'% of '+esc(lc(tradeLabelOf(trade)))+' do this</span>':'')+'</div><h2>For your <em>'+esc(jl)+'</em></h2><p class="tc-why">'+lead+'</p>'+rows+'<button class="tc-deck-all" type="button">See all your matches →</button>';
+  el.innerHTML='<div class="tc-deck-kick">Why these '+(picks.length===3?'three':'picks')+(pct?'<span class="tc-deck-pct">'+pct+'% of '+esc(lc(tradeLabelOf(trade)))+' do this</span>':'')+'</div><h2>For your <em>'+esc(jl)+'</em></h2><p class="tc-why">'+lead+'</p>'+rows+'<button class="tc-deck-all" type="button">See all your matches →</button>'+
+    '<button class="tc-deck-save" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Save this plan</button>';
   const row=document.createElement('div'); row.className='vmsg tc-verdict'; row.innerHTML='<span class="vav">Vesta.</span>'; row.appendChild(el);
   t.appendChild(row); t.classList.add('tc-resolved'); vmScroll();   // Vesta's message: picks in-chat, history collapsed → fixed verdict
   el.querySelectorAll('.tc-firm').forEach(btn=>btn.addEventListener('click',()=>openProfile(btn.dataset.place)));
   const all=el.querySelector('.tc-deck-all'); if(all) all.addEventListener('click',()=>{ S.chatReturn=true; const h=$('s-home'); if(h) h.classList.remove('vconv'); S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank'; S.match={job:job,axis:axis}; S.matchPending=false; S.triageActive=false; S.triageMode=null; renderNeedChips(); renderSidebar(); showBrowse(trade); });
+  const planSnap=vmPlan; const sv=el.querySelector('.tc-deck-save'); if(sv) sv.addEventListener('click', ()=>downloadPlan(planSnap));
   // conversational intake — the offer lands a beat after the picks, as its own question
   setTimeout(()=>{ if(vmDeckShown && !vmBusy) intakeOffer(vmIntakeCtx(), picks, trade, job, mode, emergency); }, 700);
 }
