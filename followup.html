@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Did anyone get back to you? — Vesta</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/logo.png" type="image/png">
+<meta name="theme-color" content="#0f1310">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="stylesheet" href="/home.css">
+<script src="/home.js" defer></script>
+</head>
+<body class="v-dark">
+
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square">
+      <polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/>
+      <line x1="94.5" y1="5.5" x2="94.5" y2="70"/>
+    </svg>
+    4THWALL<span class="home-tag">VESTA</span>
+  </a>
+</nav>
+
+<main>
+<section class="page-hero">
+  <a class="crumb" href="/vesta">← Vesta</a>
+  <h1 class="page-h" id="fu-h">Did anyone get back to you?</h1>
+  <p class="page-sub" id="fu-sub">One tap keeps Vesta honest about which contractors actually respond.</p>
+</section>
+
+<section class="section">
+  <div class="card-block" style="max-width:560px">
+    <div id="fu-body">
+      <button class="pill" id="fu-confirm" type="button">Confirm</button>
+      <span class="form-status" id="fu-status"></span>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span class="foot-brand">4th Wall Solutions · Stamford, CT</span>
+    <div class="foot-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var token = (q.get('token') || '').replace(/[^a-f0-9]/gi, '').slice(0, 64);
+  var ans = q.get('a') === 'no_reply' ? 'no_reply' : (q.get('a') === 'replied' ? 'replied' : '');
+  var h = document.getElementById('fu-h');
+  var sub = document.getElementById('fu-sub');
+  var body = document.getElementById('fu-body');
+  var btn = document.getElementById('fu-confirm');
+  var st = document.getElementById('fu-status');
+
+  if (!token || !ans) {
+    body.innerHTML = '<p class="note">This link is missing or malformed. Open one of the two buttons from the Vesta email again.</p>';
+    return;
+  }
+
+  if (ans === 'replied') {
+    h.textContent = 'Someone reached out — good.';
+    sub.textContent = 'Confirm to let Vesta know a contractor got back to you.';
+    btn.textContent = 'Yes, someone reached out';
+  } else {
+    h.textContent = 'Not yet?';
+    sub.textContent = 'Confirm to let Vesta know no one has gotten back to you.';
+    btn.textContent = 'Confirm — no one yet';
+    btn.classList.add('pill-orange');
+  }
+
+  btn.addEventListener('click', async function () {
+    if (!window.HOME || !HOME.api) { st.className = 'form-status is-error'; st.textContent = 'Still loading — try again in a second.'; return; }
+    btn.disabled = true; st.className = 'form-status'; st.textContent = 'Saving…';
+    try {
+      var res = await HOME.api('/request/followup', { method: 'POST', body: { token: token, answer: ans } });
+      var d = (res && res.data) || {};
+      if (d.ok) {
+        body.innerHTML = ans === 'replied'
+          ? '<p class="note">✓ Thank you — noted that a contractor reached out. That’s exactly the signal that makes Vesta honest.</p>'
+          : '<p class="note">✓ Thank you — noted that no one has yet. Need a hand? <a href="/vesta">Ask Vesta again</a> and we’ll find you another pick.</p>';
+      } else {
+        btn.disabled = false; st.className = 'form-status is-error';
+        st.textContent = (d.error === 'invalid_or_used')
+          ? 'This link was already used, or it has expired.'
+          : 'Couldn’t save that — try again.';
+      }
+    } catch (_) {
+      btn.disabled = false; st.className = 'form-status is-error';
+      st.textContent = 'Couldn’t save that — try again.';
+    }
+  });
+})();
+</script>
+</body>
+</html>
