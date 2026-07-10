@@ -1492,6 +1492,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .prof-badge.plain { background:rgba(74,75,47,.06); color:var(--ebony); }
 .prof-req { display:inline-flex; align-items:center; gap:8px; margin-top:18px; background:var(--olive); color:var(--white); font-family:var(--sans); font-size:15px; font-weight:600; border:none; border-radius:var(--r-pill); padding:14px 24px; cursor:pointer; box-shadow:0 2px 6px rgba(74,75,47,.2),0 12px 32px -6px rgba(74,75,47,.42); text-decoration:none; transition:transform .12s; }
 .prof-req:hover { transform:translateY(-1px); }
+.prof-ask { display:inline-flex; align-items:center; gap:8px; margin-top:14px; background:var(--card,#fff); color:var(--olive); font-family:var(--sans); font-size:14px; font-weight:600; border:1.5px solid rgba(74,75,47,.28); border-radius:var(--r-pill); padding:11px 20px; cursor:pointer; box-shadow:0 1px 3px rgba(74,75,47,.10); transition:transform .12s, border-color .12s, box-shadow .12s; }
+.prof-ask:hover { transform:translateY(-1px); border-color:rgba(74,75,47,.55); box-shadow:0 4px 14px -4px rgba(74,75,47,.3); }
+.prof-ask .fold-spark, .prof-ask svg { width:16px; height:16px; flex:0 0 auto; }
 .prof-fine { font-size:11.5px; color:var(--ebony); margin-top:10px; }
 .prof-note { font-size:12.5px; color:var(--ebony); line-height:1.6; margin-top:14px; background:rgba(212,223,158,.18); border:1px solid rgba(74,75,47,.08); border-radius:14px; padding:13px 16px; }
 .prof-sig { font-family:var(--serif); font-size:20px; font-weight:500; font-style:italic; line-height:1.5; color:var(--olive); margin:24px 0 4px; padding-left:16px; border-left:3px solid var(--tea); }
@@ -4616,7 +4619,10 @@ function profReadHTML(){
     '<summary class="prof-fold-sum prof-fold-sum-hi"><span class="fold-title"><span class="fold-spark">'+SPARK+'</span>Vesta’s read</span>'+
     '<span class="prof-fold-chev">'+CHEV+'</span></summary>'+
     '<div class="prof-fold-body">'+inner+'</div>'+
-  '</details>';
+  '</details>'+
+  // Ask Vesta about THIS firm — rides on the verdict the homeowner just read. Opens the
+  // live chat already focused on this contractor (its read + known-for seeded into context).
+  '<button class="prof-ask" id="prof-ask-btn" type="button"><span class="fold-spark">'+SPARK+'</span>Ask Vesta about them</button>';
 }
 // "Where it stands" — TAILORED comparative standing. Built from each firm's
 // DISTINCTIVE verifiable signals (scarce-specialty flags from the trade-wide
@@ -5023,6 +5029,7 @@ function wireProfile(){
   const pm=$('prof-photos'); if(pm){ const ph=((profData.p&&profData.p.photos)||[]).filter(x=>x&&x.ref); pm.addEventListener('click', e=>{ const t=e.target.closest('.vph-tile'); if(t) openPhotoLightbox(ph, +t.dataset.i||0); }); }
   const claim=$('prof-claim'); if(claim) claim.addEventListener('submit', profClaimSubmit);
   const req=$('prof-req-btn'); if(req) req.addEventListener('click', () => enterRequest({ placeId:profData.placeId, trade:(TRADE_APP[pTradeKey()]||pTradeKey()), name:(profData.p&&profData.p.name)||'' }));
+  const ask=$('prof-ask-btn'); if(ask) ask.addEventListener('click', () => { const e=profData.enr||{}; askVestaAboutFirm({ name:(profData.p&&profData.p.name)||'this firm', read:e.synthesis||'', knownFor:(e.known_for||[]), signature:e.signature||'' }); });
   const ct=$('claim-toggle'); if(ct) ct.addEventListener('click', () => {
     const panel=$('claim-panel'); if(!panel) return;
     const opening = !panel.classList.contains('open');
@@ -5650,6 +5657,36 @@ function closeAskOverlay(){
   document.body.classList.remove('ask-ov');
   const inp=$('hs-cin'); if(inp) inp.blur();
   // the underlying screen was never unmounted — its scroll position is exactly as left
+}
+// ── Ask Vesta ABOUT A FIRM (contractor-aware). Opens the live chat already focused on the
+// contractor whose profile the homeowner is reading: its read + known-for seed an assistant
+// turn carrying a "focus" object, and the server's focus-mode grounds Vesta on THIS firm's
+// real record (never re-interviews, never invents). A fresh thread each time — this is a
+// deliberate "ask about THIS one" action. Mobile → the minimizable overlay (X back to the
+// profile, thread persists); desktop → the in-place home morph (home IS Vesta Live there).
+function askVestaAboutFirm(firm){
+  if(!firm || !firm.name) return;
+  const greeting = 'Ask me anything about '+firm.name+' — whether their record fits your job, what their reputation is strong on, or what to ask them before you hire.';
+  const focus = { name:firm.name, vestas_read:readClip(firm.read||''), known_for:(firm.knownFor||[]).slice(0,3) };
+  // the assistant's focus turn is the first thing the model sees; its "say" matches the
+  // rendered greeting so the stored history and the screen are one coherent voice.
+  vmMsgs = [{ role:'assistant', content: JSON.stringify({ say:greeting, focus:focus }).slice(0,2900) }];
+  vmTurns=0; vmDone=false; vmBusy=false; vmDeckShown=false; vmDeckKey='';
+  const h=$('s-home'); if(!h) return;
+  const th=$('vm-thread'); if(th){ th.innerHTML=''; th.classList.remove('tc-resolved'); }
+  const st=$('vstarters'); if(st) st.classList.remove('show');
+  if (desktop()){
+    if (S.screen!=='home'){ showScreen('home'); renderSidebar(); updateNavState(); }
+    h.classList.add('vconv');
+  } else {
+    askReturnScreen = S.screen;
+    document.body.classList.add('ask-ov');
+    h.classList.add('ask-ov-home','vconv');
+  }
+  const inp=$('hs-cin'); if(inp){ inp.value=''; inp.disabled=false; inp.placeholder='Ask about '+firm.name+'…'; }
+  const bubble=vmVesta(); if(bubble){ const typer=mkTyper(bubble, vmScroll); typer.push(greeting); }
+  if(inp) inp.focus();
+  vmScroll();
 }
 
 /* ═══ MOBILE IN-PLACE CONVERSATION MORPH — the home screen becomes the chat, wired to the

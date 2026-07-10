@@ -133,7 +133,7 @@ function writeupPrompt(){
 }
 
 // ── the system prompt (mirrors the locked prototype; bank injected live) ──
-function systemPrompt(bank, model, followUp, userTurns){
+function systemPrompt(bank, model, followUp, userTurns, focusMode){
   const bankLines = Object.entries(bank)
     .map(([t, jobs]) => `${t}: ` + jobs.map(j => j.job + (j.emergency ? '*' : '')).join(', '))
     .join('\n');
@@ -173,7 +173,17 @@ FOLLOW-UP MODE — ACTIVE NOW: the homeowner has already been matched and is LOO
 - HARD RULE: you have NO pricing, availability, or schedule data on any firm — asked "which is cheapest/best value/fastest," the ONLY honest answer is that Vesta's record doesn't rank them on that, plus the smart move (ask each for an itemized quote and compare line by line). Claiming a firm is "competitive on price" or "quick to schedule" is fabrication and forbidden.
 - Keep "resolved" null for anything about the already-matched problem. Fill it ONLY for a genuinely NEW problem (different system/job), which is a fresh triage. Never re-interview the matched problem; never echo history bookkeeping.
 - LENGTH & SHAPE here: under 90 words. Explaining the picks = a one-line lead, then one "- " dash bullet PER FIRM (name + the reason its slot was earned), separated by \\n. Anything else = one tight paragraph.` : '')
-  + (!followUp && userTurns >= 2 ? `
+  + (focusMode ? `
+
+FOCUS MODE — ACTIVE NOW: the homeowner opened Ask Vesta from ONE specific firm's profile and wants to talk about THAT firm. Its details are in the history's "focus" object:
+- "name": the firm they're looking at. You MAY name and discuss THIS one firm freely — that is the entire point here. (Still never volunteer OTHER firms' names, ratings, or a ranking — you route to matches, you don't list competitors.)
+- "vestas_read": an excerpt of Vesta's own read of this firm — its character, what its reputation actually answers. Quote or paraphrase it; this is the depth a directory can't give.
+- "known_for" + "record": the firm's recurring themes and verifiable facts. Ground EVERY claim about the firm in these fields — never invent a capability, a specialty, or an outcome that isn't here.
+- Answer the homeowner's question about this firm: whether its record fits their job, what its reputation is strong (or quiet) on, what to ask them before hiring. If the read genuinely doesn't cover what they asked, say so plainly and point them to ask the firm directly — do not fabricate to fill the gap.
+- HARD RULE: you have NO pricing, availability, or schedule data on this firm — asked "are they cheap / fast / available," the ONLY honest answer is that Vesta's record doesn't cover that, plus the smart move (ask them for an itemized quote). Claiming they're "competitive on price" or "quick to schedule" is fabrication and forbidden.
+- Keep "resolved" NULL while the conversation is about this firm — you are not re-interviewing them. Fill "resolved" ONLY if they clearly turn to a NEW need and ask you to find pros for it (a real trade+job from the bank); then it's a normal triage.
+- LENGTH & SHAPE here: under 80 words. A tight paragraph, or a one-line lead + up to 3 "- " dash bullets when you're laying out distinct facts about the firm.` : '')
+  + (!followUp && !focusMode && userTurns >= 2 ? `
 
 TURN PRESSURE — YOUR QUESTION BUDGET IS SPENT: the homeowner has already answered ${userTurns - 1} message(s). Unless you genuinely cannot name the TRADE, you MUST fill "resolved" THIS TURN — and "trade" and "job" MUST be ids copied VERBATIM from THE BANK above (never invented labels like "plumber" or "toilet repair"). Asking anything more — a fixture detail, a diagnostic, a confirmation — is a rule violation now. Your best read beats another question; the pro confirms specifics on site.` : '')
   + `
@@ -371,17 +381,22 @@ export default async function handler(req, res){
   // wrote a "picks" array into an assistant turn. Only then does the prompt carry the
   // follow-up section — the plain interview path never sees it (it was diluting resolves).
   const followUp = messages.some(m => m.role === 'assistant' && m.content.indexOf('"picks"') !== -1);
+  // focus mode: the client opened Ask Vesta from a single firm's profile and seeded an
+  // assistant turn carrying a "focus" object (name + read + known_for). Same structural
+  // signal as follow-up — grounds Vesta on real firm facts, so GLM (the honesty-obeying
+  // conversationalist) should lead here too, and the forced resolver stays out of it.
+  const focusMode = !followUp && messages.some(m => m.role === 'assistant' && m.content.indexOf('"focus"') !== -1);
   let out = null, parsed = null;
   // Model order per mode: Nemotron leads the interview (speed is the UX there); GLM leads
   // follow-up mode (the design-loop-validated conversationalist — Nemotron fabricates
   // pick attributes ~1-in-3 under the honesty rule, GLM obeys it).
-  const chainModels = followUp && MODELS.length > 1 ? [...MODELS].reverse() : MODELS;
+  const chainModels = (followUp || focusMode) && MODELS.length > 1 ? [...MODELS].reverse() : MODELS;
   let servedBy = '';
   chain:
   for (const model of chainModels){
     for (let attempt = 0; attempt < 2; attempt++){
       servedBy = model;
-      out = await callModelStreaming(model, keys, systemPrompt(bank, model, followUp, messages.filter(m => m.role === 'user').length), messages, onDelta);
+      out = await callModelStreaming(model, keys, systemPrompt(bank, model, followUp, messages.filter(m => m.role === 'user').length, focusMode), messages, onDelta);
       if (out.error === 'degenerate'){
         if (streamedAny){ send({ t:'r' }); streamedAny = false; pend = ''; }
         continue;                                   // fresh generation, same model
@@ -429,7 +444,7 @@ export default async function handler(req, res){
   // still passes the same bank gate; a null keeps the conversation alive as before.
   let resolverUsed = 'no';
   const userTurns = messages.filter(m => m.role === 'user').length;
-  if (!followUp && !parsed.resolved && (userTurns >= 2 || parsed.mode === 'emergency') && parsed.mode !== 'learn'){
+  if (!followUp && !focusMode && !parsed.resolved && (userTurns >= 2 || parsed.mode === 'emergency') && parsed.mode !== 'learn'){
     try {
       const rOut = await callModelStreaming(MODELS[MODELS.length - 1], keys, resolverPrompt(bank), messages, ()=>{});
       const rj = rOut && !rOut.error ? extractJSON(rOut.raw) : null;
