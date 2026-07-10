@@ -6632,6 +6632,13 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
     enterConverseMobile(true);
     maybeShowResumeBand();   // offer to resume a recent conversation (opt-in; empty state otherwise untouched)
     requestAnimationFrame(()=>requestAnimationFrame(()=>h.classList.remove('vboot')));
+    // NEVER pop the keyboard on a cold land. enterConverseMobile(true) doesn't focus, but iOS
+    // Safari can RESTORE focus (and the keyboard) to the composer when the page is revisited
+    // from the back/forward cache — so explicitly blur on land and on every pageshow. The first
+    // thing a visitor meets is the calm explorable empty state, not a raised keyboard. (Drew, 7/10)
+    const _blurLand = () => { const i=$('hs-cin'); if(i) i.blur(); const ae=document.activeElement; if(ae && ae!==document.body && ae.blur) ae.blur(); };
+    _blurLand();
+    window.addEventListener('pageshow', _blurLand);
   }
   ['nav-saved','ds-saved'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', showSaved); });
   ['nav-you','ds-you'].forEach(id => { const el=$(id); if(el) el.addEventListener('click', goAccount); });
