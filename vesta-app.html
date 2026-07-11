@@ -6219,7 +6219,7 @@ async function vmDeck(trade, job, deckMeta, mode, quiet){
     more_matches:Math.max(0, byTrade(trade).length - picks.length),
     // conversational intake: the offer below is UI-only — this line keeps the model coherent
     // if the homeowner answers it in words instead of tapping
-    intake:'You offered to write up and send their request to one of the picks. If they accept in chat, point them to the "Send to" buttons under your offer — you cannot send it from a message.' };
+    intake:'The homeowner sees "Send to [firm]" buttons under your offer to write up and send their request. If they ask you in chat to reach out to / contact / send to a pick (e.g. "reach out to Roots for me"), that IS a yes — NEVER say you cannot send, and never lead with "I cannot from here" (it breaks the promise you just made to send it). OWN it, matching your offer: say you will write their request up from the conversation, and they just tap "Send to [firm]" to review it before it goes straight to them. The tap is the review-and-send step, not a limitation.' };
   // capture the downloadable project plan from THIS shortlist (full read, not the model-clipped
   // excerpt — the artifact has room). "Save this plan" below assembles the HTML from this.
   vmPlan = { kind:'match', trade:trade, tradeLabel:tradeLabelOf(trade),
