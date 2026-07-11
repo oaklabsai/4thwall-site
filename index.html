@@ -190,26 +190,14 @@ a,button{transition:transform .14s}
 .hero{padding:clamp(6.5rem,12vh,9.5rem) var(--pad) 0;text-align:center;position:relative}
 .hero-inner{max-width:860px;margin:0 auto}
 .hero .kicker{margin-bottom:1.6rem}
-/* announcement — handwritten "now plugged into" + drawn arrows pointing at the Slack/Jobber chips */
-.announce{display:flex;width:fit-content;max-width:100%;align-items:center;gap:.7rem;margin:0 auto 1.8rem;flex-wrap:wrap;justify-content:center}
-.announce-tag{font-family:var(--mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--olive);
-  background:var(--tea-grad);border-radius:var(--r-pill);padding:.32rem .64rem;box-shadow:0 2px 8px -2px rgba(74,75,47,.3),inset 0 1px 0 rgba(255,255,255,.55)}
-.announce-script{font-family:var(--hand);font-size:1.4rem;font-weight:700;color:var(--olive);line-height:1;transform:rotate(-3deg);padding-bottom:6px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px}
-/* the two hand-drawn arrows — short one to the near chip, long arcing one to the far chip */
-.announce-point{display:inline-flex;align-items:center;gap:.55rem}
-.aflow-arr{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--muted)}
-.a-arrows{width:44px;height:28px;flex-shrink:0;stroke:var(--olive);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;fill:none;margin-top:4px;opacity:.85}
-.announce-logos{display:inline-flex;align-items:center;gap:.45rem}
-.alogo{display:inline-flex;align-items:center;gap:.38rem;font-weight:600;font-size:.84rem;letter-spacing:-.01em;
-  background:var(--white);border-radius:var(--r-pill);padding:.34rem .72rem;box-shadow:2px 2px 6px rgba(74,75,47,.12),-2px -2px 6px rgba(255,255,255,.9)}
-.alogo svg{width:16px;height:16px;display:block;flex-shrink:0}
-.alogo-slack{color:var(--ink)}
-.alogo-jobber{color:#0E2A36}
-@media(max-width:540px){
-  .announce{gap:.5rem .6rem}
-  .announce-script{font-size:1.25rem}
-}
+/* the integration loop — a single quiet strip inside the products section (Jobber → Atlas → Vesta) */
+.loopflow{display:flex;flex-direction:column;align-items:center;gap:1rem;margin:0 auto 2.8rem}
+.loopflow-lead{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.loopflow-chips{display:inline-flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:center}
+.lf-chip{display:inline-flex;align-items:center;gap:.42rem;font-weight:600;font-size:.92rem;letter-spacing:-.01em;color:var(--olive);
+  background:var(--nm);border-radius:var(--r-pill);padding:.5rem .95rem;box-shadow:var(--nm-sm)}
+.lf-chip svg{width:17px;height:17px;display:block;flex-shrink:0}
+.lf-arr{font-family:var(--mono);font-size:.85rem;font-weight:600;color:var(--dim)}
 .hn-headline{font-family:var(--display);font-weight:500;font-size:clamp(2.5rem,6.4vw,4.6rem);line-height:1.04;letter-spacing:-.035em;color:var(--ink)}
 .hn-headline em{font-style:italic;font-weight:400;color:var(--olive)}
 .hn-sparkle{color:var(--tea);-webkit-text-stroke:1.5px var(--olive);font-style:normal;font-size:.55em;vertical-align:.35em;display:inline-block}
@@ -435,25 +423,6 @@ a,button{transition:transform .14s}
 <!-- ════════════════ HERO ════════════════ -->
 <section class="hero" id="home">
   <div class="hero-inner">
-    <div class="announce rv" role="note" aria-label="Built on the tools you already trust — your completed work becomes homeowner trust">
-      <span class="announce-tag">Built on the tools you already trust</span>
-      <span class="announce-script">your completed work becomes homeowner trust</span>
-      <span class="announce-point">
-      <svg class="a-arrows" viewBox="0 0 46 28" aria-hidden="true">
-        <path d="M3 18 C 11 9, 20 7.5, 28 11"/>
-        <path d="M28 11 l-6.2 -1 M28 11 l-4.2 4.6"/>
-        <path d="M4 22.5 C 17 28.5, 32 26, 42 15.5"/>
-        <path d="M42 15.5 l-6.4 0 M42 15.5 l-2.6 5.8"/>
-      </svg>
-      <span class="announce-logos">
-        <span class="alogo alogo-jobber"><svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="200" cy="200" r="200" fill="#0E2A36"/><g fill="none" stroke="#68DC1E" stroke-width="30"><rect x="163" y="163" width="84" height="84" rx="16"/><rect x="119" y="119" width="172" height="172" rx="44"/><rect x="77" y="77" width="256" height="256" rx="66"/></g></svg>Jobber</span>
-        <span class="aflow-arr" aria-hidden="true">→</span>
-        <span class="alogo">Atlas</span>
-        <span class="aflow-arr" aria-hidden="true">→</span>
-        <span class="alogo">Vesta</span>
-      </span>
-      </span>
-    </div>
     <span class="kicker rv">you're losing jobs to whoever answers first</span>
     <h1 class="hn-headline rv rv-d1">The front office<br><em>for the trades.</em> <span class="hn-sparkle">✦</span></h1>
     <p class="hn-sub rv rv-d2">One system, not two apps. Atlas runs your front office — answering every call and text in under 10 seconds, booking the estimate, earning the review. Vesta turns that record into homeowner trust, so your completed work wins your next job.</p>
@@ -475,6 +444,16 @@ a,button{transition:transform .14s}
     <span class="kicker">one loop, two doors</span>
     <h2 class="sec-h">Atlas builds the trust.<br><em>Vesta makes it visible.</em></h2>
     <p class="sec-sub">Atlas helps contractors build businesses homeowners can trust. Vesta helps homeowners recognize that trust. Every job Atlas handles well becomes evidence — and evidence is how you win the next one.</p>
+  </div>
+  <div class="loopflow rv" aria-label="Built on the tools you already trust: Jobber to Atlas to Vesta">
+    <span class="loopflow-lead">Built on the tools you already trust</span>
+    <div class="loopflow-chips">
+      <span class="lf-chip"><svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="200" cy="200" r="200" fill="#0E2A36"/><g fill="none" stroke="#68DC1E" stroke-width="30"><rect x="163" y="163" width="84" height="84" rx="16"/><rect x="119" y="119" width="172" height="172" rx="44"/><rect x="77" y="77" width="256" height="256" rx="66"/></g></svg>Jobber</span>
+      <span class="lf-arr" aria-hidden="true">→</span>
+      <span class="lf-chip">Atlas</span>
+      <span class="lf-arr" aria-hidden="true">→</span>
+      <span class="lf-chip">Vesta</span>
+    </div>
   </div>
   <div class="prod-grid">
     <a class="prod-card prod-atlas rv" href="/atlas">
