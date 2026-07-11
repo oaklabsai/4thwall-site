@@ -198,6 +198,7 @@ a,button{transition:transform .14s}
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px}
 /* the two hand-drawn arrows — short one to the near chip, long arcing one to the far chip */
 .announce-point{display:inline-flex;align-items:center;gap:.55rem}
+.aflow-arr{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--muted)}
 .a-arrows{width:44px;height:28px;flex-shrink:0;stroke:var(--olive);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;fill:none;margin-top:4px;opacity:.85}
 .announce-logos{display:inline-flex;align-items:center;gap:.45rem}
 .alogo{display:inline-flex;align-items:center;gap:.38rem;font-weight:600;font-size:.84rem;letter-spacing:-.01em;
@@ -434,9 +435,9 @@ a,button{transition:transform .14s}
 <!-- ════════════════ HERO ════════════════ -->
 <section class="hero" id="home">
   <div class="hero-inner">
-    <div class="announce rv" role="note" aria-label="New: Atlas now plugs into Slack and Jobber">
-      <span class="announce-tag">New</span>
-      <span class="announce-script">now plugged into</span>
+    <div class="announce rv" role="note" aria-label="Built on the tools you already trust — your completed work becomes homeowner trust">
+      <span class="announce-tag">Built on the tools you already trust</span>
+      <span class="announce-script">your completed work becomes homeowner trust</span>
       <span class="announce-point">
       <svg class="a-arrows" viewBox="0 0 46 28" aria-hidden="true">
         <path d="M3 18 C 11 9, 20 7.5, 28 11"/>
@@ -445,14 +446,17 @@ a,button{transition:transform .14s}
         <path d="M42 15.5 l-6.4 0 M42 15.5 l-2.6 5.8"/>
       </svg>
       <span class="announce-logos">
-        <span class="alogo alogo-slack"><svg viewBox="68 68 134 134" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M99.4 151.2c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h12.9v12.9z" fill="#E01E5A"/><path d="M105.9 151.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9v-32.3z" fill="#E01E5A"/><path d="M118.8 99c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9V99h-12.9z" fill="#36C5F0"/><path d="M118.8 105.9c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H86.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/><path d="M170.6 118.8c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9h-12.9v-12.9z" fill="#2EB67D"/><path d="M163.7 118.8c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V86.5c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/><path d="M150.8 170.6c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9v-12.9h12.9z" fill="#ECB22E"/><path d="M150.8 163.7c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9h-32.3z" fill="#ECB22E"/></svg>Slack</span>
         <span class="alogo alogo-jobber"><svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="200" cy="200" r="200" fill="#0E2A36"/><g fill="none" stroke="#68DC1E" stroke-width="30"><rect x="163" y="163" width="84" height="84" rx="16"/><rect x="119" y="119" width="172" height="172" rx="44"/><rect x="77" y="77" width="256" height="256" rx="66"/></g></svg>Jobber</span>
+        <span class="aflow-arr" aria-hidden="true">→</span>
+        <span class="alogo">Atlas</span>
+        <span class="aflow-arr" aria-hidden="true">→</span>
+        <span class="alogo">Vesta</span>
       </span>
       </span>
     </div>
-    <span class="kicker rv">the front office for the trades</span>
-    <h1 class="hn-headline rv rv-d1">You're losing jobs<br><em>to whoever answers first.</em> <span class="hn-sparkle">✦</span></h1>
-    <p class="hn-sub rv rv-d2">Atlas answers every call and text in your name, on your own number, in under 10 seconds — day or night. It qualifies the lead, books the estimate, and asks for the review when the job wraps.</p>
+    <span class="kicker rv">you're losing jobs to whoever answers first</span>
+    <h1 class="hn-headline rv rv-d1">The front office<br><em>for the trades.</em> <span class="hn-sparkle">✦</span></h1>
+    <p class="hn-sub rv rv-d2">One system, not two apps. Atlas runs your front office — answering every call and text in under 10 seconds, booking the estimate, earning the review. Vesta turns that record into homeowner trust, so your completed work wins your next job.</p>
     <div class="hn-cta rv rv-d3">
       <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="btn-dark" target="_blank" rel="noopener">Book a call <span class="arr">→</span></a>
       <a href="#showcase" class="btn-soft">See it work ↓</a>
@@ -468,9 +472,9 @@ a,button{transition:transform .14s}
 <!-- ════════════════ PRODUCTS — the fork, right under the hero ════════════════ -->
 <section class="sec sec-products-top" id="products">
   <div class="sec-head rv">
-    <span class="kicker">two products, one system</span>
-    <h2 class="sec-h">Both sides of the market,<br><em>under one roof.</em></h2>
-    <p class="sec-sub">4THWALL runs the back office that wins contractors the job — and the directory where homeowners find the pros who actually deliver. Two sides of the same flywheel.</p>
+    <span class="kicker">one loop, two doors</span>
+    <h2 class="sec-h">Atlas builds the trust.<br><em>Vesta makes it visible.</em></h2>
+    <p class="sec-sub">Atlas helps contractors build businesses homeowners can trust. Vesta helps homeowners recognize that trust. Every job Atlas handles well becomes evidence — and evidence is how you win the next one.</p>
   </div>
   <div class="prod-grid">
     <a class="prod-card prod-atlas rv" href="/atlas">
@@ -489,13 +493,13 @@ a,button{transition:transform .14s}
     <a class="prod-card prod-vesta rv rv-d1" href="/vesta">
       <div class="prod-tag">For Homeowners</div>
       <div class="prod-name">Vesta<span class="dot">.</span></div>
-      <p class="prod-line">Find trusted pros. Get the job done.</p>
+      <p class="prod-line">Tell Vesta what you're trying to get done.</p>
       <ul class="prod-feats">
-        <li>Find local contractors</li>
-        <li>Verified work records</li>
-        <li>Search by trade &amp; ZIP</li>
-        <li>No ads, no pay-to-play</li>
-        <li>Free to search</li>
+        <li>Ask in your own words — get a real answer</li>
+        <li>Curated picks, with the why behind each</li>
+        <li>Every read grounded in the public record</li>
+        <li>A project brief ready to send</li>
+        <li>No ads, no pay-to-play, free</li>
       </ul>
       <span class="prod-btn">Explore Vesta <span class="arr">→</span></span>
     </a>
