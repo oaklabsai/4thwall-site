@@ -54,14 +54,23 @@ a{color:inherit;text-decoration:none}
 .nav-a:hover{color:var(--ink)}
 
 /* ── hero ─────────────────────────────────────────────────────────── */
-.hero{padding:clamp(2.5rem,7vw,4.5rem) 0 1.25rem;text-align:center}
+.hero{max-width:760px;margin:0 auto;padding:clamp(2rem,5.5vw,3.2rem) var(--pad) 1rem;text-align:center}
 .eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--olive);margin-bottom:1.1rem}
 h1{font-family:var(--display);font-weight:500;font-size:clamp(1.85rem,6vw,3rem);line-height:1.06;letter-spacing:-0.02em;color:var(--ink)}
 h1 em{font-style:italic;color:var(--ink-2)}
 .sub{margin:1.1rem auto 0;max-width:34rem;font-size:clamp(1rem,2.4vw,1.12rem);color:var(--muted);line-height:1.5}
 
 /* ── calculator card ──────────────────────────────────────────────── */
-.calc{margin:1.9rem 0 0;background:var(--nm);border-radius:26px;box-shadow:var(--sh-card);padding:clamp(1.4rem,4.5vw,2.4rem)}
+/* ── tools: calculator + demo shoulder-to-shoulder ──────────────────── */
+.tools{max-width:1080px;margin:1.4rem auto 0;padding:0 var(--pad)}
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
+.col-head{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive);margin-bottom:.9rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.col-head-arrow{color:var(--ink);background:var(--tea-grad);border-radius:999px;padding:.14rem .6rem;font-size:.64rem;letter-spacing:.05em;box-shadow:var(--nm-sm)}
+.demo{display:flex;flex-direction:column}
+.demo-lead{font-size:.94rem;color:var(--muted);line-height:1.5;margin-bottom:1.05rem}
+.demo-lead b{color:var(--ink);font-weight:600}
+
+.calc{background:var(--nm);border-radius:24px;box-shadow:var(--sh-card);padding:clamp(1.3rem,3.2vw,1.9rem)}
 .field{margin-bottom:1.5rem}
 .field:last-of-type{margin-bottom:.5rem}
 .f-top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.7rem}
@@ -104,7 +113,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 .tp-chip[aria-pressed="true"]{background:var(--tea-grad);color:var(--ink);box-shadow:var(--nm-in);font-weight:500}
 
 /* ── demo chat (text your front desk) ─────────────────────────────── */
-.demo-chat{margin:1.6rem auto 0;max-width:460px;background:var(--nm);border-radius:24px;box-shadow:var(--sh-card);overflow:hidden;text-align:left}
+.demo-chat{width:100%;background:var(--nm);border-radius:24px;box-shadow:var(--sh-card);overflow:hidden;text-align:left}
 .dc-head{display:flex;align-items:center;gap:.5rem;padding:.85rem 1.1rem;border-bottom:1px solid var(--line-2);font-size:.8rem;color:var(--muted);font-weight:500}
 .dc-dot{width:8px;height:8px;border-radius:50%;background:#5aa469;box-shadow:0 0 0 3px rgba(90,164,105,.16);flex-shrink:0}
 .dc-biz{color:var(--ink);font-weight:600}
@@ -123,7 +132,17 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 .dc-input button:disabled{opacity:.5;cursor:default;transform:none}
 
 /* ── footer ───────────────────────────────────────────────────────── */
-.foot{margin-top:3.2rem;padding:1.8rem 0 2.4rem;border-top:1px solid var(--line-2);text-align:center;font-size:.78rem;color:var(--dim)}
+.foot{max-width:760px;margin:3rem auto 0;padding:1.8rem var(--pad) 2.4rem;border-top:1px solid var(--line-2);text-align:center;font-size:.78rem;color:var(--dim)}
+
+/* ── mobile: stack the tools, nudge toward the demo ─────────────────── */
+@media (max-width:820px){
+  .tools-grid{grid-template-columns:1fr;gap:1.9rem}
+  .demo .col-head{font-size:.82rem;color:var(--ink)}
+  .demo .col-head-arrow{font-size:.72rem;padding:.2rem .7rem}
+  .demo-lead{font-size:1rem}
+  .dc-input input{font-size:16px}          /* ≥16px so iOS doesn't zoom on focus */
+  .dc-thread{min-height:180px}
+}
 .foot a{color:var(--muted)}
 .foot .fnum{font-family:var(--mono)}
 </style>
@@ -137,7 +156,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
   </div>
 </nav>
 
-<main class="wrap">
+<main>
 
   <section class="hero">
     <div class="eyebrow">The missed-call math</div>
@@ -145,7 +164,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     <p class="sub">Four numbers you already know off the top of your head. Your own math — we just do the multiplication.</p>
   </section>
 
-  <section class="calc" aria-label="Missed-call revenue calculator">
+  <div class="tools">
     <div class="trade-pick">
       <div class="tp-label">First — what's your trade?</div>
       <div class="tp-chips" id="tp-chips">
@@ -156,20 +175,23 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
         <button type="button" class="tp-chip" data-trade="paving">Paving</button>
       </div>
     </div>
-    <div class="field">
-      <div class="f-top">
-        <div><div class="f-label">Calls you get in a week</div><div class="f-help">Every ring — new jobs, quotes, callbacks.</div></div>
-        <div class="f-val"><span id="v-calls">40</span></div>
+    <div class="tools-grid">
+    <section class="calc" aria-label="Missed-call revenue calculator">
+      <div class="col-head">① What your missed calls cost</div>
+      <div class="field">
+        <div class="f-top">
+          <div><div class="f-label">Calls you get in a week</div><div class="f-help">Every ring — new jobs, quotes, callbacks.</div></div>
+          <div class="f-val"><span id="v-calls">20</span></div>
+        </div>
+        <input type="range" id="calls" min="5" max="200" step="5" value="20">
       </div>
-      <input type="range" id="calls" min="5" max="200" step="5" value="40">
-    </div>
 
     <div class="field">
       <div class="f-top">
         <div><div class="f-label">How many go unanswered</div><div class="f-help">On a job, driving, after hours — straight to voicemail.</div></div>
-        <div class="f-val"><span id="v-miss">30</span>%</div>
+        <div class="f-val"><span id="v-miss">15</span>%</div>
       </div>
-      <input type="range" id="miss" min="5" max="70" step="5" value="30">
+      <input type="range" id="miss" min="5" max="70" step="5" value="15">
     </div>
 
     <div class="field">
@@ -183,9 +205,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     <div class="field">
       <div class="f-top">
         <div><div class="f-label">Of the calls you answer, how many book</div><div class="f-help">Your close rate when you actually pick up.</div></div>
-        <div class="f-val"><span id="v-close">40</span>%</div>
+        <div class="f-val"><span id="v-close">30</span>%</div>
       </div>
-      <input type="range" id="close" min="10" max="90" step="5" value="40">
+      <input type="range" id="close" min="10" max="90" step="5" value="30">
     </div>
 
     <div class="result" aria-live="polite">
@@ -200,22 +222,24 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
       </div>
     </div>
 
-    <p class="honest">These are your numbers, not ours — slide them until they match your week. A missed call isn't lost forever, but the ones a competitor picks up usually are.</p>
-  </section>
+      <p class="honest">These are your numbers, not ours — slide them until they match your week. A missed call isn't lost forever, but the ones a competitor picks up usually are.</p>
+    </section>
 
-  <section class="turn">
-    <div class="turn-line">Now — <em>be one of your own callers.</em></div>
-    <p class="turn-sub">This is your AI front desk. Text it like a customer would — watch it answer in seconds, ask the right questions, and go for the booking. Day or night, while you're on the roof.</p>
-    <div class="demo-chat">
+    <section class="demo" aria-label="Text your front desk">
+      <div class="col-head">② Now stop the leak <span class="col-head-arrow">↓ text it live</span></div>
+      <p class="demo-lead"><b>Be one of your own callers.</b> This is the AI front desk that answers when you can't — text it like a customer would and watch what they'd get instead of your voicemail.</p>
+      <div class="demo-chat">
       <div class="dc-head"><span class="dc-dot"></span><span class="dc-biz" id="dc-biz">Summit Ridge Roofing</span><span>· AI front desk</span></div>
       <div class="dc-thread" id="dc-thread"></div>
       <form class="dc-input" id="dc-form" autocomplete="off">
         <input id="dc-msg" type="text" placeholder="Text like a customer would…" maxlength="500" aria-label="Your message">
         <button type="submit" id="dc-send" aria-label="Send">↑</button>
       </form>
+      </div>
+      <span class="cta-alt" style="margin-top:1.2rem;display:block">Ready to put this on your business? <a href="/atlas#contact">Let's talk.</a></span>
+    </section>
     </div>
-    <span class="cta-alt" style="margin-top:1.4rem;display:block">Ready to put this on your business? <a href="/atlas#contact">Let's talk.</a></span>
-  </section>
+  </div>
 
   <footer class="foot">
     <div>4THWALL · Fairfield County, CT</div>
@@ -262,11 +286,11 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
   // ── trade selector + "text your front desk" demo ──────────────────────────
   var WORKER = 'https://fourthwall-bot.4thwalldevelopment.workers.dev/demo-reply';
   var TRADES = {
-    roofing:    { biz:'Summit Ridge Roofing',      ticket:8000, greet:"Hey, thanks for reaching out to Summit Ridge Roofing! What's going on with your roof?" },
-    hvac:       { biz:'TrueComfort Heating & Air', ticket:5500, greet:"Hi there — TrueComfort Heating & Air. Is it the heat or the cooling giving you trouble?" },
-    plumbing:   { biz:'Anchor Plumbing',           ticket:450,  greet:"Thanks for texting Anchor Plumbing! What's going on — is water leaking right now, or something else?" },
-    electrical: { biz:'Brightwork Electric',       ticket:900,  greet:"Hey, this is Brightwork Electric. What can we help with — a project, or something that stopped working?" },
-    paving:     { biz:'Ironclad Paving',           ticket:4000, greet:"Thanks for reaching out to Ironclad Paving! Tell me about your driveway or lot and I'll get you set up." }
+    roofing:    { biz:'Summit Ridge Roofing',      ticket:3500, greet:"Hey, thanks for reaching out to Summit Ridge Roofing! What's going on with your roof?" },
+    hvac:       { biz:'TrueComfort Heating & Air', ticket:1500, greet:"Hi there — TrueComfort Heating & Air. Is it the heat or the cooling giving you trouble?" },
+    plumbing:   { biz:'Anchor Plumbing',           ticket:350,  greet:"Thanks for texting Anchor Plumbing! What's going on — is water leaking right now, or something else?" },
+    electrical: { biz:'Brightwork Electric',       ticket:600,  greet:"Hey, this is Brightwork Electric. What can we help with — a project, or something that stopped working?" },
+    paving:     { biz:'Ironclad Paving',           ticket:2000, greet:"Thanks for reaching out to Ironclad Paving! Tell me about your driveway or lot and I'll get you set up." }
   };
   var curTrade = 'roofing';
   var thread = document.getElementById('dc-thread');
