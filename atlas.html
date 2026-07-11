@@ -529,6 +529,12 @@ section{position:relative;z-index:2}
 /* ── FEATURE SWITCHER ─────────── */
 .feat{display:grid;grid-template-columns:240px 1fr;gap:14px;align-items:start}
 .feat-nav{display:flex;flex-direction:column;gap:8px;padding:2px 0 2px 2px}
+.feat-band{display:block;font-family:var(--mono);font-size:.54rem;font-weight:600;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);padding:1.05rem .35rem .4rem}
+.feat-nav .feat-band:first-child{padding-top:.1rem}
+.s-outcome-sub{max-width:34rem;font-size:.95rem;line-height:1.6;color:var(--muted);margin-top:1rem}
+.s-outcome-sub b{color:var(--orange);font-weight:600}
+.loop-line{max-width:var(--max);margin:3.2rem auto 0;font-family:var(--display);font-style:italic;font-size:clamp(1.05rem,2vw,1.3rem);color:var(--muted);text-align:center}
+.loop-line a{color:var(--orange);text-decoration:underline;text-underline-offset:3px}
 .feat-btn{width:100%;padding:1.15rem 1.2rem;display:grid;grid-template-columns:2.6rem 1fr .7rem;align-items:center;gap:.5rem;text-align:left;cursor:pointer;border:none;background:var(--nm);border-radius:16px;box-shadow:var(--nm-sm);transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s cubic-bezier(.16,1,.3,1),background .18s}
 .feat-btn:hover:not(.is-active){transform:translateX(3px);box-shadow:var(--nm-out)}
 .feat-btn.is-active{background:var(--dark-grad);box-shadow:0 2px 6px rgba(40,41,22,.18), 0 14px 30px -10px rgba(40,41,22,.45), inset 0 1px 0 rgba(255,255,255,.08)}
@@ -1282,7 +1288,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <div class="s-meta">
     <div>
       <div class="s-label r">What it does · 01</div>
-      <h2 class="s-h r in">Six systems.<br><span class="ital">Everything automated.</span></h2>
+      <h2 class="s-h r in">Six systems.<br><span class="ital">Three outcomes.</span></h2>
+      <p class="s-outcome-sub r in d2">Everything Atlas runs maps to the three things that grow a trades business: <b>acquire</b> the lead, <b>convert</b> it into booked work, and <b>compound</b> finished jobs into the reputation that wins the next one.</p>
     </div>
   </div>
 
@@ -1340,6 +1347,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   <div class="feat r in d2">
     <div class="feat-nav">
+      <span class="feat-band">Acquire — the lead</span>
       <button class="feat-btn is-active" data-fi="0">
         <span class="feat-btn-n">001</span>
         <span class="feat-btn-label">Lead Response</span>
@@ -1347,27 +1355,29 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </button>
       <button class="feat-btn" data-fi="1">
         <span class="feat-btn-n">002</span>
-        <span class="feat-btn-label">Booking</span>
+        <span class="feat-btn-label">Storm Mode</span>
         <span class="feat-btn-dot"></span>
       </button>
       <button class="feat-btn" data-fi="2">
         <span class="feat-btn-n">003</span>
-        <span class="feat-btn-label">Review Generation</span>
+        <span class="feat-btn-label">Seasonal Campaigns</span>
         <span class="feat-btn-dot"></span>
       </button>
+      <span class="feat-band">Convert — the job</span>
       <button class="feat-btn" data-fi="3">
         <span class="feat-btn-n">004</span>
-        <span class="feat-btn-label">AI Visibility</span>
+        <span class="feat-btn-label">Booking</span>
         <span class="feat-btn-dot"></span>
       </button>
+      <span class="feat-band">Compound — the reputation</span>
       <button class="feat-btn" data-fi="4">
         <span class="feat-btn-n">005</span>
-        <span class="feat-btn-label">Storm Mode</span>
+        <span class="feat-btn-label">Review Generation</span>
         <span class="feat-btn-dot"></span>
       </button>
       <button class="feat-btn" data-fi="5">
         <span class="feat-btn-n">006</span>
-        <span class="feat-btn-label">Seasonal Campaigns</span>
+        <span class="feat-btn-label">AI Visibility</span>
         <span class="feat-btn-dot"></span>
       </button>
       <div class="feat-prog-wrap"><div class="feat-prog-bar" id="feat-bar"></div></div>
@@ -1385,8 +1395,33 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <span class="feat-pill">English + Spanish</span>
         </div>
       </div>
+
       <div class="feat-pane" data-fp="1">
-        <div class="feat-pane-ey">002 · Booking &amp; Scheduling</div>
+        <div class="feat-pane-ey">002 · Storm Mode</div>
+        <h3 class="feat-pane-h">10× volume.<br><em>Zero dropped leads.</em></h3>
+        <p class="feat-pane-d">When volume surges after a storm, the system handles it without slowing down. Every lead gets the same response time, regardless of how many come in at once.</p>
+        <div class="feat-pane-cut">No more losing a surge to whoever picked up faster.</div>
+        <div class="feat-pills">
+          <span class="feat-pill">10× capacity</span>
+          <span class="feat-pill">No lead drops</span>
+          <span class="feat-pill">Always on</span>
+        </div>
+      </div>
+
+      <div class="feat-pane" data-fp="2">
+        <div class="feat-pane-ey">003 · Seasonal Campaigns</div>
+        <h3 class="feat-pane-h">Top of mind<br><em>before the season hits.</em></h3>
+        <p class="feat-pane-d">Campaigns built around your market's seasons — storm response, renovation windows, inspection cycles. Written, scheduled, and sent automatically.</p>
+        <div class="feat-pane-cut">No more scrambling to market when demand spikes.</div>
+        <div class="feat-pills">
+          <span class="feat-pill">Storm season</span>
+          <span class="feat-pill">Renovation peaks</span>
+          <span class="feat-pill">Automated sends</span>
+        </div>
+      </div>
+
+      <div class="feat-pane" data-fp="3">
+        <div class="feat-pane-ey">004 · Booking &amp; Scheduling</div>
         <h3 class="feat-pane-h">Estimates, confirmations,<br><em>on autopilot.</em></h3>
         <p class="feat-pane-d">From first contact to confirmed appointment, automated end to end. Reminders go out, follow-ups happen. Your calendar fills without you touching it.</p>
         <div class="feat-pane-cut">No more manually chasing every confirmation.</div>
@@ -1396,8 +1431,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <span class="feat-pill">Follow-ups</span>
         </div>
       </div>
-      <div class="feat-pane" data-fp="2">
-        <div class="feat-pane-ey">003 · Review Generation</div>
+
+      <div class="feat-pane" data-fp="4">
+        <div class="feat-pane-ey">005 · Review Generation</div>
         <h3 class="feat-pane-h">5-star reviews,<br><em>without asking.</em></h3>
         <p class="feat-pane-d">Every closed job triggers a personalized review request — written to match your voice and the specifics of that customer. Not a template.</p>
         <div class="feat-pane-cut">No more asking for reviews by hand.</div>
@@ -1407,8 +1443,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <span class="feat-pill">Sounds human</span>
         </div>
       </div>
-      <div class="feat-pane" data-fp="3">
-        <div class="feat-pane-ey">004 · AI Search Visibility</div>
+
+      <div class="feat-pane" data-fp="5">
+        <div class="feat-pane-ey">006 · AI Search Visibility</div>
         <h3 class="feat-pane-h">Found on Google.<br><em>Named by AI.</em></h3>
         <p class="feat-pane-d">We manage your presence across traditional search, Google Maps, and the AI platforms homeowners are increasingly asking for recommendations — so when someone looks for a roofer in your area, your name comes up. Not occasionally. Consistently.</p>
         <div class="feat-pane-cut">No more being invisible while competitors get named.</div>
@@ -1419,30 +1456,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <span class="feat-pill">Always maintained</span>
         </div>
       </div>
-      <div class="feat-pane" data-fp="4">
-        <div class="feat-pane-ey">005 · Storm Mode</div>
-        <h3 class="feat-pane-h">10× volume.<br><em>Zero dropped leads.</em></h3>
-        <p class="feat-pane-d">When volume surges after a storm, the system handles it without slowing down. Every lead gets the same response time, regardless of how many come in at once.</p>
-        <div class="feat-pane-cut">No more losing a surge to whoever picked up faster.</div>
-        <div class="feat-pills">
-          <span class="feat-pill">10× capacity</span>
-          <span class="feat-pill">No lead drops</span>
-          <span class="feat-pill">Always on</span>
-        </div>
-      </div>
-      <div class="feat-pane" data-fp="5">
-        <div class="feat-pane-ey">006 · Seasonal Campaigns</div>
-        <h3 class="feat-pane-h">Top of mind<br><em>before the season hits.</em></h3>
-        <p class="feat-pane-d">Campaigns built around your market's seasons — storm response, renovation windows, inspection cycles. Written, scheduled, and sent automatically.</p>
-        <div class="feat-pane-cut">No more scrambling to market when demand spikes.</div>
-        <div class="feat-pills">
-          <span class="feat-pill">Storm season</span>
-          <span class="feat-pill">Renovation peaks</span>
-          <span class="feat-pill">Automated sends</span>
-        </div>
-      </div>
     </div>
   </div>
+
+  <p class="loop-line r in">Atlas helps contractors build businesses homeowners can trust. <a href="/vesta">Vesta</a> helps homeowners recognize that trust.</p>
 </section>
 
 <!-- ════════════════════════════════════════════ REVENUE INTELLIGENCE — calculators ════════════════════════════════════════════ -->
@@ -1497,6 +1514,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .ri-module .rrl{font-size:.77rem;color:rgba(244,242,238,.4);letter-spacing:-.004em}
 .ri-module .rrv{font-family:var(--mono);font-size:.73rem;font-weight:600;color:rgba(244,242,238,.72);transition:color .25s}
 .ri-module .rrv.g{color:#5DCAA5}
+.ri-module .res-price{position:relative;z-index:1;font-size:.78rem;line-height:1.55;color:rgba(244,242,238,.55);margin:0 0 1rem;max-width:30rem}
+.ri-module .res-price b{color:#F4F2EE;font-weight:600}
 .ri-module .res-cta{position:relative;z-index:1;display:inline-flex;align-items:center;gap:.42rem;background:var(--green);color:var(--cream);font-family:var(--body);font-size:.8rem;font-weight:600;letter-spacing:-.01em;padding:.65rem 1.25rem;border-radius:50px;border:none;cursor:pointer;text-decoration:none;transition:background .2s,transform .16s;align-self:flex-start}
 .ri-module .res-cta:hover{background:var(--green-2);transform:translateY(-1px)}
 .ri-module .arr{font-family:var(--display);font-size:.92rem;line-height:1}
@@ -1598,6 +1617,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <div class="res-row"><span class="rrl">4THWALL — 24/7, bilingual</span><span class="rrv g" id="om-r5">—</span></div>
         </div>
       </div>
+      <div class="res-price">Founding rate: <b>$1,500/mo</b> — measured against the number above. If Atlas doesn’t book you estimates in your first 30 days, that month’s free.</div>
       <a href="#contact" class="res-cta">Replace the hire <span class="arr">→</span></a>
     </div>
   </div>
