@@ -124,12 +124,45 @@ Rules: pick the closest job even if details are unconfirmed (best read beats no 
 }
 
 // ── the intake writer: a second single-task duty (Rung 1 — conversational intake). Reads
-// the same conversation and distills the homeowner's words into the work brief the request
-// card sends the contractor. Same architecture line as the resolver: one job, no interview
-// authority, no bank needed. The client types the result into the card; on any failure it
-// falls back to the homeowner's raw words verbatim — this op can never block a send.
+// the same conversation and returns the homeowner's OWN description of the work — EXTRACTIVE,
+// never composed. Same architecture line as the resolver: one job, no interview authority,
+// no bank needed. Two outputs: {work} (their words, lightly cleaned) or {insufficient:true}
+// (they never described the problem themselves — only tapped options / one-word answers).
+// The garble bug (4thwall-wiki/business/vesta-project-briefs.md § garble-bug fix) was the old
+// prompt COMPOSING a 40-80-word first-person narrative from a Q&A ramble — inventing the
+// connective tissue → a request the homeowner never wrote. The fix is extraction, not
+// synthesis: pull their sentences or return insufficient. On an outage the client keeps its
+// own floor (raw words verbatim), so a failure here never blocks a send.
 function writeupPrompt(){
-  return `You are an intake writer for a home-services request. Read the homeowner conversation and output ONLY one JSON object: {"work": string} — the work request a contractor will receive, written in the homeowner's own first-person voice ("I", "my"), 40-80 words, plain sentences. Include only facts the homeowner actually gave: what's happening, where on the property, how long it's been going on, anything a pro should know before coming out. Invent NOTHING — no diagnosis, no prices, no measurements or details they didn't give, no urgency words they didn't use. No greeting, no sign-off, no markdown. The JSON object only.`;
+  return `You are an intake writer for a home-services request. Read the conversation and return the homeowner's OWN description of what they need — EXTRACTIVE, not composed.
+
+Output ONLY one JSON object, exactly one of:
+{"work": string}       — the homeowner's request in THEIR OWN WORDS
+{"insufficient": true} — the homeowner never described the problem themselves
+
+Rules for "work":
+- Use ONLY words and phrases the homeowner actually typed. You may drop filler, join their fragments into plain sentences, and fix obvious typos — nothing more.
+- Do NOT add facts, diagnosis, causes, measurements, urgency, or any detail they did not say. Do NOT write in a first-person voice they didn't use, and do NOT pad to a word count. If they gave one real sentence about the problem, that sentence — lightly cleaned — IS the work. Short is correct.
+
+Return {"insufficient": true} when the homeowner only tapped options, gave one-word or yes/no answers, greeted ("hey", "hi"), or otherwise never stated the problem in their own words. When torn between composing something and returning insufficient, return insufficient — a blank the homeowner fills beats a sentence they didn't write.
+
+No prose, no markdown. The JSON object only.`;
+}
+
+// Extractive-fidelity gate — the garble backstop. The writeup must be the homeowner's OWN
+// words, so most of its content words must actually appear in the user's turns. A composed
+// narrative reuses a few nouns and invents the rest → high novelty → reject to insufficient
+// (an empty card the homeowner fills beats a sentence they didn't write). Stem-tolerant
+// (4-char prefix) so a legitimate plural/tense shift ("brick"→"bricks") isn't counted as
+// invention. Short extractions (<6 content words) are trusted — the prompt already gated them.
+function extractiveOK(work, messages){
+  const words = s => String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const stem = w => w.slice(0, 4);
+  const userStems = new Set(words(messages.filter(m => m.role === 'user').map(m => m.content).join(' ')).map(stem));
+  const content = words(work).filter(w => w.length > 3);
+  if (content.length < 6) return true;
+  const novel = content.filter(w => !userStems.has(stem(w))).length;
+  return novel / content.length <= 0.5;
 }
 
 // ── the system prompt (mirrors the locked prototype; bank injected live) ──
@@ -332,20 +365,29 @@ export default async function handler(req, res){
   }
 
   // ── op:'writeup' — the intake writer (plain JSON, not SSE). GLM leads (the
-  // instruction-follower, same reasoning as the resolver); no bank, no stream. The
-  // client owns the fallback (raw words), so any failure here is just {ok:false}.
+  // instruction-follower, same reasoning as the resolver); no bank, no stream. Three
+  // outcomes: {ok,work} extractive draft · {ok,insufficient} they never said the problem
+  // → the card asks instead of drafting garble · {ok:false} model outage → the client
+  // keeps its own floor (raw words verbatim), so an outage never blocks a send.
   if (op === 'writeup'){
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Cache-Control', 'no-store');
-    let work = '';
+    let work = '', insufficient = false;
     try {
       const wOut = await callModelStreaming(MODELS[MODELS.length - 1], keys, writeupPrompt(), messages, ()=>{});
       const wj = wOut && !wOut.error ? extractJSON(wOut.raw) : null;
-      if (wj && typeof wj.work === 'string') work = wj.work.trim().slice(0, 1200);
+      if (wj && wj.insufficient === true) insufficient = true;
+      else if (wj && typeof wj.work === 'string'){
+        const w = wj.work.trim().slice(0, 1200);
+        if (w && extractiveOK(w, messages)) work = w;
+        else if (w) insufficient = true;   // composed despite instruction → ask, don't garble
+      }
     } catch { /* fail-soft — client falls back to raw words */ }
-    console.log(`triage: writeup ${work ? 'ok len=' + work.length : 'miss'}`);
+    console.log(`triage: writeup ${work ? 'ok len=' + work.length : insufficient ? 'insufficient' : 'miss'}`);
     res.statusCode = 200;
-    return res.end(JSON.stringify(work ? { ok: true, work } : { ok: false }));
+    if (work) return res.end(JSON.stringify({ ok: true, work }));
+    if (insufficient) return res.end(JSON.stringify({ ok: true, insufficient: true }));
+    return res.end(JSON.stringify({ ok: false }));
   }
 
   res.statusCode = 200;

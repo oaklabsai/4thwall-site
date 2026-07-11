@@ -953,6 +953,11 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .vq-work { min-height:76px; }
 .vq-work.vq-writing { animation:vqPulse 1.4s ease-in-out infinite; }
 @keyframes vqPulse { 0%,100% { opacity:1; } 50% { opacity:.62; } }
+/* extractive draft — visibly the homeowner's own words (a quoted block they can still edit) */
+.vq-work.vq-quoted { border-left:3px solid var(--tea); padding-left:12px; background:rgba(212,223,158,.10); }
+/* insufficient path — Vesta asks for it in their words instead of drafting garble */
+.vq-work.vq-ask { border-left:3px solid var(--ebony); background:rgba(107,101,75,.06); }
+.vq-work-note { margin:7px 0 0; font-family:var(--sans); font-size:12px; line-height:1.45; color:var(--ebony); }
 .vq-cancel { background:none; border:none; color:var(--ebony); opacity:.65; font-family:var(--sans); font-size:10.5px; text-decoration:underline; cursor:pointer; padding:0; }
 /* ── Vesta Live RESOLVE → verdict lands as Vesta's closing message ── On match, the
    picks deck (a self-contained verdict: the read, the coverage, the per-pick why) is
@@ -6512,15 +6517,20 @@ function intakeOffer(ctx, picks, trade, job, mode, emergency){
   mk('I’ll reach out myself', ()=>{ const bb=ctx.bubble(); if(bb) bb.textContent='All good — each pick above opens their full profile, direct contact included.'; ctx.scroll(); });
   t.appendChild(wrap); ctx.scroll();
 }
+// Returns {work} (extractive draft), {insufficient:true} (they never described it — the card
+// asks in their words instead of drafting garble), or {} (outage → client uses its raw-words
+// floor). The garble fix: a composed narrative from a Q&A ramble now comes back insufficient.
 async function intakeWriteup(msgs){
   try {
     const r = await fetch('/api/triage', { method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ op:'writeup', messages: msgs.slice(-12) }),
       signal: (window.AbortSignal && AbortSignal.timeout) ? AbortSignal.timeout(14000) : undefined });
-    if (!r.ok) return '';
+    if (!r.ok) return {};
     const j = await r.json();
-    return (j && j.ok && typeof j.work === 'string') ? j.work : '';
-  } catch(_){ return ''; }
+    if (j && j.ok && typeof j.work === 'string' && j.work) return { work:j.work };
+    if (j && j.ok && j.insufficient) return { insufficient:true };
+    return {};
+  } catch(_){ return {}; }
 }
 async function intakeCard(ctx, pick, trade, mode, emergency){
   const t = ctx.thread(); if (!t) return;
@@ -6533,7 +6543,7 @@ async function intakeCard(ctx, pick, trade, mode, emergency){
     '<div class="tc-deck-kick">Your request · nothing sends until you say so<span class="tc-deck-pct">'+esc(tradeLabelOf(trade))+'</span></div>'+
     '<h2>To <em>'+esc(pick.name)+'</em></h2>'+
     '<div class="vq-fields">'+
-      '<div class="vq-f in"><label class="req-label">What’s going on — in your words</label><textarea class="req-textarea vq-work vq-writing" maxlength="1200" placeholder="Writing it up from what you told me…" aria-label="Your request"></textarea></div>'+
+      '<div class="vq-f in"><label class="req-label">What’s going on — in your words</label><textarea class="req-textarea vq-work vq-writing" maxlength="1200" placeholder="Writing it up from what you told me…" aria-label="Your request"></textarea><p class="vq-work-note" hidden></p></div>'+
       '<div class="vq-f"><label class="req-label">How soon</label><select class="req-select vq-urg" aria-label="How soon">'+
         '<option value="planning"'+(mode==='plan'&&!em?' selected':'')+'>Planning ahead</option>'+
         '<option value="soon"'+(mode!=='plan'&&!em?' selected':'')+'>In the next few weeks</option>'+
@@ -6555,17 +6565,35 @@ async function intakeCard(ctx, pick, trade, mode, emergency){
   const grow = ()=>{ ta.style.height='auto'; ta.style.height = Math.min(300, ta.scrollHeight)+'px'; };
   ta.addEventListener('input', grow);
   const msgs = ctx.msgs();
-  let work = await intakeWriteup(msgs);
-  if (!work) work = msgs.filter(m=>m.role==='user').map(m=>m.content).join('\n').slice(0,1200);
+  const wr = await intakeWriteup(msgs);
   if (!row.isConnected) return;                       // cancelled while the writeup generated
   ta.classList.remove('vq-writing');
+  const revealGaps = ()=> card.querySelectorAll('.vq-f:not(.in)').forEach((f,i)=> setTimeout(()=>{ f.classList.add('in'); ctx.scroll(); }, 140 + i*170));
+  if (wr.insufficient){
+    // garble fix: the homeowner never described the problem in their own words (only tapped
+    // options / short answers), so there's nothing honest to extract. Vesta asks for it in
+    // the card itself instead of drafting a request they never wrote — the textarea IS the
+    // clarifying-question surface, and Send stays disabled until they fill it (intakeSend).
+    const note = card.querySelector('.vq-work-note');
+    ta.value = ''; ta.placeholder = 'In a sentence or two — what’s happening, and where?';
+    ta.classList.add('vq-ask');
+    if (note){ note.hidden = false; note.textContent = 'This one I’d rather send in your own words — tell them what’s going on and I’ll pass it straight along.'; }
+    setTimeout(()=>{ try { ta.focus({ preventScroll:true }); } catch(_){ } }, 220);
+    revealGaps();
+    card.querySelector('.vq-send').addEventListener('click', ()=> intakeSend(ctx, row, card, pick, trade));
+    return;
+  }
+  // extractive draft (their words) or, on an outage, the raw-words floor — never a composed brief
+  let work = wr.work;
+  if (!work) work = msgs.filter(m=>m.role==='user').map(m=>m.content).join('\n').slice(0,1200);
+  ta.classList.add('vq-quoted');                      // visibly THEIR words (quote treatment)
   await new Promise(res=>{ let i=0; (function step(){
     i = Math.min(work.length, i + 3 + Math.floor(Math.random()*4));
     ta.value = work.slice(0,i); grow(); ctx.scroll();
     if (i < work.length) setTimeout(step, 14 + Math.random()*22); else res();
   })(); });
   // the gaps surface one beat apart — the card asks only what the conversation couldn't know
-  card.querySelectorAll('.vq-f:not(.in)').forEach((f,i)=> setTimeout(()=>{ f.classList.add('in'); ctx.scroll(); }, 140 + i*170));
+  revealGaps();
   card.querySelector('.vq-send').addEventListener('click', ()=> intakeSend(ctx, row, card, pick, trade));
 }
 async function intakeSend(ctx, row, card, pick, trade){
