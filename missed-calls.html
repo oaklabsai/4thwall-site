@@ -117,6 +117,8 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 .dc-head{display:flex;align-items:center;gap:.5rem;padding:.85rem 1.1rem;border-bottom:1px solid var(--line-2);font-size:.8rem;color:var(--muted);font-weight:500}
 .dc-dot{width:8px;height:8px;border-radius:50%;background:#5aa469;box-shadow:0 0 0 3px rgba(90,164,105,.16);flex-shrink:0}
 .dc-biz{color:var(--ink);font-weight:600}
+.dc-reset{margin-left:auto;flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--cream);color:var(--muted);font-size:.92rem;line-height:1;box-shadow:var(--nm-sm);cursor:pointer;transition:transform .2s,color .15s}
+.dc-reset:hover{transform:rotate(-90deg);color:var(--ink)}
 .dc-thread{padding:1.1rem;display:flex;flex-direction:column;gap:.6rem;min-height:210px;max-height:360px;overflow-y:auto}
 .dc-b{max-width:82%;padding:.6rem .85rem;border-radius:18px;font-size:.95rem;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
 .dc-b.them{align-self:flex-start;background:var(--cream);color:var(--ink);box-shadow:var(--nm-sm);border-bottom-left-radius:6px}
@@ -229,7 +231,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
       <div class="col-head">② Now stop the leak <span class="col-head-arrow">↓ text it live</span></div>
       <p class="demo-lead"><b>Be one of your own callers.</b> This is the AI front desk that answers when you can't — text it like a customer would and watch what they'd get instead of your voicemail.</p>
       <div class="demo-chat">
-      <div class="dc-head"><span class="dc-dot"></span><span class="dc-biz" id="dc-biz">Summit Ridge Roofing</span><span>· AI front desk</span></div>
+      <div class="dc-head"><span class="dc-dot"></span><span class="dc-biz" id="dc-biz">Summit Ridge Roofing</span><span>· AI front desk</span><button type="button" class="dc-reset" id="dc-reset" title="Start over" aria-label="Start over">↺</button></div>
       <div class="dc-thread" id="dc-thread"></div>
       <form class="dc-input" id="dc-form" autocomplete="off">
         <input id="dc-msg" type="text" placeholder="Text like a customer would…" maxlength="500" aria-label="Your message">
@@ -297,6 +299,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
   var input  = document.getElementById('dc-msg');
   var sendBtn= document.getElementById('dc-send');
   var chat = [];   // {role, content} — sent to the worker
+  var convoId = 0; // bumped on reset/trade-switch so an in-flight reply can't land in a fresh chat
 
   function addBubble(who, text){
     var b = document.createElement('div');
@@ -317,34 +320,41 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     for (var i=0;i<chips.length;i++){ chips[i].setAttribute('aria-pressed', chips[i].getAttribute('data-trade')===t ? 'true':'false'); }
     // set this trade's realistic average-job default + recalc
     if (el.ticket){ el.ticket.value = TRADES[t].ticket; calc(); }
-    // reset the demo to this trade's front desk
-    document.getElementById('dc-biz').textContent = TRADES[t].biz;
-    chat = [{ role:'assistant', content:TRADES[t].greet }];
+    resetChat();   // reset the demo to this trade's front desk
+  }
+  function resetChat(){
+    convoId++;   // invalidate any in-flight reply from the previous conversation
+    document.getElementById('dc-biz').textContent = TRADES[curTrade].biz;
+    chat = [{ role:'assistant', content:TRADES[curTrade].greet }];
     thread.innerHTML = '';
-    addBubble('them', TRADES[t].greet);
+    addBubble('them', TRADES[curTrade].greet);
+    input.value = ''; input.disabled = false; sendBtn.disabled = false;
   }
   function send(text){
     text = (text || '').trim();
     if (!text) return;
     addBubble('me', text);
     chat.push({ role:'user', content:text });
+    var myId = convoId;   // this send belongs to the current conversation
     input.value = ''; input.disabled = true; sendBtn.disabled = true; typing(true);
     fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ trade:curTrade, messages: chat.slice(-10) }) })
       .then(function(r){ return r.json().catch(function(){ return {}; }); })
       .then(function(d){
+        if (myId !== convoId) return;   // reset/switched mid-flight — drop this stale reply
         typing(false);
         var reply = (d && d.reply) ? d.reply : "Sorry — glitched for a second. Mind sending that again?";
         addBubble('them', reply);
         if (d && d.reply && !d.degraded) chat.push({ role:'assistant', content:d.reply });
       })
-      .catch(function(){ typing(false); addBubble('them', "Hmm — connection hiccup on my end. Try that once more?"); })
-      .finally(function(){ input.disabled = false; sendBtn.disabled = false; input.focus(); });
+      .catch(function(){ if (myId !== convoId) return; typing(false); addBubble('them', "Hmm — connection hiccup on my end. Try that once more?"); })
+      .finally(function(){ if (myId !== convoId) return; input.disabled = false; sendBtn.disabled = false; input.focus(); });
   }
   document.getElementById('dc-form').addEventListener('submit', function(e){ e.preventDefault(); send(input.value); });
   document.getElementById('tp-chips').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('.tp-chip') : null;
     if (b) selectTrade(b.getAttribute('data-trade'));
   });
+  document.getElementById('dc-reset').addEventListener('click', resetChat);
   selectTrade('roofing');
 })();
 </script>
