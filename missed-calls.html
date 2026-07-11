@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What are your missed calls costing you? · 4THWALL</title>
+<meta name="description" content="A 20-second estimate of the revenue your business loses to unanswered calls — your own numbers, our arithmetic. Then see what Atlas does about it.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://4thwall.solutions/missed-calls">
+<link rel="icon" href="/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="/logo.png">
+<meta property="og:title" content="What are your missed calls costing you?">
+<meta property="og:description" content="Your own numbers, our arithmetic — the revenue leaking out of your voicemail every month.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── theme (matched to atlas.html) ────────────────────────────────── */
+:root{
+  --cream:#ECEDE2; --cream-3:#DDDECB;
+  --ink:#12100E; --ink-2:#30321C;
+  --muted:rgba(74,75,47,.62); --dim:rgba(74,75,47,.42); --faint:rgba(74,75,47,.2);
+  --line:rgba(74,75,47,.13); --line-2:rgba(74,75,47,.07);
+  --tea:#D4DF9E; --olive:#4A4B2F;
+  --nm:#ECEDE2;
+  --nm-out:7px 7px 15px rgba(74,75,47,.15), -7px -7px 15px rgba(255,255,255,.9);
+  --nm-sm:4px 4px 9px rgba(74,75,47,.12), -4px -4px 9px rgba(255,255,255,.85);
+  --nm-in:inset 3px 3px 6px rgba(74,75,47,.13), inset -3px -3px 6px rgba(255,255,255,.9);
+  --sh-card:0 2px 6px rgba(74,75,47,.07), 0 18px 44px -10px rgba(74,75,47,.22), 0 40px 90px -24px rgba(74,75,47,.2);
+  --tea-grad:linear-gradient(180deg,#dfe8ac,#cdd88f);
+  --dark-grad:linear-gradient(180deg,#565738,#43442a);
+  --display:'Fraunces',Georgia,serif;
+  --body:'Inter Tight','Inter',-apple-system,sans-serif;
+  --hand:'Caveat',cursive;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --pad:clamp(1.25rem,4.5vw,4rem);
+  --max:760px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--body);color:var(--ink);background:var(--cream);-webkit-font-smoothing:antialiased;letter-spacing:-0.011em;line-height:1.5;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.serif{font-family:var(--display)}
+.hand{font-family:var(--hand);font-weight:500}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+
+/* ── nav ──────────────────────────────────────────────────────────── */
+.nav{position:sticky;top:0;z-index:50;background:rgba(236,237,226,.82);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line-2)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:.85rem var(--pad);display:flex;align-items:center;justify-content:space-between}
+.brand{font-weight:600;font-size:.82rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink)}
+.nav-a{font-size:.84rem;color:var(--muted);transition:color .2s}
+.nav-a:hover{color:var(--ink)}
+
+/* ── hero ─────────────────────────────────────────────────────────── */
+.hero{padding:clamp(2.5rem,7vw,4.5rem) 0 1.25rem;text-align:center}
+.eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--olive);margin-bottom:1.1rem}
+h1{font-family:var(--display);font-weight:500;font-size:clamp(1.85rem,6vw,3rem);line-height:1.06;letter-spacing:-0.02em;color:var(--ink)}
+h1 em{font-style:italic;color:var(--ink-2)}
+.sub{margin:1.1rem auto 0;max-width:34rem;font-size:clamp(1rem,2.4vw,1.12rem);color:var(--muted);line-height:1.5}
+
+/* ── calculator card ──────────────────────────────────────────────── */
+.calc{margin:1.9rem 0 0;background:var(--nm);border-radius:26px;box-shadow:var(--sh-card);padding:clamp(1.4rem,4.5vw,2.4rem)}
+.field{margin-bottom:1.5rem}
+.field:last-of-type{margin-bottom:.5rem}
+.f-top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.7rem}
+.f-label{font-size:.98rem;font-weight:500;color:var(--ink)}
+.f-help{font-size:.76rem;color:var(--dim);margin-top:.15rem;font-weight:400}
+.f-val{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--ink-2);white-space:nowrap;background:var(--cream);padding:.28rem .7rem;border-radius:999px;box-shadow:var(--nm-in)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:999px;background:var(--cream);box-shadow:var(--nm-in);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:30px;height:30px;border-radius:50%;background:var(--tea-grad);box-shadow:var(--nm-sm);border:2px solid #fff;cursor:pointer;transition:transform .12s}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.12)}
+input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:#cdd88f;box-shadow:var(--nm-sm);border:2px solid #fff;cursor:pointer}
+
+/* ── result ───────────────────────────────────────────────────────── */
+.result{margin-top:1.9rem;border-radius:22px;background:var(--dark-grad);color:var(--cream);padding:clamp(1.5rem,4.5vw,2.2rem);text-align:center;box-shadow:var(--sh-card)}
+.result .r-lead{font-size:.82rem;letter-spacing:.02em;color:rgba(236,237,226,.72);margin-bottom:.55rem}
+.r-big{font-family:var(--display);font-weight:500;font-size:clamp(2.6rem,10vw,4rem);line-height:1;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.r-unit{font-size:.9rem;color:rgba(236,237,226,.72);margin-top:.5rem}
+.r-year{margin-top:.55rem;font-family:var(--mono);font-size:.82rem;color:var(--tea)}
+.r-math{margin-top:1.15rem;padding-top:1.1rem;border-top:1px solid rgba(236,237,226,.14);font-size:.84rem;color:rgba(236,237,226,.78);line-height:1.55}
+.r-math b{color:#fff;font-weight:600;font-variant-numeric:tabular-nums}
+.honest{margin-top:1rem;font-size:.74rem;color:var(--dim);text-align:center;line-height:1.5}
+
+/* ── CTA ──────────────────────────────────────────────────────────── */
+.turn{margin:2.4rem 0 0;text-align:center}
+.turn-line{font-family:var(--display);font-weight:500;font-size:clamp(1.3rem,4vw,1.7rem);line-height:1.25;letter-spacing:-0.015em;color:var(--ink)}
+.turn-line em{font-style:italic}
+.turn-sub{margin:.85rem auto 0;max-width:30rem;font-size:.98rem;color:var(--muted)}
+.cta{display:inline-flex;align-items:center;gap:.6rem;margin-top:1.5rem;background:var(--ink);color:var(--cream);font-size:1.02rem;font-weight:500;padding:1rem 1.7rem;border-radius:999px;box-shadow:var(--nm-out);transition:transform .16s,box-shadow .16s}
+.cta:hover{transform:translateY(-2px)}
+.cta:active{transform:translateY(0);box-shadow:var(--nm-sm)}
+.cta .num{font-family:var(--mono);letter-spacing:.01em}
+.cta-alt{display:block;margin-top:1rem;font-size:.84rem;color:var(--dim)}
+.cta-alt a{color:var(--olive);border-bottom:1px solid var(--faint)}
+
+/* ── footer ───────────────────────────────────────────────────────── */
+.foot{margin-top:3.2rem;padding:1.8rem 0 2.4rem;border-top:1px solid var(--line-2);text-align:center;font-size:.78rem;color:var(--dim)}
+.foot a{color:var(--muted)}
+.foot .fnum{font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a href="/" class="brand">4THWALL</a>
+    <a href="/atlas" class="nav-a">What is Atlas? →</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">The missed-call math</div>
+    <h1>What is your voicemail <em>actually costing you?</em></h1>
+    <p class="sub">Four numbers you already know off the top of your head. Your own math — we just do the multiplication.</p>
+  </section>
+
+  <section class="calc" aria-label="Missed-call revenue calculator">
+    <div class="field">
+      <div class="f-top">
+        <div><div class="f-label">Calls you get in a week</div><div class="f-help">Every ring — new jobs, quotes, callbacks.</div></div>
+        <div class="f-val"><span id="v-calls">40</span></div>
+      </div>
+      <input type="range" id="calls" min="5" max="200" step="5" value="40">
+    </div>
+
+    <div class="field">
+      <div class="f-top">
+        <div><div class="f-label">How many go unanswered</div><div class="f-help">On a job, driving, after hours — straight to voicemail.</div></div>
+        <div class="f-val"><span id="v-miss">30</span>%</div>
+      </div>
+      <input type="range" id="miss" min="5" max="70" step="5" value="30">
+    </div>
+
+    <div class="field">
+      <div class="f-top">
+        <div><div class="f-label">Your average job is worth</div><div class="f-help">Ballpark ticket — what a typical job bills.</div></div>
+        <div class="f-val">$<span id="v-ticket">850</span></div>
+      </div>
+      <input type="range" id="ticket" min="150" max="12000" step="50" value="850">
+    </div>
+
+    <div class="field">
+      <div class="f-top">
+        <div><div class="f-label">Of the calls you answer, how many book</div><div class="f-help">Your close rate when you actually pick up.</div></div>
+        <div class="f-val"><span id="v-close">40</span>%</div>
+      </div>
+      <input type="range" id="close" min="10" max="90" step="5" value="40">
+    </div>
+
+    <div class="result" aria-live="polite">
+      <div class="r-lead">You're leaking about</div>
+      <div class="r-big">$<span id="r-month">0</span></div>
+      <div class="r-unit">every month, to calls you never picked up</div>
+      <div class="r-year">≈ $<span id="r-year">0</span> a year</div>
+      <div class="r-math">
+        <span id="r-missedcalls">0</span> missed calls a month →
+        <b><span id="r-lostjobs">0</span> jobs</b> that would have booked at your own close rate →
+        <b>$<span id="r-month2">0</span></b> that walked to whoever answered first.
+      </div>
+    </div>
+
+    <p class="honest">These are your numbers, not ours — slide them until they match your week. A missed call isn't lost forever, but the ones a competitor picks up usually are.</p>
+  </section>
+
+  <section class="turn">
+    <div class="turn-line">Atlas answers <em>every one of them</em> in under 60 seconds.</div>
+    <p class="turn-sub">Texts back, asks the right questions, and books the job — day or night, while you're on the roof. Don't take our word for it. Be a caller for a second.</p>
+    <a class="cta" id="smsCta" href="sms:+12036709477?&body=Hi%20%E2%80%94%20saw%20the%20missed-call%20calculator.%20Text%20me%20back%20like%20I%27m%20one%20of%20my%20callers.">
+      Text <span class="num">(203)&nbsp;670-9477</span> &nbsp;→
+    </a>
+    <span class="cta-alt">Rather talk it through? <a href="/atlas#contact">Reach out here.</a></span>
+  </section>
+
+  <footer class="foot">
+    <div>4THWALL · Fairfield County, CT</div>
+    <div style="margin-top:.4rem"><a href="tel:+12036709477" class="fnum">(203) 670-9477</a> · <a href="mailto:andrew@4thwall.solutions">andrew@4thwall.solutions</a></div>
+    <div style="margin-top:.5rem"><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  var WEEKS_PER_MONTH = 4.333;
+  var ids = ['calls','miss','ticket','close'];
+  var el = {};
+  ids.forEach(function(id){ el[id] = document.getElementById(id); });
+  function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
+  function calc(){
+    var calls  = +el.calls.value;          // calls/week
+    var miss   = +el.miss.value / 100;      // fraction unanswered
+    var ticket = +el.ticket.value;          // $ per job
+    var close  = +el.close.value / 100;     // close rate on answered calls
+
+    document.getElementById('v-calls').textContent  = calls;
+    document.getElementById('v-miss').textContent   = +el.miss.value;
+    document.getElementById('v-ticket').textContent = fmt(ticket);
+    document.getElementById('v-close').textContent  = +el.close.value;
+
+    var missedPerWeek  = calls * miss;
+    var missedPerMonth = missedPerWeek * WEEKS_PER_MONTH;
+    // a missed call, had it been answered, books at the same close rate
+    var lostJobsMonth  = missedPerMonth * close;
+    var leakMonth      = lostJobsMonth * ticket;
+    var leakYear       = missedPerWeek * close * ticket * 52;
+
+    document.getElementById('r-month').textContent      = fmt(leakMonth);
+    document.getElementById('r-month2').textContent     = fmt(leakMonth);
+    document.getElementById('r-year').textContent       = fmt(leakYear);
+    document.getElementById('r-missedcalls').textContent= fmt(missedPerMonth);
+    document.getElementById('r-lostjobs').textContent   = fmt(lostJobsMonth);
+  }
+  ids.forEach(function(id){ el[id].addEventListener('input', calc); });
+  calc();
+})();
+</script>
+</body>
+</html>
