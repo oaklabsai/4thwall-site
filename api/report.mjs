@@ -112,8 +112,10 @@ function renderReport(stats) {
     '<section class="page-hero" id="hero">' +
       '<a class="crumb" href="/directory">← All contractors</a>' +
       '<h1 class="page-h">The ' + COUNTY + ' Contractor Report</h1>' +
-      '<p class="page-sub">What the public record actually says about the contractors homeowners hire — ' +
-        'registration, tenure, and how much (or little) review signal exists per trade. ' +
+      '<p class="page-sub">Original public-record data on ' + s.total + ' home-service firms across ' + s.tradeCount +
+        ' trades — registration, tenure, and how much (or little) review signal homeowners actually have to hire on. ' +
+        (s.reviewedN ? 'The headline finding: <b>roughly one in five contractors hired in ' + COUNTY +
+        ' is chosen nearly blind.</b> ' : '') +
         'Every number below is computed live from our public-records corpus as of ' + monthYear + '. ' +
         'Journalists and researchers: cite freely with attribution and a link (see the methodology).</p>' +
     '</section>';
@@ -145,7 +147,11 @@ function renderReport(stats) {
     'licensed under separate Connecticut occupational regimes (not the HIC program), and this dataset does not ' +
     'verify those licenses — among our ' + LICENSED_TRADES.map((k) => t[k] ? t[k].firms : 0).reduce((a, b) => a + b, 0) +
     ' plumbing/HVAC/electrical firms an HIC appears on record for only a minority, and that is the expected, ' +
-    'compliant state for those trades, not a red flag.</p></section>';
+    'compliant state for those trades, not a red flag. The corpus’s remaining trades (pool, tree service, ' +
+    'windows &amp; doors, flooring — ' +
+    TRADES.filter((k) => !HIC_TRADES.includes(k) && !LICENSED_TRADES.includes(k)).map((k) => t[k] ? t[k].firms : 0).reduce((a, b) => a + b, 0) +
+    ' firms) span mixed credentialing — some of that work falls under the HIC program, some under separate ' +
+    'licenses — so we don’t grade them against the HIC baseline; they appear in the review-signal table above.</p></section>';
 
   // ── section 2: tenure ──
   const tenureSection =
@@ -159,11 +165,25 @@ function renderReport(stats) {
     'conservative floor on how long a firm has operated formally — a business can predate its registration, ' +
     'so we report it as exactly what it is.</p></section>';
 
-  // ── section 3: the review-scarcity finding ──
+  // ── the key finding, pulled out as the page's visual anchor (nut graf) ──
+  const keyBanner = s.reviewedN
+    ? '<div class="rp-key"><span class="k-big">Roughly 1 in 5 contractors homeowners hire in ' + COUNTY +
+      ' is chosen nearly blind — ' + s.le4Total + ' of the ' + s.reviewedN +
+      ' firms with a public review count have four or fewer reviews.</span>' +
+      '<span class="k-src">Computed live from public records · free to cite with attribution</span></div>'
+    : '';
+
+  // ── section: the review-scarcity finding (leads — it's the story) ──
+  // Inline data bars scaled to the deepest median so the gap is visible, not just stated.
+  const maxMedian = Math.max(...TRADES.filter((k) => t[k]).map((k) => t[k].medianReviews ?? 0), 1);
   const revRows = TRADES.filter((k) => t[k]).sort((a, b) => (t[a].medianReviews ?? 0) - (t[b].medianReviews ?? 0))
     .map((k) => {
       const d = t[k];
-      return '<tr><td>' + esc(tradeLabel(k)) + '</td><td>' + (d.medianReviews ?? '—') + '</td>' +
+      const bar = d.medianReviews !== null
+        ? '<span class="rp-barwrap"><span class="rp-bar"><i style="width:' +
+          Math.max(Math.round((d.medianReviews / maxMedian) * 100), 3) + '%"></i></span>' + d.medianReviews + '</span>'
+        : '—';
+      return '<tr><td>' + esc(tradeLabel(k)) + '</td><td>' + bar + '</td>' +
         '<td>' + pct(d.fourOrFewer, d.firms) + '% <span class="rp-dim">(' + d.fourOrFewer + ' of ' + d.firms + ')</span></td></tr>';
     }).join('');
   const hvacMed = t.hvac ? t.hvac.medianReviews : null;
@@ -192,7 +212,8 @@ function renderReport(stats) {
     COUNTY + ', CT — compiled from Connecticut public records (eLicense/data.ct.gov registration data) and public ' +
     'Google listings, then maintained as the dataset behind the <a href="/directory">Vesta contractor directory</a>. ' +
     'It is a curated corpus of established, currently-operating firms, not a census of every registered entity.</p>' +
-    '<p><b>Freshness:</b> every figure on this page is recomputed from the live dataset on load — nothing is hand-updated.</p>' +
+    '<p><b>Freshness:</b> every figure on this page is recomputed from the live dataset on load — nothing is hand-updated.' +
+    (s.lastModified ? ' Dataset last updated <b>' + s.lastModified + '</b>.' : '') + '</p>' +
     '<p><b>Citation:</b> free to quote or republish any statistic with attribution to ' +
     '<i>Vesta by 4THWALL Solutions</i> and a link to this page (' + CANONICAL + '). ' +
     'For the underlying methodology, cuts by town or trade, or press questions: ' +
@@ -203,8 +224,9 @@ function renderReport(stats) {
     '</section>';
 
   // NAV/FOOTER come from shell() — composing them here too rendered both twice.
+  // Order: key finding first (the story), then the registration/tenure context, then methodology.
   const body = hero +
-    '<section class="section" id="report">' + headline + hicSection + tenureSection + reviewSection + method + '</section>';
+    '<section class="section" id="report">' + headline + keyBanner + reviewSection + hicSection + tenureSection + method + '</section>';
 
   // Dataset JSON-LD: the page IS the dataset's landing page; publisher = the
   // shared entity graph (same @id wiring as every other page — one corpus).
@@ -246,6 +268,13 @@ function renderReport(stats) {
     '.rp-table td{padding:.55rem .8rem .55rem 0;border-bottom:1px solid var(--line,rgba(74,75,47,.12));color:var(--vink,#12100e)}' +
     '.rp-dim{color:var(--vdim);font-size:.8em}' +
     '.rp-note{font-size:.85rem;color:var(--vmut,#4a4b2f)}' +
+    '.rp-key{margin:.2rem 0 2.4rem;max-width:680px;padding:1.1rem 1.3rem;border-radius:14px;background:#30321c;color:#f0f1e8;box-shadow:0 10px 24px -14px rgba(18,16,14,.45)}' +
+    '.rp-key .k-big{font-family:"Fraunces",serif;font-size:1.18rem;line-height:1.5;font-weight:500;display:block}' +
+    '.rp-key .k-src{display:block;margin-top:.55rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:#d4df9e}' +
+    '.rp-barwrap{display:inline-flex;align-items:center;gap:.55rem;white-space:nowrap}' +
+    '.rp-bar{flex:0 0 88px;height:6px;border-radius:3px;background:rgba(74,75,47,.14);overflow:hidden}' +
+    '.rp-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#4a4b2f,#6b654b)}' +
+    '@media (max-width:480px){.rp-bar{flex-basis:56px}}' +
     '</style>';
 
   return shell({ title, description, canonical: CANONICAL, headExtra, body });
