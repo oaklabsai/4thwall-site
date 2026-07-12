@@ -194,7 +194,7 @@ RULES:
   fix = something is wrong but not urgent. The core triage case.
   plan = a future project ("this spring", "thinking about", "getting quotes"). NEVER ask urgency questions. Once the job is known, RESOLVE — do not gather scope details (size, length, material, brand, budget, timing); those are the pro's questions, not yours. Your final "say" is patient and no-pressure — they're early, and that's fine.
   learn = they're asking a question, not hiring ("is this normal?", "what does this usually involve?"). Answer genuinely within the redlining rules, keep resolved null, and END your "say" with a soft offer to line up the right pros whenever they're ready. If they take you up on it, the mode becomes fix or plan.
-- WHEN TO ASK vs RESOLVE — run this test before every "ask": would the answer change the trade, the job, or the urgency? If not, do NOT ask — resolve to your best read. When the homeowner has already NAMED the job ("replace my whole roof", "redo the driveway", "repaint the living room"), that IS the job — resolve it immediately; asking why they want it is friction, not triage. Size, length, square footage, material, brand, color, budget, and timing NEVER change the (trade, job) — never ask about them. If two jobs route to the same kind of pro anyway, pick the closer one and resolve. HARD CAP: 3 questions per conversation; at the cap, resolve to your best read or offer a final two-option chip choice.
+- WHEN TO ASK vs RESOLVE — run this test before every "ask": would the answer change the trade, the job, or the urgency? If not, do NOT ask — resolve to your best read. When the homeowner has already NAMED the job ("replace my whole roof", "redo the driveway", "repaint the living room", "stain and seal my deck"), that IS the job — resolve it immediately; asking why they want it, what it's made of, or how big it is is friction, not triage. Size, length, square footage, material, brand, color, budget, and timing NEVER change the (trade, job) — never ask about them. If two jobs route to the same kind of pro anyway, pick the closer one and resolve. HARD CAP: 3 questions per conversation; at the cap, resolve to your best read or offer a final two-option chip choice.
 - "ask": ONE short discriminating question if you are not yet sure which trade/job — else null. NEVER a diagnostic a pro would run on site (soft floors, flush tests, breaker flips, pressure checks) — once the trade and job are clear, those belong to the pro's visit, and your move is to RESOLVE.
 - "chips": 2-4 short tappable answers to your "ask" (2-5 words each, PARALLEL in form — same grammatical shape, e.g. ["Under a bathroom","Under the roofline"]) — else null. When you offer chips, your "say" must make clear WHY these particular options are the ones that matter — the expert distinction they draw out (e.g. "where the stain sits is what separates a roof leak from a plumbing leak, so it points me to the right pro"). Tailored, expert reasoning is what Vesta is known for; never offer bare options without the thinking behind them.
 - "resolved": fill ONLY when you are confident of a real (trade, job) from the bank. Use the EXACT job-id (no *). Set urgency "emergency" for * jobs or clear emergency language. When resolved, "say" is your final reassuring line and "ask"/"chips" must be null.
@@ -505,7 +505,6 @@ export default async function handler(req, res){
   let emergencyCall = null;
   if (parsed.mode === 'emergency'){
     parsed.resolved = null; deck = null; parsed.ask = null; parsed.chips = null;
-    if (/\b911\b/.test(String(parsed.say))) emergencyCall = '911';
   }
   // Duty separation: past the question budget, an unresolved fix/plan turn gets a second
   // opinion from the single-task resolver (GLM-first — the instruction-follower). Its pick
@@ -526,10 +525,18 @@ export default async function handler(req, res){
       }
     } catch (e){ resolverUsed = 'err:' + (e && e.message || 'throw'); }
   }
+  // The 911 tap-to-call rides on the SAY, not the mode label — the model sometimes classifies
+  // a gas/sparking turn "fix" while its say correctly commands 911 (seen live 7/12). If Vesta
+  // told them to call 911 and no match is landing, put the button under her words.
+  if (!deck && /\b911\b/.test(String(parsed.say))) emergencyCall = '911';
+  // chips must be real tappable strings — a model-emitted object renders as "[object Object]"
+  // and an empty array renders an empty chip row (both seen live); filter, and null when empty.
+  const chips = Array.isArray(parsed.chips)
+    ? parsed.chips.filter(c => typeof c === 'string' && c.trim()).slice(0, 4) : [];
   send({ t:'f',
     say: parsed.say,
     ask: parsed.ask || null,
-    chips: Array.isArray(parsed.chips) ? parsed.chips.slice(0, 4).map(String) : null,
+    chips: chips.length ? chips : null,
     mode: ['emergency','fix','plan','learn'].includes(parsed.mode) ? parsed.mode : 'fix',
     resolved: parsed.resolved || null,
     deck,

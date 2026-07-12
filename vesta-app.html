@@ -6147,8 +6147,8 @@ async function vmTurn(text){
     // never a walk-through offer, never a dead-end. Vesta is not dispatch. Land her say, surface a
     // tap-to-call for life-safety, and keep the composer open so the repair becomes a normal turn
     // once they're safe. (spec: 4thwall-wiki/ops/vesta-live-qa-findings.md)
+    if(final.call==='911') vmEmergencyCall();   // rides on the say (server-detected), not the mode label
     if(final.mode==='emergency'){
-      if(final.call==='911') vmEmergencyCall();
       vmBusy=false;
       const inp=$('hs-cin'); if(inp){ inp.placeholder='When you’re safe, I’m here to line up the repair.'; inp.disabled=false; }
       return;
@@ -6283,7 +6283,9 @@ async function vmDeck(trade, job, deckMeta, mode, quiet){
   setTimeout(()=>{ if(vmDeckShown && !vmBusy) intakeOffer(vmIntakeCtx(), picks, trade, job, mode, emergency); }, 700);
 }
 function vmChips(chips){
-  const t=$('vm-thread'); if(!t||!chips||!chips.length) return;
+  const t=$('vm-thread'); if(!t||!chips) return;
+  chips=chips.filter(c=>typeof c==='string'&&c.trim());   // a model-emitted object would render "[object Object]" (seen live)
+  if(!chips.length) return;
   const wrap=document.createElement('div'); wrap.className='tc-chips';
   chips.forEach(c=>{ const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.innerHTML='<span>'+esc(c)+'</span>'; bt.onclick=()=>{ if(!vmBusy&&!vmDone){ wrap.remove(); vmTurn(c); } }; wrap.appendChild(bt); });
   t.appendChild(wrap); vmScroll();
