@@ -646,6 +646,11 @@ export const FOOTER =
   // The original-data report (Stage 3 B4): the citable stats page. In the shared
   // footer for the same crawl-mesh reason as the hub link above.
   '      <a href="/fairfield-county-contractor-report">Contractor Report</a>\n' +
+  // Google Preferred Sources — a direct AI-Overview citation lever (seo/field-intel.md § AEO):
+  // a homeowner who marks us surfaces Vesta first, with a "Preferred" badge, in Google's AI
+  // answers. Low-key footer link on the homeowner SEO surfaces (where organic homeowners land).
+  // external + nofollow (no equity passed); Vesta framing — this audience knows Vesta, not 4THWALL.
+  '      <a href="https://www.google.com/preferences/source?q=4thwall.solutions" target="_blank" rel="noopener nofollow">Add Vesta as a preferred source →</a>\n' +
   '      <a href="/privacy.html">Privacy Policy</a>\n' +
   '      <a href="/terms.html">Terms of Service</a>\n' +
   '    </div>\n' +
