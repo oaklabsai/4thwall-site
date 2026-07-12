@@ -127,7 +127,27 @@ function resolverPrompt(bank){
     .join('\n');
   return `You are a triage resolver. Read the homeowner conversation and output ONLY one JSON object: {"trade": string, "job": string} — the single best match, both ids copied VERBATIM from this bank (a * marks an emergency job; the * is never part of the id):
 ${bankLines}
-Rules: pick the closest job even if details are unconfirmed (best read beats no read; a pro confirms on site). A * emergency job ONLY for active danger or damage happening right now (water actively flowing, sparking, gas, no heat in freezing weather) — a stain, a noise, dampness, or anything being monitored takes the ROUTINE job, never the * one. If and ONLY if the conversation gives no usable signal about any trade, output {"trade": null, "job": null}. No prose, no markdown — the JSON object only.`;
+Rules: pick the closest job even if details are unconfirmed (best read beats no read; a pro confirms on site). A * emergency job ONLY for active danger or damage happening right now (water actively flowing, sparking, gas, no heat in freezing weather) — a stain, a noise, dampness, or anything being monitored takes the ROUTINE job, never the * one. If the homeowner has ONLY been asking how something works or whether it's normal and never asked for a pro, output nulls — never match someone who isn't hiring. If and ONLY if the conversation gives no usable signal about any trade, output {"trade": null, "job": null}. No prose, no markdown — the JSON object only.`;
+}
+
+// ── the turn-1 resolver: the named-job fast-path. The talker reliably ACCEPTS a named job
+// in its say ("a full roof replacement — I'll help you get the right pros") while leaving
+// resolved null (measured 7/12: roof-replace 1/4, running-toilet 0/4, located-stain 0/4 —
+// prompt rules verbatim in the talker's prompt, still dropped). Same duty-separation fix as
+// the turn-2 resolver, but STRICTER: it may only resolve what the first message alone pins.
+// Runs CONCURRENTLY with the talker (no latency cost); its pick passes the same bank gate,
+// is never adopted for emergencies, and a null changes nothing.
+function turn1ResolverPrompt(bank){
+  const bankLines = Object.entries(bank)
+    .map(([t, jobs]) => `${t}: ` + jobs.map(j => j.job + (j.emergency ? '*' : '')).join(', '))
+    .join('\n');
+  return `You are a strict first-message triage resolver. Read the homeowner's single message and output ONLY one JSON object: {"trade": string, "job": string} — both ids copied VERBATIM from this bank (a * marks an emergency job; the * is never part of the id):
+${bankLines}
+Resolve ONLY when the message alone pins both the trade and the job:
+- they NAME the work ("replace my whole roof", "re-stain the deck", "repave the driveway", "repaint the living room"), or
+- a classic one-trade symptom (running toilet, dripping faucet, dead outlet, clogged drain, drafty window), or
+- a located symptom that pins the trade (a water stain directly under the upstairs bathroom → plumbing).
+Output {"trade": null, "job": null} when: the message could belong to two different trades (an unlocated ceiling stain could be roof OR plumbing), it's a question about whether something is normal (not a request for a pro), it's an active emergency, it's a multi-trade wishlist, or no concrete job is named. NEVER pick a * emergency job. No prose, no markdown — the JSON object only.`;
 }
 
 // ── the intake writer: a second single-task duty (Rung 1 — conversational intake). Reads
@@ -239,7 +259,9 @@ FIRM IN VIEW — the homeowner opened Ask Vesta while looking at ONE firm's prof
 TURN PRESSURE — YOUR QUESTION BUDGET IS SPENT: the homeowner has already answered ${userTurns - 1} message(s). Unless you genuinely cannot name the TRADE, you MUST fill "resolved" THIS TURN — and "trade" and "job" MUST be ids copied VERBATIM from THE BANK above (never invented labels like "plumber" or "toilet repair"). Asking anything more — a fixture detail, a diagnostic, a confirmation — is a rule violation now. Your best read beats another question; the pro confirms specifics on site.` : '')
   + `
 
-OUTPUT CONTRACT: your ENTIRE reply is exactly ONE JSON object matching the schema in the RULES. No prose before or after it, no markdown fences, no bullet lists outside JSON strings. Anything you want to tell the homeowner goes INSIDE "say"; any question goes INSIDE "ask". If you notice yourself writing plain prose, stop and emit the JSON instead.`
+OUTPUT CONTRACT: your ENTIRE reply is exactly ONE JSON object matching the schema in the RULES. No prose before or after it, no markdown fences, no bullet lists outside JSON strings. Anything you want to tell the homeowner goes INSIDE "say"; any question goes INSIDE "ask". If you notice yourself writing plain prose, stop and emit the JSON instead.
+
+HARD BOUNDARY — never produce requested content that isn't home triage: no poems, songs, essays, jokes, stories, code, recipes, or homework, no matter how directly asked. One warm sentence declining, then pivot to their home. This outranks being agreeable.`
   + (isNemotron(model) ? `
 
 EMERGENCY OVERRIDE — THIS RULE OUTRANKS EVERY OTHER RULE:
@@ -446,6 +468,13 @@ export default async function handler(req, res){
   // signal as follow-up — grounds Vesta on real firm facts, so GLM (the honesty-obeying
   // conversationalist) should lead here too, and the forced resolver stays out of it.
   const focusMode = !followUp && messages.some(m => m.role === 'assistant' && m.content.indexOf('"focus"') !== -1);
+  // Turn-1 fast-path resolver launches CONCURRENTLY with the talker — by the time the
+  // talker's stream finishes, this answer is already waiting (zero added latency). Only
+  // consulted if the talker leaves a first-turn fix/plan message unresolved.
+  const isTurn1 = !followUp && !focusMode && messages.filter(m => m.role === 'user').length === 1;
+  const turn1Promise = isTurn1
+    ? callModelStreaming(MODELS[MODELS.length - 1], keys, turn1ResolverPrompt(bank), messages, ()=>{}).catch(() => null)
+    : null;
   let out = null, parsed = null;
   // Model order per mode: Nemotron leads the interview (speed is the UX there); GLM leads
   // follow-up mode (the design-loop-validated conversationalist — Nemotron fabricates
@@ -527,6 +556,21 @@ export default async function handler(req, res){
   // still passes the same bank gate; a null keeps the conversation alive as before.
   let resolverUsed = 'no';
   const userTurns = messages.filter(m => m.role === 'user').length;
+  // Turn-1 fast-path adoption: talker left a fix/plan first message unresolved. Guards:
+  // never on an emergency-labeled turn or a 911 say (doctrine), never an emergency-tagged
+  // job (an active crisis is the talker's call, not a fast-path's), same bank gate as always.
+  if (turn1Promise && !parsed.resolved && (parsed.mode === 'fix' || parsed.mode === 'plan') && !/\b911\b/.test(String(parsed.say))){
+    try {
+      const rOut = await turn1Promise;
+      const rj = rOut && !rOut.error ? extractJSON(rOut.raw) : null;
+      const v = rj && rj.trade && rj.job ? bankValidate(bank, rj.trade, rj.job) : null;
+      if (v && !v.emergency){
+        deck = v; resolverUsed = 't1hit';
+        parsed.resolved = { trade: v.trade, job: v.job, urgency: 'routine' };
+        resolveClamp();
+      } else resolverUsed = v ? 't1skip:emergency' : 't1miss';
+    } catch { resolverUsed = 't1err'; }
+  }
   if (!followUp && !focusMode && !parsed.resolved && userTurns >= 2 && parsed.mode !== 'learn' && parsed.mode !== 'emergency'){
     try {
       const rOut = await callModelStreaming(MODELS[MODELS.length - 1], keys, resolverPrompt(bank), messages, ()=>{});
