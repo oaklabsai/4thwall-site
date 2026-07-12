@@ -146,7 +146,7 @@ ${bankLines}
 Resolve ONLY when the message alone pins both the trade and the job:
 - they NAME the work ("replace my whole roof", "re-stain the deck", "repave the driveway", "repaint the living room"), or
 - a classic one-trade symptom (running toilet, dripping faucet, dead outlet, clogged drain, drafty window), or
-- a located symptom that pins the trade (a water stain directly under the upstairs bathroom → plumbing).
+- a located symptom that pins the trade (a water stain directly under the upstairs bathroom → plumbing). For a stain, drip, or slow contained leak — nothing actively flowing — pick the trade's ROUTINE repair job (plumbing: fixture-or-small-repair; roofing: repair), NEVER a * job.
 Output {"trade": null, "job": null} when: the message could belong to two different trades (an unlocated ceiling stain could be roof OR plumbing), it's a question about whether something is normal (not a request for a pro), it's an active emergency, it's a multi-trade wishlist, or no concrete job is named. NEVER pick a * emergency job. No prose, no markdown — the JSON object only.`;
 }
 
