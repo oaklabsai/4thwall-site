@@ -14,7 +14,7 @@
 //   · The corpus is described as what it is (the most-visible firms per trade,
 //     compiled from public records), never as a census.
 import {
-  SITE, COUNTY, TRADES, tradeLabel, esc, shell, publisherNodes, NAV, FOOTER,
+  SITE, COUNTY, TRADES, tradeLabel, esc, shell, publisherNodes,
 } from './_render-directory.mjs';
 
 const DB_BASE = process.env.SUPABASE_URL || 'https://vinytnzzgryodyrftabg.supabase.co';
@@ -201,9 +201,9 @@ function renderReport(stats) {
     'before hiring. Any business can <a href="/terms.html#directory" style="color:var(--vgreen-2)">remove its listing ›</a>.</p>' +
     '</section>';
 
-  const body = NAV + hero +
-    '<section class="section" id="report">' + headline + hicSection + tenureSection + reviewSection + method + '</section>' +
-    FOOTER;
+  // NAV/FOOTER come from shell() — composing them here too rendered both twice.
+  const body = hero +
+    '<section class="section" id="report">' + headline + hicSection + tenureSection + reviewSection + method + '</section>';
 
   // Dataset JSON-LD: the page IS the dataset's landing page; publisher = the
   // shared entity graph (same @id wiring as every other page — one corpus).
@@ -272,9 +272,9 @@ export default async function handler(req, res) {
       description: 'Original public-record data on Fairfield County contractors.',
       canonical: CANONICAL,
       headExtra: '',
-      body: NAV + '<section class="page-hero"><h1 class="page-h">The ' + COUNTY + ' Contractor Report</h1>' +
+      body: '<section class="page-hero"><h1 class="page-h">The ' + COUNTY + ' Contractor Report</h1>' +
         '<p class="page-sub">The report is recomputing right now — check back in a minute, or browse the ' +
-        '<a href="/directory">full contractor directory</a>.</p></section>' + FOOTER,
+        '<a href="/directory">full contractor directory</a>.</p></section>',
     }));
   }
   // Stats move slowly (enrichment cadence, not user traffic): cache a day at the
