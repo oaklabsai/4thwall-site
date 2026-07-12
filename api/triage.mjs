@@ -555,11 +555,19 @@ export default async function handler(req, res){
   // model leaks a trailing question into a resolved say (seen live 7/12: resolved gutters +
   // "could you tell me what material your fascia is…"), and this path never nulled ask.
   // Enforce both here; if stripping leaves nothing, a canned line from the deck.
+  // DIY-procedure guard (M4): a resolved say that walks the homeowner through the repair
+  // (lift the tank lid, check the flapper, adjust the chain) both redlines and undercuts the
+  // handoff — why call a pro she just told you to fix it yourself? The prompt bans it; Nemotron
+  // ignores the ban ~1/3 (measured 7/12). Strip those sentences here — a component-fiddle verb
+  // aimed at a named part is the tell. Safety mitigations ("shut the water at the valve") don't
+  // match (no fiddle verb) and stay; emergency turns never reach this path.
+  const DIY_PROC = /\b(lift|remove|unscrew|loosen|tighten|jiggle|wiggle|reset|adjust|replace|reattach|reconnect|check|inspect|open up|take off|pop off)\b[^.!?]*\b(lid|flapper|chain|float|fill[- ]?valve|shut[- ]?off valve|breaker|fuse|panel|handle|washer|cartridge|o-?ring|gasket|tank|trap|p-?trap|thermostat|filter)\b/i;
   const resolveClamp = () => {
     if (!parsed.resolved || !deck) return;
     parsed.ask = null; parsed.chips = null;
-    const parts = String(parsed.say).split(/(?<=[.!?])\s+/);
+    let parts = String(parsed.say).split(/(?<=[.!?])\s+/);
     while (parts.length && /\?\s*$/.test(parts[parts.length - 1])) parts.pop();
+    parts = parts.filter(s => !DIY_PROC.test(s));
     parsed.say = parts.join(' ').trim()
       || `Got it — I'll line up vetted ${deck.tradeLabel.toLowerCase()} pros for ${deck.label} now.`;
   };
@@ -607,6 +615,19 @@ export default async function handler(req, res){
   // a gas/sparking turn "fix" while its say correctly commands 911 (seen live 7/12). If Vesta
   // told them to call 911 and no match is landing, put the button under her words.
   if (!deck && /\b911\b/.test(String(parsed.say))) emergencyCall = '911';
+  // SOFT-OFFER GUARANTEE (M5): a "is this normal? / why does…?" question that stays unresolved
+  // must end with the offer to line up pros — the learn-mode contract. Nemotron mislabels these
+  // fix ~half the time, dropping the offer, so this rides on the user's QUESTION SHAPE, not the
+  // mode label. Only when nothing else owns the next step (no resolve, no ask, no 911) and the
+  // say doesn't already offer — append once. Never on emergencies.
+  const lastUser = [...messages].reverse().find(m => m.role === 'user');
+  const lastText = String(lastUser && lastUser.content || '').trim();
+  const questionShaped = /\?\s*$/.test(lastText) || /^(is|are|does|do|should|why|what|how|can|could|would|will|when)\b/i.test(lastText);
+  if (questionShaped && !parsed.resolved && !parsed.ask && !emergencyCall && parsed.mode !== 'emergency'){
+    if (!/(line up|line them up|find (you |the right)|get you connected|match you|whenever you|when you'?re ready|ready to go|say the word)/i.test(String(parsed.say))){
+      parsed.say = String(parsed.say).replace(/\s*$/, '') + ' Whenever you’re ready, I can line up the right pros for exactly this.';
+    }
+  }
   // chips must be real tappable strings — a model-emitted object renders as "[object Object]"
   // and an empty array renders an empty chip row (both seen live); filter, and null when empty.
   const chips = Array.isArray(parsed.chips)
