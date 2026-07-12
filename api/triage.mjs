@@ -314,7 +314,11 @@ async function callModelStreaming(model, keys, system, messages, onDelta){
     ...(isNemotron(model) ? { chat_template_kwargs: { enable_thinking: false } } : {}),
   });
   let lastErr = 'no keys';
-  for (const key of keys){
+  // random starting offset: concurrent calls (talker + t1 resolver) otherwise both open on
+  // key 1 and rate-limit the same key in lockstep; a spread start uses the pool as a pool
+  const startAt = (Math.random() * keys.length) | 0;
+  for (let ki = 0; ki < keys.length; ki++){
+    const key = keys[(startAt + ki) % keys.length];
     const ctl = new AbortController();
     let firstTimer = setTimeout(() => ctl.abort(), FIRST_TOKEN_CEILING_MS);
     const totalTimer = setTimeout(() => ctl.abort(), TOTAL_CEILING_MS);
@@ -375,6 +379,15 @@ async function callModelStreaming(model, keys, system, messages, onDelta){
   return { error: lastErr };
 }
 
+// Single-task duty call (resolvers, writeup): GLM leads — the instruction-follower — but a
+// rate-limited model must never strand the duty (the t1 resolver stranded on GLM 429s across
+// every key, seen live 7/12). On any error, the same prompt runs once on the other model.
+async function callSingleTask(keys, system, messages){
+  let r = await callModelStreaming(MODELS[MODELS.length - 1], keys, system, messages, ()=>{});
+  if (r.error && MODELS.length > 1) r = await callModelStreaming(MODELS[0], keys, system, messages, ()=>{});
+  return r;
+}
+
 export const config = { supportsResponseStreaming: true };
 
 export default async function handler(req, res){
@@ -416,7 +429,7 @@ export default async function handler(req, res){
     res.setHeader('Cache-Control', 'no-store');
     let work = '', insufficient = false;
     try {
-      const wOut = await callModelStreaming(MODELS[MODELS.length - 1], keys, writeupPrompt(), messages, ()=>{});
+      const wOut = await callSingleTask(keys, writeupPrompt(), messages);
       const wj = wOut && !wOut.error ? extractJSON(wOut.raw) : null;
       if (wj && wj.insufficient === true) insufficient = true;
       else if (wj && typeof wj.work === 'string'){
@@ -473,7 +486,7 @@ export default async function handler(req, res){
   // consulted if the talker leaves a first-turn fix/plan message unresolved.
   const isTurn1 = !followUp && !focusMode && messages.filter(m => m.role === 'user').length === 1;
   const turn1Promise = isTurn1
-    ? callModelStreaming(MODELS[MODELS.length - 1], keys, turn1ResolverPrompt(bank), messages, ()=>{}).catch(() => null)
+    ? callSingleTask(keys, turn1ResolverPrompt(bank), messages).catch(() => null)
     : null;
   let out = null, parsed = null;
   // Model order per mode: Nemotron leads the interview (speed is the UX there); GLM leads
@@ -577,7 +590,7 @@ export default async function handler(req, res){
   }
   if (!followUp && !focusMode && !parsed.resolved && userTurns >= 2 && parsed.mode !== 'learn' && parsed.mode !== 'emergency'){
     try {
-      const rOut = await callModelStreaming(MODELS[MODELS.length - 1], keys, resolverPrompt(bank), messages, ()=>{});
+      const rOut = await callSingleTask(keys, resolverPrompt(bank), messages);
       const rj = rOut && !rOut.error ? extractJSON(rOut.raw) : null;
       const v = rj && rj.trade && rj.job ? bankValidate(bank, rj.trade, rj.job) : null;
       if (v){
