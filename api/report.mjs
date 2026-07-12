@@ -194,7 +194,7 @@ function renderReport(stats) {
     'It is a curated corpus of established, currently-operating firms, not a census of every registered entity.</p>' +
     '<p><b>Freshness:</b> every figure on this page is recomputed from the live dataset on load — nothing is hand-updated.</p>' +
     '<p><b>Citation:</b> free to quote or republish any statistic with attribution to ' +
-    '<i>Vesta by 4th Wall Solutions</i> and a link to this page (' + CANONICAL + '). ' +
+    '<i>Vesta by 4THWALL Solutions</i> and a link to this page (' + CANONICAL + '). ' +
     'For the underlying methodology, cuts by town or trade, or press questions: ' +
     '<a href="/contact.html">contact us</a>.</p>' +
     '<p class="fine" style="margin-top:1.4rem">Public-record compilation — not an endorsement of any firm and not legal ' +
