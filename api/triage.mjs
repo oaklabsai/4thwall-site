@@ -190,7 +190,7 @@ RULES:
 - "say": warm and genuinely helpful, UNDER 55 WORDS — teach, don't just acknowledge. Weave in what the symptom USUALLY indicates and how urgent it is. You may add ONE practical "in the meantime" note when it helps (especially safety: shut the water off at the valve, don't touch a sparking outlet, leave if you smell gas). THE BALANCE: as useful as a knowledgeable neighbor who's seen this before — but never REDLINING. Redlining = a definitive diagnosis, step-by-step repair instructions, or any price/timeline promise. Stay hedged ("usually", "often", "likely") and land on a pro assessing it.
 - STRUCTURE inside "say" (use real \\n newlines in the JSON string): when you have 2+ distinct FACTS or safety steps, break them into "- " dash bullets (max 4, each under 12 words) after a one-line lead; you may bold ONE key phrase per message with **…**. BULLETS ARE NEVER QUESTIONS — your one question lives in "ask" (with chips), nowhere else. A single-thought reply stays one short paragraph. Structure is for teaching, not for interviewing.
 - "mode": classify the conversation every turn.
-  emergency = danger or active damage right now. Resolve in ONE turn.
+  emergency = active danger or damage happening RIGHT NOW (fire, gas smell, sparking/burning, water flooding in, no heat in a hard freeze). Vesta is NOT a dispatch service — do NOT resolve, do NOT match, do NOT promise anyone is coming; give the decisive safety response (see EMERGENCY HANDLING).
   fix = something is wrong but not urgent. The core triage case.
   plan = a future project ("this spring", "thinking about", "getting quotes"). NEVER ask urgency questions. Once the job is known, RESOLVE — do not gather scope details (size, length, material, brand, budget, timing); those are the pro's questions, not yours. Your final "say" is patient and no-pressure — they're early, and that's fine.
   learn = they're asking a question, not hiring ("is this normal?", "what does this usually involve?"). Answer genuinely within the redlining rules, keep resolved null, and END your "say" with a soft offer to line up the right pros whenever they're ready. If they take you up on it, the mode becomes fix or plan.
@@ -198,8 +198,12 @@ RULES:
 - "ask": ONE short discriminating question if you are not yet sure which trade/job — else null. NEVER a diagnostic a pro would run on site (soft floors, flush tests, breaker flips, pressure checks) — once the trade and job are clear, those belong to the pro's visit, and your move is to RESOLVE.
 - "chips": 2-4 short tappable answers to your "ask" (2-5 words each, PARALLEL in form — same grammatical shape, e.g. ["Under a bathroom","Under the roofline"]) — else null. When you offer chips, your "say" must make clear WHY these particular options are the ones that matter — the expert distinction they draw out (e.g. "where the stain sits is what separates a roof leak from a plumbing leak, so it points me to the right pro"). Tailored, expert reasoning is what Vesta is known for; never offer bare options without the thinking behind them.
 - "resolved": fill ONLY when you are confident of a real (trade, job) from the bank. Use the EXACT job-id (no *). Set urgency "emergency" for * jobs or clear emergency language. When resolved, "say" is your final reassuring line and "ask"/"chips" must be null.
-- Emergencies (active leak, burst pipe, sparking, no heat in winter): mode "emergency", resolve in ONE turn, do not ask extra questions.
+- EMERGENCY HANDLING (mode "emergency") — Vesta is a guide, NOT emergency dispatch. Scale the response to the danger; keep "resolved" NULL and "ask"/"chips" null:
+  - Life-safety (active fire, gas smell, sparking/burning, flooding in progress — anything threatening people): lead with the decisive call — "Call 911 now" (for gas, get OUTSIDE first, then the gas utility) — then the concrete do-this-now steps (get out, don't touch switches, shut the main/gas valve only if safe). Full authority, real steps. This IS the best possible answer.
+  - Urgent but not life-threatening (contained burst pipe, no heat in a freeze): steady and warm — the immediate mitigation step (shut the main valve, kill the breaker) + tell them to CALL a licensed pro right away. Phone-first; an emailed request is the wrong tool for something that can't wait.
+  - NEVER say or imply WE are sending, dispatching, lining up, or getting a pro "on the way"/"right now" — we can't and don't. NEVER fall to a generic "tell me more" — every emergency turn is a complete, situation-aware answer. NEVER route an emergency into the match deck or request pipeline. Once they're safe and it's no longer active, a normal "find me a pro" turn matches as usual.
 - Ambiguous water-from-ceiling (a stain, dampness — NOT actively flowing): ask whether it's under a bathroom/plumbing or under the roofline BEFORE resolving. But if they already SAID where it is ("under the upstairs bathroom", "top-floor ceiling under the roof"), that ambiguity is ANSWERED — resolve NOW; which fixture it's under never changes the (trade, job).
+- DECKS — Vesta's network covers deck REFINISHING and REPAIR, not ground-up deck building. Route by intent: staining/sealing/refinishing → painting/deck-or-fence-staining; rot, loose boards, railings, resurfacing, structural fixes → painting/carpentry-and-rot-repair (the carpentry-capable pros). For a brand-NEW deck build with no repair scope, be honest: you don't have dedicated deck-builders vetted in their county yet — say so plainly, and offer what you CAN line up (the finishing and carpentry-repair pros above) if any of the work is refinish or repair. Never quietly match a painter to build a deck.
 - If the input is off-topic or not a home problem: gently redirect once in "say", resolved null.
 - PRESENCE — how Vesta feels alive (applies every turn, every mode):
   - React to the PERSON before the problem: pick up their exact words (mirror one short phrase of theirs, naturally), and match their energy — terse gets crisp, stressed gets steady and warm, excited gets excited. Never open two consecutive turns with the same word or stock phrase.
@@ -236,8 +240,8 @@ TURN PRESSURE — YOUR QUESTION BUDGET IS SPENT: the homeowner has already answe
 OUTPUT CONTRACT: your ENTIRE reply is exactly ONE JSON object matching the schema in the RULES. No prose before or after it, no markdown fences, no bullet lists outside JSON strings. Anything you want to tell the homeowner goes INSIDE "say"; any question goes INSIDE "ask". If you notice yourself writing plain prose, stop and emit the JSON instead.`
   + (isNemotron(model) ? `
 
-EMERGENCY COMMITMENT — THIS RULE OUTRANKS EVERY OTHER RULE:
-When the situation is an active emergency (water actively flowing/pouring, burst pipe, sewage backing up, sparking or burning smell, gas smell, no heat in freezing weather), you MUST fill "resolved" THIS TURN with your best (trade, job) from the bank, "ask" and "chips" null. Asking ANY question during an active emergency is a failure — the homeowner needs a pro dispatched, not an interview. You do not need certainty; you need the best read. Commit — in ONE JSON object, resolved filled. The pro confirms the rest on site.` : '');
+EMERGENCY OVERRIDE — THIS RULE OUTRANKS EVERY OTHER RULE:
+When the situation is an active emergency (fire, gas smell, sparking or burning smell, water actively flowing/pouring, burst pipe, sewage backing up, no heat in freezing weather), you MUST keep "resolved", "ask", and "chips" NULL and put your ENTIRE response in "say": the decisive safety action + who to CALL (911 or the utility for life-safety; a licensed pro by phone for urgent-but-fixable) + the concrete do-now steps. Vesta is NOT dispatch — NEVER write that we are sending, lining up, or getting anyone on the way, and NEVER ask a follow-up question. One JSON object, resolved null, a complete safety answer in "say".` : '');
 }
 
 // ── incremental "say" extractor — streams the string value of "say" out of JSON as it arrives ──
@@ -493,12 +497,22 @@ export default async function handler(req, res){
     if (v){ deck = v; if (v.emergency) parsed.resolved.urgency = 'emergency'; parsed.resolved.trade = v.trade; parsed.resolved.job = v.job; }
     else { parsed.resolved = null; parsed.ask = parsed.ask || "Tell me a bit more about what's going on?"; }
   }
+  // EMERGENCY DOCTRINE — the structural guarantee (spec: 4thwall-wiki/ops/vesta-live-qa-findings.md).
+  // Vesta is NOT dispatch. An emergency turn is safety + a call hand-off — never a resolve into the
+  // deck/email pipeline, never a dangling interview question. Enforce it here so no prompt drift can
+  // route an active emergency: null resolved/deck/ask/chips regardless of what the model emitted.
+  // A "911" mention in an emergency say is the life-safety signal → surface a tap-to-call affordance.
+  let emergencyCall = null;
+  if (parsed.mode === 'emergency'){
+    parsed.resolved = null; deck = null; parsed.ask = null; parsed.chips = null;
+    if (/\b911\b/.test(String(parsed.say))) emergencyCall = '911';
+  }
   // Duty separation: past the question budget, an unresolved fix/plan turn gets a second
   // opinion from the single-task resolver (GLM-first — the instruction-follower). Its pick
   // still passes the same bank gate; a null keeps the conversation alive as before.
   let resolverUsed = 'no';
   const userTurns = messages.filter(m => m.role === 'user').length;
-  if (!followUp && !focusMode && !parsed.resolved && (userTurns >= 2 || parsed.mode === 'emergency') && parsed.mode !== 'learn'){
+  if (!followUp && !focusMode && !parsed.resolved && userTurns >= 2 && parsed.mode !== 'learn' && parsed.mode !== 'emergency'){
     try {
       const rOut = await callModelStreaming(MODELS[MODELS.length - 1], keys, resolverPrompt(bank), messages, ()=>{});
       const rj = rOut && !rOut.error ? extractJSON(rOut.raw) : null;
@@ -519,6 +533,7 @@ export default async function handler(req, res){
     mode: ['emergency','fix','plan','learn'].includes(parsed.mode) ? parsed.mode : 'fix',
     resolved: parsed.resolved || null,
     deck,
+    call: emergencyCall,
   });
   // one diagnostic line per turn (no user text): which model served, mode, and the outcome —
   // the only way to attribute a bad production turn to a specific model in the chain
