@@ -79,10 +79,17 @@ async function getBank(){
   _bank = bank; _bankAt = Date.now();
   return bank;
 }
+// Trade synonyms models actually emit that the prefix match below can't catch — a reject
+// must mean a WRONG answer, not the model's plain-English word for the right one. Only
+// unambiguous mappings live here (concrete/driveway → paving is real: the paving bank
+// carries the concrete jobs; "doors" alone can't prefix-match "windows_doors").
+const TRADE_ALIAS = { landscaping:'lawn', landscape:'lawn', landscaper:'lawn', lawncare:'lawn',
+  arborist:'tree', doors:'windows_doors', door:'windows_doors', concrete:'paving', driveway:'paving' };
 function bankValidate(bank, trade, job){
   // trade normalization — models emit near-ids under pressure ("plumber", "Plumbing ").
   // A reject must mean a WRONG answer, not a spelling of the right one.
   trade = String(trade || '').toLowerCase().trim();
+  if (TRADE_ALIAS[trade]) trade = TRADE_ALIAS[trade];
   if (!bank[trade]){
     const t = Object.keys(bank).find(k => k.startsWith(trade.slice(0, 5)) || trade.startsWith(k.slice(0, 5)));
     if (t) trade = t;

@@ -6082,6 +6082,21 @@ function vmVestaOpener(promptText){
   const bubble=vmVesta(); if(bubble){ const typer=mkTyper(bubble, vmScroll); typer.push(promptText); }
   const inp=$('hs-cin'); if(inp){ inp.disabled=false; inp.focus(); }
 }
+// The model's window: the last 12 turns — but the assistant turn carrying "picks" (or
+// "focus") is LOAD-BEARING: the server detects follow-up/focus mode by its presence, and
+// it holds everything the model knows about the shown picks. On a long thread a plain
+// slice(-12) silently drops it → the server flips back to interview mode mid-follow-up
+// (forced resolver reactivates, Vesta forgets the picks). If the newest such turn has
+// slid out of the window, splice it back in as the window's first message.
+function vmWindow(){
+  const ctxTurn = m => m.role==='assistant' && (m.content.indexOf('"picks"')!==-1 || m.content.indexOf('"focus"')!==-1);
+  const w = vmMsgs.slice(-12);
+  if (w.some(ctxTurn)) return w;
+  for (let i = vmMsgs.length - 13; i >= 0; i--){
+    if (ctxTurn(vmMsgs[i])) return [vmMsgs[i], ...w.slice(1)];
+  }
+  return w;
+}
 async function vmTurn(text){
   if(vmDone||vmBusy) return; vmBusy=true; vmTurns++;
   hideResumeBand();
@@ -6096,7 +6111,7 @@ async function vmTurn(text){
   let bubble=null, typer=null, pend='', streamed='', revealTimer=null;
   const reveal=()=>{ if(typer) return; stopTrace(); vmThinkOff(); bubble=vmVesta(); typer=mkTyper(bubble, vmScroll); if(pend){ typer.push(pend); pend=''; } };
   try{
-    const r=await fetch('/api/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:vmMsgs.slice(-12)})});
+    const r=await fetch('/api/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:vmWindow()})});
     if(!r.ok||!r.body) throw new Error('http');
     const reader=r.body.getReader(), dec=new TextDecoder(); let buf='', final=null, evErr=null;
     for(;;){ const {done,value}=await reader.read(); if(done) break; buf+=dec.decode(value,{stream:true});
@@ -6126,6 +6141,12 @@ async function vmTurn(text){
     const gate=res&&res.trade&&res.job&&tradeMatchable(res.trade)&&tradeBank(res.trade).jobs.some(j=>j.value===res.job)
       && !(vmDeckShown && vmDeckKey===res.trade+'|'+res.job);   // re-affirming the SAME match in a follow-up never re-lands a duplicate deck
     if(gate){ vmBusy=false; vmDeckLand(res.trade,res.job,final.deck,final.mode||'fix'); return; }
+    // Dead-promise guard: the server resolved + bank-validated, but the client can't land
+    // this deck (trade's firms/bank not loaded here). Vesta's say just promised picks —
+    // never leave that promise hanging with nothing after it; offer the walk-through.
+    if(res && res.trade && res.job && !(vmDeckShown && vmDeckKey===res.trade+'|'+res.job)){
+      vmBusy=false; vmOffer(final.mode,'error'); return;
+    }
     if(final.chips&&final.chips.length) vmChips(final.chips);
     vmBusy=false;
     // the 4-turn cap only guards the PRE-resolve interview; and leaving the chat is now an
@@ -6355,7 +6376,7 @@ async function triTurn(text){
   let bubble = null, typer = null, pend = '', streamed = '', revealTimer = null;
   const reveal = ()=>{ if (typer) return; stopTrace(); tcThinkOff(); bubble = tcVesta(); typer = mkTyper(bubble, tcScroll); if (pend){ typer.push(pend); pend=''; } };
   try {
-    const r = await fetch('/api/triage', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ messages: c.msgs }) });
+    const r = await fetch('/api/triage', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ messages: c.msgs.slice(-12) }) });   // server hard-caps at 12 — an unsliced long thread would 400
     if (!r.ok || !r.body) throw new Error('http');
     const reader = r.body.getReader(), dec = new TextDecoder();
     let buf = '', final = null, evErr = null;
