@@ -559,7 +559,8 @@ export default async function handler(req, res){
   // Turn-1 fast-path adoption: talker left a fix/plan first message unresolved. Guards:
   // never on an emergency-labeled turn or a 911 say (doctrine), never an emergency-tagged
   // job (an active crisis is the talker's call, not a fast-path's), same bank gate as always.
-  if (turn1Promise && !parsed.resolved && (parsed.mode === 'fix' || parsed.mode === 'plan') && !/\b911\b/.test(String(parsed.say))){
+  const rawMode = String(parsed.mode || 'none');
+  if (turn1Promise && !parsed.resolved && parsed.mode !== 'emergency' && parsed.mode !== 'learn' && !/\b911\b/.test(String(parsed.say))){
     try {
       const rOut = await turn1Promise;
       const rj = rOut && !rOut.error ? extractJSON(rOut.raw) : null;
@@ -605,6 +606,6 @@ export default async function handler(req, res){
   });
   // one diagnostic line per turn (no user text): which model served, mode, and the outcome —
   // the only way to attribute a bad production turn to a specific model in the chain
-  console.log(`triage: model=${servedBy} followUp=${followUp} turns=${userTurns} resolved=${parsed.resolved ? parsed.resolved.trade + '/' + parsed.resolved.job : 'null'} raw=${rawResolved} resolver=${resolverUsed} salvaged=${!!parsed._salvaged}`);
+  console.log(`triage: model=${servedBy} followUp=${followUp} turns=${userTurns} rawMode=${rawMode} resolved=${parsed.resolved ? parsed.resolved.trade + '/' + parsed.resolved.job : 'null'} raw=${rawResolved} resolver=${resolverUsed} salvaged=${!!parsed._salvaged}`);
   res.end();
 }
