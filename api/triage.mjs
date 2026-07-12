@@ -569,7 +569,10 @@ export default async function handler(req, res){
         deck = v; resolverUsed = 't1hit';
         parsed.resolved = { trade: v.trade, job: v.job, urgency: 'routine' };
         resolveClamp();
-      } else resolverUsed = v ? 't1skip:emergency' : 't1miss';
+      } else if (v) resolverUsed = 't1skip:emergency';
+      else resolverUsed = 't1miss:' + (rOut && rOut.error ? 'err=' + rOut.error
+        : rj ? 'rj=' + JSON.stringify(rj).slice(0, 80)
+        : 'raw=' + String(rOut && rOut.raw || '').slice(0, 80).replace(/\n/g, '⏎'));
     } catch { resolverUsed = 't1err'; }
   }
   if (!followUp && !focusMode && !parsed.resolved && userTurns >= 2 && parsed.mode !== 'learn' && parsed.mode !== 'emergency'){
