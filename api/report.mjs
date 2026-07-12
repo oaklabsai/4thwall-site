@@ -172,9 +172,10 @@ function renderReport(stats) {
     ' A homeowner hiring for HVAC has roughly <b>' + Math.round(hvacMed / Math.max(masMed, 1)) +
     '× more public review signal</b> to work with than one hiring a mason.' : '';
   const countyBlind = s.reviewedN
-    ? ' Across all ' + s.tradeCount + ' trades, <b>' + s.le4Total + ' of ' + s.reviewedN +
-      ' firms (' + pct(s.le4Total, s.reviewedN) + '%)</b> have four or fewer public Google reviews — meaning ' +
-      'roughly one in five contractors homeowners hire in ' + COUNTY + ' is chosen nearly blind.'
+    ? ' Across all ' + s.tradeCount + ' trades, <b>' + s.le4Total + ' of the ' + s.reviewedN +
+      ' firms with a public review count on record (' + pct(s.le4Total, s.reviewedN) + '%)</b> have four or fewer ' +
+      'public Google reviews — meaning roughly one in five contractors homeowners hire in ' + COUNTY +
+      ' is chosen nearly blind.'
     : '';
   const reviewSection =
     '<section class="rp-sec"><h2>The review gap — some trades are hired nearly blind</h2>' +
