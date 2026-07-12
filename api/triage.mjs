@@ -561,7 +561,9 @@ export default async function handler(req, res){
   // ignores the ban ~1/3 (measured 7/12). Strip those sentences here — a component-fiddle verb
   // aimed at a named part is the tell. Safety mitigations ("shut the water at the valve") don't
   // match (no fiddle verb) and stay; emergency turns never reach this path.
-  const DIY_PROC = /\b(lift|remove|unscrew|loosen|tighten|jiggle|wiggle|reset|adjust|replace|reattach|reconnect|check|inspect|open up|take off|pop off)\b[^.!?]*\b(lid|flapper|chain|float|fill[- ]?valve|shut[- ]?off valve|breaker|fuse|panel|handle|washer|cartridge|o-?ring|gasket|tank|trap|p-?trap|thermostat|filter)\b/i;
+  // verbs are stem-matched (adjust→adjusting, replace→replacing) — a tense the model reaches
+  // for constantly; a fixed word-list let "adjusting the chain" through (measured 7/12).
+  const DIY_PROC = /\b(lift|remov|unscrew|loosen|tighten|jiggl|wiggl|reset|adjust|replac|reattach|reconnect|check|inspect)\w*\b[^.!?]*\b(lid|flapper|chain|float|fill[- ]?valve|shut[- ]?off valve|breaker|fuse|handle|washer|cartridge|o-?ring|gasket|tank lid|p-?trap|thermostat)\b/i;
   const resolveClamp = () => {
     if (!parsed.resolved || !deck) return;
     parsed.ask = null; parsed.chips = null;
@@ -570,6 +572,9 @@ export default async function handler(req, res){
     parts = parts.filter(s => !DIY_PROC.test(s));
     parsed.say = parts.join(' ').trim()
       || `Got it — I'll line up vetted ${deck.tradeLabel.toLowerCase()} pros for ${deck.label} now.`;
+    // never surface the raw bank id to the homeowner ("covers under solar-or-battery-backup") —
+    // swap any literal job-id for its human label
+    if (deck.job) parsed.say = parsed.say.replace(new RegExp(deck.job, 'gi'), deck.label);
   };
   resolveClamp();
   // Duty separation: past the question budget, an unresolved fix/plan turn gets a second
@@ -623,6 +628,14 @@ export default async function handler(req, res){
   const lastUser = [...messages].reverse().find(m => m.role === 'user');
   const lastText = String(lastUser && lastUser.content || '').trim();
   const questionShaped = /\?\s*$/.test(lastText) || /^(is|are|does|do|should|why|what|how|can|could|would|will|when)\b/i.test(lastText);
+  // A normalcy/curiosity question ("is this normal?", "should I worry?") is LEARN, not an
+  // interview — but the model sometimes attaches a triage ask anyway (mode mislabeled fix,
+  // ~half the time). When it's clearly a normalcy question and nothing resolved, drop the ask
+  // so the soft offer below lands: teach + offer, never interrogate a curiosity.
+  const learnShaped = /\b(is|are|it'?s)\b[^?]*\bnormal\b/i.test(lastText) || /\bnormal (for|to|that|when|if)\b/i.test(lastText)
+    || /\bis (it|this|that)\b[^?]*\b(bad|a problem|serious|dangerous|worth worrying)\b/i.test(lastText)
+    || /\bshould i (be )?(worr|concern)/i.test(lastText) || /\bis (it|this|that) (supposed|meant) to\b/i.test(lastText);
+  if (learnShaped && !parsed.resolved && !emergencyCall && parsed.mode !== 'emergency'){ parsed.ask = null; parsed.chips = null; }
   if (questionShaped && !parsed.resolved && !parsed.ask && !emergencyCall && parsed.mode !== 'emergency'){
     if (!/(line up|line them up|find (you |the right)|get you connected|match you|whenever you|when you'?re ready|ready to go|say the word)/i.test(String(parsed.say))){
       parsed.say = String(parsed.say).replace(/\s*$/, '') + ' Whenever you’re ready, I can line up the right pros for exactly this.';
