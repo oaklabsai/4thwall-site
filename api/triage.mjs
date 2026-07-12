@@ -85,7 +85,7 @@ async function getBank(){
 // carries the concrete jobs; "doors" alone can't prefix-match "windows_doors").
 const TRADE_ALIAS = { landscaping:'lawn', landscape:'lawn', landscaper:'lawn', lawncare:'lawn',
   arborist:'tree', doors:'windows_doors', door:'windows_doors', concrete:'paving', driveway:'paving' };
-function bankValidate(bank, trade, job){
+export function bankValidate(bank, trade, job){
   // trade normalization — models emit near-ids under pressure ("plumber", "Plumbing ").
   // A reject must mean a WRONG answer, not a spelling of the right one.
   trade = String(trade || '').toLowerCase().trim();
@@ -162,7 +162,7 @@ No prose, no markdown. The JSON object only.`;
 // (an empty card the homeowner fills beats a sentence they didn't write). Stem-tolerant
 // (4-char prefix) so a legitimate plural/tense shift ("brick"→"bricks") isn't counted as
 // invention. Short extractions (<6 content words) are trusted — the prompt already gated them.
-function extractiveOK(work, messages){
+export function extractiveOK(work, messages){
   const words = s => String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
   const stem = w => w.slice(0, 4);
   const userStems = new Set(words(messages.filter(m => m.role === 'user').map(m => m.content).join(' ')).map(stem));
@@ -259,7 +259,7 @@ function sayExtractor(onText){
   };
 }
 
-function extractJSON(text){
+export function extractJSON(text){
   if (!text) return null;
   let t = text.trim();
   const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i);

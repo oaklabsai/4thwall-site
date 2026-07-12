@@ -6255,7 +6255,7 @@ async function vmDeck(trade, job, deckMeta, mode, quiet){
   if (!merged) vmMsgs.push({role:'assistant',content:JSON.stringify(Object.assign({say:'Here are your matched picks.'},pickCtx)).slice(0,2900)});
   vmDeckShown=true; vmDeckKey=trade+'|'+job;
   const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='tc-deck';
-  el.innerHTML='<div class="tc-deck-kick">Why these '+(picks.length===3?'three':'picks')+(pct?'<span class="tc-deck-pct">'+pct+'% of '+esc(lc(tradeLabelOf(trade)))+' do this</span>':'')+'</div><h2>For your <em>'+esc(jl)+'</em></h2><p class="tc-why">'+lead+'</p>'+rows+'<button class="tc-deck-all" type="button">See all your matches →</button>'+
+  el.innerHTML='<div class="tc-deck-kick">Why these '+(picks.length===3?'three':'picks')+(pct?'<span class="tc-deck-pct">'+pct+'% of the field does this</span>':'')+'</div><h2>For your <em>'+esc(jl)+'</em></h2><p class="tc-why">'+lead+'</p>'+rows+'<button class="tc-deck-all" type="button">See all your matches →</button>'+
     '<button class="tc-deck-save" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Save this plan</button>';
   const row=document.createElement('div'); row.className='vmsg tc-verdict'; row.innerHTML='<span class="vav">Vesta.</span>'; row.appendChild(el);
   t.appendChild(row); t.classList.add('tc-resolved'); vmScroll();   // Vesta's message: picks in-chat, history collapsed → fixed verdict
@@ -6486,7 +6486,7 @@ function triDeckCard(trade, job, deckMeta, mode){
   const t = $('tc-thread'); if (!t) return;
   const el = document.createElement('div'); el.className='tc-deck';
   el.innerHTML = '<div class="tc-deck-kick">Why these '+(picks.length===3?'three':picks.length===2?'two':'picks')+
-      (pct ? '<span class="tc-deck-pct">'+pct+'% of '+esc(lc(deckMeta && deckMeta.tradeLabel ? deckMeta.tradeLabel : tradeLabelOf(trade)))+' do this</span>' : '')+'</div>'+
+      (pct ? '<span class="tc-deck-pct">'+pct+'% of the field does this</span>' : '')+'</div>'+
     '<h2>For your <em>'+esc(jl)+'</em></h2>'+
     '<p class="tc-why">'+lead+'</p>'+rows+
     '<button class="tc-deck-all" type="button" id="tc-all">See all your matches →</button>';
