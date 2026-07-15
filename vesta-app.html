@@ -2128,41 +2128,107 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
 @media (max-width:899px){
   #s-profile.screen.active,#s-request.screen.active { min-height:0; height:100svh; overflow:hidden; }
-  .prof-desk-title { margin-bottom:14px; }
-  .prof-desk-label { margin:0; font-family:var(--serif); font-size:29px; line-height:1; letter-spacing:-.03em; color:var(--olive); }
-  .prof-desk-intro { margin-top:6px; font-size:12px; color:var(--ebony); }
-  .prof-desk-proof { display:inline-flex; margin-top:10px; padding:7px 10px; border-radius:999px; background:var(--nm); box-shadow:var(--nm-in); font-family:var(--mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase; color:var(--olive); }
-  .prof-desk-grid { display:flex; flex-direction:column; gap:14px; }
-  .prof-desk-panel { width:100%; border-radius:22px; background:var(--nm); box-shadow:var(--nm-out); padding:18px; }
-  .prof-desk-hero { order:1; }
-  .prof-lead { display:grid; grid-template-columns:106px minmax(0,1fr); gap:17px; align-items:start; }
-  .prof-lead-photo { position:relative; width:106px; aspect-ratio:1; min-height:0; margin-top:2px; padding:0; overflow:hidden; border:0; border-radius:50%; background:rgba(74,75,47,.07); box-shadow:var(--nm-in); }
-  .prof-lead-photo img { width:100%; height:100%; display:block; object-fit:cover; opacity:0; }
-  .prof-lead-photo.on img { opacity:1; }
-  .prof-lead-photo span { position:absolute; right:9px; bottom:9px; padding:5px 8px; border-radius:999px; background:rgba(18,16,14,.64); color:#fff; font-family:var(--mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase; }
-  .prof-desk-hero .prof-name { font-size:30px; }
-  .prof-summary { margin-top:15px; padding-top:14px; font-size:13px; }
-  .prof-desk-facts { order:2; width:100%; }
-  .prof-desk-action { order:3; width:100%; }
-  .prof-desk-facts > section, .prof-desk-action > section { padding:18px; }
-  .prof-facts-list { margin-top:10px; }
-  .prof-fact { display:grid; grid-template-columns:34px minmax(0,1fr); gap:10px; padding:10px 0; border-top:1px solid rgba(74,75,47,.09); }
-  .prof-fact-ic { display:grid; place-items:center; width:32px; height:32px; border-radius:50%; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); }
-  .prof-fact-ic svg { width:15px; height:15px; }
-  .prof-fact-l { display:block; font-family:var(--mono); font-size:7px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); }
-  .prof-fact strong { display:block; margin-top:2px; color:var(--olive); font-size:12px; line-height:1.3; }
-  .prof-fact small { display:block; margin-top:3px; font-family:var(--mono); font-size:7px; line-height:1.35; color:var(--ebony); }
-  .prof-desk-body { order:4; }
-  .prof-desk-facts .prof-sec-kick, .prof-desk-action .prof-sec-kick { margin-top:0; }
-  .prof-desk-action .prof-req { width:100%; justify-content:center; border-radius:14px; }
-  .prof-intel-card { height:auto; }
-  .prof-intel-grid { grid-template-columns:1fr; }
-  .prof-intel-nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); overflow:visible; }
-  .prof-intel-panels { min-height:260px; }
-  .prof-intel-panel { height:auto; max-height:none; overflow:visible; }
-  .prof-mini-form { grid-template-columns:1fr; }
-  .prof-mini-form .prof-req,.prof-mini-form .prof-status { grid-column:auto; }
-  .prof-work { margin-top:26px; padding-top:24px; border-top:1px solid rgba(74,75,47,.1); }
+  #s-profile .float-back { width:48px; height:48px; left:16px; }
+  #s-profile .prof-wrap { max-width:620px; padding:calc(76px + env(safe-area-inset-top,0px)) 18px calc(142px + env(safe-area-inset-bottom,0px)); }
+  #s-profile .prof-desk-title { margin:0 2px 24px; }
+  #s-profile .prof-desk-label { margin:0; font-family:var(--serif); font-size:34px; line-height:1.02; letter-spacing:-.035em; color:var(--olive); }
+  #s-profile .prof-desk-intro { margin-top:8px; font-size:14px; line-height:1.5; color:var(--ebony); }
+  #s-profile .prof-desk-proof { display:inline-flex; max-width:100%; margin-top:14px; padding:9px 13px; border-radius:999px; background:var(--nm); box-shadow:var(--nm-in); font-family:var(--mono); font-size:9px; line-height:1.35; letter-spacing:.09em; text-transform:uppercase; color:var(--olive); }
+  #s-profile .prof-desk-grid { display:flex; flex-direction:column; gap:20px; }
+  #s-profile .prof-desk-panel { width:100%; border:1px solid rgba(255,255,255,.55); border-radius:26px; background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(212,223,158,.05)),var(--nm); box-shadow:var(--nm-out); }
+
+  /* Identity gets a real visual opening: work image first, then an unconstrained name
+     and signature. The old 106px circular image forced every long business name into a sliver. */
+  #s-profile .prof-desk-hero { order:1; padding:0; overflow:hidden; }
+  #s-profile .prof-lead { display:flex; flex-direction:column; gap:0; }
+  #s-profile .prof-lead-photo { position:relative; width:100%; aspect-ratio:16/9; min-height:176px; margin:0; padding:0; overflow:hidden; border:0; border-radius:0; background:rgba(74,75,47,.07); box-shadow:none; }
+  #s-profile .prof-lead-photo img { width:100%; height:100%; display:block; object-fit:cover; opacity:0; transition:opacity .28s ease; }
+  #s-profile .prof-lead-photo.on img { opacity:1; }
+  #s-profile .prof-lead-photo span { position:absolute; right:14px; bottom:14px; min-height:34px; display:flex; align-items:center; padding:7px 11px; border-radius:999px; background:rgba(18,16,14,.68); color:#fff; box-shadow:0 4px 15px rgba(18,16,14,.2); font-family:var(--mono); font-size:9px; letter-spacing:.09em; text-transform:uppercase; }
+  #s-profile .prof-lead-main { width:100%; min-width:0; padding:24px 21px 23px; }
+  #s-profile .prof-desk-hero .prof-name { max-width:none; margin:0; overflow-wrap:anywhere; font-size:34px; line-height:1.04; }
+  #s-profile .prof-desk-hero .prof-sub { margin-top:10px; font-size:16px; line-height:1.55; }
+  #s-profile .prof-badges { gap:8px; margin-top:16px; }
+  #s-profile .prof-badge { min-height:32px; padding:7px 11px; font-size:11px; line-height:1.35; }
+  #s-profile .prof-signature { margin-top:20px; padding-top:17px; }
+  #s-profile .prof-signature .prof-sec-kick { font-size:9px; }
+  #s-profile .prof-signature p { margin-top:7px; font-size:18px; line-height:1.5; }
+
+  /* Put the next step directly after identity, then let the record substantiate it. */
+  #s-profile .prof-desk-action { order:2; width:100%; }
+  #s-profile .prof-desk-facts { order:3; width:100%; }
+  #s-profile .prof-desk-body { order:4; width:100%; }
+  #s-profile .prof-desk-action > section,#s-profile .prof-desk-facts > section { padding:24px 21px; }
+  #s-profile .prof-desk-facts .prof-sec-kick,#s-profile .prof-desk-action .prof-sec-kick { margin-top:0; font-size:9px; }
+  #s-profile .prof-desk-facts .prof-sec-h,#s-profile .prof-desk-action .prof-sec-h { margin:7px 0 0; font-size:28px; line-height:1.08; }
+  #s-profile .prof-desk-action .prof-sec-note { margin:10px 0 0; font-size:16px; line-height:1.6; }
+  #s-profile .prof-desk-action .prof-req { width:100%; min-height:52px; justify-content:center; margin-top:19px; padding:14px 18px; border-radius:15px; font-size:15px; }
+  #s-profile .prof-contact-actions { gap:10px; margin-top:4px; }
+  #s-profile .prof-call { display:flex; align-items:center; justify-content:center; width:100%; padding:11px 12px; border:1px solid rgba(74,75,47,.14); color:var(--olive); text-decoration:none; background:var(--nm); box-shadow:var(--nm-sm); font-weight:700; }
+  #s-profile .prof-contact-actions .prof-call,#s-profile .prof-ask-rail { min-height:48px; margin-top:10px; border-radius:14px; font-size:13px; }
+  #s-profile .prof-fine { margin-top:12px; font-size:12px; line-height:1.55; }
+
+  /* Record rows stay single-column and readable. Each row has its own breathing room,
+     instead of presenting supporting evidence as microtype. */
+  #s-profile .prof-facts-list { margin-top:15px; }
+  #s-profile .prof-fact { display:grid; grid-template-columns:42px minmax(0,1fr); gap:13px; align-items:start; min-height:68px; padding:15px 0; border-top:1px solid rgba(74,75,47,.1); }
+  #s-profile .prof-fact:first-child { border-top:0; }
+  #s-profile .prof-fact-ic { display:grid; place-items:center; width:40px; height:40px; border-radius:13px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); }
+  #s-profile .prof-fact-ic svg { width:18px; height:18px; }
+  #s-profile .prof-fact-l { display:block; font-family:var(--mono); font-size:9px; line-height:1.35; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); }
+  #s-profile .prof-fact strong { display:block; margin-top:4px; color:var(--olive); font-size:15px; line-height:1.4; }
+  #s-profile .prof-fact small { display:block; margin-top:5px; font-family:var(--sans); font-size:12.5px; line-height:1.5; color:var(--ebony); }
+  #s-profile .prof-fact-btn { min-height:68px; }
+
+  /* Mobile intelligence becomes a native one-column accordion. Details expand into the
+     page scroll, eliminating the old nested 260px panel and its 7px evidence copy. */
+  #s-profile .prof-desk-body { padding:0; border:0; background:transparent; box-shadow:none; }
+  #s-profile .prof-intel-card { height:auto; overflow:visible; }
+  #s-profile .prof-intel-head { padding:3px 3px 0; }
+  #s-profile .prof-intel-head .prof-sec-kick { margin:0; font-size:9px; }
+  #s-profile .prof-intel-head .prof-sec-h { margin:7px 0 0; font-size:30px; line-height:1.08; }
+  #s-profile .prof-intel-head > p { margin-top:10px; max-width:38ch; color:var(--ebony); font-size:14px; line-height:1.6; }
+  #s-profile .prof-mobile-accordions { display:grid; gap:12px; margin-top:18px; }
+  #s-profile .prof-mobile-section { overflow:hidden; border:1px solid rgba(255,255,255,.56); border-radius:20px; background:var(--nm); box-shadow:var(--nm-sm); transition:box-shadow .2s ease; }
+  #s-profile .prof-mobile-section.open { box-shadow:var(--nm-out); }
+  #s-profile .prof-disclosure-btn { position:relative; min-height:72px; padding:14px 48px 14px 54px; border-radius:0; background:transparent; box-shadow:none; }
+  #s-profile .prof-disclosure-btn::before { content:attr(data-no); position:absolute; left:15px; top:17px; display:grid; place-items:center; width:29px; height:29px; border-radius:10px; background:var(--nm); box-shadow:var(--nm-sm); font-family:var(--mono); font-size:8px; color:var(--olive); }
+  #s-profile .prof-disclosure-btn:hover { transform:none; }
+  #s-profile .prof-disclosure-btn.active { background:linear-gradient(135deg,rgba(212,223,158,.28),rgba(255,255,255,.1)); box-shadow:none; }
+  #s-profile .prof-disclosure-btn b { font-size:18px; line-height:1.15; }
+  #s-profile .prof-disclosure-btn small { margin-top:5px; overflow:visible; text-overflow:clip; white-space:normal; font-size:9px; line-height:1.4; letter-spacing:.07em; }
+  #s-profile .prof-disclosure-chev { position:absolute; right:17px; top:26px; }
+  #s-profile .prof-intel-panel { height:auto; max-height:none; overflow:visible; padding:20px; border-top:1px solid rgba(74,75,47,.1); background:rgba(255,255,255,.1); }
+  #s-profile .prof-intel-panel[hidden] { display:none; }
+  #s-profile .prof-intel-panel p { font-size:16px; line-height:1.65; }
+  #s-profile .prof-intel-lede { margin:0 0 12px; font-size:21px!important; line-height:1.42!important; }
+  #s-profile .prof-intel-source { margin-top:15px; padding-top:12px; font-size:10.5px!important; line-height:1.55!important; letter-spacing:.035em; }
+  #s-profile .prof-intel-source-top { margin-top:0; padding-top:0; }
+  #s-profile .prof-detail-list { gap:0; }
+  #s-profile .prof-detail-item { grid-template-columns:32px minmax(0,1fr); gap:12px; padding:15px 0; }
+  #s-profile .prof-detail-item:first-child { padding-top:0; }
+  #s-profile .prof-detail-item > span,#s-profile .prof-guide-compact article > span { width:30px; height:30px; font-size:8px; }
+  #s-profile .prof-detail-item h3,#s-profile .prof-fit-group h3,#s-profile .prof-guide-compact h3,#s-profile .prof-method h3,#s-profile .prof-business-mini h3 { font-size:16px; line-height:1.3; }
+  #s-profile .prof-detail-item p,#s-profile .prof-guide-compact p,#s-profile .prof-method p { margin-top:5px; font-size:15px; line-height:1.65; }
+  #s-profile .prof-fit-group + .prof-fit-group { margin-top:18px; padding-top:16px; }
+  #s-profile .prof-detail-chips { gap:8px; margin-top:10px; }
+  #s-profile .prof-detail-chips span { padding:8px 11px; font-size:12.5px; line-height:1.35; }
+  #s-profile .prof-expect-list { margin-top:8px; }
+  #s-profile .prof-expect-list p { display:block; padding:12px 0; }
+  #s-profile .prof-expect-list b { display:block; margin-bottom:5px; font-size:13px; }
+  #s-profile .prof-expect-list span { display:block; font-size:15px; line-height:1.6; }
+  #s-profile .prof-guide-compact { gap:0; }
+  #s-profile .prof-guide-compact article { grid-template-columns:32px minmax(0,1fr); gap:12px; padding:14px 0; border-top:1px solid rgba(74,75,47,.09); }
+  #s-profile .prof-guide-compact article:first-child { border-top:0; }
+  #s-profile .prof-method h3 { margin-top:20px; }
+  #s-profile .prof-method .prof-google { margin-top:16px; padding:14px; border-radius:13px; font-size:13px; line-height:1.6; }
+  #s-profile .prof-method-fresh { padding:7px 10px; font-size:9px!important; }
+  #s-profile .prof-mini-form { grid-template-columns:1fr; gap:13px; margin-top:16px; }
+  #s-profile .prof-mini-form label { font-size:9px; line-height:1.4; }
+  #s-profile .prof-mini-form input { min-height:48px; margin-top:6px; padding:12px 13px; border-radius:11px; font-size:16px; }
+  #s-profile .prof-mini-form .prof-req,#s-profile .prof-mini-form .prof-status { grid-column:auto; }
+  #s-profile .prof-mini-form .prof-req { min-height:50px; margin-top:3px; }
+  #s-profile .prof-work { margin-top:30px; padding-top:28px; border-top:1px solid rgba(74,75,47,.1); }
 }
 /* ── Work-photo gallery + lightbox (the Vesta app at parity with the /c/ backlinks) ── */
 .vph{ margin:13px 0 4px; }
@@ -5176,7 +5242,7 @@ function profFactsHTML(){
   if (credentials.length) rows.push([PROF_FACT_IC.shield,'Verified credentials',credentials.join(' · '),'Checked against public or issuer records']);
   if (Array.isArray(enr.service_area)&&enr.service_area.length) rows.push([PROF_FACT_IC.pin,'Service area',enr.service_area.join(', '),'Sourced from this firm’s public footprint']);
   const photos=Array.isArray(p.photos) ? p.photos.filter(x=>x&&x.ref).length : 0;
-  if (photos) rows.push([PROF_FACT_IC.calendar,'Work gallery','Open '+photos+' public work photo'+(photos===1?'':'s'),'From the public Google listing','gallery']);
+  if (photos) rows.push([PROF_FACT_IC.photo,'Work gallery','Open '+photos+' public work photo'+(photos===1?'':'s'),'From the public Google listing','gallery']);
   return '<section class="prof-facts-panel prof-desk-panel" aria-label="What is established">'+
     '<span class="prof-sec-kick">At a glance</span><h2 class="prof-sec-h">Service &amp; record</h2>'+
     (rows.length ? '<div class="prof-facts-list">'+rows.map(r=>
@@ -5736,11 +5802,13 @@ function profIntelHTML(){
   }
   const first=items[0]&&items[0].id;
   return '<section class="prof-intel-card" aria-label="Vesta’s decision brief">'+
-    '<div class="prof-intel-head"><span class="prof-sec-kick">Vesta’s decision brief</span><h2 class="prof-sec-h">Every useful signal, one home</h2></div>'+
-    '<div class="prof-intel-grid"><div class="prof-intel-nav" aria-label="Profile detail dropdowns">'+items.map((it,i)=>
-      '<button class="prof-disclosure-btn'+(i===0?' active':'')+'" id="prof-intel-'+it.id+'-button" type="button" aria-expanded="'+(i===0?'true':'false')+'" aria-controls="prof-intel-'+it.id+'">'+
-      '<span><b>'+it.title+'</b><small>'+it.sub+'</small></span><span class="prof-disclosure-chev" aria-hidden="true">'+CHEV+'</span></button>').join('')+'</div>'+
-    '<div class="prof-intel-panels">'+items.map(it=>'<section class="prof-intel-panel" id="prof-intel-'+it.id+'" role="region" aria-labelledby="prof-intel-'+it.id+'-button"'+(it.id===first?'':' hidden')+'>'+it.html+'</section>').join('')+'</div></div></section>';
+    '<div class="prof-intel-head"><span class="prof-sec-kick">Vesta’s decision brief</span><h2 class="prof-sec-h">What the record supports</h2><p>Open one section at a time. Every available signal remains here without crowding the screen.</p></div>'+
+    '<div class="prof-mobile-accordions" aria-label="Profile detail sections">'+items.map((it,i)=>
+      '<section class="prof-mobile-section'+(i===0?' open':'')+'">'+
+        '<button class="prof-disclosure-btn'+(i===0?' active':'')+'" data-no="'+String(i+1).padStart(2,'0')+'" id="prof-intel-'+it.id+'-button" type="button" aria-expanded="'+(i===0?'true':'false')+'" aria-controls="prof-intel-'+it.id+'">'+
+        '<span><b>'+it.title+'</b><small>'+it.sub+'</small></span><span class="prof-disclosure-chev" aria-hidden="true">'+CHEV+'</span></button>'+
+        '<section class="prof-intel-panel" id="prof-intel-'+it.id+'" role="region" aria-labelledby="prof-intel-'+it.id+'-button"'+(it.id===first?'':' hidden')+'>'+it.html+'</section>'+
+      '</section>').join('')+'</div></section>';
 }
 // Work-photo gallery on the in-app profile — the same one /c/ shows. The photos are
 // already in profData.p.photos (openProfile fetched /c/:id), so render inline, no extra call.
@@ -5783,6 +5851,7 @@ function wireProfile(){
     disclosures.forEach(b=>{
       const on=b===btn, panel=$(b.getAttribute('aria-controls'));
       b.classList.toggle('active',on); b.setAttribute('aria-expanded',on?'true':'false');
+      const group=b.closest('.prof-mobile-section'); if(group) group.classList.toggle('open',on);
       if(panel){ panel.hidden=!on; if(on) activePanel=panel; }
     });
     const wrap=document.querySelector('.prof-intel-panels');
