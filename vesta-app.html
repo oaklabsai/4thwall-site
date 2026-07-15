@@ -655,6 +655,81 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .card-chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; color:var(--ebony); background:rgba(74,75,47,.05); border-radius:var(--r-pill); padding:4px 10px; white-space:nowrap; }
 .card-chip svg { color:var(--olive); }
 .card-hint { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:10px; font-size:11px; color:rgba(74,75,47,.5); }
+
+/* Mobile contractor decision card — reference-led, evidence-bounded. The large work image and
+   decision hierarchy mirror the approved target; every visible metric maps to a field Vesta
+   actually has. The circular device represents a county percentile band, not a trust score. */
+@media (max-width:899.98px){
+  .card.mcard { padding:0; border-radius:27px; border:1px solid rgba(74,75,47,.13); background:var(--nm); box-shadow:10px 13px 28px rgba(74,75,47,.16), -8px -8px 20px rgba(255,255,255,.82), inset 0 1px 0 rgba(255,255,255,.72); }
+  .mcard-media { position:relative; flex:0 0 31%; min-height:112px; max-height:174px; overflow:hidden; background:linear-gradient(145deg,#dfe2d2,#cbd0ba); border-bottom:1px solid rgba(74,75,47,.1); }
+  .mcard-media::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg,rgba(20,23,14,.08),transparent 42%,rgba(20,23,14,.22)); }
+  .mcard-media-fallback { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:rgba(74,75,47,.46); }
+  .mcard-media-fallback svg { width:52px; height:52px; }
+  .mcard-cover { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transform:scale(1.015); transition:opacity .28s ease, transform .55s var(--spring); }
+  .mcard-media.has-img .mcard-cover { opacity:1; transform:scale(1); }
+  .mcard-pick,.mcard-photo-count { position:absolute; z-index:2; top:14px; display:flex; align-items:center; gap:7px; min-height:34px; padding:7px 12px; border-radius:999px; color:var(--olive); background:rgba(248,248,241,.92); border:1px solid rgba(255,255,255,.72); box-shadow:0 5px 16px rgba(33,35,20,.17); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+  .mcard-pick { left:14px; font-family:var(--mono); font-size:8.5px; letter-spacing:.12em; text-transform:uppercase; }
+  .mcard-pick svg { width:12px; height:12px; }
+  .mcard-pick b { font-weight:600; }
+  .mcard-photo-count { right:14px; color:var(--white); background:rgba(33,35,20,.68); border-color:rgba(255,255,255,.2); font-size:11px; }
+  .mcard-photo-count[hidden] { display:none; }
+  .mcard-photo-count svg { width:15px; height:15px; }
+  .mcard-photo-count b { font-weight:600; }
+  .mcard-body { flex:1; min-height:0; padding:12px 15px 11px; display:flex; flex-direction:column; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; }
+  .mcard-body::-webkit-scrollbar { display:none; }
+  .mcard-head { display:flex; align-items:center; gap:10px; min-height:58px; }
+  .mcard-monogram { width:44px; height:44px; flex:0 0 44px; display:flex; align-items:center; justify-content:center; border-radius:13px; font-family:var(--serif); font-size:18px; letter-spacing:-.03em; color:var(--white); background:linear-gradient(145deg,#696a48,#44462b); box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 4px 5px 11px rgba(74,75,47,.18); }
+  .mcard-id { flex:1; min-width:0; }
+  .mcard-name { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; overflow:hidden; font-family:var(--serif); font-size:19px; font-weight:700; line-height:1.02; letter-spacing:-.025em; color:var(--olive); }
+  .mcard-town { margin-top:4px; font-size:11.5px; color:rgba(42,43,28,.7); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mcard-town i { padding:0 3px; font-style:normal; }
+  .mcard-standing { --ring:78%; position:relative; flex:0 0 64px; width:64px; height:64px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; isolation:isolate; background:conic-gradient(var(--olive) var(--ring),rgba(74,75,47,.13) 0); box-shadow:3px 4px 10px rgba(74,75,47,.12), -3px -3px 8px rgba(255,255,255,.7); }
+  .mcard-standing::before { content:''; position:absolute; inset:5px; z-index:-1; border-radius:inherit; background:var(--nm); box-shadow:inset 1px 1px 3px rgba(74,75,47,.1); }
+  .mcard-standing strong { font-family:var(--serif); font-size:17px; line-height:.95; letter-spacing:-.03em; color:var(--olive); }
+  .mcard-standing small { width:44px; margin-top:3px; font-family:var(--mono); font-size:6.5px; line-height:1.15; letter-spacing:.08em; text-transform:uppercase; text-align:center; color:var(--ebony); }
+  .mcard-match { display:flex; align-items:center; gap:7px; margin:6px 0 2px; padding:7px 10px; border-radius:10px; background:rgba(212,223,158,.25); font-size:11px; font-weight:650; line-height:1.25; color:var(--olive); }
+  .mcard-match svg { width:12px; height:12px; flex-shrink:0; }
+  .mcard-fit { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-top:8px; padding:9px 0 8px; border-top:1px solid rgba(74,75,47,.12); border-bottom:1px solid rgba(74,75,47,.12); }
+  .mcard-fit section { min-width:0; padding:0 10px 0 1px; }
+  .mcard-fit section+section { padding:0 0 0 12px; border-left:1px solid rgba(74,75,47,.12); }
+  .mcard-fit h3 { margin-bottom:6px; font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--olive); }
+  .mcard-fit ul { display:grid; gap:5px; list-style:none; }
+  .mcard-fit li { display:flex; align-items:flex-start; gap:5px; min-width:0; font-size:10.5px; font-weight:520; line-height:1.2; color:#292b1d; }
+  .mcard-fit li svg { width:12px; height:12px; flex:0 0 12px; margin-top:.5px; color:var(--olive); }
+  .mcard-fit li span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mcard-record { display:flex; align-items:stretch; padding:9px 0 8px; }
+  .mcard-record>span { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; padding:0 8px; text-align:left; }
+  .mcard-record>span:first-child { padding-left:2px; }
+  .mcard-record>span+span { border-left:1px solid rgba(74,75,47,.12); }
+  .mcard-record b { font-family:var(--serif); font-size:14px; line-height:1.05; color:var(--olive); white-space:nowrap; }
+  .mcard-record small { margin-top:3px; font-size:8px; line-height:1.15; color:rgba(42,43,28,.65); }
+  .mcard-request { flex:0 0 auto; width:100%; min-height:44px; display:flex; align-items:center; justify-content:center; gap:9px; border:0; border-radius:999px; padding:10px 14px; cursor:pointer; color:var(--white); background:var(--dark-grad); box-shadow:0 5px 13px -4px rgba(67,68,42,.65), inset 0 1px 0 rgba(255,255,255,.12); font-family:var(--sans); font-size:12.5px; font-weight:700; }
+  .mcard-request svg { width:14px; height:14px; color:#f2c44c; }
+  .mcard-request b { margin-left:auto; font-size:18px; font-weight:400; line-height:1; }
+  .mcard-request:focus-visible { outline:2.5px solid var(--olive); outline-offset:3px; }
+  .mcard-hint { padding-top:6px; text-align:center; font-size:8.5px; color:rgba(74,75,47,.5); }
+  .mcard[data-k="0"] .mcard-media { animation:tileIn .4s var(--spring) both; }
+  .mcard[data-k="0"] .mcard-head { animation:tileIn .4s var(--spring) .05s both; }
+  .mcard[data-k="0"] .mcard-fit { animation:tileIn .4s var(--spring) .1s both; }
+  .mcard[data-k="0"] .mcard-record,.mcard[data-k="0"] .mcard-request { animation:tileIn .4s var(--spring) .14s both; }
+}
+@media (max-width:899.98px) and (max-height:760px){
+  .mcard-media { flex-basis:27%; min-height:92px; }
+  .mcard-body { padding:9px 13px 8px; }
+  .mcard-head { min-height:50px; }
+  .mcard-monogram { width:38px; height:38px; flex-basis:38px; border-radius:11px; font-size:16px; }
+  .mcard-name { font-size:17px; }
+  .mcard-standing { flex-basis:56px; width:56px; height:56px; }
+  .mcard-standing strong { font-size:15px; }
+  .mcard-fit { margin-top:5px; padding:7px 0 6px; }
+  .mcard-fit li:nth-child(n+3) { display:none; }
+  .mcard-record { padding:7px 0 6px; }
+  .mcard-hint { display:none; }
+}
+@media (prefers-reduced-motion:reduce){
+  .mcard-cover { transition:none; }
+  .mcard[data-k="0"] .mcard-media,.mcard[data-k="0"] .mcard-head,.mcard[data-k="0"] .mcard-fit,.mcard[data-k="0"] .mcard-record,.mcard[data-k="0"] .mcard-request { animation:none; }
+}
 /* ── Data-rollout layers (shared: deck card + feed card) ─────────────────────
    The stat strip is the structured middle register between the name and the
    prose — real numbers presented as numbers. The lede/body split gives the
@@ -1446,6 +1521,81 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .fcard-actions { margin-top:17px; }
 }
 
+/* ===== DESKTOP DECISION SURFACE — reference-led, evidence-bounded =====
+   The visual density follows the approved feed reference, while every module
+   collapses when Vesta does not own the underlying fact. Mobile is deliberately
+   untouched here; its card system is handled only after desktop is accepted. */
+@media (min-width:900px){
+  #s-browse .browse-hdr { padding-top:26px; }
+  #s-browse .browse-h1 { font-size:clamp(34px,3.1vw,46px); }
+  .feed-entry { padding-top:10px; }
+  .feed-needs { padding-top:12px; }
+  .feed-controls { padding-top:10px; padding-bottom:14px; }
+  .feed { gap:16px; padding-top:3px; }
+  .vpanel { width:326px; padding:24px 20px 40px; background:var(--bg); border-left:0; box-shadow:inset 8px 0 18px -18px rgba(74,75,47,.35); }
+
+  .fcard { padding:12px; border:1px solid rgba(255,255,255,.52); border-radius:24px; box-shadow:var(--nm-sm); }
+  .fcard:hover { box-shadow:var(--nm-out); }
+  .fcard-summary { display:grid; grid-template-columns:minmax(190px,30%) minmax(0,1fr); gap:18px; align-items:stretch; }
+  .fcard-summary > .vph-cover-btn { grid-column:1; grid-row:1; width:100%; height:100%; min-height:260px; margin:0; border-radius:17px; }
+  .fcard-core { grid-column:2; grid-row:1; min-width:0; padding:10px 4px 8px 0; align-self:stretch; }
+  .fcard-top { gap:11px; }
+  .fcard-name { font-size:21px; color:var(--pitch); }
+  .fcard-town { margin-top:4px; font-size:12px; }
+  .fcard-band { margin-top:9px; padding:5px 11px; background:rgba(212,223,158,.46); box-shadow:inset 1px 1px 2px rgba(74,75,47,.07),inset -1px -1px 2px rgba(255,255,255,.5); }
+  .fc-record { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:17px; padding:13px 0; border-top:1px solid rgba(74,75,47,.1); border-bottom:1px solid rgba(74,75,47,.1); }
+  .fc-record > span { min-width:0; padding:0 11px; border-left:1px solid rgba(74,75,47,.1); }
+  .fc-record > span:first-child { padding-left:0; border-left:0; }
+  .fc-record b { display:block; color:var(--olive); font-family:var(--serif); font-size:15px; line-height:1.15; }
+  .fc-record small { display:block; margin-top:3px; color:var(--ebony); font-family:var(--mono); font-size:7px; line-height:1.35; letter-spacing:.07em; text-transform:uppercase; }
+  .fc-known { margin-top:15px; }
+  .fc-section-label { display:block; margin-bottom:7px; color:var(--ebony); font-family:var(--mono); font-size:8px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; }
+  .fc-known > div { display:flex; flex-wrap:wrap; gap:7px 13px; }
+  .fc-known > div > span { display:inline-flex; align-items:center; gap:5px; color:var(--olive); font-size:11px; font-weight:600; line-height:1.3; }
+  .fc-known svg { width:12px; height:12px; flex:none; }
+  .fcard-chips { margin-top:13px; }
+  .fcard-verdict { grid-column:1/-1; display:grid; grid-template-columns:minmax(180px,.6fr) minmax(0,1fr); gap:11px 18px; align-items:start; padding:16px 18px; border-radius:17px; background:linear-gradient(145deg,rgba(212,223,158,.2),rgba(255,255,255,.08)),var(--nm); box-shadow:var(--nm-in); }
+  .fc-verdict-head { display:flex; align-items:center; gap:10px; }
+  .fc-verdict-mark { display:grid; place-items:center; width:34px; height:34px; flex:none; border-radius:11px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); }
+  .fc-verdict-mark svg { width:18px; height:18px; }
+  .fc-verdict-head b { display:block; color:var(--olive); font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; }
+  .fc-verdict-head small { display:block; margin-top:3px; color:var(--ebony); font-size:10px; }
+  .fc-best { grid-column:1; }
+  .fc-best > span:not(.fc-section-label) { display:flex; align-items:flex-start; gap:6px; margin-top:6px; color:var(--olive); font-size:11px; line-height:1.35; }
+  .fc-best svg { width:12px; height:12px; flex:none; margin-top:1px; }
+  .fc-verdict-copy { grid-column:2; grid-row:1/3; margin:0; color:var(--olive); font-family:var(--serif); font-size:15px; font-weight:500; line-height:1.48; }
+  .fcard-verdict .fc-req { grid-column:2; width:100%; align-self:end; min-height:39px; padding:10px 16px; }
+  .fc-verdict-actions { grid-column:1; display:flex; align-items:center; gap:8px; align-self:end; }
+  .fc-verdict-actions .fc-save,.fc-verdict-actions .fc-fullpill { min-height:36px; padding:8px 12px; background:var(--nm); border:0; box-shadow:var(--nm-sm); }
+  .fc-verdict-actions .fc-save.on { background:var(--tea); box-shadow:var(--nm-in); }
+
+  .feedrail-card { margin-bottom:14px; padding:18px; border:1px solid rgba(255,255,255,.5); border-radius:20px; background:var(--nm); box-shadow:var(--nm-sm); }
+  .feedrail-kicker { display:flex; align-items:center; gap:7px; color:var(--olive); font-family:var(--mono); font-size:8px; letter-spacing:.13em; text-transform:uppercase; }
+  .feedrail-title { margin:8px 0 8px; color:var(--pitch); font-family:var(--serif); font-size:19px; line-height:1.15; letter-spacing:-.02em; }
+  .feedrail-copy { margin:0; color:var(--ebony); font-size:12px; line-height:1.55; }
+  .feedrail-list { display:grid; gap:9px; margin-top:14px; }
+  .feedrail-list span { display:flex; align-items:flex-start; gap:8px; color:var(--ebony); font-size:11.5px; line-height:1.4; }
+  .feedrail-list svg { width:14px; height:14px; flex:none; color:var(--olive); margin-top:1px; }
+  .feedrail-compare { margin-top:13px; }
+  .feedrail-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; padding:10px 0; border-top:1px solid rgba(74,75,47,.09); }
+  .feedrail-row b { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--olive); font-size:11px; }
+  .feedrail-row span { color:var(--ebony); font-family:var(--mono); font-size:7.5px; letter-spacing:.04em; text-transform:uppercase; }
+  .feedrail-cta { display:flex; align-items:center; justify-content:space-between; width:100%; min-height:42px; margin-top:14px; padding:10px 13px; border:0; border-radius:12px; color:var(--white); background:var(--olive); box-shadow:0 10px 22px -14px rgba(48,50,28,.8); font-family:var(--sans); font-size:12px; font-weight:700; cursor:pointer; }
+  .feedrail-private { display:flex; align-items:flex-start; gap:8px; padding:4px 6px; color:var(--ebony); font-size:10px; line-height:1.45; }
+}
+
+@media (min-width:1260px){
+  .fcard-summary { grid-template-columns:minmax(190px,28%) minmax(235px,.92fr) minmax(235px,.88fr); }
+  .fcard-summary > .vph-cover-btn { grid-column:1; min-height:245px; }
+  .fcard-core { grid-column:2; }
+  .fcard-verdict { grid-column:3; grid-row:1; display:flex; flex-direction:column; gap:12px; padding:16px; }
+  .fc-best,.fc-verdict-copy,.fcard-verdict .fc-req,.fc-verdict-actions { grid-column:auto; grid-row:auto; }
+  .fc-verdict-copy { font-size:13.5px; line-height:1.45; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  .fcard-verdict .fc-req { margin-top:auto; }
+  .fc-verdict-actions { width:100%; }
+  .fc-verdict-actions .fc-fullpill { margin-left:auto; }
+}
+
 /* ===== Task-2 additions: live saved counters · reset saved · mobile filters ===== */
 /* live saved-count badges (sidebar foot + mobile bottom nav) */
 .ds-badge { margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:var(--r-pill); background:var(--tea); color:var(--olive); font-family:var(--mono); font-size:11px; font-weight:500; display:inline-flex; align-items:center; justify-content:center; }
@@ -1904,6 +2054,76 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-profile .prof-wrap { padding-left:30px; padding-right:30px; }
   .prof-desk-grid { grid-template-columns:minmax(0,1fr) 310px; }
   .prof-lead { grid-template-columns:150px minmax(0,1fr); gap:21px; }
+}
+
+/* Desktop full profile: a scrollable evidence dossier. The earlier one-screen
+   brief forced enterprise-grade information into unreadably small type; this
+   keeps the same honest fields but gives them the hierarchy of the reference. */
+@media (min-width:900px){
+  #s-profile.screen { height:100vh; overflow:hidden; }
+  #s-profile .prof-scroll { height:100%; overflow-y:auto; overscroll-behavior:contain; }
+  #s-profile .prof-wrap { width:min(1420px,100%); max-width:none; height:auto; min-height:100%; display:block; padding:30px 42px 72px; }
+  .prof-desk-title { align-items:center; margin:0 4px 18px; }
+  .prof-desk-label { font-size:clamp(34px,3.2vw,48px); }
+  .prof-desk-intro { margin-top:7px; font-size:13px; }
+  .prof-desk-proof { padding:9px 14px; font-size:8.5px; }
+  .prof-desk-grid { display:grid; grid-template-columns:minmax(0,1.85fr) minmax(310px,.72fr); grid-template-rows:auto auto auto; grid-template-areas:"hero action" "facts action" "body action"; gap:16px; align-items:start; }
+  .prof-desk-panel { border-radius:26px; box-shadow:var(--nm-out); }
+  .prof-desk-hero { grid-area:hero; padding:26px 28px; overflow:visible; }
+  .prof-lead { height:auto; grid-template-columns:clamp(170px,18vw,225px) minmax(0,1fr); gap:30px; align-items:center; }
+  .prof-lead-photo { width:100%; }
+  .prof-desk-hero .prof-name { font-size:clamp(34px,4vw,54px); line-height:.98; color:var(--pitch); }
+  .prof-desk-hero .prof-sub { margin-top:10px; max-width:66ch; font-size:14px; line-height:1.45; }
+  .prof-signature { margin-top:18px; padding-top:16px; }
+  .prof-signature p { max-width:60ch; font-size:17px; line-height:1.45; }
+  .prof-desk-facts { grid-area:facts; }
+  .prof-desk-facts > section { height:auto; padding:22px 24px; overflow:visible; }
+  .prof-desk-facts .prof-sec-h { margin-top:5px; font-size:25px; }
+  .prof-facts-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 20px; margin-top:15px; }
+  .prof-fact { grid-template-columns:38px minmax(0,1fr); gap:11px; padding:13px 0; }
+  .prof-fact-ic { width:36px; height:36px; }
+  .prof-fact-ic svg { width:17px; height:17px; }
+  .prof-fact-l { font-size:8px; }
+  .prof-fact strong { margin-top:3px; font-size:13px; line-height:1.35; }
+  .prof-fact small { margin-top:4px; font-size:7.5px; line-height:1.4; }
+  .prof-desk-action { grid-area:action; position:sticky; top:20px; min-height:0; align-self:start; }
+  .prof-desk-action > section { height:auto; min-height:0; padding:24px; overflow:visible; }
+  .prof-desk-action .prof-sec-h { margin-top:5px; font-size:28px; }
+  .prof-desk-action .prof-sec-note { margin-top:9px; font-size:14px; line-height:1.55; }
+  .prof-desk-action .prof-req { min-height:50px; margin-top:18px; border-radius:15px; font-size:14px; }
+  .prof-contact-actions { gap:10px; margin-top:4px; }
+  .prof-contact-actions .prof-call,.prof-desk-action .prof-ask-rail { min-height:44px; border-radius:14px; font-size:12px; }
+  .prof-desk-action .prof-fine { margin-top:12px; font-size:11px; line-height:1.5; }
+  .prof-desk-body { grid-area:body; padding:25px; overflow:visible; }
+  .prof-intel-card { height:auto; overflow:visible; }
+  .prof-intel-head { display:block; }
+  .prof-intel-head .prof-sec-h { margin-top:5px; font-size:28px; }
+  .prof-intel-modules { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:18px; }
+  .prof-intel-module { min-width:0; padding:18px; border:1px solid rgba(255,255,255,.5); border-radius:19px; background:var(--nm); box-shadow:var(--nm-sm); }
+  .prof-intel-module--lead { grid-column:1/-1; background:linear-gradient(145deg,rgba(212,223,158,.22),rgba(255,255,255,.08)),var(--nm); box-shadow:var(--nm-in); }
+  .prof-intel-module > header { display:flex; align-items:flex-start; gap:11px; padding-bottom:12px; border-bottom:1px solid rgba(74,75,47,.09); }
+  .prof-intel-module > header > span { display:grid; place-items:center; width:28px; height:28px; flex:none; border-radius:9px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); font-family:var(--mono); font-size:8px; }
+  .prof-intel-module > header h3 { color:var(--pitch); font-family:var(--serif); font-size:18px; line-height:1.1; }
+  .prof-intel-module > header p { margin-top:3px; color:var(--ebony); font-family:var(--mono); font-size:7px; letter-spacing:.07em; text-transform:uppercase; }
+  .prof-intel-module-body { padding-top:13px; color:var(--ebony); font-size:12px; line-height:1.55; }
+  .prof-intel-read .prof-intel-lede { color:var(--olive); font-family:var(--serif); font-size:20px; font-weight:600; line-height:1.38; }
+  .prof-intel-read > p:not(.prof-intel-lede):not(.prof-intel-source) { margin-top:10px; font-size:13px; line-height:1.6; }
+  .prof-detail-item { padding:10px 0; }
+  .prof-detail-item h3 { font-size:13px; }
+  .prof-detail-item p { margin-top:3px; font-size:11px; line-height:1.5; }
+  .prof-detail-chips span { padding:6px 10px; font-size:10px; }
+  .prof-intel-card--desktop + .prof-work,.prof-work { margin-top:24px; padding-top:23px; border-top:1px solid rgba(74,75,47,.1); }
+  .prof-work .prof-sec-h { margin-top:5px; font-size:26px; }
+  .prof-work .vph-track { grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+  .prof-work .vph-tile { min-height:150px; }
+}
+
+@media (min-width:900px) and (max-width:1120px){
+  #s-profile .prof-wrap { padding-left:28px; padding-right:28px; }
+  .prof-desk-grid { grid-template-columns:minmax(0,1fr) 300px; }
+  .prof-lead { grid-template-columns:150px minmax(0,1fr); gap:22px; }
+  .prof-intel-modules { grid-template-columns:1fr; }
+  .prof-intel-module--lead { grid-column:auto; }
 }
 
 @media (max-width:899px){
@@ -3737,25 +3957,44 @@ function toggleCardRead(card, btn){
   if(collapsed){ const syn=card.querySelector('.card-syn'); if(syn) syn.scrollTop=0; }
 }
 function cardHTML(con, k){
-  // Read-led card: the "Why this contractor?" stack (rank band + credentials) lives on the
-  // full profile now (Where it stands / At a glance), not on the swipe card.
-  const mw = (S.match && S.match.job) ? whyLine(con, S.match) : '';   // match mode: the data-true "why", on the card
-  return '<article class="card" data-k="'+k+'" '+(k===0?'tabindex="0" aria-label="'+esc(con.name)+', '+esc(con.town)+'"':'aria-hidden="true"')+'>'+
+  // Mobile decision card: follow the reference's strong photo -> identity -> evidence -> action
+  // hierarchy, but only with fields Vesta can substantiate. The county ring is a percentile
+  // band over Vesta's rank score — never a fabricated trust score — and the review number is a
+  // public count, never the prohibited raw star rating.
+  const mw = (S.match && S.match.job) ? whyLine(con, S.match) : '';
+  const known = (con.knownFor||[]).slice(0,3);
+  const best = ((con.bestFor&&con.bestFor.length)?con.bestFor:known).slice(0,3);
+  const standing = con.ratingBand==='top10' ? 'Top 10%' : con.ratingBand==='top25' ? 'Top 25%' : '';
+  const record=[];
+  if(con.totalReviews) record.push('<span><b>'+Number(con.totalReviews).toLocaleString('en-US')+'</b><small>Public reviews</small></span>');
+  if(con.sinceYear) record.push('<span><b>Since '+esc(con.sinceYear)+'</b><small>State record</small></span>');
+  if(con.registered) record.push('<span><b>Active</b><small>CT registration</small></span>');
+  else if(con.certs&&con.certs.length) record.push('<span><b>Verified</b><small>'+esc(con.certs[0])+'</small></span>');
+  const pickLabel = mw ? 'Matched to your job' : 'Ranked by the record';
+  return '<article class="card mcard" data-k="'+k+'" '+(k===0?'tabindex="0" aria-label="'+esc(con.name)+', '+esc(con.town)+'. Tap for the full profile."':'aria-hidden="true"')+'>'+
     (k===0?'<span class="stamp stamp-save">SAVE</span><span class="stamp stamp-pass">SKIP</span>':'')+
-    // Swipe card = read-first. On a phone the photo hero and the read were fighting for the same
-    // vertical inches and the read — the product — lost, clipping to one line. Photos live on the
-    // full profile (tap the card) + the lightbox; the swipe card gives every inch to the verdict.
-    // Mobile-only: the avatar is a single cover photo (visual identity with zero vertical cost now
-    // that the hero is gone). Trade icon is the fallback when a firm has no photo (img onerror).
-    '<div class="card-top"><div class="card-mono" aria-hidden="true">'+
-      '<img class="card-mono-img" decoding="async" alt="" src="'+esc(HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=160'))+'" '+
+    '<div class="mcard-media" aria-hidden="true">'+
+      '<div class="mcard-media-fallback">'+ICONS[tradeIconOf(con.trade)]+'</div>'+
+      '<img class="mcard-cover" decoding="async" alt="" src="'+esc(HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=760'))+'" '+
         'onload="this.parentElement.classList.add(\'has-img\')" onerror="this.remove()">'+
-      ICONS[tradeIconOf(con.trade)]+'</div>'+
-      '<div class="card-id"><div class="card-name">'+esc(con.name)+'</div><div class="card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div></div></div>'+
-    (mw ? '<div class="card-matchwhy">'+SPARK+'<span>'+esc(mw)+'</span></div>' : '')+
-    '<div class="card-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
-    '<div class="card-synwrap">'+cardGlanceHTML(con)+'</div>'+
-    '<div class="card-hint">'+(desktop()?'← skip · save →':'Tap for the full profile')+'</div>'+
+      '<span class="mcard-pick">'+SPARK+'<b>'+esc(pickLabel)+'</b></span>'+
+      '<span class="mcard-photo-count" hidden>'+PROF_FACT_IC.photo+'<b></b></span>'+
+    '</div>'+
+    '<div class="mcard-body">'+
+      '<div class="mcard-head">'+
+        '<div class="mcard-monogram" aria-hidden="true">'+esc(monogram(con.name))+'</div>'+
+        '<div class="mcard-id"><div class="mcard-name" style="view-transition-name:'+vtName(con.placeId)+'">'+esc(con.name)+'</div><div class="mcard-town">'+esc(con.town)+' <i>·</i> '+esc(tradeLabelOf(con.trade))+'</div></div>'+
+        (standing?'<div class="mcard-standing" style="--ring:'+(con.ratingBand==='top10'?'90%':'75%')+'" aria-label="'+esc(standing)+' of the Fairfield County field"><strong>'+esc(standing.replace('Top ',''))+'</strong><small>County field</small></div>':'')+
+      '</div>'+
+      (mw?'<div class="mcard-match">'+SPARK+'<span>'+esc(mw)+'</span></div>':'')+
+      (known.length||best.length?'<div class="mcard-fit">'+
+        (known.length?'<section><h3>Known for</h3><ul>'+known.map(v=>'<li>'+CHECK+'<span>'+esc(v)+'</span></li>').join('')+'</ul></section>':'')+
+        (best.length?'<section><h3>Best for</h3><ul>'+best.map(v=>'<li>'+CHECK+'<span>'+esc(trecHumanize(v))+'</span></li>').join('')+'</ul></section>':'')+
+      '</div>':'')+
+      (record.length?'<div class="mcard-record" aria-label="Public record facts">'+record.slice(0,3).join('')+'</div>':'')+
+      '<button class="mcard-request" type="button" tabindex="'+(k===0?'0':'-1')+'">'+SPARK+'<span>Request through Vesta</span><b aria-hidden="true">→</b></button>'+
+      '<div class="mcard-hint">Tap the card for the full evidence profile</div>'+
+    '</div>'+
   '</article>';
 }
 function deckEndHTML(){
@@ -3796,7 +4035,14 @@ function renderDeck(){
   }
   deck.innerHTML = remaining.slice(0,3).map((c,k)=>cardHTML(c,k)).join('');
   wireTopCard(remaining[0]);
-  const _phm = deck.querySelector('.card[data-k="0"] .vph[data-place]'); if(_phm) hydratePhotos(_phm);
+  // The count is filled only after the genuine photo list resolves; the badge stays absent when
+  // there are no source photos, so the reference's visual treatment never becomes a fake claim.
+  const photoCount=deck.querySelector('.card[data-k="0"] .mcard-photo-count');
+  if(photoCount) fetchPhotos(remaining[0].placeId).then(ph=>{
+    if(!ph||!ph.length||!photoCount.isConnected) return;
+    const b=photoCount.querySelector('b'); if(b) b.textContent=ph.length+' photo'+(ph.length===1?'':'s');
+    photoCount.hidden=false;
+  });
   $('deck-actions').style.visibility='visible';
   updateRewind();
   // In match mode the subhead already says "matched to your job, best-reviewed first" —
@@ -3823,14 +4069,16 @@ function wireDeckFilterEmpty(){
 function wireTopCard(con){
   const card = $('deck').querySelector('.card[data-k="0"]'); if(!card) return;
   const save = card.querySelector('.stamp-save'), pass = card.querySelector('.stamp-pass');
-  const synEl = card.querySelector('.card-syn');
+  const synEl = card.querySelector('.card-syn') || card.querySelector('.mcard-body');
+  const request = card.querySelector('.mcard-request');
+  if(request) request.addEventListener('click', e=>{ e.stopPropagation(); enterRequest({ placeId:con.placeId, trade:con.trade, name:con.name }); });
   // Only offer "Why →" when the read is actually longer than its 2-line preview — a short read
   // shows whole, no dead toggle.
   { const txt=card.querySelector('.syn-txt'), why=card.querySelector('.syn-why');
     if(txt&&why) requestAnimationFrame(()=>{ if(txt.scrollHeight <= txt.clientHeight + 2) why.style.display='none'; }); }
   let active=false, downX=0, downY=0, dx=0, dy=0, moved=0, t0=0, mode=null, startedInSyn=false, downOnWhy=false, lastY=0, lastX=0, lastT=0, vx=0;
   const reset = anim => { card.style.transition = anim ? 'transform .3s cubic-bezier(.34,1.1,.64,1)' : 'none'; card.style.transform=''; if(save)save.style.opacity=0; if(pass)pass.style.opacity=0; };
-  card.addEventListener('pointerdown', e => { active=true; downX=e.clientX; downY=e.clientY; lastY=e.clientY; lastX=e.clientX; lastT=Date.now(); vx=0; t0=Date.now(); moved=0; dx=0; dy=0; mode=null; startedInSyn = !!(synEl && synEl.contains(e.target) && synEl.scrollHeight > synEl.clientHeight + 2); downOnWhy = !!(e.target && e.target.closest && e.target.closest('.syn-why')); card.style.transition='none'; /* capture is deferred to the first swipe move (below) — capturing on a tap can strand the pointer if the tap navigates and detaches the card before pointerup */ });
+  card.addEventListener('pointerdown', e => { if(e.target&&e.target.closest&&e.target.closest('button,a,input,select,textarea')) return; active=true; downX=e.clientX; downY=e.clientY; lastY=e.clientY; lastX=e.clientX; lastT=Date.now(); vx=0; t0=Date.now(); moved=0; dx=0; dy=0; mode=null; startedInSyn = !!(synEl && synEl.contains(e.target) && synEl.scrollHeight > synEl.clientHeight + 2); downOnWhy = !!(e.target && e.target.closest && e.target.closest('.syn-why')); card.style.transition='none'; /* capture is deferred to the first swipe move (below) — capturing on a tap can strand the pointer if the tap navigates and detaches the card before pointerup */ });
   card.addEventListener('pointermove', e => {
     if(!active) return;
     dx=e.clientX-downX; dy=e.clientY-downY; moved=Math.max(moved, Math.abs(dx)+Math.abs(dy));
@@ -3876,6 +4124,7 @@ function wireTopCard(con){
   card.addEventListener('pointerup', up);
   card.addEventListener('pointercancel', e => { active=false; try{ if(e && card.releasePointerCapture) card.releasePointerCapture(e.pointerId); }catch(_){} reset(true); });
   card.addEventListener('keydown', e => {
+    if(e.target&&e.target.closest&&e.target.closest('button,a,input,select,textarea')) return;
     if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tapCard(con); }
     else if(e.key==='ArrowRight'){ e.preventDefault(); commit('save', con); }
     else if(e.key==='ArrowLeft'){ e.preventDefault(); commit('pass', con); }
@@ -4226,6 +4475,14 @@ function feedListHTML(list){
   });
   return out;
 }
+function feedRecordBits(con){
+  const bits=[];
+  if (con.totalReviews) bits.push('<span><b>'+Number(con.totalReviews).toLocaleString('en-US')+'</b><small>public reviews</small></span>');
+  if (con.sinceYear) bits.push('<span><b>Since '+esc(con.sinceYear)+'</b><small>state record</small></span>');
+  if (con.registered) bits.push('<span><b>Active</b><small>CT registration</small></span>');
+  else if (con.certs && con.certs.length) bits.push('<span><b>Verified</b><small>'+esc(con.certs[0])+'</small></span>');
+  return bits.length ? '<div class="fc-record" aria-label="Public record facts">'+bits.slice(0,3).join('')+'</div>' : '';
+}
 function feedCardHTML(con, i){
   const trust = con.verified.filter(v => v !== 'Vesta-analyzed').slice(0,3);
   const saved = isLiked(con.placeId);
@@ -4238,6 +4495,10 @@ function feedCardHTML(con, i){
   // name-band, where it used to be suppressed only because the strip already carried it.
   const bandText = (S.match && S.match.job) ? whyLine(con, S.match) : con.standing;
   const bandHTML = bandText ? '<div class="fcard-band'+(isM?' fcard-why':'')+'">'+(isM?SPARK:'')+esc(bandText)+'</div>' : '';
+  const known=(con.knownFor||[]).slice(0,3);
+  const best=((con.bestFor&&con.bestFor.length)?con.bestFor:known).slice(0,3);
+  const glance=splitRead(con.read||'');
+  const verdict=glance.lede || readClip(con.read||'');
   return '<article class="fcard" data-place="'+esc(con.placeId)+'" style="--d:'+(Math.min(i||0,8)*30)+'ms">'+
     '<div class="fcard-summary">'+
       // One supporting image—not a banner. On a wide desktop it occupies roughly
@@ -4254,7 +4515,6 @@ function feedCardHTML(con, i){
             '<div class="fcard-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
             bandHTML+'</div>'+
           '<div class="fcard-actions-top">'+
-            '<a class="fc-fullpill" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See full profile <span aria-hidden="true">→</span></a>'+
             '<div class="fcard-menu">'+
               '<button class="fc-menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="More options for '+esc(con.name)+'">'+DOTS+'</button>'+
               '<div class="fmenu" role="menu">'+
@@ -4265,16 +4525,18 @@ function feedCardHTML(con, i){
               '</div></div>'+
           '</div>'+
         '</div>'+
-        '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
-        readHTML(con,'fcard-syn clamp')+
+        feedRecordBits(con)+
+        (known.length?'<div class="fc-known"><span class="fc-section-label">Known for</span><div>'+known.map(v=>'<span>'+CHECK+esc(v)+'</span>').join('')+'</div></div>':'')+
         (trust.length?'<div class="fcard-chips">'+trust.map(v=>'<span class="fcard-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
-        '<button class="fcard-disclose" aria-expanded="false"><span>Vesta’s full analysis</span><span class="chev">'+CHEV+'</span></button>'+
-        '<div class="fcard-more"><div class="fcard-more-inner">'+feedMoreHTML(con)+'</div></div>'+
       '</div>'+
-    '</div>'+
-    '<div class="fcard-actions">'+
-      '<button class="fc-save'+(saved?' on':'')+'" aria-pressed="'+saved+'">'+(saved?BOOKMARK_FILL:BOOKMARK)+'<span class="lbl">'+(saved?'Saved':'Save')+'</span></button>'+
-      '<button class="fc-req">Request through Vesta</button>'+
+      '<aside class="fcard-verdict" aria-label="Vesta’s read for '+esc(con.name)+'">'+
+        '<div class="fc-verdict-head"><span class="fc-verdict-mark">'+PROF_FACT_IC.shield+'</span><span><b>Vesta’s read</b><small>From the public record</small></span></div>'+
+        (best.length?'<div class="fc-best"><span class="fc-section-label">Worth a closer look for</span>'+best.map(v=>'<span>'+CHECK+esc(trecHumanize(v))+'</span>').join('')+'</div>':'')+
+        '<p class="fc-verdict-copy">'+esc(verdict)+'</p>'+
+        '<button class="fc-req">Request through Vesta <span aria-hidden="true">→</span></button>'+
+        '<div class="fc-verdict-actions"><button class="fc-save'+(saved?' on':'')+'" aria-pressed="'+saved+'">'+(saved?BOOKMARK_FILL:BOOKMARK)+'<span class="lbl">'+(saved?'Saved':'Save')+'</span></button>'+
+        '<a class="fc-fullpill" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">Full profile <span aria-hidden="true">→</span></a></div>'+
+      '</aside>'+
     '</div>'+
   '</article>';
 }
@@ -4296,7 +4558,7 @@ function wireFeedCard(con){
   const cover=card.querySelector('.vph-cover-btn');
   if(cover) cover.addEventListener('click', async e=>{ e.preventDefault(); e.stopPropagation(); const ph=await fetchPhotos(con.placeId); if(ph.length) openPhotoLightbox(ph,0); });
   const disc=card.querySelector('.fcard-disclose'), more=card.querySelector('.fcard-more');
-  disc.addEventListener('click', ()=>{ const open=more.classList.toggle('open'); disc.setAttribute('aria-expanded',open); if(open) pushHistory(con,'view'); });
+  if(disc && more) disc.addEventListener('click', ()=>{ const open=more.classList.toggle('open'); disc.setAttribute('aria-expanded',open); if(open) pushHistory(con,'view'); });
   card.querySelector('.fc-save').addEventListener('click', ()=> syncFeedSaveUI(card, toggleLike(con.placeId)));
   card.querySelector('.fc-req').addEventListener('click', ()=> enterRequest({ placeId:con.placeId, trade:con.trade, name:con.name }));
   const mbtn=card.querySelector('.fc-menu-btn'), menu=card.querySelector('.fmenu');
@@ -4467,13 +4729,26 @@ function wireFieldPanel(container, apply){
 let _railTrade = null;
 function renderFeedRail(){
   const p=$('vpanel'); if(!p) return;
-  if (!SHOW_FIELD_DATA){ p.innerHTML=''; return; }   // field rail pulled — .vpanel:empty hides the column
-  const panel = fieldPanelHTML(S.activeTrade);
-  if (!panel){ p.innerHTML=''; return; }
-  p.innerHTML = '<div class="va-head"><span class="va-spark">'+SPARK+'</span><span>The field <span class="squig">at a glance</span></span></div>'+panel;
-  wireFieldPanel(p);
-  const f = fieldStats(S.activeTrade);
-  if (f.medTen && _railTrade !== S.activeTrade){ _railTrade = S.activeTrade; countUp(p.querySelector('.fr2-n'), f.medTen); }   // count up once per trade, not on every filter tick
+  const top=feedSource().slice(0,3);
+  const rows=top.map(con=>{
+    const band=con.standing ? con.standing.replace(/ of Fairfield County.*$/,'') :
+      (con.registered ? 'Public record' : 'Vesta read');
+    return '<div class="feedrail-row"><b>'+esc(con.name)+'</b><span>'+esc(band)+'</span></div>';
+  }).join('');
+  p.innerHTML =
+    '<section class="feedrail-card" aria-labelledby="feedrail-why">'+
+      '<span class="feedrail-kicker">'+SPARK+' Vesta’s method</span><h2 class="feedrail-title" id="feedrail-why">Why these pros rise</h2>'+
+      '<p class="feedrail-copy">Vesta reads the evidence that can actually be supported, then makes the differences legible.</p>'+
+      '<div class="feedrail-list">'+
+        '<span>'+CHECK+'Consistent patterns across public homeowner reviews</span>'+
+        '<span>'+CHECK+'Public registration and credentials when verifiable</span>'+
+        '<span>'+CHECK+'Clear fit for the work you described</span>'+
+        '<span>'+CHECK+'No paid placement or lead auction</span>'+
+      '</div></section>'+
+    (rows?'<section class="feedrail-card" aria-labelledby="feedrail-compare"><span class="feedrail-kicker">County field</span><h2 class="feedrail-title" id="feedrail-compare">Compare the leading records</h2><div class="feedrail-compare">'+rows+'</div></section>':'')+
+    '<section class="feedrail-card"><span class="feedrail-kicker">Need help choosing?</span><h2 class="feedrail-title">Describe the job in your own words.</h2><p class="feedrail-copy">Vesta will narrow the field and explain why each match fits.</p><button class="feedrail-cta" id="feedrail-help" type="button"><span>Ask Vesta</span><span aria-hidden="true">→</span></button></section>'+
+    '<p class="feedrail-private">'+PROF_FACT_IC.shield+'<span>Your information is not auctioned or resold.</span></p>';
+  const help=$('feedrail-help'); if(help) help.addEventListener('click',openSearch);
 }
 // ── Silent-firm coverage tail ──────────────────────────────────────────────
 // Honest, collapsed "N more, not yet reviewed" section. Count-only firms: what's on
@@ -4866,6 +5141,7 @@ function profHeroHTML(){
 
 const PROF_FACT_IC = {
   pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  photo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="9.5" r="1.5"/><path d="m5.5 17 4.3-4.3 3.1 3.1 2.2-2.2 3.4 3.4"/></svg>',
   shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.8 8.1-7 10-4.2-1.9-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-5"/></svg>',
   check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5 10.5 15 16 9"/></svg>',
   calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>'
@@ -4886,6 +5162,9 @@ function profFactsHTML(){
     rows.push([PROF_FACT_IC.check,tenureOnly?'State-record tenure':'County standing',
       tenureOnly ? band+' for tenure among Fairfield County '+(PTRADE_PROS[trade]||'contractors') : band+' of Fairfield County '+(PTRADE_PROS[trade]||'contractors'),
       'Vesta’s comparative field analysis']);
+  }
+  if (Number(enr.rating_count)>0){
+    rows.push([PROF_FACT_IC.check,'Review record',Number(enr.rating_count).toLocaleString('en-US')+' public reviews','Count from Google · Vesta does not publish the star score']);
   }
   const credentials=[];
   if (enr.registered){
@@ -5447,6 +5726,14 @@ function profIntelHTML(){
   const guide=profIntelGuideHTML(); add('guide','Before you hire','Questions worth asking',guide);
   add('sources','Sources &amp; method','Evidence, freshness, Google context',profIntelSourcesHTML());
   add('business','For the business',profData.claimed?'Ownership verified':'Claim or correct this profile',profIntelBusinessHTML());
+  if (desktop()){
+    return '<section class="prof-intel-card prof-intel-card--desktop" aria-label="Vesta’s decision brief">'+
+      '<div class="prof-intel-head"><span class="prof-sec-kick">Vesta’s decision brief</span><h2 class="prof-sec-h">What the record supports</h2></div>'+
+      '<div class="prof-intel-modules">'+items.map((it,i)=>
+        '<section class="prof-intel-module'+(i===0?' prof-intel-module--lead':'')+'" id="prof-intel-'+it.id+'">'+
+          '<header><span>'+String(i+1).padStart(2,'0')+'</span><div><h3>'+it.title+'</h3><p>'+it.sub+'</p></div></header><div class="prof-intel-module-body">'+it.html+'</div></section>'
+      ).join('')+'</div></section>';
+  }
   const first=items[0]&&items[0].id;
   return '<section class="prof-intel-card" aria-label="Vesta’s decision brief">'+
     '<div class="prof-intel-head"><span class="prof-sec-kick">Vesta’s decision brief</span><h2 class="prof-sec-h">Every useful signal, one home</h2></div>'+
@@ -5477,7 +5764,7 @@ function renderProfile(){
   const hero = '<section class="prof-desk-hero prof-desk-panel">'+profLeadHTML()+'</section>';
   const facts = '<aside class="prof-desk-facts" aria-label="Profile details">'+profFactsHTML()+'</aside>';
   const action = '<aside class="prof-desk-action" aria-label="Your next step">'+profActionRailHTML()+'</aside>';
-  const body = '<section class="prof-desk-body prof-desk-panel">'+profIntelHTML()+'</section>';
+  const body = '<section class="prof-desk-body prof-desk-panel">'+profIntelHTML()+(desktop()?profWorkHTML():'')+'</section>';
   $('prof-wrap').innerHTML = title+'<div class="prof-desk-grid">'+hero+facts+body+action+'</div>';
   wireProfile();
 }

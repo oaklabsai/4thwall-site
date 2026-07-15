@@ -606,6 +606,64 @@ function claimBlock(enr) {
 const GOOGLE_MOUNT = '<div id="cp-google" data-mount="google"></div>';
 const CONTACT_MOUNT = '<div id="cp-contact" data-mount="contact"></div>';
 
+// The desktop decision rail: only facts the public profile can substantiate.
+// This deliberately avoids the marketplace theatre in the visual reference
+// (invented availability, exact response windows, job counts, guarantees).
+function profileFactsBlock(enr, trade) {
+  const facts = [];
+  const label = tradeLabel(trade) || 'Contractor';
+  const analyzed = monthYear(enr.enriched_at);
+  if (enr.city) facts.push([
+    'Location',
+    enr.city + ', Connecticut',
+    'Profiled in Vesta’s ' + COUNTY + ' field'
+  ]);
+  if (enr.rating_band === 'top10' || enr.rating_band === 'top25') facts.push([
+    'County standing',
+    (enr.rating_band === 'top10' ? 'Top 10%' : 'Top 25%') + ' of ' + COUNTY + ' ' + tLowerOf(trade),
+    'Vesta’s comparative field analysis'
+  ]);
+  if (Number(enr.rating_count) > 0) facts.push([
+    'Review record',
+    Number(enr.rating_count).toLocaleString('en-US') + ' public reviews',
+    'Count from Google · star score not published'
+  ]);
+  if (enr.registered) facts.push([
+    'Public record',
+    'Active CT registration',
+    'Checked against the state registry'
+  ]);
+  if (Array.isArray(enr.trade_license) && enr.trade_license.length) facts.push([
+    'Trade credential',
+    'Licensed ' + tLowerOf(trade),
+    'Verified in Connecticut eLicense'
+  ]);
+  if (analyzed) facts.push([
+    'Vesta review',
+    'Read refreshed ' + analyzed,
+    'Public reviews and records synthesized'
+  ]);
+  if (!facts.length) facts.push([
+    'Profile',
+    label + ' in ' + COUNTY,
+    'Compiled from the public record'
+  ]);
+  const icons = [
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.8 8.1-7 10-4.2-1.9-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-5"/></svg>',
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5 10.5 15 16 9"/></svg>',
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>'
+  ];
+  return '<section class="cp-facts neu-panel" aria-labelledby="cp-facts-title">' +
+    '<p class="cp-card-kicker">Vesta’s evidence file</p>' +
+    '<h2 class="cp-card-title" id="cp-facts-title">What is established</h2>' +
+    '<div class="cp-fact-list">' + facts.slice(0, 5).map((f, i) =>
+      '<div class="cp-fact"><span class="cp-fact-icon">' + icons[i % icons.length] + '</span>' +
+      '<div><span class="cp-fact-label">' + esc(f[0]) + '</span>' +
+      '<strong>' + esc(f[1]) + '</strong><small>' + esc(f[2]) + '</small></div></div>'
+    ).join('') + '</div></section>';
+}
+
 // === JSON-LD (rich results + AI citation) ===================================
 // Honest fields only: name, city/region, area served, our synthesis as the
 // description, the credential layer via hasCredential, the Google Maps listing
@@ -708,6 +766,64 @@ function profileJsonLd(enr, trade, label, canonical) {
 
 const ATLAS_MOMENT_CSS =
   '<style>' +
+  /* ── Vesta contractor dossier: desktop research desk / mobile decision flow ── */
+  'body.cp-page{--pitch:#12100E;--khaki-deep:#30321C;--khaki:#4A4B2F;--ebony:#6B654B;--tea:#D4DF9E;--cp-bg:#EEF0E4;--cp-surface:#EEF0E4;--cp-hi:rgba(255,255,255,.82);--cp-lo:rgba(48,50,28,.20);background:radial-gradient(900px 520px at 12% 4%,rgba(212,223,158,.42),transparent 68%),var(--cp-bg);color:var(--pitch)}' +
+  'body.cp-page nav.topnav{background:rgba(238,240,228,.88);border-bottom-color:rgba(74,75,47,.10);box-shadow:0 8px 22px -20px rgba(48,50,28,.58)}' +
+  'body.cp-page footer{background:rgba(212,223,158,.18);border-top-color:rgba(74,75,47,.12)}' +
+  '.cp-shell{width:min(1380px,calc(100% - 2*var(--pad)));margin:0 auto;padding:2.1rem 0 3rem}' +
+  '.cp-titlebar{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;margin:0 0 1.25rem;padding:.2rem .5rem}' +
+  '.cp-titlebar .crumb{margin:0 0 .45rem}' +
+  '.cp-titlebar h1{font-family:var(--display);font-size:clamp(2rem,3.2vw,3.05rem);font-weight:500;line-height:1;letter-spacing:-.035em;color:var(--pitch)}' +
+  '.cp-titlebar p{font-size:.9rem;color:rgba(18,16,14,.58);margin-top:.55rem}' +
+  '.cp-no-pay{display:inline-flex;align-items:center;gap:.45rem;flex:none;font-family:var(--mono);font-size:.59rem;letter-spacing:.11em;text-transform:uppercase;color:var(--khaki-deep);padding:.62rem .9rem;border-radius:999px;background:var(--cp-surface);box-shadow:inset 2px 2px 4px rgba(48,50,28,.12),inset -2px -2px 4px rgba(255,255,255,.76)}' +
+  '.cp-layout{display:grid;grid-template-columns:minmax(0,1.85fr) minmax(300px,.82fr);grid-template-areas:"hero rail" "body rail";gap:1.35rem;align-items:start}' +
+  '.neu-panel{border:1px solid rgba(255,255,255,.42);background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(212,223,158,.07)),var(--cp-surface);border-radius:25px;box-shadow:12px 12px 28px -16px var(--cp-lo),-10px -10px 24px -16px var(--cp-hi)}' +
+  '.cp-hero-card{grid-area:hero;padding:clamp(1.35rem,2.8vw,2.15rem)}' +
+  '.cp-identity{display:flex;align-items:flex-start;justify-content:space-between;gap:1.2rem}' +
+  '.cp-identity-main{min-width:0}' +
+  '.cp-profile-type{font-family:var(--mono);font-size:.61rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ebony);margin-bottom:.55rem}' +
+  '.cp-business-name{font-family:var(--display);font-size:clamp(1.8rem,3.4vw,3.15rem);font-weight:500;line-height:1.04;letter-spacing:-.035em;color:var(--pitch);text-wrap:balance}' +
+  '.cp-location{font-size:.92rem;color:rgba(18,16,14,.6);margin-top:.55rem}' +
+  '.cp-analysis-badge{display:inline-flex;align-items:center;gap:.38rem;margin-top:1rem;padding:.42rem .72rem;border-radius:999px;color:var(--khaki-deep);font-size:.72rem;font-weight:600;background:rgba(212,223,158,.48);box-shadow:inset 1px 1px 2px rgba(48,50,28,.10),inset -1px -1px 2px rgba(255,255,255,.6)}' +
+  '.cp-analysis-badge svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7}' +
+  '.cp-why{max-width:28rem;padding:1rem 1.1rem;border-radius:17px;background:var(--cp-surface);box-shadow:inset 3px 3px 7px rgba(48,50,28,.10),inset -3px -3px 7px rgba(255,255,255,.72)}' +
+  '.cp-why span{display:block;font-family:var(--mono);font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ebony);margin-bottom:.35rem}' +
+  '.cp-why p{font-family:var(--display);font-size:.95rem;line-height:1.48;color:var(--khaki-deep)}' +
+  '.cp-hero-card .cp-photos{margin:1.6rem 0 0;max-width:none}' +
+  '.cp-hero-card .cp-ph{border-radius:18px;box-shadow:5px 5px 13px -8px rgba(48,50,28,.52),-4px -4px 11px -7px rgba(255,255,255,.76)}' +
+  '.cp-rail{grid-area:rail;position:sticky;top:5.7rem;display:flex;flex-direction:column;gap:1rem}' +
+  '.cp-facts,.cp-actions{padding:1.3rem 1.35rem}' +
+  '.cp-card-kicker{font-family:var(--mono);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ebony);margin-bottom:.35rem}' +
+  '.cp-card-title{font-family:var(--display);font-size:1.38rem;font-weight:500;line-height:1.15;letter-spacing:-.025em;color:var(--pitch)}' +
+  '.cp-fact-list{margin-top:1rem}' +
+  '.cp-fact{display:grid;grid-template-columns:39px 1fr;gap:.75rem;padding:.8rem 0;border-top:1px solid rgba(74,75,47,.10)}' +
+  '.cp-fact-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:var(--khaki-deep);background:var(--cp-surface);box-shadow:4px 4px 9px -5px rgba(48,50,28,.48),-4px -4px 9px -5px rgba(255,255,255,.9)}' +
+  '.cp-fact-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}' +
+  '.cp-fact-label{display:block;font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(18,16,14,.44);margin-bottom:.1rem}' +
+  '.cp-fact strong{display:block;font-size:.85rem;font-weight:600;color:var(--pitch);line-height:1.3}' +
+  '.cp-fact small{display:block;font-size:.72rem;color:rgba(18,16,14,.55);line-height:1.4;margin-top:.12rem}' +
+  '.cp-actions .cp-action-lede{font-size:.82rem;line-height:1.5;color:rgba(18,16,14,.58);margin:.45rem 0 1rem}' +
+  '.cp-primary-action,.cp-secondary-action{display:flex;align-items:center;justify-content:center;gap:.55rem;width:100%;min-height:48px;border-radius:14px;font-size:.88rem;font-weight:600;transition:transform .18s,box-shadow .18s,color .18s}' +
+  '.cp-primary-action{background:var(--khaki-deep);color:#F5F6EC;box-shadow:7px 7px 15px -8px rgba(18,16,14,.72),-4px -4px 10px -6px rgba(255,255,255,.9)}' +
+  '.cp-primary-action:hover{transform:translateY(-1px);background:var(--pitch)}' +
+  '.cp-secondary-action{margin-top:.65rem;color:var(--khaki-deep);background:var(--cp-surface);box-shadow:4px 4px 10px -6px rgba(48,50,28,.52),-4px -4px 10px -6px rgba(255,255,255,.86)}' +
+  '.cp-secondary-action:hover{color:var(--pitch);box-shadow:inset 2px 2px 5px rgba(48,50,28,.1),inset -2px -2px 5px rgba(255,255,255,.7)}' +
+  '.cp-actions .fine{color:rgba(18,16,14,.47);margin:.75rem 0 0}' +
+  '.cp-actions #cp-contact{margin-top:1.15rem;padding-top:1rem;border-top:1px solid rgba(74,75,47,.11)}' +
+  '.cp-actions #cp-contact .section-h{font-size:1.05rem;margin:0 0 .45rem}' +
+  '.cp-actions #cp-contact .card-block{padding:0;margin:0;background:none;border:0;box-shadow:none}' +
+  '.cp-actions .contactrow{display:block;padding:.55rem 0;border-bottom-color:rgba(74,75,47,.10)}' +
+  '.cp-actions .contactrow b{display:block;margin-bottom:.12rem}' +
+  '.cp-actions .contactrow a{display:block;color:var(--khaki-deep);font-weight:600;word-break:break-word}' +
+  '.cp-body{grid-area:body;padding:clamp(1.35rem,2.7vw,2.15rem)}' +
+  '.cp-body>.trec-wrap{margin-top:0}' +
+  '.cp-body .section-h{color:var(--pitch)}' +
+  '.cp-body .vverify .vv-card,.cp-body .cost-line .cl-card,.cp-body .rel-card{background:var(--cp-surface);border-color:rgba(255,255,255,.44);box-shadow:5px 5px 12px -8px rgba(48,50,28,.38),-4px -4px 10px -7px rgba(255,255,255,.86)}' +
+  '.cp-body .trec-chip{box-shadow:inset 1px 1px 2px rgba(48,50,28,.07),inset -1px -1px 2px rgba(255,255,255,.48)}' +
+  '.cp-primary-action:focus-visible,.cp-secondary-action:focus-visible,.cp-page a:focus-visible,.cp-page button:focus-visible{outline:3px solid var(--tea);outline-offset:3px}' +
+  '@media(max-width:980px){.cp-layout{grid-template-columns:minmax(0,1fr) minmax(275px,.72fr)}.cp-identity{display:block}.cp-why{margin-top:1.1rem;max-width:none}}' +
+  '@media(max-width:760px){body.cp-page{--cp-bg:#EEF0E4}.cp-shell{width:100%;padding:1.1rem var(--pad) 2rem}.cp-titlebar{display:block;padding:0 .15rem;margin-bottom:1rem}.cp-titlebar h1{font-size:2rem}.cp-no-pay{margin-top:.8rem}.cp-layout{display:flex;flex-direction:column;gap:.9rem}.cp-hero-card{order:1;width:100%;padding:1.15rem;border-radius:22px}.cp-rail{order:2;position:static;width:100%}.cp-body{order:3;width:100%;padding:1.2rem;border-radius:22px}.cp-facts{display:none}.cp-actions{padding:1.15rem;border-radius:22px}.cp-business-name{font-size:clamp(1.75rem,9vw,2.5rem)}.cp-why{font-size:.92rem}.cp-hero-card .cp-photos{margin-top:1.2rem}.cp-actions .cp-card-title{font-size:1.55rem}.atlas-moment{border-radius:20px}}' +
+  '@media(max-width:430px){.cp-no-pay{font-size:.52rem}.cp-titlebar h1{font-size:1.75rem}.cp-profile-type{font-size:.56rem}.cp-analysis-badge{font-size:.67rem}.cp-body{padding:1.05rem}.cp-body .vverify .vv-grid{grid-template-columns:1fr}}' +
   '.hw-count{font-family:var(--mono,inherit);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--vmut,#6b654b);margin:.1rem 0 1rem}' +
   '.hw-count strong{font-family:var(--display,inherit);font-size:1.15rem;font-weight:600;letter-spacing:-.01em;color:var(--vink,#5C5346)}' +
   /* Vesta's read — the same voice as the app card: spark kicker + the serif, slightly up-sized. */
@@ -721,23 +837,23 @@ const ATLAS_MOMENT_CSS =
   '}}' +
   '.atlas-moment{--a-bg:#191712;--a-bg2:#211e16;--a-line:rgba(222,206,164,.18);--a-sand:#dcceaa;--a-sand-2:#ece2c8;--a-mut:rgba(236,226,200,.6);position:relative;margin:2.4rem 0 1rem;padding:clamp(1.6rem,3.6vw,2.5rem);background:radial-gradient(620px 320px at 86% -120px,rgba(222,206,164,.12),transparent 60%),linear-gradient(180deg,var(--a-bg2),var(--a-bg));border:1px solid var(--a-line);border-radius:24px;box-shadow:0 44px 96px -52px rgba(0,0,0,.92)}' +
   '.atlas-moment .am-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--a-sand);margin-bottom:.7rem}' +
-  '.atlas-moment .am-h{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.05rem);font-weight:500;letter-spacing:-.02em;color:var(--vcream);line-height:1.14}' +
+  '.atlas-moment .am-h{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.05rem);font-weight:500;letter-spacing:-.02em;color:var(--a-sand-2);line-height:1.14}' +
   '.atlas-moment .am-lede2{font-size:.92rem;color:var(--a-mut);line-height:1.65;margin:.7rem 0 1.1rem;max-width:60ch}' +
   '.atlas-moment form{max-width:520px}' +
   '.atlas-moment .am-rule{height:1px;background:var(--a-line);margin:1.9rem 0 1.6rem}' +
   '.atlas-moment .am-plabel{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--a-sand);margin-bottom:.6rem}' +
-  '.atlas-moment .am-lede{font-family:var(--display);font-size:clamp(1.08rem,2vw,1.3rem);font-weight:400;line-height:1.55;letter-spacing:-.01em;color:var(--vcream);max-width:64ch;margin:0}' +
+  '.atlas-moment .am-lede{font-family:var(--display);font-size:clamp(1.08rem,2vw,1.3rem);font-weight:400;line-height:1.55;letter-spacing:-.01em;color:var(--a-sand-2);max-width:64ch;margin:0}' +
   '.atlas-moment .am-lede b{color:var(--a-sand-2);font-weight:600}' +
   '.atlas-moment .am-uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.9rem;margin:1.5rem 0 0}' +
   '.atlas-moment .am-use{background:rgba(222,206,164,.05);border:1px solid var(--a-line);border-radius:16px;padding:1.15rem 1.25rem}' +
   '.atlas-moment .am-use .am-n{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;color:var(--a-sand);margin-bottom:.5rem}' +
-  '.atlas-moment .am-use h3{font-family:var(--display);font-size:1.04rem;font-weight:500;letter-spacing:-.015em;color:var(--vcream);margin-bottom:.35rem}' +
+  '.atlas-moment .am-use h3{font-family:var(--display);font-size:1.04rem;font-weight:500;letter-spacing:-.015em;color:var(--a-sand-2);margin-bottom:.35rem}' +
   '.atlas-moment .am-use p{font-size:.82rem;color:var(--a-mut);line-height:1.6}' +
   '.atlas-moment .am-cta{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}' +
   '.atlas-moment .am-pill{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(180deg,var(--a-sand-2),var(--a-sand));color:#1a1813;font-family:var(--body);font-size:.9rem;font-weight:600;padding:.7rem 1.3rem;border-radius:999px;text-decoration:none;transition:transform .16s,box-shadow .16s}' +
   '.atlas-moment .am-pill:hover{transform:translateY(-1px);box-shadow:0 14px 30px -12px rgba(222,206,164,.45)}' +
   '.atlas-moment .am-fine{font-size:.76rem;color:var(--a-mut);max-width:34ch;line-height:1.5}' +
-  '.atlas-moment .form-input{background:rgba(0,0,0,.22);border-color:var(--a-line);color:var(--vcream)}' +
+  '.atlas-moment .form-input{background:rgba(0,0,0,.22);border-color:var(--a-line);color:var(--a-sand-2)}' +
   '.atlas-moment .form-label{color:var(--a-mut)}' +
   '.atlas-moment .pill-ghost{border-color:var(--a-sand);color:var(--a-sand-2)}' +
   '.atlas-moment .pill-ghost:hover{background:rgba(222,206,164,.1)}' +
@@ -828,7 +944,7 @@ function shell({ title, description, canonical, indexable, jsonld, body }) {
     '<meta property="og:site_name" content="Vesta by 4th Wall Solutions">\n' +
     '<meta name="twitter:card" content="summary">\n' +
     '<link rel="icon" href="/logo.png" type="image/png">\n' +
-    '<meta name="theme-color" content="#0f1310">\n' +
+    '<meta name="theme-color" content="#30321C">\n' +
     '<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
     '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
     '<link rel="preconnect" href="https://vinytnzzgryodyrftabg.supabase.co">\n' +
@@ -840,7 +956,7 @@ function shell({ title, description, canonical, indexable, jsonld, body }) {
     jsonld + '\n' +
     '<script src="/home.js" defer></script>\n' +
     '<script src="/profile.js" defer></script>\n' +
-    '</head>\n<body>\n' +
+    '</head>\n<body class="cp-page">\n' +
     // Profile = single-contractor landing page: logo returns to THIS profile,
     // no "Find a pro" escape to a competitor (the lead stays on the pro they found).
     navHtml({ logoHref: canonical, browse: false }) +
@@ -894,41 +1010,64 @@ export function renderContractorHTML(enr, siblings = []) {
   // Request-through-Vesta CTA (a plain link — no JS needed).
   const reqHref = '/vesta/search?mode=request&place=' + encodeURIComponent(enr.place_id) +
     (enr.zip ? '&zip=' + encodeURIComponent(enr.zip) : '') + (trade ? '&trade=' + trade : '');
+  const firstRead = enr.synthesis
+    ? String(enr.synthesis).split(/(?<=[.!?])\s/)[0].slice(0, 240)
+    : (hasRead
+        ? 'Vesta found a substantive public record and a consistent pattern in the work homeowners mention.'
+        : 'This profile is listed from the public record; Vesta has not published an analytical read yet.');
 
   const hero =
-    '<section class="page-hero" id="hero">' +
-      '<a class="crumb" href="' + (trade ? '/fairfield-county/' + trade : '/vesta') + '">← ' + esc(label ? label + ' in ' + COUNTY : 'Vesta') + '</a>' +
-      '<h1 class="page-h" style="view-transition-name:vt-name-' + String(enr.place_id || '').replace(/[^A-Za-z0-9]/g, '') + '">' + esc(enr.business_name) + '</h1>' +
-      '<p class="page-sub">' + (label ? esc(label) + ' · ' : '') + esc((enr.city || COUNTY) + ', CT') + '</p>' +
-      '<div class="badges"><span class="badge plain">◆ ' + (hasRead ? 'Vesta-analyzed from public records' : 'Listed from public records — not yet reviewed') + '</span></div>' +
-      // Work-photo gallery — directly under the name (Drew, 2026-06-23: "the main
-      // pieces should be practical … the images"). Filled CLIENT-side by /profile.js
-      // (live Google photos, show-don't-store) + any contractor-uploaded photos.
-      // Absent/empty → collapses to nothing (the empty-state default).
+    '<section class="cp-hero-card neu-panel" id="hero">' +
+      '<div class="cp-identity"><div class="cp-identity-main">' +
+        '<p class="cp-profile-type">' + esc(label) + ' profile · ' + esc(COUNTY) + '</p>' +
+        '<h2 class="cp-business-name" style="view-transition-name:vt-name-' + String(enr.place_id || '').replace(/[^A-Za-z0-9]/g, '') + '">' + esc(enr.business_name) + '</h2>' +
+        '<p class="cp-location">' + esc((enr.city || COUNTY) + ', Connecticut') + '</p>' +
+        '<span class="cp-analysis-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.8 8.1-7 10-4.2-1.9-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-5"/></svg>' +
+          (hasRead ? 'Vesta-analyzed' : 'Public-record listing') + '</span>' +
+      '</div><div class="cp-why"><span>' + (hasRead ? 'Why it merits a closer look' : 'What Vesta knows') + '</span><p>' + esc(firstRead) + '</p></div></div>' +
+      // Live Google photos, show-don't-store. Empty mount collapses.
       '<div id="cp-photos" data-mount="photos" class="cp-photos"></div>' +
-      '<div style="margin:1.1rem 0 .2rem"><a class="pill pill-orange" href="' + reqHref + '">Request through Vesta <span class="arr">→</span></a></div>' +
-      '<p class="fine">One form — Vesta carries your request to them, replies come straight to you.</p>' +
     '</section>';
 
-  const body = '<section class="section" id="body">' +
-    recordBlock(enr, trade) +
-    signatureBlock(enr) +
-    vestaReadBlock(enr, trade) +
-    homeownersBlock(enr) +
-    notReviewedBlock(enr) +
-    hiringGuideBlock(trade) +
-    costLineBlock(trade) +
-    '<div class="cp-gref">' + GOOGLE_MOUNT + '</div>' +
-    CONTACT_MOUNT +
-    claimBlock(enr) +
-    relatedBlock(siblings, trade) +
-    disclosureRemoval(enr) +
+  const rail = '<aside class="cp-rail" aria-label="Profile facts and next actions">' +
+    profileFactsBlock(enr, trade) +
+    '<section class="cp-actions neu-panel" aria-labelledby="cp-actions-title">' +
+      '<p class="cp-card-kicker">Your next step</p>' +
+      '<h2 class="cp-card-title" id="cp-actions-title">Move forward without the marketplace pressure.</h2>' +
+      '<p class="cp-action-lede">Vesta carries one clear request to this contractor. Your information is not auctioned or resold.</p>' +
+      '<a class="cp-primary-action" href="' + reqHref + '">Request through Vesta <span aria-hidden="true">→</span></a>' +
+      (trade ? '<a class="cp-secondary-action" href="/fairfield-county/' + trade + '">Compare the county field</a>' : '') +
+      '<p class="fine">One form. Replies come straight to you.</p>' +
+      CONTACT_MOUNT +
+    '</section>' +
+  '</aside>';
+
+  const body = '<section class="cp-body neu-panel" id="body">' +
+      recordBlock(enr, trade) +
+      signatureBlock(enr) +
+      vestaReadBlock(enr, trade) +
+      homeownersBlock(enr) +
+      notReviewedBlock(enr) +
+      hiringGuideBlock(trade) +
+      costLineBlock(trade) +
+      '<div class="cp-gref">' + GOOGLE_MOUNT + '</div>' +
+      claimBlock(enr) +
+      relatedBlock(siblings, trade) +
+      disclosureRemoval(enr) +
+    '</section>';
+
+  const profile = '<section class="cp-shell">' +
+    '<header class="cp-titlebar"><div>' +
+      '<a class="crumb" href="' + (trade ? '/fairfield-county/' + trade : '/vesta') + '">← ' + esc(label ? label + ' in ' + COUNTY : 'Vesta') + '</a>' +
+      '<h1>' + esc(label) + ' profile</h1><p>Fairfield County evidence file · ranked by Vesta.</p>' +
+    '</div><span class="cp-no-pay">✦ Ranked by the record, never by payment</span></header>' +
+    '<div class="cp-layout">' + hero + rail + body + '</div>' +
   '</section>';
 
   return shell({
     title, description, canonical, indexable,
     jsonld: profileJsonLd(enr, trade, label, canonical),
-    body: hero + body
+    body: profile
   });
 }
 
