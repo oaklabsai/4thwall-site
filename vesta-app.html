@@ -1767,6 +1767,69 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .req-select { -webkit-appearance:none; appearance:none; cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16' fill='none' stroke='%234A4B2F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='4 6 8 10 12 6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 13px center; padding-right:34px; }
 @media (max-width:560px){ .req-pair { grid-template-columns:1fr; } }
 
+/* Profile intelligence disclosures — one stable information architecture for
+   every contractor. The section list stays visible; one complete, untruncated
+   detail panel opens beside it. Sparse profiles simply omit unsupported items. */
+.prof-signature { margin-top:13px; padding-top:12px; border-top:1px solid rgba(74,75,47,.11); }
+.prof-signature p { margin:5px 0 0; max-width:62ch; font-family:var(--serif); font-size:15px; line-height:1.38; color:var(--olive); }
+.prof-summary-sparse { font-size:12px; line-height:1.45; }
+.prof-empty-note { margin:15px 0 0; font-size:12px; line-height:1.5; color:var(--ebony); }
+.prof-fact-btn { width:100%; border:0; text-align:left; background:transparent; font-family:inherit; cursor:pointer; }
+.prof-fact-btn:hover strong { text-decoration:underline; }
+.prof-fact-btn:focus-visible,.prof-disclosure-btn:focus-visible,.prof-ask-rail:focus-visible { outline:2px solid var(--olive); outline-offset:3px; }
+.prof-contact-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.prof-ask-rail { gap:7px; cursor:pointer; font-family:var(--sans); }
+.prof-intel-card { height:100%; min-height:0; display:flex; flex-direction:column; }
+.prof-intel-head { flex:none; }
+.prof-intel-grid { flex:1; min-height:0; display:grid; grid-template-columns:minmax(170px,.38fr) minmax(0,1fr); gap:12px; margin-top:10px; }
+.prof-intel-nav { min-height:0; display:flex; flex-direction:column; gap:5px; overflow:auto; padding:2px 3px 2px 2px; }
+.prof-disclosure-btn { display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; min-height:38px; padding:7px 9px 7px 11px; border:0; border-radius:11px; text-align:left; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); cursor:pointer; font-family:var(--sans); transition:background .16s,box-shadow .16s,transform .16s; }
+.prof-disclosure-btn:hover { transform:translateY(-1px); }
+.prof-disclosure-btn.active { background:linear-gradient(135deg,rgba(212,223,158,.42),rgba(255,255,255,.13)),var(--nm); box-shadow:var(--nm-in); }
+.prof-disclosure-btn > span:first-child { min-width:0; }
+.prof-disclosure-btn b { display:block; font-family:var(--serif); font-size:13px; line-height:1.05; }
+.prof-disclosure-btn small { display:block; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:var(--mono); font-size:6.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--ebony); }
+.prof-disclosure-chev { display:flex; flex:none; transform:rotate(-90deg); color:var(--ebony); transition:transform .16s; }
+.prof-disclosure-btn.active .prof-disclosure-chev { transform:rotate(0); }
+.prof-intel-panels { position:relative; min-width:0; min-height:0; border-radius:14px; background:rgba(212,223,158,.13); box-shadow:var(--nm-in); overflow:hidden; }
+.prof-intel-panels.has-more::after { content:'Scroll for full detail ↓'; position:absolute; right:8px; bottom:6px; z-index:2; padding:3px 7px; border-radius:999px; background:rgba(239,241,229,.94); box-shadow:var(--nm-sm); font-family:var(--mono); font-size:6px; letter-spacing:.06em; text-transform:uppercase; color:var(--olive); pointer-events:none; }
+.prof-intel-panel { height:100%; box-sizing:border-box; overflow:auto; padding:11px 13px; scrollbar-width:thin; scrollbar-color:rgba(74,75,47,.32) transparent; }
+.prof-intel-panel[hidden] { display:none; }
+.prof-intel-panel p { color:var(--ebony); font-size:11.2px; line-height:1.42; }
+.prof-intel-lede { margin:0 0 6px; font-family:var(--serif); font-size:13.5px!important; font-weight:650; line-height:1.32!important; color:var(--olive)!important; }
+.prof-intel-source { margin-top:7px; padding-top:6px; border-top:1px solid rgba(74,75,47,.1); font-family:var(--mono); font-size:7px!important; line-height:1.4!important; letter-spacing:.035em; color:var(--ebony); }
+.prof-intel-source-top { margin-top:0; padding-top:0; border-top:0; }
+.prof-intel-source a,.prof-method a { color:var(--olive); font-weight:700; }
+.prof-detail-list { display:grid; gap:8px; }
+.prof-detail-item { display:grid; grid-template-columns:25px minmax(0,1fr); gap:9px; padding-bottom:8px; border-bottom:1px solid rgba(74,75,47,.09); }
+.prof-detail-item:last-child { padding-bottom:0; border-bottom:0; }
+.prof-detail-item > span,.prof-guide-compact article > span { display:grid; place-items:center; align-self:start; width:24px; height:24px; border-radius:50%; background:var(--nm); box-shadow:var(--nm-sm); font-family:var(--mono); font-size:7px; color:var(--olive); }
+.prof-detail-item h3,.prof-fit-group h3,.prof-guide-compact h3,.prof-method h3,.prof-business-mini h3 { margin:0; font-family:var(--serif); font-size:13px; line-height:1.2; color:var(--olive); }
+.prof-detail-item p { margin:3px 0 0; }
+.prof-fit-group + .prof-fit-group { margin-top:11px; padding-top:9px; border-top:1px solid rgba(74,75,47,.09); }
+.prof-detail-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+.prof-detail-chips span { padding:4px 7px; border-radius:999px; background:var(--nm); box-shadow:var(--nm-sm); font-size:9px; color:var(--olive); }
+.prof-expect-list { margin-top:5px; }
+.prof-expect-list p { display:grid; grid-template-columns:100px minmax(0,1fr); gap:8px; margin:0; padding:6px 0; border-top:1px solid rgba(74,75,47,.08); }
+.prof-expect-list p:first-child { border-top:0; }
+.prof-expect-list b { color:var(--olive); font-size:10px; }
+.prof-expect-list span { min-width:0; }
+.prof-guide-compact { display:grid; gap:9px; }
+.prof-guide-compact article { display:grid; grid-template-columns:25px minmax(0,1fr); gap:9px; }
+.prof-guide-compact p { margin:3px 0 0; }
+.prof-method h3 { margin-top:10px; }
+.prof-method h3:first-child { margin-top:0; }
+.prof-method p { margin:4px 0 0; }
+.prof-method-fresh { display:inline-flex; gap:6px; margin-top:10px!important; padding:5px 8px; border-radius:999px; background:var(--nm); box-shadow:var(--nm-sm); font-family:var(--mono); font-size:7.5px!important; text-transform:uppercase; letter-spacing:.05em; }
+.prof-method .prof-google { max-width:none; margin-top:10px; padding:9px 10px; border-radius:10px; font-size:10px; line-height:1.4; }
+.prof-business-mini > p { margin:5px 0 0; }
+.prof-mini-form { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin-top:10px; }
+.prof-mini-form label { font-family:var(--mono); font-size:6.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ebony); }
+.prof-mini-form input { width:100%; margin-top:4px; padding:7px 8px; border:0; border-radius:8px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-in); font-family:var(--sans); font-size:10px; outline:none; }
+.prof-mini-form input:focus { outline:2px solid var(--olive); outline-offset:1px; }
+.prof-mini-form .prof-req { grid-column:1/-1; min-height:34px; margin-top:1px; }
+.prof-mini-form .prof-status { grid-column:1/-1; margin-left:0; }
+
 @media (min-width:900px){
   /* The desktop profile is a contained decision brief, not a document. The
      request flow can still scroll; every contractor profile must resolve in one view. */
@@ -1783,10 +1846,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .prof-desk-label { margin:0; font-family:var(--serif); font-size:clamp(28px,3vw,40px); line-height:1; letter-spacing:-.035em; color:var(--olive); }
   .prof-desk-intro { margin-top:5px; font-size:12px; color:var(--ebony); }
   .prof-desk-proof { display:inline-flex; flex:none; align-items:center; gap:7px; padding:8px 12px; border-radius:999px; font-family:var(--mono); font-size:8px; letter-spacing:.12em; text-transform:uppercase; color:var(--olive); background:var(--nm); box-shadow:var(--nm-in); }
-  .prof-desk-grid { display:grid; flex:1; min-height:0; grid-template-columns:minmax(0,1.8fr) minmax(300px,.78fr); grid-template-rows:minmax(0,1fr) minmax(0,.84fr); grid-template-areas:"hero facts" "body action"; align-items:stretch; gap:14px; }
+  .prof-desk-grid { display:grid; flex:1; min-height:0; grid-template-columns:minmax(0,1.8fr) minmax(300px,.78fr); grid-template-rows:minmax(0,.84fr) minmax(0,1.08fr); grid-template-areas:"hero facts" "body action"; align-items:stretch; gap:14px; }
   .prof-desk-panel { border:1px solid rgba(255,255,255,.48); border-radius:25px; background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(212,223,158,.06)),var(--nm); box-shadow:var(--nm-out); }
   .prof-desk-hero { grid-area:hero; min-height:0; padding:18px 22px 16px; overflow:hidden; }
-  .prof-lead { height:100%; display:grid; grid-template-columns:110px minmax(0,1fr); gap:16px; align-content:center; align-items:center; }
+  .prof-lead { height:100%; display:grid; grid-template-columns:126px minmax(0,1fr); gap:19px; align-content:center; align-items:center; }
   .prof-lead-photo { position:relative; width:100%; aspect-ratio:1; min-height:0; padding:0; overflow:hidden; border:0; border-radius:50%; background:rgba(74,75,47,.07); box-shadow:var(--nm-in); cursor:pointer; }
   .prof-lead-photo img { width:100%; height:100%; display:block; object-fit:cover; opacity:0; transition:opacity .35s ease; }
   .prof-lead-photo.on img { opacity:1; }
@@ -1795,22 +1858,15 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .prof-desk-hero .prof-name { font-size:clamp(25px,2.45vw,34px); line-height:1.02; max-width:none; }
   .prof-desk-hero .prof-sub { max-width:58ch; margin-top:4px; font-size:11px; line-height:1.3; }
   .prof-desk-hero .prof-badges { display:none; }
-  .prof-rating-line { display:flex; align-items:baseline; flex-wrap:wrap; gap:6px; margin-top:6px; color:var(--olive); }
-  .prof-rating-line b { font-size:12px; }
-  .prof-rating-line small { font-size:11px; color:var(--ebony); }
-  .prof-specialties { display:flex; flex-wrap:wrap; gap:4px 8px; margin-top:8px; font-size:11px; line-height:1.25; color:var(--ebony); }
-  .prof-specialties span::before { content:'•'; margin-right:7px; color:var(--olive); }
-  .prof-specialties span:first-child::before { display:none; }
-  .prof-summary { margin:8px 0 0; max-width:60ch; padding-top:8px; border-top:1px solid rgba(74,75,47,.11); font-size:11.5px; line-height:1.35; color:var(--ebony); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .prof-profile-facts { grid-column:1/-1; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; margin-top:10px; padding-top:10px; border-top:1px solid rgba(74,75,47,.11); }
-  .prof-profile-fact { min-width:0; padding:0 15px; border-left:1px solid rgba(74,75,47,.1); }
-  .prof-profile-fact:first-child { padding-left:0; border-left:0; }
-  .prof-profile-fact b { display:block; font-size:11px; color:var(--olive); line-height:1.18; }
-  .prof-profile-fact small { display:block; margin-top:2px; font-family:var(--mono); font-size:7px; line-height:1.28; letter-spacing:.08em; text-transform:uppercase; color:var(--ebony); }
+  .prof-summary { margin:8px 0 0; max-width:60ch; padding-top:8px; border-top:1px solid rgba(74,75,47,.11); font-size:11.5px; line-height:1.35; color:var(--ebony); }
+  .prof-signature { margin-top:10px; padding-top:9px; }
+  .prof-signature p { margin-top:4px; font-size:13px; line-height:1.34; }
   .prof-desk-facts, .prof-desk-action { min-width:0; min-height:0; }
   .prof-desk-facts { grid-area:facts; }
   .prof-desk-action { grid-area:action; }
-  .prof-desk-facts > section, .prof-desk-action > section { height:100%; box-sizing:border-box; padding:17px 19px; overflow:hidden; }
+  .prof-desk-facts > section, .prof-desk-action > section { height:100%; box-sizing:border-box; overflow:hidden; }
+  .prof-desk-facts > section { padding:12px 18px; }
+  .prof-desk-action > section { padding:15px 18px; }
   .prof-desk-facts .prof-sec-kick, .prof-desk-action .prof-sec-kick { margin-top:0; }
   .prof-desk-facts .prof-sec-h, .prof-desk-action .prof-sec-h { margin-top:4px; font-size:22px; }
   .prof-desk-facts .prof-block, .prof-desk-action .prof-block { margin-top:9px; padding:0; background:none; box-shadow:none; }
@@ -1818,44 +1874,36 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .prof-desk-action .prof-contactrow b { min-width:0; }
   .prof-desk-action .prof-contactrow a { word-break:break-word; }
   .prof-desk-action .pc-ic { display:grid; place-items:center; width:27px; height:27px; border-radius:50%; background:var(--nm); box-shadow:var(--nm-sm); color:var(--olive); }
-  .prof-desk-action .prof-req { display:flex; justify-content:center; width:100%; margin-top:10px; min-height:38px; border-radius:12px; font-size:12px; }
-  .prof-call { display:flex; align-items:center; justify-content:center; width:100%; min-height:38px; margin-top:8px; border:1px solid rgba(74,75,47,.16); border-radius:12px; color:var(--olive); text-decoration:none; font-size:12px; font-weight:700; background:var(--nm); box-shadow:var(--nm-sm); }
+  .prof-desk-action .prof-req { display:flex; justify-content:center; width:100%; margin-top:9px; min-height:37px; border-radius:12px; font-size:11.5px; }
+  .prof-call { display:flex; align-items:center; justify-content:center; width:100%; min-height:36px; margin-top:7px; border:1px solid rgba(74,75,47,.16); border-radius:12px; color:var(--olive); text-decoration:none; font-size:11px; font-weight:700; background:var(--nm); box-shadow:var(--nm-sm); }
+  .prof-contact-actions { margin-top:1px; }
+  .prof-contact-actions .prof-call { margin-top:7px; }
   .prof-desk-action .prof-fine { line-height:1.35; font-size:10px; }
-  .prof-desk-body { grid-area:body; min-height:0; padding:16px 19px; overflow:hidden; }
+  .prof-desk-body { grid-area:body; min-height:0; padding:14px 17px; overflow:hidden; }
+  .prof-intel-head { display:flex; align-items:baseline; gap:10px; }
+  .prof-intel-head .prof-sec-kick { flex:none; margin:0; }
+  .prof-intel-head .prof-sec-h { margin:0; font-size:20px; }
+  .prof-intel-grid { margin-top:8px; }
+  .prof-intel-nav { gap:3px; }
+  .prof-disclosure-btn { min-height:34px; padding-top:5px; padding-bottom:5px; }
+  .prof-disclosure-btn b { font-size:12px; }
   .prof-desk-body > .prof-sec-kick { margin-top:0; }
   .prof-desk-body > .prof-sec-h { margin-top:5px; }
   .prof-desk-body > .prof-fold-hi { margin-top:18px; }
   .prof-desk-body .prof-block,.prof-desk-body .known-tile,.prof-desk-body .prof-fold-sum,.prof-desk-body .claim-toggle { background:var(--nm); }
-  /* The lower-left module is the complete decision brief. All deeper content
-     has been consolidated into this stable, source-labeled protocol. */
-  .prof-glance-card { height:100%; box-sizing:border-box; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
-  .prof-glance-card .prof-sec-h { margin-top:5px; }
-  .prof-glance-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); margin-top:10px; border-top:1px solid rgba(74,75,47,.1); border-bottom:1px solid rgba(74,75,47,.1); }
-  .prof-glance-stat { min-width:0; padding:9px 10px 8px; border-left:1px solid rgba(74,75,47,.1); }
-  .prof-glance-stat:first-child { padding-left:0; border-left:0; }
-  .prof-glance-stat b { display:block; color:var(--olive); font-size:14px; line-height:1.08; }
-  .prof-glance-stat small { display:block; margin-top:3px; color:var(--ebony); font-family:var(--mono); font-size:6.5px; line-height:1.25; letter-spacing:.08em; text-transform:uppercase; }
-  .prof-glance-read { margin-top:10px; padding:10px 12px; border-radius:12px; background:rgba(212,223,158,.18); }
-  .prof-glance-read p { margin:5px 0 0; max-width:70ch; color:var(--olive); font-size:12px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-  .prof-glance-known { margin-top:9px; }
-  .prof-glance-known > div { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
-  .prof-glance-known span { padding:5px 8px; border-radius:999px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); font-size:10px; }
-
-  .prof-facts-list { display:block; margin-top:8px; }
-  .prof-fact { display:grid; grid-template-columns:28px 1fr; gap:8px; min-width:0; padding:10px 0; border-top:1px solid rgba(74,75,47,.09); }
+  .prof-facts-list { display:block; margin-top:6px; }
+  .prof-fact { display:grid; grid-template-columns:28px 1fr; gap:8px; min-width:0; padding:5px 0; border-top:1px solid rgba(74,75,47,.09); }
   .prof-fact-ic { display:grid; place-items:center; width:27px; height:27px; border-radius:50%; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); }
   .prof-fact-ic svg { width:14px; height:14px; }
   .prof-fact-l { display:block; font-family:var(--mono); font-size:6.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); }
-  .prof-fact strong { display:-webkit-box; margin-top:1px; overflow:hidden; color:var(--olive); font-size:11px; line-height:1.22; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
-  .prof-fact small { display:none; }
+  .prof-fact strong { display:block; margin-top:1px; color:var(--olive); font-size:10.5px; line-height:1.2; }
+  .prof-fact small { display:block; margin-top:2px; font-family:var(--mono); font-size:6px; line-height:1.25; letter-spacing:.035em; color:var(--ebony); }
 }
 
 @media (min-width:900px) and (max-width:1080px){
   #s-profile .prof-wrap { padding-left:30px; padding-right:30px; }
   .prof-desk-grid { grid-template-columns:minmax(0,1fr) 310px; }
   .prof-lead { grid-template-columns:150px minmax(0,1fr); gap:21px; }
-  .prof-profile-facts { grid-template-columns:1fr 1fr; row-gap:13px; }
-  .prof-profile-fact:nth-child(3) { padding-left:0; border-left:0; }
 }
 
 @media (max-width:899px){
@@ -1873,27 +1921,27 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .prof-lead-photo.on img { opacity:1; }
   .prof-lead-photo span { position:absolute; right:9px; bottom:9px; padding:5px 8px; border-radius:999px; background:rgba(18,16,14,.64); color:#fff; font-family:var(--mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase; }
   .prof-desk-hero .prof-name { font-size:30px; }
-  .prof-rating-line { margin-top:7px; gap:5px; }
-  .prof-rating-stars { font-size:14px; }
-  .prof-rating-line b { font-size:12px; }
-  .prof-rating-line small { font-size:10.5px; line-height:1.3; }
-  .prof-specialties { gap:5px 9px; margin-top:11px; font-size:11.5px; }
-  .prof-specialties span { padding:4px 7px; border-radius:999px; background:rgba(212,223,158,.28); }
-  .prof-specialties span::before { display:none; }
   .prof-summary { margin-top:15px; padding-top:14px; font-size:13px; }
-  .prof-profile-facts { grid-column:1/-1; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-top:16px; padding-top:15px; }
-  .prof-profile-fact { padding:9px 10px; border:0; border-radius:12px; background:rgba(74,75,47,.045); }
-  .prof-profile-fact:first-child { padding:9px 10px; }
   .prof-desk-facts { order:2; width:100%; }
   .prof-desk-action { order:3; width:100%; }
   .prof-desk-facts > section, .prof-desk-action > section { padding:18px; }
+  .prof-facts-list { margin-top:10px; }
+  .prof-fact { display:grid; grid-template-columns:34px minmax(0,1fr); gap:10px; padding:10px 0; border-top:1px solid rgba(74,75,47,.09); }
+  .prof-fact-ic { display:grid; place-items:center; width:32px; height:32px; border-radius:50%; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); }
+  .prof-fact-ic svg { width:15px; height:15px; }
+  .prof-fact-l { display:block; font-family:var(--mono); font-size:7px; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); }
+  .prof-fact strong { display:block; margin-top:2px; color:var(--olive); font-size:12px; line-height:1.3; }
+  .prof-fact small { display:block; margin-top:3px; font-family:var(--mono); font-size:7px; line-height:1.35; color:var(--ebony); }
   .prof-desk-body { order:4; }
   .prof-desk-facts .prof-sec-kick, .prof-desk-action .prof-sec-kick { margin-top:0; }
   .prof-desk-action .prof-req { width:100%; justify-content:center; border-radius:14px; }
-  .prof-glance-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .prof-glance-stat:nth-child(3) { border-left:0; border-top:1px solid rgba(74,75,47,.1); }
-  .prof-glance-stat:nth-child(4) { border-top:1px solid rgba(74,75,47,.1); }
-  .prof-fact { display:none; }
+  .prof-intel-card { height:auto; }
+  .prof-intel-grid { grid-template-columns:1fr; }
+  .prof-intel-nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); overflow:visible; }
+  .prof-intel-panels { min-height:260px; }
+  .prof-intel-panel { height:auto; max-height:none; overflow:visible; }
+  .prof-mini-form { grid-template-columns:1fr; }
+  .prof-mini-form .prof-req,.prof-mini-form .prof-status { grid-column:auto; }
   .prof-work { margin-top:26px; padding-top:24px; border-top:1px solid rgba(74,75,47,.1); }
 }
 /* ── Work-photo gallery + lightbox (the Vesta app at parity with the /c/ backlinks) ── */
@@ -4830,33 +4878,49 @@ function profRefreshLabel(iso){
 function profFactsHTML(){
   const p=profData.p||{}, enr=profData.enr||{}, trade=pTradeKey();
   const rows=[];
-  if (p.address) rows.push([PROF_FACT_IC.pin,'Business location',String(p.address).replace(/,?\s*(USA|United States)\.?$/i,''),'Public business listing']);
-  if (enr.registered) rows.push([PROF_FACT_IC.shield,'Public record','Active CT registration','Checked against the state registry']);
-  if (Array.isArray(enr.trade_license)&&enr.trade_license.length) rows.push([PROF_FACT_IC.check,'Trade credential','Licensed '+((PTRADE_LABEL[trade]||'trade').toLowerCase()),'Verified in Connecticut eLicense']);
+  const standingBand=(enr.rating_band==='top10'||enr.rating_band==='top25') ? enr.rating_band :
+    ((enr.tenure_band==='top10'||enr.tenure_band==='top25') ? enr.tenure_band : '');
+  if (standingBand){
+    const band=standingBand==='top10'?'Top 10%':'Top 25%';
+    const tenureOnly=!enr.rating_band && !!enr.tenure_band;
+    rows.push([PROF_FACT_IC.check,tenureOnly?'State-record tenure':'County standing',
+      tenureOnly ? band+' for tenure among Fairfield County '+(PTRADE_PROS[trade]||'contractors') : band+' of Fairfield County '+(PTRADE_PROS[trade]||'contractors'),
+      'Vesta’s comparative field analysis']);
+  }
+  const credentials=[];
+  if (enr.registered){
+    const yr=enr.hic_issue_date ? +String(enr.hic_issue_date).slice(0,4) : 0;
+    credentials.push('Active CT registration'+(yr&&yr!==1999?' · since '+yr:''));
+  }
+  if (Array.isArray(enr.trade_license)&&enr.trade_license.length) credentials.push('Licensed '+((PTRADE_LABEL[trade]||'trade').toLowerCase()));
+  if (Array.isArray(enr.certifications)) for (const c of enr.certifications){ if(c&&c.issuer&&c.level) credentials.push(c.issuer+' '+c.level); }
+  if (credentials.length) rows.push([PROF_FACT_IC.shield,'Verified credentials',credentials.join(' · '),'Checked against public or issuer records']);
+  if (Array.isArray(enr.service_area)&&enr.service_area.length) rows.push([PROF_FACT_IC.pin,'Service area',enr.service_area.join(', '),'Sourced from this firm’s public footprint']);
   const photos=Array.isArray(p.photos) ? p.photos.filter(x=>x&&x.ref).length : 0;
-  if (photos) rows.push([PROF_FACT_IC.calendar,'Work gallery',photos+' public work photo'+(photos===1?'':'s'),'From the public Google listing']);
-  const refreshed=profRefreshLabel(enr.enriched_at);
-  if (refreshed) rows.push([PROF_FACT_IC.calendar,'Vesta review','Read refreshed '+refreshed,'Public reviews and records synthesized']);
-  if (!rows.length) return '';
+  if (photos) rows.push([PROF_FACT_IC.calendar,'Work gallery','Open '+photos+' public work photo'+(photos===1?'':'s'),'From the public Google listing','gallery']);
   return '<section class="prof-facts-panel prof-desk-panel" aria-label="What is established">'+
-    '<span class="prof-sec-kick">Profile details</span><h2 class="prof-sec-h">Service &amp; record</h2>'+
-    '<div class="prof-facts-list">'+rows.slice(0,4).map(r=>
-      '<div class="prof-fact"><span class="prof-fact-ic">'+r[0]+'</span><span><span class="prof-fact-l">'+esc(r[1])+'</span><strong>'+esc(r[2])+'</strong><small>'+esc(r[3])+'</small></span></div>'
-    ).join('')+'</div></section>';
+    '<span class="prof-sec-kick">At a glance</span><h2 class="prof-sec-h">Service &amp; record</h2>'+
+    (rows.length ? '<div class="prof-facts-list">'+rows.map(r=>
+      (r[4]==='gallery' ? '<button class="prof-fact prof-fact-btn" id="prof-gallery-btn" type="button" aria-label="'+esc(r[2])+'">' : '<div class="prof-fact">')+
+      '<span class="prof-fact-ic">'+r[0]+'</span><span><span class="prof-fact-l">'+esc(r[1])+'</span><strong>'+esc(r[2])+'</strong><small>'+esc(r[3])+'</small></span>'+
+      (r[4]==='gallery'?'</button>':'</div>')
+    ).join('')+'</div>' : '<p class="prof-empty-note">Vesta only adds a signal when the public evidence supports it. This listing currently carries identity and contact details.</p>')+
+  '</section>';
 }
 function profActionRailHTML(){
   const u=profData.unlocked||{};
-  const call=u.phone ? '<a class="prof-call" href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">Call '+esc(u.phone)+'</a>' : '';
+  const call=u.phone ? '<a class="prof-call" href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">Call</a>' : '';
   let site='';
   if (u.website){
-    let label='Visit website'; try { label=(new URL(u.website)).hostname.replace(/^www\./,''); } catch(_){}
-    site='<a class="prof-call" href="'+esc(u.website)+'" rel="nofollow noopener" target="_blank">'+esc(label)+' ↗</a>';
+    site='<a class="prof-call" href="'+esc(u.website)+'" rel="nofollow noopener" target="_blank">Website ↗</a>';
   }
   return '<section class="prof-action-panel prof-desk-panel" aria-label="Your next step">'+
     '<span class="prof-sec-kick">Contact &amp; request</span><h2 class="prof-sec-h">Get in touch</h2>'+
     '<p class="prof-sec-note">Reach out directly, or let Vesta carry one clear request to this contractor.</p>'+
     '<button class="prof-req" id="prof-req-btn">Request through Vesta <span aria-hidden="true">→</span></button>'+
-    call+site+'<p class="prof-fine">Your information is not auctioned or resold.</p></section>';
+    ((call||site)?'<div class="prof-contact-actions">'+call+site+'</div>':'')+
+    '<button class="prof-call prof-ask-rail" id="prof-ask-btn" type="button"><span aria-hidden="true">✦</span> Ask Vesta about them</button>'+
+    '<p class="prof-fine">Your information is not auctioned or resold.</p></section>';
 }
 function profSignatureHTML(){ const enr=profData.enr; return (enr && enr.signature) ? '<p class="prof-sig">'+esc(enr.signature)+'</p>' : ''; }
 // Vesta's read = the verdict — the single most important thing on the page, so it's the
@@ -5280,53 +5344,116 @@ function profLeadPhotoHTML(){
     '<span>View all '+photos.length+'</span></button>';
 }
 function profProfileIdentityHTML(){
-  const p=profData.p||{}, enr=profData.enr||{};
-  const known=Array.isArray(enr.known_for) ? enr.known_for.filter(k=>k&&k.label).slice(0,3) : [];
-  const rating=p.rating_count ? '<div class="prof-rating-line"><b>'+Number(p.rating_count).toLocaleString('en-US')+' public Google reviews</b><small>Public Google listing</small></div>' : '';
-  const specialties=known.length ? '<div class="prof-specialties">'+known.map(k=>'<span>'+esc(k.label)+'</span>').join('')+'</div>' : '';
-  return '<div class="prof-lead-main">'+profHeroHTML()+rating+specialties+profProfileSummaryHTML()+'</div>';
+  return '<div class="prof-lead-main">'+profHeroHTML()+profProfileSummaryHTML()+'</div>';
 }
 function profProfileSummaryHTML(){
   const enr=profData.enr||{};
   const split=enr.synthesis ? splitRead(enr.synthesis) : { lede:'' };
-  const summary=split.lede || enr.signature || '';
-  return summary ? '<p class="prof-summary">'+esc(summary)+'</p>' : '';
-}
-function profProfileFactsHTML(){
-  const p=profData.p||{}, enr=profData.enr||{};
-  const facts=[];
-  if (enr.rating_band==='top10' || enr.rating_band==='top25') facts.push([(enr.rating_band==='top10'?'Top 10%':'Top 25%')+' band','Fairfield County field']);
-  if (p.rating_count) facts.push([Number(p.rating_count).toLocaleString('en-US')+' public reviews','Google listing']);
-  const photos=Array.isArray(p.photos) ? p.photos.filter(x=>x&&x.ref).length : 0;
-  if (photos) facts.push([photos+' work photo'+(photos===1?'':'s'),'Public Google listing']);
-  const refreshed=profRefreshLabel(enr.enriched_at); if (refreshed) facts.push([refreshed,'Vesta read refreshed']);
-  return facts.length ? '<div class="prof-profile-facts">'+facts.slice(0,4).map(f=>'<span class="prof-profile-fact"><b>'+f[0]+'</b><small>'+esc(f[1])+'</small></span>').join('')+'</div>' : '';
+  const summary=enr.signature || split.lede || '';
+  return summary ? '<div class="prof-signature"><span class="prof-sec-kick">The signature</span><p>'+esc(summary)+'</p></div>' :
+    '<p class="prof-summary prof-summary-sparse">Public business details are available. Vesta adds interpretation only when the source record supports it.</p>';
 }
 function profLeadHTML(){
-  return '<div class="prof-lead">'+profLeadPhotoHTML()+profProfileIdentityHTML()+profProfileFactsHTML()+'</div>';
+  return '<div class="prof-lead">'+profLeadPhotoHTML()+profProfileIdentityHTML()+'</div>';
 }
-// A compact, source-labeled summary that makes the lower card useful before the
-// homeowner reaches the longer evidence record. Every value is already present
-// in the public listing or the public enrichment row; missing fields stay absent.
-function profAtAGlanceHTML(){
-  const p=profData.p||{}, enr=profData.enr||{};
-  const stats=[];
-  if (enr.rating_band==='top10' || enr.rating_band==='top25') stats.push([(enr.rating_band==='top10'?'Top 10%':'Top 25%')+' band','Fairfield County field']);
-  if (p.rating_count) stats.push([Number(p.rating_count).toLocaleString('en-US')+' reviews','Public Google listing']);
-  const photos=Array.isArray(p.photos) ? p.photos.filter(x=>x&&x.ref).length : 0;
-  if (photos) stats.push([photos+' work photo'+(photos===1?'':'s'),'Public Google listing']);
-  if (enr.registered) stats.push(['Active','CT public registration']);
-  const refreshed=profRefreshLabel(enr.enriched_at); if (refreshed) stats.push([esc(refreshed),'Vesta read refreshed']);
-  if (!stats.length && !(enr.synthesis||enr.signature) && !(Array.isArray(enr.known_for)&&enr.known_for.length)) return '';
-  const known=Array.isArray(enr.known_for) ? enr.known_for.filter(k=>k&&k.label).slice(0,3) : [];
-  const split=enr.synthesis ? splitRead(enr.synthesis) : { lede:'' };
-  const read=split.lede || enr.signature || '';
-  return '<section class="prof-glance-card" aria-label="Vesta’s decision brief">'+
-    '<span class="prof-sec-kick">Vesta’s decision brief</span><h2 class="prof-sec-h">Why this contractor</h2>'+
-    (stats.length ? '<div class="prof-glance-stats">'+stats.slice(0,4).map(s=>'<span class="prof-glance-stat"><b>'+s[0]+'</b><small>'+esc(s[1])+'</small></span>').join('')+'</div>' : '')+
-    (read ? '<div class="prof-glance-read"><span class="prof-sec-kick">Vesta’s read</span><p>'+esc(read)+'</p></div>' : '')+
-    (known.length ? '<div class="prof-glance-known"><span class="prof-sec-kick">Known for</span><div>'+known.map(k=>'<span>'+esc(k.label)+'</span>').join('')+'</div></div>' : '')+
-  '</section>';
+function profIntelReadHTML(){
+  const enr=profData.enr||{}; if (!enr.synthesis) return '';
+  const s=splitRead(enr.synthesis);
+  return '<div class="prof-intel-read">'+
+    (s.lede?'<p class="prof-intel-lede">'+esc(s.lede)+'</p>':'')+
+    (s.rest?'<p>'+esc(s.rest)+'</p>':'')+
+    '<p class="prof-intel-source">Vesta’s interpretation of the pattern across public homeowner reviews—not a copied review or business-written bio.</p></div>';
+}
+function profDisplayKnown(){
+  const enr=profData.enr||{};
+  const known=Array.isArray(enr.known_for) ? enr.known_for.filter(k=>k&&(k.label||k.detail)) : [];
+  const certWords=[];
+  if (Array.isArray(enr.certifications)) for (const c of enr.certifications){
+    if (!c) continue;
+    if (c.issuer) certWords.push(String(c.issuer).toLowerCase());
+    if (c.level) certWords.push(String(c.level).toLowerCase());
+  }
+  return known.filter(k=>{
+    const label=String(k.label||'').toLowerCase();
+    if (enr.registered && /\bregistered\b|\bregistration\b/.test(label)) return false;
+    return !certWords.some(w=>w.length>2 && label.includes(w));
+  });
+}
+function profDistinctSpecialties(){
+  const enr=profData.enr||{}, known=profDisplayKnown();
+  const fitTerms=[...(Array.isArray(enr.best_for)?enr.best_for:[]),...(Array.isArray(enr.project_scale)?enr.project_scale:[])];
+  const text=(known.map(k=>(k.label||'')+' '+(k.detail||'')).join(' ')+' '+fitTerms.join(' ')).toLowerCase();
+  const stop=new Set(['service','specialist','system','work','install','installation','home']);
+  const root=w=>w.replace(/ing$/,'').replace(/ies$/,'y').replace(/s$/,'');
+  const corpus=new Set((text.match(/[a-z0-9]+/g)||[]).map(root));
+  const specs=Array.isArray(enr.specialties)?enr.specialties.filter(Boolean):[];
+  return specs.filter(s=>{
+    const tokens=(String(s).toLowerCase().match(/[a-z0-9]+/g)||[]).map(root).filter(w=>w.length>1&&!stop.has(w));
+    return !tokens.length || !tokens.every(w=>corpus.has(w));
+  });
+}
+function profIntelKnownHTML(){
+  const known=profDisplayKnown();
+  if (!known.length) return '';
+  return '<div class="prof-detail-list">'+known.map((k,i)=>
+    '<article class="prof-detail-item"><span>'+String(i+1).padStart(2,'0')+'</span><div><h3>'+esc(k.label||'Specific strength')+'</h3>'+
+    (k.detail?'<p>'+esc(k.detail)+'</p>':'')+'</div></article>').join('')+'</div>';
+}
+function profIntelFitHTML(){
+  const enr=profData.enr||{}, groups=[];
+  const chipGroup=(title,items)=>{
+    const a=Array.isArray(items)?items.filter(Boolean):[];
+    if (a.length) groups.push('<section class="prof-fit-group"><h3>'+esc(title)+'</h3><div class="prof-detail-chips">'+a.map(x=>'<span>'+esc(trecHumanize(x))+'</span>').join('')+'</div></section>');
+  };
+  chipGroup('Additional specialties',profDistinctSpecialties());
+  chipGroup('Best fit for',enr.best_for);
+  chipGroup('Project scope',enr.project_scale);
+  const notes=[];
+  if (enr.responsiveness && enr.responsiveness.ev) notes.push(['Response pattern',enr.responsiveness.ev]);
+  if (enr.pricing_profile && (enr.pricing_profile.theme||enr.pricing_profile.ev)) notes.push(['Pricing pattern',enr.pricing_profile.theme||enr.pricing_profile.ev]);
+  if (Array.isArray(enr.crew_named)&&enr.crew_named.length) notes.push(['Crew homeowners name',enr.crew_named.join(', ')]);
+  if (notes.length) groups.push('<section class="prof-fit-group"><h3>What to expect</h3><div class="prof-expect-list">'+notes.map(n=>'<p><b>'+esc(n[0])+'</b><span>'+esc(n[1])+'</span></p>').join('')+'</div></section>');
+  return groups.join('');
+}
+function profIntelGuideHTML(){
+  const g=PGUIDE[pTradeKey()]; if (!g) return '';
+  return '<p class="prof-intel-source prof-intel-source-top">General guidance for the trade—not a claim about this business.</p><div class="prof-guide-compact">'+
+    g.map((it,i)=>'<article><span>'+String(i+1).padStart(2,'0')+'</span><div><h3>'+esc(it.t)+'</h3><p>'+esc(it.d)+'</p></div></article>').join('')+'</div>';
+}
+function profIntelSourcesHTML(){
+  const enr=profData.enr||{}, refreshed=profRefreshLabel(enr.enriched_at);
+  return '<div class="prof-method">'+
+    '<h3>What Vesta weighed</h3><p>Public homeowner review patterns, the public business listing, and Connecticut or issuer records when a match can be verified.</p>'+
+    '<h3>What Vesta does not do</h3><p>No paid placement, no fabricated job counts, no inferred license, and no response-time claim unless the source record supports it.</p>'+
+    (refreshed?'<p class="prof-method-fresh"><b>Analysis refreshed</b> '+esc(refreshed)+'</p>':'')+
+    profGoogleHTML()+
+    '<p class="prof-intel-source">Need a correction? Email <a href="mailto:contact@4thwall.solutions?subject=Vesta%20profile%20correction">contact@4thwall.solutions</a>.</p></div>';
+}
+function profIntelBusinessHTML(){
+  if (profData.claimed) return '<div class="prof-business-mini"><h3>Claimed by the business</h3><p>This profile has a verified owner.</p></div>';
+  return '<div class="prof-business-mini"><h3>Is this your business?</h3><p>Claim the profile free to verify ownership, add your voice, and receive homeowner interest.</p>'+
+    '<form id="prof-claim" class="prof-mini-form"><label for="pcn">Your name<input type="text" id="pcn" required maxlength="80"></label>'+
+    '<label for="pcp">Phone<input type="tel" id="pcp" required maxlength="20"></label><label for="pce">Email (optional)<input type="email" id="pce" maxlength="120"></label>'+
+    '<button class="prof-req" type="submit">Claim this profile—free</button><span class="prof-status" id="prof-claim-st"></span></form>'+
+    '<p class="prof-intel-source">Ownership is verified before anything changes. Claimed owners can also <a href="/atlas.html">put the profile to work with Atlas →</a></p></div>';
+}
+function profIntelHTML(){
+  const enr=profData.enr||{}, items=[];
+  const add=(id,title,sub,html)=>{ if(html) items.push({id,title,sub,html}); };
+  add('read','Vesta’s read','What the evidence adds up to',profIntelReadHTML());
+  const known=profDisplayKnown();
+  add('known','Known for',known.length+' specific strength'+(known.length===1?'':'s'),profIntelKnownHTML());
+  const fit=profIntelFitHTML(); add('fit','Best fit &amp; scope','Services, job fit, expectations',fit);
+  const guide=profIntelGuideHTML(); add('guide','Before you hire','Questions worth asking',guide);
+  add('sources','Sources &amp; method','Evidence, freshness, Google context',profIntelSourcesHTML());
+  add('business','For the business',profData.claimed?'Ownership verified':'Claim or correct this profile',profIntelBusinessHTML());
+  const first=items[0]&&items[0].id;
+  return '<section class="prof-intel-card" aria-label="Vesta’s decision brief">'+
+    '<div class="prof-intel-head"><span class="prof-sec-kick">Vesta’s decision brief</span><h2 class="prof-sec-h">Every useful signal, one home</h2></div>'+
+    '<div class="prof-intel-grid"><div class="prof-intel-nav" aria-label="Profile detail dropdowns">'+items.map((it,i)=>
+      '<button class="prof-disclosure-btn'+(i===0?' active':'')+'" id="prof-intel-'+it.id+'-button" type="button" aria-expanded="'+(i===0?'true':'false')+'" aria-controls="prof-intel-'+it.id+'">'+
+      '<span><b>'+it.title+'</b><small>'+it.sub+'</small></span><span class="prof-disclosure-chev" aria-hidden="true">'+CHEV+'</span></button>').join('')+'</div>'+
+    '<div class="prof-intel-panels">'+items.map(it=>'<section class="prof-intel-panel" id="prof-intel-'+it.id+'" role="region" aria-labelledby="prof-intel-'+it.id+'-button"'+(it.id===first?'':' hidden')+'>'+it.html+'</section>').join('')+'</div></div></section>';
 }
 // Work-photo gallery on the in-app profile — the same one /c/ shows. The photos are
 // already in profData.p.photos (openProfile fetched /c/:id), so render inline, no extra call.
@@ -5340,9 +5467,9 @@ function profWorkHTML(){
   return '<section class="prof-work"><span class="prof-sec-kick">Work photos</span><h2 class="prof-sec-h">Their work, in view</h2>'+gallery+'</section>';
 }
 function renderProfile(){
-  // Every desktop profile follows one decision-brief protocol: identity and
-  // standing, public record, Vesta’s reasoning, and a direct next step—visible
-  // together without turning a contractor page into a scroll document.
+  // Every profile follows one adaptive uniform: the same decision homes appear
+  // in the same order, unsupported signals stay absent, and disclosure panels
+  // preserve the full depth without turning the desktop page into a document.
   const trade=pTradeKey(); const profileLabel=PTRADE_PROFILE[trade] || 'Contractor';
   const title = '<header class="prof-desk-title"><div><p class="prof-desk-label">'+esc(profileLabel)+' profile</p>'+
     '<p class="prof-desk-intro">Fairfield County evidence file · ranked by Vesta.</p></div>'+
@@ -5350,7 +5477,7 @@ function renderProfile(){
   const hero = '<section class="prof-desk-hero prof-desk-panel">'+profLeadHTML()+'</section>';
   const facts = '<aside class="prof-desk-facts" aria-label="Profile details">'+profFactsHTML()+'</aside>';
   const action = '<aside class="prof-desk-action" aria-label="Your next step">'+profActionRailHTML()+'</aside>';
-  const body = '<section class="prof-desk-body prof-desk-panel">'+profAtAGlanceHTML()+'</section>';
+  const body = '<section class="prof-desk-body prof-desk-panel">'+profIntelHTML()+'</section>';
   $('prof-wrap').innerHTML = title+'<div class="prof-desk-grid">'+hero+facts+body+action+'</div>';
   wireProfile();
 }
@@ -5358,10 +5485,35 @@ function wireProfBack(){ const b=$('prof-back'); if(b) b.addEventListener('click
 function wireProfile(){
   wireProfBack();
   const lp=document.querySelector('.prof-lead-photo'); if(lp) lp.addEventListener('click', ()=>{ const ph=((profData.p&&profData.p.photos)||[]).filter(x=>x&&x.ref); if(ph.length) openPhotoLightbox(ph,0); });
+  const gp=$('prof-gallery-btn'); if(gp) gp.addEventListener('click', ()=>{ const ph=((profData.p&&profData.p.photos)||[]).filter(x=>x&&x.ref); if(ph.length) openPhotoLightbox(ph,0); });
   const pm=$('prof-photos'); if(pm){ const ph=((profData.p&&profData.p.photos)||[]).filter(x=>x&&x.ref); pm.addEventListener('click', e=>{ const t=e.target.closest('.vph-tile'); if(t) openPhotoLightbox(ph, +t.dataset.i||0); }); }
   const claim=$('prof-claim'); if(claim) claim.addEventListener('submit', profClaimSubmit);
   const req=$('prof-req-btn'); if(req) req.addEventListener('click', () => enterRequest({ placeId:profData.placeId, trade:(TRADE_APP[pTradeKey()]||pTradeKey()), name:(profData.p&&profData.p.name)||'' }));
   const ask=$('prof-ask-btn'); if(ask) ask.addEventListener('click', () => { const e=profData.enr||{}, tk=pTradeKey(); askVestaAboutFirm({ name:(profData.p&&profData.p.name)||'this firm', read:e.synthesis||'', knownFor:(e.known_for||[]), signature:e.signature||'', trade:tk, tradeLabel:(PTRADE_LABEL[tk]||'') }); });
+  const disclosures=[...document.querySelectorAll('.prof-disclosure-btn')];
+  const activateDisclosure=(btn)=>{
+    let activePanel=null;
+    disclosures.forEach(b=>{
+      const on=b===btn, panel=$(b.getAttribute('aria-controls'));
+      b.classList.toggle('active',on); b.setAttribute('aria-expanded',on?'true':'false');
+      if(panel){ panel.hidden=!on; if(on) activePanel=panel; }
+    });
+    const wrap=document.querySelector('.prof-intel-panels');
+    if(wrap) requestAnimationFrame(()=>wrap.classList.toggle('has-more',!!activePanel && activePanel.scrollHeight>activePanel.clientHeight+2));
+  };
+  disclosures.forEach((btn,i)=>{
+    btn.addEventListener('click',()=>activateDisclosure(btn));
+    btn.addEventListener('keydown',e=>{
+      let j=-1;
+      if(e.key==='ArrowDown') j=(i+1)%disclosures.length;
+      if(e.key==='ArrowUp') j=(i-1+disclosures.length)%disclosures.length;
+      if(e.key==='Home') j=0;
+      if(e.key==='End') j=disclosures.length-1;
+      if(j<0) return;
+      e.preventDefault(); disclosures[j].focus(); activateDisclosure(disclosures[j]);
+    });
+  });
+  if(disclosures[0]) activateDisclosure(disclosures[0]);
   const ct=$('claim-toggle'); if(ct) ct.addEventListener('click', () => {
     const panel=$('claim-panel'); if(!panel) return;
     const opening = !panel.classList.contains('open');
