@@ -2150,14 +2150,21 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-profile .prof-desk-hero .prof-sub { margin-top:10px; font-size:16px; line-height:1.55; }
   #s-profile .prof-badges { gap:8px; margin-top:16px; }
   #s-profile .prof-badge { min-height:32px; padding:7px 11px; font-size:11px; line-height:1.35; }
+  #s-profile .prof-mobile-contact { margin-top:21px; padding-top:18px; border-top:1px solid rgba(74,75,47,.12); }
+  #s-profile .prof-mobile-contact-kick { display:block; margin-bottom:10px; font-family:var(--mono); font-size:9px; line-height:1.35; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); }
+  #s-profile .prof-mobile-request { width:100%; min-height:52px; justify-content:center; margin:0; padding:14px 18px; border-radius:15px; font-size:15px; }
+  #s-profile .prof-mobile-contact-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:10px; }
+  #s-profile .prof-mobile-contact-btn { display:flex; align-items:center; justify-content:center; min-height:48px; padding:11px 12px; border:1px solid rgba(74,75,47,.14); border-radius:14px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); font-size:13px; font-weight:700; text-decoration:none; }
   #s-profile .prof-signature { margin-top:20px; padding-top:17px; }
   #s-profile .prof-signature .prof-sec-kick { font-size:9px; }
   #s-profile .prof-signature p { margin-top:7px; font-size:18px; line-height:1.5; }
+  #s-profile .prof-mobile-ask { width:100%; min-height:48px; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:18px; padding:11px 15px; border:1px solid rgba(74,75,47,.16); border-radius:14px; color:var(--olive); background:linear-gradient(145deg,rgba(255,255,255,.4),rgba(212,223,158,.12)),var(--nm); box-shadow:var(--nm-sm); font-family:var(--sans); font-size:13px; font-weight:700; cursor:pointer; }
+  #s-profile .prof-mobile-ask span:first-child { color:var(--olive); }
 
-  /* Put the next step directly after identity, then let the record substantiate it. */
-  #s-profile .prof-desk-action { order:2; width:100%; }
+  /* Mobile keeps the next step inside identity; the record follows in a deliberate reading order. */
+  #s-profile .prof-desk-action { display:none; }
   #s-profile .prof-desk-facts { order:3; width:100%; }
-  #s-profile .prof-desk-body { order:4; width:100%; }
+  #s-profile .prof-desk-body { order:2; width:100%; }
   #s-profile .prof-desk-action > section,#s-profile .prof-desk-facts > section { padding:24px 21px; }
   #s-profile .prof-desk-facts .prof-sec-kick,#s-profile .prof-desk-action .prof-sec-kick { margin-top:0; font-size:9px; }
   #s-profile .prof-desk-facts .prof-sec-h,#s-profile .prof-desk-action .prof-sec-h { margin:7px 0 0; font-size:28px; line-height:1.08; }
@@ -2229,6 +2236,16 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   #s-profile .prof-mini-form .prof-req,#s-profile .prof-mini-form .prof-status { grid-column:auto; }
   #s-profile .prof-mini-form .prof-req { min-height:50px; margin-top:3px; }
   #s-profile .prof-work { margin-top:30px; padding-top:28px; border-top:1px solid rgba(74,75,47,.1); }
+  #s-profile .prof-mobile-business { margin-top:20px; border:1px solid rgba(255,255,255,.56); border-radius:20px; background:var(--nm); box-shadow:var(--nm-sm); overflow:hidden; }
+  #s-profile .prof-mobile-business-toggle { position:relative; width:100%; min-height:72px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 17px 14px 54px; border:0; color:var(--olive); background:transparent; text-align:left; cursor:pointer; }
+  #s-profile .prof-mobile-business-toggle::before { content:'✦'; position:absolute; left:16px; top:19px; display:grid; place-items:center; width:29px; height:29px; border-radius:10px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); font-size:13px; }
+  #s-profile .prof-mobile-business-toggle b { display:block; font-family:var(--serif); font-size:18px; line-height:1.15; }
+  #s-profile .prof-mobile-business-toggle small { display:block; margin-top:5px; font-family:var(--mono); font-size:9px; line-height:1.4; letter-spacing:.07em; text-transform:uppercase; color:var(--ebony); }
+  #s-profile .prof-mobile-business-toggle > span:last-child { display:flex; color:var(--ebony); transition:transform .18s ease; }
+  #s-profile .prof-mobile-business-toggle.open > span:last-child { transform:rotate(180deg); }
+  #s-profile .prof-mobile-business-panel { padding:20px; border-top:1px solid rgba(74,75,47,.1); background:rgba(255,255,255,.1); }
+  #s-profile .prof-mobile-business-panel[hidden] { display:none; }
+  #s-profile .prof-mobile-business-panel .prof-business-mini > p { margin:6px 0 0; font-size:15px; line-height:1.65; color:var(--ebony); }
 }
 /* ── Work-photo gallery + lightbox (the Vesta app at parity with the /c/ backlinks) ── */
 .vph{ margin:13px 0 4px; }
@@ -5267,6 +5284,16 @@ function profActionRailHTML(){
     '<button class="prof-call prof-ask-rail" id="prof-ask-btn" type="button"><span aria-hidden="true">✦</span> Ask Vesta about them</button>'+
     '<p class="prof-fine">Your information is not auctioned or resold.</p></section>';
 }
+function profMobileContactHTML(){
+  const u=profData.unlocked||{};
+  const call=u.phone ? '<a class="prof-mobile-contact-btn" href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">Call</a>' : '';
+  const site=u.website ? '<a class="prof-mobile-contact-btn" href="'+esc(u.website)+'" rel="nofollow noopener" target="_blank">Website ↗</a>' : '';
+  return '<div class="prof-mobile-contact" aria-label="Contact and request">'+
+    '<span class="prof-mobile-contact-kick">Get in touch</span>'+
+    '<button class="prof-req prof-mobile-request" id="prof-req-btn" type="button">Request through Vesta <span aria-hidden="true">→</span></button>'+
+    ((call||site)?'<div class="prof-mobile-contact-row">'+call+site+'</div>':'')+
+  '</div>';
+}
 function profSignatureHTML(){ const enr=profData.enr; return (enr && enr.signature) ? '<p class="prof-sig">'+esc(enr.signature)+'</p>' : ''; }
 // Vesta's read = the verdict — the single most important thing on the page, so it's the
 // loudest dropdown: open by default (prioritized), visually highlighted (not a plain fold).
@@ -5689,7 +5716,7 @@ function profLeadPhotoHTML(){
     '<span>View all '+photos.length+'</span></button>';
 }
 function profProfileIdentityHTML(){
-  return '<div class="prof-lead-main">'+profHeroHTML()+profProfileSummaryHTML()+'</div>';
+  return '<div class="prof-lead-main">'+profHeroHTML()+(desktop()?'':profMobileContactHTML())+profProfileSummaryHTML()+(desktop()?'':'<button class="prof-mobile-ask" id="prof-ask-btn" type="button"><span aria-hidden="true">✦</span> Ask Vesta about them <span aria-hidden="true">→</span></button>')+'</div>';
 }
 function profProfileSummaryHTML(){
   const enr=profData.enr||{};
@@ -5800,15 +5827,24 @@ function profIntelHTML(){
           '<header><span>'+String(i+1).padStart(2,'0')+'</span><div><h3>'+it.title+'</h3><p>'+it.sub+'</p></div></header><div class="prof-intel-module-body">'+it.html+'</div></section>'
       ).join('')+'</div></section>';
   }
-  const first=items[0]&&items[0].id;
+  const mobileItems=items.filter(it=>it.id!=='business');
+  const mobileFirst=mobileItems[0]&&mobileItems[0].id;
   return '<section class="prof-intel-card" aria-label="Vesta’s decision brief">'+
     '<div class="prof-intel-head"><span class="prof-sec-kick">Vesta’s decision brief</span><h2 class="prof-sec-h">What the record supports</h2><p>Open one section at a time. Every available signal remains here without crowding the screen.</p></div>'+
-    '<div class="prof-mobile-accordions" aria-label="Profile detail sections">'+items.map((it,i)=>
+    '<div class="prof-mobile-accordions" aria-label="Profile detail sections">'+mobileItems.map((it,i)=>
       '<section class="prof-mobile-section'+(i===0?' open':'')+'">'+
         '<button class="prof-disclosure-btn'+(i===0?' active':'')+'" data-no="'+String(i+1).padStart(2,'0')+'" id="prof-intel-'+it.id+'-button" type="button" aria-expanded="'+(i===0?'true':'false')+'" aria-controls="prof-intel-'+it.id+'">'+
         '<span><b>'+it.title+'</b><small>'+it.sub+'</small></span><span class="prof-disclosure-chev" aria-hidden="true">'+CHEV+'</span></button>'+
-        '<section class="prof-intel-panel" id="prof-intel-'+it.id+'" role="region" aria-labelledby="prof-intel-'+it.id+'-button"'+(it.id===first?'':' hidden')+'>'+it.html+'</section>'+
+        '<section class="prof-intel-panel" id="prof-intel-'+it.id+'" role="region" aria-labelledby="prof-intel-'+it.id+'-button"'+(it.id===mobileFirst?'':' hidden')+'>'+it.html+'</section>'+
       '</section>').join('')+'</div></section>';
+}
+function profMobileBusinessHTML(){
+  const claimed=!!profData.claimed;
+  return '<section class="prof-mobile-business" aria-label="For the business">'+
+    '<button class="prof-mobile-business-toggle" id="prof-business-toggle" type="button" aria-expanded="false" aria-controls="prof-business-panel">'+
+      '<span><b>For the business</b><small>'+(claimed?'Ownership verified':'Claim or correct this profile')+'</small></span><span aria-hidden="true">'+CHEV+'</span></button>'+
+    '<div class="prof-mobile-business-panel" id="prof-business-panel" hidden>'+profIntelBusinessHTML()+'</div>'+
+  '</section>';
 }
 // Work-photo gallery on the in-app profile — the same one /c/ shows. The photos are
 // already in profData.p.photos (openProfile fetched /c/:id), so render inline, no extra call.
@@ -5831,9 +5867,9 @@ function renderProfile(){
     '<span class="prof-desk-proof">✦ Ranked by the record, never by payment</span></header>';
   const hero = '<section class="prof-desk-hero prof-desk-panel">'+profLeadHTML()+'</section>';
   const facts = '<aside class="prof-desk-facts" aria-label="Profile details">'+profFactsHTML()+'</aside>';
-  const action = '<aside class="prof-desk-action" aria-label="Your next step">'+profActionRailHTML()+'</aside>';
+  const action = desktop() ? '<aside class="prof-desk-action" aria-label="Your next step">'+profActionRailHTML()+'</aside>' : '';
   const body = '<section class="prof-desk-body prof-desk-panel">'+profIntelHTML()+(desktop()?profWorkHTML():'')+'</section>';
-  $('prof-wrap').innerHTML = title+'<div class="prof-desk-grid">'+hero+facts+body+action+'</div>';
+  $('prof-wrap').innerHTML = title+'<div class="prof-desk-grid">'+hero+facts+body+action+'</div>'+(desktop()?'':profMobileBusinessHTML());
   wireProfile();
 }
 function wireProfBack(){ const b=$('prof-back'); if(b) b.addEventListener('click', backFromProfile); }
@@ -5870,6 +5906,12 @@ function wireProfile(){
     });
   });
   if(disclosures[0]) activateDisclosure(disclosures[0]);
+  const businessToggle=$('prof-business-toggle'), businessPanel=$('prof-business-panel');
+  if(businessToggle&&businessPanel) businessToggle.addEventListener('click',()=>{
+    const open=businessToggle.getAttribute('aria-expanded')==='true';
+    businessToggle.setAttribute('aria-expanded',open?'false':'true');
+    businessToggle.classList.toggle('open',!open); businessPanel.hidden=open;
+  });
   const ct=$('claim-toggle'); if(ct) ct.addEventListener('click', () => {
     const panel=$('claim-panel'); if(!panel) return;
     const opening = !panel.classList.contains('open');
