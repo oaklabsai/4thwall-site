@@ -106,6 +106,26 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 .cta-alt{display:block;margin-top:1rem;font-size:.84rem;color:var(--dim)}
 .cta-alt a{color:var(--olive);border-bottom:1px solid var(--faint)}
 
+/* ── brief (what 4THWALL / Atlas / Vesta actually are) ──────────────── */
+.brief{max-width:760px;margin:2.2rem auto 0;padding:0 var(--pad)}
+.brief-card{background:var(--nm);border-radius:24px;box-shadow:var(--sh-card);padding:clamp(1.4rem,3.5vw,2.1rem)}
+.brief-eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--olive);margin-bottom:.7rem}
+.brief-h{font-family:var(--display);font-weight:500;font-size:clamp(1.35rem,3.6vw,1.75rem);line-height:1.18;letter-spacing:-.015em;color:var(--ink)}
+.brief-h em{font-style:italic;color:var(--ink-2)}
+.brief-lead{margin-top:.8rem;font-size:.98rem;color:var(--muted);line-height:1.55}
+.brief-list{margin-top:1.4rem;display:grid;gap:1rem}
+.brief-item{display:flex;gap:.8rem;align-items:flex-start}
+.brief-num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--tea-grad);color:var(--ink);font-family:var(--mono);font-size:.72rem;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:var(--nm-sm);margin-top:.1rem}
+.brief-item-body b{font-size:.96rem;color:var(--ink);font-weight:600;display:block;margin-bottom:.15rem}
+.brief-item-body span{font-size:.87rem;color:var(--muted);line-height:1.5}
+.brief-price{margin-top:1.5rem;padding-top:1.3rem;border-top:1px solid var(--line-2);font-size:.87rem;color:var(--muted);line-height:1.55}
+.brief-price b{color:var(--ink);font-weight:600}
+.brief-vesta{margin-top:1.6rem;padding-top:1.4rem;border-top:1px solid var(--line-2)}
+.brief-vesta-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive);margin-bottom:.55rem}
+.brief-vesta p{font-size:.92rem;color:var(--muted);line-height:1.55}
+.brief-vesta p+p{margin-top:.6rem}
+.brief-vesta b{color:var(--ink);font-weight:600}
+
 /* ── trade selector ───────────────────────────────────────────────── */
 .trade-pick{margin-bottom:1.9rem;padding-bottom:1.6rem;border-bottom:1px solid var(--line-2)}
 .tp-label{font-size:.98rem;font-weight:500;color:var(--ink);margin-bottom:.85rem}
@@ -170,6 +190,49 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     <h1>¿Cuánto te está costando <em>tu buzón de voz?</em></h1>
     <p class="sub">Cuatro números que ya sabes de memoria. Es tu propia matemática — nosotros solo hacemos la cuenta.</p>
   </section>
+
+  <div class="brief">
+    <div class="brief-card">
+      <div class="brief-eyebrow">Qué es 4THWALL</div>
+      <h2 class="brief-h">Atlas es la oficina completa <em>detrás del trabajo.</em></h2>
+      <p class="brief-lead">No es solo un contestador. Es el sistema que carga todo lo que pasa alrededor del trabajo — para que tú sigas en el techo, no pegado al teléfono.</p>
+
+      <div class="brief-list">
+        <div class="brief-item">
+          <div class="brief-num">1</div>
+          <div class="brief-item-body"><b>Respuesta a llamadas perdidas</b><span>Cuando se pierde una llamada, Atlas responde por texto en menos de 60 segundos, 24/7, en inglés o español.</span></div>
+        </div>
+        <div class="brief-item">
+          <div class="brief-num">2</div>
+          <div class="brief-item-body"><b>Modo tormenta</b><span>Cuando los textos y llamadas se disparan después de una tormenta, Atlas puede manejar varias conversaciones a la vez — nadie se queda en la fila.</span></div>
+        </div>
+        <div class="brief-item">
+          <div class="brief-num">3</div>
+          <div class="brief-item-body"><b>Campañas de temporada</b><span>Mensajes armados según las temporadas de tu mercado — tormentas, renovaciones, inspecciones. Escritos, programados y enviados solos.</span></div>
+        </div>
+        <div class="brief-item">
+          <div class="brief-num">4</div>
+          <div class="brief-item-body"><b>Citas y agenda</b><span>Desde el primer contacto hasta la cita confirmada: junta los detalles, ofrece horarios, manda recordatorios y da seguimiento.</span></div>
+        </div>
+        <div class="brief-item">
+          <div class="brief-num">5</div>
+          <div class="brief-item-body"><b>Solicitud de reseñas</b><span>Un trabajo cerrado activa una solicitud de reseña a tu nombre. Sale siempre, sin que tengas que acordarte — el cliente decide qué calificación poner.</span></div>
+        </div>
+        <div class="brief-item">
+          <div class="brief-num">6</div>
+          <div class="brief-item-body"><b>Presencia local</b><span>Mantenemos tus datos, servicios y área de cobertura organizados y al día, para que la búsqueda tenga información clara de tu negocio.</span></div>
+        </div>
+      </div>
+
+      <div class="brief-price">Tarifa estándar: <b>$1,500/mes</b>, todo incluido — sin cargo de instalación, sin cargo por usuario, sin contrato. Los primeros socios fundadores reciben <b>$750/mes fijo por 12 meses</b>. Puedes salir con 30 días de aviso.</div>
+
+      <div class="brief-vesta">
+        <div class="brief-vesta-eyebrow">Y detrás de Atlas — Vesta</div>
+        <p>Vesta es el directorio que estamos construyendo para que un dueño de casa vea tu <b>historial real</b> — tus reseñas, tu registro público, el trabajo por el que te conocen — no solo una estrella comprada o inflada.</p>
+        <p>Hoy lo estamos armando primero en Fairfield County, Connecticut, y lo vamos expandiendo. La idea es simple: si tu trabajo es honesto, que se pueda demostrar — no solo decir.</p>
+      </div>
+    </div>
+  </div>
 
   <div class="tools">
     <div class="trade-pick">
