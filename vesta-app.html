@@ -1378,6 +1378,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .fcard { position:relative; background:var(--nm); border:none; border-radius:22px; box-shadow:var(--sh-row); padding:20px 22px 15px; transition:box-shadow .16s; }
   .fcard:hover { box-shadow:var(--sh-row-h); }
   .fcard.flash { box-shadow:0 0 0 2px var(--olive) !important; }
+  .fcard-summary { min-width:0; }
+  .fcard-core { min-width:0; }
+  .fcard-summary > .vph-cover-btn { height:124px; max-height:none; aspect-ratio:auto; margin:0 0 17px; }
   .fcard-top { display:flex; align-items:flex-start; gap:13px; }
   .fcard-mono { width:46px; height:46px; flex-shrink:0; border-radius:13px; background:var(--bg); border:1px solid rgba(74,75,47,.08); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:17px; font-weight:600; color:var(--ebony); }
   .fcard-mono svg { width:23px; height:23px; color:var(--olive); }
@@ -1431,6 +1434,16 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   /* desktop feed-control inline labels (Sort · Town) */
   .feed-fl { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:rgba(74,75,47,.55); margin-left:8px; }
   .feed-fl:first-child { margin-left:0; }
+}
+
+@media (min-width:1200px){
+  /* Feed cards are compact dossiers: supporting work image at left, Vesta's
+     decision text at right. The same visual grammar expands on the full profile. */
+  .fcard-summary { display:grid; grid-template-columns:clamp(155px,24%,215px) minmax(0,1fr); gap:22px; align-items:stretch; }
+  .fcard-summary > .vph-cover-btn { grid-column:1; grid-row:1; width:100%; height:100%; min-height:225px; margin:0; border-radius:17px; }
+  .fcard-core { grid-column:2; grid-row:1; align-self:start; }
+  .fcard-readlbl { margin-top:14px; }
+  .fcard-actions { margin-top:17px; }
 }
 
 /* ===== Task-2 additions: live saved counters · reset saved · mobile filters ===== */
@@ -1529,7 +1542,11 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .float-back { position:absolute; top:calc(12px + env(safe-area-inset-top, 0px)); left:14px; z-index:6; width:40px; height:40px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); cursor:pointer; transition:box-shadow .15s ease; }
 .float-back:hover { box-shadow:var(--nm-out); }
 .float-back:active { box-shadow:var(--nm-in); }
-.prof-scroll { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.prof-scroll { flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior-y:contain; scrollbar-gutter:stable; scrollbar-width:thin; scrollbar-color:rgba(74,75,47,.34) transparent; touch-action:pan-y; }
+.prof-scroll::-webkit-scrollbar { width:10px; }
+.prof-scroll::-webkit-scrollbar-track { background:transparent; }
+.prof-scroll::-webkit-scrollbar-thumb { background:rgba(74,75,47,.26); border:3px solid transparent; background-clip:padding-box; border-radius:999px; }
+.prof-scroll::-webkit-scrollbar-thumb:hover { background:rgba(74,75,47,.42); background-clip:padding-box; }
 .prof-wrap { max-width:720px; margin:0 auto; padding:60px 20px 130px; }  /* top clears the floating back */
 .prof-loading, .prof-error { padding:60px 22px; text-align:center; color:var(--ebony); font-size:14px; line-height:1.6; }
 .prof-error a, .prof-loading a { color:var(--olive); font-weight:600; }
@@ -1751,8 +1768,138 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 @media (max-width:560px){ .req-pair { grid-template-columns:1fr; } }
 
 @media (min-width:900px){
-  #s-profile.screen, #s-request.screen { flex:1; min-width:0; height:100vh; }
-  .prof-wrap { padding:34px 40px 64px; }
+  /* Profile/request own one explicit inner scroll. The document and screen stay
+     locked; this prevents the old document-vs-.prof-scroll competition. */
+  #s-profile.screen, #s-request.screen { flex:1; min-width:0; min-height:0; height:100vh; overflow:hidden; }
+  #s-profile .prof-scroll, #s-request .prof-scroll { height:100%; min-height:0; }
+  .prof-wrap { padding:68px 44px 84px; }
+
+  /* Full profile = the approved desktop research desk: identity and proof sit
+     beside one another, with the record and contact action directly beneath. */
+  #s-profile .prof-wrap { max-width:1320px; }
+  .prof-desk-title { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin:0 4px 18px; }
+  .prof-desk-label { margin:0; font-family:var(--serif); font-size:clamp(32px,3.2vw,46px); line-height:1; letter-spacing:-.035em; color:var(--olive); }
+  .prof-desk-intro { margin-top:7px; font-size:13px; color:var(--ebony); }
+  .prof-desk-proof { display:inline-flex; flex:none; align-items:center; gap:7px; padding:9px 14px; border-radius:999px; font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--olive); background:var(--nm); box-shadow:var(--nm-in); }
+  .prof-desk-grid { display:grid; grid-template-columns:minmax(0,1.8fr) minmax(300px,.78fr); grid-template-areas:"hero facts" "body action"; align-items:start; gap:20px; }
+  .prof-desk-panel { border:1px solid rgba(255,255,255,.48); border-radius:25px; background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(212,223,158,.06)),var(--nm); box-shadow:var(--nm-out); }
+  .prof-desk-hero { grid-area:hero; padding:24px 28px 22px; }
+  .prof-lead { display:grid; grid-template-columns:clamp(145px,21%,175px) minmax(0,1fr); gap:22px; align-items:center; }
+  .prof-lead-photo { position:relative; width:100%; aspect-ratio:1; min-height:0; padding:0; overflow:hidden; border:0; border-radius:50%; background:rgba(74,75,47,.07); box-shadow:var(--nm-in); cursor:pointer; }
+  .prof-lead-photo img { width:100%; height:100%; display:block; object-fit:cover; opacity:0; transition:opacity .35s ease; }
+  .prof-lead-photo.on img { opacity:1; }
+  .prof-lead-photo span { position:absolute; right:10px; bottom:10px; padding:5px 9px; border-radius:999px; background:rgba(18,16,14,.64); color:#fff; font-family:var(--mono); font-size:8px; letter-spacing:.12em; text-transform:uppercase; }
+  .prof-lead-main { min-width:0; }
+  .prof-desk-hero .prof-name { font-size:clamp(29px,2.7vw,38px); line-height:1.05; max-width:none; }
+  .prof-desk-hero .prof-sub { max-width:58ch; font-size:12px; line-height:1.35; }
+  .prof-desk-hero .prof-badges { display:none; }
+  .prof-rating-line { display:flex; align-items:baseline; flex-wrap:wrap; gap:6px; margin-top:5px; color:var(--olive); }
+  .prof-rating-stars { color:var(--olive); letter-spacing:1px; font-size:17px; line-height:1; }
+  .prof-rating-line b { font-size:14px; }
+  .prof-rating-line small { font-size:12px; color:var(--ebony); }
+  .prof-specialties { display:flex; flex-wrap:wrap; gap:5px 10px; margin-top:10px; font-size:12px; line-height:1.3; color:var(--ebony); }
+  .prof-specialties span::before { content:'•'; margin-right:7px; color:var(--olive); }
+  .prof-specialties span:first-child::before { display:none; }
+  .prof-summary { margin:11px 0 0; max-width:60ch; padding-top:11px; border-top:1px solid rgba(74,75,47,.11); font-size:12.5px; line-height:1.42; color:var(--ebony); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .prof-profile-facts { grid-column:1/-1; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; margin-top:16px; padding-top:13px; border-top:1px solid rgba(74,75,47,.11); }
+  .prof-profile-fact { min-width:0; padding:0 15px; border-left:1px solid rgba(74,75,47,.1); }
+  .prof-profile-fact:first-child { padding-left:0; border-left:0; }
+  .prof-profile-fact b { display:block; font-size:12px; color:var(--olive); line-height:1.22; }
+  .prof-profile-fact small { display:block; margin-top:3px; font-family:var(--mono); font-size:7.5px; line-height:1.35; letter-spacing:.09em; text-transform:uppercase; color:var(--ebony); }
+  .prof-desk-facts, .prof-desk-action { min-width:0; }
+  .prof-desk-facts { grid-area:facts; }
+  .prof-desk-action { grid-area:action; }
+  .prof-desk-facts > section, .prof-desk-action > section { padding:21px 22px; }
+  .prof-desk-facts .prof-sec-kick, .prof-desk-action .prof-sec-kick { margin-top:0; }
+  .prof-desk-facts .prof-sec-h, .prof-desk-action .prof-sec-h { margin-top:5px; font-size:25px; }
+  .prof-desk-facts .prof-block, .prof-desk-action .prof-block { margin-top:9px; padding:0; background:none; box-shadow:none; }
+  .prof-desk-action .prof-contactrow { display:grid; grid-template-columns:28px 58px 1fr; gap:8px; align-items:start; }
+  .prof-desk-action .prof-contactrow b { min-width:0; }
+  .prof-desk-action .prof-contactrow a { word-break:break-word; }
+  .prof-desk-action .pc-ic { display:grid; place-items:center; width:27px; height:27px; border-radius:50%; background:var(--nm); box-shadow:var(--nm-sm); color:var(--olive); }
+  .prof-desk-action .prof-req { display:flex; justify-content:center; width:100%; margin-top:15px; border-radius:14px; }
+  .prof-call { display:flex; align-items:center; justify-content:center; width:100%; min-height:46px; margin-top:10px; border:1px solid rgba(74,75,47,.16); border-radius:14px; color:var(--olive); text-decoration:none; font-size:14px; font-weight:700; background:var(--nm); box-shadow:var(--nm-sm); }
+  .prof-desk-action .prof-fine { line-height:1.5; }
+  .prof-desk-body { grid-area:body; padding:clamp(24px,2.9vw,38px); }
+  .prof-desk-body > .prof-sec-kick { margin-top:0; }
+  .prof-desk-body > .prof-sec-h { margin-top:5px; }
+  .prof-desk-body > .prof-fold-hi { margin-top:18px; }
+  .prof-desk-body .prof-block,.prof-desk-body .known-tile,.prof-desk-body .prof-fold-sum,.prof-desk-body .claim-toggle { background:var(--nm); }
+  .prof-work { margin-top:31px; padding-top:29px; border-top:1px solid rgba(74,75,47,.1); }
+  .prof-work .vph-profile .vph-track { height:245px; gap:8px; }
+  .prof-work .vph-tile { border-radius:17px; }
+
+  /* The lower-left card earns the reference image's at-a-glance feeling before
+     the longer evidence sections begin. */
+  .prof-glance-card { padding:20px 21px; border:1px solid rgba(74,75,47,.11); border-radius:18px; background:rgba(255,255,255,.18); box-shadow:var(--nm-sm); }
+  .prof-glance-card .prof-sec-h { margin-top:5px; }
+  .prof-glance-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); margin-top:17px; border-top:1px solid rgba(74,75,47,.1); border-bottom:1px solid rgba(74,75,47,.1); }
+  .prof-glance-stat { min-width:0; padding:14px 13px 13px; border-left:1px solid rgba(74,75,47,.1); }
+  .prof-glance-stat:first-child { padding-left:0; border-left:0; }
+  .prof-glance-stat b { display:block; color:var(--olive); font-size:17px; line-height:1.1; }
+  .prof-glance-stat small { display:block; margin-top:5px; color:var(--ebony); font-family:var(--mono); font-size:7.5px; line-height:1.35; letter-spacing:.08em; text-transform:uppercase; }
+  .prof-glance-read { margin-top:15px; padding:13px 14px; border-radius:13px; background:rgba(212,223,158,.18); }
+  .prof-glance-read p { margin:6px 0 0; max-width:70ch; color:var(--olive); font-size:13.5px; line-height:1.48; }
+  .prof-glance-known { margin-top:15px; }
+  .prof-glance-known > div { display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
+  .prof-glance-known span { padding:7px 10px; border-radius:999px; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); font-size:11px; }
+  .prof-detail { margin-top:26px; padding-top:26px; border-top:1px solid rgba(74,75,47,.11); }
+  .prof-detail > .prof-sec-h { margin-top:5px; }
+
+  .prof-facts-list { margin-top:14px; }
+  .prof-fact { display:grid; grid-template-columns:38px 1fr; gap:11px; padding:12px 0; border-top:1px solid rgba(74,75,47,.09); }
+  .prof-fact-ic { display:grid; place-items:center; width:36px; height:36px; border-radius:50%; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); }
+  .prof-fact-ic svg { width:17px; height:17px; }
+  .prof-fact-l { display:block; font-family:var(--mono); font-size:8px; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); }
+  .prof-fact strong { display:block; margin-top:1px; font-size:13.5px; color:var(--olive); line-height:1.3; }
+  .prof-fact small { display:block; margin-top:2px; font-size:11px; line-height:1.4; color:var(--ebony); }
+}
+
+@media (min-width:900px) and (max-width:1080px){
+  #s-profile .prof-wrap { padding-left:30px; padding-right:30px; }
+  .prof-desk-grid { grid-template-columns:minmax(0,1fr) 310px; }
+  .prof-lead { grid-template-columns:150px minmax(0,1fr); gap:21px; }
+  .prof-profile-facts { grid-template-columns:1fr 1fr; row-gap:13px; }
+  .prof-profile-fact:nth-child(3) { padding-left:0; border-left:0; }
+}
+
+@media (max-width:899px){
+  #s-profile.screen.active,#s-request.screen.active { min-height:0; height:100svh; overflow:hidden; }
+  .prof-desk-title { margin-bottom:14px; }
+  .prof-desk-label { margin:0; font-family:var(--serif); font-size:29px; line-height:1; letter-spacing:-.03em; color:var(--olive); }
+  .prof-desk-intro { margin-top:6px; font-size:12px; color:var(--ebony); }
+  .prof-desk-proof { display:inline-flex; margin-top:10px; padding:7px 10px; border-radius:999px; background:var(--nm); box-shadow:var(--nm-in); font-family:var(--mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase; color:var(--olive); }
+  .prof-desk-grid { display:flex; flex-direction:column; gap:14px; }
+  .prof-desk-panel { width:100%; border-radius:22px; background:var(--nm); box-shadow:var(--nm-out); padding:18px; }
+  .prof-desk-hero { order:1; }
+  .prof-lead { display:grid; grid-template-columns:106px minmax(0,1fr); gap:17px; align-items:start; }
+  .prof-lead-photo { position:relative; width:106px; aspect-ratio:1; min-height:0; margin-top:2px; padding:0; overflow:hidden; border:0; border-radius:50%; background:rgba(74,75,47,.07); box-shadow:var(--nm-in); }
+  .prof-lead-photo img { width:100%; height:100%; display:block; object-fit:cover; opacity:0; }
+  .prof-lead-photo.on img { opacity:1; }
+  .prof-lead-photo span { position:absolute; right:9px; bottom:9px; padding:5px 8px; border-radius:999px; background:rgba(18,16,14,.64); color:#fff; font-family:var(--mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase; }
+  .prof-desk-hero .prof-name { font-size:30px; }
+  .prof-rating-line { margin-top:7px; gap:5px; }
+  .prof-rating-stars { font-size:14px; }
+  .prof-rating-line b { font-size:12px; }
+  .prof-rating-line small { font-size:10.5px; line-height:1.3; }
+  .prof-specialties { gap:5px 9px; margin-top:11px; font-size:11.5px; }
+  .prof-specialties span { padding:4px 7px; border-radius:999px; background:rgba(212,223,158,.28); }
+  .prof-specialties span::before { display:none; }
+  .prof-summary { margin-top:15px; padding-top:14px; font-size:13px; }
+  .prof-profile-facts { grid-column:1/-1; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-top:16px; padding-top:15px; }
+  .prof-profile-fact { padding:9px 10px; border:0; border-radius:12px; background:rgba(74,75,47,.045); }
+  .prof-profile-fact:first-child { padding:9px 10px; }
+  .prof-desk-facts { order:2; width:100%; }
+  .prof-desk-action { order:3; width:100%; }
+  .prof-desk-facts > section, .prof-desk-action > section { padding:18px; }
+  .prof-desk-body { order:4; }
+  .prof-desk-facts .prof-sec-kick, .prof-desk-action .prof-sec-kick { margin-top:0; }
+  .prof-desk-action .prof-req { width:100%; justify-content:center; border-radius:14px; }
+  .prof-glance-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .prof-glance-stat:nth-child(3) { border-left:0; border-top:1px solid rgba(74,75,47,.1); }
+  .prof-glance-stat:nth-child(4) { border-top:1px solid rgba(74,75,47,.1); }
+  .prof-fact { display:none; }
+  .prof-work { margin-top:26px; padding-top:24px; border-top:1px solid rgba(74,75,47,.1); }
 }
 /* ── Work-photo gallery + lightbox (the Vesta app at parity with the /c/ backlinks) ── */
 .vph{ margin:13px 0 4px; }
@@ -4049,39 +4196,39 @@ function feedCardHTML(con, i){
   const bandText = (S.match && S.match.job) ? whyLine(con, S.match) : con.standing;
   const bandHTML = bandText ? '<div class="fcard-band'+(isM?' fcard-why':'')+'">'+(isM?SPARK:'')+esc(bandText)+'</div>' : '';
   return '<article class="fcard" data-place="'+esc(con.placeId)+'" style="--d:'+(Math.min(i||0,8)*30)+'ms">'+
-    '<div class="fcard-top">'+
-      '<div class="fcard-mono" aria-hidden="true">'+ICONS[tradeIconOf(con.trade)]+'</div>'+
-      '<div class="fcard-id"><div class="fcard-name" style="view-transition-name:'+vtName(con.placeId)+'">'+esc(con.name)+'</div>'+
-        '<div class="fcard-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
-        bandHTML+'</div>'+
-      '<div class="fcard-actions-top">'+
-        '<a class="fc-fullpill" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See full profile <span aria-hidden="true">→</span></a>'+
-        '<div class="fcard-menu">'+
-          '<button class="fc-menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="More options for '+esc(con.name)+'">'+DOTS+'</button>'+
-          '<div class="fmenu" role="menu">'+
-            '<button data-act="save" role="menuitem">'+BOOKMARK+'<span>'+(saved?'Saved':'Save')+'</span></button>'+
-            '<button data-act="copy" role="menuitem">'+LINKIC+'<span>Copy link</span></button>'+
-            '<hr>'+
-            '<button data-act="hide" role="menuitem">'+EYEOFF+'<span>Not interested</span></button>'+
-          '</div></div>'+
+    '<div class="fcard-summary">'+
+      // One supporting image—not a banner. On a wide desktop it occupies roughly
+      // one quarter of the decision card; the Vesta read remains the main surface.
+      '<button class="vph-cover-btn" type="button" data-place="'+esc(con.placeId)+'" aria-label="See work photos for '+esc(con.name)+'">'+
+        '<img class="vph-cover" decoding="async" alt="" data-src="'+esc(HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=640'))+'" '+
+          'onload="this.parentElement.classList.add(\'vph-cover--on\')" onerror="this.closest(\'.vph-cover-btn\').remove()">'+
+        '<span class="vph-cover-badge">Work photos</span>'+
+      '</button>'+
+      '<div class="fcard-core">'+
+        '<div class="fcard-top">'+
+          '<div class="fcard-mono" aria-hidden="true">'+ICONS[tradeIconOf(con.trade)]+'</div>'+
+          '<div class="fcard-id"><div class="fcard-name" style="view-transition-name:'+vtName(con.placeId)+'">'+esc(con.name)+'</div>'+
+            '<div class="fcard-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
+            bandHTML+'</div>'+
+          '<div class="fcard-actions-top">'+
+            '<a class="fc-fullpill" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See full profile <span aria-hidden="true">→</span></a>'+
+            '<div class="fcard-menu">'+
+              '<button class="fc-menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="More options for '+esc(con.name)+'">'+DOTS+'</button>'+
+              '<div class="fmenu" role="menu">'+
+                '<button data-act="save" role="menuitem">'+BOOKMARK+'<span>'+(saved?'Saved':'Save')+'</span></button>'+
+                '<button data-act="copy" role="menuitem">'+LINKIC+'<span>Copy link</span></button>'+
+                '<hr>'+
+                '<button data-act="hide" role="menuitem">'+EYEOFF+'<span>Not interested</span></button>'+
+              '</div></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
+        readHTML(con,'fcard-syn clamp')+
+        (trust.length?'<div class="fcard-chips">'+trust.map(v=>'<span class="fcard-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
+        '<button class="fcard-disclose" aria-expanded="false"><span>Vesta’s full analysis</span><span class="chev">'+CHEV+'</span></button>'+
+        '<div class="fcard-more"><div class="fcard-more-inner">'+feedMoreHTML(con)+'</div></div>'+
       '</div>'+
     '</div>'+
-    // Lead with the idea, not the picture. Vesta's read sits directly under the name so the whole
-    // verdict reads without scrolling; the work photo follows as proof (it used to be a 290px banner
-    // that shoved the read below the fold — the read IS the product, so it leads).
-    '<div class="fcard-readlbl"><span class="sp">'+SPARK+'</span>Vesta’s read</div>'+
-    readHTML(con,'fcard-syn clamp')+
-    (trust.length?'<div class="fcard-chips">'+trust.map(v=>'<span class="fcard-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
-    // One lazy hero per card (native loading="lazy"): a feed is a many-card list, so
-    // 5 photos x 40 cards froze the renderer + burned the Places budget. The hero loads
-    // only when scrolled near; tapping it opens the full gallery (all photos).
-    '<button class="vph-cover-btn" type="button" data-place="'+esc(con.placeId)+'" aria-label="See work photos for '+esc(con.name)+'">'+
-      '<img class="vph-cover" decoding="async" alt="" data-src="'+esc(HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=640'))+'" '+
-        'onload="this.parentElement.classList.add(\'vph-cover--on\')" onerror="this.closest(\'.vph-cover-btn\').remove()">'+
-      '<span class="vph-cover-badge">Photos</span>'+
-    '</button>'+
-    '<button class="fcard-disclose" aria-expanded="false"><span>Vesta’s full analysis</span><span class="chev">'+CHEV+'</span></button>'+
-    '<div class="fcard-more"><div class="fcard-more-inner">'+feedMoreHTML(con)+'</div></div>'+
     '<div class="fcard-actions">'+
       '<button class="fc-save'+(saved?' on':'')+'" aria-pressed="'+saved+'">'+(saved?BOOKMARK_FILL:BOOKMARK)+'<span class="lbl">'+(saved?'Saved':'Save')+'</span></button>'+
       '<button class="fc-req">Request through Vesta</button>'+
@@ -4611,11 +4758,11 @@ function pTradeKey(){ const enr=profData.enr, p=profData.p; return (enr && enr.t
 async function openProfile(placeId){
   if (!placeId) return;
   logView(placeId, S.activeTrade);
-  S.profFrom = { screen:S.screen, mode:S.mode, trade:S.activeTrade };
+  S.profFrom = { screen:S.screen, mode:S.mode, trade:S.activeTrade,
+    feedScroll:(S.screen==='browse' && $('feed')) ? $('feed').scrollTop : 0 };
   closeSheet(); closeSearch(); if (S.filterOpen) closeFilterSheet(); closeFeedMenus();
   showScreen('profile'); updateNavState();
   const sc=$('prof-scroll'); if(sc) sc.scrollTop=0;
-  window.scrollTo(0,0);   // desktop scrolls the document, not prof-scroll — without this the profile opens blank at the deck's old offset
   $('prof-wrap').innerHTML = '<div class="prof-loading">Loading profile…</div>';
   wireProfBack();
   try {
@@ -4626,10 +4773,13 @@ async function openProfile(placeId){
       '&limit=1&select=trade,registered,hic_issue_date,trade_license,certifications,synthesis,synthesis_review_count,'+
       'signature,known_for,specialties,service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,'+
       'capabilities,value_tier,deep_review_count,rating_count,best_for,project_scale,responsiveness,'+
-      'pricing_profile,recurring_praise,crew_named');
+      'pricing_profile,recurring_praise,crew_named,enriched_at');
     const enr = Array.isArray(enrRows) && enrRows[0] ? enrRows[0] : null;
     profData = { placeId, p:data.place, enr, claimed:!!data.claimed, unlocked:data.unlocked||null };
     renderProfile();
+    // Rendering changes the scroll height; reset the actual owner again after
+    // the real profile and photo grid exist so a prior profile can never leak in.
+    if (sc) sc.scrollTop=0;
   } catch(_){
     $('prof-wrap').innerHTML = profErrorHTML(); wireProfBack();
   }
@@ -4645,6 +4795,7 @@ function backFromProfile(){
     showScreen('browse'); renderNeedChips(); renderSidebar();
     if (f.mode==='saved'){ showFav(); renderSaved(); } else { showDeck(); updateBrowseHead(); renderDeck(); }
     updateNavState();
+    const feed=$('feed'); if (feed && Number.isFinite(f.feedScroll)) feed.scrollTop=f.feedScroll;
   } else if (f && f.screen==='home'){
     // opened from a Vesta Live pick — return to the conversation, which is still intact in
     // #s-home (.vconv + #vm-thread persist; showScreen only toggles the active class). The
@@ -4667,9 +4818,45 @@ function profHeroHTML(){
   return ''+
     '<h1 class="prof-name">'+esc(p.name)+'</h1>'+
     '<p class="prof-sub">'+(tName?esc(tName)+' · ':'')+esc(String(p.address||'').replace(/,?\s*(USA|United States)\.?$/i,''))+'</p>'+
-    '<div class="prof-badges">'+badges.join('')+'</div>'+
+    '<div class="prof-badges">'+badges.join('')+'</div>';
+}
+
+const PROF_FACT_IC = {
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.8 8.1-7 10-4.2-1.9-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-5"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5 10.5 15 16 9"/></svg>',
+  calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>'
+};
+function profRefreshLabel(iso){
+  if (!iso) return '';
+  const d=new Date(iso); if (isNaN(d)) return '';
+  return d.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+}
+function profFactsHTML(){
+  const p=profData.p||{}, enr=profData.enr||{}, trade=pTradeKey();
+  const rows=[];
+  if (p.address) rows.push([PROF_FACT_IC.pin,'Business location',String(p.address).replace(/,?\s*(USA|United States)\.?$/i,''),'Public business listing']);
+  if (enr.registered) rows.push([PROF_FACT_IC.shield,'Public record','Active CT registration','Checked against the state registry']);
+  if (Array.isArray(enr.trade_license)&&enr.trade_license.length) rows.push([PROF_FACT_IC.check,'Trade credential','Licensed '+((PTRADE_LABEL[trade]||'trade').toLowerCase()),'Verified in Connecticut eLicense']);
+  const photos=Array.isArray(p.photos) ? p.photos.filter(x=>x&&x.ref).length : 0;
+  if (photos) rows.push([PROF_FACT_IC.calendar,'Work gallery',photos+' public work photo'+(photos===1?'':'s'),'From the public Google listing']);
+  const refreshed=profRefreshLabel(enr.enriched_at);
+  if (refreshed) rows.push([PROF_FACT_IC.calendar,'Vesta review','Read refreshed '+refreshed,'Public reviews and records synthesized']);
+  if (!rows.length) return '';
+  return '<section class="prof-facts-panel prof-desk-panel" aria-label="What is established">'+
+    '<span class="prof-sec-kick">Profile details</span><h2 class="prof-sec-h">Service &amp; record</h2>'+
+    '<div class="prof-facts-list">'+rows.slice(0,4).map(r=>
+      '<div class="prof-fact"><span class="prof-fact-ic">'+r[0]+'</span><span><span class="prof-fact-l">'+esc(r[1])+'</span><strong>'+esc(r[2])+'</strong><small>'+esc(r[3])+'</small></span></div>'
+    ).join('')+'</div></section>';
+}
+function profActionRailHTML(){
+  const u=profData.unlocked||{};
+  const call=u.phone ? '<a class="prof-call" href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">Call '+esc(u.phone)+'</a>' : '';
+  return '<section class="prof-action-panel prof-desk-panel" aria-label="Your next step">'+
+    '<span class="prof-sec-kick">Contact &amp; request</span><h2 class="prof-sec-h">Get in touch</h2>'+
+    '<p class="prof-sec-note">Reach out directly, or let Vesta carry one clear request to this contractor.</p>'+
     '<button class="prof-req" id="prof-req-btn">Request through Vesta <span aria-hidden="true">→</span></button>'+
-    '<p class="prof-fine">One form — Vesta carries your request to them, replies come straight to you.</p>';
+    call+'<p class="prof-fine">Your information is not auctioned or resold.</p>'+profContactHTML(true)+'</section>';
 }
 function profSignatureHTML(){ const enr=profData.enr; return (enr && enr.signature) ? '<p class="prof-sig">'+esc(enr.signature)+'</p>' : ''; }
 // Vesta's read = the verdict — the single most important thing on the page, so it's the
@@ -5004,22 +5191,27 @@ const PC_IC = {
   globe:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>',
   at:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-3.9 7.9"/></svg>'
 };
-function profContactRows(u){
+function profContactRows(u, omitPhone){
   const rows=[];
   const row = (ic, label, a) => '<div class="prof-contactrow"><span class="pc-ic">'+ic+'</span><b>'+label+'</b>'+a+'</div>';
-  if (u.phone) rows.push(row(PC_IC.phone, 'Phone', '<a href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">'+esc(u.phone)+'</a>'));
-  if (u.website) rows.push(row(PC_IC.globe, 'Website', '<a href="'+esc(u.website)+'" rel="nofollow noopener" target="_blank">'+esc(String(u.website).replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))+'</a>'));
+  if (u.phone && !omitPhone) rows.push(row(PC_IC.phone, 'Phone', '<a href="tel:'+esc(String(u.phone).replace(/[^\d+]/g,''))+'">'+esc(u.phone)+'</a>'));
+  if (u.website){
+    let display=String(u.website).replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
+    try { display=(new URL(u.website)).hostname.replace(/^www\./,''); } catch(_){}
+    rows.push(row(PC_IC.globe, 'Website', '<a href="'+esc(u.website)+'" rel="nofollow noopener" target="_blank">'+esc(display)+'</a>'));
+  }
   if (u.socials) for (const k in u.socials){ if (u.socials[k]) rows.push(row(PC_IC.at, esc(HOME.tradeLabel(k)), '<a href="'+esc(u.socials[k])+'" rel="nofollow noopener" target="_blank">'+esc(String(u.socials[k]).replace(/^https?:\/\/(www\.)?/,''))+'</a>')); }
   return rows.length ? rows.join('') : '<p class="prof-fine">No public contact details surfaced for this pro — they may be phone-unlisted. Try the request flow instead.</p>';
 }
-function profContactHTML(){
+function profContactHTML(omitPhone){
   const head = '<span class="prof-sec-kick">Reach out</span><h2 class="prof-sec-h">Contact</h2>';
   // Contact is public: the Google Maps link on this profile already exposes phone + website,
   // so the server returns it to everyone — no sign-in gate, no blurred teaser. `unlocked` is
   // only ever empty when the upstream Places fetch failed; show an honest fallback then.
   const u = profData.unlocked;
+  if (omitPhone && u && u.phone && !u.website && !(u.socials && Object.keys(u.socials).length)) return '';
   if (u && (u.phone || u.website || (u.socials && Object.keys(u.socials).length)))
-    return head+'<div class="prof-block">'+profContactRows(u)+'</div>';
+    return head+'<div class="prof-block">'+profContactRows(u, omitPhone)+'</div>';
   return head+'<div class="prof-block"><p style="font-size:13.5px;color:var(--ebony);margin:0">We couldn’t pull this pro’s public contact details right now — the Google reviews link above lists their phone and website, or reach out through Vesta.</p></div>';
 }
 const AM_IC = {
@@ -5077,6 +5269,64 @@ function profRemovalHTML(){
     'To remove or correct it, email <a href="mailto:contact@4thwall.solutions?subject=Vesta%20listing%20removal">contact@4thwall.solutions</a> '+
     '(<a href="/terms.html#directory">how this works ›</a>).</p>';
 }
+const PTRADE_PROFILE = { roofing:'Roofer', hvac:'HVAC contractor', plumbing:'Plumber', electrical:'Electrician', paving:'Paving contractor', lawn_care:'Landscaper', painting:'Painter', masonry:'Mason', tree_service:'Tree service', flooring:'Flooring installer', windows_doors:'Window & door installer', pool:'Pool contractor' };
+function profLeadPhotoHTML(){
+  const photos=(profData.p&&Array.isArray(profData.p.photos)) ? profData.p.photos.filter(x=>x&&x.ref) : [];
+  if (!photos.length) return '';
+  const first=photos[0];
+  return '<button class="prof-lead-photo" type="button" aria-label="Open '+photos.length+' work photos">'+
+    '<img src="'+esc(photoUrl(first.ref,700))+'" alt="Work photo'+(first.attribution?' by '+esc(first.attribution):'')+'" decoding="async" loading="eager" '+
+      'onload="this.parentElement.classList.add(\'on\')" onerror="this.parentElement.remove()">'+
+    '<span>View all '+photos.length+'</span></button>';
+}
+function profProfileIdentityHTML(){
+  const p=profData.p||{}, enr=profData.enr||{};
+  const known=Array.isArray(enr.known_for) ? enr.known_for.filter(k=>k&&k.label).slice(0,3) : [];
+  const rating=(p.rating!=null && p.rating_count) ? '<div class="prof-rating-line"><span class="prof-rating-stars" aria-hidden="true">★★★★★</span><b>'+esc(p.rating)+'</b><small>('+Number(p.rating_count).toLocaleString('en-US')+' public Google reviews)</small></div>' : '';
+  const specialties=known.length ? '<div class="prof-specialties">'+known.map(k=>'<span>'+esc(k.label)+'</span>').join('')+'</div>' : '';
+  return '<div class="prof-lead-main">'+profHeroHTML()+rating+specialties+profProfileSummaryHTML()+'</div>';
+}
+function profProfileSummaryHTML(){
+  const enr=profData.enr||{};
+  const split=enr.synthesis ? splitRead(enr.synthesis) : { lede:'' };
+  const summary=split.lede || enr.signature || '';
+  return summary ? '<p class="prof-summary">'+esc(summary)+'</p>' : '';
+}
+function profProfileFactsHTML(){
+  const p=profData.p||{}, enr=profData.enr||{};
+  const facts=[];
+  if (enr.rating_band==='top10' || enr.rating_band==='top25') facts.push([(enr.rating_band==='top10'?'Top 10%':'Top 25%')+' band','Fairfield County field']);
+  if (p.rating!=null && p.rating_count) facts.push([esc(p.rating)+'★ · '+Number(p.rating_count).toLocaleString('en-US'),'Public Google reviews']);
+  const photos=Array.isArray(p.photos) ? p.photos.filter(x=>x&&x.ref).length : 0;
+  if (photos) facts.push([photos+' work photo'+(photos===1?'':'s'),'Public Google listing']);
+  const refreshed=profRefreshLabel(enr.enriched_at); if (refreshed) facts.push([refreshed,'Vesta read refreshed']);
+  return facts.length ? '<div class="prof-profile-facts">'+facts.slice(0,4).map(f=>'<span class="prof-profile-fact"><b>'+f[0]+'</b><small>'+esc(f[1])+'</small></span>').join('')+'</div>' : '';
+}
+function profLeadHTML(){
+  return '<div class="prof-lead">'+profLeadPhotoHTML()+profProfileIdentityHTML()+profProfileFactsHTML()+'</div>';
+}
+// A compact, source-labeled summary that makes the lower card useful before the
+// homeowner reaches the longer evidence record. Every value is already present
+// in the public listing or the public enrichment row; missing fields stay absent.
+function profAtAGlanceHTML(){
+  const p=profData.p||{}, enr=profData.enr||{};
+  const stats=[];
+  if (p.rating!=null && p.rating_count) stats.push([esc(p.rating)+'★ · '+Number(p.rating_count).toLocaleString('en-US'),'Public Google reviews']);
+  const photos=Array.isArray(p.photos) ? p.photos.filter(x=>x&&x.ref).length : 0;
+  if (photos) stats.push([photos+' work photo'+(photos===1?'':'s'),'Public Google listing']);
+  if (enr.registered) stats.push(['Active','CT public registration']);
+  const refreshed=profRefreshLabel(enr.enriched_at); if (refreshed) stats.push([esc(refreshed),'Vesta read refreshed']);
+  if (!stats.length && !(enr.synthesis||enr.signature) && !(Array.isArray(enr.known_for)&&enr.known_for.length)) return '';
+  const known=Array.isArray(enr.known_for) ? enr.known_for.filter(k=>k&&k.label).slice(0,3) : [];
+  const split=enr.synthesis ? splitRead(enr.synthesis) : { lede:'' };
+  const read=split.lede || enr.signature || '';
+  return '<section class="prof-glance-card" aria-label="Profile at a glance">'+
+    '<span class="prof-sec-kick">Credentials &amp; reviews</span><h2 class="prof-sec-h">At a glance</h2>'+
+    (stats.length ? '<div class="prof-glance-stats">'+stats.slice(0,4).map(s=>'<span class="prof-glance-stat"><b>'+s[0]+'</b><small>'+esc(s[1])+'</small></span>').join('')+'</div>' : '')+
+    (read ? '<div class="prof-glance-read"><span class="prof-sec-kick">Vesta’s read</span><p>'+esc(read)+'</p></div>' : '')+
+    (known.length ? '<div class="prof-glance-known"><span class="prof-sec-kick">Known for</span><div>'+known.map(k=>'<span>'+esc(k.label)+'</span>').join('')+'</div></div>' : '')+
+  '</section>';
+}
 // Work-photo gallery on the in-app profile — the same one /c/ shows. The photos are
 // already in profData.p.photos (openProfile fetched /c/:id), so render inline, no extra call.
 function profPhotosHTML(){
@@ -5084,20 +5334,31 @@ function profPhotosHTML(){
   if (!photos.length) return '';
   return '<div class="vph vph-profile" id="prof-photos" data-ph="1">'+galleryHTML(photos,'profile')+'</div>';
 }
+function profWorkHTML(){
+  const gallery=profPhotosHTML(); if (!gallery) return '';
+  return '<section class="prof-work"><span class="prof-sec-kick">Work photos</span><h2 class="prof-sec-h">Their work, in view</h2>'+gallery+'</section>';
+}
 function renderProfile(){
-  // Reader/marketing flow — one home per fact, verdict first:
-  //   identity+CTA → photos → VESTA'S READ (the verdict — signature + synthesis in
-  //   the highlighted dropdown, top of the page) → "Known for" headline tiles (the
-  //   scannable layer) → The Record (dot strip · track record · how they operate ·
-  //   chips — the provable data) → firm file → external reference → contact →
-  //   (collapsed) hire checklist → (collapsed) claim.
-  $('prof-wrap').innerHTML = profHeroHTML()+profPhotosHTML()+profReadHTML()+profKnownHTML()+profTheRecordHTML()+profGlanceHTML()+
-    profGoogleHTML()+profContactHTML()+profGuideHTML()+profClaimHTML()+profRemovalHTML();
+  // One Vesta profile grammar at two depths: the opening is a compact decision
+  // dossier (identity, verdict, proof, one supporting image); the scroll expands
+  // the same evidence and only then opens the complete work gallery.
+  const trade=pTradeKey(); const profileLabel=PTRADE_PROFILE[trade] || 'Contractor';
+  const title = '<header class="prof-desk-title"><div><p class="prof-desk-label">'+esc(profileLabel)+' profile</p>'+
+    '<p class="prof-desk-intro">Fairfield County evidence file · ranked by Vesta.</p></div>'+
+    '<span class="prof-desk-proof">✦ Ranked by the record, never by payment</span></header>';
+  const hero = '<section class="prof-desk-hero prof-desk-panel">'+profLeadHTML()+'</section>';
+  const facts = '<aside class="prof-desk-facts" aria-label="Profile details">'+profFactsHTML()+'</aside>';
+  const action = '<aside class="prof-desk-action" aria-label="Your next step">'+profActionRailHTML()+'</aside>';
+  const body = '<section class="prof-desk-body prof-desk-panel">'+profAtAGlanceHTML()+
+    '<div class="prof-detail"><span class="prof-sec-kick">Vesta’s full record</span><h2 class="prof-sec-h">Evidence in depth</h2>'+profReadHTML()+profKnownHTML()+profWorkHTML()+profTheRecordHTML()+profGlanceHTML()+
+    profGoogleHTML()+profGuideHTML()+profClaimHTML()+profRemovalHTML()+'</div></section>';
+  $('prof-wrap').innerHTML = title+'<div class="prof-desk-grid">'+hero+facts+body+action+'</div>';
   wireProfile();
 }
 function wireProfBack(){ const b=$('prof-back'); if(b) b.addEventListener('click', backFromProfile); }
 function wireProfile(){
   wireProfBack();
+  const lp=document.querySelector('.prof-lead-photo'); if(lp) lp.addEventListener('click', ()=>{ const ph=((profData.p&&profData.p.photos)||[]).filter(x=>x&&x.ref); if(ph.length) openPhotoLightbox(ph,0); });
   const pm=$('prof-photos'); if(pm){ const ph=((profData.p&&profData.p.photos)||[]).filter(x=>x&&x.ref); pm.addEventListener('click', e=>{ const t=e.target.closest('.vph-tile'); if(t) openPhotoLightbox(ph, +t.dataset.i||0); }); }
   const claim=$('prof-claim'); if(claim) claim.addEventListener('submit', profClaimSubmit);
   const req=$('prof-req-btn'); if(req) req.addEventListener('click', () => enterRequest({ placeId:profData.placeId, trade:(TRADE_APP[pTradeKey()]||pTradeKey()), name:(profData.p&&profData.p.name)||'' }));
@@ -5137,7 +5398,6 @@ function enterRequest(ctx){
   reqData = { placeId:ctx.placeId, trade:ctx.trade||'', name:ctx.name||'', match:carry };
   showScreen('request'); updateNavState();
   const sc=$('req-scroll'); if(sc) sc.scrollTop=0;
-  window.scrollTo(0,0);   // same document-scroll reset as openProfile
   $('req-wrap').innerHTML = requestHTML();
   wireRequest();
 }
@@ -5221,7 +5481,6 @@ async function requestSubmit(e){
         '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><button type="button" class="de-btn ghost" id="rq-back2">Done</button></div></div>';
       const bb=$('rq-back2'); if(bb) bb.addEventListener('click', backFromRequest);
       const sc=$('req-scroll'); if(sc) sc.scrollTop=0;
-      window.scrollTo(0,0);
     } else {
       fail(r && r.error==='rate_limited' ? 'Daily send limit reached — try again tomorrow.' : 'Couldn’t send — try again.');
     }
