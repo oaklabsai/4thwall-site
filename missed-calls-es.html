@@ -400,7 +400,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     chat.push({ role:'user', content:text });
     var myId = convoId;
     input.value = ''; input.disabled = true; sendBtn.disabled = true; typing(true);
-    fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ trade:curTrade, messages: chat.slice(-10) }) })
+    fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ trade:curTrade, lang:'es', messages: chat.slice(-10) }) })
       .then(function(r){ return r.json().catch(function(){ return {}; }); })
       .then(function(d){
         if (myId !== convoId) return;
