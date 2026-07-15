@@ -118,8 +118,6 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 .brief-num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--tea-grad);color:var(--ink);font-family:var(--mono);font-size:.72rem;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:var(--nm-sm);margin-top:.1rem}
 .brief-item-body b{font-size:.96rem;color:var(--ink);font-weight:600;display:block;margin-bottom:.15rem}
 .brief-item-body span{font-size:.87rem;color:var(--muted);line-height:1.5}
-.brief-price{margin-top:1.5rem;padding-top:1.3rem;border-top:1px solid var(--line-2);font-size:.87rem;color:var(--muted);line-height:1.55}
-.brief-price b{color:var(--ink);font-weight:600}
 .brief-vesta{margin-top:1.6rem;padding-top:1.4rem;border-top:1px solid var(--line-2)}
 .brief-vesta-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive);margin-bottom:.55rem}
 .brief-vesta p{font-size:.92rem;color:var(--muted);line-height:1.55}
@@ -224,8 +222,6 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
         </div>
       </div>
 
-      <div class="brief-price">Tarifa estándar: <b>$1,500/mes</b>, todo incluido — sin cargo de instalación, sin cargo por usuario, sin contrato. Los primeros socios fundadores reciben <b>$750/mes fijo por 12 meses</b>. Puedes salir con 30 días de aviso.</div>
-
       <div class="brief-vesta">
         <div class="brief-vesta-eyebrow">Y detrás de Atlas — Vesta</div>
         <p>Vesta es el directorio que estamos construyendo para que un dueño de casa vea tu <b>historial real</b> — tus reseñas, tu registro público, el trabajo por el que te conocen — no solo una estrella comprada o inflada.</p>
@@ -299,7 +295,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
       <div class="col-head">② Ahora detén la fuga <span class="col-head-arrow">↓ pruébalo en vivo</span></div>
       <p class="demo-lead"><b>Sé uno de tus propios clientes.</b> Esta es la recepción con IA que contesta cuando tú no puedes — escríbele como si fueras un cliente y mira lo que recibiría en vez de tu buzón de voz.</p>
       <div class="demo-chat">
-      <div class="dc-head"><span class="dc-dot"></span><span class="dc-biz" id="dc-biz">Techos Summit Ridge</span><span>· recepción con IA</span><button type="button" class="dc-reset" id="dc-reset" title="Empezar de nuevo" aria-label="Empezar de nuevo">↺</button></div>
+      <div class="dc-head"><span class="dc-dot"></span><span class="dc-biz" id="dc-biz">Summit Ridge Roofing</span><span>· recepción con IA</span><button type="button" class="dc-reset" id="dc-reset" title="Empezar de nuevo" aria-label="Empezar de nuevo">↺</button></div>
       <div class="dc-thread" id="dc-thread"></div>
       <form class="dc-input" id="dc-form" autocomplete="off">
         <input id="dc-msg" type="text" placeholder="Escribe como si fueras un cliente…" maxlength="500" aria-label="Tu mensaje">
@@ -356,7 +352,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
   // ── selector de oficio + "escríbele a tu recepción" demo ───────────────────
   var WORKER = 'https://fourthwall-bot.4thwalldevelopment.workers.dev/demo-reply';
   var TRADES = {
-    roofing:    { biz:'Techos Summit Ridge',        ticket:3500, greet:"Hola, gracias por escribir a Techos Summit Ridge. ¿Qué está pasando con tu techo?" },
+    roofing:    { biz:'Summit Ridge Roofing',        ticket:3500, greet:"Hola, gracias por escribir a Summit Ridge Roofing. ¿Qué está pasando con tu techo?" },
     hvac:       { biz:'TrueComfort Calefacción y A.A.', ticket:1500, greet:"Hola — TrueComfort Calefacción y Aire Acondicionado. ¿Es el calor o el aire lo que te está dando problema?" },
     plumbing:   { biz:'Plomería Anchor',            ticket:350,  greet:"Gracias por escribir a Plomería Anchor. ¿Qué está pasando — hay agua saliendo ahora mismo, o es otra cosa?" },
     electrical: { biz:'Eléctrico Brightwork',       ticket:600,  greet:"Hola, aquí Eléctrico Brightwork. ¿En qué te podemos ayudar — un proyecto nuevo, o algo que dejó de funcionar?" },
