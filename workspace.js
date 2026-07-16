@@ -472,9 +472,50 @@
         location.replace('/lens');
       });
     }
+    wireSignOutEverywhere();
+    await loadSessions();
     await consumeHandoff();
     await loadConnection();
     return true;
+  }
+
+  function describeSession(entry) {
+    const started = new Date(entry.started_at);
+    const label = isNaN(started) ? 'Unknown start' : started.toLocaleDateString(undefined, {
+      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+    });
+    return label + (entry.current ? ' · this device' : '');
+  }
+
+  async function loadSessions() {
+    const target = document.getElementById('settings-sessions');
+    if (!target) return;
+    const result = await api('/workspace/sessions', { method: 'GET' });
+    if (!result.ok || !Array.isArray(result.data.sessions)) {
+      setText('settings-sessions', 'Active sessions could not be loaded.');
+      return;
+    }
+    const sessions = result.data.sessions;
+    const count = sessions.length;
+    setText('settings-sessions', count === 1
+      ? 'One active session, started ' + describeSession(sessions[0]) + '.'
+      : count + ' active sessions: ' + sessions.map(describeSession).join(' · ') + '.');
+    const button = document.getElementById('settings-signout-all-action');
+    if (button) button.disabled = count === 0;
+  }
+
+  function wireSignOutEverywhere() {
+    const button = document.getElementById('settings-signout-all-action');
+    if (!button || button.dataset.wired) return;
+    button.dataset.wired = '1';
+    button.addEventListener('click', async function () {
+      if (!window.confirm('Sign out on every device? This ends every session, including this one, and you will need a new sign-in link.')) return;
+      button.disabled = true;
+      const result = await api('/workspace/signout-all', { method: 'POST' });
+      if (!result.ok) { button.disabled = false; setText('settings-sessions', 'Sessions could not be revoked. Nothing changed.'); return; }
+      try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
+      location.replace('/lens');
+    });
   }
 
   function openJobberConsent() {

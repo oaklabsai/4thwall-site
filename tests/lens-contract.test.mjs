@@ -194,3 +194,35 @@ test('the workspace carries a real support path with a quotable reference (Sol I
   assert.match(workspace, /never ask you for a password, a login link or your provider password/,
     'the support path must state what 4THWALL will never ask for');
 });
+
+test('the workspace lets a contractor see and kill their own sessions (Sol ISS-0005 NEXT item 2)', async () => {
+  const html = await text('workspace.html');
+  const js = await text('workspace.js');
+
+  // The control exists and sits with the other lifecycle controls.
+  assert.match(html, /<h2>Signed-in devices<\/h2>/);
+  assert.match(html, /id="settings-sessions"/);
+  assert.match(html, /id="settings-signout-all-action"[^>]*>Sign out everywhere</);
+  assert.ok(
+    html.indexOf('settings-signout-all-action') < html.indexOf('settings-erase-action'),
+    'a security control must not sit below the destructive one',
+  );
+
+  // Copy is honest about what Lens does NOT record, and about the consequence.
+  assert.match(html, /does not record device names, locations or IP addresses/);
+  assert.match(html, /ends every session, including this one/);
+
+  // Wiring: read the real routes, confirm before revoking, drop the local token.
+  assert.match(js, /api\('\/workspace\/sessions', \{ method: 'GET' \}\)/);
+  assert.match(js, /api\('\/workspace\/signout-all', \{ method: 'POST' \}\)/);
+  const handler = js.slice(js.indexOf('function wireSignOutEverywhere'));
+  assert.match(handler, /window\.confirm\(/);
+  assert.ok(
+    handler.indexOf('window.confirm(') < handler.indexOf("'/workspace/signout-all'"),
+    'revoke-all must never fire before the contractor confirms',
+  );
+  assert.match(handler, /localStorage\.removeItem\(SESSION_KEY\)/);
+
+  // A failed revoke must not lie about what happened.
+  assert.match(handler, /Sessions could not be revoked\. Nothing changed\./);
+});
