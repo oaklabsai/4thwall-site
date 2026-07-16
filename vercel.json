@@ -99,13 +99,21 @@
     {
       "source": "/auth/(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" },
+        { "key": "Content-Security-Policy", "value": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://vinytnzzgryodyrftabg.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'" }
       ]
     },
     {
       "source": "/workspace(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" },
+        { "key": "Content-Security-Policy", "value": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://vinytnzzgryodyrftabg.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'" }
+      ]
+    },
+    {
+      "source": "/lens",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://vinytnzzgryodyrftabg.supabase.co; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'" }
       ]
     }
   ]

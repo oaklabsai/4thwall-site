@@ -436,6 +436,9 @@
       return false;
     }
     accountWorkspace = result.data.workspace;
+    if (result.data.rotated_session_token) {
+      try { localStorage.setItem(SESSION_KEY, result.data.rotated_session_token); } catch (_) {}
+    }
     const profile = accountWorkspace.profile || {};
     if (!profile.business_name) { location.replace('/workspace/onboarding'); return false; }
     setPill('workspace-mode', 'Workspace beta', 'status-beta');

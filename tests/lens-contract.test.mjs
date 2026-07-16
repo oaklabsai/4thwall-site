@@ -166,3 +166,17 @@ test('plain-vocabulary pass holds (DEC: naming hierarchy + retired jargon)', asy
   assert.match(lens, /an explanation, not a review or endorsement/, 'the public demo read carries the provenance line');
   assert.match(workspace, /<span id="readiness-percent">7\/9<\/span><small>setup checks<\/small>/, 'demo readiness shows literal checks, not a percent');
 });
+
+test('workspace surfaces carry a strict CSP and the client honors session rotation', async () => {
+  const config = JSON.parse(await text('vercel.json'));
+  for (const source of ['/workspace(.*)', '/auth/(.*)', '/lens']) {
+    const entry = config.headers.find((row) => row.source === source);
+    const csp = (entry?.headers || []).find((h) => h.key === 'Content-Security-Policy')?.value || '';
+    assert.match(csp, /default-src 'none'/, source + ' must default-deny');
+    assert.match(csp, /script-src 'self'(;| )/, source + ' must not allow inline or third-party script');
+    assert.match(csp, /connect-src 'self' https:\/\/vinytnzzgryodyrftabg\.supabase\.co/, source + ' must pin API origins');
+    assert.doesNotMatch(csp, /script-src[^;]*unsafe-inline/, source + ' must never allow inline script');
+  }
+  const script = await text('workspace.js');
+  assert.match(script, /rotated_session_token/, 'the client must store a rotated session token');
+});
