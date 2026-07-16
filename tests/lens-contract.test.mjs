@@ -226,3 +226,27 @@ test('the workspace lets a contractor see and kill their own sessions (Sol ISS-0
   // A failed revoke must not lie about what happened.
   assert.match(handler, /Sessions could not be revoked\. Nothing changed\./);
 });
+
+test('a lapsed provider reads as "reconnect", never as "never connected" (Sol ISS-0005 provider-expiry)', async () => {
+  const js = await text('workspace.js');
+  const branch = js.slice(
+    js.indexOf('if (state && state.reauthorization_required) {'),
+    js.indexOf("if (!connected) {"),
+  );
+  assert.ok(branch.length > 0, 'the lapsed state must be handled before the not-connected branch');
+
+  // The contractor is told their record survived — the whole promise of a lapse.
+  assert.match(branch, /existing records and decisions are unchanged/i);
+  assert.match(branch, /Reconnect needed/);
+  assert.match(branch, /action\.textContent = 'Reconnect Jobber'/);
+
+  // It must NOT zero the counts. "0 records" during a lapse is false: the
+  // evidence is intact and the receipt still loads.
+  assert.doesNotMatch(branch, /'0 records'/);
+  assert.doesNotMatch(branch, /No real evidence source connected/);
+  assert.match(branch, /setText\('jobber-translated', 'Retained'\)/);
+
+  // Walking away must stay possible while lapsed.
+  assert.match(js, /const revocable = connected \|\| Boolean\(state && state\.reauthorization_required\)/);
+  assert.match(js, /disconnectButton\.disabled = !canManage\(\) \|\| !revocable/);
+});

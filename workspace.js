@@ -354,11 +354,33 @@
       exportButtons.forEach(function (button) { if (button) button.disabled = !canManage() || !hasConnection; });
       const disconnectButton = document.getElementById('settings-disconnect-action');
       const eraseButton = document.getElementById('settings-erase-action');
-      if (disconnectButton) disconnectButton.disabled = !canManage() || !connected;
+      // A lapsed connection must still be revocable: walking away instead of
+      // reconnecting is the contractor's right, not a failure state.
+      const revocable = connected || Boolean(state && state.reauthorization_required);
+      if (disconnectButton) disconnectButton.disabled = !canManage() || !revocable;
       if (eraseButton) eraseButton.disabled = !canManage() || !hasConnection;
     }
     if (card) card.dataset.state = state && state.error ? 'error' : connected ? 'connected' : 'idle';
     if (!accountWorkspace) return;
+    // A lapsed provider is NOT the same as never having connected. Falling into
+    // the branch below would zero the record counts, which is false — the
+    // evidence and decisions survive a lapse and the record still loads. Only
+    // the contractor can fix this, so say exactly that.
+    if (state && state.reauthorization_required) {
+      setPill('jobber-status', 'Reconnect needed', 'status-preview');
+      setText('jobber-description', 'Jobber access for this workspace has lapsed or was revoked, so new work cannot sync. Your existing records and decisions are unchanged. Reconnecting resumes syncing.');
+      setText('jobber-coverage', 'Paused until reconnected');
+      setText('jobber-translated', 'Retained');
+      setText('jobber-last-sync', humanDate(sync.completed_at || sync.updated_at, true));
+      setPill('record-source-status', 'Reconnect needed', 'status-preview');
+      setText('evidence-source-count', '1');
+      setText('evidence-source-detail', 'Jobber access lapsed · existing records retained');
+      setPill('evidence-status', 'Reconnect needed', 'status-preview');
+      if (action) { action.textContent = 'Reconnect Jobber'; action.disabled = !canManage(); }
+      renderAccountReadiness();
+      renderAccountActivity();
+      return;
+    }
     if (!connected) {
       setPill('jobber-status', state && state.error ? 'Unavailable' : 'Not connected', state && state.error ? 'status-preview' : 'status-private');
       setText('jobber-description', state && state.error ? 'The private connection service could not be reached. No provider authorization changed.' : 'Authorize Jobber when you are ready to create a private provider-recorded history.');
