@@ -127,7 +127,7 @@
       : 'records are held while their source dates or states are reviewed.');
     setText('translated-count', records.length);
     setText('record-count-badge', records.length);
-    setText('attention-detail', value.private + ' private · ' + value.questioned + ' questioned · ' + value.pending + ' awaiting review');
+    setText('attention-detail', value.private + ' private · ' + value.questioned + ' source-questioned · ' + value.pending + ' awaiting review');
   }
 
   function renderAccountReadiness() {
@@ -182,7 +182,7 @@
     if (!selected) return;
     if (!liveReceipt) {
       record.status = decision;
-      record.statusLabel = decision === 'visible' ? 'Included' : decision === 'private' ? 'Private' : 'Questioned';
+      record.statusLabel = decision === 'visible' ? 'Included' : decision === 'private' ? 'Private' : 'Source question';
       renderRecords();
       syncCounts();
       showToast(selected[2]);
@@ -217,7 +217,7 @@
     }
     body.innerHTML = visible.map(function (record) {
       return '<tr>' +
-        '<td><div class="record-main"><strong>' + escapeHtml(record.type) + '</strong><span>' + escapeHtml(record.objectType) + ' · minimized statement</span></div></td>' +
+        '<td><div class="record-main"><strong>' + escapeHtml(record.type) + '</strong><span>' + escapeHtml(record.objectType) + ' · privacy-trimmed</span></div></td>' +
         '<td>' + escapeHtml(record.source) + '</td>' +
         '<td class="mono" style="font-size:.65rem">' + escapeHtml(record.completed) + '</td>' +
         '<td><span class="record-state ' + record.status + '">' + escapeHtml(record.statusLabel) + '</span></td>' +
@@ -239,7 +239,7 @@
 
   function sourcePills(sources) {
     return sources.map(function (source) {
-      const className = source === '4THWALL operated' ? 'source-pill operated' : 'source-pill';
+      const className = source === 'Atlas front office' ? 'source-pill operated' : 'source-pill';
       return '<span class="' + className + '">' + escapeHtml(source) + '</span>';
     }).join('');
   }
@@ -280,7 +280,7 @@
     const states = {
       accepted: ['visible', 'Included'],
       kept_private: ['private', 'Private'],
-      disputed: ['questioned', 'Questioned'],
+      disputed: ['questioned', 'Source question'],
       pending: ['pending', 'Needs review']
     };
     const state = states[item.review_decision] || states.pending;

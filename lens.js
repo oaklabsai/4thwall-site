@@ -8,7 +8,7 @@
   }
 
   function sourceClass(label) {
-    return label === '4THWALL operated' ? 'source-pill operated' : 'source-pill';
+    return label === 'Atlas front office' ? 'source-pill operated' : 'source-pill';
   }
 
   function renderAnswer(id) {

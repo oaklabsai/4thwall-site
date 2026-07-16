@@ -39,7 +39,7 @@ test('provider and operated evidence remain separate lanes', async () => {
   const demo = await demoData();
   assert.deepEqual(Array.from(demo.sources, (source) => source.lane), [
     'Provider-recorded history',
-    '4THWALL-operated record',
+    'Atlas front office record',
   ]);
   const page = await text('lens.html');
   assert.match(page, /Never blurred/);
@@ -148,4 +148,21 @@ test('workspace readiness shows literal review state, never a composite percent'
   const script = await text('workspace.js');
   assert.doesNotMatch(script, /30 \+ \(connected \? 25 : 0\)/, 'the fake readiness percent formula must stay dead');
   assert.match(script, /reviewed \+ '\/' \+ records\.length/, 'readiness must show the literal reviewed fraction');
+});
+
+test('plain-vocabulary pass holds (DEC: naming hierarchy + retired jargon)', async () => {
+  const [workspace, script, lens, lensScript, demo] = await Promise.all([
+    text('workspace.html'), text('workspace.js'), text('lens.html'), text('lens.js'), text('lens-demo-data.js'),
+  ]);
+  for (const source of [workspace, script, lens, lensScript, demo]) {
+    assert.doesNotMatch(source, /4THWALL-operated|4THWALL operated/, 'the "4THWALL-operated" phrase is retired');
+    assert.doesNotMatch(source, /minimized statement/, '"minimized statement" is retired for "privacy-trimmed"');
+  }
+  assert.doesNotMatch(workspace, /synthetic workspace/, 'settings say "example workspace", not "synthetic"');
+  assert.match(workspace, /Atlas front office/, 'the adopted plain label names the operated lane');
+  assert.match(script, /'Source question'/, 'the disputed state displays as "Source question", never "Questioned"');
+  assert.match(workspace, /class="metric-sample">Sample</, 'demo Atlas metrics carry a Sample chip');
+  assert.match(workspace, /an explanation, not a review or endorsement/, "Vesta's read carries its provenance line");
+  assert.match(lens, /an explanation, not a review or endorsement/, 'the public demo read carries the provenance line');
+  assert.match(workspace, /<span id="readiness-percent">7\/9<\/span><small>setup checks<\/small>/, 'demo readiness shows literal checks, not a percent');
 });

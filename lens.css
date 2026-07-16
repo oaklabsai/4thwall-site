@@ -215,3 +215,5 @@ svg{display:block}
 }
 
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+.vesta-read p.read-provenance{font-family:inherit;font-size:.64rem;line-height:1.5;color:var(--cream);opacity:.62;margin:.65rem 0 0}
+.metric-card{position:relative}.metric-sample{position:absolute;top:.9rem;right:.9rem;font-family:var(--mono);font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:99px;padding:.18rem .5rem}

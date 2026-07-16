@@ -33,7 +33,7 @@
       {
         id: 'atlas',
         name: 'Atlas',
-        lane: '4THWALL-operated record',
+        lane: 'Atlas front office record',
         status: 'live',
         statusLabel: 'Live',
         coverage: '112 ledger events · operated since 2026',
@@ -124,16 +124,16 @@
         question: 'How are new inquiries handled now?',
         shortQuestion: 'Inquiry handling',
         status: 'supported',
-        sources: ['4THWALL operated'],
+        sources: ['Atlas front office'],
         answer: 'Across 42 answered inquiries in the last 90 days, Atlas recorded a median response of 2.2 seconds.',
-        limitation: 'Response time describes the operated reply path, not availability, lead quality or workmanship.'
+        limitation: 'Response time describes the reply path Atlas runs, not availability, lead quality or workmanship.'
       },
       {
         id: 'followthrough',
         question: 'Does work move from commitment to completion?',
         shortQuestion: 'Follow-through',
         status: 'supported',
-        sources: ['Provider recorded', '4THWALL operated'],
+        sources: ['Provider recorded', 'Atlas front office'],
         answer: 'The provider history is too thin for a historical rate. Separately, Atlas recorded 88% booking-to-completion reliability across 26 bookings.',
         limitation: 'The two evidence classes stay separate. Neither proves quality or homeowner satisfaction.'
       },
@@ -142,12 +142,12 @@
         question: 'Is there evidence of an active operation?',
         shortQuestion: 'Operating continuity',
         status: 'supported',
-        sources: ['Provider recorded', '4THWALL operated'],
+        sources: ['Provider recorded', 'Atlas front office'],
         answer: 'Provider records span 2021–2026. Since Atlas began operating the workflow, it has recorded 23 completed jobs.',
         limitation: 'Operational activity does not establish licensing, capacity, financial stability, safety or quality.'
       }
     ],
-    narrative: 'Northstar Roofing has provider-recorded roof replacement history. In its current 4THWALL-operated workflow, Atlas has answered 42 inquiries with a 2.2-second median response and recorded 23 completed jobs.',
+    narrative: 'Northstar Roofing has provider-recorded roof replacement history. Through the Atlas front office 4THWALL runs for it, 42 inquiries were answered with a 2.2-second median response and 23 completed jobs were recorded.',
     globalLimitation: 'This explanation is not a quality score, endorsement, ranking advantage, payment claim, safety claim or guarantee.'
   });
 })();
