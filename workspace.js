@@ -451,6 +451,7 @@
     });
     setText('settings-business-profile', [profile.business_name, profile.trade, profile.service_area].filter(Boolean).join(' · '));
     setText('settings-membership', 'Signed in as ' + (accountWorkspace.membership && accountWorkspace.membership.role || 'member'));
+    if (accountWorkspace.slug) setText('settings-workspace-ref', accountWorkspace.slug);
     setText('workspace-greeting', 'Good morning.');
     setText('preview-candidate-name', profile.business_name);
     setText('preview-candidate-profile', [profile.trade, profile.service_area].filter(Boolean).join(' · '));

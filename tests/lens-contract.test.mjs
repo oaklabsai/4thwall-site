@@ -180,3 +180,17 @@ test('workspace surfaces carry a strict CSP and the client honors session rotati
   const script = await text('workspace.js');
   assert.match(script, /rotated_session_token/, 'the client must store a rotated session token');
 });
+
+test('the workspace carries a real support path with a quotable reference (Sol ISS-0005 NEXT item 4)', async () => {
+  const workspace = await text('workspace.html');
+  const script = await text('workspace.js');
+  // contact@ is the established, monitored channel — not a newly invented address.
+  assert.match(workspace, /mailto:contact@4thwall\.solutions/, 'support must point at the monitored contact address');
+  assert.match(workspace, /id="settings-workspace-ref"/, 'the contractor needs a quotable workspace reference');
+  // The reference is the slug (no provider/customer data), populated from the account.
+  assert.match(script, /setText\('settings-workspace-ref', accountWorkspace\.slug\)/,
+    'the reference must be the real workspace slug once an account exists');
+  // Anti-phishing: support must never train contractors to hand over credentials.
+  assert.match(workspace, /never ask you for a password, a login link or your provider password/,
+    'the support path must state what 4THWALL will never ask for');
+});
