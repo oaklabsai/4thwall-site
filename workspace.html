@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Lens Workspace — 4THWALL</title>
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#ECEDE2">
+  <link rel="icon" href="/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+  <link rel="stylesheet" href="/lens.css">
+  <script src="/lens-demo-data.js" defer></script>
+  <script src="/workspace.js" defer></script>
+</head>
+<body class="workspace-body">
+  <nav class="lens-nav" aria-label="Workspace header">
+    <a class="lens-brand" href="/lens" aria-label="Lens product page">
+      <svg class="brand-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
+      <span class="brand-name">4THWALL</span><span class="product-name">Lens</span>
+    </a>
+    <div class="nav-actions">
+      <span class="status-pill status-preview" id="workspace-mode">Preview</span>
+      <a class="btn btn-ghost btn-sm" href="/lens">About Lens</a>
+      <a class="btn btn-dark btn-sm" id="workspace-auth-action" href="/workspace/signin">Create workspace</a>
+    </div>
+  </nav>
+  <div class="demo-flag" id="demo-flag"><strong>Interactive product preview</strong><span>All people, records and results shown here are simulated.</span></div>
+
+  <div class="workspace-shell">
+    <aside class="workspace-sidebar" aria-label="Workspace navigation">
+      <button class="workspace-switcher" type="button" aria-label="Current workspace">
+        <span class="ws-avatar">NR</span><span><strong>Northstar Roofing</strong><small>Fairfield County, CT</small></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>
+      </button>
+      <nav class="workspace-nav">
+        <div class="workspace-nav-label">Workspace</div>
+        <button class="workspace-nav-btn active" type="button" data-view="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 13h6V4H4v9Zm10 7h6V11h-6v9ZM4 20h6v-3H4v3Zm10-13h6V4h-6v3Z"/></svg><span>Overview</span></button>
+        <button class="workspace-nav-btn" type="button" data-view="connections"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.5 14.5 5 18a3.5 3.5 0 0 1-5-5l4-4a3.5 3.5 0 0 1 5 0M15.5 9.5 19 6a3.5 3.5 0 0 1 5 5l-4 4a3.5 3.5 0 0 1-5 0M8 12h8"/></svg><span>Connections</span><span class="nav-badge">Beta</span></button>
+        <button class="workspace-nav-btn" type="button" data-view="record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3h14v18H5zM8 8h8m-8 4h8m-8 4h5"/></svg><span>Your record</span><span class="nav-badge" id="record-count-badge">4</span></button>
+        <button class="workspace-nav-btn" type="button" data-view="atlas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/></svg><span>Atlas operation</span></button>
+        <button class="workspace-nav-btn" type="button" data-view="preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Homeowner preview</span><span class="nav-badge">Beta</span></button>
+        <div class="workspace-nav-label">Control</div>
+        <button class="workspace-nav-btn" type="button" data-view="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 5 6v5c0 4.4 2.8 8.4 7 10 4.2-1.6 7-5.6 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg><span>Review & privacy</span></button>
+        <button class="workspace-nav-btn" type="button" data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg><span>Settings & data</span></button>
+      </nav>
+      <div class="sidebar-bottom"><div class="privacy-promise"><strong>Private by default</strong>Nothing in this workspace is homeowner-visible until a release path is enabled and reviewed.</div></div>
+    </aside>
+
+    <main class="workspace-main">
+      <section class="workspace-view active" data-view-panel="overview">
+        <header class="view-head"><div class="view-title"><div class="view-kicker">Thursday · July 16</div><h1 id="workspace-greeting">Good morning, Drew.</h1><p>Here is what your operating record can support—and what still needs your attention.</p></div><div class="view-actions"><button class="btn btn-soft btn-sm" type="button" data-go="preview">Open homeowner preview</button></div></header>
+        <article class="readiness-card card"><div><h2 id="readiness-title">Your trust record is taking shape.</h2><p id="readiness-detail">Seven of nine setup checks are complete. Review the two held records before you consider this story ready for a private contractor walkthrough.</p><button class="btn btn-tea btn-sm" type="button" data-go="record">Review held records <span aria-hidden="true">→</span></button></div><div class="readiness-meter"><div class="meter-ring" id="readiness-meter" style="--p:78"><span id="readiness-percent">78%</span><small>ready</small></div></div></article>
+        <div class="grid-3">
+          <article class="stat-card card"><div class="stat-top"><span>Connected evidence</span><span class="status-pill status-live" id="evidence-status">Current</span></div><div class="stat-value" id="evidence-source-count">2</div><div class="stat-detail" id="evidence-source-detail">Jobber history + Atlas operation</div></article>
+          <article class="stat-card card"><div class="stat-top"><span>Homeowner answers</span><span class="status-pill status-beta">Beta</span></div><div class="stat-value">4</div><div class="stat-detail">Every answer has a source and limit</div></article>
+          <article class="stat-card card"><div class="stat-top"><span>Needs attention</span><span class="status-pill status-preview">Review</span></div><div class="stat-value" id="attention-count">2</div><div class="stat-detail" id="attention-detail">One private · one source question</div></article>
+        </div>
+        <div class="grid-2" style="margin-top:1rem">
+          <article class="section-card card"><div class="card-head"><div><h2>Your current story</h2><p>How Vesta can explain the available evidence</p></div><button class="text-link" type="button" data-go="preview">View</button></div><div class="vesta-read"><div class="read-label">Vesta’s read · private preview</div><p id="overview-narrative"></p></div></article>
+          <article class="section-card card"><div class="card-head"><div><h2>Recent workspace activity</h2><p>Source and control events</p></div><button class="text-link" type="button" data-go="privacy">Audit trail</button></div><ul class="activity-list" id="workspace-activity"><li class="activity-item"><span class="activity-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 4 4L19 6"/></svg></span><span><strong>Jobber sync completed</strong><p>9 records read · 4 translated</p></span><span class="activity-time">8:12 AM</span></li><li class="activity-item"><span class="activity-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/></svg></span><span><strong>Atlas record refreshed</strong><p>112 ledger events verified</p></span><span class="activity-time">Live</span></li><li class="activity-item"><span class="activity-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3 5 6v5c0 4.4 2.8 8.4 7 10 4.2-1.6 7-5.6 7-10V6l-7-3Z"/></svg></span><span><strong>Privacy decision saved</strong><p>One visit kept private</p></span><span class="activity-time">Yesterday</span></li></ul></article>
+        </div>
+      </section>
+
+      <section class="workspace-view" data-view-panel="connections">
+        <header class="view-head"><div class="view-title"><div class="view-kicker">Sources</div><h1>Connections</h1><p>Bring in operating context through explicit, read-only connections. Each provider keeps its own source authority.</p></div><div class="view-actions"><span class="status-pill status-beta">Beta</span></div></header>
+        <div class="info-strip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/></svg><span><strong>What Lens asks for:</strong> only the scopes required to translate supported operating facts. Identity, money and free-text are outside the durable evidence contract.</span></div>
+        <div class="connection-grid">
+          <article class="connection-card card" id="jobber-connection-card"><div class="provider-line"><div class="provider-mark">J</div><span class="status-pill status-live" id="jobber-status">Connected</span></div><h2>Jobber</h2><p id="jobber-description">Provider-recorded job and visit history for the connected account.</p><div class="connection-meta"><div><span>Coverage</span><strong id="jobber-coverage">Complete response</strong></div><div><span>Translated</span><strong id="jobber-translated">4 records</strong></div><div><span>Last sync</span><strong id="jobber-last-sync">Today, 8:12 AM</strong></div></div><button class="btn btn-soft btn-sm provider-action" id="jobber-connect-action" type="button">Manage connection</button></article>
+          <article class="connection-card card"><div class="provider-line"><div class="provider-mark">W</div><span class="status-pill status-beta">Adapter beta</span></div><h2>Workiz</h2><p>Credential-ready adapter. A live semantic receipt still requires a consented provider account.</p><div class="connection-meta"><div><span>Product contract</span><strong>Mapped</strong></div><div><span>Live semantics</span><strong>Not yet proven</strong></div><div><span>Account access</span><strong>Required</strong></div></div><button class="btn btn-ghost btn-sm provider-action demo-action" type="button" data-demo-message="Workiz needs a consented account before a live connection can be claimed.">Request connection</button></article>
+          <article class="connection-card card"><div class="provider-line"><div class="provider-mark">FE</div><span class="status-pill status-preview">Provider gate</span></div><h2>FieldEdge</h2><p>Architecture is mapped; provider-issued access is required before account connection.</p><div class="connection-meta"><div><span>Product contract</span><strong>Mapped</strong></div><div><span>Provider access</span><strong>Approval required</strong></div><div><span>Live connection</span><strong>Not available</strong></div></div><button class="btn btn-ghost btn-sm provider-action demo-action" type="button" data-demo-message="FieldEdge access depends on provider approval and provisioned credentials.">Join access list</button></article>
+        </div>
+      </section>
+
+      <section class="workspace-view" data-view-panel="record">
+        <header class="view-head"><div class="view-title"><div class="view-kicker">Provider-recorded history</div><h1>Your record</h1><p>Review the minimized statements Lens translated from your connected tools. No raw customer identity, price or notes appear here.</p></div><div class="view-actions"><span class="status-pill status-live" id="record-source-status">Source current</span><button class="btn btn-soft btn-sm" id="record-export-action" type="button">Export</button></div></header>
+        <div class="grid-3" style="margin-bottom:1rem"><article class="stat-card card"><div class="stat-top"><span>Translated records</span></div><div class="stat-value" id="translated-count">4</div><div class="stat-detail" id="translation-detail">5 unsupported source records skipped, never stored</div></article><article class="stat-card card"><div class="stat-top"><span>Included in preview</span></div><div class="stat-value" id="included-count">2</div><div class="stat-detail">Contractor-reviewed evidence</div></article><article class="stat-card card"><div class="stat-top"><span>Held from preview</span></div><div class="stat-value" id="held-count">2</div><div class="stat-detail">Private, questioned or awaiting review</div></article></div>
+        <div class="record-toolbar"><div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><label class="sr-only" for="record-search">Search records</label><input class="search-input" id="record-search" type="search" placeholder="Search translated records"></div><label class="sr-only" for="record-filter">Filter records</label><select class="filter-select" id="record-filter"><option value="all">All decisions</option><option value="pending">Needs review</option><option value="visible">Included</option><option value="private">Private</option><option value="questioned">Questioned</option></select></div>
+        <div class="record-table-wrap"><table class="record-table"><thead><tr><th>Translated record</th><th>Source</th><th>Completed</th><th>Decision</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody id="record-table-body"></tbody></table></div>
+        <div class="legend"><span><i style="background:var(--green)"></i> Included can feed the private homeowner preview</span><span><i style="background:var(--muted)"></i> Private stays out</span><span><i style="background:var(--amber)"></i> Questioned stays out while reviewed</span></div>
+      </section>
+
+      <section class="workspace-view" data-view-panel="atlas">
+        <header class="view-head"><div class="view-title"><div class="view-kicker">4THWALL-operated record</div><h1>Atlas operation</h1><p>Present-tense behavior measured only inside the front office path 4THWALL operates. Every metric shows how many real events it is based on.</p></div><div class="view-actions"><span class="status-pill status-live" id="atlas-source-status">Live</span></div></header>
+        <div class="info-strip" id="atlas-sample-note" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/></svg><span><strong>Sample Atlas view:</strong> these operated metrics demonstrate the intended workspace. They are not measurements from your business until Atlas is actually running for this workspace.</span></div>
+        <div class="metric-grid">
+          <article class="metric-card card"><div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h14v16H5zM8 8h8m-8 4h8"/></svg></div><div class="metric-value">23</div><div class="metric-label">Recorded completions</div><div class="metric-proof">Completed jobs recorded through the operated workflow</div></article>
+          <article class="metric-card card"><div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="metric-value">2.2s</div><div class="metric-label">Median response</div><div class="metric-proof">Across 42 answered inquiries · last 90 days</div></article>
+          <article class="metric-card card"><div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m4 12 5 5L20 6"/></svg></div><div class="metric-value">88%</div><div class="metric-label">Booking follow-through</div><div class="metric-proof">Across 26 bookings · last 365 days</div></article>
+          <article class="metric-card card"><div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.2 5.9-.9L12 3Z"/></svg></div><div class="metric-value">4.8</div><div class="metric-label">Earned review average</div><div class="metric-proof">8 reviews earned through the operated path</div></article>
+        </div>
+        <article class="source-boundary card"><div class="boundary-lane"><span>Provider history</span><h3>What the contractor’s tool recorded</h3><p>Breadth, recency, mix and provider-workflow completion. 4THWALL did not observe that underlying work.</p></div><div class="boundary-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><div class="boundary-lane"><span>Atlas operation</span><h3>What 4THWALL operated and measured</h3><p>Current response and workflow behavior after connection. It does not rewrite or certify provider history.</p></div></article>
+        <div class="info-strip" style="margin-top:1rem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/></svg><span><strong>Why the separation matters:</strong> two useful facts can support one clear explanation without becoming one undifferentiated score or borrowing each other’s authority.</span></div>
+      </section>
+
+      <section class="workspace-view" data-view-panel="preview">
+        <header class="view-head"><div class="view-title"><div class="view-kicker">Private contractor preview</div><h1>What a homeowner could see</h1><p>Test the explanation against a homeowner’s project before any real publication path exists.</p></div><div class="view-actions"><span class="status-pill status-beta">Beta</span></div></header>
+        <div class="info-strip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3 5 6v5c0 4.4 2.8 8.4 7 10 4.2-1.6 7-5.6 7-10V6l-7-3Z"/></svg><span><strong>Private means private:</strong> this preview cannot affect Vesta ranking and is not a live public contractor claim.</span></div>
+        <div class="workspace-preview">
+          <aside class="preview-controls card"><h2>Preview context</h2><p>Choose what the homeowner is trying to understand. Lens can only answer from accepted evidence.</p><label class="sr-only" for="project-type">Project type</label><select class="project-select" id="project-type"><option value="roof_replacement">Roof replacement</option><option value="roof_repair">Roof repair</option><option value="emergency_roof_repair">Emergency roof repair</option></select><div class="preview-checks"><div class="preview-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m4 12 5 5L20 6"/></svg><span><strong>Source labels visible</strong><span>No unattributed facts</span></span></div><div class="preview-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m4 12 5 5L20 6"/></svg><span><strong>Private records excluded</strong><span>Your held decisions stay out</span></span></div><div class="preview-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m4 12 5 5L20 6"/></svg><span><strong>Limitations attached</strong><span>Every answer says what it cannot prove</span></span></div></div></aside>
+          <div class="mini-vesta"><div class="homeowner-top"><svg class="mini-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg><strong>VESTA</strong><span>Private preview</span></div><div class="homeowner-body"><div class="candidate"><div class="candidate-avatar" id="preview-candidate-avatar">NR</div><div><h3 id="preview-candidate-name">Northstar Roofing</h3><p id="preview-candidate-profile">Roofing · Fairfield County, CT</p></div></div><div class="vesta-read"><div class="read-label">Vesta’s read</div><p id="workspace-narrative"></p></div><article class="answer-panel" id="workspace-answer"></article><div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem" id="workspace-answer-tabs"></div></div></div>
+        </div>
+      </section>
+
+      <section class="workspace-view" data-view-panel="privacy">
+        <header class="view-head"><div class="view-title"><div class="view-kicker">Control plane</div><h1>Review & privacy</h1><p>Your visibility decisions, source questions and data controls live together—separate from the marketing story.</p></div><div class="view-actions"><span class="status-pill status-private">Private</span></div></header>
+        <div class="control-grid">
+          <article class="control-card card"><div class="control-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/></svg></div><h2>Included records</h2><p><span id="privacy-included-count">2</span> <span id="privacy-included-copy">translated records currently feed the private homeowner preview.</span></p><button class="btn btn-soft btn-sm" type="button" data-go="record">Review included</button></article>
+          <article class="control-card card"><div class="control-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4zM7 17 17 7"/></svg></div><h2>Private records</h2><p><span id="privacy-private-count">1</span> <span id="privacy-private-copy">record is stored for your workspace but excluded from the preview.</span></p><button class="btn btn-soft btn-sm" type="button" data-filter-go="private">Review private</button></article>
+          <article class="control-card card"><div class="control-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 17h.01M9.1 9a3 3 0 1 1 4.8 2.4c-1.2.9-1.9 1.4-1.9 2.6"/><circle cx="12" cy="12" r="9"/></svg></div><h2>Source questions</h2><p><span id="privacy-questioned-count">1</span> <span id="privacy-questioned-copy">record is held while its source date or state is reviewed.</span></p><button class="btn btn-soft btn-sm" type="button" data-filter-go="questioned">Review questions</button></article>
+        </div>
+        <article class="section-card card" style="margin-top:1rem"><div class="card-head"><div><h2>What never becomes a Lens claim</h2><p>The current minimization boundary</p></div></div><div class="grid-3"><div class="info-strip" style="margin:0"><span><strong>Customer identity</strong><br>Names, phone numbers, email and addresses are outside the durable evidence set.</span></div><div class="info-strip" style="margin:0"><span><strong>Money</strong><br>Prices, invoices, payments and revenue are not used as trust claims.</span></div><div class="info-strip" style="margin:0"><span><strong>Unbounded text</strong><br>Raw notes and descriptions are discarded after permitted in-memory classification.</span></div></div></article>
+      </section>
+
+      <section class="workspace-view" data-view-panel="settings">
+        <header class="view-head"><div class="view-title"><div class="view-kicker">Workspace control</div><h1>Settings & data</h1><p>Manage the workspace, connection portability and lifecycle controls.</p></div></header>
+        <div class="settings-list"><div class="settings-row"><div><h2>Business profile</h2><p id="settings-business-profile">Northstar Roofing · Roofing · Fairfield County, CT</p></div><button class="btn btn-ghost btn-sm demo-action" type="button" data-demo-message="Profile editing is available after a real workspace account is created.">Edit profile</button></div><div class="settings-row"><div><h2>Workspace members</h2><p id="settings-membership">One owner in this synthetic workspace</p></div><button class="btn btn-ghost btn-sm demo-action" type="button" data-demo-message="Member management is not active in the public demo.">Manage</button></div><div class="settings-row"><div><h2>Export your Lens data</h2><p>Portable connection, sync, evidence, decision and audit history</p></div><button class="btn btn-ghost btn-sm" id="settings-export-action" type="button">Export</button></div><div class="settings-row"><div><h2>Disconnect Jobber</h2><p>Stop future synchronization and revoke the provider connection</p></div><button class="btn btn-ghost btn-sm" id="settings-disconnect-action" type="button">Disconnect</button></div><div class="settings-row danger"><div><h2>Delete workspace evidence</h2><p>Erase evidence, decisions and sync history while retaining only the minimized audit receipt required by policy</p></div><button class="btn btn-ghost btn-sm" id="settings-erase-action" type="button">Delete evidence</button></div></div>
+        <div class="empty-real" id="workspace-boundary"><strong>This is the product experience, not a live contractor account.</strong><br>Create a workspace to establish identity and ownership. Real connections remain consented, provider-permitted and private until their release gates are met.</div>
+      </section>
+    </main>
+  </div>
+  <dialog class="connect-dialog" id="jobber-consent-dialog" aria-labelledby="jobber-consent-title">
+    <form method="dialog" class="connect-dialog-card">
+      <div class="connect-dialog-mark">J</div>
+      <h2 id="jobber-consent-title">Connect your Jobber account</h2>
+      <p>Jobber will ask you to authorize read-only access. Lens translates supported job and visit history into a private operating record.</p>
+      <ul><li>Customer names, contact details and addresses are not kept as evidence.</li><li>Prices, invoices, payments and raw notes are excluded.</li><li>Nothing becomes public. You review every translated record first.</li></ul>
+      <label class="consent-check"><input id="jobber-notice-accepted" type="checkbox"><span>I understand this creates a separate private provider connection for the Lens record.</span></label>
+      <div class="connect-dialog-actions"><button class="btn btn-ghost" value="cancel">Cancel</button><button class="btn btn-dark" id="jobber-consent-continue" type="button" disabled>Continue to Jobber</button></div>
+      <p class="auth-status" id="jobber-consent-status" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+  <div class="toast" id="workspace-toast" role="status" aria-live="polite"></div>
+</body>
+</html>

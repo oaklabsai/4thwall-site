@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Set Up Your Lens Workspace — 4THWALL</title>
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#12100E">
+  <link rel="icon" href="/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+  <link rel="stylesheet" href="/lens.css">
+  <script src="/workspace-onboarding.js" defer></script>
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-brand-panel">
+      <a class="auth-logo" href="/lens"><svg class="brand-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg><span>4THWALL</span><span class="product-name">Lens</span></a>
+      <div class="auth-promise"><div class="eyebrow">Step 1 of 2 · workspace</div><h1>Give the record a <em>home.</em></h1><p>This identifies the business that owns the workspace. Connecting Jobber, Workiz or another provider is a separate consent step.</p></div>
+      <div class="auth-proof"><span><i></i> Identity verified</span><span><i></i> Owner membership created</span><span><i></i> No provider connected yet</span></div>
+    </section>
+    <section class="auth-form-panel">
+      <div class="auth-card">
+        <div class="eyebrow">Business profile</div><h2>Tell us the basics.</h2><p>Enough to name your workspace and shape the right provider path.</p>
+        <form class="auth-form" id="workspace-onboarding-form">
+          <label for="business-name">Business name</label><input class="auth-input" id="business-name" name="business_name" autocomplete="organization" maxlength="100" required placeholder="Your business name">
+          <label for="trade" style="margin-top:1rem">Primary trade</label><select class="auth-input" id="trade" name="trade" required><option value="">Choose a trade</option><option value="roofing">Roofing</option><option value="hvac">HVAC</option><option value="plumbing">Plumbing</option><option value="electrical">Electrical</option><option value="painting">Painting</option><option value="masonry">Masonry</option><option value="tree_service">Tree service</option><option value="general_contracting">General contracting</option></select>
+          <label for="service-area" style="margin-top:1rem">Primary service area</label><input class="auth-input" id="service-area" name="service_area" maxlength="120" required placeholder="Fairfield County, CT">
+          <label for="website" style="margin-top:1rem">Website <span style="font-weight:400;color:var(--dim)">(optional)</span></label><input class="auth-input" id="website" name="website" type="url" maxlength="300" placeholder="https://yourcompany.com">
+          <button class="btn btn-dark auth-submit" type="submit">Create my workspace</button><div class="auth-status" id="onboarding-status" role="status" aria-live="polite"></div>
+        </form>
+        <p class="auth-legal">Next, you can explore Lens with sample data or begin a separately authorized provider connection.</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

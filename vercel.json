@@ -8,6 +8,10 @@
   },
   "rewrites": [
     { "source": "/atlas",         "destination": "/atlas.html" },
+    { "source": "/lens",          "destination": "/lens.html" },
+    { "source": "/workspace",     "destination": "/workspace.html" },
+    { "source": "/workspace/signin", "destination": "/workspace-signin.html" },
+    { "source": "/workspace/onboarding", "destination": "/workspace-onboarding.html" },
     { "source": "/missed-calls",  "destination": "/missed-calls.html" },
     { "source": "/es",            "destination": "/missed-calls-es.html" },
     { "source": "/vesta",         "destination": "/vesta-app.html" },
@@ -21,6 +25,7 @@
     { "source": "/privacy",       "destination": "/privacy.html" },
     { "source": "/terms",         "destination": "/terms.html" },
     { "source": "/auth/confirm",  "destination": "/auth-confirm.html" },
+    { "source": "/auth/workspace", "destination": "/workspace-auth-callback.html" },
     { "source": "/record/:token", "destination": "/record.html" },
     { "source": "/pro/:id",       "destination": "/pro.html" },
     { "source": "/c/:placeId",    "destination": "/api/contractor?placeId=:placeId" },
@@ -93,6 +98,12 @@
     },
     {
       "source": "/auth/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
+      ]
+    },
+    {
+      "source": "/workspace(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, nosnippet, noarchive" }
       ]
