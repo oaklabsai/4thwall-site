@@ -495,6 +495,15 @@ a,button{transition:transform .14s}
 .fds-chev{flex:none;color:var(--dim)}
 .fds-more{display:inline-block;font:500 .7rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ebony);border-bottom:1px solid var(--line);padding-bottom:.25rem;margin-top:.3rem}
 .fds-more:hover{color:var(--olive);border-color:var(--olive)}
+/* F3 — THE READING: the county field visualized. One dot per REAL record Vesta read
+   in the trade; the field lights up, then narrows to the three that rose. Honest by
+   construction — the count is the live corpus, never theater. */
+.fdread{display:flex;flex-wrap:wrap;gap:7px;margin:1.05rem 0 .95rem;max-width:520px}
+.fdread i{width:9px;height:9px;border-radius:50%;background:var(--olive);opacity:0;transform:scale(.55);transition:opacity .4s ease,transform .5s var(--spring),background .45s ease,box-shadow .45s ease}
+.fdread.on i{opacity:.5;transform:none}
+.fdread.on i.off{opacity:.1;transform:scale(.5)}
+.fdread.on i.keep{opacity:1;transform:scale(1.8);background:#cdd88f;box-shadow:0 0 0 4px rgba(212,223,158,.4)}
+.fdread-sub{font:500 .7rem/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--dim);transition:color .4s}
 /* quiet doors under an assembled screen — the vocabulary compounding (P4) */
 .fds-doors{display:flex;gap:1.4rem;flex-wrap:wrap;margin-top:1.1rem}
 .fds-doors a{font:500 .68rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);cursor:pointer;border-bottom:1px solid transparent;padding-bottom:.25rem;transition:color .18s,border-color .18s}
@@ -1397,6 +1406,31 @@ a,button{transition:transform .14s}
     if(deck.pct>=15)return{h:'Vesta’s picks for '+jl,s:'Matched to your job, best-reviewed first.'};
     return{h:'Specialists in '+jl,s:'The few Vesta found for this specific job.'};
   }
+  /* F3 — THE READING: light one dot per real record, hold a beat, narrow to the three
+     that rose. Fields too small to read as a field (<8) skip straight to the picks. */
+  function showReading(n,tradeLabel,done){
+    if(n<8)return done();
+    var shown=Math.min(n,120),dots='';
+    for(var i=0;i<shown;i++)dots+='<i style="transition-delay:'+Math.min(i*14,1100)+'ms"></i>';
+    showScreen('<span class="fds-kicker">reading the county field</span>'+
+      '<h3 class="fds-h">Vesta read '+n+' '+escT(tradeLabel)+' records</h3>'+
+      '<div class="fdread" id="fdRead">'+dots+'</div>'+
+      '<p class="fdread-sub" id="fdReadSub">weighing every record</p>',
+      function(){
+        var el=document.getElementById('fdRead');if(!el)return done();
+        void el.offsetWidth;el.classList.add('on');
+        setTimeout(function(){
+          var is=el.querySelectorAll('i');
+          var keep=[Math.floor(shown*.2),Math.floor(shown*.52),Math.floor(shown*.82)];
+          [].forEach.call(is,function(d,i){
+            d.style.transitionDelay=Math.min(i*5,420)+'ms';
+            d.className=keep.indexOf(i)===-1?'off':'keep';
+          });
+          var sub=document.getElementById('fdReadSub');if(sub)sub.textContent='three rose to the top';
+          setTimeout(done,1250);
+        },Math.min(shown*14,1100)+800);
+      });
+  }
   function deckLand(deck,mode){
     deckShown=true;deckKey=deck.trade+'|'+deck.job;curDeck={deck:deck,mode:mode};
     loadFirms(deck.trade).then(function(list){
@@ -1405,16 +1439,18 @@ a,button{transition:transform .14s}
       if(!picks.length)return landAfterSay(function(){screenDoor(deck)});
       curPicks=picks;curTotal=list.length;
       logEvent('match',{trade:TRADE_DB[deck.trade]||deck.trade,job:deck.job,axis:null});
-      /* choreography: the picks land AS the resolved sentence finishes, then the desk
-         LEADS the next act — it never drops content and goes quiet (the flow law) */
+      /* choreography: the reading begins AS the resolved sentence finishes; the picks
+         crystallize from it; then the desk LEADS the next act (the flow law) */
       landAfterSay(function(){
-        renderPicks();
-        seedFollow(deck,picks,list.length);
-        phList=['why these three?','tell me about the first one','what should I ask them?','I’ve got another problem too'];phIdx=0;
-        setTimeout(function(){
-          if(triBusy)return;   /* the homeowner already moved — follow them, don't talk over them */
-          speak('Three rose to the top — tap one to open it. Or ask <a data-say="what should I ask before hiring?">what to ask before you hire</a>, or <a data-say="what does this usually cost?">what this usually costs</a>.');
-        },1900);
+        showReading(list.length,String(deck.tradeLabel||deck.trade).toLowerCase(),function(){
+          renderPicks();
+          seedFollow(deck,picks,list.length);
+          phList=['why these three?','tell me about the first one','what should I ask them?','I’ve got another problem too'];phIdx=0;
+          setTimeout(function(){
+            if(triBusy)return;   /* the homeowner already moved — follow them, don't talk over them */
+            speak('Three rose to the top — tap one to open it. Or ask <a data-say="what should I ask before hiring?">what to ask before you hire</a>, or <a data-say="what does this usually cost?">what this usually costs</a>.');
+          },1900);
+        });
       });
     });
   }
