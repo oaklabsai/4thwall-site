@@ -139,7 +139,14 @@ const check = (tag, ok, note='') => {
 
 // A · ROUTING — each case boots a fresh desk (real code, clean state)
 { const d = boot(src);
-  check('A1 greet voices both doors', /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
+  check('A1 first paint ends voicing both doors (the fork lands after the break)', /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
+{ const d = boot(src);
+  // shim timers run sync: THE BREAK plays through at boot — the labeled sim assembles
+  // unprompted, then the fork lands. Proof before the ask.
+  check('A26 first visit → THE BREAK auto-plays (sim assembled + labeled, then Atlas named + fork)',
+    /Incoming call/.test(d.els.fdScreen.innerHTML) && /A simulation, labeled as one/.test(d.els.fdScreen.innerHTML)
+    && /the 4th wall, coming down/.test(d.els.fdScreen.innerHTML)
+    && /That.s Atlas/.test(d.spoken()) && /managed front office/.test(d.spoken())); }
 { const d = boot(src); d.say('contractor');
   check('A2 "contractor" → concierge line (Atlas + Lens voiced)', /Atlas/.test(d.spoken()) && /Lens/.test(d.spoken())); }
 { const d = boot(src); d.say('homeowner');
@@ -208,8 +215,11 @@ const check = (tag, ok, note='') => {
   check('A24 return visit (matched, not sent) → welcome-back + resume, NOT "how did it go"',
     /Welcome back/.test(d.spoken()) && /data-act="resume"/.test(d.els.fdLine.innerHTML) && !/how did it go/i.test(d.spoken())); }
 { const d = boot(src);
-  check('A25 first-time visitor (no memory) → the cold greeting, not welcome-back',
+  check('A25 first-time visitor (no memory) → the break + fork, never welcome-back',
     !/Welcome back/.test(d.spoken()) && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
+{ const d = boot(src, { seedMem: { v:1, ts: Date.now(), deck:{ trade:'roofing', job:'roof-replacement', label:'roof replacement', tradeLabel:'Roofing' }, firm:'Summit Ridge Roofing' } });
+  check('A27 returning visitor → memory greeting wins; THE BREAK does not play over it',
+    /Welcome back/.test(d.spoken()) && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
 
 // B · CLAIM SAFETY — every deterministic line, linted against the pack's banned list
 const L = extractL(src);

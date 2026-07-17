@@ -401,6 +401,11 @@ a,button{transition:transform .14s}
 .fd-brand:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
 .fd-brand svg{width:28px;height:28px}
 .fd-tagline{margin-top:.85rem;font:500 .58rem/1 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+.fd-proof{margin-top:1rem;display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;max-height:2em;transition:all .6s var(--spring)}
+.fd-proof-i{font:500 .66rem/1 var(--mono);letter-spacing:.02em;color:var(--dim)}
+.fd-proof-i b{color:var(--olive);font-weight:700}
+.fd-proof-dot{color:var(--tea);font-size:.7rem}
+.fd.staged .fd-proof{opacity:0;max-height:0;margin:0;overflow:hidden;pointer-events:none}
 /* the welcome mat */
 .fd-mat{margin-top:3rem}
 .fd-mat .kicker{font-size:clamp(1.4rem,2.4vw,1.7rem)}
@@ -645,6 +650,13 @@ a,button{transition:transform .14s}
       <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
     </div>
     <p class="fd-tagline">Both sides of home-service trust</p>
+    <div class="fd-proof" aria-label="4THWALL, by the numbers">
+      <span class="fd-proof-i"><b>12</b> trades tracked</span>
+      <span class="fd-proof-dot">·</span>
+      <span class="fd-proof-i"><b>463</b> evidence-backed profiles</span>
+      <span class="fd-proof-dot">·</span>
+      <span class="fd-proof-i">Fairfield County-wide</span>
+    </div>
     <p class="fd-mat"><span class="kicker" id="fdMat">good evening — welcome in</span></p>
 
     <div class="fd-chat">
@@ -1034,6 +1046,8 @@ a,button{transition:transform .14s}
 
   /* ── what the desk says — every line ends by voicing the next doors inline ── */
   var L={
+    open:'You’re up on a roof and a customer calls. Watch what happens to the call you can’t take.',
+    openFork:'That’s Atlas — 4THWALL’s managed front office, recovering the call you couldn’t answer. Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
     greet:'Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
     ho:'How can we help? Say the job like you’d tell a neighbor — <a data-say="my roof is leaking">a leak</a>, <a data-say="the AC died upstairs">a dying AC</a>, <a data-say="my driveway needs repaving">a tired driveway</a>.',
     co:'Welcome. Would you like to hear about <a data-say="atlas">Atlas</a>, <a data-say="lens">Lens</a>, <a data-say="flywheel">how it compounds</a> — or ask anything about <a data-say="the offer">the offer</a>?',
@@ -1144,6 +1158,7 @@ a,button{transition:transform .14s}
 
   function input(q,display){
     if(triBusy)return;   /* the desk is mid-read — one thought at a time */
+    simGen++;            /* any real ask ends the scripted performance mid-beat */
     convo.push({who:'you',text:q});
     echo(display||q);
     route(q);
@@ -1204,7 +1219,7 @@ a,button{transition:transform .14s}
   var PLURAL={roofing:'roofers',hvac:'HVAC contractors',plumbing:'plumbers',electrical:'electricians',paving:'paving contractors',lawn:'lawn & landscape crews',painting:'painters',masonry:'masons',tree:'tree services',flooring:'flooring contractors',windows_doors:'window & door contractors',pool:'pool companies'};
   var screen=$('fdScreen'),think=$('fdThink'),thinkW=$('fdThinkW');
   var triMsgs=[],triActive=false,triBusy=false,deckShown=false,deckKey='',lastQ='';
-  var firmCache={},curDeck=null,curPicks=[],curTotal=0,speakEnds=0;
+  var firmCache={},curDeck=null,curPicks=[],curTotal=0,speakEnds=0,simGen=0;
   /* land work AFTER the current sentence finishes — the F1 choreography primitive */
   function landAfterSay(fn){setTimeout(fn,Math.max(0,(speakEnds||0)-Date.now()))}
   var TRI_OK=null;fetch('/api/triage').then(function(r){TRI_OK=r.ok}).catch(function(){TRI_OK=false});
@@ -1706,28 +1721,34 @@ a,button{transition:transform .14s}
     ['me','9:30 works'],
     ['them','Booked ✓ — you’ll get a reminder the night before. We’ll take care of you.']
   ];
+  function phoneHTML(kicker){
+    return '<span class="fds-kicker">'+kicker+'</span>'+
+      '<div class="fdph"><div class="fdph-bar"><span>Tuesday</span><span>2:14 PM</span></div>'+
+      '<div class="fdph-call" id="phCall"><span class="fdph-ring"></span>Incoming call · (203) 555-0182</div>'+
+      '<div class="fdph-thread" id="phThread"></div></div>'+
+      '<p class="fdc-method">A simulation, labeled as one — supported texts typically get a first reply in 15 seconds after go-live. The <a href="/missed-calls" style="color:var(--olive)">live demo</a> answers for real.</p>';
+  }
   function missedDemo(){
     landAfterSay(function(){
-      showScreen('<span class="fds-kicker">watch it happen</span>'+
-        '<div class="fdph"><div class="fdph-bar"><span>Tuesday</span><span>2:14 PM</span></div>'+
-        '<div class="fdph-call" id="phCall"><span class="fdph-ring"></span>Incoming call · (203) 555-0182</div>'+
-        '<div class="fdph-thread" id="phThread"></div></div>'+
-        '<p class="fdc-method">A simulation, labeled as one — supported texts typically get a first reply in 15 seconds after go-live. The <a href="/missed-calls" style="color:var(--olive)">live demo</a> answers for real.</p>',
-        playMissedSim);
+      showScreen(phoneHTML('watch it happen'),function(){playMissedSim(function(){
+        if(triBusy)return;
+        speak('That’s Atlas — the answer to the call you couldn’t take. <a href="/missed-calls">Run the live demo yourself</a>, ask about <a data-say="the offer">the offer</a>, or <a data-say="how it compounds">how it compounds</a>.');
+      })});
     });
   }
-  function playMissedSim(){
-    var call=$('phCall'),thread=$('phThread'),i=0;
+  /* the performance survives interruption honestly: any visitor input bumps simGen and
+     the scripted playback simply stops — their conversation owns the room from there */
+  function playMissedSim(onDone){
+    var call=$('phCall'),thread=$('phThread'),i=0,g=simGen;
     setTimeout(function(){
+      if(g!==simGen)return;
       if(call)call.className='fdph-call missed';
       step();
     },1900);
     function step(){
+      if(g!==simGen)return;
       if(i>=SIM.length){
-        setTimeout(function(){
-          if(triBusy)return;
-          speak('That’s Atlas — the answer to the call you couldn’t take. <a href="/missed-calls">Run the live demo yourself</a>, ask about <a data-say="the offer">the offer</a>, or <a data-say="how it compounds">how it compounds</a>.');
-        },1300);
+        setTimeout(function(){if(g===simGen&&onDone)onDone()},1300);
         return;
       }
       var s=SIM[i++];
@@ -1802,9 +1823,35 @@ a,button{transition:transform .14s}
     fresh:function(){lane=null;setPH();speak(L.greet)}
   };
 
-  /* the desk speaks first — by memory if we've met, otherwise the greeting */
+  /* ═══ THE BREAK — the hero's first act. First-time visitors don't get asked to type;
+     they get shown. The desk sets the scene, the missed-call recovery plays unprompted
+     (labeled simulation — same honesty rail as the demo lane), and only THEN does the
+     fork land — proof before the ask. Returning visitors get their memory greeting
+     instead; reduced-motion, deep-linked, and mid-scroll arrivals get the classic
+     greeting. Any input mid-performance stops the script and hands them the room. ═══ */
+  function openBreak(){
+    speak(L.open);
+    var g=simGen;
+    landAfterSay(function(){
+      if(g!==simGen)return;
+      showScreen(phoneHTML('the 4th wall, coming down'),function(){playMissedSim(function(){
+        if(triBusy)return;
+        speak(L.openFork);
+      })});
+    });
+  }
+  function canBreak(){
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return false;
+    if(location.hash)return false;
+    if(window.scrollY>200)return false;
+    return true;
+  }
+
+  /* the desk speaks first — by memory if we've met, by performance if we haven't */
   var __mem=loadMemory();
-  if(__mem)speakReturn(__mem);else speak(L.greet);
+  if(__mem)speakReturn(__mem);
+  else if(canBreak())openBreak();
+  else speak(L.greet);
 })();
 </script>
 
