@@ -583,6 +583,10 @@ a,button{transition:transform .14s}
 .fdfw-loop.on{opacity:1;color:var(--olive)}
 /* P4 · the hiring guide — the per-trade checklist */
 .fdg-card{background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:1rem 1.1rem;margin-bottom:.7rem}
+.fdg-room{display:block;cursor:pointer;transition:transform .18s,box-shadow .2s}
+.fdg-room:hover{transform:translateY(-2px);box-shadow:var(--nm-out)}
+.fdg-room .arr{font-size:.8em;color:var(--olive);opacity:.55;transition:opacity .18s,transform .18s;display:inline-block}
+.fdg-room:hover .arr{opacity:1;transform:translateX(3px)}
 .fdg-t{display:block;font:600 .95rem/1.35 var(--display);letter-spacing:-.01em;color:var(--ink);margin-bottom:.3rem}
 .fdg-d{font:400 .82rem/1.6 var(--body);color:var(--muted)}
 /* F2 — object permanence: the tapped card MORPHS into the profile (View Transitions
@@ -1083,7 +1087,12 @@ a,button{transition:transform .14s}
     book3:'We’re 4THWALL. We build both sides of the fix.',
     greet:'Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
     ho:'How can we help? Say the job like you’d tell a neighbor — <a data-say="my roof is leaking">a leak</a>, <a data-say="the AC died upstairs">a dying AC</a>, <a data-say="my driveway needs repaving">a tired driveway</a>.',
-    co:'Welcome. Would you like to hear about <a data-say="atlas">Atlas</a>, <a data-say="lens">Lens</a>, <a data-say="flywheel">how it compounds</a> — or ask anything about <a data-say="the offer">the offer</a>?',
+    co0:'The best crews rarely have the best office. For the first time, that stops mattering.',
+    co1:'The biggest outfits always had one advantage the rest couldn’t afford — an office. People answering, chasing, booking, minding the season, minding the record. That advantage just changed hands.',
+    office:'This is the office Atlas runs around your work. Walk any room — or ask about <a data-say="storm season">storm season</a>, <a data-say="reviews">reviews</a>, or <a data-say="the offer">the offer</a>.',
+    ho0:'You shouldn’t need luck to hire well. Vesta walks you to the right few — and shows you why they fit.',
+    ho1:'From the outside, every contractor looks the same. Five stars, five stars, five stars. That was never your failure to research — it’s all anyone can see.',
+    vwho:'Vesta is free for homeowners, and no one can pay to be recommended. We’re a Connecticut company that thinks choosing well shouldn’t take luck. Tell me what’s going on with the house — or ask anything.',
     atlas:'Atlas is the managed front office behind your work — it answers when you can’t pick up, qualifies the lead, books the estimate, carries follow-up and reviews, and hands you a measured receipt every month. See the <a href="/missed-calls">60-second demo</a>, ask about <a data-say="the offer">the offer</a>, or hear about <a data-say="lens">Lens</a>.',
     lens:'Lens is free — your private trust workspace. Connect the tools you already run, review every fact your record supports, and control exactly what a homeowner could see. Nothing publishes without you. <a href="/lens">Start free</a>, or hear about <a data-say="atlas">Atlas</a>.',
     flywheel:'The work makes the evidence, and the evidence makes the work. Atlas runs the front office. What happens becomes a measured record. Lens puts you in control of it. Vesta shows homeowners the proof — never ads. Hear about <a data-say="atlas">Atlas</a>, or <a data-say="lens">Lens</a>.',
@@ -1172,19 +1181,23 @@ a,button{transition:transform .14s}
     }
     if(triActive)return triTurn(q);   /* once the real triage owns the conversation, it keeps it */
     var short=q.trim().split(/\s+/).length<=5;
-    if(short&&/home ?owner/i.test(q))return speakKey('ho');
-    if(short&&/\bcontractor\b/i.test(q))return coDoor();
+    if(short&&/home ?owner/i.test(q))return hoArc();
+    if(short&&/\bcontractor\b/i.test(q))return coArc();
     if(lane==='ho')return triStart(q);
+    if(/\b(walk the office|the office|every room)\b/i.test(q))return officeScreen();
+    if(/\bstorms?( season| mode)?\b/i.test(q))return roomScreen('storm');
+    if(/\b(campaigns?|slow season|quiet season|reactivat)/i.test(q))return roomScreen('camp');
     if(/\b(price|pricing|cost|how much|fees?|offer)\b/i.test(q))return speakKey('offer');
     if(/\batlas\b/i.test(q))return speakKey('atlas');
     if(/\blens\b/i.test(q))return speakKey('lens');
     if(/\b(flywheel|compound|compounds|fit together|how it works)\b/i.test(q)){speakKey('flywheel');return fwDraw()}
-    if(/\b(seo|search|google|rank(ing)?)\b/i.test(q))return speakKey('seo');
+    if(/\b(seo|search|google|rank(ing)?|visibilit)/i.test(q))return roomScreen('local');
     if(/\b(miss|missed|missing|after.?hours|voicemail|call ?back)\b/i.test(q)){speakKey('missed');return missedDemo()}
-    if(/\breviews?\b/i.test(q))return speakKey('reviews');
+    if(/\breviews?\b/i.test(q))return roomScreen('reviews');
+    if(/\b(who.s behind|behind this|can (i|we) trust|why (is it |is vesta )?free|pay to be)\b/i.test(q))return speakKey('vwho');
     if(/\b(4th ?wall|who are you|what is this|what do you do|about|mission|company|story)\b/i.test(q))return speakKey('house');
-    if(/\bvesta\b/i.test(q))return speakKey('ho');
-    if(CO_WORDS.test(q))return coDoor();
+    if(/\bvesta\b/i.test(q))return hoArc();
+    if(CO_WORDS.test(q))return coArc();
     if(HO_WORDS.test(q))return triStart(q);
     speakKey('deflect');
   }
@@ -1755,20 +1768,85 @@ a,button{transition:transform .14s}
     ['me','9:30 works'],
     ['them','Booked ✓ — you’ll get a reminder the night before. We’ll take care of you.']
   ];
-  /* the contractor door — the offer stated flat, on screen, the moment they claim the
-     lane. Every card is pack-derived (no new claims); the receipt closes it; the only
-     number spoken is the fit-call posture. Shortest path from "I saw it work" → Drew. */
-  function coDoor(){
-    speakKey('co');
+  /* ═══ THE TWO UNIVERSES (front-door-script.md v2). Each lane is a russian doll the
+     desk leads: blanket → why → the working doll. Atlas's doll is the FULL ESTATE —
+     eight rooms, each openable in place; the missed call is one room, never the story.
+     Vesta's doll is the guided hand into the real triage. Every line pack-derived. ═══ */
+  var ROOMS={
+    lead:{t:'Lead Response',d:'Every call and text answered and qualified — around the clock, in English or Spanish.',
+      deep:'When you can’t pick up, Atlas follows up by text right away. The approved questions get asked — what happened, where, how urgent — and supported texts typically get a first reply in 15 seconds after go-live.',sim:true},
+    storm:{t:'Storm Mode',d:'Storm volume, the same operating standard.',
+      deep:'When inbound calls and texts surge after a storm, Atlas works the conversations concurrently — instead of leaving a stack of voicemails for the end of the day. The busiest week of your year runs like a normal one.'},
+    camp:{t:'Seasonal Campaigns',d:'Your market’s seasons, worked on schedule.',
+      deep:'Campaigns built around your market’s rhythm — storm response, renovation windows, inspection cycles. Written, scheduled, and sent without you touching a keyboard.'},
+    book:{t:'Booking &amp; Scheduling',d:'Qualified estimates, on the calendar, context attached.',
+      deep:'When a lead qualifies, Atlas can place the estimate directly on your calendar — with what happened, where, and how urgent already written up for you.'},
+    follow:{t:'Follow-up',d:'Quotes chased, quiet leads revived.',
+      deep:'The quote you sent Tuesday gets followed up on. The lead that went quiet in March gets a reason to come back. Nothing dies in a notebook.'},
+    reviews:{t:'Review Generation',d:'The ask, at the moment the job closes.',
+      deep:'Reviews come from asking at the right moment. Atlas sends the request when the job closes, every time — the record compounds instead of evaporating.'},
+    local:{t:'Local Discovery',d:'The signals that make good work findable, kept current.',
+      deep:'Your pages, listings, and local signals — maintained as part of the office, not sold as an add-on. Clearer facts for the systems homeowners actually search with; honest work, honestly findable.'},
+    briefs:{t:'Operator Briefs',d:'It watches your week before you think to ask.',
+      deep:'Atlas watches for storm threats in your market, notices when a lead goes quiet, and counts your week before you think to look. It’s not waiting for a question — it’s already thinking about your business.'}
+  };
+  function officeScreen(){
+    speak(L.office);
     landAfterSay(function(){
-      showScreen('<span class="fds-kicker">the offer, plainly</span>'+
-        '<h3 class="fds-h">You do the work. Atlas runs the business around it.</h3>'+
-        '<div class="fdg-card"><span class="fdg-t">Missed calls answered</span><p class="fdg-d">When you can’t pick up, Atlas follows up by text right away — around the clock, in English or Spanish.</p></div>'+
-        '<div class="fdg-card"><span class="fdg-t">Leads qualified &amp; booked</span><p class="fdg-d">The approved questions get asked — what happened, where, how urgent — and a qualified estimate lands on your calendar.</p></div>'+
-        '<div class="fdg-card"><span class="fdg-t">Follow-up that doesn’t die</span><p class="fdg-d">Quotes get chased, quiet leads get revived, and reviews get asked for at the moment the job closes.</p></div>'+
-        '<div class="fdg-card"><span class="fdg-t">The monthly receipt</span><p class="fdg-d">Atlas measures what it actually operates — responses, bookings, follow-ups, recorded outcomes. A receipt, not a promise.</p></div>'+
-        '<p class="fdc-method">A managed service, not a software seat — the price follows the size of the front office we run for you, set on a 20-minute fit call in plain numbers. If we’re not the right fit, we’ll say so first.</p>'+
-        '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a href="/lens">start free with Lens →</a></div>');
+      var cards=Object.keys(ROOMS).map(function(k){var r=ROOMS[k];
+        return '<a class="fdg-card fdg-room" data-room="'+k+'"><span class="fdg-t">'+r.t+' <span class="arr">→</span></span><p class="fdg-d">'+r.d+'</p></a>';
+      }).join('');
+      showScreen('<span class="fds-kicker">the office</span>'+
+        '<h3 class="fds-h">You do the work. This runs around it.</h3>'+cards+
+        '<p class="fdc-method">Every month ends with a receipt, not a story — responses, bookings, follow-ups, recorded outcomes. And the record is yours: in Lens you review every fact, and nothing publishes without you. If we’re not the right fit, we’ll say so first.</p>'+
+        '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a href="/lens">start free with Lens →</a></div>',
+        wireRooms);
+    });
+  }
+  function wireRooms(){
+    [].forEach.call(screen.querySelectorAll('[data-room]'),function(a){
+      a.addEventListener('click',function(e){e.preventDefault();roomScreen(a.getAttribute('data-room'))});
+    });
+  }
+  function roomScreen(k){
+    var r=ROOMS[k];if(!r)return officeScreen();
+    speak('<b>'+r.t+'</b> — '+r.d+' Walk <a data-say="walk the office">back through the office</a> anytime.');
+    landAfterSay(function(){
+      showScreen('<span class="fds-kicker">inside the office</span>'+
+        '<h3 class="fds-h">'+r.t+'</h3>'+
+        '<p class="fdg-d" style="font-size:.92rem;line-height:1.7">'+r.deep+'</p>'+
+        '<div class="fds-doors"><a data-door="office">← the office</a>'+
+        (r.sim?'<a data-door="sim">watch a missed call come back →</a>':'')+
+        '<a href="'+CAL+'" target="_blank" rel="noopener">book the fit call →</a></div>',
+        function(){
+          var o=screen.querySelector('[data-door="office"]');if(o)o.addEventListener('click',function(e){e.preventDefault();officeScreen()});
+          var s=screen.querySelector('[data-door="sim"]');if(s)s.addEventListener('click',function(e){e.preventDefault();
+            showScreen(phoneHTML('inside lead response'),function(){playMissedSim(function(){
+              if(triBusy)return;
+              speak('That’s one room of the office. <a data-say="walk the office">Walk the rest</a>, <a href="/missed-calls">run the live demo</a>, or <a href="'+CAL+'" target="_blank" rel="noopener">book the fit call</a>.');
+            })});
+          });
+        });
+    });
+  }
+  /* the contractor arc: blanket → why → the office (the money doll) */
+  function coArc(){
+    lane='co';setPH();
+    var g=simGen;
+    speak(L.co0);
+    landAfterSay(function(){if(g!==simGen)return;
+      speak(L.co1);
+      landAfterSay(function(){if(g!==simGen)return;officeScreen()});
+    });
+  }
+  /* the homeowner arc: blanket → absolution → the ask (the triage takes it from there) */
+  function hoArc(){
+    lane='ho';setPH();
+    var g=simGen;
+    speak(L.ho0);
+    landAfterSay(function(){if(g!==simGen)return;
+      speak(L.ho1);
+      landAfterSay(function(){if(g!==simGen)return;speak(L.ho)});
     });
   }
   function phoneHTML(kicker){

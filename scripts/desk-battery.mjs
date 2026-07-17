@@ -148,12 +148,25 @@ const check = (tag, ok, note='') => {
     && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())
     && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
 { const d = boot(src); d.say('contractor');
-  check('A2 "contractor" → concierge line (Atlas + Lens voiced)', /Atlas/.test(d.spoken()) && /Lens/.test(d.spoken())); }
-{ const d = boot(src); d.say('contractor');
+  // sync timers: the co arc (blanket → why → THE OFFICE) plays through at boot
   const s = d.els.fdScreen.innerHTML;
-  check('A28 contractor door → the offer ON SCREEN (runs + receipt + fit-call CTA, zero price figures)',
-    /You do the work/.test(s) && /Missed calls answered/.test(s) && /receipt, not a promise/.test(s)
+  check('A2 "contractor" → the FULL estate lands (all 8 rooms + receipt + posture + doors, zero price figures)',
+    /Lead Response/.test(s) && /Storm Mode/.test(s) && /Seasonal Campaigns/.test(s) && /Booking/.test(s)
+    && /Follow-up/.test(s) && /Review Generation/.test(s) && /Local Discovery/.test(s) && /Operator Briefs/.test(s)
+    && /receipt, not a story/.test(s) && /say so first/.test(s)
     && /book the 20-minute fit call/.test(s) && !/\$|\b\d,?\d{3}\b/.test(s)); }
+{ const d = boot(src); d.say('storm season is coming');
+  check('A28 storm ask (cold) → Storm Mode room direct (depth of directions)',
+    /Storm Mode/.test(d.spoken()) && /concurrently/.test(d.els.fdScreen.innerHTML)); }
+{ const d = boot(src); d.say('how do you handle reviews?');
+  check('A29 reviews ask → the Review Generation room, not a flat line',
+    /Review Generation/.test(d.els.fdScreen.innerHTML) && /right moment/.test(d.els.fdScreen.innerHTML)); }
+{ const d = boot(src); d.say('why is vesta free?');
+  check('A30 trust probe → the who\'s-behind-this line (free, no pay-to-recommend, no method talk)',
+    /free for homeowners/.test(d.spoken()) && /no one can pay to be recommended/i.test(d.spoken())); }
+{ const d = boot(src); d.say('homeowner');
+  check('A31 homeowner arc → blanket + absolution land before the ask (ends on the neighbor line)',
+    /like you.d tell a neighbor/.test(d.spoken())); }
 { const d = boot(src); d.say('homeowner');
   check('A3 "homeowner" → job-examples line', /like you.d tell a neighbor/.test(d.spoken())); }
 { const d = boot(src); d.say('homeowner'); d.say('the AC died upstairs');
@@ -177,7 +190,9 @@ const check = (tag, ok, note='') => {
 { const d = boot(src); d.say('what is lens?');
   check('A12 lens ask → Lens line (free, nothing publishes without you)', /free/.test(d.spoken()) && /Nothing publishes without you/.test(d.spoken())); }
 { const d = boot(src); d.say('do you handle seo?');
-  check('A13 seo ask → SEO line', /local discovery/.test(d.spoken())); }
+  check('A13 seo ask → the Local Discovery room (kept-current signals, no ranking guarantees)',
+    /Local Discovery/.test(d.spoken()) && /maintained as part of the office/.test(d.els.fdScreen.innerHTML)
+    && !/guarantee/i.test(d.els.fdScreen.innerHTML)); }
 { const d = boot(src); d.say('i keep missing calls on jobs');
   // shim timers run sync: the whole performance plays through to the closing lead
   check('A14 missed-calls ask → the desk PERFORMS the missed call (sim assembled, labeled, hedged; closing lead voiced)',
