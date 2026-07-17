@@ -20,6 +20,16 @@
 // renderContractorHTML.
 
 import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml, ORG_ID, WEBSITE_ID, publisherNodes, COST_GUIDE } from './_render-directory.mjs';
+import { operatedBlocks } from './_blocks-operated.mjs';
+
+// ── Fusion (TP-6.1) ─────────────────────────────────────────────────────────
+// The operated-record section: ledger-measured facts ("responds in ~4 min,
+// measured across 212 real inbounds") rendering as their own evidence lane,
+// never blended into Vesta's public-record read. FUSION_LIVE is the go-live
+// switch — it stays false until a real Atlas client's chain-verified signals
+// exist AND Drew flips it (wall W1). The synthetic preview path renders the
+// template with loud not-this-business labeling and is never linked or cached.
+export const FUSION_LIVE = false;
 
 // --- the public-view read (mirror of the old contractor.html client fetch) ---
 export const PROFILE_SELECT =
@@ -467,6 +477,52 @@ function recordBlock(enr, trade) {
   '</section>';
 }
 
+// The operated record (TP-6.1) — the fused-profile section. Blocks are derived
+// by _blocks-operated.mjs (the operated lane's single derivation point); this
+// function only formats them for humans. Renders nothing without a verified
+// chain — an empty lane is silent, never padded (suppression beats filling).
+function fusedSection(signals, enr, preview) {
+  const blocks = operatedBlocks(signals, enr.place_id);
+  if (!blocks.length) return '';
+  const by = {};
+  for (const b of blocks) by[b.id.split(':').pop()] = b;
+
+  const fmtResponse = (ms) => {
+    const min = ms / 60000;
+    return min < 1 ? Math.round(ms / 1000) + ' sec' : '~' + Math.round(min) + ' min';
+  };
+  const cards = [];
+  if (by['op-response']) cards.push(['Responds in ' + fmtResponse(by['op-response'].value),
+    'median across ' + by['op-response'].denominator.inbounds + ' real inbounds, last 90 days']);
+  if (by['op-reliability']) cards.push([by['op-reliability'].value + '% carried through',
+    'booked jobs completed, measured across ' + by['op-reliability'].denominator.bookings + ' bookings in 12 months']);
+  if (by['op-jobs']) cards.push([by['op-jobs'].value + ' verified jobs',
+    'completed and recorded' + (by['op-jobs'].window ? ' since ' + by['op-jobs'].window.since_year : '')]);
+  if (by['op-storm']) cards.push(['Storm responder', 'answered during storm events in the past 18 months']);
+  if (by['op-reviews']) cards.push([by['op-reviews'].value + ' reviews earned', 'each tied to a completed, recorded job']);
+
+  const receipt = blocks[0].receipt;
+  return '<section class="fused-wrap" aria-label="The operated record — measured by 4THWALL">' +
+    (preview
+      ? '<div class="fused-preview-banner">Synthetic demonstration — this is what a 4THWALL-operated contractor’s profile carries. ' +
+        'Example data only: <b>none of it is this business’s record</b>; no operated record exists for this firm.</div>'
+      : '') +
+    '<p class="trec-kicker">✦ The operated record — measured, not claimed</p>' +
+    '<p class="fused-lede">These facts aren’t testimonials. They’re measured inside the front office 4THWALL runs' +
+      (preview ? ' for operated contractors' : ' for this business') +
+      ' — every event recorded into a tamper-evident ledger as it happens, never edited after the fact. ' +
+      'A separate evidence class from Vesta’s public-record read above.</p>' +
+    '<div class="fused-grid">' +
+      cards.map(([h, p]) => '<div class="fused-card"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p></div>').join('') +
+    '</div>' +
+    '<details class="fused-receipt"><summary>✓ Chain-verified · ' + Number(receipt.ledger_entries) + ' ledger entries · tamper-evident</summary>' +
+      '<p>Every entry carries a cryptographic hash of the entry before it. Changing any past record breaks every hash after it, ' +
+      'so the whole chain is re-verified before any of these numbers render — a broken chain shows nothing, not a best guess. ' +
+      'Rates come with their sample and window or don’t appear at all.</p>' +
+    '</details>' +
+  '</section>';
+}
+
 // What homeowners say — the kept synthesis + structured highlights.
 function homeownersBlock(enr) {
   const hasKnown = Array.isArray(enr && enr.known_for) && enr.known_for.length;
@@ -901,6 +957,17 @@ const ATLAS_MOMENT_CSS =
   '.cost-line .cl-note{font-size:.85rem;line-height:1.6;color:var(--vmut,rgba(18,16,14,.7));margin:0 0 .85rem;max-width:64ch}' +
   '.cost-line .cl-link{font-size:.82rem;font-weight:500;color:var(--vgreen-2,#4a4b2f);text-decoration:none}' +
   '.cost-line .cl-link:hover{text-decoration:underline}' +
+  /* ── The operated record (fusion, TP-6.1) — its own lane, visually distinct ── */
+  '.fused-wrap{margin:0 0 1.8rem;padding:1.2rem 1.25rem;border:1px solid rgba(74,75,47,.22);border-radius:14px;background:rgba(74,75,47,.045)}' +
+  '.fused-preview-banner{font-family:var(--mono);font-size:.72rem;line-height:1.6;letter-spacing:.04em;color:#7a3b12;background:rgba(212,138,42,.12);border:1px dashed rgba(122,59,18,.45);border-radius:9px;padding:.6rem .8rem;margin-bottom:1rem}' +
+  '.fused-lede{font-size:.9rem;line-height:1.65;color:var(--vmut,rgba(18,16,14,.72));margin:0 0 1.05rem;max-width:66ch}' +
+  '.fused-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.7rem;margin-bottom:1rem}' +
+  '.fused-card{border:1px solid rgba(74,75,47,.16);border-radius:11px;background:var(--vbg,#fff);padding:.75rem .85rem}' +
+  '.fused-card h3{font-family:var(--display);font-size:1.02rem;font-weight:600;letter-spacing:-.01em;color:var(--vgreen-2,#4a4b2f);margin:0 0 .3rem}' +
+  '.fused-card p{font-size:.8rem;line-height:1.55;color:var(--vmut,rgba(18,16,14,.65));margin:0}' +
+  '.fused-receipt summary{cursor:pointer;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--vgreen-2,#4a4b2f);list-style:none}' +
+  '.fused-receipt summary::-webkit-details-marker{display:none}' +
+  '.fused-receipt p{font-size:.82rem;line-height:1.65;color:var(--vmut,rgba(18,16,14,.7));margin:.6rem 0 0;max-width:66ch}' +
   /* ── "The Record" — the locked dot-axis design standard ── */
   '.trec-wrap{margin:0 0 1.6rem}' +
   '.trec-kicker{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--vgreen-2,#4a4b2f);margin-bottom:.9rem}' +
@@ -1003,7 +1070,7 @@ function relatedBlock(siblings, trade) {
 
 // === entry points ===========================================================
 
-export function renderContractorHTML(enr, siblings = []) {
+export function renderContractorHTML(enr, siblings = [], opts = {}) {
   const trade = enr.trade || '';
   const label = tradeLabel(trade) || 'Contractor';
   const tl = tLowerOf(trade);
@@ -1053,8 +1120,16 @@ export function renderContractorHTML(enr, siblings = []) {
     '</section>' +
   '</aside>';
 
+  // The operated lane renders only when live signals exist AND the switch is on
+  // (W1), or in the unlinked synthetic preview. Placement after the public-record
+  // section keeps the lanes visibly separate; final placement is a fusion-live
+  // taste call with Drew, cheap to move.
+  const fused = (opts.fusionSignals && (FUSION_LIVE || opts.fusionPreview))
+    ? fusedSection(opts.fusionSignals, enr, !!opts.fusionPreview) : '';
+
   const body = '<section class="cp-body neu-panel" id="body">' +
       recordBlock(enr, trade) +
+      fused +
       signatureBlock(enr) +
       vestaReadBlock(enr, trade) +
       homeownersBlock(enr) +

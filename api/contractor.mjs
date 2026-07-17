@@ -9,6 +9,7 @@
 // DB) — no secrets involved. The live Google block + gated contact are layered
 // in CLIENT-side by /profile.js, so they never enter the crawlable HTML.
 import { renderContractorHTML, renderNotFoundHTML, profileQuery, siblingsQuery } from './_render-contractor.mjs';
+import { SYNTHETIC_SIGNALS } from './_blocks-operated.mjs';
 
 const DB_BASE = process.env.SUPABASE_URL || 'https://vinytnzzgryodyrftabg.supabase.co';
 // Anon-scoped publishable key — RLS-protected, already public in the client (home.js).
@@ -67,6 +68,18 @@ export default async function handler(req, res) {
         if (Array.isArray(sd)) siblings = sd;
       }
     } catch (_) { /* non-fatal: render the profile without the compare block */ }
+  }
+
+  // Fusion synthetic preview (TP-6.1): ?fusion=preview renders the operated-record
+  // template on SYNTHETIC data with loud not-this-business labeling. Unlinked,
+  // never cached, never indexed — the public page is untouched (its cache key has
+  // no query string). The LIVE render stays off until FUSION_LIVE + real signals (W1).
+  if (String((req.query && req.query.fusion) || '') === 'preview') {
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    return res.status(200).send(renderContractorHTML(enr, siblings, {
+      fusionSignals: SYNTHETIC_SIGNALS, fusionPreview: true
+    }));
   }
 
   res.setHeader('Cache-Control', FRESH);
