@@ -150,30 +150,41 @@ a,button{transition:transform .14s}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
 
 /* ════════════════ NAV — floating soft pill ════════════════ */
-/* the option bar — every page is a neumorphic control with depth (kaisei reference) */
+/* the option bar — glassy pill; every page is a control with a name and an intent.
+   Resting: whisper of depth. Hover: lifts. Press / current: carved. (kaisei reference) */
 .topnav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:300;
-  display:flex;align-items:center;justify-content:center;gap:.45rem;
-  background:var(--nm);border-radius:var(--r-pill);padding:.5rem .55rem;
-  box-shadow:var(--nm-sm);border:1px solid rgba(255,255,255,.55);
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  background:rgba(236,237,226,.78);backdrop-filter:blur(16px) saturate(1.15);-webkit-backdrop-filter:blur(16px) saturate(1.15);
+  border-radius:var(--r-pill);padding:.45rem .5rem;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 4px 9px rgba(74,75,47,.1),0 18px 40px -16px rgba(74,75,47,.32);
+  border:1px solid rgba(255,255,255,.6);
   transition:box-shadow .3s ease}
-.topnav.scrolled{box-shadow:var(--nm-out)}
+.topnav.scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 14px rgba(74,75,47,.14),0 24px 48px -16px rgba(74,75,47,.4)}
 .topnav:active{transform:translateX(-50%)} /* keep centered — override the universal press */
-.nav-links{display:flex;align-items:center;gap:.4rem}
-.nav-a{font-size:.84rem;font-weight:550;color:var(--ebony);padding:.55rem 1.05rem;border-radius:var(--r-pill);
-  background:var(--nm);box-shadow:var(--nm-sm);border:1px solid rgba(255,255,255,.5);
-  transition:color .18s,box-shadow .2s,transform .18s}
-.nav-a:hover{color:var(--olive);box-shadow:var(--nm-out);transform:translateY(-1px)}
-.nav-a:active{box-shadow:var(--nm-in);transform:none}
-.nav-cta{display:inline-flex;align-items:center;gap:.45rem;background:var(--dark-grad);color:var(--white);border-radius:var(--r-pill);padding:.6rem 1.15rem;font-size:.84rem;font-weight:600;white-space:nowrap;box-shadow:0 4px 13px -3px rgba(67,68,42,.5);transition:box-shadow .2s,transform .14s}
+.nav-links{display:flex;align-items:center;gap:.3rem}
+.nav-a{display:flex;flex-direction:column;align-items:center;gap:.22rem;padding:.5rem 1.05rem;border-radius:var(--r-pill);
+  background:var(--nm);border:1px solid rgba(255,255,255,.45);
+  box-shadow:2.5px 2.5px 6px rgba(74,75,47,.09),-2.5px -2.5px 6px rgba(255,255,255,.75);
+  transition:box-shadow .2s,transform .18s}
+.nav-a b{font-size:.84rem;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1}
+.nav-a span{font-family:var(--mono);font-size:.5rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);line-height:1;white-space:nowrap}
+.nav-a:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
+.nav-a:hover span{color:var(--olive)}
+.nav-a:active,.nav-a.on{box-shadow:var(--nm-in);transform:none}
+.nav-cta{display:flex;flex-direction:column;align-items:center;gap:.22rem;background:var(--dark-grad);color:var(--white);border-radius:var(--r-pill);padding:.5rem 1.2rem;white-space:nowrap;box-shadow:0 4px 13px -3px rgba(67,68,42,.5),inset 0 1px 0 rgba(255,255,255,.14);transition:box-shadow .2s,transform .14s}
+.nav-cta b{font-size:.84rem;font-weight:600;line-height:1}
+.nav-cta span{font-family:var(--mono);font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(212,223,158,.75);line-height:1}
 .nav-cta:hover{box-shadow:0 7px 18px -4px rgba(67,68,42,.6);transform:translateY(-1px)}
 .nav-cta:active{transform:scale(.97)}
-.menu-btn{display:none;width:38px;height:38px;align-items:center;justify-content:center;background:var(--nm);color:var(--olive);border-radius:50%;box-shadow:var(--nm-sm);flex-shrink:0}
+.menu-btn{display:none;width:40px;height:40px;align-items:center;justify-content:center;background:var(--nm);color:var(--olive);border-radius:50%;box-shadow:var(--nm-sm);flex-shrink:0}
 .menu-btn:active{box-shadow:var(--nm-in)}
 .menu-btn svg{width:16px;height:16px}
-@media(max-width:640px){
+@media(max-width:900px){
   .nav-links{display:none}
   .menu-btn{display:flex}
-  .nav-cta{padding:.5rem 1rem;font-size:.8rem}
+  .nav-cta{padding:.45rem 1rem}
+  .nav-cta span{display:none}
+  .nav-cta b{font-size:.8rem}
 }
 
 /* mobile dropdown — a soft lifted card */
@@ -381,16 +392,17 @@ a,button{transition:transform .14s}
 .foot-legal-sep{margin:0 .5rem;color:var(--dim)}
 
 /* ════════ THE FRONT DESK — the hero is a conversation (P1 shell, zero model calls) ════════ */
-.fd{min-height:100svh;display:flex;flex-direction:column;align-items:center;padding:clamp(6rem,11vh,8rem) var(--pad) 4.2rem;position:relative;text-align:center}
-.fd-inner{width:min(660px,100%);flex:1;display:flex;flex-direction:column;align-items:center}
-/* the brand — centered, right under the option bar */
-.fd-brand{display:inline-flex;align-items:center;gap:.65rem;color:var(--olive);font-weight:600;font-size:.88rem;letter-spacing:.26em}
+.fd{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(6.5rem,12vh,8.5rem) var(--pad) 4.6rem;position:relative;text-align:center}
+.fd-inner{width:min(660px,100%);display:flex;flex-direction:column;align-items:center}
+/* the brand — centered, right under the option bar, with its category line */
+.fd-brand{display:inline-flex;align-items:center;gap:.65rem;color:var(--olive);font-weight:600;font-size:.9rem;letter-spacing:.26em}
 .fd-brand svg{width:28px;height:28px;flex-shrink:0}
+.fd-tagline{margin-top:.85rem;font:500 .58rem/1 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
 /* the welcome mat */
-.fd-mat{margin-top:2.6rem}
+.fd-mat{margin-top:3rem}
 .fd-mat .kicker{font-size:clamp(1.4rem,2.4vw,1.7rem)}
-/* the chat — centered in the remaining space, breathing */
-.fd-chat{width:100%;display:flex;flex-direction:column;align-items:center;margin:auto 0;padding:2.6rem 0}
+/* the chat — even rhythm, breathing without the void */
+.fd-chat{width:100%;display:flex;flex-direction:column;align-items:center;margin-top:1.2rem}
 @keyframes fdBreath{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.05);opacity:1}}
 @keyframes fdDot{0%,100%{opacity:.18}50%{opacity:.95}}
 @media(prefers-reduced-motion:reduce){
@@ -470,12 +482,12 @@ a,button{transition:transform .14s}
 <!-- ════════════════ NAV ════════════════ -->
 <nav class="topnav" id="topnav">
   <div class="nav-links" aria-label="Primary">
-    <a href="/atlas" class="nav-a">Atlas</a>
-    <a href="/lens" class="nav-a">Lens</a>
-    <a href="/vesta" class="nav-a">Vesta</a>
-    <a href="/thesis" class="nav-a">Thesis</a>
+    <a href="/atlas" class="nav-a"><b>Atlas</b><span>for contractors</span></a>
+    <a href="/lens" class="nav-a"><b>Lens</b><span>start free</span></a>
+    <a href="/vesta" class="nav-a"><b>Vesta</b><span>for homeowners</span></a>
+    <a href="/thesis" class="nav-a"><b>Thesis</b><span>why we exist</span></a>
   </div>
-  <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="nav-cta" target="_blank" rel="noopener">Book a call</a>
+  <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="nav-cta" target="_blank" rel="noopener"><b>Book a fit call</b><span>20 min · plain numbers</span></a>
   <button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
   </button>
@@ -499,6 +511,7 @@ a,button{transition:transform .14s}
       <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
       <span>4THWALL</span>
     </div>
+    <p class="fd-tagline">Both sides of home-service trust</p>
     <p class="fd-mat"><span class="kicker" id="fdMat">good evening — welcome in</span></p>
 
     <div class="fd-chat">
