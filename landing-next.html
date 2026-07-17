@@ -511,6 +511,13 @@ a,button{transition:transform .14s}
 .fdg-card{background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:1rem 1.1rem;margin-bottom:.7rem}
 .fdg-t{display:block;font:600 .95rem/1.35 var(--display);letter-spacing:-.01em;color:var(--ink);margin-bottom:.3rem}
 .fdg-d{font:400 .82rem/1.6 var(--body);color:var(--muted)}
+/* F2 — object permanence: the tapped card MORPHS into the profile (View Transitions
+   API; browsers without it get the staggered swap). Shared elements: fd-mono, fd-name. */
+.fdp-head{display:flex;align-items:center;gap:.85rem;margin-bottom:.3rem}
+.fdp-mono{flex:none;width:44px;height:44px;border-radius:14px;background:var(--tea-grad);color:var(--olive);display:grid;place-items:center;font:600 1.1rem/1 var(--display)}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.45s}
+::view-transition-group(fd-mono),::view-transition-group(fd-name){animation-duration:.55s;animation-timing-function:var(--spring)}
+@media(prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root),::view-transition-group(fd-mono),::view-transition-group(fd-name){animation:none}}
 /* profile */
 .fdp-back{display:inline-block;font:500 .68rem/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem;cursor:pointer}
 .fdp-back:hover{color:var(--olive)}
@@ -1178,6 +1185,44 @@ a,button{transition:transform .14s}
   function thinkOn(){var i=0;thinkW.textContent=THINKS[0];think.hidden=false;thinkTimer=setInterval(function(){i=(i+1)%THINKS.length;thinkW.textContent=THINKS[i]},2600)}
   function thinkOff(){think.hidden=true;clearInterval(thinkTimer);thinkTimer=null}
 
+  /* ── F2: the say STREAMS into the blur-reveal — complete sentences land as they
+     arrive, each chunk cascading per-letter. The one-turn grammar holds: this changes
+     WHEN the words start, never how they live or dissipate. ── */
+  var stOpen=false,stReady=false,stQ=[];
+  function stBegin(){
+    if(stOpen)return;stOpen=true;stReady=false;stQ=[];
+    thinkOff();
+    var old=line.querySelectorAll('.w i'),wait=0;
+    if(old.length){
+      for(var i=0;i<old.length;i++)old[i].style.transitionDelay=Math.min((old.length-i)*5,320)+'ms';
+      line.classList.remove('in');line.classList.add('out');wait=430;
+    }
+    setTimeout(function(){
+      line.innerHTML='<span></span>';
+      line.classList.remove('out','long');void line.offsetWidth;line.classList.add('in');
+      stReady=true;var q=stQ;stQ=[];for(var j=0;j<q.length;j++)stAppend(q[j]);
+    },wait);
+  }
+  function stAppend(html){
+    if(!stReady){stQ.push(html);return}
+    var inner=line.firstChild;if(!inner)return;
+    if(html.indexOf('<br>')!==-1)line.classList.add('long');
+    var span=document.createElement('span');
+    span.innerHTML=html.replace(/(<a[^>]*>[^<]*<\/a>)([,.?!;:—]*)/g,'<span class="nw">$1$2</span>');
+    letterize(span);
+    if(inner.childNodes.length)inner.appendChild(document.createTextNode(' '));
+    inner.appendChild(span);
+    /* inserted letters would match the .in state instantly — force the from-state, reflow, release */
+    var els=span.querySelectorAll('.w i');
+    [].forEach.call(els,function(el){el.style.opacity='0';el.style.filter='blur(10px)';el.style.transform='translateY(8px)'});
+    void span.offsetWidth;
+    [].forEach.call(els,function(el){el.style.opacity='';el.style.filter='';el.style.transform=''});
+    [].forEach.call(span.querySelectorAll('a[data-say]'),function(a){
+      a.addEventListener('click',function(e){e.preventDefault();input(a.getAttribute('data-say'),a.textContent)});
+    });
+    speakEnds=Date.now()+Math.min(html.replace(/<[^>]+>/g,'').length*13,1300)+520;
+  }
+
   function triStart(q){if(TRI_OK===false)return handoff(q);triTurn(q)}
   /* the 12-turn window, keeping the picks-context turn alive past the slice (the vmWindow rule) */
   function triWindow(){
@@ -1191,7 +1236,17 @@ a,button{transition:transform .14s}
     if(triBusy)return;triBusy=true;triActive=true;lastQ=text;
     triMsgs.push({role:'user',content:text});
     thinkOn();
-    var streamed='';
+    var streamed='',revealed='';stOpen=false;
+    /* reveal every COMPLETE sentence the moment it exists — the desk starts speaking
+       seconds before the generation finishes */
+    var reveal=function(){
+      var rem=streamed.slice(revealed.length);
+      var m=rem.match(/^[\s\S]*[.!?](?=\s|$)/);
+      if(!m||!m[0].trim())return;
+      stBegin();
+      stAppend(mdSay(m[0].trim()));
+      revealed=streamed.slice(0,revealed.length+m[0].length);
+    };
     fetch('/api/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:triWindow()})})
     .then(function(r){
       if(!r.ok||!r.body)throw new Error('http');
@@ -1201,7 +1256,8 @@ a,button{transition:transform .14s}
         buf+=dec.decode(x.value,{stream:true});
         var nl;while((nl=buf.indexOf('\n'))!==-1){var ln=buf.slice(0,nl).trim();buf=buf.slice(nl+1);
           if(ln.indexOf('data:')!==0)continue;var ev;try{ev=JSON.parse(ln.slice(5))}catch(e){continue}
-          if(ev.t==='d')streamed+=ev.c;else if(ev.t==='r')streamed='';
+          if(ev.t==='d'){streamed+=ev.c;reveal()}
+          else if(ev.t==='r'){streamed='';revealed='';stOpen=false}   /* server killed a bad generation — fresh line on the next delta */
           else if(ev.t==='f')fin=ev;else if(ev.t==='e')err=ev.error}
         return pump()})}
       return pump();
@@ -1214,7 +1270,7 @@ a,button{transition:transform .14s}
         if(streamed)f={say:streamed.slice(0,900),ask:null,chips:null,mode:'fix',resolved:null,deck:null,call:null};
         else throw new Error(res.err||'no final');
       }
-      triLand(f);
+      triLand(f,{streamed:stOpen,revealed:revealed});
     })
     .catch(function(){
       triBusy=false;thinkOff();
@@ -1222,20 +1278,35 @@ a,button{transition:transform .14s}
       handoff(lastQ);
     });
   }
-  function triLand(f){
+  function tailOf(f){
+    var tail='';
+    if(f.ask)tail+=mdSay(f.ask);
+    if(f.chips&&f.chips.length){
+      tail+=(tail?' ':'')+'— '+f.chips.map(function(c,i){return(i===f.chips.length-1&&f.chips.length>1?'or ':'')+'<a data-say="'+escT(c)+'">'+escT(c)+'</a>'}).join(', ')+'.';
+    }
+    return tail;
+  }
+  function triLand(f,pre){
     triMsgs.push({role:'assistant',content:JSON.stringify({say:String(f.say||'').slice(0,220),resolved:f.resolved||null})});
-    var html=mdSay(f.say||'');
+    var say=String(f.say||''),deck=f.resolved&&f.deck?f.deck:null,tail=tailOf(f);
+    /* streamed path: the words are already on screen — append the remainder + the tail,
+       never re-speak what was said (a double-voice reads as a glitch) */
+    if(pre&&pre.streamed&&pre.revealed&&say.indexOf(pre.revealed)===0){
+      convo.push({who:'desk',text:say});
+      var rem=say.slice(pre.revealed.length);
+      if(rem.trim())stAppend(mdSay(rem.trim()));
+      if(f.call==='911')stAppend('<a class="fd-call" href="tel:911">Call 911</a>');
+      if(f.mode==='emergency')return;
+      if(deck&&!(deckShown&&deckKey===deck.trade+'|'+deck.job)){deckLand(deck,f.mode||'fix');return}
+      if(tail)stAppend(tail);
+      return;
+    }
+    var html=mdSay(say);
     if(f.call==='911')html+=' <a class="fd-call" href="tel:911">Call 911</a>';
     /* emergency doctrine: safety + the call — never a deck, never a question (server clamps; honored here too) */
     if(f.mode==='emergency'){speak(html);return}
-    var deck=f.resolved&&f.deck?f.deck:null;
     if(deck&&!(deckShown&&deckKey===deck.trade+'|'+deck.job)){speak(html);deckLand(deck,f.mode||'fix');return}
-    var tail='';
-    if(f.ask)tail+=' '+mdSay(f.ask);
-    if(f.chips&&f.chips.length){
-      tail+=' — '+f.chips.map(function(c,i){return(i===f.chips.length-1&&f.chips.length>1?'or ':'')+'<a data-say="'+escT(c)+'">'+escT(c)+'</a>'}).join(', ')+'.';
-    }
-    speak(html+tail);
+    speak(html+(tail?' '+tail:''));
   }
 
   /* ── firms: fetched live from the same public view the Vesta app reads, one trade at a time ── */
@@ -1299,10 +1370,10 @@ a,button{transition:transform .14s}
   function readClip(s,n){s=String(s||'').trim();n=n||230;if(s.length<=n)return s;var cut=s.slice(0,n),pd=cut.lastIndexOf('. ');return pd>60?cut.slice(0,pd+1):cut+'…'}
 
   /* ── the assembled screens ── */
-  function showScreen(html){
+  function paintScreen(html,instant){
     screen.hidden=false;screen.classList.remove('in');screen.innerHTML=html;
     /* children stagger in, one beat apart — the screen ASSEMBLES rather than appears */
-    [].forEach.call(screen.children,function(c,i){c.style.transitionDelay=Math.min(i*80,640)+'ms'});
+    [].forEach.call(screen.children,function(c,i){c.style.transitionDelay=instant?'0ms':Math.min(i*80,640)+'ms'});
     void screen.offsetWidth;screen.classList.add('in');
     /* first assembly reconfigures the room: greeting hall → working room, view lifted to the stage */
     var fd=document.getElementById('home');
@@ -1310,6 +1381,15 @@ a,button{transition:transform .14s}
       fd.classList.add('staged');
       setTimeout(function(){try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){}},100);
     }
+  }
+  /* F2 — object permanence: screen→screen changes MORPH (View Transitions API; shared
+     elements carry view-transition-names). First assembly keeps the stagger. `wire`
+     runs after the new DOM paints — inside the transition when one is running. */
+  function showScreen(html,wire){
+    if(screen.hidden||!document.startViewTransition){
+      paintScreen(html,false);if(wire)wire();return;
+    }
+    document.startViewTransition(function(){paintScreen(html,true);if(wire)wire()});
   }
   function headOf(deck){
     var jl=String(deck.label||jobLabelOf(deck.job)).toLowerCase(),pl=PLURAL[deck.trade]||'pros';
@@ -1338,15 +1418,16 @@ a,button{transition:transform .14s}
       });
     });
   }
+  var morphPlace=null;   /* the pick the visitor last opened — its card carries the morph names on the way back */
   function renderPicks(){
     var deck=curDeck.deck,mode=curDeck.mode,hd=headOf(deck);
     var lead=deck.emergency?'who answers, then the record':mode==='plan'?'no rush — ready when you are':'assembled from the county record';
     var rows=curPicks.map(function(p,i){
-      var role=pickRoles[p.placeId];
+      var role=pickRoles[p.placeId],mm=p.placeId===morphPlace;
       return '<button class="fds-card" type="button" data-pick="'+i+'">'+
-        '<span class="fds-mono">'+escT((p.name||'?')[0])+'</span>'+
+        '<span class="fds-mono"'+(mm?' style="view-transition-name:fd-mono"':'')+'>'+escT((p.name||'?')[0])+'</span>'+
         '<span class="fds-fl">'+(role?'<span class="fds-role">'+ROLE_KICK[role]+'</span>':'')+
-        '<span class="fds-name">'+escT(p.name)+'</span>'+
+        '<span class="fds-name"'+(mm?' style="view-transition-name:fd-name"':'')+'>'+escT(p.name)+'</span>'+
         '<span class="fds-why">'+escT(whyOf(p,deck.job,deck.trade))+'</span></span>'+
         '<span class="fds-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></button>';
     }).join('');
@@ -1355,40 +1436,49 @@ a,button{transition:transform .14s}
     showScreen('<span class="fds-kicker">'+escT(lead)+'</span>'+
       '<h3 class="fds-h">'+escT(hd.h)+'</h3><p class="fds-sub">'+escT(hd.s)+'</p>'+rows+
       (more?'<a class="fds-more" href="/vesta">See all '+curTotal+' matches on Vesta →</a>':'')+
-      '<div class="fds-doors"><a data-door="guide">what to ask before you hire →</a><a data-door="cost">what this usually costs →</a></div>');
-    [].forEach.call(screen.querySelectorAll('[data-pick]'),function(b){
-      b.addEventListener('click',function(){openFirm(curPicks[+b.dataset.pick])});
-    });
-    wireDoors(db);
+      '<div class="fds-doors"><a data-door="guide">what to ask before you hire →</a><a data-door="cost">what this usually costs →</a></div>',
+      function(){
+        [].forEach.call(screen.querySelectorAll('[data-pick]'),function(b){
+          b.addEventListener('click',function(){openFirm(curPicks[+b.dataset.pick],b)});
+        });
+        wireDoors(db);
+      });
   }
   function wireDoors(db){
     [].forEach.call(screen.querySelectorAll('[data-door]'),function(a){
       a.addEventListener('click',function(){a.dataset.door==='guide'?guideScreen(db,null):costScreen(db,null)});
     });
   }
-  function openFirm(p){
-    if(!p)return;
+  function openFirm(p,card){
+    if(!p)return;morphPlace=p.placeId;
+    /* name the tapped card's elements so the API morphs them into the profile head */
+    if(card){var cm=card.querySelector('.fds-mono'),cn=card.querySelector('.fds-name');
+      if(cm)cm.style.viewTransitionName='fd-mono';if(cn)cn.style.viewTransitionName='fd-name';}
     logEvent('profile_view',{place_id:p.placeId,trade:curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):null});
     var st=standing(p,curDeck?curDeck.deck.trade:'');
     showScreen('<span class="fdp-back" id="fdpBack">← back to your picks</span>'+
-      '<h3 class="fdp-name">'+escT(p.name)+'</h3>'+
+      '<div class="fdp-head"><span class="fdp-mono" style="view-transition-name:fd-mono">'+escT((p.name||'?')[0])+'</span>'+
+      '<h3 class="fdp-name" style="view-transition-name:fd-name">'+escT(p.name)+'</h3></div>'+
       '<p class="fdp-town">'+escT(p.town)+(p.registered?' · CT-registered':'')+(p.sinceYear?' · since '+p.sinceYear:'')+'</p>'+
       (st?'<span class="fdp-standing">'+escT(st)+'</span>':'')+
       '<span class="fdp-readlab">vesta’s read</span>'+
       '<p class="fdp-read">'+escT(readClip(p.read,620))+'</p>'+
       (p.knownFor.length?'<div class="fdp-chips">'+p.knownFor.map(function(k){return '<span>'+escT(k)+'</span>'}).join('')+'</div>':'')+
       '<div class="fdp-actions"><button class="fdp-req" type="button" id="fdpReq">Request through Vesta</button>'+
-      '<a class="fdp-full" href="/c/'+encodeURIComponent(p.placeId)+'" target="_blank" rel="noopener">Full profile ↗</a></div>');
-    $('fdpBack').addEventListener('click',renderPicks);
-    $('fdpReq').addEventListener('click',function(){openRequest(p)});
+      '<a class="fdp-full" href="/c/'+encodeURIComponent(p.placeId)+'" target="_blank" rel="noopener">Full profile ↗</a></div>',
+      function(){
+        $('fdpBack').addEventListener('click',function(){renderPicks()});
+        $('fdpReq').addEventListener('click',function(){openRequest(p)});
+      });
   }
   function openRequest(p){
     logEvent('request',{place_id:p.placeId,trade:curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):null});
     var em=curDeck&&(curDeck.deck.emergency||/emergency/.test(curDeck.deck.job));
     var plan=curDeck&&curDeck.mode==='plan';
     showScreen('<span class="fdp-back" id="fdrBack">← back to '+escT(p.name)+'</span>'+
-      '<h3 class="fdp-name">Request through Vesta</h3>'+
-      '<p class="fds-sub">Your request goes to <b>'+escT(p.name)+'</b>. Say it once — Vesta carries it over, and replies come straight to you.</p>'+
+      '<div class="fdp-head"><span class="fdp-mono" style="view-transition-name:fd-mono">'+escT((p.name||'?')[0])+'</span>'+
+      '<h3 class="fdp-name">Request through Vesta</h3></div>'+
+      '<p class="fds-sub">Your request goes to <b style="view-transition-name:fd-name">'+escT(p.name)+'</b>. Say it once — Vesta carries it over, and replies come straight to you.</p>'+
       '<form id="fdrForm">'+
       '<div class="fdr-row"><label class="fdr-lab" for="fdrSum">What’s going on?</label><textarea class="fdr-ta" id="fdrSum" maxlength="1200" placeholder="Writing up what you told me…"></textarea></div>'+
       '<div class="fdr-row fdr-pair"><div><label class="fdr-lab" for="fdrName">Your name</label><input class="fdr-in" id="fdrName" maxlength="80" autocomplete="name"></div>'+
@@ -1400,10 +1490,12 @@ a,button{transition:transform .14s}
       '<button class="fdp-req" type="submit">Send request →</button>'+
       '<span class="fdr-status" id="fdrStatus"></span>'+
       '<p class="fdr-fine">Vesta sends '+escT(p.name)+' a one-time introduction with your note and your email as the reply-to. Your details go only to this pro — never sold, never a mailing list.</p>'+
-      '</form><div id="fdrResult"></div>');
-    $('fdrBack').addEventListener('click',function(){openFirm(p)});
-    $('fdrForm').addEventListener('submit',function(e){e.preventDefault();sendRequest(p)});
-    prefill();
+      '</form><div id="fdrResult"></div>',
+      function(){
+        $('fdrBack').addEventListener('click',function(){openFirm(p)});
+        $('fdrForm').addEventListener('submit',function(e){e.preventDefault();sendRequest(p)});
+        prefill();
+      });
   }
   /* prefill = the extractive intake writer (op:'writeup') — their OWN words, never composed.
      insufficient → an honest blank; outage → the raw-words floor (the server's own doctrine). */
@@ -1514,8 +1606,8 @@ a,button{transition:transform .14s}
         '<p class="fds-sub">'+escT(t.cost.typical)+'</p>'+rows+
         '<p class="fdc-factors"><b>What moves your number:</b> '+escT(t.cost.factors)+'.</p>'+
         '<p class="fdc-method">These are planning estimates, not quotes — your real number comes from a contractor who has seen your '+escT(t.cost.noun||'project')+'. Basis: '+escT(t.cost.basis)+' · '+escT(t.cost.scope)+' · updated '+escT(t.cost.updated)+'.</p>'+
-        (t.guide?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="guide">what to ask before you hire →</a></div>':backDoor()));
-      wireBack(db)});
+        (t.guide?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="guide">what to ask before you hire →</a></div>':backDoor()),
+        function(){wireBack(db)})});
     });
   }
   function guideScreen(db,q){
@@ -1531,8 +1623,8 @@ a,button{transition:transform .14s}
       }).join('');
       landAfterSay(function(){showScreen('<span class="fds-kicker">before you hire</span>'+
         '<h3 class="fds-h">What to ask '+escT(t.pros)+' before you hire</h3>'+cards+
-        (t.cost?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="cost">what this usually costs →</a></div>':backDoor()));
-      wireBack(db)});
+        (t.cost?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="cost">what this usually costs →</a></div>':backDoor()),
+        function(){wireBack(db)})});
     });
   }
 
