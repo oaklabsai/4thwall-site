@@ -400,6 +400,7 @@ a,button{transition:transform .14s}
 @keyframes fdRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .fd-line{font-family:var(--display);font-weight:500;font-size:clamp(1.5rem,3.2vw,2.1rem);line-height:1.45;letter-spacing:-.02em;color:var(--ink);text-align:center;max-width:580px;min-height:6em;display:grid;place-items:center;margin-top:.3rem}
 .fd-line .w{display:inline-block;white-space:pre}
+.fd-line .nw{white-space:nowrap}
 .fd-line .w i{font-style:normal;display:inline-block;opacity:0;filter:blur(10px);transform:translateY(8px);transition:opacity .25s,filter .4s,transform .4s var(--spring)}
 .fd-line.in .w i{opacity:1;filter:blur(0);transform:none}
 .fd-line.out .w i{opacity:0;filter:blur(10px);transform:translateY(-8px)}
@@ -933,7 +934,8 @@ a,button{transition:transform .14s}
       line.classList.remove('in');line.classList.add('out');wait=430;
     }
     setTimeout(function(){
-      line.innerHTML=html+(extra||'');
+      /* one inner span (the grid centers a single item); glue punctuation to voiced options so they never wrap apart */
+      line.innerHTML='<span>'+html.replace(/(<a[^>]*>[^<]*<\/a>)([,.?!;:—]*)/g,'<span class="nw">$1$2</span>')+(extra||'')+'</span>';
       letterize(line);
       line.classList.remove('out');void line.offsetWidth;line.classList.add('in');
       [].forEach.call(line.querySelectorAll('a[data-say]'),function(a){
