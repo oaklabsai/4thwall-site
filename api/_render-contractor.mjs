@@ -20,7 +20,7 @@
 // renderContractorHTML.
 
 import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml, ORG_ID, WEBSITE_ID, publisherNodes, COST_GUIDE } from './_render-directory.mjs';
-import { operatedBlocks } from './_blocks-operated.mjs';
+import { operatedBlocks, SYNTHETIC_CHAIN } from './_blocks-operated.mjs';
 
 // ── Fusion (TP-6.1) ─────────────────────────────────────────────────────────
 // The operated-record section: ledger-measured facts ("responds in ~4 min,
@@ -519,8 +519,45 @@ function fusedSection(signals, enr, preview) {
       '<p>Every entry carries a cryptographic hash of the entry before it. Changing any past record breaks every hash after it, ' +
       'so the whole chain is re-verified before any of these numbers render — a broken chain shows nothing, not a best guess. ' +
       'Rates come with their sample and window or don’t appear at all.</p>' +
+      (preview ? chainVerifierDemo() : '') +
     '</details>' +
   '</section>';
+}
+
+// TP-6.2 verifier demo (synthetic preview only): a 5-entry chain whose sha256
+// links are recomputed LIVE in the browser — verify passes, tamper breaks it
+// from the altered entry forward. This is the "verify this record" affordance
+// proven at demo scale; the live version recomputes a real ledger segment.
+function chainVerifierDemo() {
+  const rows = SYNTHETIC_CHAIN.map((e) =>
+    '<div class="fchain-row" data-seq="' + e.seq + '"><span class="fchain-st" aria-hidden="true">·</span>' +
+    '<span class="fchain-seq">#' + e.seq + '</span><span class="fchain-type">' + esc(e.type) + '</span>' +
+    '<span class="fchain-hash">' + e.hash.slice(0, 12) + '…</span></div>').join('');
+  return '<div class="fchain" id="fchain">' +
+    '<p class="fchain-lede">Try it — this synthetic 5-entry chain verifies for real, in your browser:</p>' +
+    rows +
+    '<div class="fchain-actions">' +
+      '<button type="button" class="fchain-btn" id="fchain-verify">Verify the chain</button>' +
+      '<button type="button" class="fchain-btn ghost" id="fchain-tamper">Tamper with entry #3, then verify</button>' +
+    '</div><p class="fchain-verdict" id="fchain-verdict" role="status"></p></div>' +
+    '<script>(function(){' +
+    'var C=' + JSON.stringify(SYNTHETIC_CHAIN) + ';var tampered=false;' +
+    'function hex(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}' +
+    'function sha(s){return crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)).then(hex)}' +
+    'function run(){var prev="GENESIS";var chainOk=true;var p=Promise.resolve();' +
+      'C.forEach(function(e){p=p.then(function(){' +
+        'var detail=(tampered&&e.seq===3)?e.detail+" [altered]":e.detail;' +
+        'return sha(prev+"|"+e.seq+"|"+e.type+"|"+e.at+"|"+detail).then(function(h){' +
+          'var ok=(h===e.hash)&&chainOk;if(h!==e.hash)chainOk=false;prev=h;' +
+          'var r=document.querySelector(".fchain-row[data-seq=\\""+e.seq+"\\"] .fchain-st");' +
+          'r.textContent=ok?"\\u2713":"\\u2717";r.className="fchain-st "+(ok?"ok":"bad");});});});' +
+      'p.then(function(){var v=document.getElementById("fchain-verdict");' +
+        'v.textContent=chainOk?"\\u2713 Chain intact — every hash recomputed and matched.":' +
+        '"\\u2717 Chain broken from the altered entry forward — this is what tampering looks like, and why past records can\\u2019t be quietly edited.";' +
+        'v.className="fchain-verdict "+(chainOk?"ok":"bad");});}' +
+    'document.getElementById("fchain-verify").addEventListener("click",function(){tampered=false;run()});' +
+    'document.getElementById("fchain-tamper").addEventListener("click",function(){tampered=true;run()});' +
+    '})();</script>';
 }
 
 // What homeowners say — the kept synthesis + structured highlights.
@@ -968,6 +1005,16 @@ const ATLAS_MOMENT_CSS =
   '.fused-receipt summary{cursor:pointer;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--vgreen-2,#4a4b2f);list-style:none}' +
   '.fused-receipt summary::-webkit-details-marker{display:none}' +
   '.fused-receipt p{font-size:.82rem;line-height:1.65;color:var(--vmut,rgba(18,16,14,.7));margin:.6rem 0 0;max-width:66ch}' +
+  '.fchain{margin-top:.9rem;padding:.85rem .9rem;border:1px solid rgba(74,75,47,.14);border-radius:10px;background:var(--vbg,#fff)}' +
+  '.fchain-lede{font-size:.8rem;color:var(--vmut,rgba(18,16,14,.65));margin:0 0 .6rem}' +
+  '.fchain-row{display:flex;align-items:center;gap:.6rem;padding:.28rem 0;border-bottom:1px solid rgba(74,75,47,.08);font-family:var(--mono);font-size:.72rem}' +
+  '.fchain-st{width:1em;color:rgba(18,16,14,.35)}.fchain-st.ok{color:var(--vgreen-2,#4a4b2f);font-weight:700}.fchain-st.bad{color:#a33b1c;font-weight:700}' +
+  '.fchain-seq{color:var(--vmut,rgba(18,16,14,.55))}.fchain-type{color:var(--vink,#12100e);min-width:9.5em}' +
+  '.fchain-hash{color:var(--vmut,rgba(18,16,14,.5));margin-left:auto}' +
+  '.fchain-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.7rem}' +
+  '.fchain-btn{font:500 .74rem/1 var(--mono);letter-spacing:.05em;padding:.55rem .8rem;border-radius:8px;border:1px solid var(--vgreen-2,#4a4b2f);background:var(--vgreen-2,#4a4b2f);color:#fff;cursor:pointer}' +
+  '.fchain-btn.ghost{background:transparent;color:var(--vgreen-2,#4a4b2f)}' +
+  '.fchain-verdict{font-size:.8rem;line-height:1.5;margin:.6rem 0 0;min-height:1.2em}.fchain-verdict.ok{color:var(--vgreen-2,#4a4b2f)}.fchain-verdict.bad{color:#a33b1c}' +
   /* ── "The Record" — the locked dot-axis design standard ── */
   '.trec-wrap{margin:0 0 1.6rem}' +
   '.trec-kicker{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.62rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--vgreen-2,#4a4b2f);margin-bottom:.9rem}' +

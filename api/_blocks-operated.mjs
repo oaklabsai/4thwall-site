@@ -93,6 +93,19 @@ export function operatedBlocks(signals, placeId) {
 // The synthetic fixture the flag-gated preview renders (TP-6.1's proof body).
 // Shape mirrors buildTrustSignals EXACTLY, values sit safely above every floor,
 // and nothing about it corresponds to any real firm.
+// Synthetic 5-entry hash chain for the TP-6.2 verifier demo. The hashes are REAL
+// sha256 values over `prev|seq|type|at|detail` (precomputed 2026-07-17), so the
+// in-browser recompute genuinely passes — and genuinely breaks when the demo
+// tampers with an entry. Same chaining idea as the production ledger; simplified
+// canonical form, and says so on the surface.
+export const SYNTHETIC_CHAIN = [
+  { seq: 1, type: 'booking_created', at: '2026-03-02T14:11:08Z', detail: 'estimate booked from inbound SMS', prev: 'GENESIS', hash: '2b345d11b21bea7d057cfe06288c6ecf21d1b4d15d7f30a479cd35eec678dea8' },
+  { seq: 2, type: 'lead_answered', at: '2026-03-09T08:02:41Z', detail: 'inbound answered in 190s', prev: '2b345d11b21bea7d057cfe06288c6ecf21d1b4d15d7f30a479cd35eec678dea8', hash: '451b7db631bd9ce55de98ae6343c6151b47fc2e9622f1552c69d628b35026825' },
+  { seq: 3, type: 'job_completed', at: '2026-03-18T21:30:12Z', detail: 'roof repair completed, value band B', prev: '451b7db631bd9ce55de98ae6343c6151b47fc2e9622f1552c69d628b35026825', hash: '12bace8edbf258b6da794bf0be83f6261ffb0a414ecb0b0e5367b211e86e9b17' },
+  { seq: 4, type: 'review_earned', at: '2026-03-21T16:45:33Z', detail: 'review request answered', prev: '12bace8edbf258b6da794bf0be83f6261ffb0a414ecb0b0e5367b211e86e9b17', hash: '7343a125a941d043102ab9ae1eada917f43084104139a14fa19decfca2bc7ac5' },
+  { seq: 5, type: 'storm_response', at: '2026-04-02T06:12:57Z', detail: 'storm-window inbound handled', prev: '7343a125a941d043102ab9ae1eada917f43084104139a14fa19decfca2bc7ac5', hash: '8debfdd705f44fdd385ff9c0d0bc1fcec7c2e798d8f8cd4e77355765a5dec1b6' }
+];
+
 export const SYNTHETIC_SIGNALS = {
   location_id: 'SYNTHETIC-PREVIEW',
   verified: true,
