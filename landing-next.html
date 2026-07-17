@@ -402,37 +402,29 @@ a,button{transition:transform .14s}
 .fd-brand svg{width:28px;height:28px}
 .fd-tagline{margin-top:.85rem;font:500 .58rem/1 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
 
-/* ═══ ACT 0 — the picture book. Drawn pages: ink lines that draw themselves, one idea
-   per page, the desk narrating above. Hover holds the page open (a hand on the book);
-   any input closes it and hands the visitor the room. ═══ */
-.fd-book{margin:1.4rem auto 0;width:min(560px,92vw);position:relative;transition:opacity .45s ease}
-.fd-book.bye{opacity:0}
-.fd.staged .fd-book{display:none}
-.bk{opacity:0;transition:opacity .7s ease;position:relative;padding-bottom:1.4rem}
-.bk.in{opacity:1}
-.bk svg{display:block;margin:0 auto;overflow:visible}
-.bk path,.bk line,.bk circle,.bk rect{fill:none;stroke:var(--olive);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;
-  stroke-dasharray:420;stroke-dashoffset:420;transition:stroke-dashoffset 1.15s ease}
-.bk.draw path,.bk.draw line,.bk.draw circle,.bk.draw rect{stroke-dashoffset:0}
-/* the book is now a teacher's whiteboard — diagrams and charts drawn in ink. Lines draw
-   themselves (dash), labels and captions fade in as the teacher writes them. */
-.bkchart svg{width:min(360px,82vw)}
-.bk-axis{stroke:var(--dim);stroke-width:1.8}
-.bk-lbl{fill:var(--olive);font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;opacity:0;transition:opacity .6s ease .8s}
-.bk.draw .bk-lbl{opacity:.92}
-.bk-lbl.dim{fill:var(--dim)}
-.bk.draw .bk-lbl.dim{opacity:.62}
-.bk-star{fill:var(--olive);font-size:5.5px;letter-spacing:.5px;text-anchor:middle;opacity:0;transition:opacity .5s ease .3s}
-.bk.draw .bk-star{opacity:.6}
-.bk-q{fill:var(--olive);font-family:var(--display);font-weight:600;font-size:30px;opacity:0;transition:opacity .7s ease 1.2s}
-.bk.draw .bk-q{opacity:.9}
-.bk-node{fill:var(--olive);font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-anchor:middle;opacity:0;transition:opacity .6s ease .9s}
-.bk.draw .bk-node{opacity:.9}
-.bk-addr{margin-top:.55rem;text-align:center;font:500 .62rem/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--dim);opacity:0;transition:opacity .8s ease .5s}
-.bk.draw .bk-addr{opacity:1}
-.bk.recede{opacity:0;transform:translateY(6px);transition:opacity .8s ease,transform .8s ease}
-.bk-skip{position:absolute;right:.1rem;bottom:-.2rem;font:500 .58rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);cursor:pointer;transition:color .2s}
-.bk-skip:hover{color:var(--olive)}
+/* ═══ THE TWO CATEGORIES — both universes live below the welcome sign, visible on
+   landing. Left: the office coverflow (contractors). Right: the trade swipe stack
+   (homeowners — Originkit CardStack ported to vanilla). Staging collapses both. ═══ */
+.fd-cats{margin:1.7rem auto 0;width:min(980px,94vw);display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;align-items:start}
+@media(max-width:860px){.fd-cats{grid-template-columns:1fr;gap:2.2rem}}
+.fd.staged .fd-cats{display:none}
+.fd-cat{display:flex;flex-direction:column;align-items:center;text-align:center}
+.cat-k{font:500 .58rem/1 var(--mono);letter-spacing:.26em;text-transform:uppercase;color:var(--olive);background:var(--nm);box-shadow:var(--nm-in);border-radius:var(--r-pill);padding:.45rem .95rem}
+.cat-t{margin-top:.7rem;font-family:var(--display);font-size:clamp(1.02rem,2vw,1.18rem);font-weight:500;letter-spacing:-.015em;color:var(--ink)}
+/* the homeowner swipe stack */
+.stk-wrap{position:relative;height:clamp(300px,46vw,340px);width:100%;perspective:1000px;display:flex;align-items:center;justify-content:center;margin-top:.4rem}
+.stk-card{position:absolute;width:min(215px,56vw);height:clamp(250px,40vw,286px);border-radius:20px;background:var(--nm);border:var(--nm-edge);box-shadow:var(--nm-sm);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;padding:1.1rem;cursor:grab;user-select:none;touch-action:none;
+  transition:transform .5s cubic-bezier(.3,1.2,.4,1),opacity .35s ease,box-shadow .3s;will-change:transform}
+.stk-card.top{box-shadow:var(--nm-out)}
+.stk-card.dragging{transition:none;cursor:grabbing;z-index:1000}
+.stk-ico{width:56px;height:56px;border-radius:16px;background:var(--tea-grad);display:grid;place-items:center;color:var(--olive);box-shadow:0 2px 8px -2px rgba(74,75,47,.3),inset 0 1px 0 rgba(255,255,255,.55)}
+.stk-ico svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.stk-t{font-family:var(--display);font-size:1.18rem;font-weight:500;letter-spacing:-.015em;color:var(--ink)}
+.stk-d{font-size:.8rem;line-height:1.5;color:var(--dim)}
+.stk-go{font:600 .74rem/1 var(--body);color:var(--olive);opacity:0;transform:translateY(3px);transition:opacity .3s,transform .3s}
+.stk-card.top .stk-go{opacity:1;transform:none}
+.stk-hint{margin-top:.2rem;font:500 .58rem/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
 /* the welcome mat */
 .fd-mat{margin-top:3rem}
 .fd-mat .kicker{font-size:clamp(2.3rem,4.8vw,3.1rem);transform:rotate(-3deg);padding-bottom:10px;background-size:100% 9px}
@@ -708,8 +700,19 @@ a,button{transition:transform .14s}
     </div>
     <p class="fd-tagline">The trust engine for home services</p>
     <p class="fd-mat"><span class="kicker" id="fdMat">Welcome!</span></p>
-    <!-- ACT 0 — the picture book (drawn pages; the desk narrates directly beneath) -->
-    <div class="fd-book" id="fdBook" hidden aria-hidden="true"></div>
+    <!-- THE TWO CATEGORIES — both universes visible on landing, no gate -->
+    <div class="fd-cats" id="fdCats">
+      <div class="fd-cat">
+        <span class="cat-k">for contractors</span>
+        <p class="cat-t">The office Atlas runs around your work</p>
+        <div id="catOffice"></div>
+      </div>
+      <div class="fd-cat">
+        <span class="cat-k">for homeowners</span>
+        <p class="cat-t">Tell Vesta what the house needs</p>
+        <div id="catStack"></div>
+      </div>
+    </div>
 
     <div class="fd-chat">
       <p class="fd-you" id="fdYou"></p>
@@ -1097,9 +1100,6 @@ a,button{transition:transform .14s}
 
   /* ── what the desk says — every line ends by voicing the next doors inline ── */
   var L={
-    book1:'Good work is invisible.',
-    book2:'The proof of it lives nowhere. So everyone’s guessing.',
-    book3:'We’re 4THWALL. We build both sides of the fix.',
     greet:'Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
     ho:'How can we help? Say the job like you’d tell a neighbor — <a data-say="my roof is leaking">a leak</a>, <a data-say="the AC died upstairs">a dying AC</a>, <a data-say="my driveway needs repaving">a tired driveway</a>.',
     co0:'The best crews rarely have the best office. For the first time, that stops mattering.',
@@ -1223,7 +1223,6 @@ a,button{transition:transform .14s}
   function input(q,display){
     if(triBusy)return;   /* the desk is mid-read — one thought at a time */
     simGen++;            /* any real ask ends the scripted performance mid-beat */
-    bkAbort();           /* the book closes with grace and hands them the room */
     convo.push({who:'you',text:q});
     echo(display||q);
     route(q);
@@ -1821,33 +1820,39 @@ a,button{transition:transform .14s}
     local:svg('<path d="M24 8 a12 12 0 0 1 12 12 c0 8 -12 18 -12 18 s-12 -10 -12 -18 a12 12 0 0 1 12 -12z"/><circle cx="24" cy="20" r="4"/><path d="M56 20 a30 30 0 0 1 0 0" /><path d="M78 12 a16 16 0 0 1 0 16 M88 6 a26 26 0 0 1 0 28"/>'),
     briefs:svg('<path d="M10 34 h100"/><rect x="20" y="20" width="12" height="14"/><rect x="42" y="12" width="12" height="22"/><rect x="64" y="24" width="12" height="10"/><rect x="86" y="8" width="12" height="26"/>')
   };
+  /* shared card builder — the office reads the same whether it lands in the working room
+     or on the landing category */
+  function officeHTML(keys){
+    var cards=keys.map(function(k,i){var r=ROOMS[k];
+      return '<div class="cf-card" data-cf-card="'+k+'"><span class="cf-num">'+(i<9?'0':'')+(i+1)+' · the office</span>'+
+        '<span class="cf-title">'+r.t+'</span><p class="cf-desc">'+r.d+'</p>'+(DIAG[k]||'')+
+        '<span class="cf-go">step into this room →</span></div>';
+    }).join('');
+    return '<div class="cf-wrap"><div class="cf-stage">'+cards+'</div></div>'+
+      '<div class="cf-nav"><button class="cf-arrow" data-cf="prev" aria-label="Previous room">‹</button><div class="cf-dots"></div><button class="cf-arrow" data-cf="next" aria-label="Next room">›</button></div>';
+  }
   function officeScreen(){
     speak(L.office);
     landAfterSay(function(){
       var keys=Object.keys(ROOMS);
-      /* cards live in the HTML string (so the office reads without JS and the battery can
-         see every room); wireCoverflow reads them back and applies the 3D layout */
-      var cards=keys.map(function(k,i){var r=ROOMS[k];
-        return '<div class="cf-card" data-cf-card="'+k+'"><span class="cf-num">'+(i<9?'0':'')+(i+1)+' · the office</span>'+
-          '<span class="cf-title">'+r.t+'</span><p class="cf-desc">'+r.d+'</p>'+(DIAG[k]||'')+
-          '<span class="cf-go">step into this room →</span></div>';
-      }).join('');
       showScreen('<span class="fds-kicker">the office</span>'+
         '<h3 class="fds-h">You do the work. This runs around it.</h3>'+
-        '<div class="cf-wrap"><div class="cf-stage" id="cfStage">'+cards+'</div></div>'+
-        '<div class="cf-nav"><button class="cf-arrow" data-cf="prev" aria-label="Previous room">‹</button><div class="cf-dots" id="cfDots"></div><button class="cf-arrow" data-cf="next" aria-label="Next room">›</button></div>'+
+        officeHTML(keys)+
         '<p class="fdc-method">Every month ends with a receipt, not a story — responses, bookings, follow-ups, recorded outcomes. And the record is yours: in Lens you review every fact, and nothing publishes without you. If we’re not the right fit, we’ll say so first.</p>'+
         '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a href="/lens">start free with Lens →</a></div>',
-        function(){wireCoverflow(keys)});
+        function(){wireCoverflow(keys,screen)});
     });
   }
-  /* the coverflow engine — ported from the Originkit gallery's transform math */
-  function wireCoverflow(keys){
-    var stage=$('cfStage');if(!stage)return;
+  /* the coverflow engine — ported from the Originkit gallery's transform math.
+     root scopes the queries so the same engine runs on the landing category and
+     inside the working room without id collisions. */
+  function wireCoverflow(keys,root){
+    if(!root||!root.querySelector)return;
+    var stage=root.querySelector('.cf-stage');if(!stage)return;
     var cards=[].slice.call(stage.querySelectorAll('[data-cf-card]'));
     var n=cards.length;if(!n)return;
     var cw=stage.offsetWidth||280,active=0;
-    var dotsEl=$('cfDots'),dots=[];
+    var dotsEl=root.querySelector('.cf-dots'),dots=[];
     cards.forEach(function(c,i){
       c.addEventListener('click',function(){i===active?roomScreen(keys[i]):setActive(i)});
       if(dotsEl){var d=document.createElement('button');d.className='cf-dot';d.setAttribute('aria-label','Room '+(i+1));d.addEventListener('click',function(){setActive(i)});dotsEl.appendChild(d);dots.push(d)}
@@ -1864,7 +1869,7 @@ a,button{transition:transform .14s}
       });
       dots.forEach(function(d,i){d.classList.toggle('on',i===active)});
     }
-    [].forEach.call(screen.querySelectorAll('[data-cf]'),function(b){
+    [].forEach.call(root.querySelectorAll('[data-cf]'),function(b){
       b.addEventListener('click',function(){setActive(active+(b.getAttribute('data-cf')==='next'?1:-1))});
     });
     layout();
@@ -2012,115 +2017,91 @@ a,button{transition:transform .14s}
     fresh:function(){lane=null;setPH();speak(L.greet)}
   };
 
-  /* ═══ ACT 0 — THE BLANKET BOOK (front-door-script.md). Three drawn pages, one idea
-     each, the desk narrating: the wound → both sides of the blank → the company, then
-     the fork. No climax — clean storytelling, a hand extended. Hovering the book holds
-     the page open; any input closes it and hands the visitor the room; skip is honest.
-     Drawings are drawings — illustration never masquerades as evidence. ═══ */
-  var bookEl=$('fdBook');
-  function bkPage(html){
-    bookEl.innerHTML=html+'<span class="bk-skip" data-bk-skip>skip →</span>';
-    bookEl.hidden=false;
-    var pg=bookEl.firstChild||bookEl;
-    var sk=bookEl.querySelector&&bookEl.querySelector('[data-bk-skip]');
-    if(sk)sk.addEventListener('click',function(){bkEnd(true)});
-    void bookEl.offsetWidth;pg.classList.add('in');
-    return pg;
+  /* ═══ THE TWO CATEGORIES — built on landing, always. Left: the office coverflow.
+     Right: the homeowner trade swipe stack (Originkit CardStack ported to vanilla —
+     drag the top card past the threshold to cycle it to the back; tap it to start
+     that trade with the real triage). ═══ */
+  var STACK=[
+    {k:'roofing', t:'Roofing', d:'Leaks, storm damage, a tired roof.', ask:'my roof needs help',
+     ico:'<svg viewBox="0 0 24 24"><path d="M3 12 L12 4 L21 12"/><path d="M5 11 V20 H19 V11"/></svg>'},
+    {k:'hvac', t:'Heating & Cooling', d:'The AC died, the furnace rattles.', ask:'the AC died upstairs',
+     ico:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3 v4 M12 17 v4 M3 12 h4 M17 12 h4 M5.6 5.6 l2.8 2.8 M15.6 15.6 l2.8 2.8 M18.4 5.6 l-2.8 2.8 M8.4 15.6 l-2.8 2.8"/></svg>'},
+    {k:'plumbing', t:'Plumbing', d:'A drip, a clog, a burst pipe.', ask:'I have a plumbing problem',
+     ico:'<svg viewBox="0 0 24 24"><path d="M12 3.5 C12 3.5 6.5 10 6.5 14.5 a5.5 5.5 0 0 0 11 0 C17.5 10 12 3.5 12 3.5z"/></svg>'},
+    {k:'electrical', t:'Electrical', d:'Panels, outlets, anything sparking.', ask:'I need an electrician',
+     ico:'<svg viewBox="0 0 24 24"><path d="M13 2 L5 14 h6 L11 22 L19 10 h-6z"/></svg>'},
+    {k:'paving', t:'Paving', d:'The driveway has had enough.', ask:'my driveway needs repaving',
+     ico:'<svg viewBox="0 0 24 24"><path d="M4 20 L10 4 h4 L20 20"/><path d="M12 7 v2 M12 12 v2 M12 17 v2"/></svg>'},
+    {k:'lawn', t:'Lawn & Landscape', d:'The yard, the beds, the season.', ask:'my lawn needs help',
+     ico:'<svg viewBox="0 0 24 24"><path d="M12 21 C12 13 7 9 4 8 c0 6 3 11 8 13z"/><path d="M12 21 C12 15 16 10 20 9 c0 5 -3 10 -8 12z"/></svg>'},
+    {k:'painting', t:'Painting', d:'Inside, outside, long overdue.', ask:'the house needs painting',
+     ico:'<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="7" rx="1.5"/><path d="M19 6 h2 v5 h-8 v3"/><rect x="11" y="14" width="3" height="7" rx="1"/></svg>'},
+    {k:'masonry', t:'Masonry', d:'Chimneys, steps, stone and brick.', ask:'my chimney needs repointing',
+     ico:'<svg viewBox="0 0 24 24"><path d="M4 20 h16 M4 20 v-4 h16 v4 M4 16 v-4 h16 v4 M8 12 v4 M16 12 v4 M12 16 v4 M6 8 h12 v4 M12 8 v4"/></svg>'}
+  ];
+  function buildCats(){
+    var off=$('catOffice'),stk=$('catStack');
+    var keys=Object.keys(ROOMS);
+    if(off){off.innerHTML=officeHTML(keys);wireCoverflow(keys,off)}
+    if(stk){
+      stk.innerHTML='<div class="stk-wrap">'+STACK.map(function(s){
+        return '<div class="stk-card" data-stk="'+s.k+'"><span class="stk-ico">'+s.ico+'</span>'+
+          '<span class="stk-t">'+s.t+'</span><span class="stk-d">'+s.d+'</span>'+
+          '<span class="stk-go">tap to start →</span></div>';
+      }).join('')+'</div><p class="stk-hint">swipe the deck · tap a card to start</p>';
+      wireStack(stk);
+    }
   }
-  var bkG=-1,bkHeld=false,bkDone=false;
-  function bkAbort(){
-    if(bkDone||!bookEl||bookEl.hidden)return;
-    bkDone=true;bookEl.classList.add('bye');
-    setTimeout(function(){bookEl.hidden=true},450);
-  }
-  function bkEnd(skipped){
-    if(bkDone)return;bkDone=true;
-    bookEl.dataset.played='1';
-    bookEl.classList.add('bye');
-    setTimeout(function(){bookEl.hidden=true;if(bkG===simGen||skipped)speak(L.greet)},450);
-  }
-  function blanketBook(){
-    bkG=simGen;
-    bookEl.addEventListener('mouseenter',function(){bkHeld=true});
-    bookEl.addEventListener('mouseleave',function(){bkHeld=false});
-    function alive(){return bkG===simGen&&!bkDone}
-    function step(ms,fn){setTimeout(function(){
-      if(!alive())return;
-      if(!bkHeld)return fn();
-      var iv=setInterval(function(){
-        if(!alive()){clearInterval(iv);return}
-        if(!bkHeld){clearInterval(iv);fn()}
-      },250);
-    },ms)}
-    /* PAGE 1 — the chart: the work climbs, the record stays flat at zero */
-    speak(L.book1);
-    var p1=bkPage('<div class="bk bkchart" aria-hidden="true">'+
-      '<svg viewBox="0 0 260 150">'+
-      '<line class="bk-axis" x1="34" y1="14" x2="34" y2="128"/>'+
-      '<line class="bk-axis" x1="34" y1="128" x2="244" y2="128"/>'+
-      '<path d="M40 123 C96 118 150 66 232 30" style="transition-delay:.5s"/>'+
-      '<path d="M40 120 C110 118 172 116 232 113" style="transition-delay:1.15s"/>'+
-      '<text class="bk-lbl" x="168" y="52">the work</text>'+
-      '<text class="bk-lbl dim" x="166" y="108">the record</text>'+
-      '</svg>'+
-      '<p class="bk-addr">quality climbs. the record stays blank.</p>'+
-      '</div>');
-    step(650,function(){p1.classList.add('draw');
-    step(3600,function(){
-      /* PAGE 2 — the chart of the blank: five identical bars, nothing to choose on */
-      speak(L.book2);
-      var p2=bkPage('<div class="bk bkchart" aria-hidden="true">'+
-        '<svg viewBox="0 0 260 150">'+
-        '<line class="bk-axis" x1="20" y1="128" x2="240" y2="128"/>'+
-        '<rect x="30" y="54" width="26" height="74" style="transition-delay:.1s"/>'+
-        '<rect x="70" y="54" width="26" height="74" style="transition-delay:.25s"/>'+
-        '<rect x="110" y="54" width="26" height="74" style="transition-delay:.4s"/>'+
-        '<rect x="150" y="54" width="26" height="74" style="transition-delay:.55s"/>'+
-        '<rect x="190" y="54" width="26" height="74" style="transition-delay:.7s"/>'+
-        '<text class="bk-star" x="43" y="47">★★★★★</text>'+
-        '<text class="bk-star" x="83" y="47">★★★★★</text>'+
-        '<text class="bk-star" x="123" y="47">★★★★★</text>'+
-        '<text class="bk-star" x="163" y="47">★★★★★</text>'+
-        '<text class="bk-star" x="203" y="47">★★★★★</text>'+
-        '<text class="bk-q" x="228" y="100">?</text>'+
-        '</svg>'+
-        '<p class="bk-addr">every option looks identical</p>'+
-        '</div>');
-      step(450,function(){p2.classList.add('draw');
-      step(4900,function(){
-        /* PAGE 3 — the fix, diagrammed: 4THWALL between the two sides. No climax. */
-        speak(L.book3);
-        var p3=bkPage('<div class="bk bkchart" aria-hidden="true">'+
-          '<svg viewBox="0 0 260 120">'+
-          '<circle cx="40" cy="58" r="18" style="transition-delay:.1s"/>'+
-          '<circle cx="220" cy="58" r="18" style="transition-delay:.25s"/>'+
-          '<rect x="112" y="40" width="36" height="36" rx="5" style="transition-delay:.5s"/>'+
-          '<path d="M58 58 H112" style="transition-delay:.9s"/>'+
-          '<path d="M148 58 H202" style="transition-delay:1.05s"/>'+
-          '<text class="bk-node" x="40" y="61">crew</text>'+
-          '<text class="bk-node" x="220" y="61">owner</text>'+
-          '<text class="bk-node" x="130" y="61">4TW</text>'+
-          '</svg>'+
-          '<p class="bk-addr">both sides of the fix</p>'+
-          '</div>');
-        step(300,function(){p3.classList.add('draw');
-        step(3600,function(){p3.classList.add('recede');
-        step(900,function(){bkEnd(false)});});});
-      });});
-    });});
-  }
-  function canBook(){
-    if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return false;
-    if(location.hash)return false;
-    if(window.scrollY>200)return false;
-    return true;
+  function wireStack(root){
+    if(!root||!root.querySelector)return;
+    var wrap=root.querySelector('.stk-wrap');if(!wrap)return;
+    var order=[].slice.call(wrap.querySelectorAll('.stk-card'));
+    var n=order.length;if(!n)return;
+    var TILT=-16,XOFF=Math.min(70,wrap.offsetWidth*0.16),drag=null;
+    function layout(){
+      order.forEach(function(c,i){
+        var f=n>1?i/(n-1):0;
+        c.style.transform='translateX('+(f*XOFF)+'px) translateY('+(-i*7)+'px) rotate('+(f*TILT)+'deg) scale('+(1-i*0.045)+')';
+        c.style.zIndex=String(n-i);
+        c.style.opacity=i>4?'0':'1';
+        c.style.pointerEvents=i===0?'auto':'none';
+        c.classList.toggle('top',i===0);
+      });
+    }
+    wrap.addEventListener('pointerdown',function(e){
+      var c=order[0];if(!c||!c.contains(e.target))return;
+      drag={c:c,x0:e.clientX,y0:e.clientY,t0:Date.now(),moved:false};
+      c.classList.add('dragging');
+      if(c.setPointerCapture)try{c.setPointerCapture(e.pointerId)}catch(_){}
+    });
+    wrap.addEventListener('pointermove',function(e){
+      if(!drag)return;
+      var dx=e.clientX-drag.x0,dy=e.clientY-drag.y0;
+      if(Math.abs(dx)+Math.abs(dy)>6)drag.moved=true;
+      drag.c.style.transform='translateX('+dx+'px) translateY('+dy+'px) rotate('+(dx*0.06)+'deg) scale(1.05)';
+    });
+    function release(e){
+      if(!drag)return;
+      var c=drag.c,dx=e.clientX-drag.x0,dy=e.clientY-drag.y0;
+      var dist=Math.sqrt(dx*dx+dy*dy),tap=!drag.moved&&(Date.now()-drag.t0)<450;
+      c.classList.remove('dragging');drag=null;
+      if(tap){
+        var s=STACK.filter(function(x){return x.k===c.getAttribute('data-stk')})[0];
+        if(s)input(s.ask,s.t.toLowerCase());
+        return;
+      }
+      if(dist>55){order.push(order.shift())}
+      layout();
+    }
+    wrap.addEventListener('pointerup',release);
+    wrap.addEventListener('pointercancel',function(){if(drag){drag.c.classList.remove('dragging');drag=null;layout()}});
+    layout();
   }
 
-  /* the desk speaks first — by memory if we've met, by the book if we haven't */
+  /* the desk speaks first — by memory if we've met; the two categories always stand */
+  buildCats();
   var __mem=loadMemory();
-  if(__mem)speakReturn(__mem);
-  else if(canBook())blanketBook();
-  else speak(L.greet);
+  if(__mem)speakReturn(__mem);else speak(L.greet);
 })();
 </script>
 

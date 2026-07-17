@@ -59,7 +59,7 @@ function makeStore(seed){
 // One fresh desk instance per case. probeOK controls the GET /api/triage health probe;
 // seedMem pre-seeds localStorage to simulate a returning visitor (F5).
 function boot(src, { probeOK = true, seedMem = null } = {}){
-  const ids = ['fdMat','fdYou','fdLine','fdSay','fdWell','fdPh','fdMic','fdThink','fdThinkW','fdScreen','fdBook'];
+  const ids = ['fdMat','fdYou','fdLine','fdSay','fdWell','fdPh','fdMic','fdThink','fdThinkW','fdScreen','fdCats','catOffice','catStack'];
   const els = Object.fromEntries(ids.map(i => [i, el(i)]));
   const posts = [];                       // recorded triage POSTs
   const location = { href:'' };           // handoff fallback lands here
@@ -141,10 +141,11 @@ const check = (tag, ok, note='') => {
 { const d = boot(src);
   check('A1 first paint ends voicing both doors (the fork lands after the break)', /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
 { const d = boot(src);
-  // shim timers run sync: ACT 0 (the picture book) plays through at boot — three drawn
-  // pages narrated, then the fork. No auto-sim; the working room stays untouched.
-  check('A26 first visit → the picture book plays to the fork (book traced; no auto-sim; screen untouched)',
-    d.els.fdBook.dataset.played === '1'
+  // landing = the two categories, standing on arrival: the office coverflow (all 8 rooms)
+  // under contractors, the trade swipe stack under homeowners, the fork spoken above.
+  check('A26 landing → both categories built (office coverflow + trade stack) + fork spoken; no auto-sim',
+    /Lead Response/.test(d.els.catOffice.innerHTML) && /Operator Briefs/.test(d.els.catOffice.innerHTML)
+    && /Roofing/.test(d.els.catStack.innerHTML) && /Masonry/.test(d.els.catStack.innerHTML)
     && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())
     && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
 { const d = boot(src); d.say('contractor');
@@ -235,11 +236,11 @@ const check = (tag, ok, note='') => {
   check('A24 return visit (matched, not sent) → welcome-back + resume, NOT "how did it go"',
     /Welcome back/.test(d.spoken()) && /data-act="resume"/.test(d.els.fdLine.innerHTML) && !/how did it go/i.test(d.spoken())); }
 { const d = boot(src);
-  check('A25 first-time visitor (no memory) → the book + fork, never welcome-back',
+  check('A25 first-time visitor (no memory) → the fork spoken, never welcome-back',
     !/Welcome back/.test(d.spoken()) && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
 { const d = boot(src, { seedMem: { v:1, ts: Date.now(), deck:{ trade:'roofing', job:'roof-replacement', label:'roof replacement', tradeLabel:'Roofing' }, firm:'Summit Ridge Roofing' } });
-  check('A27 returning visitor → memory greeting wins; the book does not play over it',
-    /Welcome back/.test(d.spoken()) && d.els.fdBook.dataset.played !== '1'
+  check('A27 returning visitor → memory greeting wins; the categories still stand beside it',
+    /Welcome back/.test(d.spoken()) && /Lead Response/.test(d.els.catOffice.innerHTML)
     && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
 
 // B · CLAIM SAFETY — every deterministic line, linted against the pack's banned list
