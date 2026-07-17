@@ -26,6 +26,39 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Access-Control-Allow-Origin', '*');   // read-only public data; CORS-open so any agent can compose from it
 
+  // Bare /evidence — the corpus enumeration index: one URL a machine fetches to
+  // discover every evidence doc. Same corpus rule as the docs themselves and the
+  // sitemap: index-ready profiles only.
+  if (!placeId) {
+    try {
+      const r = await fetch(DB_BASE + '/rest/v1/profile_enrichment_public' +
+        '?index_status=eq.ready&select=place_id,business_name,trade,city,enriched_at&order=trade,business_name&limit=2000', {
+        headers: { apikey: DB_KEY, Authorization: 'Bearer ' + DB_KEY, Accept: 'application/json' }
+      });
+      if (!r.ok) throw new Error('upstream');
+      const rows = await r.json();
+      res.setHeader('Cache-Control', FRESH);
+      return res.status(200).send(JSON.stringify({
+        contract: '4thwall-trust-contract-v1',
+        class_ceiling: 'public-synthesis',
+        corpus: 'Vesta — Fairfield County, CT contractor evidence',
+        count: rows.length,
+        subjects: rows.map((row) => ({
+          ref: 'place:' + row.place_id,
+          name: row.business_name,
+          trade: row.trade || null,
+          city: row.city || null,
+          as_of: row.enriched_at ? String(row.enriched_at).slice(0, 10) : null,
+          evidence: SITE + '/evidence/' + encodeURIComponent(row.place_id),
+          profile: SITE + '/c/' + encodeURIComponent(row.place_id)
+        }))
+      }, null, 1));
+    } catch (_) {
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(503).send(JSON.stringify({ error: 'unavailable' }));
+    }
+  }
+
   if (!VALID_PLACE_ID.test(placeId)) {
     res.setHeader('Cache-Control', FRESH);
     return res.status(404).send(JSON.stringify({ error: 'not_found' }));

@@ -29,6 +29,7 @@
     { "source": "/record/:token", "destination": "/record.html" },
     { "source": "/pro/:id",       "destination": "/pro.html" },
     { "source": "/c/:placeId",    "destination": "/api/contractor?placeId=:placeId" },
+    { "source": "/evidence",      "destination": "/api/evidence" },
     { "source": "/evidence/:placeId", "destination": "/api/evidence?placeId=:placeId" },
     { "source": "/fairfield-county/:trade", "destination": "/api/directory?trade=:trade" },
     { "source": "/directory",     "destination": "/api/hub" },
