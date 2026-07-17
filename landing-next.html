@@ -391,56 +391,24 @@ a,button{transition:transform .14s}
 .fdm-c i.off{visibility:hidden;animation:none}
 @keyframes fdBreath{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.05);opacity:1}}
 @keyframes fdDot{0%,100%{opacity:.18}50%{opacity:.95}}
-/* text flows in — gradient band sweeps the heading, leaving ink behind (the Dia mechanism, our palette) */
-.fd-sweep{color:transparent;-webkit-background-clip:text;background-clip:text;background-repeat:no-repeat;
-  background-image:linear-gradient(90deg,var(--ink) 0%,var(--ink) 33%,var(--olive) 44%,var(--tea) 52%,rgba(212,223,158,0) 60%,rgba(212,223,158,0) 100%);
-  background-size:300% 100%;background-position:100% 0;
-  animation:fdSweep 1.15s cubic-bezier(.4,0,.2,1) .05s forwards}
-@keyframes fdSweep{to{background-position:0% 0}}
-.fd-blur{animation:fdBlurIn .5s cubic-bezier(.22,1,.36,1) both}
-@keyframes fdBlurIn{from{opacity:0;filter:blur(9px);transform:translateY(7px)}to{opacity:1;filter:blur(0);transform:none}}
 @media(prefers-reduced-motion:reduce){
-  .fd-sweep{animation:none;background:none;color:var(--ink)}
-  .fd-blur{animation:none}
+  .fd-line .w i,.fd-ph i{transition:none}
 }
-.fd-tag{font:500 .6rem/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:1.3rem}
-.fd .kicker{margin-bottom:.9rem}
-.fd-h1{font-family:var(--display);font-weight:500;font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.06;letter-spacing:-.03em;color:var(--ink)}
-.fd-sub{margin-top:.9rem;font-size:clamp(.92rem,1.3vw,1.02rem);line-height:1.6;color:var(--muted);max-width:480px}
-.fd-stage{width:100%;text-align:left}
-.fd-you{font-family:var(--hand);font-size:1.2rem;font-weight:600;color:var(--ebony);transform:rotate(-1deg);margin:1.6rem 0 .55rem .5rem;display:none}
+/* the desk speaks — one turn at a time; the echo of what you said, then the reply */
+.fd-you{font-family:var(--hand);font-size:1.25rem;font-weight:600;color:var(--ebony);transform:rotate(-1deg);margin:1.2rem 0 .1rem;display:none;text-align:center}
 .fd-you.show{display:block;animation:fdRise .4s var(--spring)}
-/* answers live in the open — no card, text on the page itself (Drew) */
-.fd-screen{display:none;text-align:left;padding:0 .35rem;margin-top:1.4rem}
-.fd-you.show + .fd-screen{margin-top:0}
-.fd-screen.show{display:block}
-@keyframes fdRise{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
-.fd-eyebrow{font:500 .58rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:.7rem}
-.fd-sh{font-family:var(--display);font-size:clamp(1.28rem,2.5vw,1.62rem);font-weight:500;letter-spacing:-.02em;line-height:1.16;color:var(--ink);margin-bottom:.55rem}
-.fd-p{font-size:.92rem;line-height:1.64;color:var(--muted)}
-.fd-p strong{color:var(--olive);font-weight:600}
-.fd-p em{color:var(--olive)}
-.fd-facts{list-style:none;margin:.85rem 0 0;display:flex;flex-direction:column;gap:.45rem}
-.fd-facts li{display:flex;gap:.6rem;font-size:.88rem;color:var(--ebony);align-items:baseline}
-.fd-facts li::before{content:"✓";color:var(--olive);font-weight:700;font-size:.78rem;flex:none}
-.fd-steps{list-style:none;margin:.95rem 0 0;display:flex;flex-direction:column;gap:.7rem}
-.fd-steps li{display:flex;gap:.75rem;font-size:.88rem;line-height:1.55;color:var(--ebony);align-items:baseline}
-.fd-steps li b{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--olive);background:var(--nm);box-shadow:var(--nm-in);border-radius:var(--r-pill);padding:.3rem .55rem;flex:none;font-weight:500}
-.fd-rows{margin:.95rem 0 0;display:flex;flex-direction:column;gap:.55rem}
-.fd-row{display:flex;align-items:center;gap:.8rem;background:rgba(255,255,255,.4);border:1px solid var(--line);border-radius:14px;padding:.7rem .85rem;transition:background .18s}
-.fd-row:hover{background:rgba(255,255,255,.7)}
-.fd-row b{font-family:var(--display);font-size:1rem;font-weight:500;color:var(--ink);flex:none;min-width:56px}
-.fd-row b i{font-style:normal;color:var(--olive)}
-.fd-row span{font-size:.8rem;color:var(--muted);flex:1;line-height:1.45}
-.fd-row .arr{font-family:var(--display);color:var(--olive)}
-.fd-doors{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.15rem}
-.fd-doors .btn-dark,.fd-doors .btn-soft{padding:.75rem 1.25rem;font-size:.86rem}
-.fd-chips{display:flex;gap:.55rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem}
-.fd-chip{font:600 .88rem/1 var(--body);letter-spacing:-.01em;color:var(--olive);background:var(--nm);border:var(--nm-edge);border-radius:var(--r-pill);box-shadow:var(--nm-sm);padding:.82rem 1.25rem;transition:box-shadow .18s,transform .18s,color .18s}
-.fd-chip:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
-.fd-chip:active{box-shadow:var(--nm-in);transform:translateY(0)}
-.fd-chip.ghost{box-shadow:none;border-color:transparent;color:var(--dim);font-weight:500}
-.fd-chip.ghost:hover{color:var(--ebony);box-shadow:none;transform:none}
+@keyframes fdRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.fd-line{font-family:var(--display);font-weight:500;font-size:clamp(1.5rem,3.2vw,2.1rem);line-height:1.45;letter-spacing:-.02em;color:var(--ink);text-align:center;max-width:580px;min-height:6em;display:grid;place-items:center;margin-top:.3rem}
+.fd-line .w{display:inline-block;white-space:pre}
+.fd-line .w i{font-style:normal;display:inline-block;opacity:0;filter:blur(10px);transform:translateY(8px);transition:opacity .25s,filter .4s,transform .4s var(--spring)}
+.fd-line.in .w i{opacity:1;filter:blur(0);transform:none}
+.fd-line.out .w i{opacity:0;filter:blur(10px);transform:translateY(-8px)}
+/* voiced options — italic olive with the scribble, drawn in after the letters land */
+.fd-line a{color:var(--olive);font-style:italic;cursor:pointer;padding-bottom:3px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom;
+  background-size:0% 5px;transition:background-size .5s ease .45s,opacity .18s}
+.fd-line.in a{background-size:100% 5px}
+.fd-line a:hover{opacity:.7}
 /* the ask bar — floating pill, cycling per-letter placeholder, mic (the HextaUI mechanism, our material) */
 .fd-well{display:flex;align-items:center;gap:.45rem;background:var(--nm);border:1px solid rgba(255,255,255,.55);border-radius:var(--r-pill);box-shadow:var(--nm-out);padding:.5rem .55rem .5rem 1.35rem;width:min(640px,100%);margin:1.4rem auto 0;transition:box-shadow .3s ease}
 .fd-well:focus-within{box-shadow:var(--sh-card)}
@@ -456,8 +424,6 @@ a,button{transition:transform .14s}
 .fd-mic svg{width:18px;height:18px}
 .fd-send{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--dark-grad);color:var(--tea);box-shadow:0 4px 13px -3px rgba(67,68,42,.5);transition:box-shadow .18s,transform .18s;flex:none}
 .fd-send:hover{box-shadow:0 7px 18px -4px rgba(67,68,42,.6);transform:translateY(-1px)}
-.fd-hint{font:500 .74rem/1.5 var(--mono);color:var(--dim);margin-top:.75rem;min-height:1.15em;text-align:center}
-.fd-hint.pulse{color:var(--ebony)}
 .fd-cue{position:absolute;bottom:1.3rem;left:50%;transform:translateX(-50%);font:500 .68rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .9rem;border-radius:var(--r-pill)}
 .fd-cue:hover{color:var(--ebony)}
 .fd-cue:active{transform:translateX(-50%)}
@@ -470,7 +436,7 @@ a,button{transition:transform .14s}
 @media(max-width:640px){
   .fd{padding-top:5.4rem;padding-bottom:3.6rem}
   .fd-cue{display:none}
-  .fd-doors .btn-dark,.fd-doors .btn-soft{width:100%;justify-content:center}
+
 }
 @media(prefers-reduced-motion:reduce){.fdm-c i,.fd-cue span,.fd-shimmer i,.fd-mic.listening{animation:none}}
 .hero-fast{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;margin-top:1.6rem;font:500 .82rem/1 var(--body);color:var(--dim)}
@@ -533,17 +499,9 @@ a,button{transition:transform .14s}
 <section class="fd" id="home">
   <div class="fd-inner">
     <div class="fd-mark" id="fdMark" aria-hidden="true"></div>
-    <p class="fd-tag" id="fdTag">The 4THWALL front desk</p>
-    <span class="kicker" id="fdHello">good evening</span>
-    <h1 class="fd-h1 fd-sweep">What brings you in? <span class="hn-sparkle">✦</span></h1>
-    <p class="fd-sub">One desk for homeowners, contractors, and the curious. Ask in plain words — every answer here is composed from the record, never guessed.</p>
 
-    <div class="fd-stage" aria-live="polite">
-      <p class="fd-you" id="fdYou"></p>
-      <div class="fd-screen" id="fdScreen"></div>
-    </div>
-
-    <div class="fd-chips" id="fdChips" role="group" aria-label="Quick asks"></div>
+    <p class="fd-you" id="fdYou"></p>
+    <h1 class="fd-line" id="fdLine" aria-live="polite"></h1>
 
     <form class="fd-well" id="fdWell" aria-label="Ask the front desk">
       <span class="fd-in">
@@ -553,7 +511,6 @@ a,button{transition:transform .14s}
       <button type="button" class="fd-mic" id="fdMic" aria-label="Speak instead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
       <button type="submit" class="fd-send" aria-label="Ask"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h12M10 4l5 5-5 5"/></svg></button>
     </form>
-    <p class="fd-hint" id="fdHint"></p>
   </div>
 
   <a class="fd-cue" href="#story">the whole story <span>↓</span></a>
@@ -905,19 +862,18 @@ a,button{transition:transform .14s}
 </script>
 
 <script>
-/* ── THE FRONT DESK — P1 shell. Every screen below is deterministic: chips and
-   typed asks route through a fixed screen graph, free text is classified by
-   keywords only. ZERO model calls on this page — the model earns its way in
-   at P3 (homeowner loop) and P5 (house QA), per business/front-desk.md.
-   Out-of-graph asks get the honest deflection, never a guess (law 2). ── */
+/* ── THE FRONT DESK — one conversation, one turn at a time (Drew, chisel 2).
+   The desk speaks first; options are voiced inline, never buttons. Previous
+   turns dissipate; history is kept in `convo` for context (model arrives P3/P5).
+   Everything here is deterministic — ZERO model calls. Out-of-script asks get
+   the honest deflection, never a guess (front-desk.md law 2). ── */
 (function(){
   var CAL='https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE';
   function $(id){return document.getElementById(id)}
-  var mark=$('fdMark'),tag=$('fdTag'),hello=$('fdHello'),youEl=$('fdYou'),
-      scr=$('fdScreen'),chipsEl=$('fdChips'),say=$('fdSay'),hint=$('fdHint');
-  var lane=null;
+  var mark=$('fdMark'),youEl=$('fdYou'),line=$('fdLine'),say=$('fdSay');
+  var lane=null,convo=[];
 
-  /* ── the mark: dot-matrix pulse shaped to the bracket logo — bottom-right corner open (Drew, P1 review) ── */
+  /* ── the mark: dot-matrix pulse shaped to the bracket logo — bottom-right corner open ── */
   (function(){
     var OFF={'3,4':1,'4,3':1,'4,4':1};
     var d='<div class="fdm-c">';
@@ -927,124 +883,114 @@ a,button{transition:transform .14s}
     mark.innerHTML=d+'</div>';
   })();
 
-  /* ── unnamed (Drew, P1 review) — time-aware greeting only ── */
   var h=new Date().getHours(),part=h<5?'evening':h<12?'morning':h<17?'afternoon':'evening';
-  hello.textContent='good '+part;
 
-  /* ── the screen graph — all copy claim-safe, sourced from this page's own vetted sections ── */
-  var ROOT=[
-    {t:'“My roof is leaking”',q:'my roof is leaking'},
-    {t:'I’m a contractor',go:'co_start'},
-    {t:'What is 4THWALL?',go:'house_what'}
-  ];
-  var S={
-    co_start:{lane:'co',eyebrow:'for contractors',h:'You do the work. Something else is leaking.',
-      html:'<p class="fd-p">Atlas is the managed front office behind the work — it answers, qualifies, books, follows up, and hands you a measured receipt every month. Where’s it hurting?</p>',
-      chips:[{t:'Missed calls while I’m working',go:'co_missed'},{t:'Show me everything',go:'co_atlas'},{t:'What does it cost?',go:'co_price'}]},
-    co_missed:{lane:'co',eyebrow:'atlas · missed-call recovery',h:'The most expensive silence in your business.',
-      html:'<p class="fd-p">You’re on a roof. The phone rings twice and dies in voicemail — and the homeowner calls the next name on the list. When you can’t pick up, Atlas follows up by text right away: qualifies the job, books the estimate, carries the follow-up. Supported inbound texts typically get a first reply in <strong>15 seconds</strong> after go-live.</p><div class="fd-doors"><a class="btn-dark" href="/missed-calls">Watch the 60-second demo <span class="arr">→</span></a></div>',
-      chips:[{t:'What does it cost?',go:'co_price'},{t:'What else does Atlas run?',go:'co_atlas'},{t:'Book a 20-min fit call',href:CAL}]},
-    co_reviews:{lane:'co',eyebrow:'atlas · reviews',h:'Reviews come from asking at the right moment.',
-      html:'<p class="fd-p">Good work alone doesn’t get reviewed — asking while the experience is still fresh does. Atlas sends the request when the job closes, every time, without anyone having to remember. The record compounds instead of evaporating.</p>',
-      chips:[{t:'What else does Atlas run?',go:'co_atlas'},{t:'What does it cost?',go:'co_price'},{t:'Book a 20-min fit call',href:CAL}]},
-    co_slow:{lane:'co',eyebrow:'atlas · campaigns',h:'Slow months aren’t a weather problem.',
-      html:'<p class="fd-p">Your past customers are the warmest list you own. When a storm hits or a slow month looms, Atlas runs campaigns to them — reactivation, seasonal checkups, storm response — so work is generated, not waited for.</p>',
-      chips:[{t:'What else does Atlas run?',go:'co_atlas'},{t:'What does it cost?',go:'co_price'},{t:'Book a 20-min fit call',href:CAL}]},
-    co_atlas:{lane:'co',eyebrow:'atlas · the managed front office',h:'Everything around the job, run for you.',
-      html:'<ul class="fd-facts"><li>Inbound leads captured &amp; qualified</li><li>Estimates booked, jobs tracked</li><li>Review requests sent after a recorded close</li><li>Campaigns that run in slow months</li><li>Local discovery foundations maintained</li><li>A measured monthly operating receipt</li></ul><p class="fd-p" style="margin-top:.85rem">It’s managed — we operate it, you watch it work in the daily brief and the month-end receipt.</p><div class="fd-doors"><a class="btn-dark" href="/atlas">Explore Atlas <span class="arr">→</span></a><a class="btn-soft" href="/missed-calls">Watch the demo →</a></div>',
-      chips:[{t:'What does it cost?',go:'co_price'},{t:'Is there a free way in?',go:'co_lens'},{t:'Book a 20-min fit call',href:CAL}]},
-    co_price:{lane:'co',eyebrow:'atlas · pricing',h:'Priced on the fit call — in plain numbers.',
-      html:'<p class="fd-p">Atlas is a managed service, not a software seat, so the price follows the size of the front office we run for you. The 20-minute fit call is where it gets set — honestly, no pitch deck. If we’re not the right fit, we’ll say so first.</p><div class="fd-doors"><a class="btn-dark" href="'+CAL+'" target="_blank" rel="noopener">Book the fit call <span class="arr">→</span></a></div>',
-      chips:[{t:'What else does Atlas run?',go:'co_atlas'},{t:'Is there a free way in?',go:'co_lens'}]},
-    co_lens:{lane:'co',eyebrow:'lens · free · beta',h:'Start with what’s already yours.',
-      html:'<p class="fd-p"><strong>Lens</strong> is 4THWALL’s free, private trust workspace. Connect the tools you already run, review every fact your operating record supports — source-labeled, correction-capable — and control exactly what a homeowner could see. Nothing publishes without you.</p><div class="fd-doors"><a class="btn-dark" href="/lens">Start free with Lens <span class="arr">→</span></a><a class="btn-soft" href="/workspace?mode=demo">Explore the demo →</a></div>',
-      chips:[{t:'Talk Atlas instead',go:'co_atlas'},{t:'Book a 20-min fit call',href:CAL}]},
-    house_what:{eyebrow:'about 4thwall',h:'One belief: good work should leave evidence.',
-      html:'<p class="fd-p">4THWALL is a Stamford, Connecticut company building both sides of trust in home services. One system, three surfaces: <strong>Atlas</strong> operates the front office for contractors. <strong>Lens</strong> lets a contractor own their operating record. <strong>Vesta</strong> explains contractors to homeowners from the public record — no ads, no pay-to-play. <em>You’re at its front desk right now.</em></p>',
-      chips:[{t:'How does it fit together?',go:'house_flywheel'},{t:'The three products',go:'house_products'},{t:'I’m a contractor',go:'co_start'}]},
-    house_flywheel:{eyebrow:'how it compounds',h:'The work makes the evidence. The evidence makes the work.',
-      html:'<ol class="fd-steps"><li><b>01</b><span>Atlas runs a contractor’s front office — real responses, real bookings, real closes, recorded as they happen.</span></li><li><b>02</b><span>That operating record becomes evidence: measured, source-labeled, correction-capable.</span></li><li><b>03</b><span>Lens puts the contractor in control of that evidence.</span></li><li><b>04</b><span>Vesta uses evidence — never ads — to point homeowners at the right firm.</span></li><li><b>05</b><span>Better work wins more work. Both sides stop guessing.</span></li></ol>',
-      chips:[{t:'The three products',go:'house_products'},{t:'I’m a contractor',go:'co_start'},{t:'What is 4THWALL?',go:'house_what'}]},
-    house_products:{eyebrow:'the three surfaces',h:'One system. Three doors.',
-      html:'<div class="fd-rows"><a class="fd-row" href="/atlas"><b>Atlas<i>.</i></b><span>For contractors — the managed front office behind the work.</span><span class="arr">→</span></a><a class="fd-row" href="/vesta"><b>Vesta<i>.</i></b><span>For homeowners — evidence-backed contractor matching, free.</span><span class="arr">→</span></a><a class="fd-row" href="/lens"><b>Lens<i>.</i></b><span>For contractors, free — own your operating record. Beta.</span><span class="arr">→</span></a></div>',
-      chips:[{t:'How does it fit together?',go:'house_flywheel'},{t:'What is 4THWALL?',go:'house_what'},{t:'I’m a contractor',go:'co_start'}]},
-    ho_start:{lane:'ho',focus:true,eyebrow:'for homeowners · vesta',h:'Say the job like you’d say it to a neighbor.',
-      html:'<p class="fd-p">Plain words work — what’s broken, where, how urgent. Vesta matches it against <strong>463 evidence-backed Fairfield County profiles</strong>. Free, no ads, no pay-to-play.</p>',
-      chips:[{t:'“My roof is leaking”',q:'my roof is leaking'},{t:'“The AC died upstairs”',q:'the AC died upstairs'},{t:'“Driveway needs repaving”',q:'driveway needs repaving'}]},
-    ho_handoff:{eyebrow:'vesta · matching',h:'On it — Vesta takes it from here.',
-      html:'<p class="fd-p">Matching <em id="fdQ"></em> against the county’s evidence-backed record…</p><div class="fd-shimmer"><i></i><i></i><i></i></div>',
-      chips:[]},
-    deflect:{eyebrow:'the honest answer',h:'That one deserves a person, not a guess.',
-      html:'<p class="fd-p">The front desk only answers from the record — and your question isn’t in it yet. Here’s the human path:</p><div class="fd-doors"><a class="btn-dark" href="'+CAL+'" target="_blank" rel="noopener">Book a 20-min call <span class="arr">→</span></a><a class="btn-soft" href="#contact">Write to us →</a></div>',
-      chips:ROOT}
+  /* ── what the desk says — every line ends by voicing the next doors inline ── */
+  var L={
+    greet:'Good '+part+' — welcome to 4THWALL. Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
+    ho:'How can we help? Say the job like you’d tell a neighbor — <a data-say="my roof is leaking">a leak</a>, <a data-say="the AC died upstairs">a dying AC</a>, <a data-say="my driveway needs repaving">a tired driveway</a>.',
+    co:'Welcome. Would you like to hear about <a data-say="atlas">Atlas</a>, <a data-say="lens">Lens</a>, <a data-say="flywheel">how it compounds</a> — or ask anything about <a data-say="the offer">the offer</a>?',
+    atlas:'Atlas is the managed front office behind your work — it answers when you can’t pick up, qualifies the lead, books the estimate, carries follow-up and reviews, and hands you a measured receipt every month. See the <a href="/missed-calls">60-second demo</a>, ask about <a data-say="the offer">the offer</a>, or hear about <a data-say="lens">Lens</a>.',
+    lens:'Lens is free — your private trust workspace. Connect the tools you already run, review every fact your record supports, and control exactly what a homeowner could see. Nothing publishes without you. <a href="/lens">Start free</a>, or hear about <a data-say="atlas">Atlas</a>.',
+    flywheel:'The work makes the evidence, and the evidence makes the work. Atlas runs the front office. What happens becomes a measured record. Lens puts you in control of it. Vesta shows homeowners the proof — never ads. Hear about <a data-say="atlas">Atlas</a>, or <a data-say="lens">Lens</a>.',
+    offer:'Atlas is a managed service, not a software seat — the price follows the size of the front office we run for you, set on a <a href="'+CAL+'" target="_blank" rel="noopener">20-minute fit call</a> in plain numbers. If we’re not the right fit, we’ll say so first.',
+    seo:'It matters more than ever. Atlas maintains your local discovery foundations — the pages, listings, and signals that make good work findable — as part of the front office, not an add-on. Hear about <a data-say="atlas">the rest of Atlas</a>, or <a href="'+CAL+'" target="_blank" rel="noopener">book the fit call</a>.',
+    missed:'The missed call is the most expensive silence in your business. When you can’t pick up, Atlas follows up by text right away — qualifies, books, carries the follow-up. Supported texts typically get a first reply in 15 seconds. <a href="/missed-calls">Watch it happen</a>, or ask about <a data-say="the offer">the offer</a>.',
+    reviews:'Reviews come from asking at the right moment. Atlas sends the request when the job closes, every time — the record compounds instead of evaporating. Hear <a data-say="atlas">what else it runs</a>.',
+    house:'4THWALL is a Stamford, Connecticut company with one belief — good work should leave evidence. Atlas runs the front office, Lens lets you own the record, Vesta explains it to homeowners. Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
+    deflect:'That one deserves a person, not a guess. <a href="'+CAL+'" target="_blank" rel="noopener">Book a 20-minute call</a>, or <a href="#contact">write to us</a> — we answer like people.',
+    handoff:'On it — Vesta takes it from here.'
   };
 
-  function renderChips(list,withReset){
-    chipsEl.innerHTML='';
-    (list||[]).forEach(function(c){
-      var b=document.createElement('button');b.type='button';b.className='fd-chip'+(c.ghost?' ghost':'');b.textContent=c.t;
-      b.addEventListener('click',function(){
-        if(c.q)return handoff(c.q,c.t);
-        if(c.go)return go(c.go,c.t);
-        if(c.href){if(c.href.charAt(0)==='#'){var el=document.querySelector(c.href);if(el)el.scrollIntoView({behavior:'smooth'})}else{window.open(c.href,c.href.indexOf('http')===0?'_blank':'_self')}}
+  /* ── per-letter blur reveal, word-wrapped so lines break naturally ── */
+  function letterize(container){
+    var seq=0;
+    (function walk(node){
+      [].slice.call(node.childNodes).forEach(function(ch){
+        if(ch.nodeType===3){
+          var frag=document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach(function(tok){
+            if(!tok)return;
+            if(/^\s+$/.test(tok)){frag.appendChild(document.createTextNode(' '));return}
+            var w=document.createElement('span');w.className='w';
+            for(var i=0;i<tok.length;i++){
+              var l=document.createElement('i');l.textContent=tok[i];
+              l.style.transitionDelay=Math.min(seq++*13,1300)+'ms';w.appendChild(l);
+            }
+            frag.appendChild(w);
+          });
+          node.replaceChild(frag,ch);
+        } else if(ch.nodeType===1&&ch.className!=='fd-shimmer') walk(ch);
       });
-      chipsEl.appendChild(b);
-    });
-    if(withReset){
-      var r=document.createElement('button');r.type='button';r.className='fd-chip ghost';r.textContent='↺ start over';
-      r.addEventListener('click',home);chipsEl.appendChild(r);
+    })(container);
+  }
+
+  function speak(html,extra){
+    convo.push({who:'desk',text:html.replace(/<[^>]+>/g,'')});
+    var old=line.querySelectorAll('.w i'),wait=0;
+    if(old.length){
+      for(var i=0;i<old.length;i++)old[i].style.transitionDelay=Math.min((old.length-i)*5,320)+'ms';
+      line.classList.remove('in');line.classList.add('out');wait=430;
     }
+    setTimeout(function(){
+      line.innerHTML=html+(extra||'');
+      letterize(line);
+      line.classList.remove('out');void line.offsetWidth;line.classList.add('in');
+      [].forEach.call(line.querySelectorAll('a[data-say]'),function(a){
+        a.addEventListener('click',function(e){e.preventDefault();input(a.getAttribute('data-say'),a.textContent)});
+      });
+    },wait);
+  }
+  function speakKey(k){
+    if(k==='ho'){lane='ho';setPH()}
+    if(k==='co'){lane='co';setPH()}
+    speak(L[k]);
   }
 
-  function home(){lane=null;youEl.className='fd-you';scr.className='fd-screen';scr.innerHTML='';
-    renderChips(ROOT,false);hint.textContent='';hint.classList.remove('pulse');setPH()}
+  function echo(t){youEl.textContent='“'+t+'”';youEl.className='fd-you';void youEl.offsetWidth;youEl.className='fd-you show'}
 
-  function go(id,youText){
-    var s=S[id];if(!s)return;
-    if(s.lane!==undefined)lane=s.lane;
-    if(youText){youEl.textContent=youText;youEl.className='fd-you show'}else{youEl.className='fd-you'}
-    scr.innerHTML='<p class="fd-eyebrow fd-blur">'+s.eyebrow+'</p><h2 class="fd-sh fd-sweep">'+s.h+'</h2>'+s.html;
-    var kids=scr.children;
-    for(var i=2;i<kids.length;i++){kids[i].classList.add('fd-blur');kids[i].style.animationDelay=(.15+(i-2)*.12)+'s'}
-    scr.className='fd-screen';void scr.offsetWidth;scr.className='fd-screen show';
-    renderChips(s.chips,true);
-    if(s.focus)say.focus({preventScroll:true});
-    hint.textContent='';hint.classList.remove('pulse');setPH();
-    setTimeout(function(){scr.scrollIntoView({behavior:'smooth',block:'nearest'})},80);
+  function handoff(q){
+    speak(L.handoff,'<span class="fd-shimmer"><i></i><i></i><i></i></span>');
+    setTimeout(function(){location.href='/vesta?q='+encodeURIComponent(q)},1500);
   }
 
-  function handoff(q,label){
-    go('ho_handoff',label||('“'+q+'”'));
-    var qEl=scr.querySelector('#fdQ');if(qEl)qEl.textContent='“'+q+'”';
-    setTimeout(function(){location.href='/vesta?q='+encodeURIComponent(q)},1100);
+  /* ── routing — keywords only, zero model calls ── */
+  var HO_WORDS=/\b(roof|leak|hvac|heat|furnace|ac|air|plumb|pipe|drain|water|electric|panel|outlet|paint|lawn|mow|tree|mason|patio|chimney|driveway|pav|floor|pool|window|door|gutter|deck|fence|repair|install|replace|remodel|yard)\b/i;
+  var CO_WORDS=/\b(lead|leads|call|calls|book|booking|schedule|invoice|estimate|customer|client|crew|business|market|website|slow season|jobs dry|no shows?|follow ?up)\b/i;
+
+  function route(q){
+    var short=q.trim().split(/\s+/).length<=5;
+    if(short&&/home ?owner/i.test(q))return speakKey('ho');
+    if(short&&/\bcontractor\b/i.test(q))return speakKey('co');
+    if(lane==='ho')return handoff(q);
+    if(/\b(price|pricing|cost|how much|fees?|offer)\b/i.test(q))return speakKey('offer');
+    if(/\batlas\b/i.test(q))return speakKey('atlas');
+    if(/\blens\b/i.test(q))return speakKey('lens');
+    if(/\b(flywheel|compound|fit together|how it works)\b/i.test(q))return speakKey('flywheel');
+    if(/\b(seo|search|google|rank(ing)?)\b/i.test(q))return speakKey('seo');
+    if(/\b(miss|missed|after.?hours|voicemail|call ?back)\b/i.test(q))return speakKey('missed');
+    if(/\breviews?\b/i.test(q))return speakKey('reviews');
+    if(/\b(4th ?wall|who are you|what is this|what do you do|about|mission|company|story)\b/i.test(q))return speakKey('house');
+    if(/\bvesta\b/i.test(q))return speakKey('ho');
+    if(CO_WORDS.test(q))return speakKey('co');
+    if(HO_WORDS.test(q))return handoff(q);
+    speakKey('deflect');
   }
 
-  /* ── free-text routing — keywords only, zero model calls ── */
-  var HO_WORDS=/\b(roof|leak|hvac|heat|furnace|ac|air|plumb|pipe|drain|water|electric|panel|outlet|paint|lawn|mow|tree|mason|patio|chimney|driveway|pav|floor|pool|window|door|gutter|deck|fence|repair|install|replace|remodel|house|home|yard)\b/i;
-  var CO_WORDS=/\b(lead|leads|call|calls|missed|review|reviews|book|booking|schedule|invoice|estimate|customer|client|crew|business|market|website|slow season|jobs dry|no shows?|follow ?up)\b/i;
-  var HOUSE=/\b(4th ?wall|who are you|what is this|what do you do|about|mission|company|founder|story)\b/i;
-  var PRICE=/\b(price|pricing|cost|how much|fees?)\b/i;
-  var MISSED=/\b(miss|missed|after.?hours|voicemail|call ?back)\b/i;
+  function input(q,display){
+    convo.push({who:'you',text:q});
+    echo(display||q);
+    route(q);
+  }
 
   $('fdWell').addEventListener('submit',function(e){
     e.preventDefault();
-    var q=say.value.trim();
-    if(!q){hint.textContent='say it however it comes out — or tap a chip';hint.classList.add('pulse');say.focus();return}
-    say.value='';
-    var label='“'+q+'”';
-    if(lane==='ho')return handoff(q,label);
-    if(PRICE.test(q))return go('co_price',label);
-    if(/\batlas\b/i.test(q))return go('co_atlas',label);
-    if(/\blens\b/i.test(q))return go('co_lens',label);
-    if(/\bvesta\b/i.test(q))return go('ho_start',label);
-    if(HOUSE.test(q))return go('house_what',label);
-    if(MISSED.test(q))return go('co_missed',label);
-    if(CO_WORDS.test(q))return go('co_start',label);
-    if(HO_WORDS.test(q))return handoff(q,label);
-    go('deflect',label);
+    var q=say.value.trim();if(!q)return;
+    say.value='';phVis();
+    input(q);
   });
 
-  /* ── cycling placeholder — per-letter blur reveal (paused while focused or typing) ── */
+  /* ── cycling placeholder — per-letter blur (paused while focused or typing) ── */
   var PH_ALL=['my roof is leaking in Stamford','I keep missing calls on the job','what is 4THWALL?','the AC died upstairs','how much does Atlas cost?','driveway needs repaving'];
   var PH_HO=['my roof is leaking in Stamford','the AC died upstairs','driveway needs repaving','we want to redo the bathroom'];
   var phEl=$('fdPh'),phList=PH_ALL,phIdx=0;
@@ -1081,7 +1027,8 @@ a,button{transition:transform .14s}
     });
   }else{micBtn.style.display='none'}
 
-  home();
+  /* the desk speaks first */
+  speak(L.greet);
 })();
 </script>
 
