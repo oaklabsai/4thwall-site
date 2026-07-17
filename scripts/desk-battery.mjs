@@ -159,7 +159,15 @@ const check = (tag, ok, note='') => {
 { const d = boot(src); d.say('do you handle seo?');
   check('A13 seo ask → SEO line', /local discovery/.test(d.spoken())); }
 { const d = boot(src); d.say('i keep missing calls on jobs');
-  check('A14 missed-calls ask → missed line (hedged 15s claim)', /most expensive silence/.test(d.spoken()) && /typically/.test(d.spoken())); }
+  // shim timers run sync: the whole performance plays through to the closing lead
+  check('A14 missed-calls ask → the desk PERFORMS the missed call (sim assembled, labeled, hedged; closing lead voiced)',
+    /Incoming call/.test(d.els.fdScreen.innerHTML) && /A simulation, labeled as one/.test(d.els.fdScreen.innerHTML)
+    && /typically get a first reply in 15 seconds after go-live/.test(d.els.fdScreen.innerHTML)
+    && /That.s Atlas/.test(d.spoken()) && /live demo/.test(d.spoken())); }
+{ const d = boot(src); d.say('how does it all compound?');
+  check('A22 flywheel ask → spoken line + the flywheel drawn (4 nodes, proof-never-ads)',
+    /evidence makes the work/.test(d.spoken()) && /fdfw-n/.test(d.els.fdScreen.innerHTML)
+    && /never ads/.test(d.els.fdScreen.innerHTML)); }
 { const d = boot(src); d.say('who are you guys?');
   check('A15 house ask → the belief line', /good work should leave evidence/i.test(d.spoken())); }
 { const d = boot(src); d.say('qwerty asdf zxcv');
