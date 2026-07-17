@@ -50,8 +50,15 @@ function el(id){
   return e;
 }
 
-// One fresh desk instance per case. probeOK controls the GET /api/triage health probe.
-function boot(src, { probeOK = true } = {}){
+// a tiny in-memory Storage so F5's localStorage reads/writes work in the shim
+function makeStore(seed){
+  const d = seed ? { fd_memory: JSON.stringify(seed) } : {};
+  return { getItem: k => (k in d ? d[k] : null), setItem: (k,v) => { d[k] = String(v); }, removeItem: k => { delete d[k]; } };
+}
+
+// One fresh desk instance per case. probeOK controls the GET /api/triage health probe;
+// seedMem pre-seeds localStorage to simulate a returning visitor (F5).
+function boot(src, { probeOK = true, seedMem = null } = {}){
   const ids = ['fdMat','fdYou','fdLine','fdSay','fdWell','fdPh','fdMic','fdThink','fdThinkW','fdScreen'];
   const els = Object.fromEntries(ids.map(i => [i, el(i)]));
   const posts = [];                       // recorded triage POSTs
@@ -74,6 +81,7 @@ function boot(src, { probeOK = true } = {}){
     setTimeout: (fn) => { fn(); return 0; },  // transitions collapse — state lands synchronously
     clearTimeout: () => {}, setInterval: () => 0, clearInterval: () => {},
     sessionStorage: { getItem:()=>null, setItem:()=>{}, },
+    localStorage: makeStore(seedMem),
     Date, JSON, Object, Array, String, Math, Promise, encodeURIComponent, TextDecoder,
     Event: class { constructor(type){ this.type = type; } preventDefault(){} },
     SpeechRecognition: undefined, webkitSpeechRecognition: undefined,
@@ -190,6 +198,18 @@ const check = (tag, ok, note='') => {
 { const d = boot(src); d.say('what does a pool cost?'); await flush(); await flush();
   check('A21 no cost data for trade → honest line, no invented numbers',
     /don.t carry planning numbers/.test(d.spoken()) && !/\$/.test(d.els.fdScreen.innerHTML)); }
+
+// F5 — return-visit memory (localStorage only; seeded into the shim)
+{ const d = boot(src, { seedMem: { v:1, ts: Date.now(), deck:{ trade:'roofing', job:'roof-replacement', label:'roof replacement', tradeLabel:'Roofing' }, job:'roof-replacement', trade:'roofing', firm:'Summit Ridge Roofing', sent:true } });
+  check('A23 return visit (request sent) → welcome-back, names the firm, resume+fresh offered',
+    /Welcome back/.test(d.spoken()) && /Summit Ridge Roofing/.test(d.spoken()) && /how did it go/i.test(d.spoken())
+    && /data-act="resume"/.test(d.els.fdLine.innerHTML) && /data-act="fresh"/.test(d.els.fdLine.innerHTML)); }
+{ const d = boot(src, { seedMem: { v:1, ts: Date.now()-3*864e5, deck:{ trade:'paving', job:'new-driveway-installation', label:'new driveway installation', tradeLabel:'Paving' }, job:'new-driveway-installation', trade:'paving' } });
+  check('A24 return visit (matched, not sent) → welcome-back + resume, NOT "how did it go"',
+    /Welcome back/.test(d.spoken()) && /data-act="resume"/.test(d.els.fdLine.innerHTML) && !/how did it go/i.test(d.spoken())); }
+{ const d = boot(src);
+  check('A25 first-time visitor (no memory) → the cold greeting, not welcome-back',
+    !/Welcome back/.test(d.spoken()) && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
 
 // B · CLAIM SAFETY — every deterministic line, linted against the pack's banned list
 const L = extractL(src);

@@ -1092,6 +1092,9 @@ a,button{transition:transform .14s}
       [].forEach.call(line.querySelectorAll('a[data-say]'),function(a){
         a.addEventListener('click',function(e){e.preventDefault();input(a.getAttribute('data-say'),a.textContent)});
       });
+      [].forEach.call(line.querySelectorAll('a[data-act]'),function(a){
+        a.addEventListener('click',function(e){e.preventDefault();var f=ACT[a.getAttribute('data-act')];if(f)f()});
+      });
     },wait);
   }
   function speakKey(k){
@@ -1454,27 +1457,30 @@ a,button{transition:transform .14s}
         },Math.min(shown*14,1100)+800);
       });
   }
-  function deckLand(deck,mode){
+  function deckLand(deck,mode,resume){
     deckShown=true;deckKey=deck.trade+'|'+deck.job;curDeck={deck:deck,mode:mode};
     loadFirms(deck.trade).then(function(list){
-      if(!list||!list.length)return landAfterSay(function(){screenDoor(deck)});
+      var bail=function(){resume?screenDoor(deck):landAfterSay(function(){screenDoor(deck)})};
+      if(!list||!list.length)return bail();
       var all=portfolio(list,deck.job),picks=all.slice(0,3);
-      if(!picks.length)return landAfterSay(function(){screenDoor(deck)});
+      if(!picks.length)return bail();
       curPicks=picks;curTotal=list.length;
-      logEvent('match',{trade:TRADE_DB[deck.trade]||deck.trade,job:deck.job,axis:null});
+      if(!resume)logEvent('match',{trade:TRADE_DB[deck.trade]||deck.trade,job:deck.job,axis:null});
+      saveMemory();   /* the desk remembers this visit — the visitor's own browser only (F5) */
+      var land=function(){
+        renderPicks();
+        seedFollow(deck,picks,list.length);
+        phList=['why these three?','tell me about the first one','what should I ask them?','I’ve got another problem too'];phIdx=0;
+        if(!resume)setTimeout(function(){
+          if(triBusy)return;   /* the homeowner already moved — follow them, don't talk over them */
+          speak('Three rose to the top — tap one to open it. Or ask <a data-say="what should I ask before hiring?">what to ask before you hire</a>, or <a data-say="what does this usually cost?">what this usually costs</a>.');
+        },1900);
+      };
       /* choreography: the reading begins AS the resolved sentence finishes; the picks
-         crystallize from it; then the desk LEADS the next act (the flow law) */
-      landAfterSay(function(){
-        showReading(list.length,String(deck.tradeLabel||deck.trade).toLowerCase(),function(){
-          renderPicks();
-          seedFollow(deck,picks,list.length);
-          phList=['why these three?','tell me about the first one','what should I ask them?','I’ve got another problem too'];phIdx=0;
-          setTimeout(function(){
-            if(triBusy)return;   /* the homeowner already moved — follow them, don't talk over them */
-            speak('Three rose to the top — tap one to open it. Or ask <a data-say="what should I ask before hiring?">what to ask before you hire</a>, or <a data-say="what does this usually cost?">what this usually costs</a>.');
-          },1900);
-        });
-      });
+         crystallize from it; then the desk LEADS the next act (the flow law).
+         On resume the visitor has seen the reading — skip straight to their picks. */
+      if(resume){triActive=true;landAfterSay(land);}
+      else landAfterSay(function(){showReading(list.length,String(deck.tradeLabel||deck.trade).toLowerCase(),land)});
     });
   }
   var morphPlace=null;   /* the pick the visitor last opened — its card carries the morph names on the way back */
@@ -1514,6 +1520,7 @@ a,button{transition:transform .14s}
     if(card){var cm=card.querySelector('.fds-mono'),cn=card.querySelector('.fds-name');
       if(cm)cm.style.viewTransitionName='fd-mono';if(cn)cn.style.viewTransitionName='fd-name';}
     logEvent('profile_view',{place_id:p.placeId,trade:curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):null});
+    saveMemory({firm:p.name});   /* remember the last firm they weighed (F5) */
     var st=standing(p,curDeck?curDeck.deck.trade:'');
     showScreen('<span class="fdp-back" id="fdpBack">← back to your picks</span>'+
       '<div class="fdp-head"><span class="fdp-mono" style="view-transition-name:fd-mono">'+escT((p.name||'?')[0])+'</span>'+
@@ -1588,6 +1595,7 @@ a,button{transition:transform .14s}
     .then(function(resp){
       var r=resp.data;
       if(!(r&&r.ok))return fail('That didn’t go through — try again.');
+      saveMemory({firm:p.name,sent:true});   /* the request went out — the desk remembers who (F5) */
       var t=(r.targets||[])[0]||{};
       var tel=t.phone?String(t.phone).replace(/[^\d+]/g,''):'';
       var site=t.website?String(t.website):'';
@@ -1765,8 +1773,38 @@ a,button{transition:transform .14s}
     triMsgs.push({role:'assistant',content:JSON.stringify(ctx)});
   }
 
-  /* the desk speaks first */
-  speak(L.greet);
+  /* ═══ F5 — RETURN-VISIT MEMORY. The desk remembers your last visit and greets you by
+     it. localStorage ONLY — the visitor's own browser, no account, no server, nothing
+     leaves the device. Written on match / profile-open / request-sent; 30-day expiry. ═══ */
+  var MEM_KEY='fd_memory',MEM_TTL=30*864e5;
+  function loadMemory(){try{var m=JSON.parse(localStorage.getItem(MEM_KEY)||'null');if(m&&m.v===1&&(Date.now()-m.ts)<MEM_TTL)return m}catch(e){}return null}
+  function saveMemory(patch){try{
+    var cur=null;try{cur=JSON.parse(localStorage.getItem(MEM_KEY)||'null')}catch(e){}
+    if(!cur||cur.v!==1)cur={v:1};
+    if(curDeck&&curDeck.deck){cur.deck=curDeck.deck;cur.trade=curDeck.deck.trade;cur.tradeLabel=curDeck.deck.tradeLabel||curDeck.deck.trade;cur.job=curDeck.deck.job}
+    if(patch)for(var k in patch)cur[k]=patch[k];
+    cur.ts=Date.now();localStorage.setItem(MEM_KEY,JSON.stringify(cur));
+  }catch(e){}}
+  function agoWords(ts){var diff=Date.now()-ts,day=864e5;if(diff<2*day)return diff<day?'earlier today':'yesterday';if(diff<7*day)return 'a few days ago';return 'a little while back'}
+  function speakReturn(mem){
+    lane='ho';
+    var firm=mem.firm,job=(mem.deck&&mem.deck.label?mem.deck.label:(mem.job?jobLabelOf(mem.job):'your project')).toLowerCase(),when=agoWords(mem.ts),html;
+    if(mem.sent&&firm)
+      html='Welcome back. How did it go with <b>'+escT(firm)+'</b>? Your <a data-act="resume">'+escT(job)+' picks</a> are still here, or we can <a data-act="fresh">start something new</a>.';
+    else if(firm)
+      html='Welcome back. You were looking at <b>'+escT(firm)+'</b> '+when+' — want your <a data-act="resume">'+escT(job)+' picks</a> back, or to <a data-act="fresh">start fresh</a>?';
+    else
+      html='Welcome back — you were weighing '+escT(job)+' pros '+when+'. I can pull your <a data-act="resume">picks</a> back up, or <a data-act="fresh">start something new</a>.';
+    speak(html);
+  }
+  var ACT={
+    resume:function(){var m=loadMemory();if(!m||!m.deck)return speak(L.greet);triActive=true;speak('Right where you left off —');deckLand(m.deck,'fix',true)},
+    fresh:function(){lane=null;setPH();speak(L.greet)}
+  };
+
+  /* the desk speaks first — by memory if we've met, otherwise the greeting */
+  var __mem=loadMemory();
+  if(__mem)speakReturn(__mem);else speak(L.greet);
 })();
 </script>
 
