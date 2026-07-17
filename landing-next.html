@@ -414,35 +414,25 @@ a,button{transition:transform .14s}
 .bk path,.bk line,.bk circle,.bk rect{fill:none;stroke:var(--olive);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;
   stroke-dasharray:420;stroke-dashoffset:420;transition:stroke-dashoffset 1.15s ease}
 .bk.draw path,.bk.draw line,.bk.draw circle,.bk.draw rect{stroke-dashoffset:0}
-/* page 1 — the house, the departure, the fade */
-.bk1 svg{width:min(320px,72vw)}
-.bk1 .bk-truck{transition:transform 1.25s ease,opacity 1s ease}
-.bk1.gone .bk-truck{transform:translateX(130px);opacity:0}
-.bk1 .bk-home{transition:opacity 1.1s ease}
-.bk1.faded .bk-home{opacity:.14}
-.bk-addr{position:absolute;left:0;right:0;bottom:1.6rem;text-align:center;font:500 .62rem/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--dim);opacity:0;transition:opacity .9s ease .2s}
-.bk1.faded .bk-addr{opacity:1}
-/* page 2 — both sides of the blank */
-.bk-split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:stretch}
-.bk-side{background:var(--nm);border-radius:18px;box-shadow:var(--nm-sm);padding:1.05rem .95rem;display:flex;flex-direction:column;gap:.55rem;align-items:center;justify-content:center;
-  opacity:.94;transition:transform .35s ease,opacity .35s ease}
-.bk-side:hover{transform:translateY(-3px);opacity:1}
-.bk-split:hover .bk-side:not(:hover){opacity:.5}
-.bk-who{font:500 .55rem/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
-.bk-phone{display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.55);border-radius:12px;padding:.6rem .8rem;font-size:.76rem;color:var(--olive);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
-.bk-ringdot{width:8px;height:8px;border-radius:50%;background:#b76a5a;flex-shrink:0}
-.bk2.draw .bk-ringdot{animation:bkDim 2.6s ease 1.1s forwards}
-@keyframes bkDim{0%{opacity:1}60%{opacity:1}100%{opacity:.22;background:var(--dim)}}
-.bk-missed{font:500 .55rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#b76a5a;opacity:0;transition:opacity .8s ease 2.9s}
-.bk2.draw .bk-missed{opacity:.85}
-.bk-cards{display:flex;flex-direction:column;gap:.4rem;width:100%}
-.bk-card{background:rgba(255,255,255,.55);border-radius:10px;padding:.42rem .65rem;display:flex;align-items:center;justify-content:space-between;box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
-.bk-card i{display:inline-block;width:34px;height:7px;border-radius:4px;background:rgba(74,75,47,.22);font-style:normal}
-.bk-card b{font-size:.6rem;letter-spacing:.06em;color:var(--olive);font-weight:600;opacity:.85}
-.bk2.recede{opacity:0;transform:translateY(6px);transition:opacity .8s ease,transform .8s ease}
-.bk-skip{position:absolute;right:.1rem;bottom:0;font:500 .58rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);cursor:pointer;transition:color .2s}
+/* the book is now a teacher's whiteboard — diagrams and charts drawn in ink. Lines draw
+   themselves (dash), labels and captions fade in as the teacher writes them. */
+.bkchart svg{width:min(360px,82vw)}
+.bk-axis{stroke:var(--dim);stroke-width:1.8}
+.bk-lbl{fill:var(--olive);font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;opacity:0;transition:opacity .6s ease .8s}
+.bk.draw .bk-lbl{opacity:.92}
+.bk-lbl.dim{fill:var(--dim)}
+.bk.draw .bk-lbl.dim{opacity:.62}
+.bk-star{fill:var(--olive);font-size:5.5px;letter-spacing:.5px;text-anchor:middle;opacity:0;transition:opacity .5s ease .3s}
+.bk.draw .bk-star{opacity:.6}
+.bk-q{fill:var(--olive);font-family:var(--display);font-weight:600;font-size:30px;opacity:0;transition:opacity .7s ease 1.2s}
+.bk.draw .bk-q{opacity:.9}
+.bk-node{fill:var(--olive);font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-anchor:middle;opacity:0;transition:opacity .6s ease .9s}
+.bk.draw .bk-node{opacity:.9}
+.bk-addr{margin-top:.55rem;text-align:center;font:500 .62rem/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--dim);opacity:0;transition:opacity .8s ease .5s}
+.bk.draw .bk-addr{opacity:1}
+.bk.recede{opacity:0;transform:translateY(6px);transition:opacity .8s ease,transform .8s ease}
+.bk-skip{position:absolute;right:.1rem;bottom:-.2rem;font:500 .58rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);cursor:pointer;transition:color .2s}
 .bk-skip:hover{color:var(--olive)}
-@media(max-width:440px){.bk-split{gap:.6rem}.bk-side{padding:.8rem .6rem}}
 /* the welcome mat */
 .fd-mat{margin-top:3rem}
 .fd-mat .kicker{font-size:clamp(2.3rem,4.8vw,3.1rem);transform:rotate(-3deg);padding-bottom:10px;background-size:100% 9px}
@@ -2062,52 +2052,62 @@ a,button{transition:transform .14s}
         if(!bkHeld){clearInterval(iv);fn()}
       },250);
     },ms)}
-    /* PAGE 1 — the wound: the house draws, the truck departs, nothing remains */
+    /* PAGE 1 — the chart: the work climbs, the record stays flat at zero */
     speak(L.book1);
-    var p1=bkPage('<div class="bk bk1">'+
-      '<svg viewBox="0 0 220 150" aria-hidden="true">'+
-      '<g class="bk-home">'+
-      '<path d="M28 74 L110 20 L192 74" style="transition-delay:.05s"/>'+
-      '<path d="M40 74 V130 H180 V74" style="transition-delay:.35s"/>'+
-      '<path d="M98 130 V96 h24 v34" style="transition-delay:.7s"/>'+
-      '<rect x="56" y="88" width="24" height="20" rx="2" style="transition-delay:.9s"/>'+
-      '<rect x="140" y="88" width="24" height="20" rx="2" style="transition-delay:1s"/>'+
-      '<path d="M150 46 v-20 h14 v30" style="transition-delay:1.15s"/>'+
-      '</g>'+
-      '<g class="bk-truck">'+
-      '<path d="M14 138 h44 v-16 H14 z M58 138 h16 v-10 l-6 -6 h-10" style="transition-delay:1.5s"/>'+
-      '<circle cx="26" cy="140" r="4" style="transition-delay:1.7s"/>'+
-      '<circle cx="64" cy="140" r="4" style="transition-delay:1.8s"/>'+
-      '</g>'+
+    var p1=bkPage('<div class="bk bkchart" aria-hidden="true">'+
+      '<svg viewBox="0 0 260 150">'+
+      '<line class="bk-axis" x1="34" y1="14" x2="34" y2="128"/>'+
+      '<line class="bk-axis" x1="34" y1="128" x2="244" y2="128"/>'+
+      '<path d="M40 123 C96 118 150 66 232 30" style="transition-delay:.5s"/>'+
+      '<path d="M40 120 C110 118 172 116 232 113" style="transition-delay:1.15s"/>'+
+      '<text class="bk-lbl" x="168" y="52">the work</text>'+
+      '<text class="bk-lbl dim" x="166" y="108">the record</text>'+
       '</svg>'+
-      '<p class="bk-addr">the work was beautiful</p>'+
+      '<p class="bk-addr">quality climbs. the record stays blank.</p>'+
       '</div>');
     step(650,function(){p1.classList.add('draw');
-    step(2450,function(){p1.classList.add('gone');
-    step(1250,function(){p1.classList.add('faded');
-    step(2600,function(){
-      /* PAGE 2 — both sides of the blank */
+    step(3600,function(){
+      /* PAGE 2 — the chart of the blank: five identical bars, nothing to choose on */
       speak(L.book2);
-      var p2=bkPage('<div class="bk bk2"><div class="bk-split">'+
-        '<div class="bk-side"><span class="bk-who">the contractor</span>'+
-        '<span class="bk-phone"><span class="bk-ringdot"></span>Incoming call</span>'+
-        '<span class="bk-missed">missed — on the job</span></div>'+
-        '<div class="bk-side"><span class="bk-who">the homeowner</span>'+
-        '<div class="bk-cards">'+
-        '<span class="bk-card"><i></i><b>★★★★★</b></span>'+
-        '<span class="bk-card"><i></i><b>★★★★★</b></span>'+
-        '<span class="bk-card"><i></i><b>★★★★★</b></span>'+
-        '<span class="bk-card"><i></i><b>★★★★★</b></span>'+
-        '</div></div>'+
-        '</div></div>');
+      var p2=bkPage('<div class="bk bkchart" aria-hidden="true">'+
+        '<svg viewBox="0 0 260 150">'+
+        '<line class="bk-axis" x1="20" y1="128" x2="240" y2="128"/>'+
+        '<rect x="30" y="54" width="26" height="74" style="transition-delay:.1s"/>'+
+        '<rect x="70" y="54" width="26" height="74" style="transition-delay:.25s"/>'+
+        '<rect x="110" y="54" width="26" height="74" style="transition-delay:.4s"/>'+
+        '<rect x="150" y="54" width="26" height="74" style="transition-delay:.55s"/>'+
+        '<rect x="190" y="54" width="26" height="74" style="transition-delay:.7s"/>'+
+        '<text class="bk-star" x="43" y="47">★★★★★</text>'+
+        '<text class="bk-star" x="83" y="47">★★★★★</text>'+
+        '<text class="bk-star" x="123" y="47">★★★★★</text>'+
+        '<text class="bk-star" x="163" y="47">★★★★★</text>'+
+        '<text class="bk-star" x="203" y="47">★★★★★</text>'+
+        '<text class="bk-q" x="228" y="100">?</text>'+
+        '</svg>'+
+        '<p class="bk-addr">every option looks identical</p>'+
+        '</div>');
       step(450,function(){p2.classList.add('draw');
       step(4900,function(){
-        /* PAGE 3 — the company, then the hand extended. No climax. */
+        /* PAGE 3 — the fix, diagrammed: 4THWALL between the two sides. No climax. */
         speak(L.book3);
-        p2.classList.add('recede');
-        step(3600,function(){bkEnd(false)});
+        var p3=bkPage('<div class="bk bkchart" aria-hidden="true">'+
+          '<svg viewBox="0 0 260 120">'+
+          '<circle cx="40" cy="58" r="18" style="transition-delay:.1s"/>'+
+          '<circle cx="220" cy="58" r="18" style="transition-delay:.25s"/>'+
+          '<rect x="112" y="40" width="36" height="36" rx="5" style="transition-delay:.5s"/>'+
+          '<path d="M58 58 H112" style="transition-delay:.9s"/>'+
+          '<path d="M148 58 H202" style="transition-delay:1.05s"/>'+
+          '<text class="bk-node" x="40" y="61">crew</text>'+
+          '<text class="bk-node" x="220" y="61">owner</text>'+
+          '<text class="bk-node" x="130" y="61">4TW</text>'+
+          '</svg>'+
+          '<p class="bk-addr">both sides of the fix</p>'+
+          '</div>');
+        step(300,function(){p3.classList.add('draw');
+        step(3600,function(){p3.classList.add('recede');
+        step(900,function(){bkEnd(false)});});});
       });});
-    });});});});
+    });});
   }
   function canBook(){
     if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return false;
