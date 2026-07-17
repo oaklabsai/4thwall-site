@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>4THWALL — Say what you need</title>
+<meta name="description" content="The trust engine for physical-world services. Say what you need — the interface assembles around it.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ECEDE2">
+<link rel="icon" href="/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=Caveat:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEDE2; --well:#DDDECB; --olive:#4A4B2F; --ebony:#6B654B; --tea:#D4DF9E;
+  --white:#FFFFFF; --ink:#12100E; --muted:rgba(74,75,47,.62); --dim:rgba(74,75,47,.42);
+  --line:rgba(74,75,47,.13); --nm:#ECEDE2;
+  --nm-edge:1.5px solid rgba(74,75,47,.13);
+  --nm-out:7px 7px 15px rgba(74,75,47,.15), -7px -7px 15px rgba(255,255,255,.9);
+  --nm-sm:4px 4px 9px rgba(74,75,47,.12), -4px -4px 9px rgba(255,255,255,.85);
+  --nm-in:inset 3px 3px 6px rgba(74,75,47,.13), inset -3px -3px 6px rgba(255,255,255,.9);
+  --tea-grad:linear-gradient(180deg,#dfe8ac,#cdd88f);
+  --dark-grad:linear-gradient(180deg,#565738,#43442a);
+  --display:'Fraunces',Georgia,serif; --body:'Inter Tight',system-ui,sans-serif;
+  --hand:'Caveat',cursive; --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--olive);background:var(--bg);-webkit-font-smoothing:antialiased;letter-spacing:-.011em;min-height:100vh}
+a{color:inherit}
+
+/* nav */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem clamp(1.2rem,4vw,3rem)}
+.nav-logo{display:inline-flex;align-items:center;gap:.55rem;text-decoration:none}
+.nav-logo svg{width:26px;height:26px;color:var(--olive)}
+.nav-logo b{font:600 .82rem/1 var(--mono);letter-spacing:.34em;color:var(--olive)}
+.proto-tag{font:500 .62rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);border:1px dashed rgba(74,75,47,.3);border-radius:999px;padding:.35rem .7rem}
+
+/* the engine hero */
+.stage{max-width:860px;margin:0 auto;padding:clamp(2.2rem,7vh,5rem) 1.2rem 3rem;text-align:center}
+.kicker{font:600 clamp(1.25rem,2.6vw,1.6rem)/1.2 var(--hand);color:var(--ebony);transform:rotate(-1.6deg);display:inline-block;margin-bottom:.9rem}
+h1{font:500 clamp(2rem,5.4vw,3.4rem)/1.08 var(--display);letter-spacing:-.02em;color:var(--ink);margin-bottom:.7rem}
+h1 em{font-style:italic;color:var(--olive)}
+.sub{font-size:clamp(.98rem,1.6vw,1.08rem);line-height:1.6;color:var(--muted);max-width:34rem;margin:0 auto 2rem}
+
+/* the fork */
+.fork{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.1rem}
+.fork-chip{font:600 .95rem/1 var(--body);letter-spacing:-.01em;color:var(--olive);background:var(--nm);border:var(--nm-edge);border-radius:999px;box-shadow:var(--nm-sm);padding:.95rem 1.5rem;cursor:pointer;transition:box-shadow .18s,transform .18s,background .18s,color .18s}
+.fork-chip:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
+.fork-chip:active{box-shadow:var(--nm-in);transform:translateY(0)}
+.fork-chip.on{background:var(--dark-grad);color:var(--tea);border-color:transparent;box-shadow:var(--nm-sm)}
+
+/* the bubble */
+.bubble{display:flex;align-items:center;gap:.6rem;background:var(--well);border:var(--nm-edge);border-radius:18px;box-shadow:var(--nm-in);padding:.55rem .6rem .55rem 1.2rem;max-width:600px;margin:0 auto}
+.bubble input{flex:1;border:0;outline:0;background:transparent;font:400 1.02rem/1.4 var(--body);color:var(--ink);min-width:0}
+.bubble input::placeholder{color:var(--dim)}
+.bubble button{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:14px;border:0;cursor:pointer;background:var(--dark-grad);color:var(--tea);box-shadow:var(--nm-sm);transition:box-shadow .18s,transform .18s;flex:none}
+.bubble button:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
+.bubble button:active{box-shadow:var(--nm-in);transform:translateY(0)}
+.bubble-hint{font:500 .78rem/1.5 var(--mono);color:var(--dim);margin-top:.8rem;min-height:1.2em}
+.bubble-hint.pulse{color:var(--ebony)}
+
+/* assembled branch */
+.branch{max-width:860px;margin:0 auto;padding:0 1.2rem 2.5rem;display:none}
+.branch.show{display:block;animation:rise .45s cubic-bezier(.2,.8,.25,1)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.branch-kicker{font:600 1.3rem/1.2 var(--hand);color:var(--ebony);transform:rotate(-1.2deg);display:inline-block;margin-bottom:1.1rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;text-align:left}
+.card{background:var(--nm);border:var(--nm-edge);border-radius:18px;box-shadow:var(--nm-out);padding:1.35rem 1.3rem;display:flex;flex-direction:column;gap:.5rem}
+.card .tag{font:500 .62rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ebony)}
+.card h3{font:600 1.28rem/1.15 var(--display);letter-spacing:-.015em;color:var(--ink)}
+.card p{font-size:.9rem;line-height:1.6;color:var(--muted);flex:1}
+.card a{display:inline-flex;align-items:center;gap:.4rem;font:600 .88rem/1 var(--body);color:var(--olive);text-decoration:none;margin-top:.4rem}
+.card a:hover{text-decoration:underline}
+.card.hero-card{background:var(--tea-grad);border-color:rgba(74,75,47,.2)}
+.answer{max-width:600px;margin:0 auto 1.4rem;background:var(--nm);border:var(--nm-edge);border-radius:18px;box-shadow:var(--nm-out);padding:1.1rem 1.3rem;text-align:left;display:none}
+.answer.show{display:block;animation:rise .4s cubic-bezier(.2,.8,.25,1)}
+.answer p{font-size:.94rem;line-height:1.6;color:var(--olive)}
+.answer a{font-weight:600}
+
+/* below the fold — the story stays crawlable */
+.story{max-width:860px;margin:0 auto;padding:2.5rem 1.2rem 4rem;border-top:1px solid var(--line);text-align:center}
+.story p.lede{font:400 1.05rem/1.7 var(--body);color:var(--muted);max-width:44rem;margin:0 auto 1.6rem}
+.story .row{display:flex;gap:1.4rem;justify-content:center;flex-wrap:wrap;font:500 .85rem/1 var(--body)}
+.story .row a{color:var(--olive);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:.2rem}
+.story .row a:hover{border-color:var(--olive)}
+footer{padding:1.6rem;text-align:center;font:500 .68rem/1.6 var(--mono);letter-spacing:.08em;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo" aria-label="4THWALL home">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
+    <b>4THWALL</b>
+  </a>
+  <span class="proto-tag">landing prototype · unlinked</span>
+</nav>
+
+<section class="stage" aria-label="Say what you need">
+  <span class="kicker">say it like you’d say it to a person</span>
+  <h1>What do you <em>need?</em></h1>
+  <p class="sub">4THWALL is the trust engine for physical-world work — evidence, not ads, on both sides of every job.</p>
+
+  <div class="fork" role="group" aria-label="Who are you?">
+    <button class="fork-chip" id="chip-ho" type="button">I’m a homeowner</button>
+    <button class="fork-chip" id="chip-co" type="button">I’m a contractor</button>
+  </div>
+
+  <form class="bubble" id="bubble" aria-label="Tell us what you need">
+    <input type="text" id="say" maxlength="120" placeholder="…or just say it — “my roof is leaking in Stamford”" autocomplete="off">
+    <button type="submit" aria-label="Go"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h12M10 4l5 5-5 5"/></svg></button>
+  </form>
+  <p class="bubble-hint" id="hint"></p>
+</section>
+
+<!-- deterministic answer card (contractor free-text routing) -->
+<div class="answer" id="answer"><p id="answer-p"></p></div>
+
+<!-- HOMEOWNER branch — assembles instantly, no model call -->
+<section class="branch" id="br-ho" aria-label="For homeowners">
+  <span class="branch-kicker">then Vesta is yours —</span>
+  <div class="cards">
+    <div class="card hero-card">
+      <span class="tag">Vesta · free</span>
+      <h3>An honest read on every pro</h3>
+      <p>463 Fairfield County contractors with a plain-English read written from their real public record — reviews, state registrations, the work they’re actually known for. Never ranked by payment.</p>
+      <a href="/vesta">Open Vesta <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="card">
+      <span class="tag">The match</span>
+      <h3>Say the job, get the fit</h3>
+      <p>Type what’s wrong in your own words. Vesta routes it to the right trade and the firms whose record fits that exact job — with the why shown, not implied.</p>
+      <a href="/vesta">Try a match <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="card">
+      <span class="tag">The request</span>
+      <h3>One clear request, carried free</h3>
+      <p>Pick your pro and Vesta carries one request straight to them. Replies come to you. Your information is never auctioned or resold.</p>
+      <a href="/vesta">Start <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTRACTOR branch — the three doors, assembled instantly -->
+<section class="branch" id="br-co" aria-label="For contractors">
+  <span class="branch-kicker">three doors, any order —</span>
+  <div class="cards">
+    <div class="card hero-card">
+      <span class="tag">Atlas · operated</span>
+      <h3>We run the front office</h3>
+      <p>Missed-call recovery, booking, follow-up, reviews, campaigns — operated for you, and every action recorded into a tamper-evident ledger that becomes your proof.</p>
+      <a href="/atlas">See Atlas <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="card">
+      <span class="tag">Lens · free</span>
+      <h3>Your record, made legible</h3>
+      <p>Connect the tools you already use and turn your operating history into source-backed answers homeowners can trust. Free, and you control every record.</p>
+      <a href="/lens">Start free with Lens <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="card">
+      <span class="tag">Vesta · demand</span>
+      <h3>Real homeowners, delivered</h3>
+      <p>Your public profile is already in front of Fairfield County homeowners choosing who to hire. Claim it free — verified owners get requests at their own inbox.</p>
+      <a href="/vesta">Find your profile <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- crawlable story stays below the engine -->
+<section class="story">
+  <p class="lede">Every platform in this space sits outside the job and sells the lead. 4THWALL lives inside it — the back office that answers, books, follows up — and turns what actually happens into evidence both sides can trust: Atlas operates, Lens verifies, Vesta explains.</p>
+  <div class="row">
+    <a href="/atlas">Atlas — managed front office</a>
+    <a href="/lens">Lens — free trust workspace</a>
+    <a href="/vesta">Vesta — the honest guide</a>
+    <a href="/directory">Fairfield County directory</a>
+  </div>
+</section>
+
+<footer>© 2026 4THWALL SOLUTIONS · STAMFORD, CT</footer>
+
+<script>
+(function(){
+  var say = document.getElementById('say'), hint = document.getElementById('hint');
+  var brHo = document.getElementById('br-ho'), brCo = document.getElementById('br-co');
+  var chipHo = document.getElementById('chip-ho'), chipCo = document.getElementById('chip-co');
+  var answer = document.getElementById('answer'), answerP = document.getElementById('answer-p');
+  var who = null;
+
+  function pick(w){
+    who = w;
+    chipHo.classList.toggle('on', w==='ho');
+    chipCo.classList.toggle('on', w==='co');
+    brHo.classList.toggle('show', w==='ho');
+    brCo.classList.toggle('show', w==='co');
+    answer.classList.remove('show');
+    say.placeholder = w==='ho' ? '“my roof is leaking in Stamford” — say the job, Vesta takes it from here'
+                               : '“I keep missing calls after hours” — say what’s breaking';
+    hint.textContent = '';
+    (w==='ho'?brHo:brCo).scrollIntoView({behavior:'smooth', block:'nearest'});
+    say.focus();
+  }
+  chipHo.addEventListener('click', function(){ pick('ho'); });
+  chipCo.addEventListener('click', function(){ pick('co'); });
+
+  // deterministic-first routing: chips and keyword tables answer instantly;
+  // the model only ever runs inside the Vesta engine itself (/vesta?q=).
+  var HO_WORDS = /\b(roof|leak|hvac|heat|furnace|ac|air|plumb|pipe|drain|water|electric|panel|outlet|paint|lawn|mow|tree|mason|patio|chimney|driveway|pav|floor|pool|window|door|gutter|deck|fence|repair|install|replace|remodel|house|home|yard)\b/i;
+  var CO_WORDS = /\b(lead|leads|call|calls|missed|review|reviews|book|booking|schedule|invoice|estimate|customer|client|crew|business|market|website|slow season|jobs dry|no shows?|follow ?up)\b/i;
+
+  function goVesta(q){
+    hint.classList.add('pulse');
+    hint.textContent = 'assembling your match…';
+    setTimeout(function(){ location.href = '/vesta?q=' + encodeURIComponent(q); }, 550);
+  }
+  function contractorAnswer(q){
+    var missed = /\b(miss|missed|after.?hours|voicemail|call ?back)\b/i.test(q);
+    pick('co');
+    answerP.innerHTML = missed
+      ? 'Missed calls are the exact problem Atlas was built to end — <a href="/missed-calls">watch the 60-second demo</a> of a missed call turning into a booked estimate, or <a href="/atlas#contact">tell us what’s on fire</a>.'
+      : 'Start with the door that fits: <a href="/atlas#contact">tell us what’s breaking</a> and we’ll answer like a person — or <a href="/lens">open the free Lens workspace</a> right now, no conversation required.';
+    answer.classList.add('show');
+    answer.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  document.getElementById('bubble').addEventListener('submit', function(e){
+    e.preventDefault();
+    var q = say.value.trim();
+    if (!q){ (who ? say : chipHo).focus(); if(!who){ hint.textContent = 'first — which one are you?'; } return; }
+    if (who === 'ho') return goVesta(q);
+    if (who === 'co') return contractorAnswer(q);
+    // no fork chosen: classify deterministically, else ask
+    if (HO_WORDS.test(q) && !CO_WORDS.test(q)) return goVesta(q);
+    if (CO_WORDS.test(q)) return contractorAnswer(q);
+    hint.classList.add('pulse');
+    hint.textContent = 'first — which one are you? (tap a chip above)';
+  });
+})();
+</script>
+</body>
+</html>
