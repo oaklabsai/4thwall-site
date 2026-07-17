@@ -476,6 +476,22 @@ a,button{transition:transform .14s}
 .fds-chev{flex:none;color:var(--dim)}
 .fds-more{display:inline-block;font:500 .7rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ebony);border-bottom:1px solid var(--line);padding-bottom:.25rem;margin-top:.3rem}
 .fds-more:hover{color:var(--olive);border-color:var(--olive)}
+/* quiet doors under an assembled screen — the vocabulary compounding (P4) */
+.fds-doors{display:flex;gap:1.4rem;flex-wrap:wrap;margin-top:1.1rem}
+.fds-doors a{font:500 .68rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);cursor:pointer;border-bottom:1px solid transparent;padding-bottom:.25rem;transition:color .18s,border-color .18s}
+.fds-doors a:hover{color:var(--olive);border-color:var(--olive)}
+/* P4 · the cost chart — planning ranges with their provenance, desk material */
+.fdc-row{display:grid;grid-template-columns:1fr auto;gap:.2rem .9rem;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.9rem 1.05rem;margin-bottom:.7rem}
+.fdc-job{font:600 .92rem/1.35 var(--body);color:var(--ink)}
+.fdc-range{font:600 .92rem/1.35 var(--mono);color:var(--olive);white-space:nowrap}
+.fdc-note{grid-column:1/-1;font:400 .78rem/1.5 var(--body);color:var(--muted)}
+.fdc-factors{font:400 .82rem/1.6 var(--body);color:var(--olive);background:rgba(212,223,158,.32);border-radius:12px;padding:.7rem .9rem;margin:.9rem 0 .6rem}
+.fdc-factors b{font-weight:600}
+.fdc-method{font:400 .72rem/1.6 var(--body);color:var(--dim)}
+/* P4 · the hiring guide — the per-trade checklist */
+.fdg-card{background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:1rem 1.1rem;margin-bottom:.7rem}
+.fdg-t{display:block;font:600 .95rem/1.35 var(--display);letter-spacing:-.01em;color:var(--ink);margin-bottom:.3rem}
+.fdg-d{font:400 .82rem/1.6 var(--body);color:var(--muted)}
 /* profile */
 .fdp-back{display:inline-block;font:500 .68rem/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem;cursor:pointer}
 .fdp-back:hover{color:var(--olive)}
@@ -1034,6 +1050,14 @@ a,button{transition:transform .14s}
   var CO_WORDS=/\b(lead|leads|call|calls|book|booking|schedule|invoice|estimate|customer|client|crew|business|market|website|slow season|jobs dry|no shows?|follow ?up)\b/i;
 
   function route(q){
+    /* P4 deterministic intercepts — cost + hiring asks assemble screens with ZERO model
+       calls (law 3), even mid-triage (the model is banned from quoting dollars anyway).
+       Guarded so Atlas/product pricing still reaches the fit-call posture line. */
+    if(!/\b(atlas|lens|4thwall|vesta)\b/i.test(q)){
+      var tw=tradeOf(q)||(deckShown&&curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):null);
+      if(tw&&/\b(what (should|do) (i|we) ask|before (i|we|you) hire|hiring|how (do|to) (i |we )?(choose|pick|vet|screen)|red flags?|questions? (to|i should) ask)\b/i.test(q))return guideScreen(tw,q);
+      if(tw&&/\b(cost|costs|price|prices|pricing|how much|estimate|budget|spend)\b/i.test(q))return costScreen(tw,q);
+    }
     if(triActive)return triTurn(q);   /* once the real triage owns the conversation, it keeps it */
     var short=q.trim().split(/\s+/).length<=5;
     if(short&&/home ?owner/i.test(q))return speakKey('ho');
@@ -1068,8 +1092,8 @@ a,button{transition:transform .14s}
   });
 
   /* ── cycling placeholder — per-letter blur (paused while focused or typing) ── */
-  var PH_ALL=['my roof is leaking in Stamford','I keep missing calls on the job','what is 4THWALL?','the AC died upstairs','how much does Atlas cost?','driveway needs repaving'];
-  var PH_HO=['my roof is leaking in Stamford','the AC died upstairs','driveway needs repaving','we want to redo the bathroom'];
+  var PH_ALL=['my roof is leaking in Stamford','I keep missing calls on the job','what is 4THWALL?','the AC died upstairs','how much does Atlas cost?','driveway needs repaving','what does a new roof cost?'];
+  var PH_HO=['my roof is leaking in Stamford','the AC died upstairs','driveway needs repaving','we want to redo the bathroom','what does a new roof cost?','what should I ask a roofer?'];
   var phEl=$('fdPh'),phList=PH_ALL,phIdx=0;
   function setPH(){phList=(lane==='ho')?PH_HO:PH_ALL;phIdx=0}
   function phShow(text){
@@ -1287,11 +1311,19 @@ a,button{transition:transform .14s}
         '<span class="fds-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></button>';
     }).join('');
     var more=Math.max(0,curTotal-curPicks.length);
+    var db=TRADE_DB[deck.trade]||deck.trade;
     showScreen('<span class="fds-kicker">'+escT(lead)+'</span>'+
       '<h3 class="fds-h">'+escT(hd.h)+'</h3><p class="fds-sub">'+escT(hd.s)+'</p>'+rows+
-      (more?'<a class="fds-more" href="/vesta">See all '+curTotal+' matches on Vesta →</a>':''));
+      (more?'<a class="fds-more" href="/vesta">See all '+curTotal+' matches on Vesta →</a>':'')+
+      '<div class="fds-doors"><a data-door="guide">what to ask before you hire →</a><a data-door="cost">what this usually costs →</a></div>');
     [].forEach.call(screen.querySelectorAll('[data-pick]'),function(b){
       b.addEventListener('click',function(){openFirm(curPicks[+b.dataset.pick])});
+    });
+    wireDoors(db);
+  }
+  function wireDoors(db){
+    [].forEach.call(screen.querySelectorAll('[data-door]'),function(a){
+      a.addEventListener('click',function(){a.dataset.door==='guide'?guideScreen(db,null):costScreen(db,null)});
     });
   }
   function openFirm(p){
@@ -1384,6 +1416,86 @@ a,button{transition:transform .14s}
       '<p class="fds-sub">Open Vesta to see them — say the same thing and it picks right up.</p>'+
       '<a class="fds-more" href="/vesta?q='+encodeURIComponent(lastQ)+'">Open Vesta →</a>');
   }
+  /* ═══ P4 — RICH COMPONENTS: cost chart + hiring guide, assembled from /desk-guide.json
+     (compiled by scripts/build-desk-guide.mjs from the directory's COST_GUIDE + the app's
+     PGUIDE — the desk authors NOTHING; law 2). Zero model calls (law 3). ═══ */
+  var TRADE_WORDS=[
+    ['plumbing',/\b(plumb\w*|water heater|pipe|pipes|drain|toilet|faucet|sewer|sump)\b/i],
+    ['roofing',/\b(roof\w*|shingle\w*|gutter\w*)\b/i],
+    ['hvac',/\b(hvac|furnace|boiler|heat pump|air ?condition\w*|ac|mini.?split|cooling|heating)\b/i],
+    ['electrical',/\b(electric\w*|panel|outlet|wiring|generator|ev charger)\b/i],
+    ['paving',/\b(driveway|pav\w*|asphalt|blacktop|concrete)\b/i],
+    ['lawn_care',/\b(lawn|landscap\w*|mow\w*|yard)\b/i],
+    ['painting',/\b(paint\w*|stain\w*)\b/i],
+    ['masonry',/\b(mason\w*|chimney|patio|stone ?work|stone wall|brick\w*|retaining wall)\b/i],
+    ['tree_service',/\b(tree|trees|stump|arborist)\b/i],
+    ['flooring',/\b(floor\w*|hardwood)\b/i],
+    ['windows_doors',/\b(window\w*|doors?)\b/i],
+    ['pool',/\b(pool)\b/i]
+  ];
+  function tradeOf(q){
+    for(var i=0;i<TRADE_WORDS.length;i++)if(TRADE_WORDS[i][1].test(q))return TRADE_WORDS[i][0];
+    return null;
+  }
+  var _guide=null;
+  function guideData(){
+    if(_guide)return _guide;
+    _guide=fetch('/desk-guide.json').then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+    return _guide;
+  }
+  /* mid-triage coherence: the model must know a guide screen was shown (it never quotes dollars itself) */
+  function noteShown(q,what,label){
+    if(!triActive)return;
+    triMsgs.push({role:'user',content:q});
+    triMsgs.push({role:'assistant',content:JSON.stringify({say:'I pulled up the Fairfield County '+label+' '+what+' on screen — planning reference, not a quote.',resolved:null})});
+  }
+  function backDoor(){
+    return deckShown?'<div class="fds-doors"><a data-door="picks">← back to your picks</a></div>':'';
+  }
+  function wireBack(db){
+    [].forEach.call(screen.querySelectorAll('[data-door="picks"]'),function(a){
+      a.addEventListener('click',renderPicks);
+    });
+    wireDoors(db);
+  }
+  function costScreen(db,q){
+    guideData().then(function(g){
+      var t=g&&g.trades&&g.trades[db];
+      if(!t||!t.cost){
+        if(q)speak('I don’t carry planning numbers for that trade yet — but say the job and I’ll line up the right pros, and their quotes become your real numbers.');
+        return;
+      }
+      if(q){noteShown(q,'cost guide',t.label.toLowerCase());speak('Planning numbers, not quotes — here’s what '+escT(t.label.toLowerCase())+' usually runs in Fairfield County. When you’re ready, say the job and I’ll line up the right pros.')}
+      var rows=t.cost.rows.map(function(r){
+        return '<div class="fdc-row"><div class="fdc-job">'+escT(r.job)+'</div><div class="fdc-range">'+escT(r.range)+'</div><p class="fdc-note">'+escT(r.note)+'</p></div>';
+      }).join('');
+      showScreen('<span class="fds-kicker">planning numbers, not quotes</span>'+
+        '<h3 class="fds-h">What '+escT(t.label.toLowerCase())+' costs in Fairfield County</h3>'+
+        '<p class="fds-sub">'+escT(t.cost.typical)+'</p>'+rows+
+        '<p class="fdc-factors"><b>What moves your number:</b> '+escT(t.cost.factors)+'.</p>'+
+        '<p class="fdc-method">These are planning estimates, not quotes — your real number comes from a contractor who has seen your '+escT(t.cost.noun||'project')+'. Basis: '+escT(t.cost.basis)+' · '+escT(t.cost.scope)+' · updated '+escT(t.cost.updated)+'.</p>'+
+        (t.guide?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="guide">what to ask before you hire →</a></div>':backDoor()));
+      wireBack(db);
+    });
+  }
+  function guideScreen(db,q){
+    guideData().then(function(g){
+      var t=g&&g.trades&&g.trades[db];
+      if(!t||!t.guide){
+        if(q)speak('I don’t have a hiring checklist for that trade yet — but say the job and I’ll line up pros whose records Vesta has actually read.');
+        return;
+      }
+      if(q){noteShown(q,'hiring checklist',t.label.toLowerCase());speak('Before you hire — the questions that separate a solid '+escT(t.label.toLowerCase())+' quote from an expensive lesson. When you’re ready, say the job and I’ll line up the right pros.')}
+      var cards=t.guide.map(function(x){
+        return '<div class="fdg-card"><span class="fdg-t">'+escT(x.t)+'</span><p class="fdg-d">'+escT(x.d)+'</p></div>';
+      }).join('');
+      showScreen('<span class="fds-kicker">before you hire</span>'+
+        '<h3 class="fds-h">What to ask '+escT(t.pros)+' before you hire</h3>'+cards+
+        (t.cost?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="cost">what this usually costs →</a></div>':backDoor()));
+      wireBack(db);
+    });
+  }
+
   /* follow-up context: the model KNOWS what's on screen — "why these three?" gets a real answer */
   function seedFollow(deck,picks,total){
     var ctx={picks:picks.map(function(p){var role=pickRoles[p.placeId];

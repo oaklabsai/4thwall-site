@@ -67,6 +67,7 @@ function boot(src, { probeOK = true } = {}){
     location,
     fetch: (url, opts) => {
       if (opts && opts.method === 'POST'){ posts.push(JSON.parse(opts.body)); return new Promise(()=>{}); }
+      if (String(url).includes('desk-guide.json')) return Promise.resolve({ ok:true, json: () => Promise.resolve(GUIDE_JSON) });
       return Promise.resolve({ ok: probeOK });
     },
     setTimeout: (fn) => { fn(); return 0; },  // transitions collapse — state lands synchronously
@@ -114,7 +115,12 @@ function lintLine(key, text){
 
 // ═══ run ═══
 const src = await getSource();
-console.log(`desk battery — source: ${local ? 'local file' : LIVE} (${src.length} chars)\n`);
+// the P4 screens assemble from /desk-guide.json — same source discipline as the page
+const GUIDE_JSON = local
+  ? JSON.parse(readFileSync(new URL('../desk-guide.json', import.meta.url), 'utf8'))
+  : await (await fetch('https://4thwall.solutions/desk-guide.json')).json();
+const flush = () => new Promise(r => setImmediate(r));
+console.log(`desk battery — source: ${local ? 'local file' : LIVE} (${src.length} chars · guide: ${Object.keys(GUIDE_JSON.trades).length} trades)\n`);
 
 let fails = 0;
 const check = (tag, ok, note='') => {
@@ -157,6 +163,24 @@ const check = (tag, ok, note='') => {
   check('A15 house ask → the belief line', /good work should leave evidence/i.test(d.spoken())); }
 { const d = boot(src); d.say('qwerty asdf zxcv');
   check('A16 nonsense → deflection, never a guess', /deserves a person/.test(d.spoken())); }
+
+// P4 — the rich components (deterministic screens; zero model calls)
+{ const d = boot(src); d.say('how much does a new roof cost?'); await flush(); await flush();
+  const s = d.els.fdScreen.innerHTML;
+  check('A17 homeowner cost ask → cost chart, NOT the Atlas offer line',
+    /What roofing costs in Fairfield County/.test(s) && /planning estimates, not quotes/.test(s) && /updated/.test(s) && !/fit call/i.test(d.spoken())); }
+{ const d = boot(src); d.say('how much does Atlas cost?'); await flush(); await flush();
+  check('A18 Atlas cost ask still → fit-call posture (no cost chart)',
+    /fit call/i.test(d.spoken()) && !/planning estimates/.test(d.els.fdScreen.innerHTML)); }
+{ const d = boot(src); d.say('what should I ask a plumber before I hire?'); await flush(); await flush();
+  const s = d.els.fdScreen.innerHTML;
+  check('A19 hiring ask → the per-trade checklist screen', /What to ask plumbers before you hire/.test(s) && /P-class license/.test(s)); }
+{ const d = boot(src); d.say('homeowner'); d.say('what does paving cost?'); await flush(); await flush();
+  check('A20 ho-lane cost ask → chart (never sent to the model)',
+    d.posts.length === 0 && /What paving costs/.test(d.els.fdScreen.innerHTML)); }
+{ const d = boot(src); d.say('what does a pool cost?'); await flush(); await flush();
+  check('A21 no cost data for trade → honest line, no invented numbers',
+    /don.t carry planning numbers/.test(d.spoken()) && !/\$/.test(d.els.fdScreen.innerHTML)); }
 
 // B · CLAIM SAFETY — every deterministic line, linted against the pack's banned list
 const L = extractL(src);
