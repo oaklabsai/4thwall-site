@@ -39,6 +39,7 @@ function el(id){
     get innerHTML(){ return this._html; },
     set innerHTML(v){ this._html = v; },
     get childNodes(){ return []; },
+    get children(){ return []; },
     get offsetWidth(){ return 0; },
     setAttribute(){}, appendChild(){}, replaceChild(){}, scrollIntoView(){},
     querySelector(){ return null; }, querySelectorAll(){ return []; },

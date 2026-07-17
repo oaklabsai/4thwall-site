@@ -460,9 +460,28 @@ a,button{transition:transform .14s}
 .fd-line.long{text-align:left;justify-items:start}
 /* the 911 hand-off — rides Vesta's words, tap-to-call */
 .fd-line a.fd-call,.fd-line.in a.fd-call{font-style:normal;font-family:var(--body);font-weight:600;font-size:.95rem;background:var(--dark-grad);background-size:100% 100%;color:var(--tea);border-radius:var(--r-pill);padding:.5rem 1.1rem;box-shadow:0 4px 13px -3px rgba(67,68,42,.5)}
-/* ═══ P3 — THE ASSEMBLED SCREEN (picks → profile → request), desk material ═══ */
-.fd-screen{width:min(620px,100%);margin:2.4rem auto 0;text-align:left;opacity:0;transform:translateY(16px);filter:blur(8px);transition:opacity .55s ease,transform .6s var(--spring),filter .55s ease}
-.fd-screen.in{opacity:1;transform:none;filter:none}
+/* ═══ P3 — THE ASSEMBLED SCREEN (picks → profile → request), desk material.
+   F1 FLOW: the container is instant; its CHILDREN stagger in — each element lands a
+   beat after the last, timed (in JS) so the screen assembles as the words finish. ═══ */
+.fd-screen{width:min(620px,100%);margin:2.4rem auto 0;text-align:left}
+.fd-screen>*{opacity:0;transform:translateY(12px);filter:blur(5px);transition:opacity .5s ease,transform .55s var(--spring),filter .5s ease}
+.fd-screen.in>*{opacity:1;transform:none;filter:none}
+/* ═══ F1 — THE STAGE: when the desk assembles a screen, the room reconfigures.
+   Greeting hall (centered, intimate) → working room (compact header, line as
+   narrator, content mid-stage, ask bar docked in reach). One room, two acts. ═══ */
+.fd{transition:padding .6s var(--spring)}
+.fd.staged{justify-content:flex-start;padding-top:clamp(4.8rem,8vh,6rem);padding-bottom:7.5rem}
+.fd-brand,.fd-brand svg,.fd-tagline,.fd-mat,.fd-line,.fd-you{transition:all .6s var(--spring)}
+.fd.staged .fd-brand{width:46px;height:46px;border-radius:15px}
+.fd.staged .fd-brand svg{width:21px;height:21px}
+.fd.staged .fd-tagline,.fd.staged .fd-mat{opacity:0;max-height:0;margin:0;overflow:hidden;pointer-events:none}
+.fd-tagline,.fd-mat{max-height:3em}
+.fd.staged .fd-line{font-size:clamp(.98rem,1.7vw,1.15rem);min-height:3.2em;line-height:1.65}
+.fd.staged .fd-you{font-size:1.05rem}
+.fd.staged .fd-well{position:fixed;left:50%;bottom:1.1rem;transform:translateX(-50%);width:min(600px,calc(100% - 2.2rem));margin:0;z-index:70;box-shadow:var(--sh-card);animation:fdDock .55s var(--spring)}
+@keyframes fdDock{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.fd.staged .fd-cue{display:none}
+.fd.staged .fd-screen{margin-top:1.6rem}
 .fds-kicker{font-family:var(--hand);font-size:1.2rem;font-weight:600;color:var(--ebony);transform:rotate(-1deg);display:inline-block;margin-bottom:.2rem}
 .fds-h{font:600 clamp(1.25rem,2.4vw,1.55rem)/1.25 var(--display);letter-spacing:-.015em;color:var(--ink)}
 .fds-sub{font:400 .85rem/1.55 var(--body);color:var(--muted);margin:.35rem 0 1.15rem}
@@ -1016,6 +1035,10 @@ a,button{transition:transform .14s}
 
   function speak(html,extra){
     convo.push({who:'desk',text:html.replace(/<[^>]+>/g,'')});
+    /* F1 choreography: record when these words will finish landing, so an assembling
+       screen can arrive AS the sentence completes — never before, never long after */
+    speakEnds=Date.now()+(line.querySelectorAll('.w i').length?430:0)
+      +Math.min(html.replace(/<[^>]+>/g,'').length*13,1300)+520;
     var old=line.querySelectorAll('.w i'),wait=0;
     if(old.length){
       for(var i=0;i<old.length;i++)old[i].style.transitionDelay=Math.min((old.length-i)*5,320)+'ms';
@@ -1139,7 +1162,9 @@ a,button{transition:transform .14s}
   var PLURAL={roofing:'roofers',hvac:'HVAC contractors',plumbing:'plumbers',electrical:'electricians',paving:'paving contractors',lawn:'lawn & landscape crews',painting:'painters',masonry:'masons',tree:'tree services',flooring:'flooring contractors',windows_doors:'window & door contractors',pool:'pool companies'};
   var screen=$('fdScreen'),think=$('fdThink'),thinkW=$('fdThinkW');
   var triMsgs=[],triActive=false,triBusy=false,deckShown=false,deckKey='',lastQ='';
-  var firmCache={},curDeck=null,curPicks=[],curTotal=0;
+  var firmCache={},curDeck=null,curPicks=[],curTotal=0,speakEnds=0;
+  /* land work AFTER the current sentence finishes — the F1 choreography primitive */
+  function landAfterSay(fn){setTimeout(fn,Math.max(0,(speakEnds||0)-Date.now()))}
   var TRI_OK=null;fetch('/api/triage').then(function(r){TRI_OK=r.ok}).catch(function(){TRI_OK=false});
   /* the same anonymous funnel session the Vesta app threads (Stage 1.4 instrumentation) */
   var VS_SID=(function(){try{var s=sessionStorage.getItem('v_sid');if(!s){s=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem('v_sid',s)}return s}catch(e){return null}})();
@@ -1276,8 +1301,15 @@ a,button{transition:transform .14s}
   /* ── the assembled screens ── */
   function showScreen(html){
     screen.hidden=false;screen.classList.remove('in');screen.innerHTML=html;
+    /* children stagger in, one beat apart — the screen ASSEMBLES rather than appears */
+    [].forEach.call(screen.children,function(c,i){c.style.transitionDelay=Math.min(i*80,640)+'ms'});
     void screen.offsetWidth;screen.classList.add('in');
-    setTimeout(function(){try{screen.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}},350);
+    /* first assembly reconfigures the room: greeting hall → working room, view lifted to the stage */
+    var fd=document.getElementById('home');
+    if(fd&&!fd.classList.contains('staged')){
+      fd.classList.add('staged');
+      setTimeout(function(){try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){}},100);
+    }
   }
   function headOf(deck){
     var jl=String(deck.label||jobLabelOf(deck.job)).toLowerCase(),pl=PLURAL[deck.trade]||'pros';
@@ -1288,14 +1320,22 @@ a,button{transition:transform .14s}
   function deckLand(deck,mode){
     deckShown=true;deckKey=deck.trade+'|'+deck.job;curDeck={deck:deck,mode:mode};
     loadFirms(deck.trade).then(function(list){
-      if(!list||!list.length)return screenDoor(deck);
+      if(!list||!list.length)return landAfterSay(function(){screenDoor(deck)});
       var all=portfolio(list,deck.job),picks=all.slice(0,3);
-      if(!picks.length)return screenDoor(deck);
+      if(!picks.length)return landAfterSay(function(){screenDoor(deck)});
       curPicks=picks;curTotal=list.length;
       logEvent('match',{trade:TRADE_DB[deck.trade]||deck.trade,job:deck.job,axis:null});
-      renderPicks();
-      seedFollow(deck,picks,list.length);
-      phList=['why these three?','tell me about the first one','what should I ask them?','I’ve got another problem too'];phIdx=0;
+      /* choreography: the picks land AS the resolved sentence finishes, then the desk
+         LEADS the next act — it never drops content and goes quiet (the flow law) */
+      landAfterSay(function(){
+        renderPicks();
+        seedFollow(deck,picks,list.length);
+        phList=['why these three?','tell me about the first one','what should I ask them?','I’ve got another problem too'];phIdx=0;
+        setTimeout(function(){
+          if(triBusy)return;   /* the homeowner already moved — follow them, don't talk over them */
+          speak('Three rose to the top — tap one to open it. Or ask <a data-say="what should I ask before hiring?">what to ask before you hire</a>, or <a data-say="what does this usually cost?">what this usually costs</a>.');
+        },1900);
+      });
     });
   }
   function renderPicks(){
@@ -1469,13 +1509,13 @@ a,button{transition:transform .14s}
       var rows=t.cost.rows.map(function(r){
         return '<div class="fdc-row"><div class="fdc-job">'+escT(r.job)+'</div><div class="fdc-range">'+escT(r.range)+'</div><p class="fdc-note">'+escT(r.note)+'</p></div>';
       }).join('');
-      showScreen('<span class="fds-kicker">planning numbers, not quotes</span>'+
+      landAfterSay(function(){showScreen('<span class="fds-kicker">planning numbers, not quotes</span>'+
         '<h3 class="fds-h">What '+escT(t.label.toLowerCase())+' costs in Fairfield County</h3>'+
         '<p class="fds-sub">'+escT(t.cost.typical)+'</p>'+rows+
         '<p class="fdc-factors"><b>What moves your number:</b> '+escT(t.cost.factors)+'.</p>'+
         '<p class="fdc-method">These are planning estimates, not quotes — your real number comes from a contractor who has seen your '+escT(t.cost.noun||'project')+'. Basis: '+escT(t.cost.basis)+' · '+escT(t.cost.scope)+' · updated '+escT(t.cost.updated)+'.</p>'+
         (t.guide?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="guide">what to ask before you hire →</a></div>':backDoor()));
-      wireBack(db);
+      wireBack(db)});
     });
   }
   function guideScreen(db,q){
@@ -1489,10 +1529,10 @@ a,button{transition:transform .14s}
       var cards=t.guide.map(function(x){
         return '<div class="fdg-card"><span class="fdg-t">'+escT(x.t)+'</span><p class="fdg-d">'+escT(x.d)+'</p></div>';
       }).join('');
-      showScreen('<span class="fds-kicker">before you hire</span>'+
+      landAfterSay(function(){showScreen('<span class="fds-kicker">before you hire</span>'+
         '<h3 class="fds-h">What to ask '+escT(t.pros)+' before you hire</h3>'+cards+
         (t.cost?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="cost">what this usually costs →</a></div>':backDoor()));
-      wireBack(db);
+      wireBack(db)});
     });
   }
 
