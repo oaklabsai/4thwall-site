@@ -149,6 +149,11 @@ const check = (tag, ok, note='') => {
     && /That.s Atlas/.test(d.spoken()) && /managed front office/.test(d.spoken())); }
 { const d = boot(src); d.say('contractor');
   check('A2 "contractor" → concierge line (Atlas + Lens voiced)', /Atlas/.test(d.spoken()) && /Lens/.test(d.spoken())); }
+{ const d = boot(src); d.say('contractor');
+  const s = d.els.fdScreen.innerHTML;
+  check('A28 contractor door → the offer ON SCREEN (runs + receipt + fit-call CTA, zero price figures)',
+    /You do the work/.test(s) && /Missed calls answered/.test(s) && /receipt, not a promise/.test(s)
+    && /book the 20-minute fit call/.test(s) && !/\$|\b\d,?\d{3}\b/.test(s)); }
 { const d = boot(src); d.say('homeowner');
   check('A3 "homeowner" → job-examples line', /like you.d tell a neighbor/.test(d.spoken())); }
 { const d = boot(src); d.say('homeowner'); d.say('the AC died upstairs');

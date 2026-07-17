@@ -1140,7 +1140,7 @@ a,button{transition:transform .14s}
     if(triActive)return triTurn(q);   /* once the real triage owns the conversation, it keeps it */
     var short=q.trim().split(/\s+/).length<=5;
     if(short&&/home ?owner/i.test(q))return speakKey('ho');
-    if(short&&/\bcontractor\b/i.test(q))return speakKey('co');
+    if(short&&/\bcontractor\b/i.test(q))return coDoor();
     if(lane==='ho')return triStart(q);
     if(/\b(price|pricing|cost|how much|fees?|offer)\b/i.test(q))return speakKey('offer');
     if(/\batlas\b/i.test(q))return speakKey('atlas');
@@ -1151,7 +1151,7 @@ a,button{transition:transform .14s}
     if(/\breviews?\b/i.test(q))return speakKey('reviews');
     if(/\b(4th ?wall|who are you|what is this|what do you do|about|mission|company|story)\b/i.test(q))return speakKey('house');
     if(/\bvesta\b/i.test(q))return speakKey('ho');
-    if(CO_WORDS.test(q))return speakKey('co');
+    if(CO_WORDS.test(q))return coDoor();
     if(HO_WORDS.test(q))return triStart(q);
     speakKey('deflect');
   }
@@ -1721,6 +1721,22 @@ a,button{transition:transform .14s}
     ['me','9:30 works'],
     ['them','Booked ✓ — you’ll get a reminder the night before. We’ll take care of you.']
   ];
+  /* the contractor door — the offer stated flat, on screen, the moment they claim the
+     lane. Every card is pack-derived (no new claims); the receipt closes it; the only
+     number spoken is the fit-call posture. Shortest path from "I saw it work" → Drew. */
+  function coDoor(){
+    speakKey('co');
+    landAfterSay(function(){
+      showScreen('<span class="fds-kicker">the offer, plainly</span>'+
+        '<h3 class="fds-h">You do the work. Atlas runs the business around it.</h3>'+
+        '<div class="fdg-card"><span class="fdg-t">Missed calls answered</span><p class="fdg-d">When you can’t pick up, Atlas follows up by text right away — around the clock, in English or Spanish.</p></div>'+
+        '<div class="fdg-card"><span class="fdg-t">Leads qualified &amp; booked</span><p class="fdg-d">The approved questions get asked — what happened, where, how urgent — and a qualified estimate lands on your calendar.</p></div>'+
+        '<div class="fdg-card"><span class="fdg-t">Follow-up that doesn’t die</span><p class="fdg-d">Quotes get chased, quiet leads get revived, and reviews get asked for at the moment the job closes.</p></div>'+
+        '<div class="fdg-card"><span class="fdg-t">The monthly receipt</span><p class="fdg-d">Atlas measures what it actually operates — responses, bookings, follow-ups, recorded outcomes. A receipt, not a promise.</p></div>'+
+        '<p class="fdc-method">A managed service, not a software seat — the price follows the size of the front office we run for you, set on a 20-minute fit call in plain numbers. If we’re not the right fit, we’ll say so first.</p>'+
+        '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a href="/lens">start free with Lens →</a></div>');
+    });
+  }
   function phoneHTML(kicker){
     return '<span class="fds-kicker">'+kicker+'</span>'+
       '<div class="fdph"><div class="fdph-bar"><span>Tuesday</span><span>2:14 PM</span></div>'+
