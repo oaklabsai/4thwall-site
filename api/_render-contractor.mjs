@@ -719,6 +719,15 @@ function profileJsonLd(enr, trade, label, canonical) {
     sameAs: ['https://www.google.com/maps/place/?q=place_id:' + encodeURIComponent(enr.place_id)]
   };
   if (enr.city) biz.address = { '@type': 'PostalAddress', addressLocality: enr.city, addressRegion: 'CT', addressCountry: 'US' };
+  // The machine-grade twin: index-ready profiles carry a pointer to their structured
+  // evidence document (/evidence/:id — provenance-classed blocks, trust contract v1).
+  if (isIndexable(enr)) biz.subjectOf = {
+    '@type': 'Dataset',
+    name: 'Vesta evidence blocks — ' + enr.business_name,
+    description: 'Provenance-classed evidence blocks (public-synthesis) for this contractor, machine-readable.',
+    url: SITE + '/evidence/' + encodeURIComponent(enr.place_id),
+    encodingFormat: 'application/json'
+  };
   if (enr.synthesis) biz.description = enr.synthesis;
   else if (enr.signature) biz.description = enr.signature;
   // Tenure → foundingDate, but only when the registration year is real (the view
@@ -1066,7 +1075,8 @@ export function renderContractorHTML(enr, siblings = []) {
 
   return shell({
     title, description, canonical, indexable,
-    jsonld: profileJsonLd(enr, trade, label, canonical),
+    jsonld: profileJsonLd(enr, trade, label, canonical) +
+      (indexable ? '\n<link rel="alternate" type="application/json" href="/evidence/' + encodeURIComponent(enr.place_id) + '" title="Evidence blocks (trust contract)">' : ''),
     body: profile
   });
 }
