@@ -385,13 +385,24 @@ a,button{transition:transform .14s}
 .fd{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(5.8rem,9vh,7.5rem) var(--pad) 4.6rem;position:relative;text-align:center}
 .fd-inner{width:min(660px,100%);display:flex;flex-direction:column;align-items:center}
 .fd-mark{height:64px;display:grid;place-items:center;margin-bottom:1rem}
-.fd-mark svg.fdm-a{width:46px;height:46px;color:var(--olive);animation:fdBreath 4.6s ease-in-out infinite}
-.fdm-b{width:56px;height:56px;border-radius:50%;background:var(--nm);box-shadow:var(--nm-in);position:relative}
-.fdm-b::after{content:"";position:absolute;inset:15px;border-radius:50%;background:var(--tea-grad);box-shadow:0 2px 8px -2px rgba(74,75,47,.45),inset 0 1px 0 rgba(255,255,255,.55);animation:fdBreath 4.6s ease-in-out infinite}
+/* the mark: dot-matrix pulse shaped to the bracket logo — bottom-right corner open (Drew) */
 .fdm-c{display:grid;grid-template-columns:repeat(5,7px);gap:5px}
 .fdm-c i{width:7px;height:7px;border-radius:50%;background:var(--olive);opacity:.22;animation:fdDot 3.4s ease-in-out infinite}
+.fdm-c i.off{visibility:hidden;animation:none}
 @keyframes fdBreath{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.05);opacity:1}}
 @keyframes fdDot{0%,100%{opacity:.18}50%{opacity:.95}}
+/* text flows in — gradient band sweeps the heading, leaving ink behind (the Dia mechanism, our palette) */
+.fd-sweep{color:transparent;-webkit-background-clip:text;background-clip:text;background-repeat:no-repeat;
+  background-image:linear-gradient(90deg,var(--ink) 0%,var(--ink) 33%,var(--olive) 44%,var(--tea) 52%,rgba(212,223,158,0) 60%,rgba(212,223,158,0) 100%);
+  background-size:300% 100%;background-position:100% 0;
+  animation:fdSweep 1.15s cubic-bezier(.4,0,.2,1) .05s forwards}
+@keyframes fdSweep{to{background-position:0% 0}}
+.fd-blur{animation:fdBlurIn .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes fdBlurIn{from{opacity:0;filter:blur(9px);transform:translateY(7px)}to{opacity:1;filter:blur(0);transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .fd-sweep{animation:none;background:none;color:var(--ink)}
+  .fd-blur{animation:none}
+}
 .fd-tag{font:500 .6rem/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:1.3rem}
 .fd .kicker{margin-bottom:.9rem}
 .fd-h1{font-family:var(--display);font-weight:500;font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.06;letter-spacing:-.03em;color:var(--ink)}
@@ -399,9 +410,10 @@ a,button{transition:transform .14s}
 .fd-stage{width:100%;text-align:left}
 .fd-you{font-family:var(--hand);font-size:1.2rem;font-weight:600;color:var(--ebony);transform:rotate(-1deg);margin:1.6rem 0 .55rem .5rem;display:none}
 .fd-you.show{display:block;animation:fdRise .4s var(--spring)}
-.fd-screen{background:var(--nm);border:var(--nm-edge);border-radius:var(--r-card);box-shadow:var(--sh-card);padding:1.45rem 1.5rem 1.35rem;display:none;text-align:left;margin-top:1.6rem}
+/* answers live in the open — no card, text on the page itself (Drew) */
+.fd-screen{display:none;text-align:left;padding:0 .35rem;margin-top:1.4rem}
 .fd-you.show + .fd-screen{margin-top:0}
-.fd-screen.show{display:block;animation:fdRise .5s var(--spring)}
+.fd-screen.show{display:block}
 @keyframes fdRise{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
 .fd-eyebrow{font:500 .58rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:.7rem}
 .fd-sh{font-family:var(--display);font-size:clamp(1.28rem,2.5vw,1.62rem);font-weight:500;letter-spacing:-.02em;line-height:1.16;color:var(--ink);margin-bottom:.55rem}
@@ -429,11 +441,21 @@ a,button{transition:transform .14s}
 .fd-chip:active{box-shadow:var(--nm-in);transform:translateY(0)}
 .fd-chip.ghost{box-shadow:none;border-color:transparent;color:var(--dim);font-weight:500}
 .fd-chip.ghost:hover{color:var(--ebony);box-shadow:none;transform:none}
-.fd-well{display:flex;align-items:center;gap:.6rem;background:var(--well);border:var(--nm-edge);border-radius:18px;box-shadow:var(--nm-in);padding:.55rem .6rem .55rem 1.2rem;width:min(600px,100%);margin:1.1rem auto 0}
-.fd-well input{flex:1;border:0;outline:0;background:transparent;font:400 1.02rem/1.4 var(--body);color:var(--ink);min-width:0}
-.fd-well input::placeholder{color:var(--dim)}
-.fd-well button{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:14px;background:var(--dark-grad);color:var(--tea);box-shadow:var(--nm-sm);transition:box-shadow .18s,transform .18s;flex:none}
-.fd-well button:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
+/* the ask bar — floating pill, cycling per-letter placeholder, mic (the HextaUI mechanism, our material) */
+.fd-well{display:flex;align-items:center;gap:.45rem;background:var(--nm);border:1px solid rgba(255,255,255,.55);border-radius:var(--r-pill);box-shadow:var(--nm-out);padding:.5rem .55rem .5rem 1.35rem;width:min(640px,100%);margin:1.4rem auto 0;transition:box-shadow .3s ease}
+.fd-well:focus-within{box-shadow:var(--sh-card)}
+.fd-in{position:relative;flex:1;min-width:0}
+.fd-well input{width:100%;border:0;outline:0;background:transparent;font:400 1.02rem/1.4 var(--body);color:var(--ink);position:relative;z-index:1;padding:.45rem 0}
+.fd-ph{position:absolute;left:0;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--dim);font:400 1.02rem/1.4 var(--body);white-space:nowrap;overflow:hidden;max-width:100%;transition:opacity .2s;z-index:0}
+.fd-ph i{font-style:normal;display:inline-block;opacity:0;filter:blur(10px);transform:translateY(8px);transition:opacity .25s,filter .4s,transform .4s var(--spring)}
+.fd-ph.in i{opacity:1;filter:blur(0);transform:none}
+.fd-ph.out i{opacity:0;filter:blur(10px);transform:translateY(-8px)}
+.fd-mic{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--nm);color:var(--ebony);box-shadow:var(--nm-sm);transition:box-shadow .18s,color .18s,background .18s;flex:none}
+.fd-mic:hover{box-shadow:var(--nm-out);color:var(--olive)}
+.fd-mic.listening{background:var(--tea-grad);color:var(--olive);box-shadow:var(--nm-in);animation:fdBreath 1.4s ease-in-out infinite}
+.fd-mic svg{width:18px;height:18px}
+.fd-send{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--dark-grad);color:var(--tea);box-shadow:0 4px 13px -3px rgba(67,68,42,.5);transition:box-shadow .18s,transform .18s;flex:none}
+.fd-send:hover{box-shadow:0 7px 18px -4px rgba(67,68,42,.6);transform:translateY(-1px)}
 .fd-hint{font:500 .74rem/1.5 var(--mono);color:var(--dim);margin-top:.75rem;min-height:1.15em;text-align:center}
 .fd-hint.pulse{color:var(--ebony)}
 .fd-cue{position:absolute;bottom:1.3rem;left:50%;transform:translateX(-50%);font:500 .68rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .9rem;border-radius:var(--r-pill)}
@@ -445,15 +467,12 @@ a,button{transition:transform .14s}
 .fd-shimmer i{width:8px;height:8px;border-radius:50%;background:var(--olive);opacity:.25;animation:fdDot 1.2s ease-in-out infinite}
 .fd-shimmer i:nth-child(2){animation-delay:.2s}
 .fd-shimmer i:nth-child(3){animation-delay:.4s}
-.fd-proto{position:fixed;bottom:.9rem;right:1rem;z-index:250;display:flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);background:var(--nm);border:var(--nm-edge);border-radius:var(--r-pill);box-shadow:var(--nm-sm);padding:.45rem .8rem}
-.fd-proto button{font:inherit;color:var(--ebony);padding:.2rem .45rem;border-radius:8px}
-.fd-proto button.on{background:var(--tea-grad);color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
 @media(max-width:640px){
   .fd{padding-top:5.4rem;padding-bottom:3.6rem}
   .fd-cue{display:none}
   .fd-doors .btn-dark,.fd-doors .btn-soft{width:100%;justify-content:center}
 }
-@media(prefers-reduced-motion:reduce){.fd-mark svg.fdm-a,.fdm-b::after,.fdm-c i,.fd-cue span,.fd-shimmer i{animation:none}}
+@media(prefers-reduced-motion:reduce){.fdm-c i,.fd-cue span,.fd-shimmer i,.fd-mic.listening{animation:none}}
 .hero-fast{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;margin-top:1.6rem;font:500 .82rem/1 var(--body);color:var(--dim)}
 .hero-fast a{color:var(--ebony);border-bottom:1px solid var(--line);padding-bottom:.2rem}
 .hero-fast a:hover{border-color:var(--ebony)}
@@ -516,7 +535,7 @@ a,button{transition:transform .14s}
     <div class="fd-mark" id="fdMark" aria-hidden="true"></div>
     <p class="fd-tag" id="fdTag">The 4THWALL front desk</p>
     <span class="kicker" id="fdHello">good evening</span>
-    <h1 class="fd-h1">What brings you in? <span class="hn-sparkle">✦</span></h1>
+    <h1 class="fd-h1 fd-sweep">What brings you in? <span class="hn-sparkle">✦</span></h1>
     <p class="fd-sub">One desk for homeowners, contractors, and the curious. Ask in plain words — every answer here is composed from the record, never guessed.</p>
 
     <div class="fd-stage" aria-live="polite">
@@ -527,18 +546,17 @@ a,button{transition:transform .14s}
     <div class="fd-chips" id="fdChips" role="group" aria-label="Quick asks"></div>
 
     <form class="fd-well" id="fdWell" aria-label="Ask the front desk">
-      <input type="text" id="fdSay" maxlength="140" placeholder="…or just say it — “my roof is leaking in Stamford”" autocomplete="off">
-      <button type="submit" aria-label="Ask"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h12M10 4l5 5-5 5"/></svg></button>
+      <span class="fd-in">
+        <input type="text" id="fdSay" maxlength="140" autocomplete="off" aria-label="Your ask">
+        <span class="fd-ph" id="fdPh" aria-hidden="true"></span>
+      </span>
+      <button type="button" class="fd-mic" id="fdMic" aria-label="Speak instead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <button type="submit" class="fd-send" aria-label="Ask"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h12M10 4l5 5-5 5"/></svg></button>
     </form>
     <p class="fd-hint" id="fdHint"></p>
   </div>
 
   <a class="fd-cue" href="#story">the whole story <span>↓</span></a>
-
-  <div class="fd-proto" id="fdProto" aria-hidden="true">
-    <span>mark</span><button type="button" data-mark="a" class="on">A</button><button type="button" data-mark="b">B</button><button type="button" data-mark="c">C</button>
-    <span>·</span><button type="button" id="fdPersona">named: off</button>
-  </div>
 </section>
 
 <!-- ════════════════ STORY LEAD — the brand claim opens the crawlable story ════════════════ -->
@@ -899,38 +917,30 @@ a,button{transition:transform .14s}
       scr=$('fdScreen'),chipsEl=$('fdChips'),say=$('fdSay'),hint=$('fdHint');
   var lane=null;
 
-  /* ── presence marks (Drew decision: react, don't specify — toggle bottom-right) ── */
-  var MARKS={
-    a:'<svg class="fdm-a" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>',
-    b:'<div class="fdm-b"></div>',
-    c:(function(){var d='<div class="fdm-c">';for(var r=0;r<5;r++)for(var c=0;c<5;c++){d+='<i style="animation-delay:'+((Math.abs(r-2)+Math.abs(c-2))*.28)+'s"></i>'}return d+'</div>'})()
-  };
-  function setMark(k){mark.innerHTML=MARKS[k];document.querySelectorAll('#fdProto [data-mark]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-mark')===k)})}
-  setMark('a');
-  document.querySelectorAll('#fdProto [data-mark]').forEach(function(b){b.addEventListener('click',function(){setMark(b.getAttribute('data-mark'))})});
+  /* ── the mark: dot-matrix pulse shaped to the bracket logo — bottom-right corner open (Drew, P1 review) ── */
+  (function(){
+    var OFF={'3,4':1,'4,3':1,'4,4':1};
+    var d='<div class="fdm-c">';
+    for(var r=0;r<5;r++)for(var c=0;c<5;c++){
+      d+='<i'+(OFF[r+','+c]?' class="off"':'')+' style="animation-delay:'+((Math.abs(r-2)+Math.abs(c-2))*.28)+'s"></i>';
+    }
+    mark.innerHTML=d+'</div>';
+  })();
 
-  /* ── persona (Drew decision: named vs unnamed — "Wallis" is a reactable placeholder) ── */
+  /* ── unnamed (Drew, P1 review) — time-aware greeting only ── */
   var h=new Date().getHours(),part=h<5?'evening':h<12?'morning':h<17?'afternoon':'evening';
-  var named=false,pBtn=$('fdPersona');
-  function setPersona(n){named=n;
-    tag.textContent=n?'Wallis · the 4THWALL front desk':'The 4THWALL front desk';
-    hello.textContent=n?('good '+part+' — Wallis here'):('good '+part);
-    pBtn.textContent='named: '+(n?'on':'off')}
-  setPersona(false);
-  pBtn.addEventListener('click',function(){setPersona(!named)});
+  hello.textContent='good '+part;
 
   /* ── the screen graph — all copy claim-safe, sourced from this page's own vetted sections ── */
   var ROOT=[
     {t:'“My roof is leaking”',q:'my roof is leaking'},
-    {t:'I’m a homeowner',go:'ho_start'},
     {t:'I’m a contractor',go:'co_start'},
     {t:'What is 4THWALL?',go:'house_what'}
   ];
   var S={
     co_start:{lane:'co',eyebrow:'for contractors',h:'You do the work. Something else is leaking.',
       html:'<p class="fd-p">Atlas is the managed front office behind the work — it answers, qualifies, books, follows up, and hands you a measured receipt every month. Where’s it hurting?</p>',
-      placeholder:'“I keep missing calls after hours” — say what’s breaking',
-      chips:[{t:'Missed calls while I’m working',go:'co_missed'},{t:'Reviews aren’t coming in',go:'co_reviews'},{t:'Slow season ahead',go:'co_slow'},{t:'Show me everything',go:'co_atlas'}]},
+      chips:[{t:'Missed calls while I’m working',go:'co_missed'},{t:'Show me everything',go:'co_atlas'},{t:'What does it cost?',go:'co_price'}]},
     co_missed:{lane:'co',eyebrow:'atlas · missed-call recovery',h:'The most expensive silence in your business.',
       html:'<p class="fd-p">You’re on a roof. The phone rings twice and dies in voicemail — and the homeowner calls the next name on the list. When you can’t pick up, Atlas follows up by text right away: qualifies the job, books the estimate, carries the follow-up. Supported inbound texts typically get a first reply in <strong>15 seconds</strong> after go-live.</p><div class="fd-doors"><a class="btn-dark" href="/missed-calls">Watch the 60-second demo <span class="arr">→</span></a></div>',
       chips:[{t:'What does it cost?',go:'co_price'},{t:'What else does Atlas run?',go:'co_atlas'},{t:'Book a 20-min fit call',href:CAL}]},
@@ -960,7 +970,6 @@ a,button{transition:transform .14s}
       chips:[{t:'How does it fit together?',go:'house_flywheel'},{t:'What is 4THWALL?',go:'house_what'},{t:'I’m a contractor',go:'co_start'}]},
     ho_start:{lane:'ho',focus:true,eyebrow:'for homeowners · vesta',h:'Say the job like you’d say it to a neighbor.',
       html:'<p class="fd-p">Plain words work — what’s broken, where, how urgent. Vesta matches it against <strong>463 evidence-backed Fairfield County profiles</strong>. Free, no ads, no pay-to-play.</p>',
-      placeholder:'“the AC died upstairs and it’s July” — say the job',
       chips:[{t:'“My roof is leaking”',q:'my roof is leaking'},{t:'“The AC died upstairs”',q:'the AC died upstairs'},{t:'“Driveway needs repaving”',q:'driveway needs repaving'}]},
     ho_handoff:{eyebrow:'vesta · matching',h:'On it — Vesta takes it from here.',
       html:'<p class="fd-p">Matching <em id="fdQ"></em> against the county’s evidence-backed record…</p><div class="fd-shimmer"><i></i><i></i><i></i></div>',
@@ -988,18 +997,19 @@ a,button{transition:transform .14s}
   }
 
   function home(){lane=null;youEl.className='fd-you';scr.className='fd-screen';scr.innerHTML='';
-    renderChips(ROOT,false);say.placeholder='…or just say it — “my roof is leaking in Stamford”';hint.textContent='';hint.classList.remove('pulse')}
+    renderChips(ROOT,false);hint.textContent='';hint.classList.remove('pulse');setPH()}
 
   function go(id,youText){
     var s=S[id];if(!s)return;
     if(s.lane!==undefined)lane=s.lane;
     if(youText){youEl.textContent=youText;youEl.className='fd-you show'}else{youEl.className='fd-you'}
-    scr.innerHTML='<p class="fd-eyebrow">'+s.eyebrow+'</p><h2 class="fd-sh">'+s.h+'</h2>'+s.html;
+    scr.innerHTML='<p class="fd-eyebrow fd-blur">'+s.eyebrow+'</p><h2 class="fd-sh fd-sweep">'+s.h+'</h2>'+s.html;
+    var kids=scr.children;
+    for(var i=2;i<kids.length;i++){kids[i].classList.add('fd-blur');kids[i].style.animationDelay=(.15+(i-2)*.12)+'s'}
     scr.className='fd-screen';void scr.offsetWidth;scr.className='fd-screen show';
     renderChips(s.chips,true);
-    if(s.placeholder)say.placeholder=s.placeholder;
     if(s.focus)say.focus({preventScroll:true});
-    hint.textContent='';hint.classList.remove('pulse');
+    hint.textContent='';hint.classList.remove('pulse');setPH();
     setTimeout(function(){scr.scrollIntoView({behavior:'smooth',block:'nearest'})},80);
   }
 
@@ -1033,6 +1043,43 @@ a,button{transition:transform .14s}
     if(HO_WORDS.test(q))return handoff(q,label);
     go('deflect',label);
   });
+
+  /* ── cycling placeholder — per-letter blur reveal (paused while focused or typing) ── */
+  var PH_ALL=['my roof is leaking in Stamford','I keep missing calls on the job','what is 4THWALL?','the AC died upstairs','how much does Atlas cost?','driveway needs repaving'];
+  var PH_HO=['my roof is leaking in Stamford','the AC died upstairs','driveway needs repaving','we want to redo the bathroom'];
+  var phEl=$('fdPh'),phList=PH_ALL,phIdx=0;
+  function setPH(){phList=(lane==='ho')?PH_HO:PH_ALL;phIdx=0}
+  function phShow(text){
+    phEl.innerHTML='';
+    for(var i=0;i<text.length;i++){var sp=document.createElement('i');sp.textContent=text[i]===' '?' ':text[i];sp.style.transitionDelay=(i*18)+'ms';phEl.appendChild(sp)}
+    phEl.classList.remove('out');void phEl.offsetWidth;phEl.classList.add('in');
+  }
+  function phVis(){phEl.style.opacity=(say.value||document.activeElement===say)?'0':'1'}
+  say.addEventListener('focus',phVis);say.addEventListener('blur',phVis);say.addEventListener('input',phVis);
+  phShow(phList[0]);
+  setInterval(function(){
+    if(say.value||document.activeElement===say)return;
+    var els=phEl.querySelectorAll('i');
+    for(var i=0;i<els.length;i++){els[i].style.transitionDelay=((els.length-i)*10)+'ms'}
+    phEl.classList.remove('in');phEl.classList.add('out');
+    setTimeout(function(){phIdx=(phIdx+1)%phList.length;phShow(phList[phIdx])},400);
+  },3600);
+
+  /* ── mic — Web Speech API (free, in-browser); hidden where unsupported ── */
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition,micBtn=$('fdMic');
+  if(SR){
+    var rec=null;
+    micBtn.addEventListener('click',function(){
+      if(rec){try{rec.stop()}catch(e){}return}
+      rec=new SR();rec.lang='en-US';rec.interimResults=false;rec.maxAlternatives=1;
+      micBtn.classList.add('listening');
+      rec.onresult=function(e){say.value=e.results[0][0].transcript;phVis()};
+      rec.onend=function(){micBtn.classList.remove('listening');rec=null;
+        if(say.value)$('fdWell').dispatchEvent(new Event('submit',{cancelable:true}))};
+      rec.onerror=function(){micBtn.classList.remove('listening');rec=null};
+      try{rec.start()}catch(e){micBtn.classList.remove('listening');rec=null}
+    });
+  }else{micBtn.style.display='none'}
 
   home();
 })();
