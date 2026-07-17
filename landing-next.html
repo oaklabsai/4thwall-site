@@ -401,11 +401,48 @@ a,button{transition:transform .14s}
 .fd-brand:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
 .fd-brand svg{width:28px;height:28px}
 .fd-tagline{margin-top:.85rem;font:500 .58rem/1 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
-.fd-proof{margin-top:1rem;display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;max-height:2em;transition:all .6s var(--spring)}
-.fd-proof-i{font:500 .66rem/1 var(--mono);letter-spacing:.02em;color:var(--dim)}
-.fd-proof-i b{color:var(--olive);font-weight:700}
-.fd-proof-dot{color:var(--tea);font-size:.7rem}
-.fd.staged .fd-proof{opacity:0;max-height:0;margin:0;overflow:hidden;pointer-events:none}
+
+/* ═══ ACT 0 — the picture book. Drawn pages: ink lines that draw themselves, one idea
+   per page, the desk narrating above. Hover holds the page open (a hand on the book);
+   any input closes it and hands the visitor the room. ═══ */
+.fd-book{margin:1.4rem auto 0;width:min(560px,92vw);position:relative;transition:opacity .45s ease}
+.fd-book.bye{opacity:0}
+.fd.staged .fd-book{display:none}
+.bk{opacity:0;transition:opacity .7s ease;position:relative;padding-bottom:1.4rem}
+.bk.in{opacity:1}
+.bk svg{display:block;margin:0 auto;overflow:visible}
+.bk path,.bk line,.bk circle,.bk rect{fill:none;stroke:var(--olive);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:420;stroke-dashoffset:420;transition:stroke-dashoffset 1.15s ease}
+.bk.draw path,.bk.draw line,.bk.draw circle,.bk.draw rect{stroke-dashoffset:0}
+/* page 1 — the house, the departure, the fade */
+.bk1 svg{width:min(320px,72vw)}
+.bk1 .bk-truck{transition:transform 1.25s ease,opacity 1s ease}
+.bk1.gone .bk-truck{transform:translateX(130px);opacity:0}
+.bk1 .bk-home{transition:opacity 1.1s ease}
+.bk1.faded .bk-home{opacity:.14}
+.bk-addr{position:absolute;left:0;right:0;bottom:1.6rem;text-align:center;font:500 .62rem/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--dim);opacity:0;transition:opacity .9s ease .2s}
+.bk1.faded .bk-addr{opacity:1}
+/* page 2 — both sides of the blank */
+.bk-split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:stretch}
+.bk-side{background:var(--nm);border-radius:18px;box-shadow:var(--nm-sm);padding:1.05rem .95rem;display:flex;flex-direction:column;gap:.55rem;align-items:center;justify-content:center;
+  opacity:.94;transition:transform .35s ease,opacity .35s ease}
+.bk-side:hover{transform:translateY(-3px);opacity:1}
+.bk-split:hover .bk-side:not(:hover){opacity:.5}
+.bk-who{font:500 .55rem/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.bk-phone{display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.55);border-radius:12px;padding:.6rem .8rem;font-size:.76rem;color:var(--olive);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+.bk-ringdot{width:8px;height:8px;border-radius:50%;background:#b76a5a;flex-shrink:0}
+.bk2.draw .bk-ringdot{animation:bkDim 2.6s ease 1.1s forwards}
+@keyframes bkDim{0%{opacity:1}60%{opacity:1}100%{opacity:.22;background:var(--dim)}}
+.bk-missed{font:500 .55rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#b76a5a;opacity:0;transition:opacity .8s ease 2.9s}
+.bk2.draw .bk-missed{opacity:.85}
+.bk-cards{display:flex;flex-direction:column;gap:.4rem;width:100%}
+.bk-card{background:rgba(255,255,255,.55);border-radius:10px;padding:.42rem .65rem;display:flex;align-items:center;justify-content:space-between;box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+.bk-card i{display:inline-block;width:34px;height:7px;border-radius:4px;background:rgba(74,75,47,.22);font-style:normal}
+.bk-card b{font-size:.6rem;letter-spacing:.06em;color:var(--olive);font-weight:600;opacity:.85}
+.bk2.recede{opacity:0;transform:translateY(6px);transition:opacity .8s ease,transform .8s ease}
+.bk-skip{position:absolute;right:.1rem;bottom:0;font:500 .58rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);cursor:pointer;transition:color .2s}
+.bk-skip:hover{color:var(--olive)}
+@media(max-width:440px){.bk-split{gap:.6rem}.bk-side{padding:.8rem .6rem}}
 /* the welcome mat */
 .fd-mat{margin-top:3rem}
 .fd-mat .kicker{font-size:clamp(1.4rem,2.4vw,1.7rem)}
@@ -650,14 +687,9 @@ a,button{transition:transform .14s}
       <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
     </div>
     <p class="fd-tagline">Both sides of home-service trust</p>
-    <div class="fd-proof" aria-label="4THWALL, by the numbers">
-      <span class="fd-proof-i"><b>12</b> trades tracked</span>
-      <span class="fd-proof-dot">·</span>
-      <span class="fd-proof-i"><b>463</b> evidence-backed profiles</span>
-      <span class="fd-proof-dot">·</span>
-      <span class="fd-proof-i">Fairfield County-wide</span>
-    </div>
     <p class="fd-mat"><span class="kicker" id="fdMat">good evening — welcome in</span></p>
+    <!-- ACT 0 — the picture book (drawn pages; the desk narrates directly beneath) -->
+    <div class="fd-book" id="fdBook" hidden aria-hidden="true"></div>
 
     <div class="fd-chat">
       <p class="fd-you" id="fdYou"></p>
@@ -1046,8 +1078,9 @@ a,button{transition:transform .14s}
 
   /* ── what the desk says — every line ends by voicing the next doors inline ── */
   var L={
-    open:'You’re up on a roof and a customer calls. Watch what happens to the call you can’t take.',
-    openFork:'That’s Atlas — 4THWALL’s managed front office, recovering the call you couldn’t answer. Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
+    book1:'Good work is invisible.',
+    book2:'The proof of it lives nowhere. So everyone’s guessing.',
+    book3:'We’re 4THWALL. We build both sides of the fix.',
     greet:'Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
     ho:'How can we help? Say the job like you’d tell a neighbor — <a data-say="my roof is leaking">a leak</a>, <a data-say="the AC died upstairs">a dying AC</a>, <a data-say="my driveway needs repaving">a tired driveway</a>.',
     co:'Welcome. Would you like to hear about <a data-say="atlas">Atlas</a>, <a data-say="lens">Lens</a>, <a data-say="flywheel">how it compounds</a> — or ask anything about <a data-say="the offer">the offer</a>?',
@@ -1159,6 +1192,7 @@ a,button{transition:transform .14s}
   function input(q,display){
     if(triBusy)return;   /* the desk is mid-read — one thought at a time */
     simGen++;            /* any real ask ends the scripted performance mid-beat */
+    bkAbort();           /* the book closes with grace and hands them the room */
     convo.push({who:'you',text:q});
     echo(display||q);
     route(q);
@@ -1839,34 +1873,104 @@ a,button{transition:transform .14s}
     fresh:function(){lane=null;setPH();speak(L.greet)}
   };
 
-  /* ═══ THE BREAK — the hero's first act. First-time visitors don't get asked to type;
-     they get shown. The desk sets the scene, the missed-call recovery plays unprompted
-     (labeled simulation — same honesty rail as the demo lane), and only THEN does the
-     fork land — proof before the ask. Returning visitors get their memory greeting
-     instead; reduced-motion, deep-linked, and mid-scroll arrivals get the classic
-     greeting. Any input mid-performance stops the script and hands them the room. ═══ */
-  function openBreak(){
-    speak(L.open);
-    var g=simGen;
-    landAfterSay(function(){
-      if(g!==simGen)return;
-      showScreen(phoneHTML('the 4th wall, coming down'),function(){playMissedSim(function(){
-        if(triBusy)return;
-        speak(L.openFork);
-      })});
-    });
+  /* ═══ ACT 0 — THE BLANKET BOOK (front-door-script.md). Three drawn pages, one idea
+     each, the desk narrating: the wound → both sides of the blank → the company, then
+     the fork. No climax — clean storytelling, a hand extended. Hovering the book holds
+     the page open; any input closes it and hands the visitor the room; skip is honest.
+     Drawings are drawings — illustration never masquerades as evidence. ═══ */
+  var bookEl=$('fdBook');
+  function bkPage(html){
+    bookEl.innerHTML=html+'<span class="bk-skip" data-bk-skip>skip →</span>';
+    bookEl.hidden=false;
+    var pg=bookEl.firstChild||bookEl;
+    var sk=bookEl.querySelector&&bookEl.querySelector('[data-bk-skip]');
+    if(sk)sk.addEventListener('click',function(){bkEnd(true)});
+    void bookEl.offsetWidth;pg.classList.add('in');
+    return pg;
   }
-  function canBreak(){
+  var bkG=-1,bkHeld=false,bkDone=false;
+  function bkAbort(){
+    if(bkDone||!bookEl||bookEl.hidden)return;
+    bkDone=true;bookEl.classList.add('bye');
+    setTimeout(function(){bookEl.hidden=true},450);
+  }
+  function bkEnd(skipped){
+    if(bkDone)return;bkDone=true;
+    bookEl.dataset.played='1';
+    bookEl.classList.add('bye');
+    setTimeout(function(){bookEl.hidden=true;if(bkG===simGen||skipped)speak(L.greet)},450);
+  }
+  function blanketBook(){
+    bkG=simGen;
+    bookEl.addEventListener('mouseenter',function(){bkHeld=true});
+    bookEl.addEventListener('mouseleave',function(){bkHeld=false});
+    function alive(){return bkG===simGen&&!bkDone}
+    function step(ms,fn){setTimeout(function(){
+      if(!alive())return;
+      if(!bkHeld)return fn();
+      var iv=setInterval(function(){
+        if(!alive()){clearInterval(iv);return}
+        if(!bkHeld){clearInterval(iv);fn()}
+      },250);
+    },ms)}
+    /* PAGE 1 — the wound: the house draws, the truck departs, nothing remains */
+    speak(L.book1);
+    var p1=bkPage('<div class="bk bk1">'+
+      '<svg viewBox="0 0 220 150" aria-hidden="true">'+
+      '<g class="bk-home">'+
+      '<path d="M28 74 L110 20 L192 74" style="transition-delay:.05s"/>'+
+      '<path d="M40 74 V130 H180 V74" style="transition-delay:.35s"/>'+
+      '<path d="M98 130 V96 h24 v34" style="transition-delay:.7s"/>'+
+      '<rect x="56" y="88" width="24" height="20" rx="2" style="transition-delay:.9s"/>'+
+      '<rect x="140" y="88" width="24" height="20" rx="2" style="transition-delay:1s"/>'+
+      '<path d="M150 46 v-20 h14 v30" style="transition-delay:1.15s"/>'+
+      '</g>'+
+      '<g class="bk-truck">'+
+      '<path d="M14 138 h44 v-16 H14 z M58 138 h16 v-10 l-6 -6 h-10" style="transition-delay:1.5s"/>'+
+      '<circle cx="26" cy="140" r="4" style="transition-delay:1.7s"/>'+
+      '<circle cx="64" cy="140" r="4" style="transition-delay:1.8s"/>'+
+      '</g>'+
+      '</svg>'+
+      '<p class="bk-addr">the work was beautiful</p>'+
+      '</div>');
+    step(650,function(){p1.classList.add('draw');
+    step(2450,function(){p1.classList.add('gone');
+    step(1250,function(){p1.classList.add('faded');
+    step(1900,function(){
+      /* PAGE 2 — both sides of the blank */
+      speak(L.book2);
+      var p2=bkPage('<div class="bk bk2"><div class="bk-split">'+
+        '<div class="bk-side"><span class="bk-who">the contractor</span>'+
+        '<span class="bk-phone"><span class="bk-ringdot"></span>Incoming call</span>'+
+        '<span class="bk-missed">missed — on the job</span></div>'+
+        '<div class="bk-side"><span class="bk-who">the homeowner</span>'+
+        '<div class="bk-cards">'+
+        '<span class="bk-card"><i></i><b>★★★★★</b></span>'+
+        '<span class="bk-card"><i></i><b>★★★★★</b></span>'+
+        '<span class="bk-card"><i></i><b>★★★★★</b></span>'+
+        '<span class="bk-card"><i></i><b>★★★★★</b></span>'+
+        '</div></div>'+
+        '</div></div>');
+      step(450,function(){p2.classList.add('draw');
+      step(4400,function(){
+        /* PAGE 3 — the company, then the hand extended. No climax. */
+        speak(L.book3);
+        p2.classList.add('recede');
+        step(2400,function(){bkEnd(false)});
+      });});
+    });});});});
+  }
+  function canBook(){
     if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return false;
     if(location.hash)return false;
     if(window.scrollY>200)return false;
     return true;
   }
 
-  /* the desk speaks first — by memory if we've met, by performance if we haven't */
+  /* the desk speaks first — by memory if we've met, by the book if we haven't */
   var __mem=loadMemory();
   if(__mem)speakReturn(__mem);
-  else if(canBreak())openBreak();
+  else if(canBook())blanketBook();
   else speak(L.greet);
 })();
 </script>
