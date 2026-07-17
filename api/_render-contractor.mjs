@@ -570,8 +570,8 @@ function disclosureRemoval(enr) {
 function claimBlock(enr) {
   const uses = [
     ['01', 'Verified owner badge', 'Homeowners see you’re the real owner.'],
-    ['02', 'Your own photos', 'Real job shots — owned, and crawlable.'],
-    ['03', 'Respond to your read', 'Add your voice beside Vesta’s.'],
+    ['02', 'Your own photos', 'Coming to verified owners — real job shots, owned and crawlable.'],
+    ['03', 'Respond to your read', 'Coming to verified owners — your voice beside Vesta’s.'],
     ['04', 'Get notified', 'The moment a homeowner reaches out.'],
   ].map(([n, h, p]) =>
     '<div class="am-use"><div class="am-n">' + n + '</div><h3>' + h + '</h3><p>' + p + '</p></div>').join('');
@@ -594,10 +594,12 @@ function claimBlock(enr) {
     form +
     '<p class="am-fine">Free · no obligation · we verify ownership before anything changes.</p>' +
     '<div class="am-rule"></div>' +
-    '<div class="am-plabel">Then there’s Atlas</div>' +
-    '<p class="am-lede">Claimed owners can switch on <b>Atlas</b> — the AI back-office that answers your inbound, ' +
-      'books the job, and follows up while you’re on the job.</p>' +
-    '<div class="am-cta"><a class="pill-ghost" href="/atlas.html">See what Atlas does →</a></div>' +
+    '<div class="am-plabel">Then put it to work</div>' +
+    '<p class="am-lede">Verified owners can start free with <b>Lens</b> — connect the tools you already run and ' +
+      'turn your operating record into source-backed answers homeowners can trust — or switch on <b>Atlas</b>, ' +
+      'the operated front office that answers your inbound, books the job, and follows up while you’re on the job.</p>' +
+    '<div class="am-cta"><a class="pill-ghost" href="/lens">Start free with Lens →</a>' +
+      '<a class="pill-ghost" href="/atlas">See what Atlas does →</a></div>' +
   '</section>';
 }
 
