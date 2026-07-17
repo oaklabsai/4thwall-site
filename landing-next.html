@@ -402,29 +402,25 @@ a,button{transition:transform .14s}
 .fd-brand svg{width:28px;height:28px}
 .fd-tagline{margin-top:.85rem;font:500 .58rem/1 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
 
-/* ═══ THE TWO CATEGORIES — both universes live below the welcome sign, visible on
-   landing. Left: the office coverflow (contractors). Right: the trade swipe stack
-   (homeowners — Originkit CardStack ported to vanilla). Staging collapses both. ═══ */
-.fd-cats{margin:1.7rem auto 0;width:min(980px,94vw);display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;align-items:start}
-@media(max-width:860px){.fd-cats{grid-template-columns:1fr;gap:2.2rem}}
-.fd.staged .fd-cats{display:none}
-.fd-cat{display:flex;flex-direction:column;align-items:center;text-align:center}
-.cat-k{font:500 .58rem/1 var(--mono);letter-spacing:.26em;text-transform:uppercase;color:var(--olive);background:var(--nm);box-shadow:var(--nm-in);border-radius:var(--r-pill);padding:.45rem .95rem}
-.cat-t{margin-top:.7rem;font-family:var(--display);font-size:clamp(1.02rem,2vw,1.18rem);font-weight:500;letter-spacing:-.015em;color:var(--ink)}
-/* the homeowner swipe stack */
-.stk-wrap{position:relative;height:clamp(300px,46vw,340px);width:100%;perspective:1000px;display:flex;align-items:center;justify-content:center;margin-top:.4rem}
-.stk-card{position:absolute;width:min(215px,56vw);height:clamp(250px,40vw,286px);border-radius:20px;background:var(--nm);border:var(--nm-edge);box-shadow:var(--nm-sm);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;padding:1.1rem;cursor:grab;user-select:none;touch-action:none;
-  transition:transform .5s cubic-bezier(.3,1.2,.4,1),opacity .35s ease,box-shadow .3s;will-change:transform}
-.stk-card.top{box-shadow:var(--nm-out)}
-.stk-card.dragging{transition:none;cursor:grabbing;z-index:1000}
-.stk-ico{width:56px;height:56px;border-radius:16px;background:var(--tea-grad);display:grid;place-items:center;color:var(--olive);box-shadow:0 2px 8px -2px rgba(74,75,47,.3),inset 0 1px 0 rgba(255,255,255,.55)}
-.stk-ico svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.stk-t{font-family:var(--display);font-size:1.18rem;font-weight:500;letter-spacing:-.015em;color:var(--ink)}
-.stk-d{font-size:.8rem;line-height:1.5;color:var(--dim)}
-.stk-go{font:600 .74rem/1 var(--body);color:var(--olive);opacity:0;transform:translateY(3px);transition:opacity .3s,transform .3s}
-.stk-card.top .stk-go{opacity:1;transform:none}
-.stk-hint{margin-top:.2rem;font:500 .58rem/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+/* ═══ THE FORK — two pills below the welcome sign. Hovering (desktop) or tapping
+   (touch) a pill reveals that side's coverflow deck in the shared reveal panel, so the
+   two universes never fight for space. Staging collapses the whole fork. ═══ */
+.fd-fork{margin:1.6rem auto 0;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.fork-pill{display:flex;flex-direction:column;align-items:center;gap:.24rem;background:var(--nm);box-shadow:var(--nm-sm);border-radius:var(--r-pill);padding:.72rem 1.6rem;color:var(--ink);cursor:pointer;transition:box-shadow .2s,transform .15s,color .2s}
+.fork-pill:hover{transform:translateY(-2px);box-shadow:var(--nm-out);color:var(--olive)}
+.fork-pill.on{box-shadow:var(--nm-in);color:var(--olive);transform:none}
+.fork-pill b{font-family:var(--display);font-size:1.06rem;font-weight:500;letter-spacing:-.012em;line-height:1}
+.fork-pill span{font-family:var(--mono);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);line-height:1}
+.fork-pill:hover span,.fork-pill.on span{color:var(--olive)}
+.fd-reveal{width:min(560px,94vw);margin:0 auto}
+.rev-deck{margin-top:1.1rem}
+.rev-deck[hidden]{display:none}
+.rev-deck:not([hidden]){animation:revIn .42s var(--spring)}
+@keyframes revIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.fd.staged .fd-fork,.fd.staged .fd-reveal{display:none}
+/* trade coverflow diagram — a single centred trade glyph (vs the office line-diagrams) */
+.cf-diag-ico{display:flex;align-items:center;justify-content:center}
+.cf-diag-ico svg{width:auto;height:46px;fill:none;stroke:var(--olive);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 /* the welcome mat */
 .fd-mat{margin-top:3rem}
 .fd-mat .kicker{font-size:clamp(2.3rem,4.8vw,3.1rem);transform:rotate(-3deg);padding-bottom:10px;background-size:100% 9px}
@@ -700,18 +696,15 @@ a,button{transition:transform .14s}
     </div>
     <p class="fd-tagline">The trust engine for home services</p>
     <p class="fd-mat"><span class="kicker" id="fdMat">Welcome!</span></p>
-    <!-- THE TWO CATEGORIES — both universes visible on landing, no gate -->
-    <div class="fd-cats" id="fdCats">
-      <div class="fd-cat">
-        <span class="cat-k">for contractors</span>
-        <p class="cat-t">The office Atlas runs around your work</p>
-        <div id="catOffice"></div>
-      </div>
-      <div class="fd-cat">
-        <span class="cat-k">for homeowners</span>
-        <p class="cat-t">Tell Vesta what the house needs</p>
-        <div id="catStack"></div>
-      </div>
+    <!-- THE FORK — two pills; hovering (or tapping) one reveals its deck below, so the
+         two universes never fight for space -->
+    <div class="fd-fork" id="fdFork">
+      <button class="fork-pill" id="forkCo" type="button" aria-controls="fdReveal"><b>Contractor</b><span>run the business</span></button>
+      <button class="fork-pill" id="forkHo" type="button" aria-controls="fdReveal"><b>Homeowner</b><span>hire with proof</span></button>
+    </div>
+    <div class="fd-reveal" id="fdReveal">
+      <div class="rev-deck" id="catOffice" hidden></div>
+      <div class="rev-deck" id="catStack" hidden></div>
     </div>
 
     <div class="fd-chat">
@@ -1100,7 +1093,7 @@ a,button{transition:transform .14s}
 
   /* ── what the desk says — every line ends by voicing the next doors inline ── */
   var L={
-    greet:'Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
+    greet:'Are you a contractor, or a homeowner? Peek either side below — or just tell me what’s going on.',
     ho:'How can we help? Say the job like you’d tell a neighbor — <a data-say="my roof is leaking">a leak</a>, <a data-say="the AC died upstairs">a dying AC</a>, <a data-say="my driveway needs repaving">a tired driveway</a>.',
     co0:'The best crews rarely have the best office. For the first time, that stops mattering.',
     co1:'The biggest outfits always had one advantage the rest couldn’t afford — an office. People answering, chasing, booking, minding the season, minding the record. That advantage just changed hands.',
@@ -1822,15 +1815,20 @@ a,button{transition:transform .14s}
   };
   /* shared card builder — the office reads the same whether it lands in the working room
      or on the landing category */
-  function officeHTML(keys){
-    var cards=keys.map(function(k,i){var r=ROOMS[k];
-      return '<div class="cf-card" data-cf-card="'+k+'"><span class="cf-num">'+(i<9?'0':'')+(i+1)+' · the office</span>'+
-        '<span class="cf-title">'+r.t+'</span><p class="cf-desc">'+r.d+'</p>'+(DIAG[k]||'')+
-        '<span class="cf-go">step into this room →</span></div>';
+  /* generic coverflow card markup — used by the office deck AND the trade deck. Each
+     item: {key,num,title,desc,diag,go}. */
+  function cfCards(items){
+    var cards=items.map(function(it){
+      return '<div class="cf-card" data-cf-card="'+it.key+'"><span class="cf-num">'+it.num+'</span>'+
+        '<span class="cf-title">'+it.title+'</span><p class="cf-desc">'+it.desc+'</p>'+(it.diag||'')+
+        '<span class="cf-go">'+it.go+'</span></div>';
     }).join('');
     return '<div class="cf-wrap"><div class="cf-stage">'+cards+'</div></div>'+
-      '<div class="cf-nav"><button class="cf-arrow" data-cf="prev" aria-label="Previous room">‹</button><div class="cf-dots"></div><button class="cf-arrow" data-cf="next" aria-label="Next room">›</button></div>';
+      '<div class="cf-nav"><button class="cf-arrow" data-cf="prev" aria-label="Previous">‹</button><div class="cf-dots"></div><button class="cf-arrow" data-cf="next" aria-label="Next">›</button></div>';
   }
+  function officeItems(keys){return keys.map(function(k,i){var r=ROOMS[k];
+    return {key:k,num:(i<9?'0':'')+(i+1)+' · the office',title:r.t,desc:r.d,diag:DIAG[k]||'',go:'step into this room →'}})}
+  function officeHTML(keys){return cfCards(officeItems(keys))}
   function officeScreen(){
     speak(L.office);
     landAfterSay(function(){
@@ -1840,13 +1838,13 @@ a,button{transition:transform .14s}
         officeHTML(keys)+
         '<p class="fdc-method">Every month ends with a receipt, not a story — responses, bookings, follow-ups, recorded outcomes. And the record is yours: in Lens you review every fact, and nothing publishes without you. If we’re not the right fit, we’ll say so first.</p>'+
         '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a href="/lens">start free with Lens →</a></div>',
-        function(){wireCoverflow(keys,screen)});
+        function(){wireCoverflow(keys,screen,roomScreen)});
     });
   }
   /* the coverflow engine — ported from the Originkit gallery's transform math.
-     root scopes the queries so the same engine runs on the landing category and
-     inside the working room without id collisions. */
-  function wireCoverflow(keys,root){
+     root scopes the queries so the same engine runs on the landing decks and inside the
+     working room; onOpen(key,i) fires when the centered card is clicked. */
+  function wireCoverflow(keys,root,onOpen){
     if(!root||!root.querySelector)return;
     var stage=root.querySelector('.cf-stage');if(!stage)return;
     var cards=[].slice.call(stage.querySelectorAll('[data-cf-card]'));
@@ -1854,8 +1852,8 @@ a,button{transition:transform .14s}
     var cw=stage.offsetWidth||280,active=0;
     var dotsEl=root.querySelector('.cf-dots'),dots=[];
     cards.forEach(function(c,i){
-      c.addEventListener('click',function(){i===active?roomScreen(keys[i]):setActive(i)});
-      if(dotsEl){var d=document.createElement('button');d.className='cf-dot';d.setAttribute('aria-label','Room '+(i+1));d.addEventListener('click',function(){setActive(i)});dotsEl.appendChild(d);dots.push(d)}
+      c.addEventListener('click',function(){i===active?(onOpen&&onOpen(keys[i],i)):setActive(i)});
+      if(dotsEl){var d=document.createElement('button');d.className='cf-dot';d.setAttribute('aria-label','Card '+(i+1));d.addEventListener('click',function(){setActive(i)});dotsEl.appendChild(d);dots.push(d)}
     });
     function setActive(a){active=((a%n)+n)%n;layout()}
     function layout(){
@@ -2039,67 +2037,29 @@ a,button{transition:transform .14s}
     {k:'masonry', t:'Masonry', d:'Chimneys, steps, stone and brick.', ask:'my chimney needs repointing',
      ico:'<svg viewBox="0 0 24 24"><path d="M4 20 h16 M4 20 v-4 h16 v4 M4 16 v-4 h16 v4 M8 12 v4 M16 12 v4 M12 16 v4 M6 8 h12 v4 M12 8 v4"/></svg>'}
   ];
-  function buildCats(){
-    var off=$('catOffice'),stk=$('catStack');
-    var keys=Object.keys(ROOMS);
-    if(off){off.innerHTML=officeHTML(keys);wireCoverflow(keys,off)}
-    if(stk){
-      stk.innerHTML='<div class="stk-wrap">'+STACK.map(function(s){
-        return '<div class="stk-card" data-stk="'+s.k+'"><span class="stk-ico">'+s.ico+'</span>'+
-          '<span class="stk-t">'+s.t+'</span><span class="stk-d">'+s.d+'</span>'+
-          '<span class="stk-go">tap to start →</span></div>';
-      }).join('')+'</div><p class="stk-hint">swipe the deck · tap a card to start</p>';
-      wireStack(stk);
-    }
-  }
-  function wireStack(root){
-    if(!root||!root.querySelector)return;
-    var wrap=root.querySelector('.stk-wrap');if(!wrap)return;
-    var order=[].slice.call(wrap.querySelectorAll('.stk-card'));
-    var n=order.length;if(!n)return;
-    var TILT=-16,XOFF=Math.min(70,wrap.offsetWidth*0.16),drag=null;
-    function layout(){
-      order.forEach(function(c,i){
-        var f=n>1?i/(n-1):0;
-        c.style.transform='translateX('+(f*XOFF)+'px) translateY('+(-i*7)+'px) rotate('+(f*TILT)+'deg) scale('+(1-i*0.045)+')';
-        c.style.zIndex=String(n-i);
-        c.style.opacity=i>4?'0':'1';
-        c.style.pointerEvents=i===0?'auto':'none';
-        c.classList.toggle('top',i===0);
-      });
-    }
-    wrap.addEventListener('pointerdown',function(e){
-      var c=order[0];if(!c||!c.contains(e.target))return;
-      drag={c:c,x0:e.clientX,y0:e.clientY,t0:Date.now(),moved:false};
-      c.classList.add('dragging');
-      if(c.setPointerCapture)try{c.setPointerCapture(e.pointerId)}catch(_){}
-    });
-    wrap.addEventListener('pointermove',function(e){
-      if(!drag)return;
-      var dx=e.clientX-drag.x0,dy=e.clientY-drag.y0;
-      if(Math.abs(dx)+Math.abs(dy)>6)drag.moved=true;
-      drag.c.style.transform='translateX('+dx+'px) translateY('+dy+'px) rotate('+(dx*0.06)+'deg) scale(1.05)';
-    });
-    function release(e){
-      if(!drag)return;
-      var c=drag.c,dx=e.clientX-drag.x0,dy=e.clientY-drag.y0;
-      var dist=Math.sqrt(dx*dx+dy*dy),tap=!drag.moved&&(Date.now()-drag.t0)<450;
-      c.classList.remove('dragging');drag=null;
-      if(tap){
-        var s=STACK.filter(function(x){return x.k===c.getAttribute('data-stk')})[0];
-        if(s)input(s.ask,s.t.toLowerCase());
-        return;
-      }
-      if(dist>55){order.push(order.shift())}
-      layout();
-    }
-    wrap.addEventListener('pointerup',release);
-    wrap.addEventListener('pointercancel',function(){if(drag){drag.c.classList.remove('dragging');drag=null;layout()}});
-    layout();
-  }
+  function tradeItems(){return STACK.map(function(s,i){
+    return {key:s.k,num:(i<9?'0':'')+(i+1)+' · a trade',title:s.t,desc:s.d,
+      diag:'<div class="cf-diag cf-diag-ico">'+s.ico+'</div>',go:'tap to start →'}})}
+  function startTrade(k){var s=STACK.filter(function(x){return x.k===k})[0];if(s)input(s.ask,s.t.toLowerCase())}
 
-  /* the desk speaks first — by memory if we've met; the two categories always stand */
-  buildCats();
+  /* THE FORK — hover/tap a pill to reveal that side's coverflow deck (built once, then
+     shown). Only one deck stands at a time, so the two universes never fight for space. */
+  var revBuilt={};
+  function revealSide(side){
+    var co=$('catOffice'),ho=$('catStack');
+    co.hidden=(side!=='co');ho.hidden=(side!=='ho');
+    $('forkCo').classList.toggle('on',side==='co');
+    $('forkHo').classList.toggle('on',side==='ho');
+    if(side==='co'&&!revBuilt.co){var keys=Object.keys(ROOMS);co.innerHTML=officeHTML(keys);wireCoverflow(keys,co,roomScreen);revBuilt.co=1}
+    if(side==='ho'&&!revBuilt.ho){var tk=STACK.map(function(s){return s.k});ho.innerHTML=cfCards(tradeItems());wireCoverflow(tk,ho,startTrade);revBuilt.ho=1}
+  }
+  ['mouseenter','focus','click'].forEach(function(ev){
+    $('forkCo').addEventListener(ev,function(){revealSide('co')});
+    $('forkHo').addEventListener(ev,function(){revealSide('ho')});
+  });
+
+  /* the desk speaks first — by memory if we've met; otherwise the fork question stands
+     above the two pills */
   var __mem=loadMemory();
   if(__mem)speakReturn(__mem);else speak(L.greet);
 })();

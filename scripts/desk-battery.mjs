@@ -59,7 +59,7 @@ function makeStore(seed){
 // One fresh desk instance per case. probeOK controls the GET /api/triage health probe;
 // seedMem pre-seeds localStorage to simulate a returning visitor (F5).
 function boot(src, { probeOK = true, seedMem = null } = {}){
-  const ids = ['fdMat','fdYou','fdLine','fdSay','fdWell','fdPh','fdMic','fdThink','fdThinkW','fdScreen','fdCats','catOffice','catStack'];
+  const ids = ['fdMat','fdYou','fdLine','fdSay','fdWell','fdPh','fdMic','fdThink','fdThinkW','fdScreen','fdFork','forkCo','forkHo','fdReveal','catOffice','catStack'];
   const els = Object.fromEntries(ids.map(i => [i, el(i)]));
   const posts = [];                       // recorded triage POSTs
   const location = { href:'' };           // handoff fallback lands here
@@ -141,10 +141,13 @@ const check = (tag, ok, note='') => {
 { const d = boot(src);
   check('A1 first paint ends voicing both doors (the fork lands after the break)', /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
 { const d = boot(src);
-  // landing = the two categories, standing on arrival: the office coverflow (all 8 rooms)
-  // under contractors, the trade swipe stack under homeowners, the fork spoken above.
-  check('A26 landing → both categories built (office coverflow + trade stack) + fork spoken; no auto-sim',
-    /Lead Response/.test(d.els.catOffice.innerHTML) && /Operator Briefs/.test(d.els.catOffice.innerHTML)
+  // landing shows only the two pills; the decks build lazily on hover/tap of each pill.
+  const beforeHover = d.els.catOffice.innerHTML === '' && d.els.catStack.innerHTML === '';
+  d.els.forkCo.dispatchEvent({ type:'mouseenter' });
+  d.els.forkHo.dispatchEvent({ type:'mouseenter' });
+  check('A26 landing → pills reveal decks on hover (office coverflow + trade coverflow); fork spoken; no auto-sim',
+    beforeHover
+    && /Lead Response/.test(d.els.catOffice.innerHTML) && /Operator Briefs/.test(d.els.catOffice.innerHTML)
     && /Roofing/.test(d.els.catStack.innerHTML) && /Masonry/.test(d.els.catStack.innerHTML)
     && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())
     && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
@@ -239,8 +242,8 @@ const check = (tag, ok, note='') => {
   check('A25 first-time visitor (no memory) → the fork spoken, never welcome-back',
     !/Welcome back/.test(d.spoken()) && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
 { const d = boot(src, { seedMem: { v:1, ts: Date.now(), deck:{ trade:'roofing', job:'roof-replacement', label:'roof replacement', tradeLabel:'Roofing' }, firm:'Summit Ridge Roofing' } });
-  check('A27 returning visitor → memory greeting wins; the categories still stand beside it',
-    /Welcome back/.test(d.spoken()) && /Lead Response/.test(d.els.catOffice.innerHTML)
+  check('A27 returning visitor → memory greeting wins; decks stay behind the pills until hover',
+    /Welcome back/.test(d.spoken()) && d.els.catOffice.innerHTML === ''
     && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
 
 // B · CLAIM SAFETY — every deterministic line, linted against the pack's banned list
