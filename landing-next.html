@@ -587,6 +587,32 @@ a,button{transition:transform .14s}
 .fdg-room:hover{transform:translateY(-2px);box-shadow:var(--nm-out)}
 .fdg-room .arr{font-size:.8em;color:var(--olive);opacity:.55;transition:opacity .18s,transform .18s;display:inline-block}
 .fdg-room:hover .arr{opacity:1;transform:translateX(3px)}
+
+/* ═══ THE OFFICE — coverflow (ported from the Originkit 3D gallery to vanilla + our
+   neumorphic palette). Rooms are cards in depth: the centered room stands upright and
+   readable, neighbours tilt back in perspective. Click a side room to bring it forward,
+   click the centered room to step in. Transforms are applied in JS (wireCoverflow). ═══ */
+.cf-wrap{position:relative;height:clamp(322px,54vw,392px);margin:1.3rem auto .6rem;perspective:1600px;display:flex;align-items:center;justify-content:center}
+.cf-stage{position:relative;transform-style:preserve-3d;width:min(300px,74vw);height:clamp(300px,50vw,360px)}
+.cf-card{position:absolute;left:50%;top:50%;width:min(300px,74vw);height:clamp(300px,50vw,360px);border-radius:22px;
+  background:var(--nm);box-shadow:var(--nm-sm);border:var(--nm-edge);transform-origin:center center;backface-visibility:hidden;
+  transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .55s ease,box-shadow .3s;
+  display:flex;flex-direction:column;padding:1.5rem 1.45rem;overflow:hidden;cursor:pointer;will-change:transform}
+.cf-card.active{box-shadow:var(--nm-out);cursor:default}
+.cf-num{font:500 .58rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--olive);opacity:.55}
+.cf-title{font-family:var(--display);font-size:clamp(1.25rem,3.2vw,1.5rem);font-weight:500;letter-spacing:-.02em;color:var(--ink);margin:.55rem 0 .55rem;line-height:1.1}
+.cf-desc{font-size:.92rem;line-height:1.62;color:var(--dim)}
+.cf-diag{margin-top:auto;margin-bottom:.7rem;height:52px;color:var(--olive)}
+.cf-diag svg{width:100%;height:100%;overflow:visible}
+.cf-go{font:600 .82rem/1 var(--body);color:var(--olive);opacity:0;transform:translateY(4px);transition:opacity .35s ease,transform .35s ease}
+.cf-card.active .cf-go{opacity:1;transform:none}
+.cf-nav{display:flex;align-items:center;justify-content:center;gap:.9rem;margin-top:.1rem}
+.cf-arrow{width:38px;height:38px;border-radius:50%;background:var(--nm);box-shadow:var(--nm-sm);color:var(--olive);font-size:1.2rem;line-height:1;display:grid;place-items:center;transition:box-shadow .2s,transform .15s}
+.cf-arrow:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
+.cf-arrow:active{box-shadow:var(--nm-in);transform:none}
+.cf-dots{display:flex;gap:.42rem}
+.cf-dot{width:7px;height:7px;border-radius:50%;background:rgba(74,75,47,.22);transition:background .25s,transform .25s}
+.cf-dot.on{background:var(--olive);transform:scale(1.3)}
 .fdg-t{display:block;font:600 .95rem/1.35 var(--display);letter-spacing:-.01em;color:var(--ink);margin-bottom:.3rem}
 .fdg-d{font:400 .82rem/1.6 var(--body);color:var(--muted)}
 /* F2 — object permanence: the tapped card MORPHS into the profile (View Transitions
@@ -1792,23 +1818,66 @@ a,button{transition:transform .14s}
     briefs:{t:'Operator Briefs',d:'It watches your week before you think to ask.',
       deep:'Atlas watches for storm threats in your market, notices when a lead goes quiet, and counts your week before you think to look. It’s not waiting for a question — it’s already thinking about your business.'}
   };
+  /* teacher-whiteboard line glyphs — one small diagram per room (the "visual explaining
+     the office"). Kept minimal; ink lines in olive, drawn flat on the card. */
+  function svg(inner){return '<div class="cf-diag"><svg viewBox="0 0 120 40" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg></div>'}
+  var DIAG={
+    lead:svg('<rect x="6" y="8" width="20" height="24" rx="3"/><path d="M40 14 h58"/><path d="M90 8 l8 6 -8 6"/><path d="M98 26 h-58"/><path d="M48 32 l-8-6 8-6"/>'),
+    storm:svg('<path d="M8 18 a10 8 0 0 1 20 -2 a7 6 0 0 1 4 12 H12 a8 7 0 0 1 -4 -10z"/><path d="M44 10 v22 M60 10 v22 M76 10 v22 M92 10 v22"/>'),
+    camp:svg('<rect x="6" y="10" width="30" height="24" rx="3"/><path d="M6 18 h30 M14 6 v6 M28 6 v6"/><path d="M50 22 h48"/><path d="M90 15 l8 7 -8 7"/><path d="M98 22 a20 20 0 0 1 -20 18" stroke-dasharray="3 4"/>'),
+    book:svg('<rect x="6" y="10" width="34" height="26" rx="3"/><path d="M6 18 h34 M16 6 v6 M32 6 v6"/><path d="M52 24 l7 7 14 -16"/><path d="M84 24 l7 7 14 -16"/>'),
+    follow:svg('<path d="M10 26 h40" stroke-dasharray="3 5"/><path d="M50 26 a18 14 0 1 0 -8 -12"/><path d="M42 8 l0 8 8 -2"/>'),
+    reviews:svg('<path d="M22 6 l5 10 11 1 -8 8 2 11 -10 -5 -10 5 2 -11 -8 -8 11 -1z"/><path d="M64 21 h34 M81 6 v30"/>'),
+    local:svg('<path d="M24 8 a12 12 0 0 1 12 12 c0 8 -12 18 -12 18 s-12 -10 -12 -18 a12 12 0 0 1 12 -12z"/><circle cx="24" cy="20" r="4"/><path d="M56 20 a30 30 0 0 1 0 0" /><path d="M78 12 a16 16 0 0 1 0 16 M88 6 a26 26 0 0 1 0 28"/>'),
+    briefs:svg('<path d="M10 34 h100"/><rect x="20" y="20" width="12" height="14"/><rect x="42" y="12" width="12" height="22"/><rect x="64" y="24" width="12" height="10"/><rect x="86" y="8" width="12" height="26"/>')
+  };
   function officeScreen(){
     speak(L.office);
     landAfterSay(function(){
-      var cards=Object.keys(ROOMS).map(function(k){var r=ROOMS[k];
-        return '<a class="fdg-card fdg-room" data-room="'+k+'"><span class="fdg-t">'+r.t+' <span class="arr">→</span></span><p class="fdg-d">'+r.d+'</p></a>';
+      var keys=Object.keys(ROOMS);
+      /* cards live in the HTML string (so the office reads without JS and the battery can
+         see every room); wireCoverflow reads them back and applies the 3D layout */
+      var cards=keys.map(function(k,i){var r=ROOMS[k];
+        return '<div class="cf-card" data-cf-card="'+k+'"><span class="cf-num">'+(i<9?'0':'')+(i+1)+' · the office</span>'+
+          '<span class="cf-title">'+r.t+'</span><p class="cf-desc">'+r.d+'</p>'+(DIAG[k]||'')+
+          '<span class="cf-go">step into this room →</span></div>';
       }).join('');
       showScreen('<span class="fds-kicker">the office</span>'+
-        '<h3 class="fds-h">You do the work. This runs around it.</h3>'+cards+
+        '<h3 class="fds-h">You do the work. This runs around it.</h3>'+
+        '<div class="cf-wrap"><div class="cf-stage" id="cfStage">'+cards+'</div></div>'+
+        '<div class="cf-nav"><button class="cf-arrow" data-cf="prev" aria-label="Previous room">‹</button><div class="cf-dots" id="cfDots"></div><button class="cf-arrow" data-cf="next" aria-label="Next room">›</button></div>'+
         '<p class="fdc-method">Every month ends with a receipt, not a story — responses, bookings, follow-ups, recorded outcomes. And the record is yours: in Lens you review every fact, and nothing publishes without you. If we’re not the right fit, we’ll say so first.</p>'+
         '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a href="/lens">start free with Lens →</a></div>',
-        wireRooms);
+        function(){wireCoverflow(keys)});
     });
   }
-  function wireRooms(){
-    [].forEach.call(screen.querySelectorAll('[data-room]'),function(a){
-      a.addEventListener('click',function(e){e.preventDefault();roomScreen(a.getAttribute('data-room'))});
+  /* the coverflow engine — ported from the Originkit gallery's transform math */
+  function wireCoverflow(keys){
+    var stage=$('cfStage');if(!stage)return;
+    var cards=[].slice.call(stage.querySelectorAll('[data-cf-card]'));
+    var n=cards.length;if(!n)return;
+    var cw=stage.offsetWidth||280,active=0;
+    var dotsEl=$('cfDots'),dots=[];
+    cards.forEach(function(c,i){
+      c.addEventListener('click',function(){i===active?roomScreen(keys[i]):setActive(i)});
+      if(dotsEl){var d=document.createElement('button');d.className='cf-dot';d.setAttribute('aria-label','Room '+(i+1));d.addEventListener('click',function(){setActive(i)});dotsEl.appendChild(d);dots.push(d)}
     });
+    function setActive(a){active=((a%n)+n)%n;layout()}
+    function layout(){
+      cards.forEach(function(c,i){
+        var rel=i-active;if(rel>n/2)rel-=n;if(rel<-n/2)rel+=n;
+        var ax=Math.abs(rel),vis=ax<=2;
+        var sc=Math.max(0.4,1-ax*0.16),tx=rel*(cw*0.66),tz=-ax*(cw*0.72),ry=-rel*12,rz=rel*8;
+        c.style.transform='translate(-50%,-50%) translateX('+tx+'px) translateZ('+tz+'px) rotateY('+ry+'deg) rotateZ('+rz+'deg) scale('+sc+')';
+        c.style.opacity=vis?'1':'0';c.style.pointerEvents=vis?'auto':'none';
+        c.classList.toggle('active',rel===0);c.style.zIndex=String(100-ax);
+      });
+      dots.forEach(function(d,i){d.classList.toggle('on',i===active)});
+    }
+    [].forEach.call(screen.querySelectorAll('[data-cf]'),function(b){
+      b.addEventListener('click',function(){setActive(active+(b.getAttribute('data-cf')==='next'?1:-1))});
+    });
+    layout();
   }
   function roomScreen(k){
     var r=ROOMS[k];if(!r)return officeScreen();
