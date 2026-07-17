@@ -15,6 +15,7 @@
     { "source": "/missed-calls",  "destination": "/missed-calls.html" },
     { "source": "/es",            "destination": "/missed-calls-es.html" },
     { "source": "/next",          "destination": "/landing-next.html" },
+    { "source": "/thesis",        "destination": "/thesis.html" },
     { "source": "/vesta",         "destination": "/vesta-app.html" },
     { "source": "/vesta/search",  "destination": "/vesta.html" },
     { "source": "/find",          "destination": "/find.html" },
