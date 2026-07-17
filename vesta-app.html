@@ -4764,7 +4764,7 @@ function fieldPanelHTML(key){
   const sigs = [];
   if (f.emergPct) sigs.push('<div class="fr2-sig"><b>'+f.emergPct+'%</b><span>answer emergencies — per their review record</span></div>');
   if (tradeSupportsReg(key) && base.length) sigs.push('<div class="fr2-sig"><b>'+Math.round(100*f.regN/base.length)+'%</b><span>state-registered</span></div>');
-  if (f.certPct) sigs.push('<div class="fr2-sig"><b>'+f.certPct+'%</b><span>manufacturer-certified — Vesta-verified</span></div>');
+  if (f.certPct) sigs.push('<div class="fr2-sig"><b>'+f.certPct+'%</b><span>manufacturer-certified — per issuer registries</span></div>');
   // Pricing mix — premium darkest so the bar reads "how much of this field quotes high."
   const pm = f.priceMix;
   const pmix = pm
