@@ -445,7 +445,7 @@ a,button{transition:transform .14s}
 @media(max-width:440px){.bk-split{gap:.6rem}.bk-side{padding:.8rem .6rem}}
 /* the welcome mat */
 .fd-mat{margin-top:3rem}
-.fd-mat .kicker{font-size:clamp(1.4rem,2.4vw,1.7rem)}
+.fd-mat .kicker{font-size:clamp(2.3rem,4.8vw,3.1rem);transform:rotate(-3deg);padding-bottom:10px;background-size:100% 9px}
 /* the chat — even rhythm, breathing without the void */
 .fd-chat{width:100%;display:flex;flex-direction:column;align-items:center;margin-top:1.2rem}
 @keyframes fdBreath{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.05);opacity:1}}
@@ -690,8 +690,8 @@ a,button{transition:transform .14s}
     <div class="fd-brand" aria-label="4THWALL">
       <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
     </div>
-    <p class="fd-tagline">Both sides of home-service trust</p>
-    <p class="fd-mat"><span class="kicker" id="fdMat">good evening — welcome in</span></p>
+    <p class="fd-tagline">The trust engine for home services</p>
+    <p class="fd-mat"><span class="kicker" id="fdMat">Welcome!</span></p>
     <!-- ACT 0 — the picture book (drawn pages; the desk narrates directly beneath) -->
     <div class="fd-book" id="fdBook" hidden aria-hidden="true"></div>
 
@@ -1077,8 +1077,7 @@ a,button{transition:transform .14s}
   var lane=null,convo=[];
 
   /* ── the welcome mat — time-aware, above the chat ── */
-  var h=new Date().getHours(),part=h<5?'evening':h<12?'morning':h<17?'afternoon':'evening';
-  $('fdMat').textContent='good '+part+' — welcome in';
+  $('fdMat').textContent='Welcome!';
 
   /* ── what the desk says — every line ends by voicing the next doors inline ── */
   var L={
@@ -1132,8 +1131,11 @@ a,button{transition:transform .14s}
     convo.push({who:'desk',text:html.replace(/<[^>]+>/g,'')});
     /* F1 choreography: record when these words will finish landing, so an assembling
        screen can arrive AS the sentence completes — never before, never long after */
+    /* reading time = clear + appearance + a DWELL scaled to sentence length, so a long
+       line gets read before the next beat replaces it (not a flat 520ms rush) */
+    var _plain=html.replace(/<[^>]+>/g,'').length;
     speakEnds=Date.now()+(line.querySelectorAll('.w i').length?430:0)
-      +Math.min(html.replace(/<[^>]+>/g,'').length*13,1300)+520;
+      +Math.min(_plain*13,1300)+Math.min(_plain*34,3600)+650;
     var old=line.querySelectorAll('.w i'),wait=0;
     if(old.length){
       for(var i=0;i<old.length;i++)old[i].style.transitionDelay=Math.min((old.length-i)*5,320)+'ms';
@@ -2014,7 +2016,7 @@ a,button{transition:transform .14s}
     step(650,function(){p1.classList.add('draw');
     step(2450,function(){p1.classList.add('gone');
     step(1250,function(){p1.classList.add('faded');
-    step(1900,function(){
+    step(2600,function(){
       /* PAGE 2 — both sides of the blank */
       speak(L.book2);
       var p2=bkPage('<div class="bk bk2"><div class="bk-split">'+
@@ -2030,11 +2032,11 @@ a,button{transition:transform .14s}
         '</div></div>'+
         '</div></div>');
       step(450,function(){p2.classList.add('draw');
-      step(4400,function(){
+      step(4900,function(){
         /* PAGE 3 — the company, then the hand extended. No climax. */
         speak(L.book3);
         p2.classList.add('recede');
-        step(2400,function(){bkEnd(false)});
+        step(3600,function(){bkEnd(false)});
       });});
     });});});});
   }
