@@ -2627,6 +2627,8 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
 </div>
 
+<script src="/cuelume.js"></script>
+<script src="/cue-init.js"></script>
 <script>
 // No pro-counts anywhere on Vesta — a catalog number ("48 pros") reads as thin and
 // undercuts the due-diligence. Per-pro review counts are different and stay.
@@ -7080,7 +7082,8 @@ async function vmTurn(text){
     const res=final.resolved;
     const gate=res&&res.trade&&res.job&&tradeMatchable(res.trade)&&tradeBank(res.trade).jobs.some(j=>j.value===res.job)
       && !(vmDeckShown && vmDeckKey===res.trade+'|'+res.job);   // re-affirming the SAME match in a follow-up never re-lands a duplicate deck
-    if(gate){ vmBusy=false; vmDeckLand(res.trade,res.job,final.deck,final.mode||'fix'); return; }
+    if(gate){ vmBusy=false; vmDeckLand(res.trade,res.job,final.deck,final.mode||'fix'); return; }   // success cue rides on the deck (vmDeck)
+    if(window.cue)cue('chime');   // a normal conversational reply (emergency + atlas already returned above → never on those)
     // Dead-promise guard: the server resolved + bank-validated, but the client can't land
     // this deck (trade's firms/bank not loaded here). Vesta's say just promised picks —
     // never leave that promise hanging with nothing after it; offer the walk-through.
@@ -7199,6 +7202,7 @@ async function vmDeck(trade, job, deckMeta, mode, quiet){
     '<button class="tc-deck-save" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Save this plan</button>';
   const row=document.createElement('div'); row.className='vmsg tc-verdict'; row.innerHTML='<span class="vav">Vesta.</span>'; row.appendChild(el);
   t.appendChild(row); t.classList.add('tc-resolved'); vmScroll();   // Vesta's message: picks in-chat, history collapsed → fixed verdict
+  if(window.cue)cue('success');   // the picks landed
   el.querySelectorAll('.tc-firm').forEach(btn=>btn.addEventListener('click',()=>openProfile(btn.dataset.place)));
   const all=el.querySelector('.tc-deck-all'); if(all) all.addEventListener('click',()=>{ S.chatReturn=true; const h=$('s-home'); if(h) h.classList.remove('vconv'); S.mode='trade'; S.activeTrade=trade; S.feedTown=''; S.feedNeeds=new Set(); S.feedSort='rank'; S.match={job:job,axis:axis}; S.matchPending=false; S.triageActive=false; S.triageMode=null; renderNeedChips(); renderSidebar(); showBrowse(trade); });
   const planSnap=vmPlan; const sv=el.querySelector('.tc-deck-save'); if(sv) sv.addEventListener('click', ()=>downloadPlan(planSnap));

@@ -1427,6 +1427,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
 </div>
 
+<script src="/cuelume.js"></script>
+<script src="/cue-init.js"></script>
 <script>
 /* ══════════ THE ATLAS DESK — app shell (rail + center chat), Vesta's structure. ══════════
    The center IS the conversation; the left rail is the office as tabs. A tab and a typed ask
@@ -1811,6 +1813,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(body)})
       .then(function(r){if(!r.ok)throw new Error('submit failed: '+r.status);
         send.classList.add('sent');send.textContent='✓';form.reset();
+        if(window.cue)cue('success');
         chips.forEach(function(c){c.classList.remove('active')});
         msg.placeholder='Got it — Andrew will reply within an hour during business hours.';
         setTimeout(function(){send.classList.remove('sent');send.textContent=orig;send.disabled=false},4500);
@@ -1879,6 +1882,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       if(!s){speak(DEFLECT);return}
       msgs.push({role:'assistant',content:s});
       speak(escT(s));
+      if(window.cue)cue('chime');   // the desk answered
       if(scr){setActive(scr);landAfterSay(function(){assembleScreen(scr)})}
     })
     .catch(function(){busy=false;thinkOff();speak(DEFLECT)});
