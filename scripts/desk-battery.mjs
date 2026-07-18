@@ -157,12 +157,17 @@ const check = (tag, ok, note='') => {
     && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())
     && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
 { const d = boot(src);
-  // choosing a side then ASKING collapses the cards — they never obstruct the conversation
+  // CHATTING state: any ask collapses the cards AND retires the fork for the session —
+  // a stray hover mid-conversation must NOT stand the deck back up over the thread
   d.els.forkHo.dispatchEvent({ type:'mouseenter' });
   d.say('my roof is leaking in Stamford');
-  check('A30 deck open + typed ask → cards collapse out of the way (hidden again, pills off)',
-    d.els.catStack.hidden === true && d.els.catOffice.hidden === true
-    && d.els.revHide.hidden === true); }
+  const collapsed = d.els.catStack.hidden === true && d.els.catOffice.hidden === true
+    && d.els.revHide.hidden === true;
+  d.els.forkHo.dispatchEvent({ type:'mouseenter' });
+  d.els.forkCo.dispatchEvent({ type:'mouseenter' });
+  const noResurrect = d.els.catStack.hidden === true && d.els.catOffice.hidden === true;
+  check('A30 typed ask → cards collapse AND hover cannot resurrect them mid-conversation',
+    collapsed && noResurrect); }
 { // every trade-card ask reaches the real triage — the exact phrasings the cards fire
   // ("plumbing"/"electrician"/"painting" deflected before the suffix-tolerant stems)
   const asks = ['I have a plumbing problem','I need an electrician','the house needs painting','my chimney needs repointing'];

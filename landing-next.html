@@ -425,6 +425,9 @@ a,button{transition:transform .14s}
 .rev-deck:not([hidden]){animation:revIn .42s var(--spring)}
 @keyframes revIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .fd.staged .fd-fork,.fd.staged .fd-reveal{display:none}
+/* CHATTING state — the moment anyone speaks, the fork leaves the room entirely: the
+   conversation owns the column and no hover can stand the deck back up mid-thread */
+.fd.talking .fd-fork,.fd.talking .fd-reveal{display:none}
 /* trade coverflow diagram — a single centred trade glyph (vs the office line-diagrams) */
 .cf-diag-ico{display:flex;align-items:center;justify-content:center}
 .cf-diag-ico svg{width:auto;height:46px;fill:none;stroke:var(--olive);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -506,8 +509,10 @@ a,button{transition:transform .14s}
 .fd.staged .fd-brand svg{width:21px;height:21px}
 .fd.staged .fd-tagline,.fd.staged .fd-mat{opacity:0;max-height:0;margin:0;overflow:hidden;pointer-events:none}
 .fd-tagline,.fd-mat{max-height:3em}
-.fd.staged .fd-line{font-size:clamp(.98rem,1.7vw,1.15rem);min-height:3.2em;line-height:1.65}
-.fd.staged .fd-you{font-size:1.05rem}
+.fd.staged .fd-line,.fd.talking .fd-line{font-size:clamp(.98rem,1.7vw,1.15rem);min-height:3.2em;line-height:1.65}
+.fd.staged .fd-you,.fd.talking .fd-you{font-size:1.05rem}
+/* chatting: the welcome sign steps back so a long reply never runs under the bar */
+.fd.talking .fd-mat,.fd.talking .fd-tagline{opacity:0;max-height:0;margin:0;overflow:hidden;pointer-events:none}
 .fd.staged .fd-well{position:fixed;left:50%;bottom:1.1rem;transform:translateX(-50%);width:min(600px,calc(100% - 2.2rem));margin:0;z-index:70;box-shadow:var(--sh-card);animation:fdDock .55s var(--spring)}
 @keyframes fdDock{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .fd.staged .fd-cue{display:none}
@@ -1229,7 +1234,7 @@ a,button{transition:transform .14s}
   function input(q,display){
     if(triBusy)return;   /* the desk is mid-read — one thought at a time */
     simGen++;            /* any real ask ends the scripted performance mid-beat */
-    if(typeof hideReveal==='function')hideReveal();   /* the cards tuck away — never over the conversation */
+    setTalking(true);    /* CHATTING state: the fork leaves the room — the conversation owns the column */
     convo.push({who:'you',text:q});
     echo(display||q);
     route(q);
@@ -2037,7 +2042,7 @@ a,button{transition:transform .14s}
   }
   var ACT={
     resume:function(){var m=loadMemory();if(!m||!m.deck)return speak(L.greet);triActive=true;speak('Right where you left off —');deckLand(m.deck,'fix',true)},
-    fresh:function(){lane=null;setPH();speak(L.greet)}
+    fresh:function(){lane=null;setPH();setTalking(false);speak(L.greet)}
   };
 
   /* ═══ THE TWO CATEGORIES — built on landing, always. Left: the office coverflow.
@@ -2072,7 +2077,12 @@ a,button{transition:transform .14s}
   /* THE FORK — both decks are built EAGERLY at boot (first hover must be instant);
      hover/tap a pill shows that side's deck, tap again or "hide ×" tucks it away, and
      any typed ask collapses the cards so they never obstruct the conversation. */
-  var revSide=null;
+  var revSide=null,talking=false;
+  function setTalking(v){
+    talking=v;
+    var fd=document.getElementById('home');if(fd)fd.classList.toggle('talking',v);
+    if(v&&typeof hideReveal==='function')hideReveal();
+  }
   function buildDecks(){
     var co=$('catOffice'),ho=$('catStack');
     var keys=Object.keys(ROOMS);co.innerHTML=officeHTML(keys);wireCoverflow(keys,co,roomScreen);
@@ -2085,6 +2095,7 @@ a,button{transition:transform .14s}
     $('forkCo').classList.remove('on');$('forkHo').classList.remove('on');
   }
   function revealSide(side){
+    if(talking)return;   /* mid-conversation, nothing stands the deck back up */
     if(revSide===side)return;
     revSide=side;
     $('catOffice').hidden=(side!=='co');$('catStack').hidden=(side!=='ho');
