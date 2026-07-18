@@ -599,6 +599,16 @@ a,button{transition:transform .14s}
 .cf-diag svg{width:100%;height:100%;overflow:visible}
 .cf-go{font:600 .82rem/1 var(--body);color:var(--olive);opacity:0;transform:translateY(4px);transition:opacity .35s ease,transform .35s ease}
 .cf-card.active .cf-go{opacity:1;transform:none}
+/* the final door — dark-grad, the same "this is the real thing" treatment the Atlas
+   product card and every primary CTA already carry; it should read as leaving the deck,
+   not as another room in it */
+.cf-card.cf-final{background:var(--dark-grad);border:none;box-shadow:0 2px 6px rgba(40,41,22,.2),0 22px 48px -12px rgba(40,41,22,.45),inset 0 1px 0 rgba(255,255,255,.1)}
+.cf-card.cf-final.active{box-shadow:0 4px 14px rgba(40,41,22,.3),0 28px 56px -14px rgba(40,41,22,.55),inset 0 1px 0 rgba(255,255,255,.14)}
+.cf-card.cf-final .cf-num{color:var(--tea);opacity:.8}
+.cf-card.cf-final .cf-title{color:var(--white)}
+.cf-card.cf-final .cf-desc{color:rgba(255,255,255,.68)}
+.cf-card.cf-final .cf-diag-ico svg{stroke:var(--tea)}
+.cf-card.cf-final .cf-go{color:var(--tea)}
 .cf-nav{display:flex;align-items:center;justify-content:center;gap:.9rem;margin-top:.1rem}
 .cf-arrow{width:38px;height:38px;border-radius:50%;background:var(--nm);box-shadow:var(--nm-sm);color:var(--olive);font-size:1.2rem;line-height:1;display:grid;place-items:center;transition:box-shadow .2s,transform .15s}
 .cf-arrow:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
@@ -1855,7 +1865,8 @@ a,button{transition:transform .14s}
      item: {key,num,title,desc,diag,go}. */
   function cfCards(items){
     var cards=items.map(function(it){
-      return '<div class="cf-card" data-cf-card="'+it.key+'"><span class="cf-num">'+it.num+'</span>'+
+      var isFinal=it.key==='__atlas__'||it.key==='__vesta__';
+      return '<div class="cf-card'+(isFinal?' cf-final':'')+'" data-cf-card="'+it.key+'"><span class="cf-num">'+it.num+'</span>'+
         '<span class="cf-title">'+it.title+'</span><p class="cf-desc">'+it.desc+'</p>'+(it.diag||'')+
         '<span class="cf-go">'+it.go+'</span></div>';
     }).join('');
