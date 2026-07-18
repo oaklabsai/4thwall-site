@@ -160,6 +160,10 @@ a,button{transition:transform .14s}
   border:1px solid rgba(255,255,255,.6);
   transition:box-shadow .3s ease}
 .topnav.scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 14px rgba(74,75,47,.14),0 24px 48px -16px rgba(74,75,47,.4)}
+.nav-home{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:var(--nm);box-shadow:var(--nm-sm);color:var(--olive);flex-shrink:0;margin-right:.15rem;transition:box-shadow .2s,transform .15s}
+.nav-home:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
+.nav-home:active{box-shadow:var(--nm-in);transform:none}
+.nav-home svg{width:17px;height:17px}
 .topnav:active{transform:translateX(-50%)} /* keep centered — override the universal press */
 .nav-links{display:flex;align-items:center;gap:.35rem}
 /* text lives on its own inside the bar — no pills in the pill; subtle lift + olive on hover */
@@ -392,7 +396,7 @@ a,button{transition:transform .14s}
 .foot-legal-sep{margin:0 .5rem;color:var(--dim)}
 
 /* ════════ THE FRONT DESK — the hero is a conversation (P1 shell, zero model calls) ════════ */
-.fd{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(6.5rem,12vh,8.5rem) var(--pad) 4.6rem;position:relative;text-align:center}
+.fd{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:clamp(5.6rem,9vh,6.8rem) var(--pad) 4.6rem;position:relative;text-align:center}
 .fd-inner{width:min(660px,100%);display:flex;flex-direction:column;align-items:center}
 /* the brand — the mark alone, on a raised neumorphic button */
 .fd-brand{display:grid;place-items:center;width:62px;height:62px;border-radius:20px;color:var(--olive);
@@ -400,12 +404,15 @@ a,button{transition:transform .14s}
   transition:box-shadow .2s,transform .18s}
 .fd-brand:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
 .fd-brand svg{width:28px;height:28px}
-.fd-tagline{margin-top:.85rem;font:500 .58rem/1 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+.fd-tagline{margin-top:.7rem;font:500 .58rem/1 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
 
 /* ═══ THE FORK — two pills below the welcome sign. Hovering (desktop) or tapping
    (touch) a pill reveals that side's coverflow deck in the shared reveal panel, so the
    two universes never fight for space. Staging collapses the whole fork. ═══ */
-.fd-fork{margin:1.6rem auto 0;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.fd-fork{margin:1.3rem auto 0;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.rev-hide{display:block;margin:.65rem auto 0;font:500 .58rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);cursor:pointer;padding:.35rem .8rem;border-radius:var(--r-pill);transition:color .2s,box-shadow .2s}
+.rev-hide:hover{color:var(--olive);box-shadow:var(--nm-in)}
+.rev-hide[hidden]{display:none}
 .fork-pill{display:flex;flex-direction:column;align-items:center;gap:.24rem;background:var(--nm);box-shadow:var(--nm-sm);border-radius:var(--r-pill);padding:.72rem 1.6rem;color:var(--ink);cursor:pointer;transition:box-shadow .2s,transform .15s,color .2s}
 .fork-pill:hover{transform:translateY(-2px);box-shadow:var(--nm-out);color:var(--olive)}
 .fork-pill.on{box-shadow:var(--nm-in);color:var(--olive);transform:none}
@@ -421,8 +428,8 @@ a,button{transition:transform .14s}
 /* trade coverflow diagram — a single centred trade glyph (vs the office line-diagrams) */
 .cf-diag-ico{display:flex;align-items:center;justify-content:center}
 .cf-diag-ico svg{width:auto;height:46px;fill:none;stroke:var(--olive);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-/* the welcome mat */
-.fd-mat{margin-top:3rem}
+/* the welcome mat — first thing under the floating bar */
+.fd-mat{margin-top:.4rem}
 .fd-mat .kicker{font-size:clamp(2.3rem,4.8vw,3.1rem);transform:rotate(-3deg);padding-bottom:10px;background-size:100% 9px}
 /* the chat — even rhythm, breathing without the void */
 .fd-chat{width:100%;display:flex;flex-direction:column;align-items:center;margin-top:1.2rem}
@@ -665,10 +672,11 @@ a,button{transition:transform .14s}
 
 <!-- ════════════════ NAV ════════════════ -->
 <nav class="topnav" id="topnav">
+  <a href="/" class="nav-home" aria-label="4THWALL — home">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
+  </a>
   <div class="nav-links" aria-label="Primary">
-    <a href="/atlas" class="nav-a"><b>Atlas</b><span>for contractors</span></a>
     <a href="/lens" class="nav-a"><b>Lens</b><span>start free</span></a>
-    <a href="/vesta" class="nav-a"><b>Vesta</b><span>for homeowners</span></a>
     <a href="/thesis" class="nav-a"><b>Thesis</b><span>why we exist</span></a>
   </div>
   <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="nav-cta" target="_blank" rel="noopener"><b>Book a fit call</b><span>20 min · plain numbers</span></a>
@@ -681,36 +689,33 @@ a,button{transition:transform .14s}
 <div class="nav-drop" id="navDrop" role="dialog" aria-modal="false" aria-label="Site navigation">
   <a href="#how" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>How it works</a>
   <a href="#features" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="7" height="7" rx="1"/><rect x="15" y="3" width="7" height="7" rx="1"/><rect x="2" y="14" width="7" height="7" rx="1"/><rect x="15" y="14" width="7" height="7" rx="1"/></svg></span>What you get</a>
-  <a href="/atlas" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Atlas — for contractors</a>
   <a href="/thesis" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Thesis — why we build this</a>
   <a href="/lens" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg></span>Lens — trust workspace</a>
-  <a href="/vesta" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Vesta — for homeowners</a>
   <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="drop-a drop-cta" target="_blank" rel="noopener">Book a call →</a>
 </div>
 
 <!-- ════════════════ THE FRONT DESK — the hero is a conversation (P1: every screen deterministic) ════════════════ -->
 <section class="fd" id="home">
   <div class="fd-inner">
-    <div class="fd-brand" aria-label="4THWALL">
-      <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
-    </div>
-    <p class="fd-tagline">The trust engine for home services</p>
     <p class="fd-mat"><span class="kicker" id="fdMat">Welcome!</span></p>
-    <!-- THE FORK — two pills; hovering (or tapping) one reveals its deck below, so the
-         two universes never fight for space -->
-    <div class="fd-fork" id="fdFork">
-      <button class="fork-pill" id="forkCo" type="button" aria-controls="fdReveal"><b>Contractor</b><span>run the business</span></button>
-      <button class="fork-pill" id="forkHo" type="button" aria-controls="fdReveal"><b>Homeowner</b><span>hire with proof</span></button>
-    </div>
-    <div class="fd-reveal" id="fdReveal">
-      <div class="rev-deck" id="catOffice" hidden></div>
-      <div class="rev-deck" id="catStack" hidden></div>
-    </div>
+    <p class="fd-tagline">The trust engine for home services</p>
 
     <div class="fd-chat">
       <p class="fd-you" id="fdYou"></p>
       <h1 class="fd-line" id="fdLine" aria-live="polite"></h1>
       <p class="fd-think" id="fdThink" hidden><span class="fd-shimmer"><i></i><i></i><i></i></span><span id="fdThinkW">reading that</span></p>
+
+      <!-- THE FORK — the question speaks above; choosing a side reveals its deck here,
+           between the question and the input, never over the conversation -->
+      <div class="fd-fork" id="fdFork">
+        <button class="fork-pill" id="forkCo" type="button" aria-controls="fdReveal"><b>Contractor</b><span>run the business</span></button>
+        <button class="fork-pill" id="forkHo" type="button" aria-controls="fdReveal"><b>Homeowner</b><span>hire with proof</span></button>
+      </div>
+      <div class="fd-reveal" id="fdReveal">
+        <button class="rev-hide" id="revHide" type="button" hidden aria-label="Hide the cards">hide ×</button>
+        <div class="rev-deck" id="catOffice" hidden></div>
+        <div class="rev-deck" id="catStack" hidden></div>
+      </div>
 
       <form class="fd-well" id="fdWell" aria-label="Ask the front desk">
       <span class="fd-in">
@@ -1093,13 +1098,11 @@ a,button{transition:transform .14s}
 
   /* ── what the desk says — every line ends by voicing the next doors inline ── */
   var L={
-    greet:'Are you a contractor, or a homeowner? Peek either side below — or just tell me what’s going on.',
+    greet:'Are you a contractor, or a homeowner? Choose a side below — or just tell me what’s going on.',
     ho:'How can we help? Say the job like you’d tell a neighbor — <a data-say="my roof is leaking">a leak</a>, <a data-say="the AC died upstairs">a dying AC</a>, <a data-say="my driveway needs repaving">a tired driveway</a>.',
     co0:'The best crews rarely have the best office. For the first time, that stops mattering.',
-    co1:'The biggest outfits always had one advantage the rest couldn’t afford — an office. People answering, chasing, booking, minding the season, minding the record. That advantage just changed hands.',
     office:'This is the office Atlas runs around your work. Walk any room — or ask about <a data-say="storm season">storm season</a>, <a data-say="reviews">reviews</a>, or <a data-say="the offer">the offer</a>.',
     ho0:'You shouldn’t need luck to hire well. Vesta walks you to the right few — and shows you why they fit.',
-    ho1:'From the outside, every contractor looks the same. Five stars, five stars, five stars. That was never your failure to research — it’s all anyone can see.',
     vwho:'Vesta is free for homeowners, and no one can pay to be recommended. We’re a Connecticut company that thinks choosing well shouldn’t take luck. Tell me what’s going on with the house — or ask anything.',
     atlas:'Atlas is the managed front office behind your work — it answers when you can’t pick up, qualifies the lead, books the estimate, carries follow-up and reviews, and hands you a measured receipt every month. See the <a href="/missed-calls">60-second demo</a>, ask about <a data-say="the offer">the offer</a>, or hear about <a data-say="lens">Lens</a>.',
     lens:'Lens is free — your private trust workspace. Connect the tools you already run, review every fact your record supports, and control exactly what a homeowner could see. Nothing publishes without you. <a href="/lens">Start free</a>, or hear about <a data-say="atlas">Atlas</a>.',
@@ -1140,11 +1143,12 @@ a,button{transition:transform .14s}
     convo.push({who:'desk',text:html.replace(/<[^>]+>/g,'')});
     /* F1 choreography: record when these words will finish landing, so an assembling
        screen can arrive AS the sentence completes — never before, never long after */
-    /* reading time = clear + appearance + a DWELL scaled to sentence length, so a long
-       line gets read before the next beat replaces it (not a flat 520ms rush) */
+    /* screens land as the sentence finishes APPEARING — assembly never waits on a long
+       reading dwell (that lag made the office feel broken; Drew 7/17). Spoken chains
+       that need reading room add it explicitly. */
     var _plain=html.replace(/<[^>]+>/g,'').length;
     speakEnds=Date.now()+(line.querySelectorAll('.w i').length?430:0)
-      +Math.min(_plain*13,1300)+Math.min(_plain*34,3600)+650;
+      +Math.min(_plain*13,1300)+650;
     var old=line.querySelectorAll('.w i'),wait=0;
     if(old.length){
       for(var i=0;i<old.length;i++)old[i].style.transitionDelay=Math.min((old.length-i)*5,320)+'ms';
@@ -1216,6 +1220,7 @@ a,button{transition:transform .14s}
   function input(q,display){
     if(triBusy)return;   /* the desk is mid-read — one thought at a time */
     simGen++;            /* any real ask ends the scripted performance mid-beat */
+    if(typeof hideReveal==='function')hideReveal();   /* the cards tuck away — never over the conversation */
     convo.push({who:'you',text:q});
     echo(display||q);
     route(q);
@@ -1831,7 +1836,9 @@ a,button{transition:transform .14s}
   function officeHTML(keys){return cfCards(officeItems(keys))}
   function officeScreen(){
     speak(L.office);
-    landAfterSay(function(){
+    landAfterSay(assembleOffice);
+  }
+  function assembleOffice(){
       var keys=Object.keys(ROOMS);
       showScreen('<span class="fds-kicker">the office</span>'+
         '<h3 class="fds-h">You do the work. This runs around it.</h3>'+
@@ -1839,7 +1846,6 @@ a,button{transition:transform .14s}
         '<p class="fdc-method">Every month ends with a receipt, not a story — responses, bookings, follow-ups, recorded outcomes. And the record is yours: in Lens you review every fact, and nothing publishes without you. If we’re not the right fit, we’ll say so first.</p>'+
         '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a href="/lens">start free with Lens →</a></div>',
         function(){wireCoverflow(keys,screen,roomScreen)});
-    });
   }
   /* the coverflow engine — ported from the Originkit gallery's transform math.
      root scopes the queries so the same engine runs on the landing decks and inside the
@@ -1874,6 +1880,7 @@ a,button{transition:transform .14s}
   }
   function roomScreen(k){
     var r=ROOMS[k];if(!r)return officeScreen();
+    hideReveal();   /* stepping into a room retires the landing deck immediately */
     speak('<b>'+r.t+'</b> — '+r.d+' Walk <a data-say="walk the office">back through the office</a> anytime.');
     landAfterSay(function(){
       showScreen('<span class="fds-kicker">inside the office</span>'+
@@ -1893,25 +1900,20 @@ a,button{transition:transform .14s}
         });
     });
   }
-  /* the contractor arc: blanket → why → the office (the money doll) */
+  /* the contractor arc: ONE blanket beat spoken, the office lands on its heels —
+     no second sentence gating the cards (speed over ceremony; Drew 7/17) */
   function coArc(){
     lane='co';setPH();
     var g=simGen;
     speak(L.co0);
-    landAfterSay(function(){if(g!==simGen)return;
-      speak(L.co1);
-      landAfterSay(function(){if(g!==simGen)return;officeScreen()});
-    });
+    landAfterSay(function(){if(g!==simGen)return;assembleOffice()});
   }
-  /* the homeowner arc: blanket → absolution → the ask (the triage takes it from there) */
+  /* the homeowner arc: one blanket beat, then the ask (the triage takes it from there) */
   function hoArc(){
     lane='ho';setPH();
     var g=simGen;
     speak(L.ho0);
-    landAfterSay(function(){if(g!==simGen)return;
-      speak(L.ho1);
-      landAfterSay(function(){if(g!==simGen)return;speak(L.ho)});
-    });
+    landAfterSay(function(){if(g!==simGen)return;speak(L.ho)});
   }
   function phoneHTML(kicker){
     return '<span class="fds-kicker">'+kicker+'</span>'+
@@ -2042,21 +2044,39 @@ a,button{transition:transform .14s}
       diag:'<div class="cf-diag cf-diag-ico">'+s.ico+'</div>',go:'tap to start →'}})}
   function startTrade(k){var s=STACK.filter(function(x){return x.k===k})[0];if(s)input(s.ask,s.t.toLowerCase())}
 
-  /* THE FORK — hover/tap a pill to reveal that side's coverflow deck (built once, then
-     shown). Only one deck stands at a time, so the two universes never fight for space. */
-  var revBuilt={};
-  function revealSide(side){
+  /* THE FORK — both decks are built EAGERLY at boot (first hover must be instant);
+     hover/tap a pill shows that side's deck, tap again or "hide ×" tucks it away, and
+     any typed ask collapses the cards so they never obstruct the conversation. */
+  var revSide=null;
+  function buildDecks(){
     var co=$('catOffice'),ho=$('catStack');
-    co.hidden=(side!=='co');ho.hidden=(side!=='ho');
+    var keys=Object.keys(ROOMS);co.innerHTML=officeHTML(keys);wireCoverflow(keys,co,roomScreen);
+    var tk=STACK.map(function(s){return s.k});ho.innerHTML=cfCards(tradeItems());wireCoverflow(tk,ho,startTrade);
+    hideReveal();   /* explicit tucked state at boot */
+  }
+  function hideReveal(){
+    revSide=null;
+    $('catOffice').hidden=true;$('catStack').hidden=true;$('revHide').hidden=true;
+    $('forkCo').classList.remove('on');$('forkHo').classList.remove('on');
+  }
+  function revealSide(side){
+    if(revSide===side)return;
+    revSide=side;
+    $('catOffice').hidden=(side!=='co');$('catStack').hidden=(side!=='ho');
+    $('revHide').hidden=false;
     $('forkCo').classList.toggle('on',side==='co');
     $('forkHo').classList.toggle('on',side==='ho');
-    if(side==='co'&&!revBuilt.co){var keys=Object.keys(ROOMS);co.innerHTML=officeHTML(keys);wireCoverflow(keys,co,roomScreen);revBuilt.co=1}
-    if(side==='ho'&&!revBuilt.ho){var tk=STACK.map(function(s){return s.k});ho.innerHTML=cfCards(tradeItems());wireCoverflow(tk,ho,startTrade);revBuilt.ho=1}
   }
-  ['mouseenter','focus','click'].forEach(function(ev){
-    $('forkCo').addEventListener(ev,function(){revealSide('co')});
-    $('forkHo').addEventListener(ev,function(){revealSide('ho')});
-  });
+  /* desktop (hover-capable): hover reveals, click just keeps it open — hide lives on the
+     × . touch: tap toggles. */
+  var canHover=!!(window.matchMedia&&matchMedia('(hover: hover)').matches);
+  function pillTap(side){(canHover||revSide!==side)?revealSide(side):hideReveal()}
+  $('forkCo').addEventListener('mouseenter',function(){revealSide('co')});
+  $('forkHo').addEventListener('mouseenter',function(){revealSide('ho')});
+  $('forkCo').addEventListener('click',function(){pillTap('co')});
+  $('forkHo').addEventListener('click',function(){pillTap('ho')});
+  $('revHide').addEventListener('click',hideReveal);
+  buildDecks();
 
   /* the desk speaks first — by memory if we've met; otherwise the fork question stands
      above the two pills */

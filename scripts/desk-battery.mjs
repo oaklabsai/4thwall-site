@@ -59,7 +59,7 @@ function makeStore(seed){
 // One fresh desk instance per case. probeOK controls the GET /api/triage health probe;
 // seedMem pre-seeds localStorage to simulate a returning visitor (F5).
 function boot(src, { probeOK = true, seedMem = null } = {}){
-  const ids = ['fdMat','fdYou','fdLine','fdSay','fdWell','fdPh','fdMic','fdThink','fdThinkW','fdScreen','fdFork','forkCo','forkHo','fdReveal','catOffice','catStack'];
+  const ids = ['fdMat','fdYou','fdLine','fdSay','fdWell','fdPh','fdMic','fdThink','fdThinkW','fdScreen','fdFork','forkCo','forkHo','fdReveal','revHide','catOffice','catStack'];
   const els = Object.fromEntries(ids.map(i => [i, el(i)]));
   const posts = [];                       // recorded triage POSTs
   const location = { href:'' };           // handoff fallback lands here
@@ -141,16 +141,28 @@ const check = (tag, ok, note='') => {
 { const d = boot(src);
   check('A1 first paint ends voicing both doors (the fork lands after the break)', /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
 { const d = boot(src);
-  // landing shows only the two pills; the decks build lazily on hover/tap of each pill.
-  const beforeHover = d.els.catOffice.innerHTML === '' && d.els.catStack.innerHTML === '';
-  d.els.forkCo.dispatchEvent({ type:'mouseenter' });
+  // decks build EAGERLY at boot (first hover must be instant) but stay tucked away until
+  // a pill is hovered/tapped; hide × and any typed ask collapse them again.
+  const builtHidden = /Lead Response/.test(d.els.catOffice.innerHTML) && /Roofing/.test(d.els.catStack.innerHTML)
+    && d.els.catOffice.hidden === true && d.els.catStack.hidden === true;
   d.els.forkHo.dispatchEvent({ type:'mouseenter' });
-  check('A26 landing → pills reveal decks on hover (office coverflow + trade coverflow); fork spoken; no auto-sim',
-    beforeHover
-    && /Lead Response/.test(d.els.catOffice.innerHTML) && /Operator Briefs/.test(d.els.catOffice.innerHTML)
-    && /Roofing/.test(d.els.catStack.innerHTML) && /Masonry/.test(d.els.catStack.innerHTML)
+  const hoShown = d.els.catStack.hidden === false && d.els.catOffice.hidden === true && d.els.revHide.hidden === false;
+  d.els.forkCo.dispatchEvent({ type:'mouseenter' });
+  const coShown = d.els.catOffice.hidden === false && d.els.catStack.hidden === true;
+  d.els.revHide.dispatchEvent({ type:'click' });
+  const tucked = d.els.catOffice.hidden === true && d.els.catStack.hidden === true && d.els.revHide.hidden === true;
+  check('A26 landing → decks eager-built, hidden until pill hover, one at a time, hide × tucks away; fork spoken; no auto-sim',
+    builtHidden && hoShown && coShown && tucked
+    && /Operator Briefs/.test(d.els.catOffice.innerHTML) && /Masonry/.test(d.els.catStack.innerHTML)
     && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())
     && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
+{ const d = boot(src);
+  // choosing a side then ASKING collapses the cards — they never obstruct the conversation
+  d.els.forkHo.dispatchEvent({ type:'mouseenter' });
+  d.say('my roof is leaking in Stamford');
+  check('A30 deck open + typed ask → cards collapse out of the way (hidden again, pills off)',
+    d.els.catStack.hidden === true && d.els.catOffice.hidden === true
+    && d.els.revHide.hidden === true); }
 { const d = boot(src); d.say('contractor');
   // sync timers: the co arc (blanket → why → THE OFFICE) plays through at boot
   const s = d.els.fdScreen.innerHTML;
@@ -242,8 +254,9 @@ const check = (tag, ok, note='') => {
   check('A25 first-time visitor (no memory) → the fork spoken, never welcome-back',
     !/Welcome back/.test(d.spoken()) && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
 { const d = boot(src, { seedMem: { v:1, ts: Date.now(), deck:{ trade:'roofing', job:'roof-replacement', label:'roof replacement', tradeLabel:'Roofing' }, firm:'Summit Ridge Roofing' } });
-  check('A27 returning visitor → memory greeting wins; decks stay behind the pills until hover',
-    /Welcome back/.test(d.spoken()) && d.els.catOffice.innerHTML === ''
+  check('A27 returning visitor → memory greeting wins; decks built but tucked behind the pills',
+    /Welcome back/.test(d.spoken()) && /Lead Response/.test(d.els.catOffice.innerHTML)
+    && d.els.catOffice.hidden === true
     && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
 
 // B · CLAIM SAFETY — every deterministic line, linted against the pack's banned list
