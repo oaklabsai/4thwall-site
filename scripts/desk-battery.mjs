@@ -154,6 +154,9 @@ const check = (tag, ok, note='') => {
   check('A26 landing → decks eager-built, hidden until pill hover, one at a time, hide × tucks away; fork spoken; no auto-sim',
     builtHidden && hoShown && coShown && tucked
     && /Operator Briefs/.test(d.els.catOffice.innerHTML) && /Masonry/.test(d.els.catStack.innerHTML)
+    // the final door: each deck's last card is a clean exit to the full product
+    && /The full Atlas/.test(d.els.catOffice.innerHTML) && /open Atlas/.test(d.els.catOffice.innerHTML)
+    && /The full Vesta/.test(d.els.catStack.innerHTML) && /open Vesta/.test(d.els.catStack.innerHTML)
     && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())
     && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
 { const d = boot(src);

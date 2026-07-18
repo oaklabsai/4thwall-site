@@ -1865,6 +1865,16 @@ a,button{transition:transform .14s}
   function officeItems(keys){return keys.map(function(k,i){var r=ROOMS[k];
     return {key:k,num:(i<9?'0':'')+(i+1)+' · the office',title:r.t,desc:r.d,diag:DIAG[k]||'',go:'step into this room →'}})}
   function officeHTML(keys){return cfCards(officeItems(keys))}
+  /* the final door — a card in its own right, not a UI escape hatch: the last stop in
+     the deck IS the whole product, one tap out of the chat entirely (Drew 7/17: the
+     chat was fighting the landing page's own flow; this gives every deck a clean exit) */
+  var GO_ICO='<svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8 7 h9 v9"/></svg>';
+  function finalDoorItem(kind){
+    return kind==='atlas'
+      ? {key:'__atlas__',num:'see more',title:'The full Atlas',desc:'Every room, live — the whole product, not just the doors.',diag:'<div class="cf-diag cf-diag-ico">'+GO_ICO+'</div>',go:'open Atlas →'}
+      : {key:'__vesta__',num:'see more',title:'The full Vesta',desc:'Every trade, every town — the whole directory.',diag:'<div class="cf-diag cf-diag-ico">'+GO_ICO+'</div>',go:'open Vesta →'};
+  }
+  function openFinalDoor(k){if(k==='__atlas__')location.href='/atlas';else if(k==='__vesta__')location.href='/vesta'}
   function officeScreen(){
     speak(L.office);
     landAfterSay(assembleOffice);
@@ -2088,8 +2098,12 @@ a,button{transition:transform .14s}
   }
   function buildDecks(){
     var co=$('catOffice'),ho=$('catStack');
-    var keys=Object.keys(ROOMS);co.innerHTML=officeHTML(keys);wireCoverflow(keys,co,roomScreen);
-    var tk=STACK.map(function(s){return s.k});ho.innerHTML=cfCards(tradeItems());wireCoverflow(tk,ho,startTrade);
+    var keys=Object.keys(ROOMS).concat(['__atlas__']);
+    co.innerHTML=cfCards(officeItems(Object.keys(ROOMS)).concat([finalDoorItem('atlas')]));
+    wireCoverflow(keys,co,function(k){k==='__atlas__'?openFinalDoor(k):roomScreen(k)});
+    var tk=STACK.map(function(s){return s.k}).concat(['__vesta__']);
+    ho.innerHTML=cfCards(tradeItems().concat([finalDoorItem('vesta')]));
+    wireCoverflow(tk,ho,function(k){k==='__vesta__'?openFinalDoor(k):startTrade(k)});
     hideReveal();   /* explicit tucked state at boot */
   }
   function hideReveal(){
