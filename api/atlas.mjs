@@ -33,7 +33,7 @@ function loadKeys(){
 
 // ── the valid appless surfaces the desk may open (the UI assembles these deterministically) ──
 export const SCREENS = new Set([
-  'office','sim','offer','lens','fitcall','numbers','faq','contact',
+  'office','sim','offer','lens','fitcall','numbers','faq','contact','vesta',
   'room:lead','room:storm','room:camp','room:book','room:follow','room:reviews','room:local','room:briefs',
 ]);
 
@@ -42,7 +42,7 @@ export const DEFLECT = 'That one deserves a person, not a guess — book the 20-
 
 // ── §9 banned list, server-side. A tripped `say` is replaced by DEFLECT, never shipped.
 //    "not a software seat" is the pack's own approved framing; the negated form stays legal.
-export function claimSafe(say){
+export function claimSafe(say, echoNums){
   const t = String(say);
   if (/AI[- ]powered/i.test(t)) return false;
   if (/\breceptionist\b/i.test(t)) return false;
@@ -54,9 +54,16 @@ export function claimSafe(say){
   if (/!/.test(t)) return false;                                // no exclamation marks (voice.md)
   if (/\$|\b1,?500\b/.test(t)) return false;                    // fit-call posture: never a price figure
   // any bare performance number that isn't the one hedged claim (15s) or the standing terms
-  // (20-min call, 30-day guarantee, 463 Vesta profiles) is an unreceipted claim → deflect
-  const nums = t.match(/\d+/g) || [];
+  // (20-min call, 30-day guarantee, 463 Vesta profiles) is an unreceipted claim → deflect.
+  // Two measured false-positives softened 7/18 (a storm-season follow-up deflected 3/4):
+  //   - "24/7" is the desk's own deterministic coverage copy — strip the idiom before scanning
+  //   - a number the CONTRACTOR typed themselves (crew size, lead counts) is THEIR fact, not
+  //     our claim — echoing it back is conversation, not an unreceipted promise (echoNums =
+  //     digits harvested from the user's own turns; absent → strict scan, so the battery's
+  //     single-arg calls keep their teeth)
+  const nums = t.replace(/\b24\/7\b/g, '').match(/\d+/g) || [];
   const allow = new Set(['4','15','20','30','463']);
+  if (echoNums) for (const n of echoNums) allow.add(String(n));
   for (const n of nums) if (!allow.has(n)) return false;
   return true;
 }
@@ -76,6 +83,8 @@ The rooms of the office (each maps to a screen you can open): Lead Response, Sto
 LENS (free, beta): 4THWALL's free, private trust workspace for contractors. Connect the tools you already run, review every fact your operating record supports — each source-labeled and correction-capable — and control exactly what a homeowner could see. Nothing publishes without you. Free to start at /lens.
 
 VESTA (the homeowner side): a free guide to Fairfield County contractors, matching homeowners against 463 evidence-backed profiles built from the public record, with the why behind each pick. No ads, no pay-to-play. Contractors cannot pay for placement — Vesta orders by evidence, that's the whole point.
+
+IF THE PERSON IS A HOMEOWNER (they have a home problem or need a contractor — a leaking roof, a dead furnace, "can you send someone" — rather than running a trades business): Atlas is not for them and you do not dispatch anyone. Warmly say Vesta is the side built for them and open the "vesta" screen — that IS the help. Never triage their home problem here, never guess at their repair, and never send a homeowner to the fit call.
 
 THE FLYWHEEL (say ONLY as customer benefit, never as our strategy): Atlas runs your front office, so every response and close is real recorded work. That record becomes evidence — measured, source-labeled. Lens puts you in control of it. Vesta uses evidence, never ads, to point homeowners at the right firm. Better work wins more work; both sides stop guessing.
 
@@ -98,7 +107,7 @@ Return ONLY one JSON object, no prose, no markdown:
 {"say": string, "screen": string|null}
 - say: your spoken reply, following every rule above.
 - screen: open an appless surface when it fits, else null. Exactly one of:
-  "office" (they want the whole system / what Atlas does) · "room:lead" "room:storm" "room:camp" "room:book" "room:follow" "room:reviews" "room:local" "room:briefs" (a specific capability) · "sim" (show the missed-call recovery happening) · "offer" (pricing / how it works commercially) · "lens" (the free workspace) · "fitcall" (they're ready to talk / book a call) · "numbers" (they're weighing the cost of the problem — what missed calls / slow replies / storm season are costing them, or whether to hire an office person; the calculators let them compute it from their OWN inputs) · "faq" (a logistics or "what's the catch" question — what's included, is it another tool to learn, does it answer calls, CRM fit, how fast it goes live, how to cancel) · "contact" (they want to send a message or reach a person another way, short of booking the call) · null (pure conversation).
+  "office" (they want the whole system / what Atlas does) · "room:lead" "room:storm" "room:camp" "room:book" "room:follow" "room:reviews" "room:local" "room:briefs" (a specific capability) · "sim" (show the missed-call recovery happening) · "offer" (pricing / how it works commercially) · "lens" (the free workspace) · "vesta" (the person is a HOMEOWNER looking for a contractor — open the homeowner guide) · "fitcall" (they're ready to talk / book a call) · "numbers" (they're weighing the cost of the problem — what missed calls / slow replies / storm season are costing them, or whether to hire an office person; the calculators let them compute it from their OWN inputs) · "faq" (a logistics or "what's the catch" question — what's included, is it another tool to learn, does it answer calls, CRM fit, how fast it goes live, how to cancel) · "contact" (they want to send a message or reach a person another way, short of booking the call) · null (pure conversation).
 - When you open "numbers", the calculator produces the figures from the contractor's own sliders — you still state NO number yourself; introduce it and let them move the sliders.
 Choose the screen that best serves what they just asked; when unsure, null.`;
 }
@@ -184,18 +193,34 @@ export default async function handler(req, res){
   // lives in the client; this keeps the API contract intact even when the pool is down)
   if (!alive){ res.statusCode = 200; return res.end(JSON.stringify({ say: DEFLECT, screen: 'fitcall', off: true })); }
 
+  // numbers the contractor typed themselves are safe to echo back (see claimSafe)
+  const echo = new Set();
+  for (const m of messages) if (m.role === 'user')
+    for (const n of (String(m.content).match(/\d+/g) || [])) echo.add(n);
+
   let raw = null;
   try { raw = await generate(keys, messages); } catch { /* fall through */ }
-  const parsed = raw ? extractJSON(raw) : null;
+  let parsed = raw ? extractJSON(raw) : null;
+
+  // one fresh regeneration before deflecting — a guard trip is usually a phrasing the model
+  // doesn't repeat (measured 7/18: a natural storm-season follow-up deflected 3/4 without
+  // this; the clean generations prove the answer is there). Never retries a safe answer.
+  let retried = false;
+  if (raw && (!parsed || typeof parsed.say !== 'string' || !claimSafe(parsed.say, echo))){
+    retried = true;
+    try { raw = await generate(keys, messages); } catch { /* fall through */ }
+    const second = raw ? extractJSON(raw) : null;
+    if (second && typeof second.say === 'string' && claimSafe(second.say, echo)) parsed = second;
+  }
 
   let say = parsed && typeof parsed.say === 'string' ? parsed.say.replace(/<unk>/g, '').trim() : '';
   let screen = parsed && typeof parsed.screen === 'string' && SCREENS.has(parsed.screen) ? parsed.screen : null;
 
   // the final authority: anything the pack forbids never ships. A tripped or empty answer
   // becomes the honest deflection + the fit-call door — the desk never fabricates.
-  if (!say || !claimSafe(say)){ say = DEFLECT; screen = 'fitcall'; }
+  if (!say || !claimSafe(say, echo)){ say = DEFLECT; screen = 'fitcall'; }
 
-  console.log(`atlas: ${parsed ? (claimSafe(parsed.say||'') ? 'ok' : 'unsafe→deflect') : 'nojson→deflect'} screen=${screen||'null'}`);
+  console.log(`atlas: ${parsed ? (claimSafe(parsed.say||'', echo) ? 'ok' : 'unsafe→deflect') : 'nojson→deflect'} retried=${retried} screen=${screen||'null'}`);
   res.statusCode = 200;
   return res.end(JSON.stringify({ say, screen }));
 }

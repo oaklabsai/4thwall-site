@@ -1666,6 +1666,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       '<div class="fds-doors"><a href="/lens">start free with Lens →</a><a data-door="office">← the office</a></div>',
       wireScreenDoors);
   }
+  function vestaVisual(){
+    showScreen('<span class="fds-kicker">the homeowner side</span><h3 class="fds-h">Vesta — choose with evidence</h3>'+
+      '<p class="fds-sub">A free guide to Fairfield County contractors — 463 evidence-backed profiles built from the public record, with the why behind each pick. No ads, no pay-to-play; Vesta orders by evidence.</p>'+
+      '<div class="fds-doors"><a href="/vesta">open Vesta →</a><a data-door="office">← the office</a></div>',
+      wireScreenDoors);
+  }
   function fitcallVisual(){
     showScreen('<span class="fds-kicker">the next step</span><h3 class="fds-h">A 20-minute fit call — with the founder</h3>'+
       '<p class="fds-sub">We show the office working on your business, in plain numbers. Thirty days, no contract — if the first month’s receipt doesn’t justify the fee, fire us. If we’re not the right fit, we’ll say so first.</p>'+
@@ -1725,7 +1731,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         '<div class="res-row"><span class="rrl">Hours covered / week</span><span class="rrv" id="om-r3">—</span></div>'+
         '<div class="res-row"><span class="rrl">After-hours + storm coverage</span><span class="rrv" id="om-r4">—</span></div>'+
         '<div class="res-row"><span class="rrl">4THWALL — 24/7, bilingual</span><span class="rrv g" id="om-r5">—</span></div></div></div>'+
-        '<div class="res-price">That’s the cost of <b>one local hire</b> — before benefits, management, and the nights and weekends they don’t cover. Atlas runs the whole office for a fraction of a hire; the exact number is <b>set on a 20-minute fit call</b>, in plain terms. Every supported inbound text or missed-call follow-up gets a first response in under 60 seconds after go-live, or the month is free.</div>'+
+        '<div class="res-price">That’s the cost of <b>one local hire</b> — before benefits, management, and the nights and weekends they don’t cover. Atlas runs the whole office for a fraction of a hire; the exact number is <b>set on a 20-minute fit call</b>, in plain terms. Supported texts typically get a first reply in 15 seconds after go-live — and if the first month’s receipt doesn’t justify the fee, <b>fire us</b>. Thirty days, no contract.</div>'+
         '<a data-door="fitcall" class="res-cta">Replace the hire <span class="arr">→</span></a></div></div>'+
       '</div>'+
       '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a data-door="office">← the office</a></div>';
@@ -1826,6 +1832,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     if(s==='sim')return simVisual();
     if(s==='offer')return offerVisual();
     if(s==='lens')return lensVisual();
+    if(s==='vesta')return vestaVisual();
     if(s==='fitcall')return fitcallVisual();
     if(s==='numbers')return assembleRevenue();
     if(s==='faq')return assembleFAQ();

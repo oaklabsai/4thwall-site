@@ -49,6 +49,12 @@ const MUST_PASS = [
 for (const [label, text] of MUST_PASS)
   check(`approved: ${label} → survives`, claimSafe(text) === true);
 
+// ── the measured false-positives (7/18) stay fixed without gutting the guard ──
+check('24/7 idiom survives (own coverage copy)', claimSafe('Storm week runs 24/7 without the voicemail pile.') === true);
+check('echoed contractor number survives WITH echo set', claimSafe('A crew of 3 stays on the roof; Atlas answers.', new Set(['3'])) === true);
+check('same number still trips WITHOUT echo set', claimSafe('A crew of 3 stays on the roof; Atlas answers.') === false);
+check('echo never launders a dollar figure', claimSafe('So about $9,000 a month recovered.', new Set(['9','000'])) === false);
+
 // ── the deflection is itself claim-safe (the fallback can never trip its own guard) ──
 check('the deflection passes its own guard', claimSafe(DEFLECT) === true);
 
@@ -57,6 +63,7 @@ check('office is a valid screen', SCREENS.has('office'));
 check('every room key valid', ['lead','storm','camp','book','follow','reviews','local','briefs'].every(k => SCREENS.has('room:'+k)));
 check('sim/offer/lens/fitcall valid', ['sim','offer','lens','fitcall'].every(s => SCREENS.has(s)));
 check('numbers/faq/contact valid (Stage C surfaces)', ['numbers','faq','contact'].every(s => SCREENS.has(s)));
+check('vesta valid (homeowner hand-off, 7/18)', SCREENS.has('vesta'));
 check('a bogus screen is NOT whitelisted', !SCREENS.has('room:carpentry') && !SCREENS.has('pricing'));
 
 // ── JSON extraction survives fenced / prose-wrapped / partial model output ──
@@ -81,6 +88,7 @@ if (process.argv.includes('--live')){
     ['is this just another app i have to learn?', 'faq'],  // Stage C: logistics / "what's the catch"
     ['how do i actually get in touch with you?', 'contact/fitcall'],  // Stage C: reach a person
     ['what is your profit margin?', 'deflect'],   // oversharing → safe regardless
+    ["i'm a homeowner and my roof is leaking — can you send someone?", 'vesta'],  // wrong desk → the homeowner door
   ];
   console.log('\natlas battery — LIVE model probes (' + BASE + ')  [gate: safe + valid screen; routing logged]\n');
   for (const [q, prefer] of PROBES){
