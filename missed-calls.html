@@ -164,6 +164,10 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 .mcs-island{position:absolute;top:.62rem;left:50%;transform:translateX(-50%);width:80px;height:21px;background:#0e0d0a;border-radius:999px;z-index:4}
 .mcs-status{position:absolute;top:.74rem;left:0;right:0;display:flex;justify-content:space-between;padding:0 1.2rem;font:600 .63rem/1 var(--mono);color:var(--ink);letter-spacing:.02em;z-index:2}
 .mcs-status span:last-child{opacity:.75;letter-spacing:.08em}
+/* the Demo / Try it toggle at the top of the phone */
+.mcs-seg{display:flex;gap:2px;flex:none;background:var(--well);border-radius:11px;padding:3px;margin-bottom:.55rem;box-shadow:var(--nm-in)}
+.mcs-seg button{flex:1;border:none;background:none;font:600 .74rem/1 var(--body);color:var(--muted);padding:.44rem .3rem;border-radius:8px;cursor:pointer;transition:background .2s,color .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
+.mcs-seg button.on{background:var(--white);color:var(--ink);box-shadow:var(--nm-sm)}
 .mcs-callbar{display:flex;align-items:center;gap:.55rem;background:var(--well);box-shadow:var(--nm-in);border-radius:14px;padding:.68rem .85rem;font:600 .79rem/1.3 var(--body);color:var(--ink);transition:opacity .5s,background .5s;flex:none}
 .mcs-ring{width:9px;height:9px;border-radius:50%;background:#7a8f3d;animation:fdBreath 1s ease-in-out infinite;flex:none}
 .mcs-callbar.missed{opacity:.6}
@@ -322,6 +326,10 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
       <div class="mcs-phone"><div class="mcs-screen">
         <div class="mcs-island"></div>
         <div class="mcs-status"><span id="mcsClock">2:14</span><span>5G ▪ 87%</span></div>
+        <div class="mcs-seg" id="mcsSeg" role="tablist" aria-label="Demo or try it live">
+          <button type="button" class="on" data-mode="demo" role="tab">Demo</button>
+          <button type="button" data-mode="try" role="tab">Try it</button>
+        </div>
         <div class="mcs-thread" id="mcsThread"></div>
         <form class="mcs-input" id="mcsForm" autocomplete="off">
           <input id="mcsMsg" type="text" placeholder="Watch the demo…" maxlength="500" disabled aria-label="Your message">
@@ -329,8 +337,8 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
         </form>
       </div></div>
       <div class="mcs-cap" id="mcsCap"></div>
-      <button type="button" class="mcs-reset" id="mcsReset">↺ replay the demo</button>
-      <p class="mcs-note">A labeled simulation — then the same thread goes <b>live</b> and answers for real. Switch trades to see another.</p>
+      <button type="button" class="mcs-reset" id="mcsReset">↺ replay</button>
+      <p class="mcs-note"><b>Demo</b> is a labeled simulation. <b>Try it</b> is the live front desk — it answers for real. Switch trades to change the scenario.</p>
       <span class="cta-alt" style="margin-top:.8rem;display:block">Ready to put this on your business? <a href="/atlas#contact">Let's talk.</a></span>
     </section>
     </div>
@@ -446,32 +454,40 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     if(on&&!ex){var t=document.createElement('div');t.className='mcs-typing';t.id='mcsTyping';t.innerHTML='<span class="mcs-gooey"><i></i><i></i><i></i></span>';mThread.appendChild(t);void t.offsetWidth;t.classList.add('in');mThread.scrollTop=mThread.scrollHeight;}
     else if(!on&&ex){ex.remove();}
   }
-  function mcsPlay(trade){
-    gen++; var g=gen, sim=SIMS[trade], T=TRADES[trade], i=0; if(!sim||!T) return;
-    live=false;
-    mThread.innerHTML='';
-    var ck=document.getElementById('mcsClock'); if(ck)ck.textContent=sim.clock;
-    var cap=document.getElementById('mcsCap'); if(cap)cap.innerHTML='<b>'+sim.biz+'</b> — '+sim.label;
-    mInput.value=''; mInput.disabled=true; mSend.disabled=true; mInput.placeholder='Watch the demo…';
+  var mode='demo';   // 'demo' = scripted sim (watch), 'try' = live front desk (type)
+  function setHeader(trade){
+    var sim=SIMS[trade];
+    var ck=document.getElementById('mcsClock'); if(ck&&sim)ck.textContent=sim.clock;
+    var cap=document.getElementById('mcsCap'); if(cap&&sim)cap.innerHTML='<b>'+sim.biz+'</b> — '+sim.label;
+  }
+  function playDemo(trade){
+    gen++; var g=gen, sim=SIMS[trade], i=0; if(!sim) return;
+    live=false; mThread.innerHTML=''; setHeader(trade);
+    mInput.value=''; mInput.disabled=true; mSend.disabled=true; mInput.placeholder='Switch to “Try it” to text →';
     function step(){
       if(g!==gen) return;
-      if(i>=sim.turns.length){ setTimeout(function(){goLive(g,T);},1100); return; }
+      if(i>=sim.turns.length) return;   // the demo just ends — toggle to “Try it” for live
       var s=sim.turns[i++];
       if(s[0]==='them'){
         mTyping(true);
         setTimeout(function(){if(g!==gen)return;mTyping(false);mBubble('them',s[1],s[2]);setTimeout(step,1300);},1200);
       } else { mBubble(s[0],s[1],s[2]); setTimeout(step,s[0]==='me'?1300:1000); }
     }
-    setTimeout(function(){if(g!==gen)return;step();},800);
+    setTimeout(function(){if(g!==gen)return;step();},700);
   }
-  function goLive(g,T){
-    if(g!==gen) return;
-    var div=document.createElement('div');div.className='mcs-divide';div.innerHTML='<span>now you try — live</span>';mThread.appendChild(div);
+  function startLive(trade){
+    gen++; var g=gen, T=TRADES[trade]; if(!T) return;
+    live=true; mThread.innerHTML=''; setHeader(trade);
     lchat=[{role:'assistant',content:T.greet}];
     mBubble('them',T.greet);
-    live=true;
-    mInput.disabled=false; mSend.disabled=false; mInput.placeholder='Text like a customer would…';
-    mThread.scrollTop=mThread.scrollHeight;
+    mInput.value=''; mInput.disabled=false; mSend.disabled=false; mInput.placeholder='Text like a customer would…';
+    try{mInput.focus();}catch(e){}
+  }
+  function setMode(m){
+    mode=m;
+    var segs=document.querySelectorAll('#mcsSeg button');
+    for(var i=0;i<segs.length;i++){ segs[i].classList.toggle('on', segs[i].getAttribute('data-mode')===m); }
+    if(m==='try') startLive(curTrade); else playDemo(curTrade);
   }
 
   var curTrade='roofing';
@@ -498,14 +514,18 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     var chips=document.querySelectorAll('.tp-chip');
     for(var i=0;i<chips.length;i++){ chips[i].setAttribute('aria-pressed', chips[i].getAttribute('data-trade')===t?'true':'false'); }
     if(el.ticket){ el.ticket.value=TRADES[t].ticket; calc(); }   // this trade's realistic average-job default
-    mcsPlay(t);   // replay the sim for this trade, which then hands off to live
+    setMode(mode);   // re-run whichever mode is active (Demo or Try it) for the new trade
   }
   document.getElementById('mcsForm').addEventListener('submit', function(e){ e.preventDefault(); sendLive(mInput.value); });
   document.getElementById('tp-chips').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('.tp-chip') : null;
     if (b) selectTrade(b.getAttribute('data-trade'));
   });
-  var mReset=document.getElementById('mcsReset'); if(mReset) mReset.addEventListener('click', function(){ mcsPlay(curTrade); });
+  document.getElementById('mcsSeg').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('button[data-mode]') : null;
+    if (b) setMode(b.getAttribute('data-mode'));
+  });
+  var mReset=document.getElementById('mcsReset'); if(mReset) mReset.addEventListener('click', function(){ setMode(mode); });
   selectTrade('roofing');
 })();
 </script>
