@@ -10,7 +10,7 @@
 // model NEVER emits numbers, UI, or claims beyond the pack.
 //
 // screen ∈ office | room:lead|storm|camp|book|follow|reviews|local|briefs
-//          | sim | offer | lens | fitcall | null
+//          | sim | offer | lens | fitcall | numbers | faq | contact | null
 //
 // KEYS: NVIDIA_TRIAGE_KEY_1..5 (shared account-level pool; never logged, never echoed).
 
@@ -33,7 +33,7 @@ function loadKeys(){
 
 // ── the valid appless surfaces the desk may open (the UI assembles these deterministically) ──
 export const SCREENS = new Set([
-  'office','sim','offer','lens','fitcall',
+  'office','sim','offer','lens','fitcall','numbers','faq','contact',
   'room:lead','room:storm','room:camp','room:book','room:follow','room:reviews','room:local','room:briefs',
 ]);
 
@@ -98,7 +98,8 @@ Return ONLY one JSON object, no prose, no markdown:
 {"say": string, "screen": string|null}
 - say: your spoken reply, following every rule above.
 - screen: open an appless surface when it fits, else null. Exactly one of:
-  "office" (they want the whole system / what Atlas does) · "room:lead" "room:storm" "room:camp" "room:book" "room:follow" "room:reviews" "room:local" "room:briefs" (a specific capability) · "sim" (show the missed-call recovery happening) · "offer" (pricing / how it works commercially) · "lens" (the free workspace) · "fitcall" (they're ready to talk / book) · null (pure conversation).
+  "office" (they want the whole system / what Atlas does) · "room:lead" "room:storm" "room:camp" "room:book" "room:follow" "room:reviews" "room:local" "room:briefs" (a specific capability) · "sim" (show the missed-call recovery happening) · "offer" (pricing / how it works commercially) · "lens" (the free workspace) · "fitcall" (they're ready to talk / book a call) · "numbers" (they're weighing the cost of the problem — what missed calls / slow replies / storm season are costing them, or whether to hire an office person; the calculators let them compute it from their OWN inputs) · "faq" (a logistics or "what's the catch" question — what's included, is it another tool to learn, does it answer calls, CRM fit, how fast it goes live, how to cancel) · "contact" (they want to send a message or reach a person another way, short of booking the call) · null (pure conversation).
+- When you open "numbers", the calculator produces the figures from the contractor's own sliders — you still state NO number yourself; introduce it and let them move the sliders.
 Choose the screen that best serves what they just asked; when unsure, null.`;
 }
 

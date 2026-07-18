@@ -911,6 +911,39 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .feed-divider { display:flex; align-items:center; gap:14px; margin:20px 0 12px; }
 .feed-divider::before, .feed-divider::after { content:''; flex:1; height:1px; background:rgba(74,75,47,.14); }
 .feed-divider span { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--ebony); opacity:.66; white-space:nowrap; }
+/* ── The names feed (Drew, 7/18) — the desktop scroll surface is the FIELD as a
+   typographic index: one company name per row, dim at rest, lit on hover. The Vesta
+   read isn't gone — it rides the cursor (.vname-card) on hover and fills the right
+   panel on click. "The text is just their company name." ── */
+.vfeed { position:relative; display:flex; flex-direction:column; padding:8px 0 44px; }
+@keyframes vnameIn { from { opacity:0; transform:translateY(9px); } }
+.vname { position:relative; display:block; width:100%; text-align:left; background:none; border:0; cursor:pointer;
+  font-family:var(--serif); font-weight:420; font-size:clamp(25px,3.3vw,43px); line-height:1.05; letter-spacing:-.021em;
+  color:var(--ebony); opacity:.5; padding:12px 4px; transition:opacity .22s ease, color .22s ease, transform .3s var(--spring);
+  animation:vnameIn .42s var(--spring) backwards; animation-delay:var(--d,0ms); }
+.vname:hover, .vname:focus-visible { opacity:1; color:var(--olive); outline:none; transform:translateX(7px); }
+.vfeed.vfeed--hot .vname:not(:hover) { opacity:.26; }   /* Originkit dim-siblings */
+.vname.vname--active { opacity:1; color:var(--olive); }
+.vname.vname--active::before { content:''; position:absolute; left:-12px; top:50%; transform:translateY(-50%); width:4px; height:.62em; border-radius:3px; background:var(--olive); }
+@keyframes vnameFlash { 0%,100% { color:var(--ebony); } 30%,60% { color:var(--olive); opacity:1; } }
+.vname.flash { animation:vnameFlash 1.4s ease; }
+/* the floating profile card that rides the cursor */
+.vname-card { position:absolute; top:0; left:0; z-index:40; width:272px; pointer-events:none;
+  background:var(--nm); border:var(--nm-edge); border-radius:var(--r-tile); box-shadow:var(--nm-out); overflow:hidden;
+  opacity:0; transform:translateY(-50%) scale(.96); transform-origin:left center;
+  transition:opacity .18s ease, transform .32s var(--spring), left .3s var(--spring), top .3s var(--spring); will-change:left, top; }
+.vname-card.vname-card--on { opacity:1; transform:translateY(-50%) scale(1); }
+.vname-card-photo { display:block; width:100%; aspect-ratio:16/10; object-fit:cover; background:rgba(74,75,47,.09); }
+.vname-card-body { padding:13px 15px 15px; }
+.vname-card-name { font-family:var(--serif); font-weight:500; font-size:17px; line-height:1.14; color:var(--olive); }
+.vname-card-town { font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:.045em; text-transform:uppercase; color:var(--ebony); opacity:.72; margin:3px 0 8px; }
+.vname-card-read { font-family:var(--sans); font-size:12.5px; line-height:1.5; color:var(--ebony); margin:0; }
+.vname-card-best { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+.vname-card-best span { display:inline-flex; align-items:center; gap:4px; font-family:var(--sans); font-size:10.5px; font-weight:600; color:var(--olive); background:rgba(212,223,158,.34); border-radius:var(--r-pill); padding:3px 9px; }
+.vname-card-best span svg { width:10px; height:10px; }
+.vname-card-hint { display:flex; align-items:center; gap:6px; margin-top:11px; font-family:var(--sans); font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--olive); opacity:.82; }
+.vname-card-hint svg { width:12px; height:12px; }
+@media (prefers-reduced-motion:reduce){ .vname { animation:none; transition:opacity .12s ease; } .vname:hover { transform:none; } .vname-card { transition:opacity .14s ease; } }
 @media (min-width:600px){ .mw-opts { grid-template-columns:1fr 1fr; } .mw-opt--wide { grid-column:1 / -1; } }
 /* quiet "or just describe it" affordance at the foot of the triage screens (LLM lane) */
 .mw-describe { display:block; margin:18px auto 0; background:none; border:none; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--ebony); cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:6px 4px; }
@@ -975,6 +1008,22 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   font-family:var(--script); font-size:18px; font-weight:700; line-height:1.05; color:var(--olive); font-style:oblique 7deg; cursor:pointer; box-shadow:var(--sh-row); transition:border-color .16s, transform .16s, background .16s; }
 .tc-chip > span { padding-bottom:3px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px; }
 .tc-chip:hover { border-color:var(--olive); transform:translateY(-1px); background:var(--white); }
+/* Atlas/Lens hand-off inside a Vesta Live turn (Drew, 7/18) — when the visitor is a CONTRACTOR,
+   not a homeowner, Vesta introduces the contractor's side. Two doors: LENS (the free way to set up
+   + verify your account) is primary; ATLAS (the fuller managed service) is secondary. Atlas-toned
+   (warm sand on ink) so it reads as the OTHER product, never a Vesta match. Shared by both threads. */
+.v-handoff { display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin:4px 0 6px; }
+#tc-thread .v-handoff { margin-left:37px; }   /* match the tc avatar gutter */
+.v-atlas-cta { display:inline-flex; align-items:center; gap:9px; text-decoration:none;
+  background:linear-gradient(180deg,#211e16,#191712); border:1px solid rgba(222,206,164,.28); border-radius:14px;
+  padding:12px 18px; color:#ece2c8; font-family:var(--sans); font-size:14px; font-weight:600; letter-spacing:-.01em;
+  box-shadow:0 6px 20px -8px rgba(18,16,14,.5); transition:transform .16s var(--spring), border-color .16s; }
+.v-atlas-cta:hover { transform:translateY(-1px); border-color:rgba(222,206,164,.55); }
+.v-atlas-cta .vac-mark { font-family:var(--serif); color:#dcceaa; font-weight:600; }
+.v-atlas-cta .vac-arrow { color:#dcceaa; }
+.v-atlas-cta--free { border-color:rgba(222,206,164,.5); }
+.v-atlas-cta--free .vac-free { font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:#191712; background:#dcceaa; border-radius:999px; padding:2px 7px; }
+@media (prefers-reduced-motion:reduce){ .v-atlas-cta:hover { transform:none; } }
 /* Emergency hand-off: a decisive life-safety call-to-action (not a match, not dispatch). */
 .vm-emg-wrap { grid-template-columns:1fr; }
 .vm-emg-call { display:flex; align-items:center; justify-content:center; gap:9px; min-height:50px; border-radius:14px; background:#B23A2E; color:#fff; font-family:var(--sans); font-size:15.5px; font-weight:700; letter-spacing:.01em; text-decoration:none; box-shadow:0 7px 18px -6px rgba(178,58,46,.55); transition:transform .14s, box-shadow .14s; }
@@ -4473,9 +4522,8 @@ function applyFeed(){
   renderFeedNeeds();
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
   feed.innerHTML = feedListHTML(list) + (S.match && S.match.job ? '' : silentTailHTML(S.activeTrade));
-  list.forEach(wireFeedCard);
+  wireNamesFeed(list);
   wireSilentTail();
-  lazyCovers(feed);
   renderFeedRail(); syncSavedUI();
 }
 // Desktop problem-first entry: a search box + problem pills bar above the feed, so the desktop
@@ -4545,18 +4593,84 @@ function feedMoreHTML(con){
 // The feed body: in match mode, drop a "best-reviewed below" divider at the matcher/non-matcher
 // boundary (wide + narrowed tiers) — the literal "Vesta's picks → the rest" shape. Sharp tier is
 // matchers-only (hard-filtered upstream), so it never divides.
+// The names feed row — just the company name (Drew, 7/18). Everything else (town, trade,
+// the read, best-for) lives in the hover card and the click-panel, so the list stays a clean
+// typographic index of the field.
+function nameRowHTML(con, i){
+  return '<button class="vname" type="button" data-place="'+esc(con.placeId)+'" style="--d:'+(Math.min(i||0,14)*24)+'ms">'+esc(con.name)+'</button>';
+}
+// The floating profile that rides the cursor on hover — the essence of the profile:
+// a work photo, the name/town/trade, Vesta's read (lede), and the two best-for tags.
+function nameCardInner(con){
+  const glance = splitRead(con.read||'');
+  const lede = glance.lede || readClip(con.read||'');
+  const best = ((con.bestFor && con.bestFor.length) ? con.bestFor : (con.knownFor||[])).slice(0,2);
+  const cover = HOME.apiUrl('/cover?placeId='+encodeURIComponent(con.placeId)+'&w=480');
+  return (con.placeId?'<img class="vname-card-photo" alt="" decoding="async" src="'+esc(cover)+'" onerror="this.remove()">':'')+
+    '<div class="vname-card-body">'+
+      '<div class="vname-card-name">'+esc(con.name)+'</div>'+
+      '<div class="vname-card-town">'+esc(con.town)+' · '+esc(tradeLabelOf(con.trade))+'</div>'+
+      (lede?'<p class="vname-card-read">'+esc(lede)+'</p>':'')+
+      (best.length?'<div class="vname-card-best">'+best.map(v=>'<span>'+CHECK+esc(trecHumanize(v))+'</span>').join('')+'</div>':'')+
+      '<div class="vname-card-hint">'+SPARK+'Click for the full read</div>'+
+    '</div>';
+}
 function feedListHTML(list){
-  if (!(S.match && S.match.job)) return list.map(feedCardHTML).join('');
-  const sharp = honestyTier(jobCoverage(S.activeTrade, S.match.job)) === 'sharp';
-  let out = '', divided = false, i = 0;
-  list.forEach(con => {
-    if (!sharp && !divided && matchScore(con, S.match) === 0){
-      out += '<div class="feed-divider"><span>More '+esc(tradePlural(S.activeTrade))+' · best-reviewed</span></div>';
-      divided = true;
-    }
-    out += feedCardHTML(con, i++);
+  let inner = '';
+  if (!(S.match && S.match.job)){
+    inner = list.map((con,i) => nameRowHTML(con,i)).join('');
+  } else {
+    const sharp = honestyTier(jobCoverage(S.activeTrade, S.match.job)) === 'sharp';
+    let divided = false, i = 0;
+    list.forEach(con => {
+      if (!sharp && !divided && matchScore(con, S.match) === 0){
+        inner += '<div class="feed-divider"><span>More '+esc(tradePlural(S.activeTrade))+' · best-reviewed</span></div>';
+        divided = true;
+      }
+      inner += nameRowHTML(con, i++);
+    });
+  }
+  return '<div class="vfeed" id="vfeed">'+inner+'<div class="vname-card" id="vname-card" aria-hidden="true"></div></div>';
+}
+// Click a name → the full analysis fills the desktop panel (reuses renderPanel — same read the
+// deck shows). Hover fills the cursor-card; leave restores the field rail is NOT auto — a click
+// commits the selection, another name replaces it, a re-render (trade/filter) returns the rail.
+function selectName(con, btn){
+  document.querySelectorAll('#vfeed .vname--active').forEach(b => b.classList.remove('vname--active'));
+  if (btn) btn.classList.add('vname--active');
+  renderPanel(con); pushHistory(con,'view');
+  const p = $('vpanel'); if (p) p.scrollTop = 0;
+}
+function wireNamesFeed(list){
+  const vf = $('vfeed'); if (!vf) return;
+  const card = $('vname-card'); if (!card) return;
+  const byId = {}; list.forEach(c => byId[c.placeId] = c);
+  let raf = 0, mx = 0, my = 0;
+  function place(){
+    raf = 0;
+    const r = vf.getBoundingClientRect();
+    const cw = card.offsetWidth || 272, ch = card.offsetHeight || 240;
+    let left = mx + 34;                                   // sit to the right of the cursor…
+    if (left + cw > r.width - 8) left = mx - cw - 34;     // …flip left if it would overflow
+    left = Math.max(8, left);
+    const top = Math.min(Math.max(my, ch/2 + 8), Math.max(ch/2 + 8, r.height - ch/2 - 8));
+    card.style.left = left+'px'; card.style.top = top+'px';
+  }
+  vf.addEventListener('mousemove', e => {
+    const r = vf.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
+    if (!raf) raf = requestAnimationFrame(place);
   });
-  return out;
+  vf.addEventListener('mouseleave', () => { vf.classList.remove('vfeed--hot'); card.classList.remove('vname-card--on'); });
+  vf.querySelectorAll('.vname').forEach(btn => {
+    const con = byId[btn.dataset.place]; if (!con) return;
+    btn.addEventListener('mouseenter', () => {
+      vf.classList.add('vfeed--hot');
+      card.innerHTML = nameCardInner(con);
+      card.classList.add('vname-card--on');
+      place();
+    });
+    btn.addEventListener('click', () => selectName(con, btn));
+  });
 }
 function feedRecordBits(con){
   const bits=[];
@@ -4874,17 +4988,18 @@ function renderFeed(){
   if (!S.dataLoaded){ feed.innerHTML='<div class="feed-empty">Loading vetted pros…</div>'; renderFeedRail(); return; }
   if (!list.length){ feed.innerHTML='<div class="feed-empty">No pros match those filters — try clearing one.</div>'; renderFeedRail(); syncSavedUI(); return; }
   feed.innerHTML = feedListHTML(list) + (S.match && S.match.job ? '' : silentTailHTML(S.activeTrade));
-  list.forEach(wireFeedCard);
+  wireNamesFeed(list);
   wireSilentTail();
-  lazyCovers(feed);
   renderFeedRail(); syncSavedUI();
 }
+// Search → jump to the firm in the names feed: scroll it into view, open its full read in the
+// panel, and flash the row so the eye lands on it.
 function focusFeedCard(placeId){
-  const card=[...document.querySelectorAll('#feed .fcard')].find(el=>el.dataset.place===placeId); if(!card) return;
-  card.scrollIntoView({behavior:'smooth', block:'center'});
-  const disc=card.querySelector('.fcard-disclose'), more=card.querySelector('.fcard-more');
-  if(more && !more.classList.contains('open')){ more.classList.add('open'); if(disc) disc.setAttribute('aria-expanded','true'); }
-  card.classList.add('flash'); setTimeout(()=>card.classList.remove('flash'),1500);
+  const row=[...document.querySelectorAll('#vfeed .vname')].find(el=>el.dataset.place===placeId); if(!row) return;
+  row.scrollIntoView({behavior:'smooth', block:'center'});
+  const con=contractors.find(x=>x.placeId===placeId);
+  if(con) selectName(con, row);
+  row.classList.add('flash'); setTimeout(()=>row.classList.remove('flash'),1500);
 }
 
 /* ===== MOBILE FILTER SHEET — same filters as desktop, version-appropriate ===== */
@@ -6961,6 +7076,7 @@ async function vmTurn(text){
       const inp=$('hs-cin'); if(inp){ inp.placeholder='When you’re safe, I’m here to line up the repair.'; inp.disabled=false; }
       return;
     }
+    if(final.mode==='atlas'){ vmBusy=false; vmAtlasHandoff(); const inp=$('hs-cin'); if(inp){ inp.placeholder='Or tell me about a home problem…'; inp.disabled=false; } return; }
     const res=final.resolved;
     const gate=res&&res.trade&&res.job&&tradeMatchable(res.trade)&&tradeBank(res.trade).jobs.some(j=>j.value===res.job)
       && !(vmDeckShown && vmDeckKey===res.trade+'|'+res.job);   // re-affirming the SAME match in a follow-up never re-lands a duplicate deck
@@ -7098,6 +7214,19 @@ function vmChips(chips){
   chips.forEach(c=>{ const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.innerHTML='<span>'+esc(c)+'</span>'; bt.onclick=()=>{ if(!vmBusy&&!vmDone){ wrap.remove(); vmTurn(c); } }; wrap.appendChild(bt); });
   t.appendChild(wrap); vmScroll();
 }
+// Atlas hand-off (Drew, 7/18): the visitor is a contractor, not a homeowner — Vesta advocated
+// for 4THWALL, this is the door to the contractor's side. The composer stays open: if they turn
+// out to have a home problem too, the next turn triages normally.
+function vAtlasCTA(){
+  const wrap=document.createElement('div'); wrap.className='v-handoff';
+  const lens=document.createElement('a'); lens.className='v-atlas-cta v-atlas-cta--free'; lens.href='/lens';
+  lens.innerHTML='<span class="vac-mark">Lens</span><span>Verify your account</span><span class="vac-free">Free</span><span class="vac-arrow" aria-hidden="true">→</span>';
+  const atlas=document.createElement('a'); atlas.className='v-atlas-cta'; atlas.href='/atlas';
+  atlas.innerHTML='<span class="vac-mark">Atlas</span><span>See the contractor’s side</span><span class="vac-arrow" aria-hidden="true">→</span>';
+  wrap.appendChild(lens); wrap.appendChild(atlas);
+  return wrap;
+}
+function vmAtlasHandoff(){ const t=$('vm-thread'); if(!t) return; t.appendChild(vAtlasCTA()); vmScroll(); }
 // Life-safety hand-off: a decisive tap-to-call, rendered only when Vesta's emergency say
 // invoked 911 (server sets final.call). Never a match, never dispatch — the doctrine's
 // "deliver it well." The composer stays open beneath it for the follow-up once they're safe.
@@ -7182,6 +7311,7 @@ function tcChips(chips){
     b.onclick=()=>{ if(S.triChat && !S.triChat.busy){ t.querySelectorAll('.tc-chips').forEach(x=>x.remove()); triTurn(c); } }; wrap.appendChild(b); });
   t.appendChild(wrap); tcScroll();
 }
+function tcAtlasHandoff(){ const t=$('tc-thread'); if(!t) return; t.appendChild(vAtlasCTA()); tcScroll(); }
 // Leaving the chat is a question, not a move — an in-chat offer with a way to stay.
 // Accepting sets S.chatReturn so the walkthrough's back button returns to the thread.
 function tcOffer(mode, reason){
@@ -7246,6 +7376,7 @@ async function triTurn(text){
     c.mode = final.mode || 'fix';
     // history stays under the server's message cap; the model needs continuity, not verbatim
     c.msgs.push({ role:'assistant', content: JSON.stringify({ say:(final.say||'').slice(0,220), resolved: final.resolved||null }) });
+    if(final.mode==='atlas'){ c.busy=false; tcAtlasHandoff(); return; }   // contractor, not homeowner → hand off to Atlas
     // client-side gate — the same bank check triageEnter runs; the server already validated,
     // this catches a bank drift or a not-yet-loaded bank (fails back into the conversation)
     const res = final.resolved;

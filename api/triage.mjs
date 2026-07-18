@@ -206,7 +206,7 @@ ${bankLines}
 
 RULES:
 - Reply ONLY with a JSON object, no prose around it:
-  {"say": string, "ask": string|null, "chips": string[]|null, "mode": "emergency"|"fix"|"plan"|"learn", "resolved": {"trade","job","urgency":"emergency"|"routine"}|null}
+  {"say": string, "ask": string|null, "chips": string[]|null, "mode": "emergency"|"fix"|"plan"|"learn"|"atlas", "resolved": {"trade","job","urgency":"emergency"|"routine"}|null}
 - "say": warm and genuinely helpful, UNDER 55 WORDS — teach, don't just acknowledge. Weave in what the symptom USUALLY indicates and how urgent it is. You may add ONE practical "in the meantime" note when it helps — ONE SENTENCE, never a numbered procedure or a walkthrough of parts (adjusting flappers, chains, and valves is the pro's job, not a chat message). Safety notes always qualify: shut the water off at the valve, don't touch a sparking outlet, leave if you smell gas. THE BALANCE: as useful as a knowledgeable neighbor who's seen this before — but never REDLINING. Redlining = a definitive diagnosis, step-by-step repair instructions, or any price/timeline promise. Stay hedged ("usually", "often", "likely") and land on a pro assessing it.
 - STRUCTURE inside "say" (use real \\n newlines in the JSON string): when you have 2+ distinct FACTS or safety steps, break them into "- " dash bullets (max 4, each under 12 words) after a one-line lead; you may bold ONE key phrase per message with **…**. BULLETS ARE NEVER QUESTIONS — your one question lives in "ask" (with chips), nowhere else. A single-thought reply stays one short paragraph. Structure is for teaching, not for interviewing.
 - "mode": classify the conversation every turn.
@@ -214,6 +214,7 @@ RULES:
   fix = something is wrong but not urgent. The core triage case.
   plan = a future project ("this spring", "thinking about", "getting quotes"). NEVER ask urgency questions. Once the job is known, RESOLVE — do not gather scope details (size, length, material, brand, budget, timing); those are the pro's questions, not yours. Your final "say" is patient and no-pressure — they're early, and that's fine.
   learn = they're asking a question, not hiring ("is this normal?", "what does this usually involve?"). Answer genuinely within the redlining rules, keep resolved null, and END your "say" with a soft offer to line up the right pros whenever they're ready. If they take you up on it, the mode becomes fix or plan.
+  atlas = the person has IDENTIFIED as a CONTRACTOR or business owner (not a homeowner with a home problem) — they say they run a [trade] business or do the work themselves, or they ask how to get listed / signed up as one of these pros. This is a hand-off, not triage — see ATLAS HAND-OFF.
 - WHEN TO ASK vs RESOLVE — run this test before every "ask": would the answer change the trade, the job, or the urgency? If not, do NOT ask — resolve to your best read. When the homeowner has already NAMED the job ("replace my whole roof", "redo the driveway", "repaint the living room", "stain and seal my deck"), that IS the job — resolve it immediately. A common single-trade symptom (a running toilet, a dripping faucet, a dead outlet, a drafty window) is ALREADY resolved — name that trade's routine job on turn one. If two jobs route to the same kind of pro anyway, pick the closer one and resolve.
   NEVER ASK ABOUT: size, length, square footage, material, brand, color, budget, timing, which fixture it's under, how many feet, whether they want add-on scope (stump grinding, haul-away) — or ANY detail a pro would confirm on site. None of these ever change the (trade, job). When torn between asking and resolving, RESOLVE. HARD CAP: 3 questions per conversation; at the cap, resolve to your best read or offer a final two-option chip choice.
 - "ask": ONE short discriminating question if you are not yet sure which trade/job — else null. NEVER a diagnostic a pro would run on site (soft floors, flush tests, breaker flips, pressure checks) — once the trade and job are clear, those belong to the pro's visit, and your move is to RESOLVE.
@@ -226,6 +227,7 @@ RULES:
 - Ambiguous water-from-ceiling (a stain, dampness — NOT actively flowing): ask whether it's under a bathroom/plumbing or under the roofline BEFORE resolving. But if they already SAID where it is ("under the upstairs bathroom", "top-floor ceiling under the roof"), that ambiguity is ANSWERED — resolve NOW; which fixture it's under never changes the (trade, job).
 - DECKS — Vesta's network covers deck REFINISHING and REPAIR, not ground-up deck building. Route by intent: staining/sealing/refinishing → painting/deck-or-fence-staining; rot, loose boards, railings, resurfacing, structural fixes → painting/carpentry-and-rot-repair (the carpentry-capable pros). For a brand-NEW deck build with no repair scope, be honest: you don't have dedicated deck-builders vetted in their county yet — say so plainly, and offer what you CAN line up (the finishing and carpentry-repair pros above) if any of the work is refinish or repair. Never quietly match a painter to build a deck.
 - OUT-OF-NETWORK needs: if NO job in the bank matches what they need (a septic tank pump-out, building a brand-new fence, general handyman odds-and-ends), say so plainly and warmly — Vesta hasn't vetted that specialty in their county yet. Do NOT interview toward a match you cannot make, do NOT claim you can find those pros, and NEVER contradict yourself ("I can't connect you with X, but I can find you X pros" is forbidden). CHECK THE BANK before disclaiming: solar (electrical: solar-or-battery-backup), generators, EV chargers, and pool wiring are all IN network — a need that has a bank job resolves like any other. If a real bank job genuinely covers a piece of an out-of-network need, offer THAT honestly, named for what it is.
+- ATLAS HAND-OFF (mode "atlas") — 4THWALL runs BOTH sides of this: Vesta is the homeowner's side; ATLAS is the contractor's side — a managed front office that answers every call, books the job, chases the quote, and asks for the review, so a good contractor never loses work to a call they missed. When the person IDENTIFIES as a contractor/business owner or asks how to get listed: do NOT run home triage and do NOT match pros. Warmly send them to the right side in 2-3 genuine sentences — no hard sell — keep resolved/ask/chips null. ALWAYS name the FREE first step: LENS — a contractor's free, private workspace (at /lens) to set up and verify their own account, connect the tools they already run, and control exactly what a homeowner sees; free to start, nothing publishes without them. Lens is the free way to get verified; Atlas is the fuller managed service. NEVER quote a price, promise results, or invent numbers; the desks carry the full story, your job is the introduction. GUARDS (these are NOT "atlas"): a homeowner complaining ABOUT a contractor (ghosted, overcharged, no-showed) is still a homeowner → triage normally. Someone merely CURIOUS what 4THWALL is could be a homeowner → answer honestly (you MAY explain 4THWALL: the managed front office behind Vesta) and stay in normal mode; only switch to "atlas" once they actually reveal they're a contractor.
 - If the input is off-topic or not a home problem: gently redirect once in "say", resolved null.
 - PRESENCE — how Vesta feels alive (applies every turn, every mode):
   - React to the PERSON before the problem: pick up their exact words (mirror one short phrase of theirs, naturally), and match their energy — terse gets crisp, stressed gets steady and warm, excited gets excited. Never open two consecutive turns with the same word or stock phrase.
@@ -550,6 +552,27 @@ export default async function handler(req, res){
   if (parsed.mode === 'emergency'){
     parsed.resolved = null; deck = null; parsed.ask = null; parsed.chips = null;
   }
+  // ATLAS REFERRAL (Drew, 7/18) — the person is a CONTRACTOR or asking about the company itself,
+  // not a homeowner with a home problem. Vesta advocates for 4THWALL and hands off to Atlas (the
+  // contractor desk). This is never a home-triage turn: no resolve, no deck, and none of the
+  // pro-matching resolvers / soft-offers below may fire on it (they'd inject "I'll line up pros").
+  // Deterministic backstop: Nemotron (the interview leader) is inconsistent at labeling this novel
+  // mode — it often writes a correct Lens/Atlas say but leaves mode "fix", which then skips the
+  // handoff CTA AND lets the soft-offer append "I'll line up pros" to a CONTRACTOR. So detect clear
+  // FIRST-PERSON contractor identity in the user's own words and force atlas (mirrors the
+  // 911/learn/question deterministic guards). Conservative by design — a homeowner ("I have a
+  // plumbing problem", "I need a plumber", "my contractor ghosted me") must NEVER match: the
+  // own/run branch requires a business noun, and bare trade words only match "I'm a <trade>".
+  const atlasLastUser = [...messages].reverse().find(m => m.role === 'user');
+  const atlasText = String(atlasLastUser && atlasLastUser.content || '');
+  const TRADE_ID = 'contractor|plumber|electrician|roofer|painter|landscaper|hvac|mason|carpenter|handyman|builder|paver';
+  const atlasSignal =
+       /\b(i|we)\s+(own|run|operate|started)\b[^.?!]{0,26}\b(business|company|shop|crew|firm|contracting)\b/i.test(atlasText)
+    || new RegExp(`\\bi'?m\\s+(a|an)\\s+(${TRADE_ID})\\b`, 'i').test(atlasText)
+    || new RegExp(`\\b(get|getting|sign|signing)\\s+(my|our)\\s+(business|company|${TRADE_ID})\\b[^.?!]{0,26}\\b(listed|signed up|up|on)\\b`, 'i').test(atlasText)
+    || /\bmy\s+(business|company|crew|firm)\b[^.?!]{0,26}\b(listed|sign(ed)? up|get on|join)\b/i.test(atlasText);
+  const isAtlas = (parsed.mode === 'atlas' || atlasSignal) && parsed.mode !== 'emergency';
+  if (isAtlas){ parsed.mode = 'atlas'; parsed.resolved = null; deck = null; parsed.ask = null; parsed.chips = null; }
   // RESOLVED-TURN COHERENCE (the M1 clamp): a resolved turn is a handoff, not an interview.
   // The contract says ask/chips are null and the say is a final reassuring line — but the
   // model leaks a trailing question into a resolved say (seen live 7/12: resolved gutters +
@@ -586,7 +609,7 @@ export default async function handler(req, res){
   // never on an emergency-labeled turn or a 911 say (doctrine), never an emergency-tagged
   // job (an active crisis is the talker's call, not a fast-path's), same bank gate as always.
   const rawMode = String(parsed.mode || 'none');
-  if (turn1Promise && !parsed.resolved && parsed.mode !== 'emergency' && parsed.mode !== 'learn' && !/\b911\b/.test(String(parsed.say))){
+  if (turn1Promise && !isAtlas && !parsed.resolved && parsed.mode !== 'emergency' && parsed.mode !== 'learn' && !/\b911\b/.test(String(parsed.say))){
     try {
       const rOut = await turn1Promise;
       const rj = rOut && !rOut.error ? extractJSON(rOut.raw) : null;
@@ -601,7 +624,7 @@ export default async function handler(req, res){
         : 'raw=' + String(rOut && rOut.raw || '').slice(0, 80).replace(/\n/g, '⏎'));
     } catch { resolverUsed = 't1err'; }
   }
-  if (!followUp && !focusMode && !parsed.resolved && userTurns >= 2 && parsed.mode !== 'learn' && parsed.mode !== 'emergency'){
+  if (!followUp && !focusMode && !isAtlas && !parsed.resolved && userTurns >= 2 && parsed.mode !== 'learn' && parsed.mode !== 'emergency'){
     try {
       const rOut = await callSingleTask(keys, resolverPrompt(bank), messages);
       const rj = rOut && !rOut.error ? extractJSON(rOut.raw) : null;
@@ -636,7 +659,7 @@ export default async function handler(req, res){
     || /\bis (it|this|that)\b[^?]*\b(bad|a problem|serious|dangerous|worth worrying)\b/i.test(lastText)
     || /\bshould i (be )?(worr|concern)/i.test(lastText) || /\bis (it|this|that) (supposed|meant) to\b/i.test(lastText);
   if (learnShaped && !parsed.resolved && !emergencyCall && parsed.mode !== 'emergency'){ parsed.ask = null; parsed.chips = null; }
-  if (questionShaped && !parsed.resolved && !parsed.ask && !emergencyCall && parsed.mode !== 'emergency'){
+  if (questionShaped && !isAtlas && !parsed.resolved && !parsed.ask && !emergencyCall && parsed.mode !== 'emergency'){
     if (!/(line up|line them up|find (you |the right)|get you connected|match you|whenever you|when you'?re ready|ready to go|say the word)/i.test(String(parsed.say))){
       parsed.say = String(parsed.say).replace(/\s*$/, '') + ' Whenever you’re ready, I can line up the right pros for exactly this.';
     }
@@ -649,7 +672,7 @@ export default async function handler(req, res){
     say: parsed.say,
     ask: parsed.ask || null,
     chips: chips.length ? chips : null,
-    mode: ['emergency','fix','plan','learn'].includes(parsed.mode) ? parsed.mode : 'fix',
+    mode: ['emergency','fix','plan','learn','atlas'].includes(parsed.mode) ? parsed.mode : 'fix',
     resolved: parsed.resolved || null,
     deck,
     call: emergencyCall,

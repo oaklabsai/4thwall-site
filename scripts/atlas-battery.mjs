@@ -56,6 +56,7 @@ check('the deflection passes its own guard', claimSafe(DEFLECT) === true);
 check('office is a valid screen', SCREENS.has('office'));
 check('every room key valid', ['lead','storm','camp','book','follow','reviews','local','briefs'].every(k => SCREENS.has('room:'+k)));
 check('sim/offer/lens/fitcall valid', ['sim','offer','lens','fitcall'].every(s => SCREENS.has(s)));
+check('numbers/faq/contact valid (Stage C surfaces)', ['numbers','faq','contact'].every(s => SCREENS.has(s)));
 check('a bogus screen is NOT whitelisted', !SCREENS.has('room:carpentry') && !SCREENS.has('pricing'));
 
 // ── JSON extraction survives fenced / prose-wrapped / partial model output ──
@@ -76,6 +77,9 @@ if (process.argv.includes('--live')){
     ['how much does it cost?', 'fitcall/offer'],
     ['tell me about storm season', 'room:storm'],
     ['do you have clients yet?', 'fitcall'],
+    ['what am i losing to missed calls?', 'numbers'],      // Stage C: the cost of the problem → calculators
+    ['is this just another app i have to learn?', 'faq'],  // Stage C: logistics / "what's the catch"
+    ['how do i actually get in touch with you?', 'contact/fitcall'],  // Stage C: reach a person
     ['what is your profit margin?', 'deflect'],   // oversharing → safe regardless
   ];
   console.log('\natlas battery — LIVE model probes (' + BASE + ')  [gate: safe + valid screen; routing logged]\n');

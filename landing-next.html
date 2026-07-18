@@ -457,6 +457,10 @@ a,button{transition:transform .14s}
   background-size:0% 5px;transition:background-size .5s ease .45s,opacity .18s}
 .fd-line.in a{background-size:100% 5px}
 .fd-line a:hover{opacity:.7}
+/* the fork is now the doorway (the conversation moved into /atlas + /vesta) — a static
+   prompt, no animated line, no input; choosing a side reveals its deck below */
+.fd-line.fd-static{min-height:0;margin:.1rem 0 .35rem}
+.fd-static-sub{font:400 1rem/1.55 var(--body);color:var(--muted);text-align:center;margin:.1rem auto 0;max-width:34ch}
 /* the ask bar — floating pill, cycling per-letter placeholder, mic (the HextaUI mechanism, our material) */
 .fd-well{display:flex;align-items:center;gap:.45rem;background:var(--nm);border:1px solid rgba(255,255,255,.55);border-radius:var(--r-pill);box-shadow:var(--nm-out);padding:.5rem .55rem .5rem 1.35rem;width:min(600px,100%);margin:2.1rem auto 0;transition:box-shadow .3s ease}
 .fd-well:focus-within{box-shadow:var(--sh-card)}
@@ -722,12 +726,12 @@ a,button{transition:transform .14s}
     <p class="fd-mat"><span class="kicker" id="fdMat">Welcome!</span></p>
 
     <div class="fd-chat">
-      <p class="fd-you" id="fdYou"></p>
-      <h1 class="fd-line" id="fdLine" aria-live="polite"></h1>
-      <p class="fd-think" id="fdThink" hidden><span class="fd-shimmer"><i></i><i></i><i></i></span><span id="fdThinkW">reading that</span></p>
+      <!-- THE FORK is the doorway — the conversation itself now lives in the desks
+           (/atlas for contractors, /vesta for homeowners). The homepage picks a side and
+           routes out with context; no inline chat, no generated screens here. -->
+      <h1 class="fd-line fd-static">Are you a contractor,<br>or a homeowner?</h1>
+      <p class="fd-static-sub">Pick a side — see exactly what we run for you.</p>
 
-      <!-- THE FORK — the question speaks above; choosing a side reveals its deck here,
-           between the question and the input, never over the conversation -->
       <div class="fd-fork" id="fdFork">
         <button class="fork-pill" id="forkCo" type="button" aria-controls="fdReveal"><b>Contractor</b><span>run the business</span></button>
         <button class="fork-pill" id="forkHo" type="button" aria-controls="fdReveal"><b>Homeowner</b><span>hire with proof</span></button>
@@ -737,19 +741,7 @@ a,button{transition:transform .14s}
         <div class="rev-deck" id="catOffice" hidden></div>
         <div class="rev-deck" id="catStack" hidden></div>
       </div>
-
-      <form class="fd-well" id="fdWell" aria-label="Ask the front desk">
-      <span class="fd-in">
-        <input type="text" id="fdSay" maxlength="280" autocomplete="off" aria-label="Your ask">
-        <span class="fd-ph" id="fdPh" aria-hidden="true"></span>
-      </span>
-      <button type="button" class="fd-mic" id="fdMic" aria-label="Speak instead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
-      <button type="submit" class="fd-send" aria-label="Ask"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h12M10 4l5 5-5 5"/></svg></button>
-      </form>
     </div>
-
-    <!-- P3 — the assembled screen: the desk composes picks → profile → request here, in place -->
-    <div class="fd-screen" id="fdScreen" hidden></div>
   </div>
 
   <a class="fd-cue" href="#story">the whole story <span>↓</span></a>
@@ -1103,751 +1095,25 @@ a,button{transition:transform .14s}
 
 <script src="/home.js"></script>
 <script>
-/* ── THE FRONT DESK — one conversation, one turn at a time (Drew, chisel 2).
-   The desk speaks first; options are voiced inline, never buttons. Previous
-   turns dissipate; history is kept in `convo` for context (model arrives P3/P5).
-   Everything here is deterministic — ZERO model calls. Out-of-script asks get
-   the honest deflection, never a guess (front-desk.md law 2). ── */
+/* ── THE FRONT DESK — the homepage fork (the conversation moved into the desks).
+   Two coverflow decks: the office (contractor) and the trades (homeowner). Choosing a
+   side reveals its deck; tapping a card routes OUT to the product it belongs to, WITH
+   context — an office room → /atlas?tab=room:<key>, a trade → /vesta?q=<ask>. No inline
+   chat, no model calls here: the homepage is the doorway, the desks are the rooms. ── */
 (function(){
-  var CAL='https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE';
   function $(id){return document.getElementById(id)}
-  var youEl=$('fdYou'),line=$('fdLine'),say=$('fdSay');
-  var lane=null,convo=[];
 
-  /* ── the welcome mat — time-aware, above the chat ── */
-  $('fdMat').textContent='Welcome!';
-
-  /* ── what the desk says — every line ends by voicing the next doors inline ── */
-  var L={
-    greet:'Are you a contractor, or a homeowner? Choose a side below — or just tell me what’s going on.',
-    ho:'How can we help? Say the job like you’d tell a neighbor — <a data-say="my roof is leaking">a leak</a>, <a data-say="the AC died upstairs">a dying AC</a>, <a data-say="my driveway needs repaving">a tired driveway</a>.',
-    co0:'The best crews rarely have the best office. For the first time, that stops mattering.',
-    office:'This is the office Atlas runs around your work. Walk any room — or ask about <a data-say="storm season">storm season</a>, <a data-say="reviews">reviews</a>, or <a data-say="the offer">the offer</a>.',
-    ho0:'You shouldn’t need luck to hire well. Vesta walks you to the right few — and shows you why they fit.',
-    vwho:'Vesta is free for homeowners, and no one can pay to be recommended. We’re a Connecticut company that thinks choosing well shouldn’t take luck. Tell me what’s going on with the house — or ask anything.',
-    atlas:'Atlas is the managed front office behind your work — it answers when you can’t pick up, qualifies the lead, books the estimate, carries follow-up and reviews, and hands you a measured receipt every month. See the <a href="/missed-calls">60-second demo</a>, ask about <a data-say="the offer">the offer</a>, or hear about <a data-say="lens">Lens</a>.',
-    lens:'Lens is free — your private trust workspace. Connect the tools you already run, review every fact your record supports, and control exactly what a homeowner could see. Nothing publishes without you. <a href="/lens">Start free</a>, or hear about <a data-say="atlas">Atlas</a>.',
-    flywheel:'The work makes the evidence, and the evidence makes the work. Atlas runs the front office. What happens becomes a measured record. Lens puts you in control of it. Vesta shows homeowners the proof — never ads. Hear about <a data-say="atlas">Atlas</a>, or <a data-say="lens">Lens</a>.',
-    offer:'Atlas is a managed service, not a software seat — the price follows the size of the front office we run for you, set on a <a href="'+CAL+'" target="_blank" rel="noopener">20-minute fit call</a> in plain numbers. If we’re not the right fit, we’ll say so first.',
-    seo:'It matters more than ever. Atlas maintains your local discovery foundations — the pages, listings, and signals that make good work findable — as part of the front office, not an add-on. Hear about <a data-say="atlas">the rest of Atlas</a>, or <a href="'+CAL+'" target="_blank" rel="noopener">book the fit call</a>.',
-    missed:'The missed call is the most expensive silence in your business. When you can’t pick up, Atlas follows up by text right away — qualifies, books, carries the follow-up. Supported texts typically get a first reply in 15 seconds. <a href="/missed-calls">Watch it happen</a>, or ask about <a data-say="the offer">the offer</a>.',
-    reviews:'Reviews come from asking at the right moment. Atlas sends the request when the job closes, every time — the record compounds instead of evaporating. Hear <a data-say="atlas">what else it runs</a>.',
-    house:'4THWALL is a Stamford, Connecticut company with one belief — good work should leave evidence. Atlas runs the front office, Lens lets you own the record, Vesta explains it to homeowners. Are you a <a data-say="contractor">contractor</a>, or a <a data-say="homeowner">homeowner</a>?',
-    deflect:'That one deserves a person, not a guess. <a href="'+CAL+'" target="_blank" rel="noopener">Book a 20-minute call</a>, or <a href="#contact">write to us</a> — we answer like people.',
-    handoff:'On it — Vesta takes it from here.'
-  };
-
-  /* ── per-letter blur reveal, word-wrapped so lines break naturally ── */
-  function letterize(container){
-    var seq=0;
-    (function walk(node){
-      [].slice.call(node.childNodes).forEach(function(ch){
-        if(ch.nodeType===3){
-          var frag=document.createDocumentFragment();
-          ch.textContent.split(/(\s+)/).forEach(function(tok){
-            if(!tok)return;
-            if(/^\s+$/.test(tok)){frag.appendChild(document.createTextNode(' '));return}
-            var w=document.createElement('span');w.className='w';
-            for(var i=0;i<tok.length;i++){
-              var l=document.createElement('i');l.textContent=tok[i];
-              l.style.transitionDelay=Math.min(seq++*13,1300)+'ms';w.appendChild(l);
-            }
-            frag.appendChild(w);
-          });
-          node.replaceChild(frag,ch);
-        } else if(ch.nodeType===1&&ch.className!=='fd-shimmer') walk(ch);
-      });
-    })(container);
-  }
-
-  function speak(html,extra){
-    convo.push({who:'desk',text:html.replace(/<[^>]+>/g,'')});
-    /* F1 choreography: record when these words will finish landing, so an assembling
-       screen can arrive AS the sentence completes — never before, never long after */
-    /* screens land as the sentence finishes APPEARING — assembly never waits on a long
-       reading dwell (that lag made the office feel broken; Drew 7/17). Spoken chains
-       that need reading room add it explicitly. */
-    var _plain=html.replace(/<[^>]+>/g,'').length;
-    speakEnds=Date.now()+(line.querySelectorAll('.w i').length?430:0)
-      +Math.min(_plain*13,1300)+650;
-    var old=line.querySelectorAll('.w i'),wait=0;
-    if(old.length){
-      for(var i=0;i<old.length;i++)old[i].style.transitionDelay=Math.min((old.length-i)*5,320)+'ms';
-      line.classList.remove('in');line.classList.add('out');wait=430;
-    }
-    setTimeout(function(){
-      /* one inner span (the grid centers a single item); glue punctuation to voiced options so they never wrap apart */
-      line.innerHTML='<span>'+html.replace(/(<a[^>]*>[^<]*<\/a>)([,.?!;:—]*)/g,'<span class="nw">$1$2</span>')+(extra||'')+'</span>';
-      line.classList.toggle('long',html.indexOf('<br>')!==-1);
-      letterize(line);
-      line.classList.remove('out');void line.offsetWidth;line.classList.add('in');
-      [].forEach.call(line.querySelectorAll('a[data-say]'),function(a){
-        a.addEventListener('click',function(e){e.preventDefault();input(a.getAttribute('data-say'),a.textContent)});
-      });
-      [].forEach.call(line.querySelectorAll('a[data-act]'),function(a){
-        a.addEventListener('click',function(e){e.preventDefault();var f=ACT[a.getAttribute('data-act')];if(f)f()});
-      });
-    },wait);
-  }
-  function speakKey(k){
-    if(k==='ho'){lane='ho';setPH()}
-    if(k==='co'){lane='co';setPH()}
-    speak(L[k]);
-  }
-
-  function echo(t){youEl.textContent='“'+t+'”';youEl.className='fd-you';void youEl.offsetWidth;youEl.className='fd-you show'}
-
-  function handoff(q){
-    speak(L.handoff,'<span class="fd-shimmer"><i></i><i></i><i></i></span>');
-    setTimeout(function(){location.href='/vesta?q='+encodeURIComponent(q)},1500);
-  }
-
-  /* ── routing — keywords only, zero model calls ── */
-  /* suffix-tolerant stems — "plumbing", "electrician", "painting", "repaving" must all
-     match (exact \b stems silently deflected 3 of the 8 trade cards; live QA 7/17) */
-  var HO_WORDS=/\b(roof\w*|leak\w*|hvac|heat\w*|furnace|ac|air|plumb\w*|pipe\w*|drain\w*|water|electr\w*|panel|outlet\w*|paint\w*|lawn|mow\w*|tree\w*|mason\w*|patio|chimney\w*|driveway\w*|pav\w*|repav\w*|floor\w*|pool|window\w*|door\w*|gutter\w*|deck|fenc\w*|repair\w*|install\w*|replac\w*|remodel\w*|yard)\b/i;
-  var CO_WORDS=/\b(lead|leads|call|calls|book|booking|schedule|invoice|estimate|customer|client|crew|business|market|website|slow season|jobs dry|no shows?|follow ?up)\b/i;
-
-  function route(q){
-    /* P4 deterministic intercepts — cost + hiring asks assemble screens with ZERO model
-       calls (law 3), even mid-triage (the model is banned from quoting dollars anyway).
-       Guarded so Atlas/product pricing still reaches the fit-call posture line. */
-    if(!/\b(atlas|lens|4thwall|vesta)\b/i.test(q)){
-      var tw=tradeOf(q)||(deckShown&&curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):null);
-      if(tw&&/\b(what (should|do) (i|we) ask|before (i|we|you) hire|hiring|how (do|to) (i |we )?(choose|pick|vet|screen)|red flags?|questions? (to|i should) ask)\b/i.test(q))return guideScreen(tw,q);
-      if(tw&&/\b(cost|costs|price|prices|pricing|how much|estimate|budget|spend)\b/i.test(q))return costScreen(tw,q);
-    }
-    /* explicit lane switches ALWAYS escape — a visitor exploring both sides must never
-       be trapped inside the homeowner triage (live QA 7/17: "contractor" mid-triage got
-       a model answer about roofing pricing instead of the contractor universe) */
-    var short=q.trim().split(/\s+/).length<=5;
-    if(short&&/home ?owner/i.test(q)){triActive=false;return hoArc()}
-    if(short&&/\bcontractor\b/i.test(q)){triActive=false;return coArc()}
-    if(short&&/\b(walk the office|the office)\b/i.test(q)){triActive=false;return officeScreen()}
-    if(triActive)return triTurn(q);   /* otherwise the real triage keeps the conversation */
-    if(lane==='ho')return triStart(q);
-    if(/\b(walk the office|the office|every room)\b/i.test(q))return officeScreen();
-    if(/\bstorms?( season| mode)?\b/i.test(q))return roomScreen('storm');
-    if(/\b(campaigns?|slow season|quiet season|reactivat)/i.test(q))return roomScreen('camp');
-    if(/\b(price|pricing|cost|how much|fees?|offer)\b/i.test(q))return speakKey('offer');
-    if(/\batlas\b/i.test(q))return speakKey('atlas');
-    if(/\blens\b/i.test(q))return speakKey('lens');
-    if(/\b(flywheel|compound|compounds|fit together|how it works)\b/i.test(q)){speakKey('flywheel');return fwDraw()}
-    if(/\b(seo|search|google|rank(ing)?|visibilit)/i.test(q))return roomScreen('local');
-    if(/\b(miss|missed|missing|after.?hours|voicemail|call ?back)\b/i.test(q)){speakKey('missed');return missedDemo()}
-    if(/\breviews?\b/i.test(q))return roomScreen('reviews');
-    if(/\b(who.s behind|behind this|can (i|we) trust|why (is it |is vesta )?free|pay to be)\b/i.test(q))return speakKey('vwho');
-    if(/\b(4th ?wall|who are you|what is this|what do you do|about|mission|company|story)\b/i.test(q))return speakKey('house');
-    if(/\bvesta\b/i.test(q))return hoArc();
-    if(CO_WORDS.test(q))return coArc();
-    if(HO_WORDS.test(q))return triStart(q);
-    speakKey('deflect');
-  }
-
-  function input(q,display){
-    if(triBusy)return;   /* the desk is mid-read — one thought at a time */
-    simGen++;            /* any real ask ends the scripted performance mid-beat */
-    setTalking(true);    /* CHATTING state: the fork leaves the room — the conversation owns the column */
-    convo.push({who:'you',text:q});
-    echo(display||q);
-    route(q);
-  }
-
-  $('fdWell').addEventListener('submit',function(e){
-    e.preventDefault();
-    var q=say.value.trim();if(!q)return;
-    say.value='';phVis();
-    input(q);
-  });
-
-  /* ── cycling placeholder — per-letter blur (paused while focused or typing) ── */
-  var PH_ALL=['my roof is leaking in Stamford','I keep missing calls on the job','what is 4THWALL?','the AC died upstairs','how much does Atlas cost?','driveway needs repaving','what does a new roof cost?'];
-  var PH_HO=['my roof is leaking in Stamford','the AC died upstairs','driveway needs repaving','we want to redo the bathroom','what does a new roof cost?','what should I ask a roofer?'];
-  var phEl=$('fdPh'),phList=PH_ALL,phIdx=0;
-  function setPH(){phList=(lane==='ho')?PH_HO:PH_ALL;phIdx=0}
-  function phShow(text){
-    phEl.innerHTML='';
-    for(var i=0;i<text.length;i++){var sp=document.createElement('i');sp.textContent=text[i]===' '?' ':text[i];sp.style.transitionDelay=(i*18)+'ms';phEl.appendChild(sp)}
-    phEl.classList.remove('out');void phEl.offsetWidth;phEl.classList.add('in');
-  }
-  function phVis(){phEl.style.opacity=(say.value||document.activeElement===say)?'0':'1'}
-  say.addEventListener('focus',phVis);say.addEventListener('blur',phVis);say.addEventListener('input',phVis);
-  phShow(phList[0]);
-  setInterval(function(){
-    if(say.value||document.activeElement===say)return;
-    var els=phEl.querySelectorAll('i');
-    for(var i=0;i<els.length;i++){els[i].style.transitionDelay=((els.length-i)*10)+'ms'}
-    phEl.classList.remove('in');phEl.classList.add('out');
-    setTimeout(function(){phIdx=(phIdx+1)%phList.length;phShow(phList[phIdx])},400);
-  },3600);
-
-  /* ── mic — Web Speech API (free, in-browser); hidden where unsupported ── */
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition,micBtn=$('fdMic');
-  if(SR){
-    var rec=null;
-    micBtn.addEventListener('click',function(){
-      if(rec){try{rec.stop()}catch(e){}return}
-      rec=new SR();rec.lang='en-US';rec.interimResults=false;rec.maxAlternatives=1;
-      micBtn.classList.add('listening');
-      rec.onresult=function(e){say.value=e.results[0][0].transcript;phVis()};
-      rec.onend=function(){micBtn.classList.remove('listening');rec=null;
-        if(say.value)$('fdWell').dispatchEvent(new Event('submit',{cancelable:true}))};
-      rec.onerror=function(){micBtn.classList.remove('listening');rec=null};
-      try{rec.start()}catch(e){micBtn.classList.remove('listening');rec=null}
-    });
-  }else{micBtn.style.display='none'}
-
-  /* ═══ P3 — THE HOMEOWNER LOOP, IN PLACE. The desk runs the REAL triage
-     (/api/triage — the same talker + resolver + bank-gate machine the Vesta app
-     runs; ZERO prompt edits here) and assembles the next screen for the ask:
-     picks → profile → request. The interface is generated; the facts never are
-     (front-desk.md law 2). Any outage falls back to the /vesta handoff — the
-     tap-tree floor — never a dead end. Scorer + portfolio composition are the
-     LOCKED versions ported from vesta-app.html; do not re-derive them here. ═══ */
-  var TRADE_DB={roofing:'roofing',hvac:'hvac',plumbing:'plumbing',electrical:'electrical',paving:'paving',lawn:'lawn_care',painting:'painting',masonry:'masonry',tree:'tree_service',flooring:'flooring',windows_doors:'windows_doors',pool:'pool'};
-  var PLURAL={roofing:'roofers',hvac:'HVAC contractors',plumbing:'plumbers',electrical:'electricians',paving:'paving contractors',lawn:'lawn & landscape crews',painting:'painters',masonry:'masons',tree:'tree services',flooring:'flooring contractors',windows_doors:'window & door contractors',pool:'pool companies'};
-  var screen=$('fdScreen'),think=$('fdThink'),thinkW=$('fdThinkW');
-  var triMsgs=[],triActive=false,triBusy=false,deckShown=false,deckKey='',lastQ='';
-  var firmCache={},curDeck=null,curPicks=[],curTotal=0,speakEnds=0,simGen=0;
-  /* land work AFTER the current sentence finishes — the F1 choreography primitive */
-  function landAfterSay(fn){setTimeout(fn,Math.max(0,(speakEnds||0)-Date.now()))}
-  var TRI_OK=null;fetch('/api/triage').then(function(r){TRI_OK=r.ok}).catch(function(){TRI_OK=false});
-  /* the same anonymous funnel session the Vesta app threads (Stage 1.4 instrumentation) */
-  var VS_SID=(function(){try{var s=sessionStorage.getItem('v_sid');if(!s){s=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem('v_sid',s)}return s}catch(e){return null}})();
-  function logEvent(kind,fields){if(!window.HOME||!HOME.api)return;try{HOME.api('/vesta-event',{method:'POST',body:Object.assign({kind:kind,session:VS_SID},fields||{})}).catch(function(){})}catch(e){}}
-  function escT(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
-  /* model text is DATA: escape first, then the two marks the triage contract allows */
-  function mdSay(s){return escT(s).replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}
-
-  var THINKS=['reading that','thinking it through','checking the county field','weighing the records'];
-  var thinkTimer=null;
-  function thinkOn(){var i=0;thinkW.textContent=THINKS[0];think.hidden=false;thinkTimer=setInterval(function(){i=(i+1)%THINKS.length;thinkW.textContent=THINKS[i]},2600)}
-  function thinkOff(){think.hidden=true;clearInterval(thinkTimer);thinkTimer=null}
-
-  /* ── F2: the say STREAMS into the blur-reveal — complete sentences land as they
-     arrive, each chunk cascading per-letter. The one-turn grammar holds: this changes
-     WHEN the words start, never how they live or dissipate. ── */
-  var stOpen=false,stReady=false,stQ=[];
-  function stBegin(){
-    if(stOpen)return;stOpen=true;stReady=false;stQ=[];
-    thinkOff();
-    var old=line.querySelectorAll('.w i'),wait=0;
-    if(old.length){
-      for(var i=0;i<old.length;i++)old[i].style.transitionDelay=Math.min((old.length-i)*5,320)+'ms';
-      line.classList.remove('in');line.classList.add('out');wait=430;
-    }
-    setTimeout(function(){
-      line.innerHTML='<span></span>';
-      line.classList.remove('out','long');void line.offsetWidth;line.classList.add('in');
-      stReady=true;var q=stQ;stQ=[];for(var j=0;j<q.length;j++)stAppend(q[j]);
-    },wait);
-  }
-  function stAppend(html){
-    if(!stReady){stQ.push(html);return}
-    var inner=line.firstChild;if(!inner)return;
-    if(html.indexOf('<br>')!==-1)line.classList.add('long');
-    var span=document.createElement('span');
-    span.innerHTML=html.replace(/(<a[^>]*>[^<]*<\/a>)([,.?!;:—]*)/g,'<span class="nw">$1$2</span>');
-    letterize(span);
-    if(inner.childNodes.length)inner.appendChild(document.createTextNode(' '));
-    inner.appendChild(span);
-    /* inserted letters would match the .in state instantly — force the from-state, reflow, release */
-    var els=span.querySelectorAll('.w i');
-    [].forEach.call(els,function(el){el.style.opacity='0';el.style.filter='blur(10px)';el.style.transform='translateY(8px)'});
-    void span.offsetWidth;
-    [].forEach.call(els,function(el){el.style.opacity='';el.style.filter='';el.style.transform=''});
-    [].forEach.call(span.querySelectorAll('a[data-say]'),function(a){
-      a.addEventListener('click',function(e){e.preventDefault();input(a.getAttribute('data-say'),a.textContent)});
-    });
-    speakEnds=Date.now()+Math.min(html.replace(/<[^>]+>/g,'').length*13,1300)+520;
-  }
-
-  function triStart(q){if(TRI_OK===false)return handoff(q);triTurn(q)}
-  /* the 12-turn window, keeping the picks-context turn alive past the slice (the vmWindow rule) */
-  function triWindow(){
-    var ctx=function(m){return m.role==='assistant'&&m.content.indexOf('"picks"')!==-1};
-    var w=triMsgs.slice(-12);
-    if(w.some(ctx))return w;
-    for(var i=triMsgs.length-13;i>=0;i--){if(ctx(triMsgs[i]))return [triMsgs[i]].concat(w.slice(1))}
-    return w;
-  }
-  function triTurn(text){
-    if(triBusy)return;triBusy=true;triActive=true;lastQ=text;
-    triMsgs.push({role:'user',content:text});
-    thinkOn();
-    var streamed='',revealed='';stOpen=false;
-    /* reveal every COMPLETE sentence the moment it exists — the desk starts speaking
-       seconds before the generation finishes */
-    var reveal=function(){
-      var rem=streamed.slice(revealed.length);
-      var m=rem.match(/^[\s\S]*[.!?](?=\s|$)/);
-      if(!m||!m[0].trim())return;
-      stBegin();
-      stAppend(mdSay(m[0].trim()));
-      revealed=streamed.slice(0,revealed.length+m[0].length);
-    };
-    fetch('/api/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:triWindow()})})
-    .then(function(r){
-      if(!r.ok||!r.body)throw new Error('http');
-      var reader=r.body.getReader(),dec=new TextDecoder(),buf='',fin=null,err=null;
-      function pump(){return reader.read().then(function(x){
-        if(x.done)return{fin:fin,err:err};
-        buf+=dec.decode(x.value,{stream:true});
-        var nl;while((nl=buf.indexOf('\n'))!==-1){var ln=buf.slice(0,nl).trim();buf=buf.slice(nl+1);
-          if(ln.indexOf('data:')!==0)continue;var ev;try{ev=JSON.parse(ln.slice(5))}catch(e){continue}
-          if(ev.t==='d'){streamed+=ev.c;reveal()}
-          else if(ev.t==='r'){streamed='';revealed='';stOpen=false}   /* server killed a bad generation — fresh line on the next delta */
-          else if(ev.t==='f')fin=ev;else if(ev.t==='e')err=ev.error}
-        return pump()})}
-      return pump();
-    })
-    .then(function(res){
-      triBusy=false;thinkOff();
-      var f=res.fin;
-      if(!f){
-        /* salvage: her words arrived but the final frame didn't — land them, keep the conversation */
-        if(streamed)f={say:streamed.slice(0,900),ask:null,chips:null,mode:'fix',resolved:null,deck:null,call:null};
-        else throw new Error(res.err||'no final');
-      }
-      triLand(f,{streamed:stOpen,revealed:revealed});
-    })
-    .catch(function(){
-      triBusy=false;thinkOff();
-      if(deckShown){speak('I hit a snag on that one — your picks below still stand. Tap one to open it, or ask me again.');return}
-      handoff(lastQ);
-    });
-  }
-  function tailOf(f){
-    var tail='';
-    if(f.ask)tail+=mdSay(f.ask);
-    if(f.chips&&f.chips.length){
-      tail+=(tail?' ':'')+'— '+f.chips.map(function(c,i){return(i===f.chips.length-1&&f.chips.length>1?'or ':'')+'<a data-say="'+escT(c)+'">'+escT(c)+'</a>'}).join(', ')+'.';
-    }
-    return tail;
-  }
-  function triLand(f,pre){
-    triMsgs.push({role:'assistant',content:JSON.stringify({say:String(f.say||'').slice(0,220),resolved:f.resolved||null})});
-    var say=String(f.say||''),deck=f.resolved&&f.deck?f.deck:null,tail=tailOf(f);
-    /* streamed path: the words are already on screen — append the remainder + the tail,
-       never re-speak what was said (a double-voice reads as a glitch) */
-    if(pre&&pre.streamed&&pre.revealed&&say.indexOf(pre.revealed)===0){
-      convo.push({who:'desk',text:say});
-      var rem=say.slice(pre.revealed.length);
-      if(rem.trim())stAppend(mdSay(rem.trim()));
-      if(f.call==='911')stAppend('<a class="fd-call" href="tel:911">Call 911</a>');
-      if(f.mode==='emergency')return;
-      if(deck&&!(deckShown&&deckKey===deck.trade+'|'+deck.job)){deckLand(deck,f.mode||'fix');return}
-      if(tail)stAppend(tail);
-      return;
-    }
-    var html=mdSay(say);
-    if(f.call==='911')html+=' <a class="fd-call" href="tel:911">Call 911</a>';
-    /* emergency doctrine: safety + the call — never a deck, never a question (server clamps; honored here too) */
-    if(f.mode==='emergency'){speak(html);return}
-    if(deck&&!(deckShown&&deckKey===deck.trade+'|'+deck.job)){speak(html);deckLand(deck,f.mode||'fix');return}
-    speak(html+(tail?' '+tail:''));
-  }
-
-  /* ── firms: fetched live from the same public view the Vesta app reads, one trade at a time ── */
-  var SEL='place_id,business_name,city,registered,hic_issue_date,synthesis,known_for,specialties,best_for,volume_band,rating_band,tenure_band,rank_score';
-  function loadFirms(appTrade){
-    if(firmCache[appTrade])return Promise.resolve(firmCache[appTrade]);
-    if(!window.HOME||!HOME.db)return Promise.resolve(null);
-    return HOME.db('/profile_enrichment_public?trade=eq.'+(TRADE_DB[appTrade]||appTrade)+'&select='+SEL+'&order=rank_score.desc.nullslast').then(function(rows){
-      if(!Array.isArray(rows))return null;
-      /* substance gate: only firms Vesta has a read on (the app's own rule) */
-      var list=rows.map(mapFirm).filter(function(c){return c.name&&c.read});
-      firmCache[appTrade]=list;return list;
-    }).catch(function(){return null});
-  }
-  function mapFirm(r){
-    var yr=r.hic_issue_date?+String(r.hic_issue_date).slice(0,4):0;
-    var kf=Array.isArray(r.known_for)?r.known_for.map(function(k){return k&&(k.label||k)}).filter(Boolean):[];
-    if(!kf.length&&Array.isArray(r.specialties))kf=r.specialties.filter(Boolean);
-    var specs=[].concat(Array.isArray(r.specialties)?r.specialties:[],kf).map(function(x){return String(x).toLowerCase()});
-    return{placeId:r.place_id,name:r.business_name||'',town:(r.city||'Fairfield County')+', CT',read:r.synthesis||'',knownFor:kf.slice(0,4),bestFor:Array.isArray(r.best_for)?r.best_for:[],rankScore:r.rank_score||0,ratingBand:r.rating_band||'',volumeBand:r.volume_band||'',tenureBand:r.tenure_band||'',registered:!!r.registered,sinceYear:(yr&&yr!==1999)?yr:0,specs:specs};
-  }
-  function standing(c,appTrade){
-    var pl=PLURAL[appTrade]||'pros';
-    if(c.ratingBand==='top10')return 'Top 10% of Fairfield County '+pl;
-    if(c.ratingBand==='top25')return 'Top 25% of Fairfield County '+pl;
-    if(c.volumeBand==='top10')return 'Among the most-reviewed '+pl;
-    if(c.volumeBand==='top25')return 'A deep review track record';
-    if(c.tenureBand==='top25')return 'One of the longest-established';
-    return '';
-  }
-  function jobLabelOf(job){return String(job||'').replace(/-/g,' ')}
-  function jobMatch(c,job){return !!job&&c.bestFor.indexOf(job)!==-1}
-  var ROLE_KICK={proof:'Strongest record',specialist:'This job is their core work',named:'Their record names this job'};
-  var ROLE_LONG={proof:'the proof pick — of every firm whose record shows this job, theirs carries the strongest county standing',specialist:'the specialist — this job is not one line of many on their record, it is the core of it',named:'the named fit — homeowners’ own reviews of them describe exactly this work'};
-  var pickRoles={};
-  function portfolio(list,job){
-    pickRoles={};
-    var scored=list.slice().sort(function(x,y){return(jobMatch(y,job)?3:0)-(jobMatch(x,job)?3:0)||(y.rankScore-x.rankScore)});
-    if(!job)return scored;
-    var matchers=scored.filter(function(c){return jobMatch(c,job)});
-    if(matchers.length<=3)return scored;
-    var picks=[matchers[0]];pickRoles[matchers[0].placeId]='proof';
-    var rest=matchers.slice(1);
-    var spec=rest.slice().sort(function(a,b){return(a.bestFor.length-b.bestFor.length)||(b.rankScore-a.rankScore)})[0];
-    if(spec&&spec.bestFor.length<matchers[0].bestFor.length){picks.push(spec);pickRoles[spec.placeId]='specialist'}
-    var words=jobLabelOf(job).toLowerCase().split(/[^a-z]+/).filter(function(w){return w.length>3});
-    var named=null;
-    for(var i=0;i<rest.length;i++){(function(c){
-      if(!named&&picks.indexOf(c)===-1&&words.some(function(w){return c.specs.some(function(s){return s.indexOf(w)!==-1})}))named=c;
-    })(rest[i])}
-    if(named&&picks.length<3){picks.push(named);pickRoles[named.placeId]='named'}
-    for(var j=0;j<rest.length;j++){if(picks.length>=3)break;if(picks.indexOf(rest[j])===-1)picks.push(rest[j])}
-    return picks.concat(scored.filter(function(c){return picks.indexOf(c)===-1}));
-  }
-  function whyOf(c,job,appTrade){
-    var bits=[];
-    if(jobMatch(c,job))bits.push('Does '+jobLabelOf(job));
-    var st=standing(c,appTrade);if(st)bits.push(st);
-    return bits.slice(0,2).join(' · ')||'A strong county record';
-  }
-  function readClip(s,n){s=String(s||'').trim();n=n||230;if(s.length<=n)return s;var cut=s.slice(0,n),pd=cut.lastIndexOf('. ');return pd>60?cut.slice(0,pd+1):cut+'…'}
-
-  /* ── the assembled screens ── */
-  function paintScreen(html,instant){
-    screen.hidden=false;screen.classList.remove('in');screen.innerHTML=html;
-    /* the request form owns the bottom of the stage — the docked composer steps aside */
-    var fdEl=document.getElementById('home');
-    if(fdEl)fdEl.classList.toggle('req-open',html.indexOf('id="fdrSum"')!==-1);
-    /* children stagger in, one beat apart — the screen ASSEMBLES rather than appears */
-    [].forEach.call(screen.children,function(c,i){c.style.transitionDelay=instant?'0ms':Math.min(i*80,640)+'ms'});
-    void screen.offsetWidth;screen.classList.add('in');
-    /* first assembly reconfigures the room: greeting hall → working room, view lifted to the stage */
-    var fd=document.getElementById('home');
-    if(fd&&!fd.classList.contains('staged')){
-      fd.classList.add('staged');
-      setTimeout(function(){try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){}},100);
-    }
-  }
-  /* F2 — object permanence: screen→screen changes MORPH (View Transitions API; shared
-     elements carry view-transition-names). First assembly keeps the stagger. `wire`
-     runs after the new DOM paints — inside the transition when one is running. */
-  function showScreen(html,wire){
-    /* VT only when the tab is actually visible — a hidden tab's view transition never
-       finishes and freezes the whole render mid-assembly (found in live QA 7/17) */
-    if(screen.hidden||!document.startViewTransition||document.visibilityState!=='visible'){
-      paintScreen(html,false);if(wire)wire();return;
-    }
-    try{
-      var vt=document.startViewTransition(function(){paintScreen(html,true);if(wire)wire()});
-      if(vt&&vt.finished&&vt.finished.catch)vt.finished.catch(function(){});
-    }catch(e){paintScreen(html,false);if(wire)wire()}
-  }
-  function headOf(deck){
-    var jl=String(deck.label||jobLabelOf(deck.job)).toLowerCase(),pl=PLURAL[deck.trade]||'pros';
-    if(deck.pct>50)return{h:'Most '+pl+' handle '+jl,s:'Vesta read every one — best-reviewed first.'};
-    if(deck.pct>=15)return{h:'Vesta’s picks for '+jl,s:'Matched to your job, best-reviewed first.'};
-    return{h:'Specialists in '+jl,s:'The few Vesta found for this specific job.'};
-  }
-  /* F3 — THE READING: light one dot per real record, hold a beat, narrow to the three
-     that rose. Fields too small to read as a field (<8) skip straight to the picks. */
-  function showReading(n,tradeLabel,done){
-    if(n<8)return done();
-    var shown=Math.min(n,120),dots='';
-    for(var i=0;i<shown;i++)dots+='<i style="transition-delay:'+Math.min(i*14,1100)+'ms"></i>';
-    showScreen('<span class="fds-kicker">reading the county field</span>'+
-      '<h3 class="fds-h">Vesta read '+n+' '+escT(tradeLabel)+' records</h3>'+
-      '<div class="fdread" id="fdRead">'+dots+'</div>'+
-      '<p class="fdread-sub" id="fdReadSub">weighing every record</p>',
-      function(){
-        var el=document.getElementById('fdRead');if(!el)return done();
-        void el.offsetWidth;el.classList.add('on');
-        setTimeout(function(){
-          var is=el.querySelectorAll('i');
-          var keep=[Math.floor(shown*.2),Math.floor(shown*.52),Math.floor(shown*.82)];
-          [].forEach.call(is,function(d,i){
-            d.style.transitionDelay=Math.min(i*5,420)+'ms';
-            d.className=keep.indexOf(i)===-1?'off':'keep';
-          });
-          var sub=document.getElementById('fdReadSub');if(sub)sub.textContent='three rose to the top';
-          setTimeout(done,1250);
-        },Math.min(shown*14,1100)+800);
-      });
-  }
-  function deckLand(deck,mode,resume){
-    deckShown=true;deckKey=deck.trade+'|'+deck.job;curDeck={deck:deck,mode:mode};
-    loadFirms(deck.trade).then(function(list){
-      var bail=function(){resume?screenDoor(deck):landAfterSay(function(){screenDoor(deck)})};
-      if(!list||!list.length)return bail();
-      var all=portfolio(list,deck.job),picks=all.slice(0,3);
-      if(!picks.length)return bail();
-      curPicks=picks;curTotal=list.length;
-      if(!resume)logEvent('match',{trade:TRADE_DB[deck.trade]||deck.trade,job:deck.job,axis:null});
-      saveMemory();   /* the desk remembers this visit — the visitor's own browser only (F5) */
-      var land=function(){
-        renderPicks();
-        seedFollow(deck,picks,list.length);
-        phList=['why these three?','tell me about the first one','what should I ask them?','I’ve got another problem too'];phIdx=0;
-        if(!resume)setTimeout(function(){
-          if(triBusy)return;   /* the homeowner already moved — follow them, don't talk over them */
-          speak('Three rose to the top — tap one to open it. Or ask <a data-say="what should I ask before hiring?">what to ask before you hire</a>, or <a data-say="what does this usually cost?">what this usually costs</a>.');
-        },1900);
-      };
-      /* choreography: the reading begins AS the resolved sentence finishes; the picks
-         crystallize from it; then the desk LEADS the next act (the flow law).
-         On resume the visitor has seen the reading — skip straight to their picks. */
-      if(resume){triActive=true;landAfterSay(land);}
-      else landAfterSay(function(){showReading(list.length,String(deck.tradeLabel||deck.trade).toLowerCase(),land)});
-    });
-  }
-  var morphPlace=null;   /* the pick the visitor last opened — its card carries the morph names on the way back */
-  function renderPicks(){
-    var deck=curDeck.deck,mode=curDeck.mode,hd=headOf(deck);
-    var lead=deck.emergency?'who answers, then the record':mode==='plan'?'no rush — ready when you are':'assembled from the county record';
-    var rows=curPicks.map(function(p,i){
-      var role=pickRoles[p.placeId],mm=p.placeId===morphPlace;
-      return '<button class="fds-card" type="button" data-pick="'+i+'">'+
-        '<span class="fds-mono"'+(mm?' style="view-transition-name:fd-mono"':'')+'>'+escT((p.name||'?')[0])+'</span>'+
-        '<span class="fds-fl">'+(role?'<span class="fds-role">'+ROLE_KICK[role]+'</span>':'')+
-        '<span class="fds-name"'+(mm?' style="view-transition-name:fd-name"':'')+'>'+escT(p.name)+'</span>'+
-        '<span class="fds-why">'+escT(whyOf(p,deck.job,deck.trade))+'</span></span>'+
-        '<span class="fds-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></button>';
-    }).join('');
-    var more=Math.max(0,curTotal-curPicks.length);
-    var db=TRADE_DB[deck.trade]||deck.trade;
-    showScreen('<span class="fds-kicker">'+escT(lead)+'</span>'+
-      '<h3 class="fds-h">'+escT(hd.h)+'</h3><p class="fds-sub">'+escT(hd.s)+'</p>'+rows+
-      (more?'<a class="fds-more" href="/vesta">See all '+curTotal+' matches on Vesta →</a>':'')+
-      '<div class="fds-doors"><a data-door="guide">what to ask before you hire →</a><a data-door="cost">what this usually costs →</a></div>',
-      function(){
-        [].forEach.call(screen.querySelectorAll('[data-pick]'),function(b){
-          b.addEventListener('click',function(){openFirm(curPicks[+b.dataset.pick],b)});
-        });
-        wireDoors(db);
-      });
-  }
-  function wireDoors(db){
-    [].forEach.call(screen.querySelectorAll('[data-door]'),function(a){
-      a.addEventListener('click',function(){a.dataset.door==='guide'?guideScreen(db,null):costScreen(db,null)});
-    });
-  }
-  function openFirm(p,card){
-    if(!p)return;morphPlace=p.placeId;
-    /* name the tapped card's elements so the API morphs them into the profile head */
-    if(card){var cm=card.querySelector('.fds-mono'),cn=card.querySelector('.fds-name');
-      if(cm)cm.style.viewTransitionName='fd-mono';if(cn)cn.style.viewTransitionName='fd-name';}
-    logEvent('profile_view',{place_id:p.placeId,trade:curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):null});
-    saveMemory({firm:p.name});   /* remember the last firm they weighed (F5) */
-    /* the desk keeps narrating — the line follows the visitor onto the profile */
-    if(!triBusy)speak('<b>'+escT(p.name)+'</b> — the read is below, and the request door when you’re ready. Or ask me anything about them.');
-    var st=standing(p,curDeck?curDeck.deck.trade:'');
-    showScreen('<span class="fdp-back" id="fdpBack">← back to your picks</span>'+
-      '<div class="fdp-head"><span class="fdp-mono" style="view-transition-name:fd-mono">'+escT((p.name||'?')[0])+'</span>'+
-      '<h3 class="fdp-name" style="view-transition-name:fd-name">'+escT(p.name)+'</h3></div>'+
-      '<p class="fdp-town">'+escT(p.town)+(p.registered?' · CT-registered':'')+(p.sinceYear?' · since '+p.sinceYear:'')+'</p>'+
-      (st?'<span class="fdp-standing">'+escT(st)+'</span>':'')+
-      '<span class="fdp-readlab">vesta’s read</span>'+
-      '<p class="fdp-read">'+escT(readClip(p.read,620))+'</p>'+
-      (p.knownFor.length?'<div class="fdp-chips">'+p.knownFor.map(function(k){return '<span>'+escT(k)+'</span>'}).join('')+'</div>':'')+
-      '<div class="fdp-actions"><button class="fdp-req" type="button" id="fdpReq">Request through Vesta</button>'+
-      '<a class="fdp-full" href="/c/'+encodeURIComponent(p.placeId)+'" target="_blank" rel="noopener">Full profile ↗</a></div>',
-      function(){
-        $('fdpBack').addEventListener('click',function(){renderPicks()});
-        $('fdpReq').addEventListener('click',function(){openRequest(p)});
-      });
-  }
-  function openRequest(p){
-    logEvent('request',{place_id:p.placeId,trade:curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):null});
-    if(!triBusy)speak('Say it once — I’ll carry it to <b>'+escT(p.name)+'</b>, and replies land straight in your inbox.');
-    var em=curDeck&&(curDeck.deck.emergency||/emergency/.test(curDeck.deck.job));
-    var plan=curDeck&&curDeck.mode==='plan';
-    showScreen('<span class="fdp-back" id="fdrBack">← back to '+escT(p.name)+'</span>'+
-      '<div class="fdp-head"><span class="fdp-mono" style="view-transition-name:fd-mono">'+escT((p.name||'?')[0])+'</span>'+
-      '<h3 class="fdp-name">Request through Vesta</h3></div>'+
-      '<p class="fds-sub">Your request goes to <b style="view-transition-name:fd-name">'+escT(p.name)+'</b>. Say it once — Vesta carries it over, and replies come straight to you.</p>'+
-      '<form id="fdrForm">'+
-      '<div class="fdr-row"><label class="fdr-lab" for="fdrSum">What’s going on?</label><textarea class="fdr-ta" id="fdrSum" maxlength="1200" placeholder="Writing up what you told me…"></textarea></div>'+
-      '<div class="fdr-row fdr-pair"><div><label class="fdr-lab" for="fdrName">Your name</label><input class="fdr-in" id="fdrName" maxlength="80" autocomplete="name"></div>'+
-      '<div><label class="fdr-lab" for="fdrEmail">Email — replies land here</label><input class="fdr-in" id="fdrEmail" type="email" maxlength="254" autocomplete="email" placeholder="you@example.com"></div></div>'+
-      '<div class="fdr-row fdr-pair"><div><label class="fdr-lab" for="fdrPhone">Phone — optional</label><input class="fdr-in" id="fdrPhone" type="tel" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="(203) 555-0148"></div>'+
-      '<div><label class="fdr-lab" for="fdrZip">ZIP code</label><input class="fdr-in" id="fdrZip" maxlength="5" inputmode="numeric" autocomplete="postal-code" placeholder="06824"></div></div>'+
-      '<div class="fdr-row"><label class="fdr-lab" for="fdrUrg">How soon</label><select class="fdr-sel" id="fdrUrg">'+
-      '<option value="planning"'+(plan?' selected':'')+'>Planning ahead</option><option value="soon"'+(!plan&&!em?' selected':'')+'>In the next few weeks</option><option value="emergency"'+(em?' selected':'')+'>It’s urgent</option></select></div>'+
-      '<button class="fdp-req" type="submit">Send request →</button>'+
-      '<span class="fdr-status" id="fdrStatus"></span>'+
-      '<p class="fdr-fine">Vesta sends '+escT(p.name)+' a one-time introduction with your note and your email as the reply-to. Your details go only to this pro — never sold, never a mailing list.</p>'+
-      '</form><div id="fdrResult"></div>',
-      function(){
-        $('fdrBack').addEventListener('click',function(){openFirm(p)});
-        $('fdrForm').addEventListener('submit',function(e){e.preventDefault();sendRequest(p)});
-        prefill();
-      });
-  }
-  /* prefill = the extractive intake writer (op:'writeup') — their OWN words, never composed.
-     insufficient → an honest blank; outage → the raw-words floor (the server's own doctrine). */
-  function prefill(){
-    var ta=$('fdrSum');if(!ta)return;
-    var raw=triMsgs.filter(function(m){return m.role==='user'}).map(function(m){return m.content}).join(' — ');
-    fetch('/api/triage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'writeup',messages:triWindow()})})
-    .then(function(r){return r.json()})
-    .then(function(j){if(ta.value)return;
-      if(j&&j.ok&&j.work)ta.value=j.work;
-      else if(j&&j.ok&&j.insufficient)ta.placeholder='Describe the work — what’s happening, where on the property, and anything a pro should know.';
-      else ta.value=raw.slice(0,1200)})
-    .catch(function(){if(!ta.value)ta.value=raw.slice(0,1200)});
-  }
-  function sendRequest(p){
-    var st=$('fdrStatus'),out=$('fdrResult'),btn=document.querySelector('#fdrForm .fdp-req');
-    function fail(m){st.className='fdr-status err';st.textContent=m;btn.disabled=false}
-    var summary=($('fdrSum').value||'').trim().slice(0,1200);
-    var name=($('fdrName').value||'').trim().slice(0,80);
-    var email=($('fdrEmail').value||'').trim();
-    var phone=($('fdrPhone').value||'').trim();
-    var zip=($('fdrZip').value||'').replace(/[^\d]/g,'').slice(0,5);
-    var urgency=$('fdrUrg').value||'soon';
-    if(!summary)return fail('Say what’s going on first.');
-    if(!/.+@.+\..+/.test(email))return fail('Add an email — replies land there.');
-    if(phone&&phone.replace(/\D/g,'').length<10)return fail('Check the phone number, or leave it blank.');
-    if(!window.HOME||!HOME.api)return fail('Something’s offline — try again in a moment.');
-    btn.disabled=true;st.className='fdr-status';st.textContent='Sending…';
-    var trade=curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):'';
-    HOME.api('/request',{method:'POST',body:{trade:trade,zip:zip,summary:summary,urgency:urgency,name:name,email:email,phone:phone,place_ids:[p.placeId]}})
-    .then(function(resp){
-      var r=resp.data;
-      if(!(r&&r.ok))return fail('That didn’t go through — try again.');
-      saveMemory({firm:p.name,sent:true});   /* the request went out — the desk remembers who (F5) */
-      var t=(r.targets||[])[0]||{};
-      var tel=t.phone?String(t.phone).replace(/[^\d+]/g,''):'';
-      var site=t.website?String(t.website):'';
-      var links='';
-      if(tel)links+='<a class="tel" href="tel:'+escT(tel)+'">Call '+escT(t.phone)+'</a>';
-      if(site)links+='<a class="site" href="'+escT(site)+'" target="_blank" rel="noopener nofollow">Visit their site</a>';
-      var msg=t.emailed?'<b>'+escT(p.name)+'</b> just received your request — a reply will come to <b>'+escT(email)+'</b>.':'Your request to <b>'+escT(p.name)+'</b> is saved.'+(links?' You can also reach them directly:':'');
-      $('fdrForm').hidden=true;
-      out.innerHTML='<h3 class="fdp-name">Request on its way ✓</h3><p class="fdr-done" style="margin-top:.6rem">'+msg+'</p>'+(links?'<div class="fdr-links">'+links+'</div>':'')+'<p class="fdr-fine">Whoever answers, you talk to them directly — Vesta steps out of the conversation.</p>';
-    })
-    .catch(function(){fail('That didn’t go through — try again.')});
-  }
-  /* firms couldn't load — the match still exists; door to Vesta, never a dead end */
-  function screenDoor(deck){
-    showScreen('<span class="fds-kicker">your matches are ready</span>'+
-      '<h3 class="fds-h">Vesta has your '+escT(String(deck.label||jobLabelOf(deck.job)).toLowerCase())+' picks</h3>'+
-      '<p class="fds-sub">Open Vesta to see them — say the same thing and it picks right up.</p>'+
-      '<a class="fds-more" href="/vesta?q='+encodeURIComponent(lastQ)+'">Open Vesta →</a>');
-  }
-  /* ═══ P4 — RICH COMPONENTS: cost chart + hiring guide, assembled from /desk-guide.json
-     (compiled by scripts/build-desk-guide.mjs from the directory's COST_GUIDE + the app's
-     PGUIDE — the desk authors NOTHING; law 2). Zero model calls (law 3). ═══ */
-  var TRADE_WORDS=[
-    ['plumbing',/\b(plumb\w*|water heater|pipe|pipes|drain|toilet|faucet|sewer|sump)\b/i],
-    ['roofing',/\b(roof\w*|shingle\w*|gutter\w*)\b/i],
-    ['hvac',/\b(hvac|furnace|boiler|heat pump|air ?condition\w*|ac|mini.?split|cooling|heating)\b/i],
-    ['electrical',/\b(electric\w*|panel|outlet|wiring|generator|ev charger)\b/i],
-    ['paving',/\b(driveway|pav\w*|asphalt|blacktop|concrete)\b/i],
-    ['lawn_care',/\b(lawn|landscap\w*|mow\w*|yard)\b/i],
-    ['painting',/\b(paint\w*|stain\w*)\b/i],
-    ['masonry',/\b(mason\w*|chimney|patio|stone ?work|stone wall|brick\w*|retaining wall)\b/i],
-    ['tree_service',/\b(tree|trees|stump|arborist)\b/i],
-    ['flooring',/\b(floor\w*|hardwood)\b/i],
-    ['windows_doors',/\b(window\w*|doors?)\b/i],
-    ['pool',/\b(pool)\b/i]
-  ];
-  function tradeOf(q){
-    for(var i=0;i<TRADE_WORDS.length;i++)if(TRADE_WORDS[i][1].test(q))return TRADE_WORDS[i][0];
-    return null;
-  }
-  var _guide=null;
-  function guideData(){
-    if(_guide)return _guide;
-    _guide=fetch('/desk-guide.json').then(function(r){return r.ok?r.json():null}).catch(function(){return null});
-    return _guide;
-  }
-  /* mid-triage coherence: the model must know a guide screen was shown (it never quotes dollars itself) */
-  function noteShown(q,what,label){
-    if(!triActive)return;
-    triMsgs.push({role:'user',content:q});
-    triMsgs.push({role:'assistant',content:JSON.stringify({say:'I pulled up the Fairfield County '+label+' '+what+' on screen — planning reference, not a quote.',resolved:null})});
-  }
-  function backDoor(){
-    return deckShown?'<div class="fds-doors"><a data-door="picks">← back to your picks</a></div>':'';
-  }
-  function wireBack(db){
-    [].forEach.call(screen.querySelectorAll('[data-door="picks"]'),function(a){
-      a.addEventListener('click',renderPicks);
-    });
-    wireDoors(db);
-  }
-  function costScreen(db,q){
-    guideData().then(function(g){
-      var t=g&&g.trades&&g.trades[db];
-      if(!t||!t.cost){
-        if(q)speak('I don’t carry planning numbers for that trade yet — but say the job and I’ll line up the right pros, and their quotes become your real numbers.');
-        return;
-      }
-      if(q)noteShown(q,'cost guide',t.label.toLowerCase());
-      /* voiced on BOTH paths (typed ask or tapped door) — the words always match the room */
-      if(!triBusy)speak('Planning numbers, not quotes — here’s what '+escT(t.label.toLowerCase())+' usually runs in Fairfield County. When you’re ready, say the job and I’ll line up the right pros.');
-      var rows=t.cost.rows.map(function(r){
-        return '<div class="fdc-row"><div class="fdc-job">'+escT(r.job)+'</div><div class="fdc-range">'+escT(r.range)+'</div><p class="fdc-note">'+escT(r.note)+'</p></div>';
-      }).join('');
-      landAfterSay(function(){showScreen('<span class="fds-kicker">planning numbers, not quotes</span>'+
-        '<h3 class="fds-h">What '+escT(t.label.toLowerCase())+' costs in Fairfield County</h3>'+
-        '<p class="fds-sub">'+escT(t.cost.typical)+'</p>'+rows+
-        '<p class="fdc-factors"><b>What moves your number:</b> '+escT(t.cost.factors)+'.</p>'+
-        '<p class="fdc-method">These are planning estimates, not quotes — your real number comes from a contractor who has seen your '+escT(t.cost.noun||'project')+'. Basis: '+escT(t.cost.basis)+' · '+escT(t.cost.scope)+' · updated '+escT(t.cost.updated)+'.</p>'+
-        (t.guide?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="guide">what to ask before you hire →</a></div>':backDoor()),
-        function(){wireBack(db)})});
-    });
-  }
-  function guideScreen(db,q){
-    guideData().then(function(g){
-      var t=g&&g.trades&&g.trades[db];
-      if(!t||!t.guide){
-        if(q)speak('I don’t have a hiring checklist for that trade yet — but say the job and I’ll line up pros whose records Vesta has actually read.');
-        return;
-      }
-      if(q)noteShown(q,'hiring checklist',t.label.toLowerCase());
-      if(!triBusy)speak('Before you hire — the questions that separate a solid '+escT(t.label.toLowerCase())+' quote from an expensive lesson. When you’re ready, say the job and I’ll line up the right pros.');
-      var cards=t.guide.map(function(x){
-        return '<div class="fdg-card"><span class="fdg-t">'+escT(x.t)+'</span><p class="fdg-d">'+escT(x.d)+'</p></div>';
-      }).join('');
-      landAfterSay(function(){showScreen('<span class="fds-kicker">before you hire</span>'+
-        '<h3 class="fds-h">What to ask '+escT(t.pros)+' before you hire</h3>'+cards+
-        (t.cost?'<div class="fds-doors">'+(deckShown?'<a data-door="picks">← back to your picks</a>':'')+'<a data-door="cost">what this usually costs →</a></div>':backDoor()),
-        function(){wireBack(db)})});
-    });
-  }
-
-  /* ═══ F4 — THE DEMO LANE: the desk performs, never just describes. The missed-call
-     sim is a SCRIPTED, LABELED performance (zero model calls — law 3); the live demo
-     (the real product model) is one door away at /missed-calls. ═══ */
-  var SIM=[
-    ['sys','Missed call — you’re 30 ft up on a roof'],
-    ['them','Hey, this is Summit Ridge Roofing — sorry we missed your call! What’s going on with your roof?','moments later, in your name'],
-    ['me','Shingles blew off in last night’s wind — there’s a water spot on the ceiling now'],
-    ['them','That deserves eyes quickly. We can have someone out tomorrow morning — does 9:30 work?'],
-    ['me','9:30 works'],
-    ['them','Booked ✓ — you’ll get a reminder the night before. We’ll take care of you.']
-  ];
-  /* ═══ THE TWO UNIVERSES (front-door-script.md v2). Each lane is a russian doll the
-     desk leads: blanket → why → the working doll. Atlas's doll is the FULL ESTATE —
-     eight rooms, each openable in place; the missed call is one room, never the story.
-     Vesta's doll is the guided hand into the real triage. Every line pack-derived. ═══ */
+  /* ══ THE OFFICE — eight rooms (titles + teacher-whiteboard diagrams for the deck) ══ */
   var ROOMS={
-    lead:{t:'Lead Response',d:'Every call and text answered and qualified — around the clock, in English or Spanish.',
-      deep:'When you can’t pick up, Atlas follows up by text right away. The approved questions get asked — what happened, where, how urgent — and supported texts typically get a first reply in 15 seconds after go-live.',sim:true},
-    storm:{t:'Storm Mode',d:'Storm volume, the same operating standard.',
-      deep:'When inbound calls and texts surge after a storm, Atlas works the conversations concurrently — instead of leaving a stack of voicemails for the end of the day. The busiest week of your year runs like a normal one.'},
-    camp:{t:'Seasonal Campaigns',d:'Your market’s seasons, worked on schedule.',
-      deep:'Campaigns built around your market’s rhythm — storm response, renovation windows, inspection cycles. Written, scheduled, and sent without you touching a keyboard.'},
-    book:{t:'Booking &amp; Scheduling',d:'Qualified estimates, on the calendar, context attached.',
-      deep:'When a lead qualifies, Atlas can place the estimate directly on your calendar — with what happened, where, and how urgent already written up for you.'},
-    follow:{t:'Follow-up',d:'Quotes chased, quiet leads revived.',
-      deep:'The quote you sent Tuesday gets followed up on. The lead that went quiet in March gets a reason to come back. Nothing dies in a notebook.'},
-    reviews:{t:'Review Generation',d:'The ask, at the moment the job closes.',
-      deep:'Reviews come from asking at the right moment. Atlas sends the request when the job closes, every time — the record compounds instead of evaporating.'},
-    local:{t:'Local Discovery',d:'The signals that make good work findable, kept current.',
-      deep:'Your pages, listings, and local signals — maintained as part of the office, not sold as an add-on. Clearer facts for the systems homeowners actually search with; honest work, honestly findable.'},
-    briefs:{t:'Operator Briefs',d:'It watches your week before you think to ask.',
-      deep:'Atlas watches for storm threats in your market, notices when a lead goes quiet, and counts your week before you think to look. It’s not waiting for a question — it’s already thinking about your business.'}
+    lead:{t:'Lead Response',d:'Every call and text answered and qualified — around the clock, in English or Spanish.'},
+    storm:{t:'Storm Mode',d:'Storm volume, the same operating standard.'},
+    camp:{t:'Seasonal Campaigns',d:'Your market’s seasons, worked on schedule.'},
+    book:{t:'Booking &amp; Scheduling',d:'Qualified estimates, on the calendar, context attached.'},
+    follow:{t:'Follow-up',d:'Quotes chased, quiet leads revived.'},
+    reviews:{t:'Review Generation',d:'The ask, at the moment the job closes.'},
+    local:{t:'Local Discovery',d:'The signals that make good work findable, kept current.'},
+    briefs:{t:'Operator Briefs',d:'It watches your week before you think to ask.'}
   };
-  /* teacher-whiteboard line glyphs — one small diagram per room (the "visual explaining
-     the office"). Kept minimal; ink lines in olive, drawn flat on the card. */
   function svg(inner){return '<div class="cf-diag"><svg viewBox="0 0 120 40" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg></div>'}
   var DIAG={
     lead:svg('<rect x="6" y="8" width="20" height="24" rx="3"/><path d="M40 14 h58"/><path d="M90 8 l8 6 -8 6"/><path d="M98 26 h-58"/><path d="M48 32 l-8-6 8-6"/>'),
@@ -1859,10 +1125,9 @@ a,button{transition:transform .14s}
     local:svg('<path d="M24 8 a12 12 0 0 1 12 12 c0 8 -12 18 -12 18 s-12 -10 -12 -18 a12 12 0 0 1 12 -12z"/><circle cx="24" cy="20" r="4"/><path d="M56 20 a30 30 0 0 1 0 0" /><path d="M78 12 a16 16 0 0 1 0 16 M88 6 a26 26 0 0 1 0 28"/>'),
     briefs:svg('<path d="M10 34 h100"/><rect x="20" y="20" width="12" height="14"/><rect x="42" y="12" width="12" height="22"/><rect x="64" y="24" width="12" height="10"/><rect x="86" y="8" width="12" height="26"/>')
   };
-  /* shared card builder — the office reads the same whether it lands in the working room
-     or on the landing category */
-  /* generic coverflow card markup — used by the office deck AND the trade deck. Each
-     item: {key,num,title,desc,diag,go}. */
+
+  /* ══ generic coverflow card markup + engine (ported from the Originkit gallery) ══ */
+  var GO_ICO='<svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8 7 h9 v9"/></svg>';
   function cfCards(items){
     var cards=items.map(function(it){
       var isFinal=it.key==='__atlas__'||it.key==='__vesta__';
@@ -1874,34 +1139,12 @@ a,button{transition:transform .14s}
       '<div class="cf-nav"><button class="cf-arrow" data-cf="prev" aria-label="Previous">‹</button><div class="cf-dots"></div><button class="cf-arrow" data-cf="next" aria-label="Next">›</button></div>';
   }
   function officeItems(keys){return keys.map(function(k,i){var r=ROOMS[k];
-    return {key:k,num:(i<9?'0':'')+(i+1)+' · the office',title:r.t,desc:r.d,diag:DIAG[k]||'',go:'step into this room →'}})}
-  function officeHTML(keys){return cfCards(officeItems(keys))}
-  /* the final door — a card in its own right, not a UI escape hatch: the last stop in
-     the deck IS the whole product, one tap out of the chat entirely (Drew 7/17: the
-     chat was fighting the landing page's own flow; this gives every deck a clean exit) */
-  var GO_ICO='<svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8 7 h9 v9"/></svg>';
+    return {key:k,num:(i<9?'0':'')+(i+1)+' · the office',title:r.t,desc:r.d,diag:DIAG[k]||'',go:'open this room →'}})}
   function finalDoorItem(kind){
     return kind==='atlas'
       ? {key:'__atlas__',num:'see more',title:'The full Atlas',desc:'Every room, live — the whole product, not just the doors.',diag:'<div class="cf-diag cf-diag-ico">'+GO_ICO+'</div>',go:'open Atlas →'}
       : {key:'__vesta__',num:'see more',title:'The full Vesta',desc:'Every trade, every town — the whole directory.',diag:'<div class="cf-diag cf-diag-ico">'+GO_ICO+'</div>',go:'open Vesta →'};
   }
-  function openFinalDoor(k){if(k==='__atlas__')location.href='/atlas';else if(k==='__vesta__')location.href='/vesta'}
-  function officeScreen(){
-    speak(L.office);
-    landAfterSay(assembleOffice);
-  }
-  function assembleOffice(){
-      var keys=Object.keys(ROOMS);
-      showScreen('<span class="fds-kicker">the office</span>'+
-        '<h3 class="fds-h">You do the work. This runs around it.</h3>'+
-        officeHTML(keys)+
-        '<p class="fdc-method">Every month ends with a receipt, not a story — responses, bookings, follow-ups, recorded outcomes. And the record is yours: in Lens you review every fact, and nothing publishes without you. If we’re not the right fit, we’ll say so first.</p>'+
-        '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a href="/lens">start free with Lens →</a></div>',
-        function(){wireCoverflow(keys,screen,roomScreen)});
-  }
-  /* the coverflow engine — ported from the Originkit gallery's transform math.
-     root scopes the queries so the same engine runs on the landing decks and inside the
-     working room; onOpen(key,i) fires when the centered card is clicked. */
   function wireCoverflow(keys,root,onOpen){
     if(!root||!root.querySelector)return;
     var stage=root.querySelector('.cf-stage');if(!stage)return;
@@ -1930,149 +1173,8 @@ a,button{transition:transform .14s}
     });
     layout();
   }
-  function roomScreen(k){
-    var r=ROOMS[k];if(!r)return officeScreen();
-    hideReveal();   /* stepping into a room retires the landing deck immediately */
-    speak('<b>'+r.t+'</b> — '+r.d+' Walk <a data-say="walk the office">back through the office</a> anytime.');
-    landAfterSay(function(){
-      showScreen('<span class="fds-kicker">inside the office</span>'+
-        '<h3 class="fds-h">'+r.t+'</h3>'+
-        '<p class="fdg-d" style="font-size:.92rem;line-height:1.7">'+r.deep+'</p>'+
-        '<div class="fds-doors"><a data-door="office">← the office</a>'+
-        (r.sim?'<a data-door="sim">watch a missed call come back →</a>':'')+
-        '<a href="'+CAL+'" target="_blank" rel="noopener">book the fit call →</a></div>',
-        function(){
-          var o=screen.querySelector('[data-door="office"]');if(o)o.addEventListener('click',function(e){e.preventDefault();officeScreen()});
-          var s=screen.querySelector('[data-door="sim"]');if(s)s.addEventListener('click',function(e){e.preventDefault();
-            showScreen(phoneHTML('inside lead response'),function(){playMissedSim(function(){
-              if(triBusy)return;
-              speak('That’s one room of the office. <a data-say="walk the office">Walk the rest</a>, <a href="/missed-calls">run the live demo</a>, or <a href="'+CAL+'" target="_blank" rel="noopener">book the fit call</a>.');
-            })});
-          });
-        });
-    });
-  }
-  /* the contractor arc: ONE blanket beat spoken, the office lands on its heels —
-     no second sentence gating the cards (speed over ceremony; Drew 7/17) */
-  function coArc(){
-    lane='co';setPH();
-    var g=simGen;
-    speak(L.co0);
-    landAfterSay(function(){if(g!==simGen)return;assembleOffice()});
-  }
-  /* the homeowner arc: one blanket beat, then the ask (the triage takes it from there) */
-  function hoArc(){
-    lane='ho';setPH();
-    var g=simGen;
-    speak(L.ho0);
-    landAfterSay(function(){if(g!==simGen)return;speak(L.ho)});
-  }
-  function phoneHTML(kicker){
-    return '<span class="fds-kicker">'+kicker+'</span>'+
-      '<div class="fdph"><div class="fdph-bar"><span>Tuesday</span><span>2:14 PM</span></div>'+
-      '<div class="fdph-call" id="phCall"><span class="fdph-ring"></span>Incoming call · (203) 555-0182</div>'+
-      '<div class="fdph-thread" id="phThread"></div></div>'+
-      '<p class="fdc-method">A simulation, labeled as one — supported texts typically get a first reply in 15 seconds after go-live. The <a href="/missed-calls" style="color:var(--olive)">live demo</a> answers for real.</p>';
-  }
-  function missedDemo(){
-    landAfterSay(function(){
-      showScreen(phoneHTML('watch it happen'),function(){playMissedSim(function(){
-        if(triBusy)return;
-        speak('That’s Atlas — the answer to the call you couldn’t take. <a href="/missed-calls">Run the live demo yourself</a>, ask about <a data-say="the offer">the offer</a>, or <a data-say="how it compounds">how it compounds</a>.');
-      })});
-    });
-  }
-  /* the performance survives interruption honestly: any visitor input bumps simGen and
-     the scripted playback simply stops — their conversation owns the room from there */
-  function playMissedSim(onDone){
-    var call=$('phCall'),thread=$('phThread'),i=0,g=simGen;
-    setTimeout(function(){
-      if(g!==simGen)return;
-      if(call)call.className='fdph-call missed';
-      step();
-    },1900);
-    function step(){
-      if(g!==simGen)return;
-      if(i>=SIM.length){
-        setTimeout(function(){if(g===simGen&&onDone)onDone()},1300);
-        return;
-      }
-      var s=SIM[i++];
-      if(s[2]&&thread){var w=document.createElement('span');w.className='fdph-when';w.textContent=s[2];thread.appendChild(w)}
-      var d=document.createElement('div');
-      d.className=s[0]==='sys'?'fdph-missedchip':'fdph-b '+(s[0]==='them'?'them':'me');
-      d.textContent=s[1];
-      d.style.opacity='0';d.style.transform='translateY(8px)';
-      if(thread)thread.appendChild(d);
-      void d.offsetWidth;
-      d.style.opacity='';d.style.transform='';
-      setTimeout(step,s[0]==='me'?1500:2000);
-    }
-  }
-  /* the flywheel, drawn node by node as the spoken line lands */
-  function fwDraw(){
-    landAfterSay(function(){
-      showScreen('<span class="fds-kicker">how it compounds</span>'+
-        '<div class="fdfw">'+
-        '<div class="fdfw-n"><b>Atlas</b><span>runs the front office — answers, books, follows up</span></div>'+
-        '<div class="fdfw-n"><b>The record</b><span>what actually happens becomes measured evidence</span></div>'+
-        '<div class="fdfw-n"><b>Lens</b><span>you review every fact and control what shows</span></div>'+
-        '<div class="fdfw-n"><b>Vesta</b><span>homeowners see the proof — never ads</span></div>'+
-        '<p class="fdfw-loop">…and the proof brings the next call back to Atlas ↺</p>'+
-        '</div>',
-        function(){
-          var ns=screen.querySelectorAll('.fdfw-n'),k=0;
-          (function light(){
-            if(k<ns.length){ns[k++].classList.add('on');setTimeout(light,850);return}
-            var lp=screen.querySelector('.fdfw-loop');if(lp)lp.classList.add('on');
-          })();
-        });
-    });
-  }
 
-  /* follow-up context: the model KNOWS what's on screen — "why these three?" gets a real answer */
-  function seedFollow(deck,picks,total){
-    var ctx={picks:picks.map(function(p){var role=pickRoles[p.placeId];
-        return{name:p.name,slot_earned_because:role?ROLE_LONG[role]:'next-strongest record among the firms matched to this job',
-          record:whyOf(p,deck.job,deck.trade),vestas_read:readClip(p.read,230),known_for:p.knownFor.slice(0,3)}}),
-      trade:deck.trade,job:deck.job,more_matches:Math.max(0,total-picks.length),
-      intake:'The homeowner sees the picks as cards on this page; tapping one opens its profile with a "Request through Vesta" button that writes their request up from this conversation. If they ask you in chat to reach out to / contact / send to a pick, that IS a yes — NEVER say you cannot send. Say you’ll write it up from the conversation, and they just tap the pick and "Request through Vesta" to review it before it goes.'};
-    triMsgs.push({role:'assistant',content:JSON.stringify(ctx)});
-  }
-
-  /* ═══ F5 — RETURN-VISIT MEMORY. The desk remembers your last visit and greets you by
-     it. localStorage ONLY — the visitor's own browser, no account, no server, nothing
-     leaves the device. Written on match / profile-open / request-sent; 30-day expiry. ═══ */
-  var MEM_KEY='fd_memory',MEM_TTL=30*864e5;
-  function loadMemory(){try{var m=JSON.parse(localStorage.getItem(MEM_KEY)||'null');if(m&&m.v===1&&(Date.now()-m.ts)<MEM_TTL)return m}catch(e){}return null}
-  function saveMemory(patch){try{
-    var cur=null;try{cur=JSON.parse(localStorage.getItem(MEM_KEY)||'null')}catch(e){}
-    if(!cur||cur.v!==1)cur={v:1};
-    if(curDeck&&curDeck.deck){cur.deck=curDeck.deck;cur.trade=curDeck.deck.trade;cur.tradeLabel=curDeck.deck.tradeLabel||curDeck.deck.trade;cur.job=curDeck.deck.job}
-    if(patch)for(var k in patch)cur[k]=patch[k];
-    cur.ts=Date.now();localStorage.setItem(MEM_KEY,JSON.stringify(cur));
-  }catch(e){}}
-  function agoWords(ts){var diff=Date.now()-ts,day=864e5;if(diff<2*day)return diff<day?'earlier today':'yesterday';if(diff<7*day)return 'a few days ago';return 'a little while back'}
-  function speakReturn(mem){
-    lane='ho';
-    var firm=mem.firm,job=(mem.deck&&mem.deck.label?mem.deck.label:(mem.job?jobLabelOf(mem.job):'your project')).toLowerCase(),when=agoWords(mem.ts),html;
-    if(mem.sent&&firm)
-      html='Welcome back. How did it go with <b>'+escT(firm)+'</b>? Your <a data-act="resume">'+escT(job)+' picks</a> are still here, or we can <a data-act="fresh">start something new</a>.';
-    else if(firm)
-      html='Welcome back. You were looking at <b>'+escT(firm)+'</b> '+when+' — want your <a data-act="resume">'+escT(job)+' picks</a> back, or to <a data-act="fresh">start fresh</a>?';
-    else
-      html='Welcome back — you were weighing '+escT(job)+' pros '+when+'. I can pull your <a data-act="resume">picks</a> back up, or <a data-act="fresh">start something new</a>.';
-    speak(html);
-  }
-  var ACT={
-    resume:function(){var m=loadMemory();if(!m||!m.deck)return speak(L.greet);triActive=true;speak('Right where you left off —');deckLand(m.deck,'fix',true)},
-    fresh:function(){lane=null;setPH();setTalking(false);speak(L.greet)}
-  };
-
-  /* ═══ THE TWO CATEGORIES — built on landing, always. Left: the office coverflow.
-     Right: the homeowner trade swipe stack (Originkit CardStack ported to vanilla —
-     drag the top card past the threshold to cycle it to the back; tap it to start
-     that trade with the real triage). ═══ */
+  /* ══ THE TRADES — the homeowner deck ══ */
   var STACK=[
     {k:'roofing', t:'Roofing', d:'Leaks, storm damage, a tired roof.', ask:'my roof needs help',
      ico:'<svg viewBox="0 0 24 24"><path d="M3 12 L12 4 L21 12"/><path d="M5 11 V20 H19 V11"/></svg>'},
@@ -2094,45 +1196,35 @@ a,button{transition:transform .14s}
   function tradeItems(){return STACK.map(function(s,i){
     return {key:s.k,num:(i<9?'0':'')+(i+1)+' · a trade',title:s.t,desc:s.d,
       diag:'<div class="cf-diag cf-diag-ico">'+s.ico+'</div>',go:'tap to start →'}})}
-  function startTrade(k){var s=STACK.filter(function(x){return x.k===k})[0];if(!s)return;
-    lane='ho';setPH();   /* deterministic lane entry — a tapped trade card never rides the keyword regex */
-    input(s.ask,s.t.toLowerCase())}
 
-  /* THE FORK — both decks are built EAGERLY at boot (first hover must be instant);
-     hover/tap a pill shows that side's deck, tap again or "hide ×" tucks it away, and
-     any typed ask collapses the cards so they never obstruct the conversation. */
-  var revSide=null,talking=false;
-  function setTalking(v){
-    talking=v;
-    var fd=document.getElementById('home');if(fd)fd.classList.toggle('talking',v);
-    if(v&&typeof hideReveal==='function')hideReveal();
+  /* ══ routing OUT — a card is a door to the product, carrying its context ══ */
+  function openOffice(k){location.href=(k==='__atlas__')?'/atlas':'/atlas?tab=room:'+k}
+  function openTrade(k){
+    if(k==='__vesta__'){location.href='/vesta';return}
+    var s=STACK.filter(function(x){return x.k===k})[0];
+    location.href='/vesta?q='+encodeURIComponent(s?s.ask:k);
+  }
+
+  /* ══ THE FORK — both decks built eagerly; a pill reveals a side, a card routes out ══ */
+  var revSide=null;
+  function hideReveal(){revSide=null;$('catOffice').hidden=true;$('catStack').hidden=true;$('revHide').hidden=true;$('forkCo').classList.remove('on');$('forkHo').classList.remove('on')}
+  function revealSide(side){
+    if(revSide===side)return;
+    revSide=side;
+    $('catOffice').hidden=(side!=='co');$('catStack').hidden=(side!=='ho');
+    $('revHide').hidden=false;
+    $('forkCo').classList.toggle('on',side==='co');$('forkHo').classList.toggle('on',side==='ho');
   }
   function buildDecks(){
     var co=$('catOffice'),ho=$('catStack');
     var keys=Object.keys(ROOMS).concat(['__atlas__']);
     co.innerHTML=cfCards(officeItems(Object.keys(ROOMS)).concat([finalDoorItem('atlas')]));
-    wireCoverflow(keys,co,function(k){k==='__atlas__'?openFinalDoor(k):roomScreen(k)});
+    wireCoverflow(keys,co,openOffice);
     var tk=STACK.map(function(s){return s.k}).concat(['__vesta__']);
     ho.innerHTML=cfCards(tradeItems().concat([finalDoorItem('vesta')]));
-    wireCoverflow(tk,ho,function(k){k==='__vesta__'?openFinalDoor(k):startTrade(k)});
-    hideReveal();   /* explicit tucked state at boot */
+    wireCoverflow(tk,ho,openTrade);
+    hideReveal();
   }
-  function hideReveal(){
-    revSide=null;
-    $('catOffice').hidden=true;$('catStack').hidden=true;$('revHide').hidden=true;
-    $('forkCo').classList.remove('on');$('forkHo').classList.remove('on');
-  }
-  function revealSide(side){
-    if(talking)return;   /* mid-conversation, nothing stands the deck back up */
-    if(revSide===side)return;
-    revSide=side;
-    $('catOffice').hidden=(side!=='co');$('catStack').hidden=(side!=='ho');
-    $('revHide').hidden=false;
-    $('forkCo').classList.toggle('on',side==='co');
-    $('forkHo').classList.toggle('on',side==='ho');
-  }
-  /* desktop (hover-capable): hover reveals, click just keeps it open — hide lives on the
-     × . touch: tap toggles. */
   var canHover=!!(window.matchMedia&&matchMedia('(hover: hover)').matches);
   function pillTap(side){(canHover||revSide!==side)?revealSide(side):hideReveal()}
   $('forkCo').addEventListener('mouseenter',function(){revealSide('co')});
@@ -2141,11 +1233,6 @@ a,button{transition:transform .14s}
   $('forkHo').addEventListener('click',function(){pillTap('ho')});
   $('revHide').addEventListener('click',hideReveal);
   buildDecks();
-
-  /* the desk speaks first — by memory if we've met; otherwise the fork question stands
-     above the two pills */
-  var __mem=loadMemory();
-  if(__mem)speakReturn(__mem);else speak(L.greet);
 })();
 </script>
 

@@ -9,7 +9,9 @@
   },
   "rewrites": [
     { "source": "/",              "destination": "/landing-next.html" },
-    { "source": "/atlas",         "destination": "/atlas.html" },
+    { "source": "/atlas",         "destination": "/atlas-next.html" },
+    { "source": "/atlas-classic", "destination": "/atlas.html" },
+    { "source": "/atlas-next",    "destination": "/atlas-next.html" },
     { "source": "/lens",          "destination": "/lens.html" },
     { "source": "/workspace",     "destination": "/workspace.html" },
     { "source": "/workspace/signin", "destination": "/workspace-signin.html" },
