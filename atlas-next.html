@@ -1044,6 +1044,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 /* the ask bar — floating pill, cycling per-letter placeholder, mic (the HextaUI mechanism, our material) */
 .fd-well{display:flex;align-items:center;gap:.45rem;background:var(--nm);border:1px solid rgba(255,255,255,.55);border-radius:var(--r-pill);box-shadow:var(--nm-out);padding:.5rem .55rem .5rem 1.35rem;width:min(600px,100%);margin:2.1rem auto 0;transition:box-shadow .3s ease}
 .fd-well:focus-within{box-shadow:var(--sh-card)}
+.fd-demo{margin:1.15rem auto 0;display:inline-flex;align-items:center;gap:.5rem;background:var(--tea-grad);color:var(--ink);border:none;border-radius:var(--r-pill);padding:.62rem 1.2rem;font:600 .92rem/1 var(--body);box-shadow:var(--nm-out);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.fd-demo svg{width:15px;height:15px;color:var(--olive)}
+.fd-demo:hover{transform:translateY(-1px);box-shadow:var(--sh-card)}
+.fd-demo:active{transform:translateY(0);box-shadow:var(--nm-in)}
+.fd.talking .fd-demo,.fd.staged .fd-demo,.fd.req-open .fd-demo{display:none}
 .fd-in{position:relative;flex:1;min-width:0}
 .fd-well input{width:100%;border:0;outline:0;background:transparent;font:400 1.02rem/1.4 var(--body);color:var(--ink);position:relative;z-index:1;padding:.45rem 0}
 .fd-ph{position:absolute;left:0;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--dim);font:400 1.02rem/1.4 var(--body);white-space:nowrap;overflow:hidden;max-width:100%;transition:opacity .2s;z-index:0}
@@ -1088,6 +1093,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 /* the request screen has its own form + send — the docked composer would overlap and
    confuse (two inputs); it steps aside until the form leaves the stage */
 .fd.staged.req-open .fd-well{display:none}
+.fd.sim-open .fd-well{display:none}   /* watching the demo — no need to type; give the phone the room */
+#acenter .fd.sim-open .fd-line{min-height:0;margin-top:0}   /* reclaim the reserved greeting height so the phone can breathe */
+#acenter .fd.sim-open .fd-mat{display:none}                 /* "Welcome!" not needed while watching a demo */
+#acenter .fd.sim-open.staged{padding-top:clamp(.8rem,1.6vh,1.5rem);padding-bottom:1rem}
 .fd-brand,.fd-brand svg,.fd-tagline,.fd-mat,.fd-line,.fd-you{transition:all .6s var(--spring)}
 .fd.staged .fd-brand{width:46px;height:46px;border-radius:15px}
 .fd.staged .fd-brand svg{width:21px;height:21px}
@@ -1432,6 +1441,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           <button type="button" class="fd-mic" id="fdMic" aria-label="Speak instead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
           <button type="submit" class="fd-send" aria-label="Ask"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h12M10 4l5 5-5 5"/></svg></button>
           </form>
+          <button type="button" class="fd-demo" id="fdDemo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4" fill="currentColor" stroke="none"/></svg>Would you like to see a 20-second demo?</button>
         </div>
         <div class="fd-screen" id="fdScreen" hidden></div>
       </div>
@@ -1739,11 +1749,25 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       '<a href="'+CAL+'" target="_blank" rel="noopener">book the fit call →</a></div>',
       wireScreenDoors);
   }
+  /* zoom the whole phone (uniform, no reflow) so it AND the caption/cycler below it clear the docked composer — a step back, not shrunken */
+  function fitMcsPhone(){
+    var phone=document.querySelector('.mcs-phone'); if(!phone)return;
+    phone.style.zoom='1';
+    var pr=phone.getBoundingClientRect(), natural=pr.height||610;
+    var last=document.querySelector('#fdScreen .fdc-method')||$('mcsMore');
+    var below=last?Math.max(96,last.getBoundingClientRect().bottom-pr.bottom):150;   // caption + dots + button + method
+    var well=document.querySelector('#acenter .fd-well'), cBottom;
+    if(well&&well.offsetParent){ cBottom=well.getBoundingClientRect().top-12; }
+    else { cBottom=window.innerHeight-(window.innerWidth<900?90:14); }
+    phone.style.zoom=Math.max(0.5,Math.min(1,(cBottom-pr.top-below)/natural));
+  }
+  window.addEventListener('resize',fitMcsPhone);
   function simVisual(){
     showScreen(mcsPhoneHTML(),function(){
       var more=$('mcsMore');
       if(more)more.addEventListener('click',function(){if(window.cue)cue('tick');mcsPlay((simIdx+1)%SIMS.length)});
       mcsPlay(simIdx,function(){if(busy)return;speak('That’s one room of the office — one of five here. <a data-say="walk the office">Walk the rest</a>, <a href="/missed-calls">run the live demo</a>, or <a href="'+CAL+'" target="_blank" rel="noopener">book the fit call</a>.')});
+      fitMcsPhone(); setTimeout(fitMcsPhone,60);
     });
   }
   function offerVisual(){
@@ -1965,6 +1989,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     sim:'Here’s a missed call coming back — a simulation, labeled as one. Watch it play out.'
   };
   function openTab(key){
+    var _fdh=$('home');if(_fdh)_fdh.classList.toggle('sim-open',key==='sim');
     if(key==='office')return walkOffice();
     if(key&&key.indexOf('room:')===0)return enterRoom(key.slice(5));
     setTalking(true);setActive(key);
@@ -2087,6 +2112,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   wire('abnOffice',function(){openTab('office')});
   wire('abnOffer',function(){openTab('offer')});
   wire('abnDemo',function(){openTab('sim')});
+  wire('fdDemo',function(){if(window.cue)cue('tick');openTab('sim')});
   wire('abnLens',function(){openTab('lens')});
   wire('abnAsk',function(){try{say.focus()}catch(e){}});
   wire('abnYou',function(){setTalking(true);setActive(null);speak('Accounts live in Lens — your free, private workspace. <a href="/lens">Open Lens</a>.')});

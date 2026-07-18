@@ -526,6 +526,14 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     if (b) setMode(b.getAttribute('data-mode'));
   });
   var mReset=document.getElementById('mcsReset'); if(mReset) mReset.addEventListener('click', function(){ setMode(mode); });
+  // zoom the whole phone (uniform, no reflow) so it fits the viewport on short screens — a step back, not shrunken
+  function fitMcsPhone(){
+    var phone=document.querySelector('.mcs-phone'); if(!phone)return;
+    phone.style.zoom='1';
+    var natural=phone.getBoundingClientRect().height||610;
+    phone.style.zoom=Math.max(0.6,Math.min(1,(window.innerHeight-96)/natural));
+  }
+  window.addEventListener('resize',fitMcsPhone); fitMcsPhone();
   selectTrade('roofing');
 })();
 </script>
