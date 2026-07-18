@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="google-site-verification" content="cb0TWuB6_uWIhHMBxoH5bSVsIQQ0oMMfyoS_SzQjENg">
 <title>4THWALL® — The Managed Front Office for Home-Service Contractors</title>
 <meta name="description" content="Atlas runs the work around the job for homeowner-facing contractors — missed-call recovery, lead qualification, booking, follow-up, reviews, campaigns, local discovery, and a measured monthly receipt.">
@@ -1160,12 +1160,19 @@ a,button{transition:transform .14s}
     });
     function setActive(a){active=((a%n)+n)%n;layout()}
     function layout(){
+      var mob=window.innerWidth<=640;
       cards.forEach(function(c,i){
         var rel=i-active;if(rel>n/2)rel-=n;if(rel<-n/2)rel+=n;
-        var ax=Math.abs(rel),vis=ax<=2;
-        var sc=Math.max(0.4,1-ax*0.16),tx=rel*(cw*0.66),tz=-ax*(cw*0.72),ry=-rel*12,rz=rel*8;
-        c.style.transform='translate(-50%,-50%) translateX('+tx+'px) translateZ('+tz+'px) rotateY('+ry+'deg) rotateZ('+rz+'deg) scale('+sc+')';
-        c.style.opacity=vis?'1':'0';c.style.pointerEvents=vis?'auto':'none';
+        var ax=Math.abs(rel);
+        if(mob){
+          /* Vesta-style deck on phones: active card centered, neighbors stacked behind with a slight upward peek — no horizontal bleed */
+          c.style.transform='translate(-50%,-50%) translateY('+(-ax*10)+'px) rotateZ('+(rel*2.2)+'deg) scale('+Math.max(0.9,1-ax*0.05)+')';
+          c.style.opacity=ax===0?'1':(ax<=2?'0.42':'0');c.style.pointerEvents=ax===0?'auto':'none';
+        }else{
+          var sc=Math.max(0.4,1-ax*0.16),tx=rel*(cw*0.66),tz=-ax*(cw*0.72),ry=-rel*12,rz=rel*8;
+          c.style.transform='translate(-50%,-50%) translateX('+tx+'px) translateZ('+tz+'px) rotateY('+ry+'deg) rotateZ('+rz+'deg) scale('+sc+')';
+          c.style.opacity=(ax<=2)?'1':'0';c.style.pointerEvents=(ax<=2)?'auto':'none';
+        }
         c.classList.toggle('active',rel===0);c.style.zIndex=String(100-ax);
       });
       dots.forEach(function(d,i){d.classList.toggle('on',i===active)});
@@ -1173,6 +1180,9 @@ a,button{transition:transform .14s}
     [].forEach.call(root.querySelectorAll('[data-cf]'),function(b){
       b.addEventListener('click',function(){setActive(active+(b.getAttribute('data-cf')==='next'?1:-1))});
     });
+    var tsx=null;
+    stage.addEventListener('touchstart',function(e){tsx=e.touches[0].clientX},{passive:true});
+    stage.addEventListener('touchend',function(e){if(tsx==null)return;var dx=e.changedTouches[0].clientX-tsx;if(Math.abs(dx)>40)setActive(active+(dx<0?1:-1));tsx=null},{passive:true});
     layout();
   }
 

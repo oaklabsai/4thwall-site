@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Atlas — The Front Desk | 4THWALL</title>
 <meta name="description" content="Atlas runs the work around the job for homeowner-facing contractors: missed-call text recovery, qualification, booking, follow-up, review requests, campaigns, local discovery, operator briefs, and a measured monthly receipt.">
 <link rel="canonical" href="https://4thwall.solutions/atlas">
@@ -1585,16 +1585,27 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     });
     function setA(a){active=((a%n)+n)%n;layout()}
     function layout(){
+      var mob=window.innerWidth<=640;
       cards.forEach(function(c,i){
         var rel=i-active;if(rel>n/2)rel-=n;if(rel<-n/2)rel+=n;
-        var ax=Math.abs(rel),vis=ax<=2;
-        var sc=Math.max(0.4,1-ax*0.16),tx=rel*(cw*0.66),tz=-ax*(cw*0.72),ry=-rel*12,rz=rel*8;
-        c.style.transform='translate(-50%,-50%) translateX('+tx+'px) translateZ('+tz+'px) rotateY('+ry+'deg) rotateZ('+rz+'deg) scale('+sc+')';
-        c.style.opacity=vis?'1':'0';c.style.pointerEvents=vis?'auto':'none';c.classList.toggle('active',rel===0);c.style.zIndex=String(100-ax);
+        var ax=Math.abs(rel);
+        if(mob){
+          /* Vesta-style deck on phones: active card centered, neighbors stacked behind with a slight upward peek — no horizontal bleed */
+          c.style.transform='translate(-50%,-50%) translateY('+(-ax*10)+'px) rotateZ('+(rel*2.2)+'deg) scale('+Math.max(0.9,1-ax*0.05)+')';
+          c.style.opacity=ax===0?'1':(ax<=2?'0.42':'0');c.style.pointerEvents=ax===0?'auto':'none';
+        }else{
+          var sc=Math.max(0.4,1-ax*0.16),tx=rel*(cw*0.66),tz=-ax*(cw*0.72),ry=-rel*12,rz=rel*8;
+          c.style.transform='translate(-50%,-50%) translateX('+tx+'px) translateZ('+tz+'px) rotateY('+ry+'deg) rotateZ('+rz+'deg) scale('+sc+')';
+          c.style.opacity=(ax<=2)?'1':'0';c.style.pointerEvents=(ax<=2)?'auto':'none';
+        }
+        c.classList.toggle('active',rel===0);c.style.zIndex=String(100-ax);
       });
       dots.forEach(function(d,i){d.classList.toggle('on',i===active)});
     }
     [].forEach.call(root.querySelectorAll('[data-cf]'),function(b){b.addEventListener('click',function(){setA(active+(b.getAttribute('data-cf')==='next'?1:-1))})});
+    var tsx=null;
+    stage.addEventListener('touchstart',function(e){tsx=e.touches[0].clientX},{passive:true});
+    stage.addEventListener('touchend',function(e){if(tsx==null)return;var dx=e.changedTouches[0].clientX-tsx;if(Math.abs(dx)>40)setA(active+(dx<0?1:-1));tsx=null},{passive:true});
     layout();
   }
 
@@ -1912,7 +1923,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   /* ── placeholder cycling ── */
   var PH=['I keep missing calls on the job','what does Atlas do?','how does storm season work?','what does it cost?','how do you handle reviews?','what is Lens?'];
   var phEl=$('fdPh'),phIdx=0;
-  function phShow(text){phEl.innerHTML='';for(var i=0;i<text.length;i++){var sp=document.createElement('i');sp.textContent=text[i]===' '?' ':text[i];sp.style.transitionDelay=(i*18)+'ms';phEl.appendChild(sp)}phEl.classList.remove('out');void phEl.offsetWidth;phEl.classList.add('in')}
+  function phShow(text){phEl.innerHTML='';for(var i=0;i<text.length;i++){var sp=document.createElement('i');sp.textContent=text[i]===' '?' ':text[i];sp.style.transitionDelay=(i*18)+'ms';phEl.appendChild(sp)}phEl.classList.remove('out');void phEl.offsetWidth;phEl.classList.add('in')}
   function phVis(){phEl.style.opacity=(say.value||document.activeElement===say)?'0':'1'}
   say.addEventListener('focus',phVis);say.addEventListener('blur',phVis);say.addEventListener('input',phVis);
   if(phEl){phShow(PH[0]);setInterval(function(){if(say.value||document.activeElement===say)return;var els=phEl.querySelectorAll('i');for(var i=0;i<els.length;i++){els[i].style.transitionDelay=((els.length-i)*10)+'ms'}phEl.classList.remove('in');phEl.classList.add('out');setTimeout(function(){phIdx=(phIdx+1)%PH.length;phShow(PH[phIdx])},400)},3600)}
