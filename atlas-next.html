@@ -1138,18 +1138,41 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 /* F4 — THE DEMO LANE: the desk performs the product instead of describing it.
    The phone frame is a stage prop; the thread plays a scripted simulation (labeled),
    with the LIVE demo one door away. */
-.fdph{background:var(--nm);border:var(--nm-edge);border-radius:26px;box-shadow:var(--nm-out);padding:1rem 1rem 1.15rem;max-width:420px;margin:.4rem 0 .7rem}
-.fdph-bar{display:flex;justify-content:space-between;font:500 .62rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:.1rem .3rem .75rem}
-.fdph-call{display:flex;align-items:center;gap:.6rem;background:var(--well);box-shadow:var(--nm-in);border-radius:14px;padding:.75rem .9rem;font:600 .82rem/1.3 var(--body);color:var(--ink);transition:opacity .5s,background .5s}
-.fdph-ring{width:9px;height:9px;border-radius:50%;background:#7a8f3d;animation:fdBreath 1s ease-in-out infinite;flex:none}
-.fdph-call.missed{opacity:.55}
-.fdph-call.missed .fdph-ring{animation:none;background:#8a3b2e}
-.fdph-thread{display:flex;flex-direction:column;gap:.55rem;margin-top:.7rem;min-height:40px}
-.fdph-b{max-width:85%;border-radius:16px;padding:.6rem .85rem;font:400 .84rem/1.5 var(--body);opacity:1;transform:none;transition:opacity .45s ease,transform .5s var(--spring)}
-.fdph-b.them{align-self:flex-start;background:var(--white);border:var(--nm-edge);box-shadow:var(--nm-sm);color:var(--ink);border-bottom-left-radius:6px}
-.fdph-b.me{align-self:flex-end;background:var(--dark-grad);color:var(--tea);border-bottom-right-radius:6px}
-.fdph-when{align-self:flex-start;font:500 .6rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:.15rem 0 -.2rem .3rem}
-.fdph-missedchip{align-self:center;font:500 .62rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#8a3b2e;background:rgba(138,59,46,.08);border-radius:var(--r-pill);padding:.45rem .8rem}
+/* the missed-call plays inside a phone; iPhone frame + gooey typing loader + a cycler of real trade examples */
+.mcs-wrap{display:flex;flex-direction:column;align-items:center;gap:.95rem;margin:.5rem auto .3rem}
+.mcs-phone{position:relative;width:min(300px,82vw);background:linear-gradient(155deg,#2b2c1c,#15150e);border-radius:44px;padding:11px;box-shadow:0 2px 6px rgba(40,41,22,.28),0 26px 54px -14px rgba(40,41,22,.5),inset 0 1px 0 rgba(255,255,255,.09),inset 0 0 0 1.5px rgba(255,255,255,.05)}
+.mcs-screen{position:relative;background:var(--cream);border-radius:34px;overflow:hidden;padding:2.15rem .7rem .85rem;height:432px;display:flex;flex-direction:column}
+.mcs-island{position:absolute;top:.62rem;left:50%;transform:translateX(-50%);width:80px;height:21px;background:#0e0d0a;border-radius:999px;z-index:4}
+.mcs-status{position:absolute;top:.74rem;left:0;right:0;display:flex;justify-content:space-between;padding:0 1.2rem;font:600 .63rem/1 var(--mono);color:var(--ink);letter-spacing:.02em;z-index:2}
+.mcs-status span:last-child{opacity:.75;letter-spacing:.08em}
+.mcs-callbar{display:flex;align-items:center;gap:.55rem;background:var(--well);box-shadow:var(--nm-in);border-radius:14px;padding:.68rem .85rem;font:600 .79rem/1.3 var(--body);color:var(--ink);transition:opacity .5s,background .5s;flex:none}
+.mcs-ring{width:9px;height:9px;border-radius:50%;background:#7a8f3d;animation:fdBreath 1s ease-in-out infinite;flex:none}
+.mcs-callbar.missed{opacity:.6}
+.mcs-callbar.missed .mcs-ring{animation:none;background:#8a3b2e}
+.mcs-thread{display:flex;flex-direction:column;gap:.5rem;margin-top:.65rem;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+.mcs-thread::-webkit-scrollbar{display:none}
+.mcs-b{max-width:84%;border-radius:16px;padding:.55rem .8rem;font:400 .83rem/1.48 var(--body);opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .5s var(--spring)}
+.mcs-b.in{opacity:1;transform:none}
+.mcs-b.them{align-self:flex-start;background:var(--white);border:var(--nm-edge);box-shadow:var(--nm-sm);color:var(--ink);border-bottom-left-radius:6px}
+.mcs-b.me{align-self:flex-end;background:var(--dark-grad);color:var(--tea);border-bottom-right-radius:6px}
+.mcs-when{align-self:flex-start;font:500 .57rem/1.35 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:.2rem 0 -.1rem .3rem}
+.mcs-syschip{align-self:center;text-align:center;font:500 .59rem/1.45 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#8a3b2e;background:rgba(138,59,46,.09);border-radius:var(--r-pill);padding:.4rem .75rem;margin-bottom:.15rem}
+.mcs-typing{align-self:flex-start;background:var(--white);border:var(--nm-edge);box-shadow:var(--nm-sm);border-radius:16px;border-bottom-left-radius:6px;padding:.62rem .82rem;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .35s var(--spring)}
+.mcs-typing.in{opacity:1;transform:none}
+.mcs-gooey{filter:url(#mcsGooey);display:flex;align-items:center;gap:1px;height:10px}
+.mcs-gooey i{width:8px;height:8px;border-radius:50%;background:var(--olive);display:block;animation:mcsBlob 1.5s ease-in-out infinite}
+.mcs-gooey i:nth-child(2){animation-delay:.2s}
+.mcs-gooey i:nth-child(3){animation-delay:.4s}
+@keyframes mcsBlob{0%,100%{transform:translateX(0) scale(.85)}25%{transform:translateX(6px) scale(1.15)}50%{transform:translateX(0) scale(.85)}75%{transform:translateX(-6px) scale(1.15)}}
+.mcs-cap{font:500 .74rem/1.4 var(--mono);letter-spacing:.06em;color:var(--muted);text-align:center;text-transform:uppercase}
+.mcs-cap b{color:var(--ink);font-weight:600}
+.mcs-dots{display:flex;gap:.42rem;justify-content:center}
+.mcs-dots i{width:6px;height:6px;border-radius:50%;background:var(--faint);transition:background .25s,transform .25s;display:block}
+.mcs-dots i.on{background:var(--olive);transform:scale(1.3)}
+.mcs-more{display:inline-flex;align-items:center;gap:.5rem;background:var(--nm);box-shadow:var(--nm-sm);border:none;border-radius:999px;padding:.55rem 1.15rem;font:500 .85rem/1 var(--body);color:var(--ink);cursor:pointer;transition:transform .14s,box-shadow .15s}
+.mcs-more:hover{transform:translateY(-1px);box-shadow:var(--nm-out)}
+.mcs-more:active{box-shadow:var(--nm-in);transform:none}
+@media (prefers-reduced-motion:reduce){.mcs-gooey i,.mcs-ring{animation:none}}
 /* F4 · the flywheel, drawn as it's spoken */
 .fdfw{display:flex;flex-direction:column;gap:.55rem;margin:.4rem 0 .6rem;max-width:460px}
 .fdfw-n{display:flex;align-items:baseline;gap:.7rem;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.85rem 1rem;opacity:.25;transform:translateX(-8px);transition:opacity .5s ease,transform .55s var(--spring),box-shadow .5s}
@@ -1609,35 +1632,95 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     layout();
   }
 
-  /* ══ THE MISSED-CALL SIM ══ */
-  var SIM=[
-    ['sys','Missed call — you’re 30 ft up on a roof'],
-    ['them','Hey, this is Summit Ridge Roofing — sorry we missed your call. What’s going on with your roof?','moments later, in your name'],
-    ['me','Shingles blew off in last night’s wind — there’s a water spot on the ceiling now'],
-    ['them','That deserves eyes quickly. We can have someone out tomorrow morning — does 9:30 work?'],
-    ['me','9:30 works'],
-    ['them','Booked ✓ — you’ll get a reminder the night before. We’ll take care of you.']
+  /* ══ THE MISSED-CALL SIM — scripted, played inside a phone; a cycler of real trade examples ══ */
+  var SIMS=[
+    {label:'Roofing · storm damage', biz:'Summit Ridge Roofing', phone:'(203) 555-0182', clock:'2:14', turns:[
+      ['sys','Missed call — you’re 30 ft up on a roof'],
+      ['them','Hey, this is Summit Ridge Roofing — sorry we missed your call. What’s going on with your roof?','texted back in 15 seconds, in your name'],
+      ['me','Shingles blew off in last night’s wind — there’s a water spot on the ceiling now'],
+      ['them','That deserves eyes quickly. We can have someone out tomorrow morning — does 9:30 work?'],
+      ['me','9:30 works'],
+      ['them','Booked ✓ — you’ll get a reminder the night before. We’ll take care of you.']
+    ]},
+    {label:'HVAC · no heat, after hours', biz:'TrueComfort Heating & Air', phone:'(203) 555-0147', clock:'9:14', turns:[
+      ['sys','Missed call — 9:14 PM, you’re home for the night'],
+      ['them','Hi — TrueComfort Heating & Air, sorry we missed you. Is it the heat or the cooling giving you trouble?','answered after hours, in your name'],
+      ['me','Furnace quit and the house is down to 58. We’ve got a newborn.'],
+      ['them','Let’s get you warm fast. I can have a tech out first thing — 8 AM tomorrow. Want me to lock it in?'],
+      ['me','Yes please'],
+      ['them','Booked ✓ for 8 AM. Keep the thermostat calling for heat — we’ll handle the rest.']
+    ]},
+    {label:'Plumbing · active leak', biz:'Anchor Plumbing', phone:'(203) 555-0119', clock:'11:32', turns:[
+      ['sys','Missed call — you’re under a sink on another job'],
+      ['them','Thanks for texting Anchor Plumbing! Is water leaking right now, or can we schedule it?','replied in 15 seconds, in your name'],
+      ['me','Leaking under the kitchen sink, dripping into the cabinet'],
+      ['them','Shut the valve under the sink if you can. I’ve got someone free this afternoon between 2 and 4 — work for you?'],
+      ['me','That works, thank you'],
+      ['them','Booked ✓ 2–4 PM today. Send a photo of the leak if you can and we’ll come ready.']
+    ]},
+    {label:'Electrical · power out', biz:'Brightwork Electric', phone:'(203) 555-0163', clock:'4:47', turns:[
+      ['sys','Missed call — mid-install, hands full'],
+      ['them','Hey, this is Brightwork Electric. What’s going on — a project, or did something stop working?','texted back in 15 seconds, in your name'],
+      ['me','Half the house just lost power and the breaker keeps tripping'],
+      ['them','Don’t keep resetting it — that’s the panel protecting you. I can have a licensed electrician out today at 3. Want the slot?'],
+      ['me','Yes'],
+      ['them','Booked ✓ 3 PM. Leave the tripped breaker off till we’re there — see you soon.']
+    ]},
+    {label:'Paving · quote request', biz:'Ironclad Paving', phone:'(203) 555-0175', clock:'1:05', turns:[
+      ['sys','Missed call — running a paver, can’t hear the phone'],
+      ['them','Thanks for reaching out to Ironclad Paving! Tell me about the driveway or lot and I’ll get you set up.','answered while you worked, in your name'],
+      ['me','Need a quote to repave my driveway, about 3 cars wide'],
+      ['them','Happy to. I can send an estimator Thursday morning for a measure and a firm number — 10 AM ok?'],
+      ['me','10 works'],
+      ['them','Booked ✓ Thursday 10 AM. No charge for the estimate — we’ll bring options.']
+    ]}
   ];
-  var simGen=0;
-  function phoneHTML(kicker){
-    return '<span class="fds-kicker">'+kicker+'</span>'+
-      '<div class="fdph"><div class="fdph-bar"><span>Tuesday</span><span>2:14 PM</span></div>'+
-      '<div class="fdph-call" id="phCall"><span class="fdph-ring"></span>Incoming call · (203) 555-0182</div>'+
-      '<div class="fdph-thread" id="phThread"></div></div>'+
+  var simGen=0, simIdx=0;
+  function mcsPhoneHTML(){
+    return '<span class="fds-kicker">watch a missed call come back</span>'+
+      '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="mcsGooey"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="g"/><feBlend in="SourceGraphic" in2="g"/></filter></defs></svg>'+
+      '<div class="mcs-wrap">'+
+        '<div class="mcs-phone"><div class="mcs-screen">'+
+          '<div class="mcs-island"></div>'+
+          '<div class="mcs-status"><span id="mcsClock">2:14</span><span>5G ▪ 87%</span></div>'+
+          '<div class="mcs-callbar" id="mcsCall"><span class="mcs-ring"></span><span id="mcsCallTxt">Incoming call · (203) 555-0182</span></div>'+
+          '<div class="mcs-thread" id="mcsThread"></div>'+
+        '</div></div>'+
+        '<div class="mcs-cap" id="mcsCap"></div>'+
+        '<div class="mcs-dots" id="mcsDots"></div>'+
+        '<button type="button" class="mcs-more" id="mcsMore">see another example →</button>'+
+      '</div>'+
       '<p class="fdc-method">A simulation, labeled as one — supported texts typically get a first reply in 15 seconds after go-live. The <a href="/missed-calls" style="color:var(--olive)">live demo</a> answers for real.</p>';
   }
-  function playMissedSim(onDone){
-    var call=$('phCall'),thread=$('phThread'),i=0,g=simGen;
-    setTimeout(function(){if(g!==simGen)return;if(call)call.className='fdph-call missed';step()},1900);
+  function mcsPlay(idx,onDone){
+    simGen++; var g=simGen; simIdx=idx;
+    var sim=SIMS[idx], thread=$('mcsThread'), call=$('mcsCall'), i=0;
+    if(!thread)return;
+    thread.innerHTML='';
+    var ct=$('mcsCallTxt'); if(ct)ct.textContent='Incoming call · '+sim.phone;
+    var ck=$('mcsClock'); if(ck)ck.textContent=sim.clock;
+    if(call)call.className='mcs-callbar';
+    var cap=$('mcsCap'); if(cap)cap.innerHTML='<b>'+sim.biz+'</b> — '+sim.label;
+    var dots=$('mcsDots'); if(dots){dots.innerHTML='';SIMS.forEach(function(_,k){var d=document.createElement('i');if(k===idx)d.className='on';dots.appendChild(d)})}
+    function bubble(role,text,when){
+      if(when){var w=document.createElement('div');w.className='mcs-when';w.textContent=when;thread.appendChild(w)}
+      var d=document.createElement('div');d.className=role==='sys'?'mcs-syschip':'mcs-b '+(role==='them'?'them':'me');d.textContent=text;
+      thread.appendChild(d);void d.offsetWidth;d.classList.add('in');thread.scrollTop=thread.scrollHeight;
+    }
     function step(){
       if(g!==simGen)return;
-      if(i>=SIM.length){setTimeout(function(){if(g===simGen&&onDone)onDone()},1300);return}
-      var s=SIM[i++];
-      if(s[2]&&thread){var w=document.createElement('span');w.className='fdph-when';w.textContent=s[2];thread.appendChild(w)}
-      var d=document.createElement('div');d.className=s[0]==='sys'?'fdph-missedchip':'fdph-b '+(s[0]==='them'?'them':'me');d.textContent=s[1];
-      d.style.opacity='0';d.style.transform='translateY(8px)';if(thread)thread.appendChild(d);void d.offsetWidth;d.style.opacity='';d.style.transform='';
-      setTimeout(step,s[0]==='me'?1500:2000);
+      if(i>=sim.turns.length){setTimeout(function(){if(g===simGen&&onDone)onDone()},1200);return}
+      var s=sim.turns[i++];
+      if(s[0]==='them'){
+        var t=document.createElement('div');t.className='mcs-typing';t.innerHTML='<span class="mcs-gooey"><i></i><i></i><i></i></span>';
+        thread.appendChild(t);void t.offsetWidth;t.classList.add('in');thread.scrollTop=thread.scrollHeight;
+        setTimeout(function(){if(g!==simGen)return;t.remove();bubble('them',s[1],s[2]);setTimeout(step,1400)},1200);
+      }else{
+        bubble(s[0],s[1],s[2]);
+        setTimeout(step,s[0]==='me'?1300:1000);
+      }
     }
+    setTimeout(function(){if(g!==simGen)return;if(call)call.className='mcs-callbar missed';step()},1700);
   }
 
   /* ══ ASSEMBLERS (pure visual) ══ */
@@ -1659,8 +1742,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       wireScreenDoors);
   }
   function simVisual(){
-    showScreen(phoneHTML('inside lead response'),function(){
-      playMissedSim(function(){if(busy)return;speak('That’s one room of the office. <a data-say="walk the office">Walk the rest</a>, <a href="/missed-calls">run the live demo</a>, or <a href="'+CAL+'" target="_blank" rel="noopener">book the fit call</a>.')});
+    showScreen(mcsPhoneHTML(),function(){
+      var more=$('mcsMore');
+      if(more)more.addEventListener('click',function(){if(window.cue)cue('tick');mcsPlay((simIdx+1)%SIMS.length)});
+      mcsPlay(simIdx,function(){if(busy)return;speak('That’s one room of the office — one of five here. <a data-say="walk the office">Walk the rest</a>, <a href="/missed-calls">run the live demo</a>, or <a href="'+CAL+'" target="_blank" rel="noopener">book the fit call</a>.')});
     });
   }
   function offerVisual(){
