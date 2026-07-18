@@ -40,6 +40,33 @@ export const SCREENS = new Set([
 // ── the honest deflection (pack law 2): out-of-pack, oversharing probes, or a tripped answer ──
 export const DEFLECT = 'That one deserves a person, not a guess — book the 20-minute fit call and ask the founder directly.';
 
+// ── the parameterized calculator (Rung 2, Drew 7/18): when the model opens "numbers" it may
+// seed the sliders with figures the CONTRACTOR STATED — extractive, never invented (prompt
+// law), and structurally bounded here: every arg is clamped to its slider's real [min,max],
+// unknown keys are dropped, panel is whitelisted. Worst case is a visibly draggable preset.
+// Ranges mirror the sliders in atlas-next.html's revenueHTML() exactly.
+export const CALC_ARGS = {
+  panel: ['missed', 'storm', 'office'],
+  job_value: [1000, 60000],  leads_per_week: [2, 60],   response_minutes: [5, 480],
+  close_rate_pct: [5, 70],   after_hours_pct: [10, 70],
+  storm_events: [1, 20],     leads_per_storm: [5, 100], storm_job_value: [500, 30000],
+  storm_close_pct: [5, 60],  dropped_pct: [10, 80],
+  office_leads_per_week: [2, 80], wage_per_hour: [18, 55], office_hours_week: [10, 45],
+};
+export function cleanArgs(a){
+  if (!a || typeof a !== 'object' || Array.isArray(a)) return null;
+  const out = {};
+  for (const [k, v] of Object.entries(a)){
+    const spec = CALC_ARGS[k];
+    if (!spec) continue;
+    if (k === 'panel'){ if (spec.includes(v)) out.panel = v; continue; }
+    const n = Number(v);
+    if (!Number.isFinite(n)) continue;
+    out[k] = Math.min(spec[1], Math.max(spec[0], Math.round(n)));
+  }
+  return Object.keys(out).length ? out : null;
+}
+
 // ── §9 banned list, server-side. A tripped `say` is replaced by DEFLECT, never shipped.
 //    "not a software seat" is the pack's own approved framing; the negated form stays legal.
 export function claimSafe(say, echoNums){
@@ -104,11 +131,16 @@ FAQ:
 
 ═══ OUTPUT (STRICT) ═══
 Return ONLY one JSON object, no prose, no markdown:
-{"say": string, "screen": string|null}
+{"say": string, "screen": string|null, "args": object|null}
 - say: your spoken reply, following every rule above.
 - screen: open an appless surface when it fits, else null. Exactly one of:
   "office" (they want the whole system / what Atlas does) · "room:lead" "room:storm" "room:camp" "room:book" "room:follow" "room:reviews" "room:local" "room:briefs" (a specific capability) · "sim" (show the missed-call recovery happening) · "offer" (pricing / how it works commercially) · "lens" (the free workspace) · "vesta" (the person is a HOMEOWNER looking for a contractor — open the homeowner guide) · "fitcall" (they're ready to talk / book a call) · "numbers" (they're weighing the cost of the problem — what missed calls / slow replies / storm season are costing them, or whether to hire an office person; the calculators let them compute it from their OWN inputs) · "faq" (a logistics or "what's the catch" question — what's included, is it another tool to learn, does it answer calls, CRM fit, how fast it goes live, how to cancel) · "contact" (they want to send a message or reach a person another way, short of booking the call) · null (pure conversation).
 - When you open "numbers", the calculator produces the figures from the contractor's own sliders — you still state NO number yourself; introduce it and let them move the sliders.
+- "args": ONLY with screen "numbers", else null. Seed the calculator with figures the contractor THEMSELVES stated in this conversation — EXTRACTIVE, never estimated, never invented: omit any field they did not state (a partial seed is normal; an empty one means omit "args"). Convert units to the field's own (four hours to reply → response_minutes: 240; "$9k jobs" → job_value: 9000). Plain numbers only — no strings, units, or symbols. Fields:
+  panel: "missed"|"storm"|"office" — which calculator faces them first (their words decide: slow replies/missed calls → missed; storm talk → storm; weighing a hire → office)
+  missed: job_value ($ per job), leads_per_week, response_minutes, close_rate_pct, after_hours_pct
+  storm: storm_events (per year), leads_per_storm, storm_job_value, storm_close_pct, dropped_pct
+  office: office_leads_per_week, wage_per_hour (what a hire would cost them), office_hours_week
 Choose the screen that best serves what they just asked; when unsure, null.`;
 }
 
@@ -220,7 +252,11 @@ export default async function handler(req, res){
   // becomes the honest deflection + the fit-call door — the desk never fabricates.
   if (!say || !claimSafe(say, echo)){ say = DEFLECT; screen = 'fitcall'; }
 
-  console.log(`atlas: ${parsed ? (claimSafe(parsed.say||'', echo) ? 'ok' : 'unsafe→deflect') : 'nojson→deflect'} retried=${retried} screen=${screen||'null'}`);
+  // calculator seed: only rides on a surviving "numbers" screen (a deflect forced fitcall
+  // above, so a tripped turn can never carry args), clamped + whitelisted by cleanArgs.
+  const args = screen === 'numbers' && parsed ? cleanArgs(parsed.args) : null;
+
+  console.log(`atlas: ${parsed ? (claimSafe(parsed.say||'', echo) ? 'ok' : 'unsafe→deflect') : 'nojson→deflect'} retried=${retried} screen=${screen||'null'} args=${args ? Object.keys(args).join(',') : 'null'}`);
   res.statusCode = 200;
-  return res.end(JSON.stringify({ say, screen }));
+  return res.end(JSON.stringify(args ? { say, screen, args } : { say, screen }));
 }

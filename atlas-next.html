@@ -1738,9 +1738,22 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       '</div>'+
       '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a data-door="office">← the office</a></div>';
   }
-  function assembleRevenue(){
+  /* the parameterized seed (Rung 2): args arrive server-clamped from /api/atlas — numbers the
+     contractor stated, mapped onto their sliders so the calculator opens already computing THEIR
+     situation. Range inputs snap/clamp on assignment; riCalc* then repaints every readout. */
+  var ARG2ID={job_value:'ml-jv',leads_per_week:'ml-lw',response_minutes:'ml-rt',close_rate_pct:'ml-cr',after_hours_pct:'ml-ah',
+    storm_events:'st-ev',leads_per_storm:'st-lp',storm_job_value:'st-jv',storm_close_pct:'st-cr',dropped_pct:'st-dr',
+    office_leads_per_week:'om-lw',wage_per_hour:'om-wg',office_hours_week:'om-hr'};
+  function assembleRevenue(args){
     showScreen(revenueHTML(),function(){
-      try{riCalcMissed();riCalcStorm();riCalcOffice()}catch(e){}
+      try{
+        if(args)for(var k in ARG2ID){if(args[k]!=null){var el=$(ARG2ID[k]);if(el)el.value=args[k]}}
+        riCalcMissed();riCalcStorm();riCalcOffice();
+        if(args&&(args.panel==='storm'||args.panel==='office')){
+          var pt=screen.querySelector('.pill-tab:nth-child('+(args.panel==='storm'?2:3)+')');
+          if(pt)riSwitchTab(args.panel,pt);
+        }
+      }catch(e){}
       wireScreenDoors();
     });
   }
@@ -1829,7 +1842,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     var f=screen.querySelector('[data-door="fitcall"]');if(f)f.addEventListener('click',function(e){e.preventDefault();openTab('fitcall')});
     var c=screen.querySelector('[data-door="contact"]');if(c)c.addEventListener('click',function(e){e.preventDefault();openTab('contact')});
   }
-  function assembleScreen(s){
+  function assembleScreen(s,args){
     if(s==='office')return assembleOffice();
     if(s&&s.indexOf('room:')===0)return roomVisual(s.slice(5));
     if(s==='sim')return simVisual();
@@ -1837,7 +1850,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     if(s==='lens')return lensVisual();
     if(s==='vesta')return vestaVisual();
     if(s==='fitcall')return fitcallVisual();
-    if(s==='numbers')return assembleRevenue();
+    if(s==='numbers')return assembleRevenue(args||null);
     if(s==='faq')return assembleFAQ();
     if(s==='contact')return assembleContact();
   }
@@ -1879,11 +1892,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     .then(function(d){
       busy=false;thinkOff();
       var s=(d&&typeof d.say==='string')?d.say.trim():'';var scr=(d&&typeof d.screen==='string')?d.screen:null;
+      var ar=(d&&d.args&&typeof d.args==='object'&&!Array.isArray(d.args))?d.args:null;   // server-clamped calculator seed
       if(!s){speak(DEFLECT);return}
       msgs.push({role:'assistant',content:s});
       speak(escT(s));
       if(window.cue)cue('chime');   // the desk answered
-      if(scr){setActive(scr);landAfterSay(function(){assembleScreen(scr)})}
+      if(scr){setActive(scr);landAfterSay(function(){assembleScreen(scr,ar)})}
     })
     .catch(function(){busy=false;thinkOff();speak(DEFLECT)});
   }

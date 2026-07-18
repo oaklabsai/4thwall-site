@@ -10,7 +10,7 @@
 // Run: node scripts/atlas-battery.mjs         (deterministic gate)
 //      node scripts/atlas-battery.mjs --live   (+ live model probes against prod)
 
-import { claimSafe, SCREENS, DEFLECT, extractJSON } from '../api/atlas.mjs';
+import { claimSafe, SCREENS, DEFLECT, extractJSON, cleanArgs, CALC_ARGS } from '../api/atlas.mjs';
 
 let fails = 0;
 const check = (tag, ok, note='') => {
@@ -58,6 +58,17 @@ check('echo never launders a dollar figure', claimSafe('So about $9,000 a month 
 // ── the deflection is itself claim-safe (the fallback can never trip its own guard) ──
 check('the deflection passes its own guard', claimSafe(DEFLECT) === true);
 
+// ── the calculator-seed clamp (Rung 2): every arg bounded, junk dropped, panel whitelisted ──
+check('args: in-range value passes through', cleanArgs({ job_value: 9000 })?.job_value === 9000);
+check('args: out-of-range clamps to the slider max', cleanArgs({ job_value: 999999 })?.job_value === 60000);
+check('args: below-min clamps to the slider min', cleanArgs({ response_minutes: 1 })?.response_minutes === 5);
+check('args: unknown keys dropped (all junk → null)', cleanArgs({ monthly_price: 1500, foo: 9 }) === null);
+check('args: non-numeric value dropped', cleanArgs({ job_value: 'a lot' }) === null);
+check('args: panel whitelisted', cleanArgs({ panel: 'storm' })?.panel === 'storm' && cleanArgs({ panel: 'pricing' }) === null);
+check('args: array/garbage shape → null', cleanArgs([1,2]) === null && cleanArgs('x') === null);
+check('args: unit strings coerce ("9000" → 9000)', cleanArgs({ job_value: '9000' })?.job_value === 9000);
+check('args: every spec field maps to a real range', Object.entries(CALC_ARGS).every(([k,v]) => k === 'panel' ? Array.isArray(v) : v[0] < v[1]));
+
 // ── screen whitelist: exactly the surfaces the UI knows how to assemble ──
 check('office is a valid screen', SCREENS.has('office'));
 check('every room key valid', ['lead','storm','camp','book','follow','reviews','local','briefs'].every(k => SCREENS.has('room:'+k)));
@@ -103,6 +114,21 @@ if (process.argv.includes('--live')){
         `safe=${safe} screen=${d.screen}`);
     } catch (e){ check(`live "${q}"`, false, e.message); }
   }
+  // ── the parameterized seed, live: stated figures should arrive as clamped args. Gate on the
+  // CONTRACT (numbers screen → any args present are in-spec + in-range); the exact fields the
+  // model extracts are soft (logged), the clamp guarantee is hard.
+  try {
+    const q = "jobs run me about $9,000 and I get 20 leads a week, but it takes me 4 hours to call people back — what is that costing me?";
+    const r = await fetch(BASE + '/api/atlas', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ messages:[{ role:'user', content:q }] }) });
+    const d = await r.json();
+    const inSpec = !d.args || Object.entries(d.args).every(([k,v]) =>
+      k === 'panel' ? CALC_ARGS.panel.includes(v)
+      : CALC_ARGS[k] && v >= CALC_ARGS[k][0] && v <= CALC_ARGS[k][1]);
+    check(`live seeded-calc → safe + args in-spec · screen=${d.screen} args=${JSON.stringify(d.args||null)}`,
+      claimSafe(d.say||'', new Set(['9','000','20','4'])) && (d.screen === null || SCREENS.has(d.screen)) && inSpec,
+      `screen=${d.screen} args=${JSON.stringify(d.args||null)}`);
+  } catch (e){ check('live seeded-calc', false, e.message); }
 }
 
 console.log(fails ? `\nATLAS BATTERY: ${fails} FAIL(S)\n` : '\nATLAS BATTERY GREEN\n');
