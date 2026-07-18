@@ -1140,10 +1140,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
    with the LIVE demo one door away. */
 /* the missed-call plays inside a phone; iPhone frame + gooey typing loader + a cycler of real trade examples */
 .mcs-wrap{display:flex;flex-direction:column;align-items:center;gap:.95rem;margin:.5rem auto .3rem}
-.mcs-phone{position:relative;width:min(300px,82vw);background:linear-gradient(155deg,#2b2c1c,#15150e);border-radius:44px;padding:11px;box-shadow:0 2px 6px rgba(40,41,22,.28),0 26px 54px -14px rgba(40,41,22,.5),inset 0 1px 0 rgba(255,255,255,.09),inset 0 0 0 1.5px rgba(255,255,255,.05)}
-.mcs-screen{position:relative;background:var(--cream);border-radius:34px;overflow:hidden;padding:2.15rem .7rem .85rem;height:432px;display:flex;flex-direction:column}
-.mcs-island{position:absolute;top:.62rem;left:50%;transform:translateX(-50%);width:80px;height:21px;background:#0e0d0a;border-radius:999px;z-index:4}
-.mcs-status{position:absolute;top:.74rem;left:0;right:0;display:flex;justify-content:space-between;padding:0 1.2rem;font:600 .63rem/1 var(--mono);color:var(--ink);letter-spacing:.02em;z-index:2}
+.mcs-phone{position:relative;width:min(256px,74vw);aspect-ratio:407/845;margin:0 auto;filter:drop-shadow(0 20px 38px rgba(40,41,22,.3))}
+.mcs-frameimg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;user-select:none;-webkit-user-select:none}
+.mcs-screen{position:absolute;top:2%;left:4.3%;right:4.3%;bottom:2%;z-index:1;background:var(--cream);border-radius:26px;overflow:hidden;padding:2.35rem .5rem .8rem;display:flex;flex-direction:column}
+.mcs-status{position:absolute;top:.62rem;left:0;right:0;display:flex;justify-content:space-between;padding:0 .8rem;font:600 .56rem/1 var(--mono);color:var(--ink);letter-spacing:.02em;z-index:2}
 .mcs-status span:last-child{opacity:.75;letter-spacing:.08em}
 .mcs-callbar{display:flex;align-items:center;gap:.55rem;background:var(--well);box-shadow:var(--nm-in);border-radius:14px;padding:.68rem .85rem;font:600 .79rem/1.3 var(--body);color:var(--ink);transition:opacity .5s,background .5s;flex:none}
 .mcs-ring{width:9px;height:9px;border-radius:50%;background:#7a8f3d;animation:fdBreath 1s ease-in-out infinite;flex:none}
@@ -1157,13 +1157,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .mcs-b.me{align-self:flex-end;background:var(--dark-grad);color:var(--tea);border-bottom-right-radius:6px}
 .mcs-when{align-self:flex-start;font:500 .57rem/1.35 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:.2rem 0 -.1rem .3rem}
 .mcs-syschip{align-self:center;text-align:center;font:500 .59rem/1.45 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#8a3b2e;background:rgba(138,59,46,.09);border-radius:var(--r-pill);padding:.4rem .75rem;margin-bottom:.15rem}
-.mcs-typing{align-self:flex-start;background:var(--white);border:var(--nm-edge);box-shadow:var(--nm-sm);border-radius:16px;border-bottom-left-radius:6px;padding:.62rem .82rem;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .35s var(--spring)}
+.mcs-typing{align-self:flex-start;display:inline-flex;gap:4px;align-items:center;background:var(--white);border:var(--nm-edge);box-shadow:var(--nm-sm);border-radius:16px;border-bottom-left-radius:6px;padding:.6rem .78rem;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .35s var(--spring)}
 .mcs-typing.in{opacity:1;transform:none}
-.mcs-gooey{filter:url(#mcsGooey);display:flex;align-items:center;gap:1px;height:10px}
-.mcs-gooey i{width:8px;height:8px;border-radius:50%;background:var(--olive);display:block;animation:mcsBlob 1.5s ease-in-out infinite}
-.mcs-gooey i:nth-child(2){animation-delay:.2s}
-.mcs-gooey i:nth-child(3){animation-delay:.4s}
-@keyframes mcsBlob{0%,100%{transform:translateX(0) scale(.85)}25%{transform:translateX(6px) scale(1.15)}50%{transform:translateX(0) scale(.85)}75%{transform:translateX(-6px) scale(1.15)}}
+.mcs-typing i{width:6px;height:6px;border-radius:50%;background:var(--dim);display:block;animation:mcsDot 1.3s infinite}
+.mcs-typing i:nth-child(2){animation-delay:.18s}
+.mcs-typing i:nth-child(3){animation-delay:.36s}
+@keyframes mcsDot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:.9;transform:translateY(-3px)}}
 .mcs-cap{font:500 .74rem/1.4 var(--mono);letter-spacing:.06em;color:var(--muted);text-align:center;text-transform:uppercase}
 .mcs-cap b{color:var(--ink);font-weight:600}
 .mcs-dots{display:flex;gap:.42rem;justify-content:center}
@@ -1172,7 +1171,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .mcs-more{display:inline-flex;align-items:center;gap:.5rem;background:var(--nm);box-shadow:var(--nm-sm);border:none;border-radius:999px;padding:.55rem 1.15rem;font:500 .85rem/1 var(--body);color:var(--ink);cursor:pointer;transition:transform .14s,box-shadow .15s}
 .mcs-more:hover{transform:translateY(-1px);box-shadow:var(--nm-out)}
 .mcs-more:active{box-shadow:var(--nm-in);transform:none}
-@media (prefers-reduced-motion:reduce){.mcs-gooey i,.mcs-ring{animation:none}}
+@media (prefers-reduced-motion:reduce){.mcs-typing i{animation:none}}
 /* F4 · the flywheel, drawn as it's spoken */
 .fdfw{display:flex;flex-direction:column;gap:.55rem;margin:.4rem 0 .6rem;max-width:460px}
 .fdfw-n{display:flex;align-items:baseline;gap:.7rem;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.85rem 1rem;opacity:.25;transform:translateX(-8px);transition:opacity .5s ease,transform .55s var(--spring),box-shadow .5s}
@@ -1679,14 +1678,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   var simGen=0, simIdx=0;
   function mcsPhoneHTML(){
     return '<span class="fds-kicker">watch a missed call come back</span>'+
-      '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="mcsGooey"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="g"/><feBlend in="SourceGraphic" in2="g"/></filter></defs></svg>'+
       '<div class="mcs-wrap">'+
-        '<div class="mcs-phone"><div class="mcs-screen">'+
-          '<div class="mcs-island"></div>'+
+        '<div class="mcs-phone">'+
+          '<div class="mcs-screen">'+
           '<div class="mcs-status"><span id="mcsClock">2:14</span><span>5G ▪ 87%</span></div>'+
-          '<div class="mcs-callbar" id="mcsCall"><span class="mcs-ring"></span><span id="mcsCallTxt">Incoming call · (203) 555-0182</span></div>'+
           '<div class="mcs-thread" id="mcsThread"></div>'+
-        '</div></div>'+
+          '</div>'+
+          '<img class="mcs-frameimg" src="/iphone-frame.png" alt="" aria-hidden="true">'+
+        '</div>'+
         '<div class="mcs-cap" id="mcsCap"></div>'+
         '<div class="mcs-dots" id="mcsDots"></div>'+
         '<button type="button" class="mcs-more" id="mcsMore">see another example →</button>'+
@@ -1695,12 +1694,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
   function mcsPlay(idx,onDone){
     simGen++; var g=simGen; simIdx=idx;
-    var sim=SIMS[idx], thread=$('mcsThread'), call=$('mcsCall'), i=0;
+    var sim=SIMS[idx], thread=$('mcsThread'), i=0;
     if(!thread)return;
     thread.innerHTML='';
-    var ct=$('mcsCallTxt'); if(ct)ct.textContent='Incoming call · '+sim.phone;
     var ck=$('mcsClock'); if(ck)ck.textContent=sim.clock;
-    if(call)call.className='mcs-callbar';
     var cap=$('mcsCap'); if(cap)cap.innerHTML='<b>'+sim.biz+'</b> — '+sim.label;
     var dots=$('mcsDots'); if(dots){dots.innerHTML='';SIMS.forEach(function(_,k){var d=document.createElement('i');if(k===idx)d.className='on';dots.appendChild(d)})}
     function bubble(role,text,when){
@@ -1713,7 +1710,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       if(i>=sim.turns.length){setTimeout(function(){if(g===simGen&&onDone)onDone()},1200);return}
       var s=sim.turns[i++];
       if(s[0]==='them'){
-        var t=document.createElement('div');t.className='mcs-typing';t.innerHTML='<span class="mcs-gooey"><i></i><i></i><i></i></span>';
+        var t=document.createElement('div');t.className='mcs-typing';t.innerHTML='<i></i><i></i><i></i>';
         thread.appendChild(t);void t.offsetWidth;t.classList.add('in');thread.scrollTop=thread.scrollHeight;
         setTimeout(function(){if(g!==simGen)return;t.remove();bubble('them',s[1],s[2]);setTimeout(step,1400)},1200);
       }else{
@@ -1721,7 +1718,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         setTimeout(step,s[0]==='me'?1300:1000);
       }
     }
-    setTimeout(function(){if(g!==simGen)return;if(call)call.className='mcs-callbar missed';step()},1700);
+    setTimeout(function(){if(g!==simGen)return;step()},800);
   }
 
   /* ══ ASSEMBLERS (pure visual) ══ */
