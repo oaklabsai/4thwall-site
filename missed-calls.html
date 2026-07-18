@@ -159,22 +159,22 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 /* ── the scripted showcase: a missed call, played inside a phone ─────────── */
 @keyframes fdBreath{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.05);opacity:1}}
 .mcs-wrap{display:flex;flex-direction:column;align-items:center;gap:.95rem}
-.mcs-phone{position:relative;width:min(256px,74vw);aspect-ratio:407/845;margin:.2rem auto 0;filter:drop-shadow(0 20px 38px rgba(40,41,22,.3))}
+.mcs-phone{position:relative;width:min(294px,84vw);aspect-ratio:407/845;margin:.2rem auto 0;filter:drop-shadow(0 20px 38px rgba(40,41,22,.3))}
 .mcs-frameimg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;user-select:none;-webkit-user-select:none}
 .mcs-screen{position:absolute;top:2%;left:4.3%;right:4.3%;bottom:2%;z-index:1;background:var(--cream);border-radius:26px;overflow:hidden;padding:2.35rem .5rem .55rem;display:flex;flex-direction:column}
 .mcs-status{position:absolute;top:.62rem;left:0;right:0;display:flex;justify-content:space-between;padding:0 .8rem;font:600 .56rem/1 var(--mono);color:var(--ink);letter-spacing:.02em;z-index:2}
 .mcs-status span:last-child{opacity:.75;letter-spacing:.08em}
 /* the Demo / Try it toggle at the top of the phone */
-.mcs-seg{display:flex;gap:2px;flex:none;background:var(--well);border-radius:11px;padding:3px;margin-bottom:.55rem;box-shadow:var(--nm-in)}
+.mcs-seg{display:flex;gap:2px;flex:none;background:var(--well);border-radius:11px;padding:3px;margin-bottom:.42rem;box-shadow:var(--nm-in)}
 .mcs-seg button{flex:1;border:none;background:none;font:600 .74rem/1 var(--body);color:var(--muted);padding:.44rem .3rem;border-radius:8px;cursor:pointer;transition:background .2s,color .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
 .mcs-seg button.on{background:var(--white);color:var(--ink);box-shadow:var(--nm-sm)}
 .mcs-callbar{display:flex;align-items:center;gap:.55rem;background:var(--well);box-shadow:var(--nm-in);border-radius:14px;padding:.68rem .85rem;font:600 .79rem/1.3 var(--body);color:var(--ink);transition:opacity .5s,background .5s;flex:none}
 .mcs-ring{width:9px;height:9px;border-radius:50%;background:#7a8f3d;animation:fdBreath 1s ease-in-out infinite;flex:none}
 .mcs-callbar.missed{opacity:.6}
 .mcs-callbar.missed .mcs-ring{animation:none;background:#8a3b2e}
-.mcs-thread{display:flex;flex-direction:column;gap:.5rem;margin-top:.65rem;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+.mcs-thread{display:flex;flex-direction:column;gap:.4rem;margin-top:.55rem;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
 .mcs-thread::-webkit-scrollbar{display:none}
-.mcs-b{max-width:84%;border-radius:16px;padding:.55rem .8rem;font:400 .83rem/1.48 var(--body);opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .5s var(--spring)}
+.mcs-b{max-width:86%;border-radius:15px;padding:.42rem .66rem;font:400 .73rem/1.38 var(--body);opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .5s var(--spring)}
 .mcs-b.in{opacity:1;transform:none}
 .mcs-b.them{align-self:flex-start;background:var(--white);border:var(--nm-edge);box-shadow:var(--nm-sm);color:var(--ink);border-bottom-left-radius:6px}
 .mcs-b.me{align-self:flex-end;background:var(--dark-grad);color:var(--tea);border-bottom-right-radius:6px}
@@ -191,7 +191,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 .mcs-note{margin-top:.4rem;font-size:.76rem;color:var(--dim);text-align:center;line-height:1.5}
 @media (prefers-reduced-motion:reduce){.mcs-typing i{animation:none}}
 /* composer docked in the phone — disabled during the sim, live after the handoff divider */
-.mcs-input{display:flex;gap:.4rem;flex:none;margin-top:.55rem;padding-top:.55rem;border-top:1px solid var(--line-2)}
+.mcs-input{display:flex;gap:.4rem;flex:none;margin-top:.42rem;padding-top:.42rem;border-top:1px solid var(--line-2)}
 .mcs-input input{flex:1;min-width:0;font:400 .78rem/1.3 var(--body);color:var(--ink);background:var(--white);border:var(--nm-edge);border-radius:999px;padding:.5rem .8rem;outline:none;transition:opacity .3s}
 .mcs-input input:disabled{opacity:.4;background:transparent}
 .mcs-input button{flex:none;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--cream);font-size:1.05rem;line-height:1;cursor:pointer;box-shadow:var(--nm-sm);transition:transform .12s,opacity .3s}
@@ -400,42 +400,42 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     roofing:{label:'Roofing · storm damage', biz:'Summit Ridge Roofing', phone:'(203) 555-0182', clock:'2:14', turns:[
       ['sys','Missed call — you’re 30 ft up on a roof'],
       ['them','Hey, this is Summit Ridge Roofing — sorry we missed your call. What’s going on with your roof?','texted back in 15 seconds, in your name'],
-      ['me','Shingles blew off in last night’s wind — there’s a water spot on the ceiling now'],
-      ['them','That deserves eyes quickly. We can have someone out tomorrow morning — does 9:30 work?'],
-      ['me','9:30 works'],
-      ['them','Booked ✓ — you’ll get a reminder the night before. We’ll take care of you.']
+      ['me','Shingles blew off last night and now there’s a water spot on the ceiling'],
+      ['them','That’s water getting in — worth a fast look. What’s the address, and when works this week for a free inspection?'],
+      ['me','14 Oak Lane, Fairfield. Mornings are best.'],
+      ['them','Got it — sending this to the owner now to confirm a morning visit and get someone out. Put a bucket under the drip, and please stay off the roof yourself.']
     ]},
     hvac:{label:'HVAC · no heat, after hours', biz:'TrueComfort Heating & Air', phone:'(203) 555-0147', clock:'9:14', turns:[
       ['sys','Missed call — 9:14 PM, you’re home for the night'],
       ['them','Hi — TrueComfort Heating & Air, sorry we missed you. Is it the heat or the cooling giving you trouble?','answered after hours, in your name'],
       ['me','Furnace quit and the house is down to 58. We’ve got a newborn.'],
-      ['them','Let’s get you warm fast. I can have a tech out first thing — 8 AM tomorrow. Want me to lock it in?'],
-      ['me','Yes please'],
-      ['them','Booked ✓ for 8 AM. Keep the thermostat calling for heat — we’ll handle the rest.']
+      ['them','With a newborn let’s prioritize this. What’s the address, and is first thing tomorrow okay?'],
+      ['me','8 Birch Rd, Norwalk. Morning’s good.'],
+      ['them','Thanks — sending this to the owner right now and flagging it urgent; he’ll confirm a morning tech and reach out. Keep the thermostat calling for heat till then.']
     ]},
     plumbing:{label:'Plumbing · active leak', biz:'Anchor Plumbing', phone:'(203) 555-0119', clock:'11:32', turns:[
       ['sys','Missed call — you’re under a sink on another job'],
       ['them','Thanks for texting Anchor Plumbing! Is water leaking right now, or can we schedule it?','replied in 15 seconds, in your name'],
       ['me','Leaking under the kitchen sink, dripping into the cabinet'],
-      ['them','Shut the valve under the sink if you can. I’ve got someone free this afternoon between 2 and 4 — work for you?'],
-      ['me','That works, thank you'],
-      ['them','Booked ✓ 2–4 PM today. Send a photo of the leak if you can and we’ll come ready.']
+      ['them','Shut the valve under the sink if you can. What’s the address, and does this afternoon work?'],
+      ['me','22 Elm St, Stamford. This afternoon’s fine.'],
+      ['them','Got it — sending this to the owner now to confirm an afternoon window and get someone out. Snap a photo of the leak if you can so we come ready.']
     ]},
     electrical:{label:'Electrical · power out', biz:'Brightwork Electric', phone:'(203) 555-0163', clock:'4:47', turns:[
       ['sys','Missed call — mid-install, hands full'],
       ['them','Hey, this is Brightwork Electric. What’s going on — a project, or did something stop working?','texted back in 15 seconds, in your name'],
-      ['me','Half the house just lost power and the breaker keeps tripping'],
-      ['them','Don’t keep resetting it — that’s the panel protecting you. I can have a licensed electrician out today at 3. Want the slot?'],
-      ['me','Yes'],
-      ['them','Booked ✓ 3 PM. Leave the tripped breaker off till we’re there — see you soon.']
+      ['me','Half the house lost power and the breaker keeps tripping'],
+      ['them','Don’t keep resetting it — that’s the panel protecting you. What’s the address, and can someone be there today?'],
+      ['me','5 Maple Ave, Darien. Yes, I’m home.'],
+      ['them','Got it — sending this to the owner now to confirm a licensed electrician today and reach out. Leave that breaker off until we’re there.']
     ]},
     paving:{label:'Paving · quote request', biz:'Ironclad Paving', phone:'(203) 555-0175', clock:'1:05', turns:[
       ['sys','Missed call — running a paver, can’t hear the phone'],
       ['them','Thanks for reaching out to Ironclad Paving! Tell me about the driveway or lot and I’ll get you set up.','answered while you worked, in your name'],
-      ['me','Need a quote to repave my driveway, about 3 cars wide'],
-      ['them','Happy to. I can send an estimator Thursday morning for a measure and a firm number — 10 AM ok?'],
-      ['me','10 works'],
-      ['them','Booked ✓ Thursday 10 AM. No charge for the estimate — we’ll bring options.']
+      ['me','Need to repave my driveway, about 3 cars wide'],
+      ['them','Happy to — it’s a free on-site estimate. What’s the address, and what mornings are good this week?'],
+      ['me','9 Cedar Ln, Westport. Thursday morning works.'],
+      ['them','Perfect — sending this to the owner now to confirm a Thursday estimate and get someone out to measure. No charge, no obligation.']
     ]}
   };
   // ── one phone, one thread: auto-play the labeled sim, drop an honest divider, then go live ──
