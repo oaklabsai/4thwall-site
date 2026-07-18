@@ -159,10 +159,10 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 /* ── the scripted showcase: a missed call, played inside a phone ─────────── */
 @keyframes fdBreath{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.05);opacity:1}}
 .mcs-wrap{display:flex;flex-direction:column;align-items:center;gap:.95rem}
-.mcs-phone{position:relative;width:min(300px,84vw);background:linear-gradient(155deg,#2b2c1c,#15150e);border-radius:44px;padding:11px;box-shadow:0 2px 6px rgba(40,41,22,.28),0 26px 54px -14px rgba(40,41,22,.5),inset 0 1px 0 rgba(255,255,255,.09),inset 0 0 0 1.5px rgba(255,255,255,.05)}
-.mcs-screen{position:relative;background:var(--cream);border-radius:34px;overflow:hidden;padding:2.15rem .7rem .8rem;height:508px;display:flex;flex-direction:column}
-.mcs-island{position:absolute;top:.62rem;left:50%;transform:translateX(-50%);width:80px;height:21px;background:#0e0d0a;border-radius:999px;z-index:4}
-.mcs-status{position:absolute;top:.74rem;left:0;right:0;display:flex;justify-content:space-between;padding:0 1.2rem;font:600 .63rem/1 var(--mono);color:var(--ink);letter-spacing:.02em;z-index:2}
+.mcs-phone{position:relative;width:min(256px,74vw);aspect-ratio:407/845;margin:.2rem auto 0;filter:drop-shadow(0 20px 38px rgba(40,41,22,.3))}
+.mcs-frameimg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;user-select:none;-webkit-user-select:none}
+.mcs-screen{position:absolute;top:2%;left:4.3%;right:4.3%;bottom:2%;z-index:1;background:var(--cream);border-radius:26px;overflow:hidden;padding:2.35rem .5rem .55rem;display:flex;flex-direction:column}
+.mcs-status{position:absolute;top:.62rem;left:0;right:0;display:flex;justify-content:space-between;padding:0 .8rem;font:600 .56rem/1 var(--mono);color:var(--ink);letter-spacing:.02em;z-index:2}
 .mcs-status span:last-child{opacity:.75;letter-spacing:.08em}
 /* the Demo / Try it toggle at the top of the phone */
 .mcs-seg{display:flex;gap:2px;flex:none;background:var(--well);border-radius:11px;padding:3px;margin-bottom:.55rem;box-shadow:var(--nm-in)}
@@ -180,20 +180,19 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 .mcs-b.me{align-self:flex-end;background:var(--dark-grad);color:var(--tea);border-bottom-right-radius:6px}
 .mcs-when{align-self:flex-start;font:500 .57rem/1.35 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:.2rem 0 -.1rem .3rem}
 .mcs-syschip{align-self:center;text-align:center;font:500 .59rem/1.45 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#8a3b2e;background:rgba(138,59,46,.09);border-radius:var(--r-pill);padding:.4rem .75rem;margin-bottom:.15rem}
-.mcs-typing{align-self:flex-start;background:var(--white);border:var(--nm-edge);box-shadow:var(--nm-sm);border-radius:16px;border-bottom-left-radius:6px;padding:.62rem .82rem;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .35s var(--spring)}
+.mcs-typing{align-self:flex-start;display:inline-flex;gap:4px;align-items:center;background:var(--white);border:var(--nm-edge);box-shadow:var(--nm-sm);border-radius:16px;border-bottom-left-radius:6px;padding:.6rem .78rem;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .35s var(--spring)}
 .mcs-typing.in{opacity:1;transform:none}
-.mcs-gooey{filter:url(#mcsGooey);display:flex;align-items:center;gap:1px;height:10px}
-.mcs-gooey i{width:8px;height:8px;border-radius:50%;background:var(--olive);display:block;animation:mcsBlob 1.5s ease-in-out infinite}
-.mcs-gooey i:nth-child(2){animation-delay:.2s}
-.mcs-gooey i:nth-child(3){animation-delay:.4s}
-@keyframes mcsBlob{0%,100%{transform:translateX(0) scale(.85)}25%{transform:translateX(6px) scale(1.15)}50%{transform:translateX(0) scale(.85)}75%{transform:translateX(-6px) scale(1.15)}}
+.mcs-typing i{width:6px;height:6px;border-radius:50%;background:var(--dim);display:block;animation:mcsDot 1.3s infinite}
+.mcs-typing i:nth-child(2){animation-delay:.18s}
+.mcs-typing i:nth-child(3){animation-delay:.36s}
+@keyframes mcsDot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:.9;transform:translateY(-3px)}}
 .mcs-cap{font:500 .74rem/1.4 var(--mono);letter-spacing:.06em;color:var(--muted);text-align:center;text-transform:uppercase}
 .mcs-cap b{color:var(--ink);font-weight:600}
 .mcs-note{margin-top:.4rem;font-size:.76rem;color:var(--dim);text-align:center;line-height:1.5}
-@media (prefers-reduced-motion:reduce){.mcs-gooey i,.mcs-ring{animation:none}}
+@media (prefers-reduced-motion:reduce){.mcs-typing i{animation:none}}
 /* composer docked in the phone — disabled during the sim, live after the handoff divider */
 .mcs-input{display:flex;gap:.4rem;flex:none;margin-top:.55rem;padding-top:.55rem;border-top:1px solid var(--line-2)}
-.mcs-input input{flex:1;min-width:0;font:400 .82rem/1.3 var(--body);color:var(--ink);background:var(--white);border:var(--nm-edge);border-radius:999px;padding:.5rem .85rem;outline:none;transition:opacity .3s}
+.mcs-input input{flex:1;min-width:0;font:400 .78rem/1.3 var(--body);color:var(--ink);background:var(--white);border:var(--nm-edge);border-radius:999px;padding:.5rem .8rem;outline:none;transition:opacity .3s}
 .mcs-input input:disabled{opacity:.4;background:transparent}
 .mcs-input button{flex:none;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--cream);font-size:1.05rem;line-height:1;cursor:pointer;box-shadow:var(--nm-sm);transition:transform .12s,opacity .3s}
 .mcs-input button:hover:not(:disabled){transform:scale(1.06)}
@@ -322,9 +321,8 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
 
     <section class="chat-col" aria-label="Watch a missed call come back, then text the front desk live">
       <div class="col-head">② See it — then try it live</div>
-      <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="mcsGooey"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="g"/><feBlend in="SourceGraphic" in2="g"/></filter></defs></svg>
-      <div class="mcs-phone"><div class="mcs-screen">
-        <div class="mcs-island"></div>
+      <div class="mcs-phone">
+        <div class="mcs-screen">
         <div class="mcs-status"><span id="mcsClock">2:14</span><span>5G ▪ 87%</span></div>
         <div class="mcs-seg" id="mcsSeg" role="tablist" aria-label="Demo or try it live">
           <button type="button" class="on" data-mode="demo" role="tab">Demo</button>
@@ -335,7 +333,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
           <input id="mcsMsg" type="text" placeholder="Watch the demo…" maxlength="500" disabled aria-label="Your message">
           <button type="submit" id="mcsSend" aria-label="Send" disabled>↑</button>
         </form>
-      </div></div>
+        </div>
+        <img class="mcs-frameimg" src="/iphone-frame.png" alt="" aria-hidden="true">
+      </div>
       <div class="mcs-cap" id="mcsCap"></div>
       <button type="button" class="mcs-reset" id="mcsReset">↺ replay</button>
       <p class="mcs-note"><b>Demo</b> is a labeled simulation. <b>Try it</b> is the live front desk — it answers for real. Switch trades to change the scenario.</p>
@@ -451,7 +451,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
   }
   function mTyping(on){
     var ex=document.getElementById('mcsTyping');
-    if(on&&!ex){var t=document.createElement('div');t.className='mcs-typing';t.id='mcsTyping';t.innerHTML='<span class="mcs-gooey"><i></i><i></i><i></i></span>';mThread.appendChild(t);void t.offsetWidth;t.classList.add('in');mThread.scrollTop=mThread.scrollHeight;}
+    if(on&&!ex){var t=document.createElement('div');t.className='mcs-typing';t.id='mcsTyping';t.innerHTML='<i></i><i></i><i></i>';mThread.appendChild(t);void t.offsetWidth;t.classList.add('in');mThread.scrollTop=mThread.scrollHeight;}
     else if(!on&&ex){ex.remove();}
   }
   var mode='demo';   // 'demo' = scripted sim (watch), 'try' = live front desk (type)
@@ -463,7 +463,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
   function playDemo(trade){
     gen++; var g=gen, sim=SIMS[trade], i=0; if(!sim) return;
     live=false; mThread.innerHTML=''; setHeader(trade);
-    mInput.value=''; mInput.disabled=true; mSend.disabled=true; mInput.placeholder='Switch to “Try it” to text →';
+    mInput.value=''; mInput.disabled=true; mSend.disabled=true; mInput.placeholder='Tap “Try it” to reply →';
     function step(){
       if(g!==gen) return;
       if(i>=sim.turns.length) return;   // the demo just ends — toggle to “Try it” for live
@@ -480,7 +480,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bac
     live=true; mThread.innerHTML=''; setHeader(trade);
     lchat=[{role:'assistant',content:T.greet}];
     mBubble('them',T.greet);
-    mInput.value=''; mInput.disabled=false; mSend.disabled=false; mInput.placeholder='Text like a customer would…';
+    mInput.value=''; mInput.disabled=false; mSend.disabled=false; mInput.placeholder='Message…';
     try{mInput.focus();}catch(e){}
   }
   function setMode(m){
