@@ -497,7 +497,10 @@ a,button{transition:transform .14s}
    Greeting hall (centered, intimate) → working room (compact header, line as
    narrator, content mid-stage, ask bar docked in reach). One room, two acts. ═══ */
 .fd{transition:padding .6s var(--spring)}
-.fd.staged{justify-content:flex-start;padding-top:clamp(4.8rem,8vh,6rem);padding-bottom:7.5rem}
+.fd.staged{justify-content:flex-start;padding-top:clamp(5.6rem,9vh,6.8rem);padding-bottom:8.5rem}
+/* the request screen has its own form + send — the docked composer would overlap and
+   confuse (two inputs); it steps aside until the form leaves the stage */
+.fd.staged.req-open .fd-well{display:none}
 .fd-brand,.fd-brand svg,.fd-tagline,.fd-mat,.fd-line,.fd-you{transition:all .6s var(--spring)}
 .fd.staged .fd-brand{width:46px;height:46px;border-radius:15px}
 .fd.staged .fd-brand svg{width:21px;height:21px}
@@ -1182,7 +1185,9 @@ a,button{transition:transform .14s}
   }
 
   /* ── routing — keywords only, zero model calls ── */
-  var HO_WORDS=/\b(roof|leak|hvac|heat|furnace|ac|air|plumb|pipe|drain|water|electric|panel|outlet|paint|lawn|mow|tree|mason|patio|chimney|driveway|pav|floor|pool|window|door|gutter|deck|fence|repair|install|replace|remodel|yard)\b/i;
+  /* suffix-tolerant stems — "plumbing", "electrician", "painting", "repaving" must all
+     match (exact \b stems silently deflected 3 of the 8 trade cards; live QA 7/17) */
+  var HO_WORDS=/\b(roof\w*|leak\w*|hvac|heat\w*|furnace|ac|air|plumb\w*|pipe\w*|drain\w*|water|electr\w*|panel|outlet\w*|paint\w*|lawn|mow\w*|tree\w*|mason\w*|patio|chimney\w*|driveway\w*|pav\w*|repav\w*|floor\w*|pool|window\w*|door\w*|gutter\w*|deck|fenc\w*|repair\w*|install\w*|replac\w*|remodel\w*|yard)\b/i;
   var CO_WORDS=/\b(lead|leads|call|calls|book|booking|schedule|invoice|estimate|customer|client|crew|business|market|website|slow season|jobs dry|no shows?|follow ?up)\b/i;
 
   function route(q){
@@ -1194,10 +1199,14 @@ a,button{transition:transform .14s}
       if(tw&&/\b(what (should|do) (i|we) ask|before (i|we|you) hire|hiring|how (do|to) (i |we )?(choose|pick|vet|screen)|red flags?|questions? (to|i should) ask)\b/i.test(q))return guideScreen(tw,q);
       if(tw&&/\b(cost|costs|price|prices|pricing|how much|estimate|budget|spend)\b/i.test(q))return costScreen(tw,q);
     }
-    if(triActive)return triTurn(q);   /* once the real triage owns the conversation, it keeps it */
+    /* explicit lane switches ALWAYS escape — a visitor exploring both sides must never
+       be trapped inside the homeowner triage (live QA 7/17: "contractor" mid-triage got
+       a model answer about roofing pricing instead of the contractor universe) */
     var short=q.trim().split(/\s+/).length<=5;
-    if(short&&/home ?owner/i.test(q))return hoArc();
-    if(short&&/\bcontractor\b/i.test(q))return coArc();
+    if(short&&/home ?owner/i.test(q)){triActive=false;return hoArc()}
+    if(short&&/\bcontractor\b/i.test(q)){triActive=false;return coArc()}
+    if(short&&/\b(walk the office|the office)\b/i.test(q)){triActive=false;return officeScreen()}
+    if(triActive)return triTurn(q);   /* otherwise the real triage keeps the conversation */
     if(lane==='ho')return triStart(q);
     if(/\b(walk the office|the office|every room)\b/i.test(q))return officeScreen();
     if(/\bstorms?( season| mode)?\b/i.test(q))return roomScreen('storm');
@@ -1484,6 +1493,9 @@ a,button{transition:transform .14s}
   /* ── the assembled screens ── */
   function paintScreen(html,instant){
     screen.hidden=false;screen.classList.remove('in');screen.innerHTML=html;
+    /* the request form owns the bottom of the stage — the docked composer steps aside */
+    var fdEl=document.getElementById('home');
+    if(fdEl)fdEl.classList.toggle('req-open',html.indexOf('id="fdrSum"')!==-1);
     /* children stagger in, one beat apart — the screen ASSEMBLES rather than appears */
     [].forEach.call(screen.children,function(c,i){c.style.transitionDelay=instant?'0ms':Math.min(i*80,640)+'ms'});
     void screen.offsetWidth;screen.classList.add('in');
@@ -1498,10 +1510,15 @@ a,button{transition:transform .14s}
      elements carry view-transition-names). First assembly keeps the stagger. `wire`
      runs after the new DOM paints — inside the transition when one is running. */
   function showScreen(html,wire){
-    if(screen.hidden||!document.startViewTransition){
+    /* VT only when the tab is actually visible — a hidden tab's view transition never
+       finishes and freezes the whole render mid-assembly (found in live QA 7/17) */
+    if(screen.hidden||!document.startViewTransition||document.visibilityState!=='visible'){
       paintScreen(html,false);if(wire)wire();return;
     }
-    document.startViewTransition(function(){paintScreen(html,true);if(wire)wire()});
+    try{
+      var vt=document.startViewTransition(function(){paintScreen(html,true);if(wire)wire()});
+      if(vt&&vt.finished&&vt.finished.catch)vt.finished.catch(function(){});
+    }catch(e){paintScreen(html,false);if(wire)wire()}
   }
   function headOf(deck){
     var jl=String(deck.label||jobLabelOf(deck.job)).toLowerCase(),pl=PLURAL[deck.trade]||'pros';
@@ -1598,6 +1615,8 @@ a,button{transition:transform .14s}
       if(cm)cm.style.viewTransitionName='fd-mono';if(cn)cn.style.viewTransitionName='fd-name';}
     logEvent('profile_view',{place_id:p.placeId,trade:curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):null});
     saveMemory({firm:p.name});   /* remember the last firm they weighed (F5) */
+    /* the desk keeps narrating — the line follows the visitor onto the profile */
+    if(!triBusy)speak('<b>'+escT(p.name)+'</b> — the read is below, and the request door when you’re ready. Or ask me anything about them.');
     var st=standing(p,curDeck?curDeck.deck.trade:'');
     showScreen('<span class="fdp-back" id="fdpBack">← back to your picks</span>'+
       '<div class="fdp-head"><span class="fdp-mono" style="view-transition-name:fd-mono">'+escT((p.name||'?')[0])+'</span>'+
@@ -1616,6 +1635,7 @@ a,button{transition:transform .14s}
   }
   function openRequest(p){
     logEvent('request',{place_id:p.placeId,trade:curDeck?(TRADE_DB[curDeck.deck.trade]||curDeck.deck.trade):null});
+    if(!triBusy)speak('Say it once — I’ll carry it to <b>'+escT(p.name)+'</b>, and replies land straight in your inbox.');
     var em=curDeck&&(curDeck.deck.emergency||/emergency/.test(curDeck.deck.job));
     var plan=curDeck&&curDeck.mode==='plan';
     showScreen('<span class="fdp-back" id="fdrBack">← back to '+escT(p.name)+'</span>'+
@@ -1741,7 +1761,9 @@ a,button{transition:transform .14s}
         if(q)speak('I don’t carry planning numbers for that trade yet — but say the job and I’ll line up the right pros, and their quotes become your real numbers.');
         return;
       }
-      if(q){noteShown(q,'cost guide',t.label.toLowerCase());speak('Planning numbers, not quotes — here’s what '+escT(t.label.toLowerCase())+' usually runs in Fairfield County. When you’re ready, say the job and I’ll line up the right pros.')}
+      if(q)noteShown(q,'cost guide',t.label.toLowerCase());
+      /* voiced on BOTH paths (typed ask or tapped door) — the words always match the room */
+      if(!triBusy)speak('Planning numbers, not quotes — here’s what '+escT(t.label.toLowerCase())+' usually runs in Fairfield County. When you’re ready, say the job and I’ll line up the right pros.');
       var rows=t.cost.rows.map(function(r){
         return '<div class="fdc-row"><div class="fdc-job">'+escT(r.job)+'</div><div class="fdc-range">'+escT(r.range)+'</div><p class="fdc-note">'+escT(r.note)+'</p></div>';
       }).join('');
@@ -1761,7 +1783,8 @@ a,button{transition:transform .14s}
         if(q)speak('I don’t have a hiring checklist for that trade yet — but say the job and I’ll line up pros whose records Vesta has actually read.');
         return;
       }
-      if(q){noteShown(q,'hiring checklist',t.label.toLowerCase());speak('Before you hire — the questions that separate a solid '+escT(t.label.toLowerCase())+' quote from an expensive lesson. When you’re ready, say the job and I’ll line up the right pros.')}
+      if(q)noteShown(q,'hiring checklist',t.label.toLowerCase());
+      if(!triBusy)speak('Before you hire — the questions that separate a solid '+escT(t.label.toLowerCase())+' quote from an expensive lesson. When you’re ready, say the job and I’ll line up the right pros.');
       var cards=t.guide.map(function(x){
         return '<div class="fdg-card"><span class="fdg-t">'+escT(x.t)+'</span><p class="fdg-d">'+escT(x.d)+'</p></div>';
       }).join('');
@@ -2042,7 +2065,9 @@ a,button{transition:transform .14s}
   function tradeItems(){return STACK.map(function(s,i){
     return {key:s.k,num:(i<9?'0':'')+(i+1)+' · a trade',title:s.t,desc:s.d,
       diag:'<div class="cf-diag cf-diag-ico">'+s.ico+'</div>',go:'tap to start →'}})}
-  function startTrade(k){var s=STACK.filter(function(x){return x.k===k})[0];if(s)input(s.ask,s.t.toLowerCase())}
+  function startTrade(k){var s=STACK.filter(function(x){return x.k===k})[0];if(!s)return;
+    lane='ho';setPH();   /* deterministic lane entry — a tapped trade card never rides the keyword regex */
+    input(s.ask,s.t.toLowerCase())}
 
   /* THE FORK — both decks are built EAGERLY at boot (first hover must be instant);
      hover/tap a pill shows that side's deck, tap again or "hide ×" tucks it away, and

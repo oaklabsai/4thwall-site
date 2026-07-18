@@ -163,6 +163,11 @@ const check = (tag, ok, note='') => {
   check('A30 deck open + typed ask → cards collapse out of the way (hidden again, pills off)',
     d.els.catStack.hidden === true && d.els.catOffice.hidden === true
     && d.els.revHide.hidden === true); }
+{ // every trade-card ask reaches the real triage — the exact phrasings the cards fire
+  // ("plumbing"/"electrician"/"painting" deflected before the suffix-tolerant stems)
+  const asks = ['I have a plumbing problem','I need an electrician','the house needs painting','my chimney needs repointing'];
+  const ok = asks.every(q => { const d = boot(src); d.say(q); return d.posts.length === 1; });
+  check('A33 trade-card phrasings (plumbing/electrician/painting/masonry) all reach the triage, never the deflect', ok); }
 { const d = boot(src); d.say('contractor');
   // sync timers: the co arc (blanket → why → THE OFFICE) plays through at boot
   const s = d.els.fdScreen.innerHTML;
