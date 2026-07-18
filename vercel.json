@@ -4,7 +4,8 @@
     "productionBranch": "main"
   },
   "functions": {
-    "api/triage.mjs": { "maxDuration": 60 }
+    "api/triage.mjs": { "maxDuration": 60 },
+    "api/atlas.mjs": { "maxDuration": 60 }
   },
   "rewrites": [
     { "source": "/",              "destination": "/landing-next.html" },

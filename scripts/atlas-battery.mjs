@@ -1,0 +1,97 @@
+// atlas-battery — the claim-safety + routing gate for the Atlas desk brain (/api/atlas).
+// Two layers:
+//   DETERMINISTIC (always): the server-side guards that must NEVER regress — the §9 banned
+//     list, the screen whitelist, the deflection fallback, JSON extraction. These are the
+//     belt-and-suspenders guarantee that nothing the pack forbids ever reaches a contractor.
+//   LIVE (opt-in --live): fires real contractor probes at the deployed endpoint and checks
+//     each answer is claim-safe + routes to a valid screen. Non-deterministic (real model),
+//     so it's a spot-check, not a gate — run before shipping a prompt change.
+//
+// Run: node scripts/atlas-battery.mjs         (deterministic gate)
+//      node scripts/atlas-battery.mjs --live   (+ live model probes against prod)
+
+import { claimSafe, SCREENS, DEFLECT, extractJSON } from '../api/atlas.mjs';
+
+let fails = 0;
+const check = (tag, ok, note='') => {
+  console.log(`${ok ? '  ✓' : '  ✗ FAIL'} ${tag}${!ok && note ? ' — ' + note : ''}`);
+  if (!ok) fails++;
+};
+
+console.log('atlas battery — deterministic guards\n');
+
+// ── the §9 banned list: every forbidden form must be caught ──
+const MUST_TRIP = [
+  ['self-label AI-powered', 'Atlas is an AI-powered front office'],
+  ['self-label software',   'Atlas is software that runs your office'],
+  ['self-label platform',   'our platform runs your business'],
+  ['self-label receptionist','Atlas is your AI receptionist'],
+  ['certified',             'our certified system handles it'],
+  ['Connect product name',  'use Connect to manage your record'],
+  ['voice.md word',         'we streamline your whole operation'],
+  ['exclamation mark',      'It books the estimate for you!'],
+  ['dollar figure',         'It runs about $1,500 a month'],
+  ['bare price number',     'plans start at 1500 a month'],
+  ['unreceipted number',    'we recover 87 percent of missed calls'],
+];
+for (const [label, text] of MUST_TRIP)
+  check(`banned: ${label} → tripped`, claimSafe(text) === false);
+
+// ── the approved forms must SURVIVE (no false positives that would gut real answers) ──
+const MUST_PASS = [
+  ['not-a-software-seat framing', 'Atlas is a managed service, not a software seat.'],
+  ['the hedged 15-second line',   'Supported texts typically get a first reply in 15 seconds after go-live.'],
+  ['the 20-min / 30-day terms',   'A 20-minute fit call, and a 30-day no-contract guarantee.'],
+  ['the 463 Vesta profiles',      'Vesta matches against 463 evidence-backed profiles.'],
+  ['Connect-the-tools verb',      'Connect the tools you already run and review the record.'],
+  ['plain operator answer',       'When you miss a call, the customer gets a text back in your name.'],
+];
+for (const [label, text] of MUST_PASS)
+  check(`approved: ${label} → survives`, claimSafe(text) === true);
+
+// ── the deflection is itself claim-safe (the fallback can never trip its own guard) ──
+check('the deflection passes its own guard', claimSafe(DEFLECT) === true);
+
+// ── screen whitelist: exactly the surfaces the UI knows how to assemble ──
+check('office is a valid screen', SCREENS.has('office'));
+check('every room key valid', ['lead','storm','camp','book','follow','reviews','local','briefs'].every(k => SCREENS.has('room:'+k)));
+check('sim/offer/lens/fitcall valid', ['sim','offer','lens','fitcall'].every(s => SCREENS.has(s)));
+check('a bogus screen is NOT whitelisted', !SCREENS.has('room:carpentry') && !SCREENS.has('pricing'));
+
+// ── JSON extraction survives fenced / prose-wrapped / partial model output ──
+check('extractJSON: clean', extractJSON('{"say":"hi","screen":null}')?.say === 'hi');
+check('extractJSON: fenced', extractJSON('```json\n{"say":"hi","screen":"office"}\n```')?.screen === 'office');
+check('extractJSON: prose-wrapped', extractJSON('Sure: {"say":"ok","screen":"sim"} done')?.screen === 'sim');
+check('extractJSON: garbage → null', extractJSON('no json here at all') === null);
+
+// ── LIVE probes (opt-in) ──
+if (process.argv.includes('--live')){
+  const BASE = process.env.ATLAS_BASE || 'https://4thwall.solutions';
+  // The gate on a LIVE answer is the CONTRACT: claim-safe + a valid (or null) screen. Exact
+  // routing is model-chosen and soft — a capability question opening the fit-call instead of
+  // the room is a legitimate seller move, not a failure — so `prefer` is logged, never failed.
+  const PROBES = [
+    ['what does atlas do?', 'office'],
+    ['i keep missing calls on the job', 'sim'],
+    ['how much does it cost?', 'fitcall/offer'],
+    ['tell me about storm season', 'room:storm'],
+    ['do you have clients yet?', 'fitcall'],
+    ['what is your profit margin?', 'deflect'],   // oversharing → safe regardless
+  ];
+  console.log('\natlas battery — LIVE model probes (' + BASE + ')  [gate: safe + valid screen; routing logged]\n');
+  for (const [q, prefer] of PROBES){
+    try {
+      const r = await fetch(BASE + '/api/atlas', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ messages:[{ role:'user', content:q }] }) });
+      const d = await r.json();
+      const safe = claimSafe(d.say || '');
+      const screenValid = d.screen === null || SCREENS.has(d.screen);
+      const hit = (d.screen === prefer) || prefer.split('/').includes(d.screen) ? '' : ` (prefer ${prefer})`;
+      check(`live "${q}" → safe + valid screen · routed ${d.screen}${hit}`, safe && screenValid,
+        `safe=${safe} screen=${d.screen}`);
+    } catch (e){ check(`live "${q}"`, false, e.message); }
+  }
+}
+
+console.log(fails ? `\nATLAS BATTERY: ${fails} FAIL(S)\n` : '\nATLAS BATTERY GREEN\n');
+process.exit(fails ? 1 : 0);
