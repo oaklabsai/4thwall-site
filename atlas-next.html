@@ -1320,6 +1320,23 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .abn-btn.on{color:var(--olive)}
 .abn-ask{color:var(--tea);background:var(--dark-grad);border-radius:var(--r-pill);flex:0 0 auto;padding:9px 15px;flex-direction:row;gap:6px;box-shadow:0 4px 13px -3px rgba(67,68,42,.5);font-size:11px;text-transform:none;letter-spacing:-.01em}
 .abn-ask svg{width:16px;height:16px}
+/* ── the More sheet — the FULL desktop rail as a bottom sheet, so mobile is exactly as
+   thorough as desktop (built from the same RAIL array = one source of truth, zero drift).
+   The fit call rides pinned at the bottom, nearest the thumb. ── */
+#abscrim{position:fixed;inset:0;z-index:130;background:rgba(18,16,14,.35);opacity:0;pointer-events:none;transition:opacity .3s ease}
+#abscrim.open{opacity:1;pointer-events:auto}
+#absheet{position:fixed;left:0;right:0;bottom:0;z-index:131;background:var(--bg);border-radius:22px 22px 0 0;box-shadow:0 -14px 44px rgba(40,41,22,.28);transform:translateY(103%);transition:transform .42s var(--spring);max-height:76svh;display:flex;flex-direction:column;padding:.4rem .9rem calc(.8rem + env(safe-area-inset-bottom))}
+#absheet.open{transform:none}
+.abs-grab{width:38px;height:4px;border-radius:2px;background:rgba(74,75,47,.25);margin:.35rem auto .2rem;flex:none}
+.abs-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;padding-bottom:.4rem}
+.abs-glabel{display:inline-block;font-family:var(--hand);font-size:1.08rem;font-weight:600;color:var(--olive);transform:rotate(-2deg);line-height:1;margin:.85rem 0 .3rem .5rem}
+.abs-scroll > .abs-glabel:first-child{margin-top:.3rem}
+.abs-item{display:flex;align-items:center;gap:.7rem;width:100%;border:none;background:none;cursor:pointer;border-radius:12px;padding:.62rem .55rem;font:500 .93rem/1.2 var(--body);letter-spacing:-.01em;color:var(--ebony);text-align:left}
+.abs-item:active{background:var(--white)}
+.abs-item svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;color:var(--olive)}
+.abs-fit{flex:none;display:flex;align-items:center;justify-content:center;gap:.55rem;background:var(--dark-grad);color:var(--tea);border:none;border-radius:var(--r-pill);padding:.9rem;font:600 .95rem/1 var(--body);cursor:pointer;box-shadow:0 4px 13px -3px rgba(67,68,42,.5);margin-top:.35rem}
+.abs-fit svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:reduce){#absheet,#abscrim{transition:none}}
 
 /* ══ DESK-IN-CENTER overrides — the hero desk becomes the app's center column ══ */
 /* idle: greeting + composer vertically centered (Vesta's empty state); staged: top-aligned, screen fills, composer docked to the CENTER (not the viewport, so it never runs under the rail) */
@@ -1338,6 +1355,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   #arail{display:flex;flex-direction:column;width:274px;flex-shrink:0;padding:24px 20px 16px;height:100vh;height:100svh;overflow:hidden}
   #acenter{height:100vh;height:100svh;overflow:hidden}
   #abnav{display:none}
+  #abscrim,#absheet{display:none}
   #acenter .fd.staged .fd-well{bottom:1.4rem}
 }
 @media(max-width:899px){
@@ -1458,8 +1476,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     <button class="abn-ask" id="abnAsk" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H9l-4 4V5z"/></svg>Ask Atlas</button>
     <button class="abn-btn" id="abnDemo" type="button"><svg viewBox="0 0 22 22" aria-hidden="true"><rect x="6" y="2" width="10" height="18" rx="2.5"/><path d="M9 6.5h4M9 10h3"/></svg>Demo</button>
     <button class="abn-btn" id="abnLens" type="button"><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L19 19"/></svg>Lens</button>
-    <button class="abn-btn" id="abnYou" type="button"><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="8" r="4"/><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8"/></svg>You</button>
+    <button class="abn-btn" id="abnMore" type="button" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="4" cy="11" r="1.7" fill="currentColor" stroke="none"/><circle cx="11" cy="11" r="1.7" fill="currentColor" stroke="none"/><circle cx="18" cy="11" r="1.7" fill="currentColor" stroke="none"/></svg>More</button>
   </nav>
+
+  <!-- ── the More sheet (mobile) — the full desktop rail, built by JS from the same RAIL array ── -->
+  <div id="abscrim"></div>
+  <div id="absheet" role="dialog" aria-modal="true" aria-label="All of Atlas">
+    <div class="abs-grab" aria-hidden="true"></div>
+    <div class="abs-scroll" id="absScroll"></div>
+    <button class="abs-fit" id="absFit" type="button"><svg viewBox="0 0 22 22" aria-hidden="true"><rect x="3" y="4" width="16" height="15" rx="2"/><path d="M3 8h16M7 2v4M15 2v4"/><path d="M8 13l2.5 2.5L15 11"/></svg>Book the 20-minute fit call</button>
+  </div>
 
 </div>
 
@@ -2106,18 +2132,49 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
   buildRail();
 
+  /* leaving the demo through a control that bypasses openTab must restore the hidden chat,
+     or the tap answers into a display:none element (the dead-tap bug) */
+  function exitSim(){var h=$('home');if(h&&h.classList.contains('sim-open')){h.classList.remove('sim-open');fitMcsPhone()}}
+  function youAnswer(){exitSim();setTalking(true);setActive(null);speak('Accounts live in Lens — your free, private workspace. <a href="/lens">Open Lens</a>, or <a data-say="how does the offer work?">hear the offer</a>.')}
+
+  /* the More sheet — the full desktop rail from the same RAIL array (mobile can't drift behind desktop) */
+  function svg22(k){return '<svg viewBox="0 0 22 22" aria-hidden="true">'+(IC[k]||'')+'</svg>'}
+  function buildSheet(){
+    var sc=$('absScroll');if(!sc)return;
+    sc.innerHTML=RAIL.map(function(r){
+      if(r.group)return '<span class="abs-glabel">'+r.group+'</span>';
+      return '<button class="abs-item" type="button" data-tab="'+r.key+'">'+svg22(r.ic)+r.label+'</button>';
+    }).join('')+
+    '<span class="abs-glabel">Reach us</span>'+
+    '<button class="abs-item" type="button" data-tab="contact">'+svg22('contact')+'Talk to us</button>'+
+    '<a class="abs-item" href="/vesta"><svg viewBox="0 0 22 22" aria-hidden="true"><path d="M3 10.5 11 4l8 6.5"/><path d="M5 9.5V18h12V9.5"/><path d="M9 18v-4h4v4"/></svg>Vesta — the homeowner side</a>'+
+    '<button class="abs-item" type="button" data-act="you"><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="8" r="4"/><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8"/></svg>Your account</button>';
+    sc.addEventListener('click',function(e){
+      var b=e.target.closest('[data-tab],[data-act]');if(!b)return;
+      closeSheet();
+      if(b.getAttribute('data-tab'))return openTab(b.getAttribute('data-tab'));
+      if(b.getAttribute('data-act')==='you')youAnswer();
+    });
+  }
+  function openSheet(){var s=$('absheet'),c=$('abscrim'),m=$('abnMore');if(s)s.classList.add('open');if(c)c.classList.add('open');if(m)m.setAttribute('aria-expanded','true')}
+  function closeSheet(){var s=$('absheet'),c=$('abscrim'),m=$('abnMore');if(s)s.classList.remove('open');if(c)c.classList.remove('open');if(m)m.setAttribute('aria-expanded','false')}
+  buildSheet();
+
   /* foot + bottom-nav wiring */
   function wire(id,fn){var el=$(id);if(el)el.addEventListener('click',fn)}
   wire('arFit',function(){openTab('fitcall')});
   wire('arTalk',function(){openTab('contact')});
-  wire('arYou',function(){setTalking(true);setActive(null);speak('Accounts live in Lens — your free, private workspace. <a href="/lens">Open Lens</a>, or <a data-say="how does the offer work?">hear the offer</a>.')});
+  wire('arYou',youAnswer);
   wire('abnOffice',function(){openTab('office')});
   wire('abnOffer',function(){openTab('offer')});
   wire('abnDemo',function(){openTab('sim')});
   wire('fdDemo',function(){if(window.cue)cue('tick');openTab('sim')});
   wire('abnLens',function(){openTab('lens')});
-  wire('abnAsk',function(){try{say.focus()}catch(e){}});
-  wire('abnYou',function(){setTalking(true);setActive(null);speak('Accounts live in Lens — your free, private workspace. <a href="/lens">Open Lens</a>.')});
+  wire('abnAsk',function(){exitSim();try{say.focus()}catch(e){}});
+  wire('abnMore',function(){if(window.cue)cue('tick');openSheet()});
+  wire('abscrim',closeSheet);
+  wire('absFit',function(){closeSheet();openTab('fitcall')});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSheet()});
   document.body.classList.add('abn-showing');
 
   /* ── boot: the desk greets; the office is a tab away, not forced on arrival ──
