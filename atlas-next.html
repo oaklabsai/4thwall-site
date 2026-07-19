@@ -2005,7 +2005,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   /* clicks (no model say) — the desk narrates, then assembles */
   function enterRoom(k){var r=ROOMS[k];if(!r)return walkOffice();
     setTalking(true);setActive('room:'+k);
-    speak('<b>'+r.t+'</b> — '+r.d+' Walk <a data-say="walk the office">back through the office</a> anytime.');
+    speak(r.d);   /* the hook only — the assembled screen already carries the title (h3) and the "← the office" door; repeating them here is the flow redundancy */
     landAfterSay(function(){roomVisual(k)});}
   function walkOffice(){setTalking(true);setActive('office');speak(OFFICE_LINE);landAfterSay(assembleOffice)}
   var TAB_LINE={
