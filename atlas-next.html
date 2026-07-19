@@ -1093,10 +1093,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 /* the request screen has its own form + send — the docked composer would overlap and
    confuse (two inputs); it steps aside until the form leaves the stage */
 .fd.staged.req-open .fd-well{display:none}
-.fd.sim-open .fd-well{display:none}   /* watching the demo — no need to type; give the phone the room */
-#acenter .fd.sim-open .fd-line{min-height:0;margin-top:0}   /* reclaim the reserved greeting height so the phone can breathe */
-#acenter .fd.sim-open .fd-mat{display:none}                 /* "Welcome!" not needed while watching a demo */
-#acenter .fd.sim-open.staged{padding-top:clamp(.8rem,1.6vh,1.5rem);padding-bottom:1rem}
+/* watching a demo — hide the "Welcome!", greeting + composer entirely; all the room goes to the phone */
+#acenter .fd.sim-open .fd-mat,#acenter .fd.sim-open .fd-chat{display:none}
+#acenter .fd.sim-open.staged{padding-top:clamp(.9rem,2vh,1.8rem);padding-bottom:1rem}
 .fd-brand,.fd-brand svg,.fd-tagline,.fd-mat,.fd-line,.fd-you{transition:all .6s var(--spring)}
 .fd.staged .fd-brand{width:46px;height:46px;border-radius:15px}
 .fd.staged .fd-brand svg{width:21px;height:21px}
@@ -1687,8 +1686,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   ];
   var simGen=0, simIdx=0;
   function mcsPhoneHTML(){
-    return '<span class="fds-kicker">watch a missed call come back</span>'+
-      '<div class="mcs-wrap">'+
+    return '<div class="mcs-wrap">'+
         '<div class="mcs-phone">'+
           '<div class="mcs-screen">'+
           '<div class="mcs-status"><span id="mcsClock">2:14</span><span>5G ▪ 87%</span></div>'+
@@ -1696,11 +1694,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           '</div>'+
           '<img class="mcs-frameimg" src="/iphone-frame.png" alt="" aria-hidden="true">'+
         '</div>'+
-        '<div class="mcs-cap" id="mcsCap"></div>'+
-        '<div class="mcs-dots" id="mcsDots"></div>'+
         '<button type="button" class="mcs-more" id="mcsMore">see another example →</button>'+
       '</div>'+
-      '<p class="fdc-method">A simulation, labeled as one — supported texts typically get a first reply in 15 seconds after go-live. The <a href="/missed-calls" style="color:var(--olive)">live demo</a> answers for real.</p>';
+      '<p class="fdc-method">A labeled simulation — the <a href="/missed-calls" style="color:var(--olive)">live demo</a> answers for real.</p>';
   }
   function mcsPlay(idx,onDone){
     simGen++; var g=simGen; simIdx=idx;
@@ -1759,14 +1755,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     var well=document.querySelector('#acenter .fd-well'), cBottom;
     if(well&&well.offsetParent){ cBottom=well.getBoundingClientRect().top-12; }
     else { cBottom=window.innerHeight-(window.innerWidth<900?90:14); }
-    phone.style.zoom=Math.max(0.5,Math.min(1,(cBottom-pr.top-below)/natural));
+    phone.style.zoom=Math.max(0.5,Math.min(1.3,(cBottom-pr.top-below)/natural));
   }
   window.addEventListener('resize',fitMcsPhone);
   function simVisual(){
     showScreen(mcsPhoneHTML(),function(){
       var more=$('mcsMore');
       if(more)more.addEventListener('click',function(){if(window.cue)cue('tick');mcsPlay((simIdx+1)%SIMS.length)});
-      mcsPlay(simIdx,function(){if(busy)return;speak('That’s one room of the office — one of five here. <a data-say="walk the office">Walk the rest</a>, <a href="/missed-calls">run the live demo</a>, or <a href="'+CAL+'" target="_blank" rel="noopener">book the fit call</a>.')});
+      mcsPlay(simIdx);
       fitMcsPhone(); setTimeout(fitMcsPhone,60);
     });
   }
@@ -1985,8 +1981,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     fitcall:'The next step is a 20-minute fit call with the founder — we show the office working on your business, in plain numbers, and set the fee from there.',
     numbers:'Here are the calculators — the real cost of slow replies, storm seasons, and hiring for the desk. Move the sliders; the math is yours, from your own numbers.',
     faq:'The common questions, answered plainly — what’s included, whether it’s another tool to learn, how fast it goes live, and how to stop.',
-    contact:'Tell us what’s on fire — a message reaches the founder directly. Or book the fit call any time.',
-    sim:'Here’s a missed call coming back — a simulation, labeled as one. Watch it play out.'
+    contact:'Tell us what’s on fire — a message reaches the founder directly. Or book the fit call any time.'
   };
   function openTab(key){
     var _fdh=$('home');if(_fdh)_fdh.classList.toggle('sim-open',key==='sim');
