@@ -1176,9 +1176,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .mcs-dots{display:flex;gap:.42rem;justify-content:center}
 .mcs-dots i{width:6px;height:6px;border-radius:50%;background:var(--faint);transition:background .25s,transform .25s;display:block}
 .mcs-dots i.on{background:var(--olive);transform:scale(1.3)}
-.mcs-more{display:inline-flex;align-items:center;gap:.5rem;background:var(--nm);box-shadow:var(--nm-sm);border:none;border-radius:999px;padding:.55rem 1.15rem;font:500 .85rem/1 var(--body);color:var(--ink);cursor:pointer;transition:transform .14s,box-shadow .15s}
-.mcs-more:hover{transform:translateY(-1px);box-shadow:var(--nm-out)}
-.mcs-more:active{box-shadow:var(--nm-in);transform:none}
+/* pick your own trade — clicking a chip plays that demo immediately (no random shuffle) */
+.mcs-tabs{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;max-width:min(420px,92vw)}
+.mcs-tab{background:var(--nm);box-shadow:var(--nm-sm);border:none;border-radius:999px;padding:.44rem .9rem;font:500 .78rem/1 var(--body);color:var(--muted);cursor:pointer;transition:transform .14s,box-shadow .15s,color .15s}
+.mcs-tab:hover{transform:translateY(-1px);box-shadow:var(--nm-out);color:var(--ink)}
+.mcs-tab:active{box-shadow:var(--nm-in);transform:none}
+.mcs-tab.on{background:var(--dark-grad);color:var(--tea);box-shadow:var(--nm-sm);cursor:default}
+.mcs-tab.on:hover{transform:none;color:var(--tea)}
 @media (prefers-reduced-motion:reduce){.mcs-typing i{animation:none}}
 /* F4 · the flywheel, drawn as it's spoken */
 .fdfw{display:flex;flex-direction:column;gap:.55rem;margin:.4rem 0 .6rem;max-width:460px}
@@ -1685,6 +1689,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     ]}
   ];
   var simGen=0, simIdx=0;
+  function simTab(s){return s.label.split('·')[0].trim();}   // "Roofing · storm damage" → "Roofing"
   function mcsPhoneHTML(){
     return '<div class="mcs-wrap">'+
         '<div class="mcs-phone">'+
@@ -1694,7 +1699,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           '</div>'+
           '<img class="mcs-frameimg" src="/iphone-frame.png" alt="" aria-hidden="true">'+
         '</div>'+
-        '<button type="button" class="mcs-more" id="mcsMore">see another example →</button>'+
+        '<div class="mcs-tabs" id="mcsTabs" role="group" aria-label="See the demo for your trade">'+
+          SIMS.map(function(s,k){return '<button type="button" class="mcs-tab'+(k===simIdx?' on':'')+'" data-sim="'+k+'">'+simTab(s)+'</button>'}).join('')+
+        '</div>'+
       '</div>'+
       '<p class="fdc-method">A labeled simulation — the <a href="/missed-calls" style="color:var(--olive)">live demo</a> answers for real.</p>';
   }
@@ -1705,7 +1712,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     thread.innerHTML='';
     var ck=$('mcsClock'); if(ck)ck.textContent=sim.clock;
     var cap=$('mcsCap'); if(cap)cap.innerHTML='<b>'+sim.biz+'</b> — '+sim.label;
-    var dots=$('mcsDots'); if(dots){dots.innerHTML='';SIMS.forEach(function(_,k){var d=document.createElement('i');if(k===idx)d.className='on';dots.appendChild(d)})}
+    var tabs=$('mcsTabs'); if(tabs){[].forEach.call(tabs.children,function(b,k){b.classList.toggle('on',k===idx);if(k===idx)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current')})}
     function bubble(role,text,when){
       if(when){var w=document.createElement('div');w.className='mcs-when';w.textContent=when;thread.appendChild(w)}
       var d=document.createElement('div');d.className=role==='sys'?'mcs-syschip':'mcs-b '+(role==='them'?'them':'me');d.textContent=text;
@@ -1750,8 +1757,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     var phone=document.querySelector('.mcs-phone'); if(!phone)return;
     phone.style.zoom='1';
     var pr=phone.getBoundingClientRect(), natural=pr.height||610;
-    var last=document.querySelector('#fdScreen .fdc-method')||$('mcsMore');
-    var below=last?Math.max(96,last.getBoundingClientRect().bottom-pr.bottom):150;   // caption + dots + button + method
+    var last=document.querySelector('#fdScreen .fdc-method')||$('mcsTabs');
+    var below=last?Math.max(96,last.getBoundingClientRect().bottom-pr.bottom):150;   // trade tabs + method line
     var well=document.querySelector('#acenter .fd-well'), cBottom;
     if(well&&well.offsetParent){ cBottom=well.getBoundingClientRect().top-12; }
     else { cBottom=window.innerHeight-(window.innerWidth<900?90:14); }
@@ -1760,8 +1767,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   window.addEventListener('resize',fitMcsPhone);
   function simVisual(){
     showScreen(mcsPhoneHTML(),function(){
-      var more=$('mcsMore');
-      if(more)more.addEventListener('click',function(){if(window.cue)cue('tick');mcsPlay((simIdx+1)%SIMS.length)});
+      var tabs=$('mcsTabs');
+      if(tabs)tabs.addEventListener('click',function(e){var b=e.target.closest('[data-sim]');if(!b)return;var k=+b.dataset.sim;if(k===simIdx)return;if(window.cue)cue('tick');mcsPlay(k)});
       mcsPlay(simIdx);
       fitMcsPhone(); setTimeout(fitMcsPhone,60);
     });
