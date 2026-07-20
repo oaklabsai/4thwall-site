@@ -667,11 +667,16 @@ export default async function handler(req, res){
       const rOut = await turn1Promise;
       const rj = rOut && !rOut.error ? extractJSON(rOut.raw) : null;
       const v = rj && rj.trade && rj.job ? bankValidate(bank, rj.trade, rj.job) : null;
-      if (v && !v.emergency){
-        deck = v; resolverUsed = 't1hit';
-        parsed.resolved = { trade: v.trade, job: v.job, urgency: 'routine' };
+      // Emergency-tagged adoption (2026-07-20): the blanket skip left equipment-down turns
+      // (AC dead in heat, no heat in mild weather — urgent, not dangerous) unresolved 1-2/3.
+      // Real crises are already carved out by this block's own guards (mode=emergency never
+      // enters; a 911 say never enters) — inside those rails an emergency-tagged job is the
+      // bank's own answer for "this can't wait," so adopt it with the emergency urgency.
+      if (v){
+        deck = v; resolverUsed = v.emergency ? 't1hit:emergency' : 't1hit';
+        parsed.resolved = { trade: v.trade, job: v.job, urgency: v.emergency ? 'emergency' : 'routine' };
         resolveClamp();
-      } else if (v) resolverUsed = 't1skip:emergency';
+      }
       else resolverUsed = 't1miss:' + (rOut && rOut.error ? 'err=' + rOut.error
         : rj ? 'rj=' + JSON.stringify(rj).slice(0, 80)
         : 'raw=' + String(rOut && rOut.raw || '').slice(0, 80).replace(/\n/g, '⏎'));
@@ -703,6 +708,21 @@ export default async function handler(req, res){
   if (bankRejected && !parsed.resolved && !parsed.ask
       && !/(line up|line them up|find (you|the right)|match you|get you connected|whenever you|when you'?re ready|say the word|i'?ll (get|handle|take|line))/i.test(String(parsed.say))){
     parsed.ask = "Tell me a bit more about what's going on?";
+  }
+  // TRUST-STORY GUARANTEE (2026-07-20, same pattern as the M5 soft-offer): "why should I
+  // trust you / are these paid listings?" is a trust-deciding question, and the model
+  // reaches for the WHO-VESTA-IS story only ~1/3 — the rest answer in humble-neighbor
+  // voice with no evidence claim. When the question is trust-shaped and the say carries
+  // none of the story, append the one canonical sentence. Output-aware: a say that
+  // already tells the story is never touched; a missed detection = today's behavior.
+  {
+    const tLast = [...messages].reverse().find(m => m.role === 'user');
+    const tText = String(tLast && tLast.content || '');
+    const trustShaped = /\b(why (should|would) (i|we) trust|can (i|we) trust|how do (i|we) know (you|these|this)|are (you|these|they) legit|trust (you|your|these)|pay(ing)? (you )?to be (listed|recommended|on here)|paid (you )?to be (listed|here)|sponsored|kickback)\b/i.test(tText);
+    const storyTold = /public record|evidence|nothing to buy|no ads|pay.?to.?play|cannot (buy|pay for) placement/i.test(String(parsed.say));
+    if (trustShaped && !storyTold && parsed.mode !== 'emergency' && !isAtlas){
+      parsed.say = String(parsed.say).replace(/\s*$/, '') + ' And for what it’s worth: every pick I make is built from the public record — real registrations and homeowners’ own reviews, never ads — and no contractor can pay to be recommended here.';
+    }
   }
   // The 911 tap-to-call rides on the SAY, not the mode label — the model sometimes classifies
   // a gas/sparking turn "fix" while its say correctly commands 911 (seen live 7/12). If Vesta
