@@ -1139,6 +1139,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
    stacked on mobile, where vertical space is the scarce thing instead */
 .rm-grid{display:grid;gap:1rem;align-items:start;margin-top:.15rem}
 .rm-grid .mcs-wrap{margin:0 auto}
+/* room phones render at full, legible size — never zoomed down (the fitter is sim-tab-only) */
+.rm-scene .mcs-phone{width:min(330px,100%)}
+.rm-scene .mcs-b{font-size:.8rem}
+.rm-scene .mcs-when{font-size:.62rem}
+.rm-scene .mcs-syschip{font-size:.63rem}
 @media(min-width:900px){
   /* the copy column needs a real floor — minmax(0,1fr) beside an auto column collapses to nothing */
   .rm-grid{grid-template-columns:minmax(250px,1fr) minmax(0,350px);gap:2.2rem;align-items:center}
@@ -1817,8 +1822,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function simTab(s){return s.label.split('·')[0].trim();}   // "Roofing · storm damage" → "Roofing"
   function mcsPhoneHTML(o){
     o=o||{};
+    /* data-fit marks the SIM TAB's phone only — the zoom-to-fit exists for that no-scroll
+       tab. Room phones must NEVER be zoomed down (they shrank illegible); rooms scroll. */
     return '<div class="mcs-wrap">'+
-        '<div class="mcs-phone">'+
+        '<div class="mcs-phone"'+(o.fit===false?'':' data-fit')+'>'+
           '<div class="mcs-screen">'+
           '<div class="mcs-status"><span id="mcsClock">2:14</span><span>5G ▪ 87%</span></div>'+
           '<div class="mcs-thread" id="mcsThread"></div>'+
@@ -1844,7 +1851,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         '</div>'+
         '<p class="fdc-method">A labeled simulation of your own Slack channel — these are the formats the system posts.</p>';
     }
-    return mcsPhoneHTML({tabs:false});
+    return mcsPhoneHTML({tabs:false,fit:false});
   }
   /* the player takes a SCENE OBJECT, so the trade sims and the room scenes share one engine.
      simGen cancels any scene still playing when you move rooms. */
@@ -1921,12 +1928,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       '<a href="'+CAL+'" target="_blank" rel="noopener">book the fit call →</a></div>',
       function(){
         wireScreenDoors();
-        if(scene){mcsPlay(scene);fitMcsPhone();setTimeout(fitMcsPhone,60)}
+        if(scene)mcsPlay(scene);   /* full size, no zoom — rooms scroll, legibility wins */
       });
   }
   /* zoom the whole phone (uniform, no reflow) so it AND the caption/cycler below it clear the docked composer — a step back, not shrunken */
   function fitMcsPhone(){
-    var phone=document.querySelector('.mcs-phone'); if(!phone)return;
+    var phone=document.querySelector('.mcs-phone[data-fit]'); if(!phone)return;
     phone.style.zoom='1';
     var pr=phone.getBoundingClientRect(), natural=pr.height||610;
     var last=document.querySelector('#fdScreen .fdc-method')||$('mcsTabs');
@@ -2150,10 +2157,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   /* clicks (no model say) — the desk narrates, then assembles */
   function enterRoom(k){var r=ROOMS[k];if(!r)return walkOffice();
-    setTalking(true);setActive('room:'+k);
+    setTalking(true);setActive('room:'+k);whereNow='room:'+k;phRoom(k);
     speak(r.d);   /* the hook only — the assembled screen already carries the title (h3) and the "← the office" door; repeating them here is the flow redundancy */
     roomVisual(k);}
-  function walkOffice(){setTalking(true);setActive('office');speak(OFFICE_LINE);assembleOffice()}
+  function walkOffice(){setTalking(true);setActive('office');whereNow='office';phRoom(null);speak(OFFICE_LINE);assembleOffice()}
   var TAB_LINE={
     offer:'Here’s how the offer works — a managed service, not a software seat. The number follows the size of the front office we run for you, set on a 20-minute fit call in plain terms.',
     lens:'Lens is your free, private trust workspace — connect the tools you already run, review every fact your record supports, and control exactly what a homeowner could see. Nothing publishes without you.',
@@ -2166,13 +2173,17 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     var _fdh=$('home');if(_fdh)_fdh.classList.toggle('sim-open',key==='sim');
     if(key==='office')return walkOffice();
     if(key&&key.indexOf('room:')===0)return enterRoom(key.slice(5));
-    setTalking(true);setActive(key);
+    setTalking(true);setActive(key);whereNow=key;phRoom(null);
     if(TAB_LINE[key])speak(TAB_LINE[key]);
     assembleScreen(key);
   }
 
-  /* ══ THE MODEL LOOP — typed asks -> /api/atlas ══ */
-  var msgs=[],busy=false;
+  /* ══ THE MODEL LOOP — typed asks -> /api/atlas ══
+     The brain gets the visitor's STANDING POSITION (whereNow — the room is a lens, not a
+     cage) and the last-known AUDIENCE (audNow — contractor|homeowner, the model's own read,
+     echoed back so deflects and outages route to a screen that answers). */
+  var msgs=[],busy=false,whereNow=null,audNow=null;
+  function deflectLocal(){speak(DEFLECT);var s=audNow==='homeowner'?'vesta':'faq';setActive(s);assembleScreen(s)}
   var THINKS=['reading that','thinking it through','checking the record','lining it up'],thinkTimer=null;
   var think=$('fdThink'),thinkW=$('fdThinkW');
   function thinkOn(){var i=0;if(thinkW)thinkW.textContent=THINKS[0];if(think)think.hidden=false;thinkTimer=setInterval(function(){i=(i+1)%THINKS.length;if(thinkW)thinkW.textContent=THINKS[i]},2600)}
@@ -2180,19 +2191,20 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function ask(q){
     busy=true;thinkOn();
     msgs.push({role:'user',content:q});
-    fetch('/api/atlas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs.slice(-14)})})
+    fetch('/api/atlas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs.slice(-14),where:whereNow,aud:audNow})})
     .then(function(r){return r.json()})
     .then(function(d){
       busy=false;thinkOff();
       var s=(d&&typeof d.say==='string')?d.say.trim():'';var scr=(d&&typeof d.screen==='string')?d.screen:null;
       var ar=(d&&d.args&&typeof d.args==='object'&&!Array.isArray(d.args))?d.args:null;   // server-clamped calculator seed
-      if(!s){speak(DEFLECT);return}
+      if(d&&(d.aud==='contractor'||d.aud==='homeowner'))audNow=d.aud;
+      if(!s){deflectLocal();return}
       msgs.push({role:'assistant',content:s});
       speak(escT(s));
       if(window.cue)cue('chime');   // the desk answered
-      if(scr){setActive(scr);assembleScreen(scr,ar)}
+      if(scr){setActive(scr);whereNow=scr;assembleScreen(scr,ar)}
     })
-    .catch(function(){busy=false;thinkOff();speak(DEFLECT)});
+    .catch(function(){busy=false;thinkOff();deflectLocal()});
   }
   function input(q,display){
     if(busy)return;
@@ -2202,13 +2214,25 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
   $('fdWell').addEventListener('submit',function(e){e.preventDefault();var q=say.value.trim();if(!q)return;say.value='';phVis();input(q)});
 
-  /* ── placeholder cycling ── */
+  /* ── placeholder cycling — ROOM-AWARE: standing in a room, the composer suggests questions
+     about THAT room (the room is there to be asked; the visitor shouldn't have to guess that) ── */
   var PH=['I keep missing calls on the job','what does Atlas do?','how does storm season work?','what does it cost?','how do you handle reviews?','what is Lens?'];
-  var phEl=$('fdPh'),phIdx=0;
+  var PH_ROOM={
+    lead:['what counts as a missed call?','can it book the estimate too?','what does it text in my name?'],
+    storm:['what happens when 9 calls hit at once?','how do you know a storm hit my area?','what does a storm week cost me?'],
+    camp:['what campaigns would run for my trade?','do I write anything myself?','when do they go out?'],
+    book:['how does it get on my calendar?','what if the time does not work for me?','does the customer get reminders?'],
+    follow:['how long do you chase a quote?','what do you say on day seven?','can it revive old leads?'],
+    reviews:['when does the review ask go out?','what if the job went badly?','where do the reviews land?'],
+    local:['what listings do you keep current?','how do homeowners actually find me?','what is a local signal?'],
+    briefs:['what lands in my Monday brief?','how do I know if a lead went quiet?','what gets flagged to me?']
+  };
+  var phEl=$('fdPh'),phIdx=0,phList=PH;
+  function phRoom(k){phList=(k&&PH_ROOM[k])||PH;phIdx=0;if(phEl&&!say.value&&document.activeElement!==say)phShow(phList[0])}
   function phShow(text){phEl.innerHTML='';for(var i=0;i<text.length;i++){var sp=document.createElement('i');sp.textContent=text[i]===' '?' ':text[i];sp.style.transitionDelay=(i*18)+'ms';phEl.appendChild(sp)}phEl.classList.remove('out');void phEl.offsetWidth;phEl.classList.add('in')}
   function phVis(){phEl.style.opacity=(say.value||document.activeElement===say)?'0':'1'}
   say.addEventListener('focus',phVis);say.addEventListener('blur',phVis);say.addEventListener('input',phVis);
-  if(phEl){phShow(PH[0]);setInterval(function(){if(say.value||document.activeElement===say)return;var els=phEl.querySelectorAll('i');for(var i=0;i<els.length;i++){els[i].style.transitionDelay=((els.length-i)*10)+'ms'}phEl.classList.remove('in');phEl.classList.add('out');setTimeout(function(){phIdx=(phIdx+1)%PH.length;phShow(PH[phIdx])},400)},3600)}
+  if(phEl){phShow(phList[0]);setInterval(function(){if(say.value||document.activeElement===say)return;var els=phEl.querySelectorAll('i');for(var i=0;i<els.length;i++){els[i].style.transitionDelay=((els.length-i)*10)+'ms'}phEl.classList.remove('in');phEl.classList.add('out');setTimeout(function(){phIdx=(phIdx+1)%phList.length;phShow(phList[phIdx])},400)},3600)}
 
   /* ── mic ── */
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition,micBtn=$('fdMic');

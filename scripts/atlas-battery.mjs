@@ -10,7 +10,7 @@
 // Run: node scripts/atlas-battery.mjs         (deterministic gate)
 //      node scripts/atlas-battery.mjs --live   (+ live model probes against prod)
 
-import { claimSafe, SCREENS, DEFLECT, extractJSON, cleanArgs, CALC_ARGS } from '../api/atlas.mjs';
+import { claimSafe, SCREENS, DEFLECT, extractJSON, cleanArgs, CALC_ARGS, cleanAud, deflectScreenFor, WHERE_LABEL } from '../api/atlas.mjs';
 
 let fails = 0;
 const check = (tag, ok, note='') => {
@@ -57,6 +57,19 @@ check('echo never launders a dollar figure', claimSafe('So about $9,000 a month 
 
 // ── the deflection is itself claim-safe (the fallback can never trip its own guard) ──
 check('the deflection passes its own guard', claimSafe(DEFLECT) === true);
+
+// ── deflect lands on a screen that ANSWERS, by audience (Drew 7/18: no dead ends) ──
+check('deflect: contractor → faq (the answers screen)', deflectScreenFor('contractor') === 'faq');
+check('deflect: unknown audience → faq', deflectScreenFor(null) === 'faq');
+check('deflect: homeowner → vesta (their side)', deflectScreenFor('homeowner') === 'vesta');
+check('deflect screens are valid + never fitcall', SCREENS.has('faq') && SCREENS.has('vesta') && deflectScreenFor('contractor') !== 'fitcall');
+
+// ── audience validation: exactly two values, junk → null ──
+check('aud: contractor/homeowner pass', cleanAud('contractor') === 'contractor' && cleanAud('homeowner') === 'homeowner');
+check('aud: junk → null', cleanAud('admin') === null && cleanAud(1) === null && cleanAud(undefined) === null);
+
+// ── the standing-position map covers every screen the UI can stand in ──
+check('WHERE_LABEL covers every whitelisted screen', [...SCREENS].every(s => typeof WHERE_LABEL[s] === 'string'));
 
 // ── the calculator-seed clamp (Rung 2): every arg bounded, junk dropped, panel whitelisted ──
 check('args: in-range value passes through', cleanArgs({ job_value: 9000 })?.job_value === 9000);

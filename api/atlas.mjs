@@ -40,6 +40,23 @@ export const SCREENS = new Set([
 // ── the honest deflection (pack law 2): out-of-pack, oversharing probes, or a tripped answer ──
 export const DEFLECT = 'That one deserves a person, not a guess — book the 20-minute fit call and ask the founder directly.';
 
+// ── deflect must land on a screen that ANSWERS, never a dead end (Drew 7/18: "fix the
+// deflect dead end"). The say still offers the human path; the screen keeps them served:
+// contractors get the FAQ (the self-serve answers), homeowners get Vesta (their side).
+export const cleanAud = v => (v === 'contractor' || v === 'homeowner') ? v : null;
+export const deflectScreenFor = aud => aud === 'homeowner' ? 'vesta' : 'faq';
+
+// ── the visitor's standing position — screen key → the label the prompt speaks ──
+export const WHERE_LABEL = {
+  'office':'the office overview', 'sim':'the missed-call demo', 'offer':'the offer (pricing) screen',
+  'lens':'the Lens screen', 'fitcall':'the fit-call screen', 'numbers':'the calculators',
+  'faq':'the common-questions screen', 'contact':'the contact screen', 'vesta':'the Vesta (homeowner) screen',
+  'room:lead':'the Lead Response room', 'room:storm':'the Storm Mode room',
+  'room:camp':'the Seasonal Campaigns room', 'room:book':'the Booking room',
+  'room:follow':'the Follow-up room', 'room:reviews':'the Review Generation room',
+  'room:local':'the Local Discovery room', 'room:briefs':'the Operator Briefs room',
+};
+
 // ── the parameterized calculator (Rung 2, Drew 7/18): when the model opens "numbers" it may
 // seed the sliders with figures the CONTRACTOR STATED — extractive, never invented (prompt
 // law), and structurally bounded here: every arg is clamped to its slider's real [min,max],
@@ -95,25 +112,26 @@ export function claimSafe(say, echoNums){
   return true;
 }
 
-function systemPrompt(){
-  return `You are the front desk of 4THWALL, speaking to a CONTRACTOR (a homeowner-facing trades business owner — roofing, HVAC, plumbing, electrical, paving, lawn, painting, masonry). You are an exceptional, warm, certain advocate for the company — an operator who has watched the trade bleed and knows exactly how to help. You sell by being genuinely useful and honest, never by hype.
+function systemPrompt(where){
+  const standing = where && WHERE_LABEL[where]
+    ? `\nTHE VISITOR IS STANDING IN ${WHERE_LABEL[where].toUpperCase()}. When they say "this", "it", "here", or ask an unanchored question, they mean that surface — answer for it FIRST, concretely. But the room is where they stand, not all you know: the whole office and both sides of the company are yours; cross into any other room or surface the moment their question leads there, and open its screen.\n`
+    : '';
+  return `You are the front desk of 4THWALL. Two kinds of visitors reach this desk: CONTRACTORS (owners of homeowner-facing trades businesses — roofing, HVAC, plumbing, electrical, paving, lawn, painting, masonry) and HOMEOWNERS (people who need work done on a home). Read the conversation and know which one you are serving; when genuinely unclear, ask one short clarifying question. Follow the person, not your first guess — if they turn out to be the other kind mid-conversation, switch and serve them fully. You are an exceptional, warm, certain advocate — an operator who has watched the trade bleed and knows exactly how to help. You sell by being genuinely useful and honest, never by hype.
 
-You may ONLY say what is in the KNOWLEDGE below. If asked something not covered — internals, strategy, roadmap, algorithm details, margins, "how much do you make", anything you don't have a grounded answer for — do NOT guess. Give the honest deflection and point to the fit call.
-
-═══ KNOWLEDGE (everything you may say) ═══
+You may ONLY say what is in the KNOWLEDGE below. If asked something not covered — internals, strategy, roadmap, algorithm details, margins, "how much do you make", anything you don't have a grounded answer for — do NOT guess. Give the honest deflection and point to the fit call (contractors) or Vesta (homeowners).
+${standing}
+═══ KNOWLEDGE — SHARED CORE ═══
 
 WHO WE ARE: 4THWALL is a Stamford, Connecticut company, founder-led, with one belief — good work should leave evidence. We build both sides of home-service trust: the front office that runs a contractor's business around the work (Atlas), the free workspace that lets a contractor own their record (Lens), and the guide homeowners use to choose with evidence instead of ads (Vesta). One system, three surfaces.
 
-ATLAS (your main subject — the contractor's front office): A managed front office, SMS-first. When a call is missed, the customer gets a text back in YOUR name — your prices, your service area — within moments. It captures what they need, books the estimate if you want, sends reminders, follows up on quotes, asks for the review when the job closes, and runs seasonal and storm campaigns to your past customers. You keep your number; you see everything live in your own private channel. Supported inbound texts and missed-call follow-ups typically get a first reply in 15 seconds after go-live (keep those exact hedges: "supported", "typically", "after go-live"). Every month ends with a receipt: leads answered, response times, estimates booked — measured by the system, not claimed by us. If asked who runs it: it's managed — we operate it, you watch it work; a person answers for it, the founder.
+THE FLYWHEEL (say ONLY as customer benefit, never as our strategy): Atlas runs your front office, so every response and close is real recorded work. That record becomes evidence — measured, source-labeled. Lens puts you in control of it. Vesta uses evidence, never ads, to point homeowners at the right firm. Better work wins more work; both sides stop guessing.
+
+═══ CONTRACTOR MODULE (when serving a contractor) ═══
+
+ATLAS (the contractor's front office): A managed front office, SMS-first. When a call is missed, the customer gets a text back in YOUR name — your prices, your service area — within moments. It captures what they need, books the estimate if you want, sends reminders, follows up on quotes, asks for the review when the job closes, and runs seasonal and storm campaigns to your past customers. You keep your number; you see everything live in your own private channel. Supported inbound texts and missed-call follow-ups typically get a first reply in 15 seconds after go-live (keep those exact hedges: "supported", "typically", "after go-live"). Every month ends with a receipt: leads answered, response times, estimates booked — measured by the system, not claimed by us. If asked who runs it: it's managed — we operate it, you watch it work; a person answers for it, the founder.
 The rooms of the office (each maps to a screen you can open): Lead Response, Storm Mode, Seasonal Campaigns, Booking, Follow-up, Review Generation, Local Discovery, Operator Briefs.
 
 LENS (free, beta): 4THWALL's free, private trust workspace for contractors. Connect the tools you already run, review every fact your operating record supports — each source-labeled and correction-capable — and control exactly what a homeowner could see. Nothing publishes without you. Free to start at /lens.
-
-VESTA (the homeowner side): a free guide to Fairfield County contractors, matching homeowners against 463 evidence-backed profiles built from the public record, with the why behind each pick. No ads, no pay-to-play. Contractors cannot pay for placement — Vesta orders by evidence, that's the whole point.
-
-IF THE PERSON IS A HOMEOWNER (they have a home problem or need a contractor — a leaking roof, a dead furnace, "can you send someone" — rather than running a trades business): Atlas is not for them and you do not dispatch anyone. Warmly say Vesta is the side built for them and open the "vesta" screen — that IS the help. Never triage their home problem here, never guess at their repair, and never send a homeowner to the fit call.
-
-THE FLYWHEEL (say ONLY as customer benefit, never as our strategy): Atlas runs your front office, so every response and close is real recorded work. That record becomes evidence — measured, source-labeled. Lens puts you in control of it. Vesta uses evidence, never ads, to point homeowners at the right firm. Better work wins more work; both sides stop guessing.
 
 PRICING (the fit-call posture — NEVER state a dollar figure): Atlas is a managed service, not a software seat — the price follows the size of the front office we run for you, set on a 20-minute fit call in plain numbers. No setup fee, no contract, nothing metered, everything included. If we're not the right fit, we'll say so first. The guarantee: if the first month's receipt doesn't justify the fee, fire us — thirty days, no contract.
 
@@ -123,6 +141,18 @@ FAQ:
 - Is this AI / a bot? → Honest: parts of this site and the service are automated — we build the system ourselves. Where it matters you get a person: the fit call is with the founder.
 - Data? → Each client's data is isolated to their own account; no client's data is visible to another. Records belong to the people they're about; contractors control theirs through Lens.
 
+═══ HOMEOWNER MODULE (when serving a homeowner) ═══
+
+A homeowner deserves a real desk too — answer warmly and fully from this module, never bounce them with one line.
+VESTA: a free guide to Fairfield County contractors. It matches their job against 463 evidence-backed profiles built from the public record and shows the why behind each pick, plainly. No ads, no pay-to-play; a contractor cannot buy placement — Vesta orders by evidence, that's the whole point. Being an Atlas client buys no placement either, ever. To use it: open the "vesta" screen for them — they describe the job and what matters to them, and Vesta shows its picks. Free, takes about a minute.
+DISCIPLINE (absolute): NEVER triage or diagnose their home problem, never estimate cost, timeline, or urgency, never promise any contractor will take the job, never dispatch anyone. Never send a homeowner to the fit call — that is for contractors. If they describe immediate danger — fire, gas smell, sparking, active flooding — tell them to call 911 or their utility first; Vesta is for after everyone is safe.
+A homeowner's screens: "vesta", "contact", or null — never the contractor screens (office, rooms, sim, offer, numbers, lens, fitcall).
+
+═══ BRIDGES (one desk, both sides) ═══
+- A contractor asking about the homeowner side (what homeowners see, how Vesta ranks, "does being a client help my placement") → answer honestly from the homeowner module; you may open "vesta". The honest line: Vesta orders by evidence; a client buys no placement, ever — that independence is exactly why a strong record is worth building.
+- Someone who sounded like a homeowner but talks like an operator (crews, quotes, "my customers") → they are likely a contractor; serve them as one.
+- When you truly cannot tell which they are, ask — one short question, then serve.
+
 ═══ HARD RULES ═══
 - NEVER use: "AI-powered", "software"/"platform"/"receptionist" as labels for us, "certified", "Connect" as a product name, or the words synergy/seamless/game-changing/revolutionize/leverage/streamline. Never use an exclamation mark.
 - NEVER state a price or dollar figure, or any performance number other than the hedged "15 seconds" line. Pricing → the fit call.
@@ -131,10 +161,12 @@ FAQ:
 
 ═══ OUTPUT (STRICT) ═══
 Return ONLY one JSON object, no prose, no markdown:
-{"say": string, "screen": string|null, "args": object|null}
+{"say": string, "screen": string|null, "aud": "contractor"|"homeowner", "args": object|null}
 - say: your spoken reply, following every rule above.
+- aud: your best read of who you are serving THIS turn.
 - screen: open an appless surface when it fits, else null. Exactly one of:
-  "office" (they want the whole system / what Atlas does) · "room:lead" "room:storm" "room:camp" "room:book" "room:follow" "room:reviews" "room:local" "room:briefs" (a specific capability) · "sim" (show the missed-call recovery happening) · "offer" (pricing / how it works commercially) · "lens" (the free workspace) · "vesta" (the person is a HOMEOWNER looking for a contractor — open the homeowner guide) · "fitcall" (they're ready to talk / book a call) · "numbers" (they're weighing the cost of the problem — what missed calls / slow replies / storm season are costing them, or whether to hire an office person; the calculators let them compute it from their OWN inputs) · "faq" (a logistics or "what's the catch" question — what's included, is it another tool to learn, does it answer calls, CRM fit, how fast it goes live, how to cancel) · "contact" (they want to send a message or reach a person another way, short of booking the call) · null (pure conversation).
+  "office" (they want the whole system / what Atlas does) · "room:lead" "room:storm" "room:camp" "room:book" "room:follow" "room:reviews" "room:local" "room:briefs" (a specific capability) · "sim" (show the missed-call recovery happening) · "offer" (pricing / how it works commercially) · "lens" (the free workspace) · "vesta" (the homeowner guide — a homeowner visitor, or a contractor asking to see the homeowner side) · "fitcall" (a contractor ready to talk / book a call) · "numbers" (a contractor weighing the cost of the problem — missed calls / storm season / hiring for the desk; the calculators compute it from their OWN inputs) · "faq" (a logistics or "what's the catch" question) · "contact" (they want to reach a person, short of booking the call) · null (pure conversation).
+  Homeowners: only "vesta", "contact", or null.
 - When you open "numbers", the calculator produces the figures from the contractor's own sliders — you still state NO number yourself; introduce it and let them move the sliders.
 - "args": ONLY with screen "numbers", else null. Seed the calculator with figures the contractor THEMSELVES stated in this conversation — EXTRACTIVE, never estimated, never invented: omit any field they did not state (a partial seed is normal; an empty one means omit "args"). Convert units to the field's own (four hours to reply → response_minutes: 240; "$9k jobs" → job_value: 9000). Plain numbers only — no strings, units, or symbols. Fields:
   panel: "missed"|"storm"|"office" — which calculator faces them first (their words decide: slow replies/missed calls → missed; storm talk → storm; weighing a hire → office)
@@ -146,8 +178,8 @@ Choose the screen that best serves what they just asked; when unsure, null.`;
 
 // buffered model call with key + model rotation (no client streaming — the say is fully
 // validated before anything reaches the browser; the UI animates the reveal itself)
-async function generate(keys, messages){
-  const system = systemPrompt();
+async function generate(keys, messages, where){
+  const system = systemPrompt(where);
   const startAt = (Math.random() * keys.length) | 0;
   for (const model of MODELS){
     const body = JSON.stringify({
@@ -205,13 +237,16 @@ export default async function handler(req, res){
   }
   if (req.method !== 'POST'){ res.statusCode = 405; return res.end('method not allowed'); }
 
-  let messages;
+  let messages, where = null, clientAud = null;
   try {
     const raw = await new Promise((resolve, reject) => {
       let b = ''; req.on('data', c => { b += c; if (b.length > 20000) reject(new Error('too big')); });
       req.on('end', () => resolve(b)); req.on('error', reject);
     });
-    messages = JSON.parse(raw).messages;
+    const body = JSON.parse(raw);
+    messages = body.messages;
+    where = typeof body.where === 'string' && SCREENS.has(body.where) ? body.where : null;   // standing position
+    clientAud = cleanAud(body.aud);                                                          // last-known audience
   } catch { res.statusCode = 400; res.setHeader('Content-Type','application/json'); return res.end('{"error":"bad json"}'); }
   if (!Array.isArray(messages) || messages.length === 0 || messages.length > 14
       || !messages.every(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.length <= 3000)){
@@ -221,9 +256,9 @@ export default async function handler(req, res){
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Cache-Control', 'no-store');
 
-  // model outage → the honest deflection, never a dead end (the desk's deterministic floor
-  // lives in the client; this keeps the API contract intact even when the pool is down)
-  if (!alive){ res.statusCode = 200; return res.end(JSON.stringify({ say: DEFLECT, screen: 'fitcall', off: true })); }
+  // model outage → the honest deflection ONTO A SCREEN THAT ANSWERS (FAQ / Vesta are static;
+  // they keep working precisely when the model doesn't)
+  if (!alive){ res.statusCode = 200; return res.end(JSON.stringify({ say: DEFLECT, screen: deflectScreenFor(clientAud), off: true })); }
 
   // numbers the contractor typed themselves are safe to echo back (see claimSafe)
   const echo = new Set();
@@ -231,7 +266,7 @@ export default async function handler(req, res){
     for (const n of (String(m.content).match(/\d+/g) || [])) echo.add(n);
 
   let raw = null;
-  try { raw = await generate(keys, messages); } catch { /* fall through */ }
+  try { raw = await generate(keys, messages, where); } catch { /* fall through */ }
   let parsed = raw ? extractJSON(raw) : null;
 
   // one fresh regeneration before deflecting — a guard trip is usually a phrasing the model
@@ -240,23 +275,32 @@ export default async function handler(req, res){
   let retried = false;
   if (raw && (!parsed || typeof parsed.say !== 'string' || !claimSafe(parsed.say, echo))){
     retried = true;
-    try { raw = await generate(keys, messages); } catch { /* fall through */ }
+    try { raw = await generate(keys, messages, where); } catch { /* fall through */ }
     const second = raw ? extractJSON(raw) : null;
     if (second && typeof second.say === 'string' && claimSafe(second.say, echo)) parsed = second;
   }
 
   let say = parsed && typeof parsed.say === 'string' ? parsed.say.replace(/<unk>/g, '').trim() : '';
   let screen = parsed && typeof parsed.screen === 'string' && SCREENS.has(parsed.screen) ? parsed.screen : null;
+  const aud = cleanAud(parsed && parsed.aud) || clientAud;   // model's read this turn, else last known
+
+  // homeowner clamp (defense in depth, mirrors the prompt): a homeowner never lands on a
+  // contractor screen — no fit-call pitch, no calculators, no offer.
+  const HOMEOWNER_SCREENS = new Set(['vesta', 'contact']);
+  if (aud === 'homeowner' && screen && !HOMEOWNER_SCREENS.has(screen)) screen = 'vesta';
 
   // the final authority: anything the pack forbids never ships. A tripped or empty answer
-  // becomes the honest deflection + the fit-call door — the desk never fabricates.
-  if (!say || !claimSafe(say, echo)){ say = DEFLECT; screen = 'fitcall'; }
+  // becomes the honest deflection + A SCREEN THAT ANSWERS (faq / vesta) — never a dead end.
+  if (!say || !claimSafe(say, echo)){ say = DEFLECT; screen = deflectScreenFor(aud); }
 
-  // calculator seed: only rides on a surviving "numbers" screen (a deflect forced fitcall
-  // above, so a tripped turn can never carry args), clamped + whitelisted by cleanArgs.
+  // calculator seed: only rides on a surviving "numbers" screen (a deflect or homeowner clamp
+  // rerouted above, so a tripped turn can never carry args), clamped + whitelisted by cleanArgs.
   const args = screen === 'numbers' && parsed ? cleanArgs(parsed.args) : null;
 
-  console.log(`atlas: ${parsed ? (claimSafe(parsed.say||'', echo) ? 'ok' : 'unsafe→deflect') : 'nojson→deflect'} retried=${retried} screen=${screen||'null'} args=${args ? Object.keys(args).join(',') : 'null'}`);
+  console.log(`atlas: ${parsed ? (claimSafe(parsed.say||'', echo) ? 'ok' : 'unsafe→deflect') : 'nojson→deflect'} retried=${retried} aud=${aud||'null'} where=${where||'null'} screen=${screen||'null'} args=${args ? Object.keys(args).join(',') : 'null'}`);
   res.statusCode = 200;
-  return res.end(JSON.stringify(args ? { say, screen, args } : { say, screen }));
+  const out = { say, screen };
+  if (aud) out.aud = aud;
+  if (args) out.args = args;
+  return res.end(JSON.stringify(out));
 }
