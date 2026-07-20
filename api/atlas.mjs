@@ -305,6 +305,31 @@ const ROUTER = [
     say: () => "Fair push. The honest answer: the price follows the size of the front office we run for you, so a number before the fit call would be a guess — and we don't guess. What I can promise now: no setup fee, no contract, and if the first month's receipt doesn't justify the fee, you fire us. Twenty minutes gets you the plain number.",
     screen: () => 'offer', aud: () => 'contractor' },
 ];
+const RK = Object.fromEntries(ROUTER.map(r => [r.k, r]));   // router canonicals by key
+
+// ── lint→canonical (2026-07-20 hemisphere audit): a tripped fabrication class used to land
+// on the generic DEFLECT — honest, but a dead end ("book the fit call") when the lint
+// already KNOWS which lie it caught. Now the class maps to its canonical truth, so a novel
+// phrasing that makes the model cave still gets the pack answer to that exact question.
+// Variation-independent by construction: it reads the OUTPUT, not the question.
+export function canonicalForTrip(say){
+  const t = String(say);
+  if (/\breal (person|human)\b/i.test(t) || /\b(i'?m|i am) (a )?(person|human)\b/i.test(t))
+    return { say: RK.bot.say(''), screen: 'faq' };                          // personhood → the honest bot answer
+  if (/\b(hundreds?|thousands?)\b[^.?!]{0,28}\b(a|per)\s+(month|week|year)\b/i.test(t)
+   || /\b(pay|charge|bill)[a-z]*\b[^.?!]{0,30}\bper\s+(lead|job|call|booking)\b/i.test(t)
+   || /\bonly charges? when\b/i.test(t) || /\bpay for (the )?(leads?|jobs?) that\b/i.test(t))
+    return { say: 'Atlas is a managed service, not a software seat — one flat fee that follows the size of the front office we run for you, set on a 20-minute fit call in plain numbers. No setup fee, no contract — and if the first month’s receipt doesn’t justify the fee, fire us.', screen: 'offer' };
+  if (/\b(jobber|servicetitan|service titan|housecall|workiz|acculynx|buildertrend|quickbooks)\b/i.test(t))
+    return { say: RK.tool.say(''), screen: 'faq' };                         // invented integration → the honest tool answer
+  if (/\batlas (partner|pro|verified|premium)\b/i.test(t))
+    return { say: RK.placement.say('i'), screen: 'vesta' };                 // invented label → the placement truth
+  if (/\b(approve|approval)\b[^.?!]{0,30}\b(answers?|repl(y|ies)|messages?|goes live)\b/i.test(t)
+   || /\b(it|the system|atlas) learns\b/i.test(t) || /\blearns from\b/i.test(t) || /\bcorrect it in the (app|inbox)\b/i.test(t))
+    return { say: 'The system answers from what you’ve given it — your prices, your services, your words — and you see every thread live in your own private channel, so nothing runs where you can’t watch it. Where it matters, a person answers for it: the founder.', screen: 'faq' };
+  return null;
+}
+
 export function routeKillQuestion(messages){
   const last = [...messages].reverse().find(m => m.role === 'user');
   const t = String(last && last.content || '');
@@ -396,9 +421,17 @@ export default async function handler(req, res){
   const HOMEOWNER_SCREENS = new Set(['vesta', 'contact']);
   if (aud === 'homeowner' && screen && !HOMEOWNER_SCREENS.has(screen)) screen = 'vesta';
 
-  // the final authority: anything the pack forbids never ships. A tripped or empty answer
-  // becomes the honest deflection + A SCREEN THAT ANSWERS (faq / vesta) — never a dead end.
-  if (!say || !claimSafe(say, echo)){ say = DEFLECT; screen = deflectScreenFor(aud); }
+  // the final authority: anything the pack forbids never ships. A tripped answer first
+  // tries its class's canonical truth (see canonicalForTrip) — the pack answer to the
+  // exact lie the lint caught; only an unmapped trip (or no answer at all) becomes the
+  // honest deflection + A SCREEN THAT ANSWERS (faq / vesta) — never a dead end.
+  if (!say || !claimSafe(say, echo)){
+    const canon = say ? canonicalForTrip(say) : null;
+    if (canon){
+      say = canon.say;
+      screen = (aud === 'homeowner' && !HOMEOWNER_SCREENS.has(canon.screen)) ? 'vesta' : canon.screen;
+    } else { say = DEFLECT; screen = deflectScreenFor(aud); }
+  }
 
   // calculator seed: only rides on a surviving "numbers" screen (a deflect or homeowner clamp
   // rerouted above, so a tripped turn can never carry args), clamped + whitelisted by cleanArgs.

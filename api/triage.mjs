@@ -395,6 +395,51 @@ async function callSingleTask(keys, system, messages){
 
 export const config = { supportsResponseStreaming: true };
 
+// ── the say governor (2026-07-20 hemisphere-symmetry audit) — Vesta's output-side net.
+// The redlines were prompt-only; a phrasing we didn't anticipate could ship a dollar
+// figure, a dispatch promise ("someone's on the way" — the worst emergency-doctrine
+// breach), a vetting mechanism Vesta doesn't run (background checks, insurance
+// verification), or a personhood claim. Sentence-level strip, same splitter as
+// resolveClamp; digits the HOMEOWNER typed are their facts and stay quotable (the
+// Atlas echoNums rule). DIY_PROC extends to unresolved turns here (resolveClamp only
+// covered resolved ones). Everything stripped → an honest, forward-owning floor line.
+const PRICE_UNIT_OK = /\d[\d,]*\s?-?\s?(sq|square|feet|foot|ft|amp|volt|watt|gallon|btu|degree|year|day|hour|minute|second|%)/i;
+// hoisted from resolveClamp (2026-07-20) so the say governor can extend the DIY strip to
+// unresolved turns — see resolveClamp's original comment block for the rule's history.
+const DIY_PROC = /\b(lift|remov|unscrew|loosen|tighten|jiggl|wiggl|reset|adjust|replac|reattach|reconnect|check|inspect)\w*\b[^.!?]*\b(lid|flapper|chain|float|fill[- ]?valve|shut[- ]?off valve|breaker|fuse|handle|washer|cartridge|o-?ring|gasket|tank lid|p-?trap|thermostat)\b/i;
+export function sayGuard(say, messages, deck){
+  const userDigits = new Set();
+  for (const m of messages) if (m.role === 'user')
+    for (const d of (String(m.content).match(/\d[\d,]*/g) || [])) userDigits.add(d.replace(/,/g, ''));
+  const priceShaped = s =>
+       /\$\s?\d/.test(s)
+    || (/\b\d{1,3}(,\d{3})+\b/.test(s) && !PRICE_UNIT_OK.test(s))
+    || /\b\d+(\.\d+)?k\b(?!w)/i.test(s)
+    || /\b(between|around|roughly|about|typically|usually|expect|run|runs|cost|costs)\b[^.!?]{0,24}\b(a )?(few |couple |several )?(hundred|thousand)s?\b[^.!?]{0,16}\b(dollars|bucks)?\b/i.test(s) && /(hundred|thousand)/i.test(s) && /\b(dollars|bucks|\$)|price|quote|cost/i.test(s);
+  // the echo exemption only applies to sentences that HAVE digits — a spelled-out price
+  // ("several thousand dollars") has none and must never pass vacuously
+  const allDigitsEchoed = s => {
+    const ds = s.match(/\d[\d,]*/g) || [];
+    return ds.length > 0 && ds.every(d => userDigits.has(d.replace(/,/g, '')));
+  };
+  const DISPATCH =
+    /\b(i|we)('ll| will|'m| am|'re| are)?\s+(send(ing)?|dispatch(ing)?|have|get|got)\b[^.!?]{0,26}\b(someone|help|a (pro|plumber|tech(nician)?|crew|team|roofer|electrician))\b[^.!?]{0,26}\b(out|over|to you|coming|headed|on the way|right away|right now|tonight|today|within the hour)\b/i;
+  const DISPATCH2 = /\b(help|someone|a (pro|plumber|tech(nician)?|crew|team))('s| is| will be)? (on (the|its|their) way|en route)\b/i;
+  const VETTING = /\bbackground[- ]?check|\b(insurance|insured)[^.!?]{0,20}\bverif|\bverify (their |the )?(insurance|licens)|\bdrug[- ]?test|\bwe (personally )?(inspect|interview|screen|meet)\b[^.!?]{0,16}\b(them|every|each|all|firms?|pros?|contractors?)\b/i;
+  const PERSONHOOD = /\breal (person|human)\b|\b(i'?m|i am) (a )?(real )?(person|human)\b/i;
+  let parts = String(say).split(/(?<=[.!?])\s+/);
+  parts = parts.filter(s =>
+       !(priceShaped(s) && !allDigitsEchoed(s))
+    && !DISPATCH.test(s) && !DISPATCH2.test(s)
+    && !VETTING.test(s) && !PERSONHOOD.test(s)
+    && !DIY_PROC.test(s));
+  const out = parts.join(' ').trim();
+  if (out) return out;
+  return deck
+    ? `Got it — I'll line up vetted ${deck.tradeLabel.toLowerCase()} pros for ${deck.label} now.`
+    : `Here's the honest answer: the right local pro should look at this — and lining up exactly that is what I do. Tell me a bit about what's going on and I'll point you right.`;
+}
+
 export default async function handler(req, res){
   const keys = loadKeys();
   const alive = keys.length > 0 && !process.env.TRIAGE_OFF;
@@ -595,7 +640,6 @@ export default async function handler(req, res){
   // match (no fiddle verb) and stay; emergency turns never reach this path.
   // verbs are stem-matched (adjust→adjusting, replace→replacing) — a tense the model reaches
   // for constantly; a fixed word-list let "adjusting the chain" through (measured 7/12).
-  const DIY_PROC = /\b(lift|remov|unscrew|loosen|tighten|jiggl|wiggl|reset|adjust|replac|reattach|reconnect|check|inspect)\w*\b[^.!?]*\b(lid|flapper|chain|float|fill[- ]?valve|shut[- ]?off valve|breaker|fuse|handle|washer|cartridge|o-?ring|gasket|tank lid|p-?trap|thermostat)\b/i;
   const resolveClamp = () => {
     if (!parsed.resolved || !deck) return;
     parsed.ask = null; parsed.chips = null;
@@ -687,6 +731,16 @@ export default async function handler(req, res){
   }
   // chips must be real tappable strings — a model-emitted object renders as "[object Object]"
   // and an empty array renders an empty chip row (both seen live); filter, and null when empty.
+  // ── THE SAY GOVERNOR (hemisphere-symmetry audit, 2026-07-20) ─────────────────────────
+  // Until now Vesta's redlines (no dollars, no dispatch claims, honest vetting) were
+  // prompt-only — the homeowner hemisphere had governed STRUCTURE (bankValidate, clamps)
+  // but ungoverned SPEECH, while Atlas had the reverse. This is the missing output-side
+  // net: sentence-level strip (Vesta's established pattern — resolveClamp), applied to
+  // EVERY say before the final frame. The client reconciles the bubble to the final say
+  // (typer.finish(final.say)), so what survives here is what the homeowner sees.
+  const guarded = sayGuard(String(parsed.say), messages, deck);
+  const guardTripped = guarded !== String(parsed.say);
+  parsed.say = guarded;
   const chips = Array.isArray(parsed.chips)
     ? parsed.chips.filter(c => typeof c === 'string' && c.trim()).slice(0, 4) : [];
   send({ t:'f',
@@ -700,6 +754,6 @@ export default async function handler(req, res){
   });
   // one diagnostic line per turn (no user text): which model served, mode, and the outcome —
   // the only way to attribute a bad production turn to a specific model in the chain
-  console.log(`triage: model=${servedBy} followUp=${followUp} turns=${userTurns} rawMode=${rawMode} resolved=${parsed.resolved ? parsed.resolved.trade + '/' + parsed.resolved.job : 'null'} raw=${rawResolved} resolver=${resolverUsed} salvaged=${!!parsed._salvaged}`);
+  console.log(`triage: model=${servedBy} followUp=${followUp} turns=${userTurns} rawMode=${rawMode} resolved=${parsed.resolved ? parsed.resolved.trade + '/' + parsed.resolved.job : 'null'} raw=${rawResolved} resolver=${resolverUsed} salvaged=${!!parsed._salvaged} guard=${guardTripped ? 'stripped' : 'clean'}`);
   res.end();
 }
