@@ -258,6 +258,7 @@ export default async function handler(req, res){
     messages = body.messages;
     where = typeof body.where === 'string' && SCREENS.has(body.where) ? body.where : null;   // standing position
     clientAud = cleanAud(body.aud);                                                          // last-known audience
+    var wantDiag = body.debug === true;   // response-side diagnostics (no secrets: stage/model/raw head)
   } catch { res.statusCode = 400; res.setHeader('Content-Type','application/json'); return res.end('{"error":"bad json"}'); }
   if (!Array.isArray(messages) || messages.length === 0 || messages.length > 14
       || !messages.every(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.length <= 3000)){
@@ -313,5 +314,10 @@ export default async function handler(req, res){
   const out = { say, screen };
   if (aud) out.aud = aud;
   if (args) out.args = args;
+  if (wantDiag) out._diag = {
+    stage: parsed ? (claimSafe(parsed.say || '', echo) ? 'ok' : 'unsafe') : 'nojson',
+    retried, model: gen.model, upstream: gen.status, rawlen: gen.raw ? gen.raw.length : 0,
+    rawHead: gen.raw ? String(gen.raw).slice(0, 300) : null,
+  };
   return res.end(JSON.stringify(out));
 }
