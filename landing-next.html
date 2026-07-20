@@ -406,64 +406,62 @@ a,button{transition:transform .14s}
 .fd-brand svg{width:28px;height:28px}
 .fd-tagline{margin-top:.7rem;font:500 .58rem/1 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
 
-/* ═══ THE FORK — two pills below the welcome sign. Hovering (desktop) or tapping
-   (touch) a pill reveals that side's coverflow deck in the shared reveal panel, so the
-   two universes never fight for space. Staging collapses the whole fork. ═══ */
-/* the fork now shows both product cards at once (Drew 7/20 — the empty page gets Atlas
-   under Contractor, Vesta under Homeowner). Each column = a category label + its tilt card. */
-.fd-fork{margin:1.6rem auto 0;display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;width:100%;max-width:min(720px,94vw);align-items:start}
-.fork-col{display:flex;flex-direction:column;align-items:stretch;gap:1rem}
-.fork-pill{display:flex;flex-direction:column;align-items:center;gap:.24rem;background:var(--nm);box-shadow:var(--nm-sm);border-radius:var(--r-pill);padding:.72rem 1.6rem;color:var(--ink);transition:box-shadow .2s,transform .15s,color .2s}
-.fork-pill b{font-family:var(--display);font-size:1.06rem;font-weight:500;letter-spacing:-.012em;line-height:1}
-.fork-pill span{font-family:var(--mono);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);line-height:1}
-/* the category labels are headers now, not toggles — the card below IS the door.
-   z-index above the stack so upward-cascading feature cards pass BEHIND the (opaque) label */
-.fork-pill.is-label{cursor:default;align-self:center;position:relative;z-index:6}
+/* ═══ THE THREE SURFACES — Atlas / Lens / Vesta, each a card whose feature tiles stack in
+   the bottom-right and FAN UP on hover. Vanilla port of the framer-motion PhotoStackCard
+   (Drew 7/20), with feature bullets in place of photos. Dark→olive→cream tracks the brand
+   ramp (Atlas = ink side, Lens = the #4A4B2F hinge, Vesta = tea side). No JS. ═══ */
+.fd-fork{margin:1.7rem auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;width:100%;max-width:min(960px,95vw)}
+.pcard{position:relative;display:block;height:clamp(300px,40vh,340px);padding:1.5rem 1.5rem 1.4rem;border-radius:var(--r-card);overflow:hidden;text-decoration:none;
+  transition:transform .3s var(--spring),box-shadow .3s ease}
+.pcard:hover{transform:translateY(-4px)}
+.pcard-atlas{background:var(--dark-grad);color:var(--white);box-shadow:0 2px 6px rgba(40,41,22,.2),0 22px 48px -12px rgba(40,41,22,.48),inset 0 1px 0 rgba(255,255,255,.1)}
+.pcard-lens{background:linear-gradient(165deg,#5b5f3c,#4A4B2F);color:#F3F4E7;box-shadow:0 2px 6px rgba(40,41,22,.18),0 22px 48px -12px rgba(40,41,22,.42),inset 0 1px 0 rgba(255,255,255,.12)}
+.pcard-vesta{background:var(--nm);border:var(--nm-edge);color:var(--olive);box-shadow:var(--nm-out)}
+.pcard-vesta::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 110% -10%,rgba(212,223,158,.5),transparent 60%);pointer-events:none}
+/* the head sits above the stack (z) so the fanning tiles pass behind the title */
+.pcard-head{position:relative;z-index:5}
+.pcard-cat{font:600 .62rem/1 var(--mono);letter-spacing:.19em;text-transform:uppercase;color:var(--tea);margin-bottom:.7rem}
+.pcard-lens .pcard-cat{color:#D4DF9E}
+.pcard-vesta .pcard-cat{color:var(--olive)}
+.pcard-title{font-family:var(--display);font-size:clamp(1.9rem,3vw,2.5rem);font-weight:400;letter-spacing:-.04em;line-height:.95;margin-bottom:.5rem}
+.pcard-title .dot{color:var(--tea)}
+.pcard-vesta .pcard-title{color:var(--ink)}.pcard-vesta .pcard-title .dot{color:var(--olive)}
+.pcard-sub{font-family:var(--display);font-size:1rem;font-weight:400;line-height:1.35;color:rgba(255,255,255,.72);max-width:15ch;transition:opacity .3s ease}
+.pcard-vesta .pcard-sub{color:var(--muted)}
+.pcard-go{display:inline-flex;align-items:center;gap:.45rem;margin-top:.9rem;font:600 .82rem/1 var(--body);color:var(--tea);transition:opacity .3s ease}
+.pcard-lens .pcard-go{color:#D4DF9E}.pcard-vesta .pcard-go{color:var(--olive)}
+.pcard-go .arr{transition:transform .25s var(--spring)}
+/* on hover the feature tiles fan up into the lower card, so the tagline + CTA step aside */
+.pcard:hover .pcard-sub,.pcard:focus-visible .pcard-sub,.pcard:hover .pcard-go,.pcard:focus-visible .pcard-go{opacity:0}
+/* the feature stack — anchored bottom-right, tiles fan UP on hover (staggered) */
+.pcard-stack{position:absolute;left:1.4rem;right:1.4rem;bottom:1.4rem;top:44%;pointer-events:none}
+.pft{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:.6rem;
+  padding:.72rem .9rem;border-radius:14px;font:600 .9rem/1.15 var(--body);letter-spacing:-.008em;
+  background:var(--nm);color:var(--olive);border:var(--nm-edge);
+  box-shadow:0 3px 8px rgba(40,41,22,.16),0 14px 30px -12px rgba(40,41,22,.42);
+  transform-origin:bottom center;
+  transform:translate(calc(var(--i) * 5px), calc(var(--i) * 5px)) rotate(calc(var(--i) * 2.5deg));
+  transition:transform .5s var(--spring),box-shadow .3s ease;transition-delay:calc(var(--i) * .05s);
+  z-index:calc(3 - var(--i));backface-visibility:hidden}
+.pft-d{font:600 .62rem/1 var(--mono);letter-spacing:.08em;color:var(--dim);flex:none}
+/* fan open: tile i=0 climbs highest → reads top-to-bottom 01·02·03, each tilted into a fan */
+.pcard:hover .pft,.pcard:focus-visible .pft{
+  transform:translate(calc((1 - var(--i)) * 7px), calc((2 - var(--i)) * -52px - 6px)) rotate(calc((1 - var(--i)) * 7deg)) scale(1.03);
+  box-shadow:0 10px 30px rgba(40,41,22,.24)}
 
-/* ═══ THE PRODUCT STACKS — hero card on top, feature cards hidden behind it, revealed on
-   hover. Vanilla ports of two framer-motion components (Drew 7/20): Atlas = cascade-stagger,
-   Vesta = corner-fan. Spring physics → the site's --spring easing; hover-driven, no JS. ═══ */
-.pstack{position:relative;display:block;width:100%;max-width:340px;margin:0 auto;height:clamp(330px,46vh,384px);text-decoration:none}
-.scard{position:absolute;inset:0;border-radius:var(--r-card);overflow:hidden;
-  transition:transform .55s var(--spring),box-shadow .3s ease;will-change:transform;backface-visibility:hidden}
-/* the hero card carries the product breakdown; feature cards carry one label each */
-.sc-hero{display:flex;flex-direction:column;padding:clamp(1.5rem,2.4vw,1.95rem)}
-.sc-hero > *{position:relative;z-index:1}
-.sc-atlas{background:var(--dark-grad);color:var(--white);box-shadow:0 2px 6px rgba(40,41,22,.2),0 22px 48px -12px rgba(40,41,22,.5),inset 0 1px 0 rgba(255,255,255,.1)}
-.sc-atlas::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 85% 65% at 108% -8%,rgba(212,223,158,.16),transparent 60%);pointer-events:none}
-.sc-vesta{background:var(--nm);border:var(--nm-edge);color:var(--olive);box-shadow:var(--nm-out)}
-.sc-vesta::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 85% 65% at 108% -8%,rgba(212,223,158,.5),transparent 60%);pointer-events:none}
-.sc-line{font-family:var(--body);font-size:.85rem;font-weight:450;line-height:1.5;margin:.85rem 0 auto;color:rgba(255,255,255,.8)}
-.sc-vesta .sc-line{color:var(--ebony)}
-.sc-hero .prod-btn{margin-top:1.1rem;align-self:flex-start}
-/* feature cards — a lifted tile with its label; Atlas features light on the dark hero, Vesta features olive-dark on the light hero */
-.sc-feat{display:flex;padding:1.05rem 1.2rem;box-shadow:0 2px 6px rgba(40,41,22,.14),0 16px 34px -14px rgba(40,41,22,.4);border:1px solid rgba(255,255,255,.06)}
-.sc-feat-l{font-family:var(--display);font-size:1.02rem;font-weight:500;letter-spacing:-.01em;line-height:1.2}
-.pstack-cascade .sc-feat{background:var(--nm);color:var(--olive);border:var(--nm-edge)}
-.pstack-fan .sc-feat{background:var(--dark-grad);color:var(--tea)}
-/* where the label sits, so it PEEKS from behind the hero when the stack opens */
-.sc-below{align-items:flex-end}     /* cascades downward → bottom edge shows */
-.sc-above{align-items:flex-start}   /* cascades upward → top edge shows */
-.sc-fan{align-items:flex-start;justify-content:flex-end;text-align:right}  /* fans up-right → top-right shows */
-
-/* ── ATLAS · cascade-stagger (--dist = card index − center) ── */
-.pstack-cascade .scard{transform:translateY(calc(var(--dist) * 2px))}
-.pstack-cascade:hover .scard,.pstack-cascade:focus-visible .scard{
-  transform:translate(calc(var(--dist) * 20px), calc(var(--dist) * -34px - 16px)) rotate(calc(var(--dist) * 6deg)) scale(var(--sc))}
-/* ── VESTA · corner-fan (pivot at the bottom-left corner; --rot per card) ── */
-.pstack-fan .scard{transform-origin:0% 100%;transform:rotate(0deg)}
-.pstack-fan:hover .scard,.pstack-fan:focus-visible .scard{transform:rotate(var(--rot)) scale(var(--sc))}
-
-.fd.staged .fd-fork{display:none}
-@media(prefers-reduced-motion:reduce){ .scard{transition:none} .pstack:hover .scard{transform:none} .pstack-fan:hover .scard{transform:none} }
-/* touch / no-hover: no fan trigger — hold the stacks open in a gentle resting fan so the features read */
+.fd.staged .fd-fork,.fd.talking .fd-fork{display:none}
+@media(prefers-reduced-motion:reduce){ .pft{transition:none} .pcard:hover .pft{transform:none} }
+/* touch / no-hover: no hover to fan — hold the tiles in a gentle open fan so all three read */
 @media(hover:none){
-  .pstack-cascade .scard{transform:translate(calc(var(--dist) * 11px), calc(var(--dist) * -22px - 11px)) rotate(calc(var(--dist) * 5deg)) scale(var(--sc))}
-  .pstack-fan .scard{transform:rotate(calc(var(--rot) * .82)) scale(var(--sc))}
+  .pft{transform:translate(calc((1 - var(--i)) * 6px), calc((2 - var(--i)) * -46px - 6px)) rotate(calc((1 - var(--i)) * 5deg))}
 }
-@media(max-width:560px){
-  .fd-fork{grid-template-columns:1fr;gap:2.2rem;max-width:min(360px,90vw)}
-  .pstack{height:340px}
+@media(max-width:820px){
+  .fd-fork{grid-template-columns:1fr;gap:1rem;max-width:min(380px,92vw)}
+  .pcard{height:auto;min-height:132px;padding:1.3rem 1.4rem}
+  /* single-column: the stack would collide with the next card — inline the features as a row instead */
+  .pcard-stack{position:static;margin-top:1.1rem;display:flex;flex-wrap:wrap;gap:.5rem;pointer-events:auto}
+  .pft{position:static;transform:none!important;box-shadow:none;padding:.5rem .8rem;font-size:.82rem;flex:0 0 auto}
+  .pcard-sub{max-width:none}
 }
 /* CHATTING state — the moment anyone speaks, the fork leaves the room entirely: the
    conversation owns the column and no hover can stand the deck back up mid-thread */
@@ -769,44 +767,52 @@ a,button{transition:transform .14s}
       <!-- THE FORK is the doorway — the conversation itself now lives in the desks
            (/atlas for contractors, /vesta for homeowners). The homepage picks a side and
            routes out with context; no inline chat, no generated screens here. -->
-      <h1 class="fd-line fd-static">Are you a contractor,<br>or a homeowner?</h1>
-      <p class="fd-static-sub">Two sides of one system — here’s what we run for each.</p>
+      <h1 class="fd-line fd-static">One system,<br>three surfaces.</h1>
+      <p class="fd-static-sub">Atlas runs the business · Lens keeps the record · Vesta helps homeowners hire.</p>
 
+      <!-- THE THREE SURFACES — each a card with its own feature stack that fans out on hover
+           (a vanilla port of the framer-motion PhotoStackCard; the stacked items are feature
+           tiles, not photos). Tapping the card routes to that product's desk. -->
       <div class="fd-fork" id="fdFork">
-        <div class="fork-col">
-          <div class="fork-pill is-label"><b>Contractor</b><span>run the business</span></div>
-          <!-- ATLAS — cascade-stagger stack: the hero card (Atlas + what it is) sits on top;
-               the four feature cards hide behind it and cascade out on hover. -->
-          <a class="pstack pstack-cascade" href="/atlas" aria-label="Atlas — for contractors">
-            <div class="scard sc-feat sc-below" style="--dist:-2;z-index:3;--sc:.98"><span class="sc-feat-l">Booking &amp; scheduling</span></div>
-            <div class="scard sc-feat sc-below" style="--dist:-1;z-index:4;--sc:.98"><span class="sc-feat-l">Missed-call recovery</span></div>
-            <div class="scard sc-hero sc-atlas" style="--dist:0;z-index:5;--sc:1.05">
-              <div class="prod-tag">For Contractors</div>
-              <div class="prod-name">Atlas<span class="dot">.</span></div>
-              <p class="sc-line">The managed front office behind the work — it answers, books, follows up, and sends a receipt each month.</p>
-              <span class="prod-btn">Explore Atlas <span class="arr">→</span></span>
-            </div>
-            <div class="scard sc-feat sc-above" style="--dist:1;z-index:4;--sc:.98"><span class="sc-feat-l">Follow-up &amp; reviews</span></div>
-            <div class="scard sc-feat sc-above" style="--dist:2;z-index:3;--sc:.98"><span class="sc-feat-l">Monthly receipt</span></div>
-          </a>
-        </div>
-        <div class="fork-col">
-          <div class="fork-pill is-label"><b>Homeowner</b><span>hire with proof</span></div>
-          <!-- VESTA — corner-fan stack: the hero card (Vesta + what it is) sits on top;
-               the four feature cards fan out from the bottom-left corner on hover. -->
-          <a class="pstack pstack-fan" href="/vesta" aria-label="Vesta — for homeowners">
-            <div class="scard sc-hero sc-vesta" style="--rot:-10deg;z-index:5;--sc:1">
-              <div class="prod-tag">For Homeowners</div>
-              <div class="prod-name">Vesta<span class="dot">.</span></div>
-              <p class="sc-line">Find a contractor worth hiring — tell Vesta the job in your words, get picks from the public record.</p>
-              <span class="prod-btn">Explore Vesta <span class="arr">→</span></span>
-            </div>
-            <div class="scard sc-feat sc-fan" style="--rot:0deg;z-index:4;--sc:1"><span class="sc-feat-l">Ask in your words</span></div>
-            <div class="scard sc-feat sc-fan" style="--rot:10deg;z-index:3;--sc:1.03"><span class="sc-feat-l">Public-record picks</span></div>
-            <div class="scard sc-feat sc-fan" style="--rot:20deg;z-index:2;--sc:1"><span class="sc-feat-l">A project brief</span></div>
-            <div class="scard sc-feat sc-fan" style="--rot:30deg;z-index:1;--sc:1"><span class="sc-feat-l">Free — no ads</span></div>
-          </a>
-        </div>
+        <a class="pcard pcard-atlas" href="/atlas" aria-label="Atlas — for contractors">
+          <div class="pcard-head">
+            <p class="pcard-cat">For Contractors</p>
+            <h2 class="pcard-title">Atlas<span class="dot">.</span></h2>
+            <p class="pcard-sub">The managed front office behind the work.</p>
+            <span class="pcard-go">Explore Atlas <span class="arr">→</span></span>
+          </div>
+          <div class="pcard-stack">
+            <span class="pft" style="--i:0"><span class="pft-d">01</span>Missed-call recovery</span>
+            <span class="pft" style="--i:1"><span class="pft-d">02</span>Booking &amp; follow-up</span>
+            <span class="pft" style="--i:2"><span class="pft-d">03</span>A monthly receipt</span>
+          </div>
+        </a>
+        <a class="pcard pcard-lens" href="/lens" aria-label="Lens — your record">
+          <div class="pcard-head">
+            <p class="pcard-cat">For Contractors · Free</p>
+            <h2 class="pcard-title">Lens<span class="dot">.</span></h2>
+            <p class="pcard-sub">Your private trust workspace — own the record.</p>
+            <span class="pcard-go">Explore Lens <span class="arr">→</span></span>
+          </div>
+          <div class="pcard-stack">
+            <span class="pft" style="--i:0"><span class="pft-d">01</span>Connect your history</span>
+            <span class="pft" style="--i:1"><span class="pft-d">02</span>Review every fact</span>
+            <span class="pft" style="--i:2"><span class="pft-d">03</span>Control what shows</span>
+          </div>
+        </a>
+        <a class="pcard pcard-vesta" href="/vesta" aria-label="Vesta — for homeowners">
+          <div class="pcard-head">
+            <p class="pcard-cat">For Homeowners</p>
+            <h2 class="pcard-title">Vesta<span class="dot">.</span></h2>
+            <p class="pcard-sub">Find a contractor worth hiring.</p>
+            <span class="pcard-go">Explore Vesta <span class="arr">→</span></span>
+          </div>
+          <div class="pcard-stack">
+            <span class="pft" style="--i:0"><span class="pft-d">01</span>Ask in your words</span>
+            <span class="pft" style="--i:1"><span class="pft-d">02</span>Public-record picks</span>
+            <span class="pft" style="--i:2"><span class="pft-d">03</span>A project brief</span>
+          </div>
+        </a>
       </div>
     </div>
   </div>
