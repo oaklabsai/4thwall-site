@@ -1135,6 +1135,17 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .fds-doors{display:flex;gap:1.4rem;flex-wrap:wrap;margin-top:1.1rem}
 .fds-doors a{font:500 .68rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);cursor:pointer;border-bottom:1px solid transparent;padding-bottom:.25rem;transition:color .18s,border-color .18s}
 .fds-doors a:hover{color:var(--olive);border-color:var(--olive)}
+/* a room = its story beside its proof (the empty right half was doing nothing);
+   stacked on mobile, where vertical space is the scarce thing instead */
+.rm-grid{display:grid;gap:1rem;align-items:start;margin-top:.15rem}
+.rm-grid .mcs-wrap{margin:0 auto}
+@media(min-width:900px){
+  /* the copy column needs a real floor — minmax(0,1fr) beside an auto column collapses to nothing */
+  .rm-grid{grid-template-columns:minmax(250px,1fr) minmax(0,350px);gap:2.2rem;align-items:center}
+  .rm-grid .fdg-d{margin-bottom:0}
+  .rm-scene{width:100%}
+  .rm-scene .slk{width:100%}
+}
 /* P4 · the cost chart — planning ranges with their provenance, desk material */
 .fdc-row{display:grid;grid-template-columns:1fr auto;gap:.2rem .9rem;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.9rem 1.05rem;margin-bottom:.7rem}
 .fdc-job{font:600 .92rem/1.35 var(--body);color:var(--ink)}
@@ -1184,6 +1195,27 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .mcs-tab.on{background:var(--dark-grad);color:var(--tea);box-shadow:var(--nm-sm);cursor:default}
 .mcs-tab.on:hover{transform:none;color:var(--tea)}
 @media (prefers-reduced-motion:reduce){.mcs-typing i{animation:none}}
+/* ── the OWNER's surface is a Slack channel, not a phone (worker: slack_webhook_foh is a
+   required go-live field; storm/leads/bookings → #foh, GBP+local → #boh). Customer-facing
+   rooms use the phone; owner-facing rooms use this. ── */
+.slk{width:min(400px,100%);background:var(--white);border:var(--nm-edge);border-radius:16px;box-shadow:var(--nm-out);overflow:hidden;display:flex;flex-direction:column}
+.slk-head{display:flex;align-items:center;gap:.3rem;padding:.65rem .85rem;border-bottom:1px solid var(--line);background:var(--well);font:600 .78rem/1 var(--body);color:var(--ink)}
+.slk-hash{color:var(--dim);font-weight:500}
+.slk-tag{margin-left:auto;font:500 .55rem/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--olive);background:var(--tea-grad);border-radius:var(--r-pill);padding:.3rem .5rem}
+.slk-thread{padding:.75rem .85rem;display:flex;flex-direction:column;gap:.7rem;min-height:180px;max-height:min(330px,42svh);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.slk-thread::-webkit-scrollbar{display:none}
+.slk-msg{display:flex;gap:.5rem;opacity:0;transform:translateY(6px);transition:opacity .4s ease,transform .45s var(--spring)}
+.slk-msg.in{opacity:1;transform:none}
+.slk-av{width:25px;height:25px;border-radius:7px;flex:none;display:grid;place-items:center;font:600 .58rem/1 var(--display);background:var(--dark-grad);color:var(--tea)}
+.slk-msg.you .slk-av{background:var(--tea-grad);color:var(--olive)}
+.slk-bod{min-width:0}
+.slk-who{font:600 .75rem/1.2 var(--body);color:var(--ink)}
+.slk-when{font:400 .6rem/1 var(--mono);color:var(--dim);margin-left:.35rem;letter-spacing:.03em}
+.slk-txt{font:400 .765rem/1.5 var(--body);color:var(--olive);white-space:pre-line;margin-top:.12rem}
+.slk-txt b{color:var(--ink);font-weight:600}
+.slk-txt i{color:var(--dim);font-style:normal;font-size:.94em}
+.slk-sys{align-self:center;text-align:center;font:500 .56rem/1.45 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);opacity:0;transition:opacity .4s ease}
+.slk-sys.in{opacity:1}
 /* F4 · the flywheel, drawn as it's spoken */
 .fdfw{display:flex;flex-direction:column;gap:.55rem;margin:.4rem 0 .6rem;max-width:460px}
 .fdfw-n{display:flex;align-items:baseline;gap:.7rem;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.85rem 1rem;opacity:.25;transform:translateX(-8px);transition:opacity .5s ease,transform .55s var(--spring),box-shadow .5s}
@@ -1714,9 +1746,78 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       ['them','Perfect — sending this to the owner now to confirm a Thursday estimate and get someone out to measure. No charge, no obligation.']
     ]}
   ];
+  /* ══ ROOM SCENES — every room gets a world you WATCH, not a paragraph you read.
+     Same engine as the trade sims. Deliberately mixed POV so eight rooms aren't eight
+     missed calls: some are the HOMEOWNER's phone, some are YOURS (the owner's).
+     Claim discipline is the demo protocol's: Atlas gathers and hands off, the owner
+     confirms — it never tells a customer they're booked on its own authority. ══ */
+  var SCENES={
+    storm:{clock:'3:26',turns:[
+      ['sys','Hail through Fairfield — 9 calls in 14 minutes'],
+      ['them','This is Summit Ridge Roofing — we’re taking a lot of storm calls right now. What happened at your place?','answered immediately, in your name — and 8 others at the same time'],
+      ['me','Shingles all over the lawn and the gutter’s dented'],
+      ['them','Worth documenting before anything gets moved. What’s the address, and are you free this week for a free storm inspection?'],
+      ['me','14 Oak Lane, Fairfield. Thursday works.'],
+      ['them','Got it — sending this to the owner to confirm Thursday. Photograph the yard now for your insurer, and don’t let anyone on your roof who can’t show a license.'],
+      ['sys','The other 8 ran at the same time — none waited for the end of the day']
+    ]},
+    camp:{clock:'10:05',turns:[
+      ['sys','July — the gutter-and-drainage window · 214 past customers'],
+      ['them','Hi Maria — Summit Ridge Roofing. We’re booking gutter work before the August storms. Want us to look at yours while we’re on Oak Lane?','sent on schedule, in your name'],
+      ['me','Actually yes — they overflowed last time it really poured'],
+      ['them','That’s usually pitch or a blockage — quick to check. Same address, and is a weekday morning alright?'],
+      ['me','Yes, mornings are fine'],
+      ['them','Perfect — sending this to the owner to confirm a morning slot. Nothing goes on the calendar without him.']
+    ]},
+    book:{slack:true,channel:'foh',turns:[
+      ['sys','A lead just qualified — this is your channel, not ours'],
+      ['them','📅 *Estimate booked — Maria O.*\nStorm damage · shingles off, ceiling stain (still wet)\n14 Oak Lane, Fairfield\n*Thursday 9:00 AM*\n_On your calendar. She’s been told, and gets a reminder Wednesday night._','11:48 AM'],
+      ['them','Everything she told me is on the card — you don’t have to ask her twice.','11:48 AM'],
+      ['me','perfect','11:52 AM'],
+      ['sys','If the calendar ever rejects a slot, it says so here and asks you to confirm by hand']
+    ]},
+    follow:{clock:'4:10',turns:[
+      ['sys','Quote sent Tuesday — no reply'],
+      ['them','Hi Dan — following up on the roof quote from Tuesday. Any questions on it?','day 3, sent for you'],
+      ['sys','No answer'],
+      ['them','No rush — is it the timing or the number? Either one we can work with.','day 7'],
+      ['me','Honestly the number. I’m getting one more quote.'],
+      ['them','Completely fair. I’ll tell the owner you’re comparing — he can walk you through what’s in ours so you’re comparing the same scope.']
+    ]},
+    reviews:{clock:'5:32',turns:[
+      ['sys','Job closed 20 minutes ago'],
+      ['them','Hi Maria — the crew just wrapped on Oak Lane. How did it go?','asked at the close, in your name'],
+      ['me','Great honestly — they cleaned up better than the last company did'],
+      ['them','That means a lot. Would you put that in a Google review? Here’s the direct link — about a minute.'],
+      ['me','Sure, just did'],
+      ['sys','Asked on the day the work happened — not months later, from memory']
+    ]},
+    local:{slack:true,channel:'boh',turns:[
+      ['sys','Tuesday — the back-of-house channel, where the record gets kept'],
+      ['them','📍 *GBP post published — Summit Ridge Roofing*\n_“Storm season prep: what to check on your roof before August.”_','6:15 AM'],
+      ['them','📉 *Local visibility moved*\n“roof repair fairfield” · position 3 → 7\n_Measured against live results, not a dashboard estimate._','6:15 AM'],
+      ['them','“emergency roof repair fairfield county” — you now appear where you didn’t last month.','6:15 AM'],
+      ['sys','Checked on a schedule, so a slip shows up in days — not when the phone goes quiet']
+    ]},
+    briefs:{slack:true,channel:'foh',turns:[
+      ['sys','One Monday — none of this was asked for'],
+      ['them','📊 *Last week, counted for you*\n23 conversations answered · 9 estimates requested · 2 quotes still open\n_The full report is already in your inbox._','7:02 AM'],
+      ['them','🌩️ *Storm Mode ACTIVATED — Summit Ridge Roofing*\nSevere Thunderstorm Warning\nZIP: 06824\n_The bot is now in storm-mode voice._','2:41 PM'],
+      ['them','⏱ *Follow-up waiting 30+ minutes*\nDan R. answered about Tuesday’s quote and nobody has replied yet.','4:12 PM'],
+      ['me','on it — calling him now','4:13 PM'],
+      ['sys','The weather cron, the counter and the timer all report here — you just read it']
+    ]}
+  };
+  /* one real, checkable artifact per room where one exists — real beats simulated */
+  var ROOM_DOORS={
+    lead:'<a data-door="sim">every trade — pick yours →</a><a href="/missed-calls">try it live →</a>',
+    storm:'<a data-door="numbers">what a storm week costs you →</a>',
+    local:'<a href="/vesta">the homeowner side of your record →</a>'
+  };
   var simGen=0, simIdx=0;
   function simTab(s){return s.label.split('·')[0].trim();}   // "Roofing · storm damage" → "Roofing"
-  function mcsPhoneHTML(){
+  function mcsPhoneHTML(o){
+    o=o||{};
     return '<div class="mcs-wrap">'+
         '<div class="mcs-phone">'+
           '<div class="mcs-screen">'+
@@ -1725,21 +1826,50 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           '</div>'+
           '<img class="mcs-frameimg" src="/iphone-frame.png" alt="" aria-hidden="true">'+
         '</div>'+
-        '<div class="mcs-tabs" id="mcsTabs" role="group" aria-label="See the demo for your trade">'+
-          SIMS.map(function(s,k){return '<button type="button" class="mcs-tab'+(k===simIdx?' on':'')+'" data-sim="'+k+'">'+simTab(s)+'</button>'}).join('')+
-        '</div>'+
+        (o.tabs===false?'':
+          '<div class="mcs-tabs" id="mcsTabs" role="group" aria-label="See the demo for your trade">'+
+            SIMS.map(function(s,k){return '<button type="button" class="mcs-tab'+(k===simIdx?' on':'')+'" data-sim="'+k+'">'+simTab(s)+'</button>'}).join('')+
+          '</div>')+
       '</div>'+
       '<p class="fdc-method">A labeled simulation — the <a href="/missed-calls" style="color:var(--olive)">live demo</a> answers for real.</p>';
   }
-  function mcsPlay(idx,onDone){
-    simGen++; var g=simGen; simIdx=idx;
-    var sim=SIMS[idx], thread=$('mcsThread'), i=0;
-    if(!thread)return;
+  /* the scene picks its own chrome: customer-facing scenes render a phone, owner-facing
+     scenes render the client's Slack channel (the surface the worker actually posts to) */
+  function slkEsc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
+  function slkFmt(t){return slkEsc(t).replace(/\*([^*]+)\*/g,'<b>$1</b>').replace(/_([^_]+)_/g,'<i>$1</i>')}
+  function sceneHTML(sc){
+    if(sc&&sc.slack){
+      return '<div class="slk">'+
+          '<div class="slk-head"><span class="slk-hash">#</span>'+(sc.channel||'foh')+'<span class="slk-tag">your channel</span></div>'+
+          '<div class="slk-thread" id="mcsThread"></div>'+
+        '</div>'+
+        '<p class="fdc-method">A labeled simulation of your own Slack channel — these are the formats the system posts.</p>';
+    }
+    return mcsPhoneHTML({tabs:false});
+  }
+  /* the player takes a SCENE OBJECT, so the trade sims and the room scenes share one engine.
+     simGen cancels any scene still playing when you move rooms. */
+  function mcsPlay(sim,onDone){
+    simGen++; var g=simGen;
+    var thread=$('mcsThread'), i=0;
+    if(!thread||!sim)return;
     thread.innerHTML='';
-    var ck=$('mcsClock'); if(ck)ck.textContent=sim.clock;
-    var cap=$('mcsCap'); if(cap)cap.innerHTML='<b>'+sim.biz+'</b> — '+sim.label;
-    var tabs=$('mcsTabs'); if(tabs){[].forEach.call(tabs.children,function(b,k){b.classList.toggle('on',k===idx);if(k===idx)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current')})}
+    var ck=$('mcsClock'); if(ck)ck.textContent=sim.clock||'9:41';
+    var cap=$('mcsCap'); if(cap&&sim.biz)cap.innerHTML='<b>'+sim.biz+'</b> — '+sim.label;
+    var slk=!!sim.slack;
     function bubble(role,text,when){
+      if(slk){
+        var el;
+        if(role==='sys'){el=document.createElement('div');el.className='slk-sys';el.textContent=text}
+        else{
+          el=document.createElement('div');el.className='slk-msg'+(role==='me'?' you':'');
+          el.innerHTML='<span class="slk-av">'+(role==='me'?'YOU':'A')+'</span>'+
+            '<span class="slk-bod"><span class="slk-who">'+(role==='me'?'You':'Atlas')+
+            (when?'<span class="slk-when">'+slkEsc(when)+'</span>':'')+'</span>'+
+            '<span class="slk-txt">'+slkFmt(text)+'</span></span>';
+        }
+        thread.appendChild(el);void el.offsetWidth;el.classList.add('in');thread.scrollTop=thread.scrollHeight;return;
+      }
       if(when){var w=document.createElement('div');w.className='mcs-when';w.textContent=when;thread.appendChild(w)}
       var d=document.createElement('div');d.className=role==='sys'?'mcs-syschip':'mcs-b '+(role==='them'?'them':'me');d.textContent=text;
       thread.appendChild(d);void d.offsetWidth;d.classList.add('in');thread.scrollTop=thread.scrollHeight;
@@ -1748,7 +1878,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       if(g!==simGen)return;
       if(i>=sim.turns.length){setTimeout(function(){if(g===simGen&&onDone)onDone()},1200);return}
       var s=sim.turns[i++];
-      if(s[0]==='them'){
+      if(slk){   /* a channel post doesn't type — it lands */
+        bubble(s[0],s[1],s[2]);
+        setTimeout(step,s[0]==='sys'?900:1500);
+      }else if(s[0]==='them'){
         var t=document.createElement('div');t.className='mcs-typing';t.innerHTML='<i></i><i></i><i></i>';
         thread.appendChild(t);void t.offsetWidth;t.classList.add('in');thread.scrollTop=thread.scrollHeight;
         setTimeout(function(){if(g!==simGen)return;t.remove();bubble('them',s[1],s[2]);setTimeout(step,1400)},1200);
@@ -1758,6 +1891,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       }
     }
     setTimeout(function(){if(g!==simGen)return;step()},800);
+  }
+  /* the trade-picker wrapper — only the sim tab has tabs to light up */
+  function simPlay(idx){
+    simIdx=idx;
+    var tabs=$('mcsTabs');
+    if(tabs)[].forEach.call(tabs.children,function(b,k){b.classList.toggle('on',k===idx);if(k===idx)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current')});
+    mcsPlay(SIMS[idx]);
   }
 
   /* ══ ASSEMBLERS (pure visual) ══ */
@@ -1771,12 +1911,19 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
   function roomVisual(k){
     var r=ROOMS[k];if(!r)return assembleOffice();
+    var scene=SCENES[k]||(k==='lead'?SIMS[0]:null);   /* Lead Response reuses the roofing sim — one copy, not two */
     showScreen('<span class="fds-kicker">inside the office</span><h3 class="fds-h">'+r.t+'</h3>'+
-      '<p class="fdg-d" style="font-size:.92rem;line-height:1.7">'+r.deep+'</p>'+
+      '<div class="rm-grid">'+
+        '<p class="fdg-d" style="font-size:.92rem;line-height:1.7">'+r.deep+'</p>'+
+        (scene?'<div class="rm-scene">'+sceneHTML(scene)+'</div>':'')+
+      '</div>'+
       '<div class="fds-doors"><a data-door="office">← the office</a>'+
-      (r.sim?'<a data-door="sim">watch a missed call come back →</a>':'')+
+      (ROOM_DOORS[k]||'')+
       '<a href="'+CAL+'" target="_blank" rel="noopener">book the fit call →</a></div>',
-      wireScreenDoors);
+      function(){
+        wireScreenDoors();
+        if(scene){mcsPlay(scene);fitMcsPhone();setTimeout(fitMcsPhone,60)}
+      });
   }
   /* zoom the whole phone (uniform, no reflow) so it AND the caption/cycler below it clear the docked composer — a step back, not shrunken */
   function fitMcsPhone(){
@@ -1794,8 +1941,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function simVisual(){
     showScreen(mcsPhoneHTML(),function(){
       var tabs=$('mcsTabs');
-      if(tabs)tabs.addEventListener('click',function(e){var b=e.target.closest('[data-sim]');if(!b)return;var k=+b.dataset.sim;if(k===simIdx)return;if(window.cue)cue('tick');mcsPlay(k)});
-      mcsPlay(simIdx);
+      if(tabs)tabs.addEventListener('click',function(e){var b=e.target.closest('[data-sim]');if(!b)return;var k=+b.dataset.sim;if(k===simIdx)return;if(window.cue)cue('tick');simPlay(k)});
+      simPlay(simIdx);
       fitMcsPhone(); setTimeout(fitMcsPhone,60);
     });
   }
