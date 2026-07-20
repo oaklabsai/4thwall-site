@@ -1017,7 +1017,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .cf-diag-ico svg{width:auto;height:46px;fill:none;stroke:var(--olive);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 /* the welcome mat — first thing under the floating bar */
 .fd-mat{margin-top:.4rem}
-.fd-mat .kicker{font-size:clamp(2.3rem,4.8vw,3.1rem);transform:rotate(-3deg);padding-bottom:10px;background-size:100% 9px}
+.fd-mat .kicker{font-family:var(--hand);font-weight:600;font-style:italic;font-size:clamp(2.5rem,5.2vw,3.4rem);transform:rotate(-3deg);display:inline-block;padding-bottom:10px;text-decoration:underline;text-decoration-color:var(--tea);text-decoration-thickness:4px;text-underline-offset:9px}
 /* the chat — even rhythm, breathing without the void */
 .fd-chat{width:100%;display:flex;flex-direction:column;align-items:center;margin-top:1.2rem}
 @keyframes fdBreath{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.05);opacity:1}}
@@ -1131,16 +1131,19 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .fdread.on i.off{opacity:.1;transform:scale(.5)}
 .fdread.on i.keep{opacity:1;transform:scale(1.8);background:#cdd88f;box-shadow:0 0 0 4px rgba(212,223,158,.4)}
 .fdread-sub{font:500 .7rem/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--dim);transition:color .4s}
-/* quiet doors under an assembled screen — the vocabulary compounding (P4) */
-.fds-doors{display:flex;gap:1.4rem;flex-wrap:wrap;margin-top:1.1rem}
-.fds-doors a{font:500 .68rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);cursor:pointer;border-bottom:1px solid transparent;padding-bottom:.25rem;transition:color .18s,border-color .18s}
-.fds-doors a:hover{color:var(--olive);border-color:var(--olive)}
+/* doors under an assembled screen — handwritten so they read as invitations, not fine print (Drew 7/20) */
+.fds-doors{display:flex;gap:.5rem 1.6rem;flex-wrap:wrap;margin-top:1.1rem}
+.fds-doors a{font-family:var(--hand);font-weight:600;font-style:italic;font-size:1.18rem;line-height:1.25;color:var(--olive);cursor:pointer;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:4px;padding-bottom:.1rem;transition:color .18s}
+.fds-doors a:hover{color:var(--ink)}
 /* a room = its story beside its proof (the empty right half was doing nothing);
-   stacked on mobile, where vertical space is the scarce thing instead */
+   stacked on mobile, where vertical space is the scarce thing instead.
+   The title lives INSIDE the copy column so the phone column can start at the top
+   of the screen and fit whole — the same vertical room the 20-second demo gets. */
 .rm-grid{display:grid;gap:1rem;align-items:start;margin-top:.15rem}
 .rm-grid .mcs-wrap{margin:0 auto}
-/* room phones render at full, legible size — never zoomed down (the fitter is sim-tab-only) */
-.rm-scene .mcs-phone{width:min(330px,100%)}
+/* room phones = the DEMO phone: same base width, same zoom-to-fit pipeline (Drew 7/20:
+   one phone size everywhere a phone demonstrates) */
+.rm-scene .mcs-phone{width:min(294px,84vw)}
 .rm-scene .mcs-b{font-size:.8rem}
 .rm-scene .mcs-when{font-size:.62rem}
 .rm-scene .mcs-syschip{font-size:.63rem}
@@ -1148,6 +1151,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   /* the copy column needs a real floor — minmax(0,1fr) beside an auto column collapses to nothing */
   .rm-grid{grid-template-columns:minmax(250px,1fr) minmax(0,350px);gap:2.2rem;align-items:center}
   .rm-grid .fdg-d{margin-bottom:0}
+  .rm-copy{text-align:left}
   .rm-scene{width:100%}
   .rm-scene .slk{width:100%}
 }
@@ -1205,6 +1209,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
    rooms use the phone; owner-facing rooms use this. ── */
 .slk{width:min(400px,100%);background:var(--white);border:var(--nm-edge);border-radius:16px;box-shadow:var(--nm-out);overflow:hidden;display:flex;flex-direction:column}
 .slk-head{display:flex;align-items:center;gap:.3rem;padding:.65rem .85rem;border-bottom:1px solid var(--line);background:var(--well);font:600 .78rem/1 var(--body);color:var(--ink)}
+.slk-head .slk-logo{margin-right:.35rem}
+.slk-logo{width:15px;height:15px;flex:none}
+/* "what is Slack?" — for the operator who has never used it; the surface names itself */
+.slk-what{display:flex;align-items:flex-start;gap:.6rem;text-align:left;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.75rem .9rem;margin:.7rem auto 0;max-width:400px;font:400 .78rem/1.55 var(--body);color:var(--muted)}
+.slk-what .slk-logo{width:20px;height:20px;margin-top:.15rem}
+.slk-what b{color:var(--ink);font-weight:600}
 .slk-hash{color:var(--dim);font-weight:500}
 .slk-tag{margin-left:auto;font:500 .55rem/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--olive);background:var(--tea-grad);border-radius:var(--r-pill);padding:.3rem .5rem}
 .slk-thread{padding:.75rem .85rem;display:flex;flex-direction:column;gap:.7rem;min-height:180px;max-height:min(330px,42svh);overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -1382,10 +1392,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 #acenter .fd{position:static;min-height:0;flex:1;padding:clamp(2.2rem,5vh,4rem) clamp(1rem,4vw,2.4rem) 6.5rem;justify-content:center;text-align:center;overflow-y:auto;overflow-x:hidden}
 #acenter .fd.staged{justify-content:flex-start;padding-top:clamp(1.6rem,4vh,3rem);padding-bottom:7rem}
 #acenter .fd-cue{display:none}   /* no "scroll for the story" — the app doesn't scroll to a story */
-/* the composer docks to the center column's bottom, centered under the chat, clear of the rail */
-#acenter .fd.staged .fd-well{position:absolute;left:50%;bottom:1.1rem;transform:translateX(-50%);width:min(600px,calc(100% - 2.2rem));margin:0;z-index:70;box-shadow:var(--sh-card)}
+/* the composer docks to the center column's bottom, centered under the chat, clear of the rail.
+   DESKTOP ONLY: absolute pins to the locked #acenter shell. On mobile #acenter GROWS with
+   content, so absolute pinned the composer to the page bottom — offscreen; tapping Ask Atlas
+   focused an invisible input (Drew 7/20: "ask atlas obstructs the layout / looks messy").
+   Mobile uses the global fixed-to-viewport dock instead. */
 
 @media(min-width:900px){
+  #acenter .fd.staged .fd-well{position:absolute;left:50%;bottom:1.1rem;transform:translateX(-50%);width:min(600px,calc(100% - 2.2rem));margin:0;z-index:70;box-shadow:var(--sh-card)}
   html,body{height:100%;overflow:hidden}                 /* desktop: locked app shell */
   body::before{opacity:.28}                              /* soften the grain a touch at app scale */
   #app{height:100vh;height:100svh;flex-direction:row;overflow:hidden}
@@ -1399,6 +1413,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   #arail{display:none}
   #app{padding-bottom:0}
   #acenter{min-height:100svh}
+  /* the composer is FIXED to the viewport on mobile (the .fd.staged .fd-well global rule);
+     clear room for it + the bottom nav so screen content never runs underneath */
+  #acenter .fd.staged{padding-bottom:15rem}
   /* lift the docked composer above the mobile bottom nav */
   .abn-showing #acenter .fd.staged .fd-well{bottom:calc(4.8rem + env(safe-area-inset-bottom))}
 }
@@ -1843,15 +1860,23 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
      scenes render the client's Slack channel (the surface the worker actually posts to) */
   function slkEsc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
   function slkFmt(t){return slkEsc(t).replace(/\*([^*]+)\*/g,'<b>$1</b>').replace(/_([^_]+)_/g,'<i>$1</i>')}
+  /* the official Slack mark — the surface should NAME itself for people who've never used Slack */
+  var SLACK_LOGO='<svg class="slk-logo" viewBox="0 0 122.8 122.8" aria-hidden="true">'+
+    '<path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zM32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z" fill="#E01E5A"/>'+
+    '<path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zM45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/>'+
+    '<path d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2zM90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/>'+
+    '<path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z" fill="#ECB22E"/></svg>';
   function sceneHTML(sc){
     if(sc&&sc.slack){
       return '<div class="slk">'+
-          '<div class="slk-head"><span class="slk-hash">#</span>'+(sc.channel||'foh')+'<span class="slk-tag">your channel</span></div>'+
+          '<div class="slk-head">'+SLACK_LOGO+'<span class="slk-hash">#</span>'+(sc.channel||'foh')+'<span class="slk-tag">your channel</span></div>'+
           '<div class="slk-thread" id="mcsThread"></div>'+
         '</div>'+
-        '<p class="fdc-method">A labeled simulation of your own Slack channel — these are the formats the system posts.</p>';
+        '<p class="fdc-method">A labeled simulation of your own Slack channel — these are the formats the system posts.</p>'+
+        '<div class="slk-what">'+SLACK_LOGO+'<span><b>What is Slack?</b> A free messaging app — like texting, but organized into channels. '+
+        'We set up a private channel for your business and post updates like these into it. Nothing to learn: you read it on your phone, like any chat.</span></div>';
     }
-    return mcsPhoneHTML({tabs:false,fit:false});
+    return mcsPhoneHTML({tabs:false});
   }
   /* the player takes a SCENE OBJECT, so the trade sims and the room scenes share one engine.
      simGen cancels any scene still playing when you move rooms. */
@@ -1918,30 +1943,36 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function roomVisual(k){
     var r=ROOMS[k];if(!r)return assembleOffice();
     var scene=SCENES[k]||(k==='lead'?SIMS[0]:null);   /* Lead Response reuses the roofing sim — one copy, not two */
-    showScreen('<span class="fds-kicker">inside the office</span><h3 class="fds-h">'+r.t+'</h3>'+
-      '<div class="rm-grid">'+
+    showScreen('<div class="rm-grid">'+
+        '<div class="rm-copy"><span class="fds-kicker">inside the office</span><h3 class="fds-h">'+r.t+'</h3>'+
         '<p class="fdg-d" style="font-size:.92rem;line-height:1.7">'+r.deep+'</p>'+
+        '<div class="fds-doors"><a data-door="office">← the office</a>'+
+        (ROOM_DOORS[k]||'')+
+        '<a href="'+CAL+'" target="_blank" rel="noopener">book the fit call →</a></div></div>'+
         (scene?'<div class="rm-scene">'+sceneHTML(scene)+'</div>':'')+
-      '</div>'+
-      '<div class="fds-doors"><a data-door="office">← the office</a>'+
-      (ROOM_DOORS[k]||'')+
-      '<a href="'+CAL+'" target="_blank" rel="noopener">book the fit call →</a></div>',
+      '</div>',
       function(){
         wireScreenDoors();
-        if(scene)mcsPlay(scene);   /* full size, no zoom — rooms scroll, legibility wins */
+        if(scene){mcsPlay(scene);fitMcsPhone();setTimeout(fitMcsPhone,60)}   /* same size pipeline as the 20-second demo */
       });
   }
-  /* zoom the whole phone (uniform, no reflow) so it AND the caption/cycler below it clear the docked composer — a step back, not shrunken */
+  /* zoom the whole phone (uniform, no reflow) so it AND the caption/cycler below it clear the docked composer — a step back, not shrunken.
+     Room phones ride the SAME pipeline as the 20-second demo (one phone size everywhere),
+     with a higher legibility floor and a cap at the demo's base size; on mobile, rooms
+     stack and scroll, so the fitter stands down there. */
   function fitMcsPhone(){
     var phone=document.querySelector('.mcs-phone[data-fit]'); if(!phone)return;
+    var inRoom=!!phone.closest('.rm-scene');
     phone.style.zoom='1';
+    if(inRoom&&window.innerWidth<900)return;
     var pr=phone.getBoundingClientRect(), natural=pr.height||610;
     var last=document.querySelector('#fdScreen .fdc-method')||$('mcsTabs');
     var below=last?Math.max(96,last.getBoundingClientRect().bottom-pr.bottom):150;   // trade tabs + method line
     var well=document.querySelector('#acenter .fd-well'), cBottom;
     if(well&&well.offsetParent){ cBottom=well.getBoundingClientRect().top-12; }
     else { cBottom=window.innerHeight-(window.innerWidth<900?90:14); }
-    phone.style.zoom=Math.max(0.5,Math.min(1.3,(cBottom-pr.top-below)/natural));
+    var z=(cBottom-pr.top-below)/natural;
+    phone.style.zoom=inRoom?Math.max(0.78,Math.min(1,z)):Math.max(0.5,Math.min(1.3,z));
   }
   window.addEventListener('resize',fitMcsPhone);
   function simVisual(){
@@ -2155,12 +2186,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     if(s==='contact')return assembleContact();
   }
 
-  /* clicks (no model say) — the desk narrates, then assembles */
+  /* clicks (no model say) — the desk narrates, then assembles.
+     Every click-navigation clears the last ask's echo (a stale handwritten quote hanging
+     over a fresh room read as mess) and returns the view to the top of the screen. */
+  function echoClear(){if(youEl)youEl.className='fd-you'}
+  function toTop(){var fd=$('home');if(fd)fd.scrollTop=0;window.scrollTo(0,0)}
   function enterRoom(k){var r=ROOMS[k];if(!r)return walkOffice();
-    setTalking(true);setActive('room:'+k);whereNow='room:'+k;phRoom(k);
+    setTalking(true);setActive('room:'+k);whereNow='room:'+k;phRoom(k);echoClear();toTop();
     speak(r.d);   /* the hook only — the assembled screen already carries the title (h3) and the "← the office" door; repeating them here is the flow redundancy */
     roomVisual(k);}
-  function walkOffice(){setTalking(true);setActive('office');whereNow='office';phRoom(null);speak(OFFICE_LINE);assembleOffice()}
+  function walkOffice(){setTalking(true);setActive('office');whereNow='office';phRoom('office');echoClear();toTop();speak(OFFICE_LINE);assembleOffice()}
   var TAB_LINE={
     offer:'Here’s how the offer works — a managed service, not a software seat. The number follows the size of the front office we run for you, set on a 20-minute fit call in plain terms.',
     lens:'Lens is your free, private trust workspace — connect the tools you already run, review every fact your record supports, and control exactly what a homeowner could see. Nothing publishes without you.',
@@ -2173,7 +2208,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     var _fdh=$('home');if(_fdh)_fdh.classList.toggle('sim-open',key==='sim');
     if(key==='office')return walkOffice();
     if(key&&key.indexOf('room:')===0)return enterRoom(key.slice(5));
-    setTalking(true);setActive(key);whereNow=key;phRoom(null);
+    setTalking(true);setActive(key);whereNow=key;phRoom(key);echoClear();toTop();
     if(TAB_LINE[key])speak(TAB_LINE[key]);
     assembleScreen(key);
   }
@@ -2183,7 +2218,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
      cage) and the last-known AUDIENCE (audNow — contractor|homeowner, the model's own read,
      echoed back so deflects and outages route to a screen that answers). */
   var msgs=[],busy=false,whereNow=null,audNow=null;
-  function deflectLocal(){speak(DEFLECT);var s=audNow==='homeowner'?'vesta':'faq';setActive(s);assembleScreen(s)}
+  function deflectLocal(){speak(DEFLECT);var s=audNow==='homeowner'?'vesta':'faq';setActive(s);assembleScreen(s);toTop()}
   var THINKS=['reading that','thinking it through','checking the record','lining it up'],thinkTimer=null;
   var think=$('fdThink'),thinkW=$('fdThinkW');
   function thinkOn(){var i=0;if(thinkW)thinkW.textContent=THINKS[0];if(think)think.hidden=false;thinkTimer=setInterval(function(){i=(i+1)%THINKS.length;if(thinkW)thinkW.textContent=THINKS[i]},2600)}
@@ -2203,16 +2238,17 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       speak(escT(s));
       if(window.cue)cue('chime');   // the desk answered
       if(scr){setActive(scr);whereNow=scr;assembleScreen(scr,ar)}
+      toTop();   /* the answer types at the top of the screen — bring the visitor to it */
     })
     .catch(function(){busy=false;thinkOff();deflectLocal()});
   }
   function input(q,display){
     if(busy)return;
-    simGen++;setTalking(true);setActive(null);echo(display||q);
+    simGen++;setTalking(true);setActive(null);echo(display||q);toTop();
     if(/^\s*(walk the office|the office|back to the office|every room)\s*$/i.test(q)){walkOffice();return}
     ask(q);
   }
-  $('fdWell').addEventListener('submit',function(e){e.preventDefault();var q=say.value.trim();if(!q)return;say.value='';phVis();input(q)});
+  $('fdWell').addEventListener('submit',function(e){e.preventDefault();var q=say.value.trim();if(!q)return;say.value='';if(window.innerWidth<900)say.blur();phVis();input(q)});
 
   /* ── placeholder cycling — ROOM-AWARE: standing in a room, the composer suggests questions
      about THAT room (the room is there to be asked; the visitor shouldn't have to guess that) ── */
@@ -2225,7 +2261,17 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     follow:['how long do you chase a quote?','what do you say on day seven?','can it revive old leads?'],
     reviews:['when does the review ask go out?','what if the job went badly?','where do the reviews land?'],
     local:['what listings do you keep current?','how do homeowners actually find me?','what is a local signal?'],
-    briefs:['what lands in my Monday brief?','how do I know if a lead went quiet?','what gets flagged to me?']
+    briefs:['what lands in my Monday brief?','how do I know if a lead went quiet?','what gets flagged to me?'],
+    /* tabs get suggestions too — a screen you can ask about should say what it can answer */
+    offer:['what does it cost?','is there a contract?','how does the guarantee work?'],
+    lens:['is Lens really free?','what goes in my record?','can I control what shows?'],
+    vesta:['what is Vesta?','does paying you boost my ranking?','how do homeowners see my work?'],
+    fitcall:['what happens on the fit call?','who runs the call?','how fast can I go live?'],
+    numbers:['what does a missed call cost me?','where do these numbers come from?'],
+    faq:['is this another tool to learn?','how fast does it go live?','how do I stop?'],
+    contact:['how do I reach the founder?','can I just text you?'],
+    sim:['is this a real conversation?','can I try it on my own phone?'],
+    office:['what rooms are included?','who chases my quotes?','what happens in a storm week?']
   };
   var phEl=$('fdPh'),phIdx=0,phList=PH;
   function phRoom(k){phList=(k&&PH_ROOM[k])||PH;phIdx=0;if(phEl&&!say.value&&document.activeElement!==say)phShow(phList[0])}

@@ -6368,12 +6368,42 @@ function mwStepSuffix(step){
   if (t==='broken') return step==='disambig'?' · One more thing':'';
   return step==='job'?' · Step 1 of 2':step==='priority'?' · Step 2 of 2':'';
 }
+/* CHAT-FIRST FRONT DOOR (Drew 7/20): "Something broken? / Planning a project?" lead with a
+   real conversation — the homeowner talks about the plan or the problem in their own words,
+   and Vesta OFFERS the structured tap-walk from inside the chat ("break it down step by
+   step"). The tap-walk is unchanged and remains the whole front door when the LLM lane is
+   down (TRI_OK=false) — the health gate stands. */
 function enterTriage(mode){
+  if (TRI_OK) return enterTriageConverse(mode);
+  enterTriageWalk(mode);
+}
+function enterTriageWalk(mode){
   S.mode='trade'; S.match=null; S.matchPending=true; _mwMoreOpen=false; _pendingJob=null;
   S.matchHi=null; S.matchHiLabel=null;
   S.triageActive=true; S.triageMode=mode; S.triageAmbig=null; S.triageArea=null;
   S.matchStep = (mode==='broken') ? 'triage-symptom' : 'triage-area';
   renderNeedChips(); renderSidebar(); showScreen('match'); updateNavState(); renderMatchWalk();
+}
+function enterTriageConverse(mode){
+  hideResumeBand();
+  if (S.screen !== 'home'){ showScreen('home'); renderSidebar(); updateNavState(); }
+  const greeting = mode==='broken'
+    ? 'Tell me what’s going on — what you’re seeing, how long it’s been doing it, whether it feels urgent. We’ll figure out what it is and who’s right for it, together.'
+    : 'Tell me what you’re thinking about — the project, the timing, the parts you’re unsure of. We’ll talk it through and shape it into something you can actually hire for.';
+  vmVestaOpener(greeting);   /* UI-only opener — the first turn the model sees is still the homeowner's own words */
+  vmTriageOfferChip(mode);
+  const inp=$('hs-cin'); if(inp) inp.placeholder = mode==='broken' ? 'What’s going on at your place?' : 'What are you thinking about doing?';
+}
+/* the offered breakdown — one chip under the opener; tapping it hands off to the tap-walk */
+function vmTriageOfferChip(mode){
+  const t=$('vm-thread'); if(!t) return;
+  const wrap=document.createElement('div'); wrap.className='tc-chips';
+  const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button';
+  bt.innerHTML='<span>'+(mode==='broken'?'Or break it down step by step →':'Or walk me through it step by step →')+'</span>';
+  bt.onclick=()=>{ wrap.remove();
+    if (document.body.classList.contains('ask-ov')) closeAskOverlay(); else exitConverseMobile();
+    enterTriageWalk(mode); };
+  wrap.appendChild(bt); t.appendChild(wrap); vmScroll();
 }
 // The single resolver: hand a (trade, job) to the existing walk, BANK-VALIDATED. An unknown
 // job falls back to Q1 with hi pre-highlight — never a dead end (Hard Rule #1).
