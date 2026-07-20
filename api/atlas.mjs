@@ -193,7 +193,7 @@ async function generate(keys, messages, where){
       // answered consumer-shaped questions ("what is vesta?") in plain prose from world
       // knowledge, ignoring both the pack and the output contract. Beginning + end restate it.
       messages: [{ role:'system', content: system }, ...messages,
-        { role:'system', content: 'Reply to the visitor now, as the front desk, from the KNOWLEDGE only. Output exactly one JSON object {"say":...,"screen":...,"aud":...,"args":...} and nothing else.' }],
+        { role:'system', content: 'Reply to the visitor now, as the front desk, from the KNOWLEDGE only. Output exactly one JSON object {"say":...,"screen":...,"aud":...,"args":...} and nothing else. Choose "screen" deliberately — the desk SHOWS while it talks: the surface that best serves this turn (office, room:lead, room:storm, room:camp, room:book, room:follow, room:reviews, room:local, room:briefs, sim, offer, lens, vesta, fitcall, numbers, faq, contact). Reserve null for pure conversation with nothing to show.' }],
       temperature: 0.4, max_tokens: 900,   /* 480 truncated the new {say,screen,aud,args} mid-JSON → nojson→deflect storms (measured 7/18) */
       ...(isNemotron(model) ? { chat_template_kwargs: { enable_thinking: false } } : {}),
     });
