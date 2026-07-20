@@ -95,6 +95,12 @@ check('extractJSON: clean', extractJSON('{"say":"hi","screen":null}')?.say === '
 check('extractJSON: fenced', extractJSON('```json\n{"say":"hi","screen":"office"}\n```')?.screen === 'office');
 check('extractJSON: prose-wrapped', extractJSON('Sure: {"say":"ok","screen":"sim"} done')?.screen === 'sim');
 check('extractJSON: garbage → null', extractJSON('no json here at all') === null);
+check('extractJSON: closed think block stripped', extractJSON('<think>{"say":"draft"}</think>{"say":"hi","screen":null}')?.say === 'hi');
+check('extractJSON: UNCLOSED think (truncated) → null, never braces from a thought', extractJSON('<think>maybe {"say":"half-formedико') === null);
+check('extractJSON: prose then think then JSON', extractJSON('ok <think>hmm</think> {"say":"x","screen":"faq"}')?.screen === 'faq');
+
+// ── the homeowner module's own safety line must survive its guard ──
+check('911 survives (the module instructs it)', claimSafe('If you smell gas, call 911 or your utility first — Vesta is for after everyone is safe.') === true);
 
 // ── LIVE probes (opt-in) ──
 if (process.argv.includes('--live')){

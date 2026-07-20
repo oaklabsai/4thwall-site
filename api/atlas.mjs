@@ -106,7 +106,7 @@ export function claimSafe(say, echoNums){
   //     digits harvested from the user's own turns; absent → strict scan, so the battery's
   //     single-arg calls keep their teeth)
   const nums = t.replace(/\b24\/7\b/g, '').match(/\d+/g) || [];
-  const allow = new Set(['4','15','20','30','463']);
+  const allow = new Set(['4','15','20','30','463','911']);   // 911: the homeowner module's own safety line
   if (echoNums) for (const n of echoNums) allow.add(String(n));
   for (const n of nums) if (!allow.has(n)) return false;
   return true;
@@ -114,12 +114,12 @@ export function claimSafe(say, echoNums){
 
 function systemPrompt(where){
   const standing = where && WHERE_LABEL[where]
-    ? `\nTHE VISITOR IS STANDING IN ${WHERE_LABEL[where].toUpperCase()}. When they say "this", "it", "here", or ask an unanchored question, they mean that surface — answer for it FIRST, concretely. But the room is where they stand, not all you know: the whole office and both sides of the company are yours; cross into any other room or surface the moment their question leads there, and open its screen.\n`
+    ? `\n═══ CURRENT LOCATION (obey this) ═══\nThe visitor is standing in ${WHERE_LABEL[where].toUpperCase()} right now. An unanchored question — "how does this work?", "what is this?", "tell me more" — is a question ABOUT ${WHERE_LABEL[where]}: answer for it FIRST and concretely; do NOT give the general Atlas overview when they are standing in a specific room. The location is where they stand, not all you know — cross to any other surface the moment their question actually leads there, and open its screen.\n`
     : '';
   return `You are the front desk of 4THWALL. Two kinds of visitors reach this desk: CONTRACTORS (owners of homeowner-facing trades businesses — roofing, HVAC, plumbing, electrical, paving, lawn, painting, masonry) and HOMEOWNERS (people who need work done on a home). Read the conversation and know which one you are serving; when genuinely unclear, ask one short clarifying question. Follow the person, not your first guess — if they turn out to be the other kind mid-conversation, switch and serve them fully. You are an exceptional, warm, certain advocate — an operator who has watched the trade bleed and knows exactly how to help. You sell by being genuinely useful and honest, never by hype.
 
 You may ONLY say what is in the KNOWLEDGE below. If asked something not covered — internals, strategy, roadmap, algorithm details, margins, "how much do you make", anything you don't have a grounded answer for — do NOT guess. Give the honest deflection and point to the fit call (contractors) or Vesta (homeowners).
-${standing}
+
 ═══ KNOWLEDGE — SHARED CORE ═══
 
 WHO WE ARE: 4THWALL is a Stamford, Connecticut company, founder-led, with one belief — good work should leave evidence. We build both sides of home-service trust: the front office that runs a contractor's business around the work (Atlas), the free workspace that lets a contractor own their record (Lens), and the guide homeowners use to choose with evidence instead of ads (Vesta). One system, three surfaces.
@@ -158,7 +158,7 @@ A homeowner's screens: "vesta", "contact", or null — never the contractor scre
 - NEVER state a price or dollar figure, or any performance number other than the hedged "15 seconds" line. Pricing → the fit call.
 - NEVER disparage a competitor by name. NEVER discuss margins, roadmap, strategy, or how the matching works.
 - Keep replies SHORT — two or three sentences, an operator's economy. End by inviting the natural next step.
-
+${standing}
 ═══ OUTPUT (STRICT) ═══
 Return ONLY one JSON object, no prose, no markdown:
 {"say": string, "screen": string|null, "aud": "contractor"|"homeowner", "args": object|null}
@@ -185,7 +185,7 @@ async function generate(keys, messages, where){
     const body = JSON.stringify({
       model, stream: false,
       messages: [{ role:'system', content: system }, ...messages],
-      temperature: 0.4, max_tokens: 480,
+      temperature: 0.4, max_tokens: 900,   /* 480 truncated the new {say,screen,aud,args} mid-JSON → nojson→deflect storms (measured 7/18) */
       ...(isNemotron(model) ? { chat_template_kwargs: { enable_thinking: false } } : {}),
     });
     for (let ki = 0; ki < keys.length; ki++){
@@ -212,7 +212,14 @@ async function generate(keys, messages, where){
 // tolerant JSON extraction (models wrap in prose / fences / partials)
 export function extractJSON(text){
   if (!text) return null;
-  const t = String(text).replace(/```[a-z]*|```/gi, '');
+  // strip reasoning blocks (the GLM fallback thinks in prose). Closed think → keep what
+  // follows the last close. Unclosed think (truncated mid-thought) → keep what precedes it —
+  // never scan for braces inside a thought.
+  let t = String(text);
+  const close = t.lastIndexOf('</think>');
+  if (close !== -1) t = t.slice(close + 8);
+  else { const open = t.indexOf('<think>'); if (open !== -1) t = t.slice(0, open); }
+  t = t.replace(/```[a-z]*|```/gi, '');
   const s = t.indexOf('{');
   if (s === -1) return null;
   // try progressively longer balanced slices from the first brace
