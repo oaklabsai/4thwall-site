@@ -400,10 +400,16 @@ a,button{transition:transform .14s}
 .fd-inner{width:min(660px,100%);display:flex;flex-direction:column;align-items:center}
 /* the three-surface fork breaks out wider than the hero's text column (Drew 7/20 — use the space) */
 .fd-inner:has(.fd-fork){width:min(1140px,94vw)}
-/* the brand mark leads the hero, in place of the old "Welcome!" sign (Drew 7/20) */
-.fd-logo{display:block;width:clamp(50px,6vw,70px);color:var(--olive);margin:1.3rem auto 1.9rem;transition:transform .2s var(--spring),opacity .2s}
-.fd-logo svg{width:100%;height:auto;display:block}
-.fd-logo:hover{transform:translateY(-2px)}
+/* the brand mark leads the hero on a lifted neumorphic square (in place of "Welcome!") */
+.fd-logo{display:grid;place-items:center;width:clamp(66px,7vw,86px);aspect-ratio:1;border-radius:22px;color:var(--olive);
+  background:var(--nm);box-shadow:var(--nm-out);border:1px solid rgba(255,255,255,.55);
+  margin:1.1rem auto 1.5rem;transition:box-shadow .25s ease,transform .2s var(--spring)}
+.fd-logo svg{width:46%;height:auto;display:block}
+.fd-logo:hover{transform:translateY(-2px);box-shadow:var(--nm-out),0 10px 24px -8px rgba(74,75,47,.28)}
+/* the brand claim leading the hero — reading width, centered above the cards */
+.fd-intro{max-width:min(680px,92vw);margin:0 auto 2rem}
+.fd-intro .sec-h{margin-top:.5rem}
+.fd-intro .hero-fast{margin-top:1.3rem}
 /* handwritten caption above each surface card (Caveat, slanted, underlined) */
 .pcard-cap{font-family:var(--hand);font-style:italic;font-weight:600;font-size:1.55rem;line-height:1.12;color:var(--olive);text-align:center;
   text-decoration:underline;text-decoration-color:var(--tea);text-decoration-thickness:2px;text-underline-offset:5px;
@@ -796,10 +802,22 @@ a,button{transition:transform .14s}
 <!-- ════════════════ THE FRONT DESK — the hero is a conversation (P1: every screen deterministic) ════════════════ -->
 <section class="fd" id="home">
   <div class="fd-inner">
-    <!-- the brand mark now leads the hero (moved off the top bar, in place of "Welcome!") -->
+    <!-- the brand mark leads the hero on a lifted neumorphic square (in place of "Welcome!") -->
     <a href="/" class="fd-logo" aria-label="4THWALL — home">
       <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
     </a>
+
+    <!-- the brand claim — moved up from the old products section to lead the hero -->
+    <div class="fd-intro">
+      <span class="kicker">three surfaces, one system</span>
+      <h1 class="sec-h">Run the business around the work.<br><em>Stop letting good work disappear.</em></h1>
+      <p class="sec-sub">Atlas runs the moments contractors usually lose — first response, booking, follow-up, reviews, reactivation, and the receipt. Lens gives contractors control of the evidence. Vesta turns reviewed, source-labelled facts into a clearer homeowner decision. One system, one mission: good work should leave evidence that compounds.</p>
+      <div class="hero-fast">
+        <span>In a hurry?</span>
+        <a href="/missed-calls">Try the missed-call demo →</a>
+        <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" target="_blank" rel="noopener">Book a 20-min fit call →</a>
+      </div>
+    </div>
 
     <div class="fd-chat">
       <!-- THE THREE SURFACES — each card carries a handwritten caption above it; tapping the
@@ -857,30 +875,7 @@ a,button{transition:transform .14s}
     </div>
   </div>
 
-  <a class="fd-cue" href="#story">the whole story <span>↓</span></a>
-</section>
-
-<!-- ════════════════ STORY LEAD — the brand claim opens the crawlable story ════════════════ -->
-<section class="sec sec-products-top" id="story">
-  <div class="sec-head rv">
-    <span class="kicker">one company, both sides of trust</span>
-    <h2 class="sec-h">Good work should<br><em>leave evidence.</em> <span class="hn-sparkle">✦</span></h2>
-    <p class="sec-sub">4THWALL runs the business around the work — and turns what actually happens into proof both sides can trust. Atlas operates the front office. Lens verifies the record. Vesta explains it to homeowners.</p>
-    <div class="hero-fast">
-      <span>In a hurry?</span>
-      <a href="/missed-calls">Try the missed-call demo →</a>
-      <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" target="_blank" rel="noopener">Book a 20-min fit call →</a>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════ PRODUCTS — the fork, right under the hero ════════════════ -->
-<section class="sec sec-products-top" id="products">
-  <div class="sec-head rv">
-    <span class="kicker">three surfaces, one system</span>
-    <h2 class="sec-h">Run the business around the work.<br><em>Stop letting good work disappear.</em></h2>
-    <p class="sec-sub">Atlas runs the moments contractors usually lose — first response, booking, follow-up, reviews, reactivation, and the receipt. Lens gives contractors control of the evidence. Vesta turns reviewed, source-labelled facts into a clearer homeowner decision. One system, one mission: good work should leave evidence that compounds.</p>
-  </div>
+  <a class="fd-cue" href="#showcase">the whole story <span>↓</span></a>
 </section>
 
 <!-- ════════════════ SHOWCASE — Atlas, working (proof after the offer) ════════════════ -->
