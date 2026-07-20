@@ -409,25 +409,29 @@ a,button{transition:transform .14s}
 /* ═══ THE FORK — two pills below the welcome sign. Hovering (desktop) or tapping
    (touch) a pill reveals that side's coverflow deck in the shared reveal panel, so the
    two universes never fight for space. Staging collapses the whole fork. ═══ */
-.fd-fork{margin:1.3rem auto 0;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
-.rev-hide{display:block;margin:.65rem auto 0;font:500 .58rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);cursor:pointer;padding:.35rem .8rem;border-radius:var(--r-pill);transition:color .2s,box-shadow .2s}
-.rev-hide:hover{color:var(--olive);box-shadow:var(--nm-in)}
-.rev-hide[hidden]{display:none}
-.fork-pill{display:flex;flex-direction:column;align-items:center;gap:.24rem;background:var(--nm);box-shadow:var(--nm-sm);border-radius:var(--r-pill);padding:.72rem 1.6rem;color:var(--ink);cursor:pointer;transition:box-shadow .2s,transform .15s,color .2s}
-.fork-pill:hover{transform:translateY(-2px);box-shadow:var(--nm-out);color:var(--olive)}
-.fork-pill.on{box-shadow:var(--nm-in);color:var(--olive);transform:none}
+/* the fork now shows both product cards at once (Drew 7/20 — the empty page gets Atlas
+   under Contractor, Vesta under Homeowner). Each column = a category label + its tilt card. */
+.fd-fork{margin:1.6rem auto 0;display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;max-width:min(780px,94vw);align-items:start}
+.fork-col{display:flex;flex-direction:column;align-items:stretch;gap:.85rem}
+.fork-pill{display:flex;flex-direction:column;align-items:center;gap:.24rem;background:var(--nm);box-shadow:var(--nm-sm);border-radius:var(--r-pill);padding:.72rem 1.6rem;color:var(--ink);transition:box-shadow .2s,transform .15s,color .2s}
 .fork-pill b{font-family:var(--display);font-size:1.06rem;font-weight:500;letter-spacing:-.012em;line-height:1}
 .fork-pill span{font-family:var(--mono);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);line-height:1}
-.fork-pill:hover span,.fork-pill.on span{color:var(--olive)}
-.fd-reveal{width:min(560px,94vw);margin:0 auto}
-.rev-deck{margin-top:1.1rem}
-.rev-deck[hidden]{display:none}
-.rev-deck:not([hidden]){animation:revIn .42s var(--spring)}
-@keyframes revIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.fd.staged .fd-fork,.fd.staged .fd-reveal{display:none}
+/* the category labels are headers now, not toggles — the card below IS the door */
+.fork-pill.is-label{cursor:default;align-self:center}
+/* ── tilt card — a vanilla port of the React TiltCard (evade tilt + cursor spotlight) ── */
+.fork-card{min-height:0;text-decoration:none;transform-style:preserve-3d;will-change:transform;transition:transform .2s ease-out,box-shadow .3s ease}
+.fork-card .prod-feats{flex:0 0 auto}
+.fc-spot{position:absolute;inset:0;z-index:2;opacity:0;pointer-events:none;transition:opacity .3s ease;
+  background:radial-gradient(circle at var(--sx,50%) var(--sy,50%),rgba(255,255,255,.16),transparent 42%)}
+.prod-vesta .fc-spot{background:radial-gradient(circle at var(--sx,50%) var(--sy,50%),rgba(74,75,47,.09),transparent 42%)}
+.fork-card.tilt-on .fc-spot{opacity:1}
+.fd.staged .fd-fork{display:none}
+@media(max-width:560px){
+  .fd-fork{grid-template-columns:1fr;gap:1.4rem;max-width:min(400px,94vw)}
+}
 /* CHATTING state — the moment anyone speaks, the fork leaves the room entirely: the
    conversation owns the column and no hover can stand the deck back up mid-thread */
-.fd.talking .fd-fork,.fd.talking .fd-reveal{display:none}
+.fd.talking .fd-fork{display:none}
 /* trade coverflow diagram — a single centred trade glyph (vs the office line-diagrams) */
 .cf-diag-ico{display:flex;align-items:center;justify-content:center}
 .cf-diag-ico svg{width:auto;height:46px;fill:none;stroke:var(--olive);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -730,16 +734,39 @@ a,button{transition:transform .14s}
            (/atlas for contractors, /vesta for homeowners). The homepage picks a side and
            routes out with context; no inline chat, no generated screens here. -->
       <h1 class="fd-line fd-static">Are you a contractor,<br>or a homeowner?</h1>
-      <p class="fd-static-sub">Pick a side — see exactly what we run for you.</p>
+      <p class="fd-static-sub">Two sides of one system — here’s what we run for each.</p>
 
       <div class="fd-fork" id="fdFork">
-        <button class="fork-pill" id="forkCo" type="button" aria-controls="fdReveal"><b>Contractor</b><span>run the business</span></button>
-        <button class="fork-pill" id="forkHo" type="button" aria-controls="fdReveal"><b>Homeowner</b><span>hire with proof</span></button>
-      </div>
-      <div class="fd-reveal" id="fdReveal">
-        <button class="rev-hide" id="revHide" type="button" hidden aria-label="Hide the cards">hide ×</button>
-        <div class="rev-deck" id="catOffice" hidden></div>
-        <div class="rev-deck" id="catStack" hidden></div>
+        <div class="fork-col">
+          <div class="fork-pill is-label"><b>Contractor</b><span>run the business</span></div>
+          <a class="prod-card prod-atlas fork-card" href="/atlas" aria-label="Atlas — for contractors">
+            <span class="fc-spot" aria-hidden="true"></span>
+            <div class="prod-tag">For Contractors</div>
+            <div class="prod-name">Atlas<span class="dot">.</span></div>
+            <p class="prod-line">The managed front office behind the work.</p>
+            <ul class="prod-feats">
+              <li>Missed calls recovered by text</li>
+              <li>Leads qualified &amp; estimates booked</li>
+              <li>Follow-ups, reviews &amp; a monthly receipt</li>
+            </ul>
+            <span class="prod-btn">Explore Atlas <span class="arr">→</span></span>
+          </a>
+        </div>
+        <div class="fork-col">
+          <div class="fork-pill is-label"><b>Homeowner</b><span>hire with proof</span></div>
+          <a class="prod-card prod-vesta fork-card" href="/vesta" aria-label="Vesta — for homeowners">
+            <span class="fc-spot" aria-hidden="true"></span>
+            <div class="prod-tag">For Homeowners</div>
+            <div class="prod-name">Vesta<span class="dot">.</span></div>
+            <p class="prod-line">Find a contractor worth hiring.</p>
+            <ul class="prod-feats">
+              <li>Ask in your own words — get a real answer</li>
+              <li>Picks grounded in the public record</li>
+              <li>No ads, no pay-to-play, free</li>
+            </ul>
+            <span class="prod-btn">Explore Vesta <span class="arr">→</span></span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -797,11 +824,6 @@ a,button{transition:transform .14s}
       <span class="prod-btn">Explore Vesta <span class="arr">→</span></span>
     </a>
   </div>
-  <a class="lens-bridge rv" href="/lens">
-    <span class="lens-bridge-mark">L.</span>
-    <span class="lens-bridge-copy"><strong>Lens <span>Beta</span></strong><p>The private trust workspace between Atlas and Vesta—connect history, review every supported fact, and preview what a homeowner could understand.</p></span>
-    <span class="lens-bridge-cta">Explore Lens <span aria-hidden="true">→</span></span>
-  </a>
 </section>
 
 <!-- ════════════════ SHOWCASE — Atlas, working (proof after the offer) ════════════════ -->
@@ -1097,154 +1119,29 @@ a,button{transition:transform .14s}
 <script src="/cuelume.js"></script>
 <script src="/cue-init.js"></script>
 <script>
-/* ── THE FRONT DESK — the homepage fork (the conversation moved into the desks).
-   Two coverflow decks: the office (contractor) and the trades (homeowner). Choosing a
-   side reveals its deck; tapping a card routes OUT to the product it belongs to, WITH
-   context — an office room → /atlas?tab=room:<key>, a trade → /vesta?q=<ask>. No inline
-   chat, no model calls here: the homepage is the doorway, the desks are the rooms. ── */
+/* ── THE FRONT DESK — the homepage fork. The homepage is the doorway: two product
+   cards (Atlas for contractors, Vesta for homeowners) shown at once, each a link OUT to
+   its desk. The tilt/spotlight is a vanilla port of the React TiltCard (evade tilt that
+   follows the cursor + a soft spotlight) — hover-only, motion-safe. ── */
 (function(){
-  function $(id){return document.getElementById(id)}
-
-  /* ══ THE OFFICE — eight rooms (titles + teacher-whiteboard diagrams for the deck) ══ */
-  var ROOMS={
-    lead:{t:'Lead Response',d:'Every call and text answered and qualified — around the clock, in English or Spanish.'},
-    storm:{t:'Storm Mode',d:'Storm volume, the same operating standard.'},
-    camp:{t:'Seasonal Campaigns',d:'Your market’s seasons, worked on schedule.'},
-    book:{t:'Booking &amp; Scheduling',d:'Qualified estimates, on the calendar, context attached.'},
-    follow:{t:'Follow-up',d:'Quotes chased, quiet leads revived.'},
-    reviews:{t:'Review Generation',d:'The ask, at the moment the job closes.'},
-    local:{t:'Local Discovery',d:'The signals that make good work findable, kept current.'},
-    briefs:{t:'Operator Briefs',d:'It watches your week before you think to ask.'}
-  };
-  function svg(inner){return '<div class="cf-diag"><svg viewBox="0 0 120 40" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg></div>'}
-  var DIAG={
-    lead:svg('<rect x="6" y="8" width="20" height="24" rx="3"/><path d="M40 14 h58"/><path d="M90 8 l8 6 -8 6"/><path d="M98 26 h-58"/><path d="M48 32 l-8-6 8-6"/>'),
-    storm:svg('<path d="M8 18 a10 8 0 0 1 20 -2 a7 6 0 0 1 4 12 H12 a8 7 0 0 1 -4 -10z"/><path d="M44 10 v22 M60 10 v22 M76 10 v22 M92 10 v22"/>'),
-    camp:svg('<rect x="6" y="10" width="30" height="24" rx="3"/><path d="M6 18 h30 M14 6 v6 M28 6 v6"/><path d="M50 22 h48"/><path d="M90 15 l8 7 -8 7"/><path d="M98 22 a20 20 0 0 1 -20 18" stroke-dasharray="3 4"/>'),
-    book:svg('<rect x="6" y="10" width="34" height="26" rx="3"/><path d="M6 18 h34 M16 6 v6 M32 6 v6"/><path d="M52 24 l7 7 14 -16"/><path d="M84 24 l7 7 14 -16"/>'),
-    follow:svg('<path d="M10 26 h40" stroke-dasharray="3 5"/><path d="M50 26 a18 14 0 1 0 -8 -12"/><path d="M42 8 l0 8 8 -2"/>'),
-    reviews:svg('<path d="M22 6 l5 10 11 1 -8 8 2 11 -10 -5 -10 5 2 -11 -8 -8 11 -1z"/><path d="M64 21 h34 M81 6 v30"/>'),
-    local:svg('<path d="M24 8 a12 12 0 0 1 12 12 c0 8 -12 18 -12 18 s-12 -10 -12 -18 a12 12 0 0 1 12 -12z"/><circle cx="24" cy="20" r="4"/><path d="M56 20 a30 30 0 0 1 0 0" /><path d="M78 12 a16 16 0 0 1 0 16 M88 6 a26 26 0 0 1 0 28"/>'),
-    briefs:svg('<path d="M10 34 h100"/><rect x="20" y="20" width="12" height="14"/><rect x="42" y="12" width="12" height="22"/><rect x="64" y="24" width="12" height="10"/><rect x="86" y="8" width="12" height="26"/>')
-  };
-
-  /* ══ generic coverflow card markup + engine (ported from the Originkit gallery) ══ */
-  var GO_ICO='<svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8 7 h9 v9"/></svg>';
-  function cfCards(items){
-    var cards=items.map(function(it){
-      var isFinal=it.key==='__atlas__'||it.key==='__vesta__';
-      return '<div class="cf-card'+(isFinal?' cf-final':'')+'" data-cf-card="'+it.key+'"><span class="cf-num">'+it.num+'</span>'+
-        '<span class="cf-title">'+it.title+'</span><p class="cf-desc">'+it.desc+'</p>'+(it.diag||'')+
-        '<span class="cf-go">'+it.go+'</span></div>';
-    }).join('');
-    return '<div class="cf-wrap"><div class="cf-stage">'+cards+'</div></div>'+
-      '<div class="cf-nav"><button class="cf-arrow" data-cf="prev" aria-label="Previous">‹</button><div class="cf-dots"></div><button class="cf-arrow" data-cf="next" aria-label="Next">›</button></div>';
-  }
-  function officeItems(keys){return keys.map(function(k,i){var r=ROOMS[k];
-    return {key:k,num:(i<9?'0':'')+(i+1)+' · the office',title:r.t,desc:r.d,diag:DIAG[k]||'',go:'open this room →'}})}
-  function finalDoorItem(kind){
-    return kind==='atlas'
-      ? {key:'__atlas__',num:'see more',title:'The full Atlas',desc:'Every room, live — the whole product, not just the doors.',diag:'<div class="cf-diag cf-diag-ico">'+GO_ICO+'</div>',go:'open Atlas →'}
-      : {key:'__vesta__',num:'see more',title:'The full Vesta',desc:'Every trade, every town — the whole directory.',diag:'<div class="cf-diag cf-diag-ico">'+GO_ICO+'</div>',go:'open Vesta →'};
-  }
-  function wireCoverflow(keys,root,onOpen){
-    if(!root||!root.querySelector)return;
-    var stage=root.querySelector('.cf-stage');if(!stage)return;
-    var cards=[].slice.call(stage.querySelectorAll('[data-cf-card]'));
-    var n=cards.length;if(!n)return;
-    var cw=stage.offsetWidth||280,active=0;
-    var dotsEl=root.querySelector('.cf-dots'),dots=[];
-    cards.forEach(function(c,i){
-      c.addEventListener('click',function(){i===active?(onOpen&&onOpen(keys[i],i)):setActive(i)});
-      if(dotsEl){var d=document.createElement('button');d.className='cf-dot';d.setAttribute('aria-label','Card '+(i+1));d.addEventListener('click',function(){setActive(i)});dotsEl.appendChild(d);dots.push(d)}
+  if(!(window.matchMedia && matchMedia('(hover: hover)').matches)) return;   // touch: flat cards
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var LIMIT=11, SCALE=1.025, PERSP=1200, DIR=-1;   // DIR -1 = "evade" (tilt away from cursor)
+  [].forEach.call(document.querySelectorAll('.fork-card'),function(card){
+    card.addEventListener('pointermove',function(e){
+      var r=card.getBoundingClientRect();
+      var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+      var xRot=(py-0.5)*(LIMIT*2)*DIR, yRot=(px-0.5)*-(LIMIT*2)*DIR;
+      card.style.transform='perspective('+PERSP+'px) rotateX('+xRot.toFixed(2)+'deg) rotateY('+yRot.toFixed(2)+'deg) scale3d('+SCALE+','+SCALE+','+SCALE+')';
+      card.style.setProperty('--sx',(px*100).toFixed(1)+'%');
+      card.style.setProperty('--sy',(py*100).toFixed(1)+'%');
+      card.classList.add('tilt-on');
     });
-    function setActive(a){active=((a%n)+n)%n;layout()}
-    function layout(){
-      var mob=window.innerWidth<=640;
-      cards.forEach(function(c,i){
-        var rel=i-active;if(rel>n/2)rel-=n;if(rel<-n/2)rel+=n;
-        var ax=Math.abs(rel);
-        if(mob){
-          /* Vesta-style deck on phones: active card centered, neighbors stacked behind with a slight upward peek — no horizontal bleed */
-          c.style.transform='translate(-50%,-50%) translateY('+(-ax*10)+'px) rotateZ('+(rel*2.2)+'deg) scale('+Math.max(0.9,1-ax*0.05)+')';
-          c.style.opacity=ax===0?'1':(ax<=2?'0.42':'0');c.style.pointerEvents=ax===0?'auto':'none';
-        }else{
-          var sc=Math.max(0.4,1-ax*0.16),tx=rel*(cw*0.66),tz=-ax*(cw*0.72),ry=-rel*12,rz=rel*8;
-          c.style.transform='translate(-50%,-50%) translateX('+tx+'px) translateZ('+tz+'px) rotateY('+ry+'deg) rotateZ('+rz+'deg) scale('+sc+')';
-          c.style.opacity=(ax<=2)?'1':'0';c.style.pointerEvents=(ax<=2)?'auto':'none';
-        }
-        c.classList.toggle('active',rel===0);c.style.zIndex=String(100-ax);
-      });
-      dots.forEach(function(d,i){d.classList.toggle('on',i===active)});
-    }
-    [].forEach.call(root.querySelectorAll('[data-cf]'),function(b){
-      b.addEventListener('click',function(){setActive(active+(b.getAttribute('data-cf')==='next'?1:-1))});
+    card.addEventListener('pointerleave',function(){
+      card.style.transform='';   // fall back to the CSS resting/hover state
+      card.classList.remove('tilt-on');
     });
-    var tsx=null;
-    stage.addEventListener('touchstart',function(e){tsx=e.touches[0].clientX},{passive:true});
-    stage.addEventListener('touchend',function(e){if(tsx==null)return;var dx=e.changedTouches[0].clientX-tsx;if(Math.abs(dx)>40)setActive(active+(dx<0?1:-1));tsx=null},{passive:true});
-    layout();
-  }
-
-  /* ══ THE TRADES — the homeowner deck ══ */
-  var STACK=[
-    {k:'roofing', t:'Roofing', d:'Leaks, storm damage, a tired roof.', ask:'my roof needs help',
-     ico:'<svg viewBox="0 0 24 24"><path d="M3 12 L12 4 L21 12"/><path d="M5 11 V20 H19 V11"/></svg>'},
-    {k:'hvac', t:'Heating & Cooling', d:'The AC died, the furnace rattles.', ask:'the AC died upstairs',
-     ico:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3 v4 M12 17 v4 M3 12 h4 M17 12 h4 M5.6 5.6 l2.8 2.8 M15.6 15.6 l2.8 2.8 M18.4 5.6 l-2.8 2.8 M8.4 15.6 l-2.8 2.8"/></svg>'},
-    {k:'plumbing', t:'Plumbing', d:'A drip, a clog, a burst pipe.', ask:'I have a plumbing problem',
-     ico:'<svg viewBox="0 0 24 24"><path d="M12 3.5 C12 3.5 6.5 10 6.5 14.5 a5.5 5.5 0 0 0 11 0 C17.5 10 12 3.5 12 3.5z"/></svg>'},
-    {k:'electrical', t:'Electrical', d:'Panels, outlets, anything sparking.', ask:'I need an electrician',
-     ico:'<svg viewBox="0 0 24 24"><path d="M13 2 L5 14 h6 L11 22 L19 10 h-6z"/></svg>'},
-    {k:'paving', t:'Paving', d:'The driveway has had enough.', ask:'my driveway needs repaving',
-     ico:'<svg viewBox="0 0 24 24"><path d="M4 20 L10 4 h4 L20 20"/><path d="M12 7 v2 M12 12 v2 M12 17 v2"/></svg>'},
-    {k:'lawn', t:'Lawn & Landscape', d:'The yard, the beds, the season.', ask:'my lawn needs help',
-     ico:'<svg viewBox="0 0 24 24"><path d="M12 21 C12 13 7 9 4 8 c0 6 3 11 8 13z"/><path d="M12 21 C12 15 16 10 20 9 c0 5 -3 10 -8 12z"/></svg>'},
-    {k:'painting', t:'Painting', d:'Inside, outside, long overdue.', ask:'the house needs painting',
-     ico:'<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="7" rx="1.5"/><path d="M19 6 h2 v5 h-8 v3"/><rect x="11" y="14" width="3" height="7" rx="1"/></svg>'},
-    {k:'masonry', t:'Masonry', d:'Chimneys, steps, stone and brick.', ask:'my chimney needs repointing',
-     ico:'<svg viewBox="0 0 24 24"><path d="M4 20 h16 M4 20 v-4 h16 v4 M4 16 v-4 h16 v4 M8 12 v4 M16 12 v4 M12 16 v4 M6 8 h12 v4 M12 8 v4"/></svg>'}
-  ];
-  function tradeItems(){return STACK.map(function(s,i){
-    return {key:s.k,num:(i<9?'0':'')+(i+1)+' · a trade',title:s.t,desc:s.d,
-      diag:'<div class="cf-diag cf-diag-ico">'+s.ico+'</div>',go:'tap to start →'}})}
-
-  /* ══ routing OUT — a card is a door to the product, carrying its context ══ */
-  function openOffice(k){location.href=(k==='__atlas__')?'/atlas':'/atlas?tab=room:'+k}
-  function openTrade(k){
-    if(k==='__vesta__'){location.href='/vesta';return}
-    var s=STACK.filter(function(x){return x.k===k})[0];
-    location.href='/vesta?q='+encodeURIComponent(s?s.ask:k);
-  }
-
-  /* ══ THE FORK — both decks built eagerly; a pill reveals a side, a card routes out ══ */
-  var revSide=null;
-  function hideReveal(){revSide=null;$('catOffice').hidden=true;$('catStack').hidden=true;$('revHide').hidden=true;$('forkCo').classList.remove('on');$('forkHo').classList.remove('on')}
-  function revealSide(side){
-    if(revSide===side)return;
-    revSide=side;
-    $('catOffice').hidden=(side!=='co');$('catStack').hidden=(side!=='ho');
-    $('revHide').hidden=false;
-    $('forkCo').classList.toggle('on',side==='co');$('forkHo').classList.toggle('on',side==='ho');
-  }
-  function buildDecks(){
-    var co=$('catOffice'),ho=$('catStack');
-    var keys=Object.keys(ROOMS).concat(['__atlas__']);
-    co.innerHTML=cfCards(officeItems(Object.keys(ROOMS)).concat([finalDoorItem('atlas')]));
-    wireCoverflow(keys,co,openOffice);
-    var tk=STACK.map(function(s){return s.k}).concat(['__vesta__']);
-    ho.innerHTML=cfCards(tradeItems().concat([finalDoorItem('vesta')]));
-    wireCoverflow(tk,ho,openTrade);
-    hideReveal();
-  }
-  var canHover=!!(window.matchMedia&&matchMedia('(hover: hover)').matches);
-  function pillTap(side){(canHover||revSide!==side)?revealSide(side):hideReveal()}
-  $('forkCo').addEventListener('mouseenter',function(){revealSide('co')});
-  $('forkHo').addEventListener('mouseenter',function(){revealSide('ho')});
-  $('forkCo').addEventListener('click',function(){pillTap('co')});
-  $('forkHo').addEventListener('click',function(){pillTap('ho')});
-  $('revHide').addEventListener('click',hideReveal);
-  buildDecks();
+  });
 })();
 </script>
 
