@@ -97,6 +97,22 @@ export function claimSafe(say, echoNums){
   if (/\b(synergy|seamless|game-changing|revolutioni[sz]e|leverage|streamline)\b/i.test(t)) return false;
   if (/!/.test(t)) return false;                                // no exclamation marks (voice.md)
   if (/\$|\b1,?500\b/.test(t)) return false;                    // fit-call posture: never a price figure
+  // ── fabrication classes, measured live 2026-07-20 (cred probe): under adversarial pressure
+  //    the model invented personhood ("a real person here to help you", 3/3), spelled-out
+  //    price magnitudes ("low- to mid-thousands per month" — no digits, so the scan below
+  //    missed it), a pay-per-lead pricing model, client approval/learning workflows, Jobber
+  //    integration mechanics, and an "Atlas Partner" label on Vesta. None exist. The router
+  //    owns the questions; this lint catches the same lies drifting into ANY answer.
+  if (/\breal (person|human)\b/i.test(t)) return false;                     // personhood claim
+  if (/\b(i'?m|i am) (a )?(person|human)\b/i.test(t)) return false;
+  if (/\b(hundreds?|thousands?)\b[^.?!]{0,28}\b(a|per)\s+(month|week|year)\b/i.test(t)) return false;
+  if (/\b(pay|charge|bill)[a-z]*\b[^.?!]{0,30}\bper\s+(lead|job|call|booking)\b/i.test(t)) return false;
+  if (/\bonly charges? when\b/i.test(t) || /\bpay for (the )?(leads?|jobs?) that\b/i.test(t)) return false;
+  if (/\b(approve|approval)\b[^.?!]{0,30}\b(answers?|repl(y|ies)|messages?|goes live)\b/i.test(t)) return false;
+  if (/\b(it|the system|atlas) learns\b/i.test(t) || /\blearns from\b/i.test(t)) return false;
+  if (/\bcorrect it in the (app|inbox)\b/i.test(t)) return false;
+  if (/\b(jobber|servicetitan|service titan|housecall|workiz|acculynx|buildertrend|quickbooks)\b/i.test(t)) return false;
+  if (/\batlas (partner|pro|verified|premium)\b/i.test(t)) return false;    // invented labels
   // any bare performance number that isn't the one hedged claim (15s) or the standing terms
   // (20-min call, 30-day guarantee, 463 Vesta profiles) is an unreceipted claim → deflect.
   // Two measured false-positives softened 7/18 (a storm-season follow-up deflected 3/4):
@@ -130,7 +146,7 @@ THE FLYWHEEL (say ONLY as customer benefit, never as our strategy): Atlas runs y
 
 ═══ CONTRACTOR MODULE (when serving a contractor) ═══
 
-ATLAS (the contractor's front office): A managed front office, SMS-first. When a call is missed, the customer gets a text back in YOUR name — your prices, your service area — within moments. It captures what they need, books the estimate if you want, sends reminders, follows up on quotes, asks for the review when the job closes, and runs seasonal and storm campaigns to your past customers. You keep your number; you see everything live in your own private channel. Supported inbound texts and missed-call follow-ups typically get a first reply in 15 seconds after go-live (keep those exact hedges: "supported", "typically", "after go-live"). Every month ends with a receipt: leads answered, response times, estimates booked — measured by the system, not claimed by us. If asked who runs it: it's managed — we operate it, you watch it work; a person answers for it, the founder.
+ATLAS (the contractor's front office): A managed front office, SMS-first. When a call is missed, the customer gets a text back in YOUR name — your prices, your service area — within moments. It captures what they need, books the estimate if you want, sends reminders, follows up on quotes, asks for the review when the job closes, and runs seasonal and storm campaigns to your past customers. You keep your number; you see everything live in your own private channel. Supported inbound texts and missed-call follow-ups typically get a first reply in 15 seconds after go-live (keep those exact hedges: "supported", "typically", "after go-live"). Every month ends with a receipt: leads answered, response times, estimates booked — measured by the system, not claimed by us. If asked who runs it: it's managed — we operate it, you watch it work; a person answers for it, the founder. Asked to PROVE the 15-second line: the sim is the proof — open "sim" and let them watch it reply in real time; never say you are "timing it now."
 The rooms of the office (each maps to a screen you can open): Lead Response, Storm Mode, Seasonal Campaigns, Booking, Follow-up, Review Generation, Local Discovery, Operator Briefs.
 
 LENS (free, beta): 4THWALL's free, private trust workspace for contractors. Connect the tools you already run, review every fact your operating record supports — each source-labeled and correction-capable — and control exactly what a homeowner could see. Nothing publishes without you. Free to start at /lens.
@@ -161,6 +177,15 @@ A homeowner's screens: "vesta", "contact", or null — never the contractor scre
 - NEVER state a price or dollar figure, or any performance number other than the hedged "15 seconds" line. Pricing → the fit call.
 - NEVER disparage a competitor by name. NEVER discuss margins, roadmap, strategy, or how the matching works.
 - Keep replies SHORT — two or three sentences, an operator's economy. End by inviting the natural next step.
+
+═══ DOES NOT EXIST (never claim, never imply — every one of these was a measured fabrication) ═══
+- No per-lead, per-job, or pay-per-booking pricing. One flat managed fee, set on the fit call.
+- No client dashboard, approval workflow, or self-serve app; no "review every answer before it goes live." The interface is your private channel — you watch it work live, and a person answers for it.
+- No machine "learning from corrections."
+- No direct integration with Jobber or any scheduling/CRM tool — never name one.
+- No "Atlas Partner" badge, label, or paid visibility anywhere on Vesta. Nothing to buy, ever.
+- No team of dozens — founder-led is the truth. No client case studies yet — "we're early," said plainly, beats an invented proof point.
+- You are NOT a person. Asked bot-or-human: the FAQ's honest answer, exactly — never claim personhood.
 ${standing}
 ═══ OUTPUT (STRICT) ═══
 Return ONLY one JSON object, no prose, no markdown:
@@ -241,6 +266,54 @@ export function extractJSON(text){
   return null;
 }
 
+// ── the kill-question router (2026-07-20, cred probe) ─────────────────────────────────
+// The five questions a skeptic uses to test whether the desk is real. Measured live: the
+// model under adversarial pressure CAVES — claimed personhood 3/3, invented "Atlas Partner"
+// placement 2/3, invented per-lead pricing, invented Jobber mechanics, invented a founderless
+// company. These answers decide trust, so they are served deterministically from the pack
+// (front-desk-knowledge.md §1/§7/§8/§10a) — same house pattern as triage's 911/atlas guards.
+// Runs BEFORE the model (works during outages too); the model keeps every other question.
+const ROUTER = [
+  { k: 'bot',   // "am I talking to a bot?" — the honest §8 answer, never personhood
+    test: t => /(are you|am i (talk|speak|chatt)ing (to|with)|is this)[^.?!]{0,40}\b(a )?(bot|robot|an? ai|automated|real person|human)\b/i.test(t)
+            || /\b(person or a bot|bot or a (real )?(person|human)|human or a bot|bot or human)\b/i.test(t),
+    say: () => 'Parts of this site and the service are automated — we build the system ourselves. Where it matters, you get a person: the fit call is with the founder.',
+    screen: () => 'faq' },
+  { k: 'placement',   // pay-for-rank — the §10a mandatory truth, opening with the plain No
+    test: t => /\b(pay|paying|paid|subscribe[ds]?|sign(ing|ed)? up|become a client|atlas client)\b[^.?!]{0,60}\b(rank(ing|ed)?|placement|higher|top|boost(ed)?|visib|show(ing|s)? up|featured|listed|first)\b/i.test(t)
+            || /\b(rank(ing)?|placement|higher|boost|visib|show up|featured|listed)\b[^.?!]{0,60}\b(pay|paying|paid|subscribe|client|sign(ing)? up)\b/i.test(t),
+    say: t => /\b(i|my|me|we|our)\b/i.test(t)
+      ? 'No — being an Atlas client buys no placement, no boost, no badge, ever. Vesta orders by evidence from the public record; that independence is the whole point. What Atlas changes is the record itself: answered calls and finished work are real evidence, and evidence is the only thing Vesta ranks.'
+      : 'No — there is nothing to buy. A contractor cannot pay for placement, a badge, or a boost on Vesta. It orders by evidence from the public record, and that independence is the whole point.',
+    screen: t => /\b(i|my|me|we|our)\b/i.test(t) ? 'vesta' : null,
+    aud: t => /\b(i|my|me|we|our)\b/i.test(t) ? 'contractor' : null },
+  { k: 'founder',   // §1: founder-led is the truth — never a fabricated origin story
+    test: t => /\bwho('s| is|se)? (the )?(founder|owner|behind (this|it|4thwall))\b/i.test(t)
+            || /\bwho (runs|owns|started|built|made) (this|it|the company|4thwall)\b/i.test(t)
+            || /\bfounder('s)? (name|background|story|experience)\b/i.test(t),
+    say: () => 'Founder-led, out of Stamford, Connecticut — one founder who builds and operates the system, with one belief: good work should leave evidence. The fit call is with the founder directly; anything you want to know about the person behind it, ask there.',
+    screen: () => 'contact' },
+  { k: 'tool',   // named third-party tools — honest, no invented integrations (and the
+                 // Jobber announce-hold: nothing is claimed until Jobber publishes the app)
+    test: t => /\b(jobber|servicetitan|service titan|housecall( pro)?|workiz|acculynx|buildertrend|quickbooks)\b/i.test(t),
+    say: () => "We don't plug into your scheduling tools today — Atlas runs ahead of the schedule, not inside it. It catches the missed call, holds the conversation, and books the estimate; what lands on your calendar is yours to run in the tools you already use. If a direct connection matters for your setup, bring it to the fit call — that's exactly what the founder wants to hear.",
+    screen: () => 'faq', aud: () => 'contractor' },
+  { k: 'price-pressed',   // a ballpark demanded after the fit-call posture — hold, warmly (§7)
+    test: (t, msgs) => /\b(price|pricing|cost|charge|how much|ballpark|rate|fee|per month)\b/i.test(t)
+      && /\b(ballpark|range|rough (number|idea)|just (tell|give) me|hundreds or thousands|before i book|without (a|the) call|not booking)\b/i.test(t)
+      && msgs.some(m => m.role === 'assistant'),
+    say: () => "Fair push. The honest answer: the price follows the size of the front office we run for you, so a number before the fit call would be a guess — and we don't guess. What I can promise now: no setup fee, no contract, and if the first month's receipt doesn't justify the fee, you fire us. Twenty minutes gets you the plain number.",
+    screen: () => 'offer', aud: () => 'contractor' },
+];
+export function routeKillQuestion(messages){
+  const last = [...messages].reverse().find(m => m.role === 'user');
+  const t = String(last && last.content || '');
+  for (const r of ROUTER){
+    if (r.test(t, messages)) return { k: r.k, say: r.say(t), screen: r.screen ? r.screen(t) : null, aud: r.aud ? r.aud(t) : null };
+  }
+  return null;
+}
+
 export const config = { supportsResponseStreaming: false };
 
 export default async function handler(req, res){
@@ -274,6 +347,21 @@ export default async function handler(req, res){
 
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Cache-Control', 'no-store');
+
+  // kill-question router: the trust-deciding questions get the pack's canonical answer,
+  // deterministically — before (and regardless of) the model. See ROUTER above.
+  const routed = routeKillQuestion(messages);
+  if (routed){
+    const rAud = routed.aud || clientAud;
+    let rScreen = routed.screen;
+    if (rAud === 'homeowner' && rScreen && !['vesta','contact'].includes(rScreen)) rScreen = 'vesta';
+    console.log(`atlas: router=${routed.k} aud=${rAud||'null'} screen=${rScreen||'null'}`);
+    const out = { say: routed.say, screen: rScreen };
+    if (rAud) out.aud = rAud;
+    if (wantDiag) out._diag = { stage: 'router:' + routed.k, retried: false, model: null, upstream: null, rawlen: 0, rawHead: null };
+    res.statusCode = 200;
+    return res.end(JSON.stringify(out));
+  }
 
   // model outage → the honest deflection ONTO A SCREEN THAT ANSWERS (FAQ / Vesta are static;
   // they keep working precisely when the model doesn't)
