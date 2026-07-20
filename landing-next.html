@@ -400,7 +400,15 @@ a,button{transition:transform .14s}
 .fd-inner{width:min(660px,100%);display:flex;flex-direction:column;align-items:center}
 /* the three-surface fork breaks out wider than the hero's text column (Drew 7/20 — use the space) */
 .fd-inner:has(.fd-fork){width:min(1140px,94vw)}
-.fd-inner:has(.fd-fork) .fd-line,.fd-inner:has(.fd-fork) .fd-static-sub{max-width:34rem}
+/* the brand mark leads the hero, in place of the old "Welcome!" sign (Drew 7/20) */
+.fd-logo{display:block;width:clamp(50px,6vw,70px);color:var(--olive);margin:1.3rem auto 1.9rem;transition:transform .2s var(--spring),opacity .2s}
+.fd-logo svg{width:100%;height:auto;display:block}
+.fd-logo:hover{transform:translateY(-2px)}
+/* handwritten caption above each surface card (Caveat, slanted, underlined) */
+.pcard-cap{font-family:var(--hand);font-style:italic;font-weight:600;font-size:1.55rem;line-height:1.12;color:var(--olive);text-align:center;
+  text-decoration:underline;text-decoration-color:var(--tea);text-decoration-thickness:2px;text-underline-offset:5px;
+  transform:rotate(-1.6deg);margin:0 auto .95rem;min-height:1.7em;display:flex;align-items:flex-end;justify-content:center}
+.fork-col{display:flex;flex-direction:column;align-items:stretch;min-width:0}
 /* the brand — the mark alone, on a raised neumorphic button */
 .fd-brand{display:grid;place-items:center;width:62px;height:62px;border-radius:20px;color:var(--olive);
   background:var(--nm);box-shadow:var(--nm-sm);border:1px solid rgba(255,255,255,.5);
@@ -462,28 +470,35 @@ a,button{transition:transform .14s}
    three times). Static, no fan: category · title · a tight feature list bottom-aligned; the
    whole card taps through. Grid stretch keeps the three equal height. */
 @media(max-width:820px){
-  .fd-inner:has(.fd-fork){width:min(720px,96vw)}
-  .fd-fork{grid-template-columns:repeat(3,1fr);gap:.6rem;max-width:100%}
-  .pcard{display:flex;flex-direction:column;align-items:center;text-align:center;height:auto;min-height:0;padding:1.1rem .85rem 1.15rem;border-radius:18px}
+  .fd-inner:has(.fd-fork){width:min(560px,96vw)}
+  /* Atlas + Vesta shoulder to shoulder; Lens centered underneath (Drew 7/20) */
+  .fd-fork{grid-template-columns:1fr 1fr;grid-template-areas:"atlas vesta" "lens lens";gap:.7rem;max-width:100%;align-items:stretch}
+  .fc-atlas{grid-area:atlas}
+  .fc-vesta{grid-area:vesta}
+  .fc-lens{grid-area:lens;width:calc(50% - .35rem);justify-self:center}
+  .pcard-cap{font-size:1.18rem;margin-bottom:.55rem;min-height:2.2em}
+  .pcard{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;height:auto;min-height:0;padding:1.1rem .85rem 1.15rem;border-radius:18px}
   .pcard:hover{transform:none}
   .pcard-head{display:flex;flex-direction:column;align-items:center;width:100%}
-  .pcard-cat{font-size:.5rem;letter-spacing:.1em;margin-bottom:.5rem;min-height:2em;display:flex;align-items:center}
-  .pcard-title{font-size:clamp(1.1rem,4.6vw,1.7rem);margin-bottom:.4rem}
-  .pcard-sub{font-size:.75rem;line-height:1.32;max-width:none;margin-bottom:0}
+  .pcard-cat{font-size:.52rem;letter-spacing:.1em;margin-bottom:.5rem;min-height:2em;display:flex;align-items:center}
+  .pcard-title{font-size:clamp(1.2rem,5vw,1.8rem);margin-bottom:.4rem}
+  .pcard-sub{font-size:.78rem;line-height:1.32;max-width:none;margin-bottom:0}
   .pcard-go{display:none}                       /* whole card is the link at this size */
   .pcard-stack{position:static;margin-top:auto;padding-top:.85rem;display:flex;flex-direction:column;gap:.35rem;pointer-events:auto}
   .pft{position:static;transform:none!important;box-shadow:none;white-space:normal;
-    padding:.42rem .55rem;border-radius:9px;font:600 .7rem/1.2 var(--body);gap:.35rem;
+    padding:.46rem .6rem;border-radius:9px;font:600 .74rem/1.2 var(--body);gap:.4rem;
     background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.14);color:#F1F2E6}
   .pcard-vesta .pft{background:rgba(74,75,47,.07);border-color:rgba(74,75,47,.12);color:var(--olive)}
-  .pft-d{font-size:.55rem;opacity:.65}
+  .pft-d{font-size:.56rem;opacity:.65}
 }
 @media(max-width:440px){
-  .fd-fork{gap:.5rem}
-  .pcard{padding:.95rem .65rem 1rem}
+  .fd-fork{gap:.55rem}
+  .fc-lens{width:calc(50% - .275rem)}
+  .pcard{padding:.95rem .7rem 1rem}
+  .pcard-cap{font-size:1.02rem;min-height:2.3em}
   .pcard-sub{display:none}                       /* phones: title + features carry it */
-  .pcard-title{font-size:clamp(1rem,4.8vw,1.45rem)}
-  .pft{font-size:.64rem;padding:.36rem .46rem}
+  .pcard-title{font-size:clamp(1.05rem,5.2vw,1.5rem)}
+  .pft{font-size:.66rem;padding:.4rem .5rem}
   .pft-d{display:none}                           /* reclaim width in the narrowest cards */
 }
 /* CHATTING state — the moment anyone speaks, the fork leaves the room entirely: the
@@ -755,9 +770,6 @@ a,button{transition:transform .14s}
 
 <!-- ════════════════ NAV ════════════════ -->
 <nav class="topnav" id="topnav">
-  <a href="/" class="nav-home" aria-label="4THWALL — home">
-    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
-  </a>
   <div class="nav-links" aria-label="Primary">
     <a href="/atlas" class="nav-a"><b>Atlas</b><span>for contractors</span></a>
     <a href="/lens" class="nav-a"><b>Lens</b><span>start free</span></a>
@@ -784,58 +796,63 @@ a,button{transition:transform .14s}
 <!-- ════════════════ THE FRONT DESK — the hero is a conversation (P1: every screen deterministic) ════════════════ -->
 <section class="fd" id="home">
   <div class="fd-inner">
-    <p class="fd-mat"><span class="kicker" id="fdMat">Welcome!</span></p>
+    <!-- the brand mark now leads the hero (moved off the top bar, in place of "Welcome!") -->
+    <a href="/" class="fd-logo" aria-label="4THWALL — home">
+      <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
+    </a>
 
     <div class="fd-chat">
-      <!-- THE FORK is the doorway — the conversation itself now lives in the desks
-           (/atlas for contractors, /vesta for homeowners). The homepage picks a side and
-           routes out with context; no inline chat, no generated screens here. -->
-      <h1 class="fd-line fd-static">One system,<br>three surfaces.</h1>
-      <p class="fd-static-sub">Atlas runs the business · Lens keeps the record · Vesta helps homeowners hire.</p>
-
-      <!-- THE THREE SURFACES — each a card with its own feature stack that fans out on hover
-           (a vanilla port of the framer-motion PhotoStackCard; the stacked items are feature
-           tiles, not photos). Tapping the card routes to that product's desk. -->
+      <!-- THE THREE SURFACES — each card carries a handwritten caption above it; tapping the
+           card routes to that product's desk. -->
       <div class="fd-fork" id="fdFork">
-        <a class="pcard pcard-atlas" href="/atlas" aria-label="Atlas — for contractors">
-          <div class="pcard-head">
-            <p class="pcard-cat">For Contractors</p>
-            <h2 class="pcard-title">Atlas<span class="dot">.</span></h2>
-            <p class="pcard-sub">The managed front office behind the work.</p>
-            <span class="pcard-go">Explore Atlas <span class="arr">→</span></span>
-          </div>
-          <div class="pcard-stack">
-            <span class="pft" style="--i:0"><span class="pft-d">01</span>Missed-call recovery</span>
-            <span class="pft" style="--i:1"><span class="pft-d">02</span>Booking &amp; follow-up</span>
-            <span class="pft" style="--i:2"><span class="pft-d">03</span>A monthly receipt</span>
-          </div>
-        </a>
-        <a class="pcard pcard-lens" href="/lens" aria-label="Lens — your record">
-          <div class="pcard-head">
-            <p class="pcard-cat">For Contractors · Free</p>
-            <h2 class="pcard-title">Lens<span class="dot">.</span></h2>
-            <p class="pcard-sub">Your private trust workspace — own the record.</p>
-            <span class="pcard-go">Explore Lens <span class="arr">→</span></span>
-          </div>
-          <div class="pcard-stack">
-            <span class="pft" style="--i:0"><span class="pft-d">01</span>Connect your history</span>
-            <span class="pft" style="--i:1"><span class="pft-d">02</span>Review every fact</span>
-            <span class="pft" style="--i:2"><span class="pft-d">03</span>Control what shows</span>
-          </div>
-        </a>
-        <a class="pcard pcard-vesta" href="/vesta" aria-label="Vesta — for homeowners">
-          <div class="pcard-head">
-            <p class="pcard-cat">For Homeowners</p>
-            <h2 class="pcard-title">Vesta<span class="dot">.</span></h2>
-            <p class="pcard-sub">Find a contractor worth hiring.</p>
-            <span class="pcard-go">Explore Vesta <span class="arr">→</span></span>
-          </div>
-          <div class="pcard-stack">
-            <span class="pft" style="--i:0"><span class="pft-d">01</span>Vesta’s Read on each pro</span>
-            <span class="pft" style="--i:1"><span class="pft-d">02</span>Ranked by the record, not ads</span>
-            <span class="pft" style="--i:2"><span class="pft-d">03</span>Free — no pay-to-play</span>
-          </div>
-        </a>
+        <div class="fork-col fc-atlas">
+          <p class="pcard-cap">Atlas runs the business</p>
+          <a class="pcard pcard-atlas" href="/atlas" aria-label="Atlas — for contractors">
+            <div class="pcard-head">
+              <p class="pcard-cat">For Contractors</p>
+              <h2 class="pcard-title">Atlas<span class="dot">.</span></h2>
+              <p class="pcard-sub">The managed front office behind the work.</p>
+              <span class="pcard-go">Explore Atlas <span class="arr">→</span></span>
+            </div>
+            <div class="pcard-stack">
+              <span class="pft" style="--i:0"><span class="pft-d">01</span>Missed-call recovery</span>
+              <span class="pft" style="--i:1"><span class="pft-d">02</span>Booking &amp; follow-up</span>
+              <span class="pft" style="--i:2"><span class="pft-d">03</span>A monthly receipt</span>
+            </div>
+          </a>
+        </div>
+        <div class="fork-col fc-lens">
+          <p class="pcard-cap">Lens keeps the record</p>
+          <a class="pcard pcard-lens" href="/lens" aria-label="Lens — your record">
+            <div class="pcard-head">
+              <p class="pcard-cat">For Contractors · Free</p>
+              <h2 class="pcard-title">Lens<span class="dot">.</span></h2>
+              <p class="pcard-sub">Your private trust workspace — own the record.</p>
+              <span class="pcard-go">Explore Lens <span class="arr">→</span></span>
+            </div>
+            <div class="pcard-stack">
+              <span class="pft" style="--i:0"><span class="pft-d">01</span>Connect your history</span>
+              <span class="pft" style="--i:1"><span class="pft-d">02</span>Review every fact</span>
+              <span class="pft" style="--i:2"><span class="pft-d">03</span>Control what shows</span>
+            </div>
+          </a>
+        </div>
+        <div class="fork-col fc-vesta">
+          <p class="pcard-cap">Vesta helps homeowners hire</p>
+          <a class="pcard pcard-vesta" href="/vesta" aria-label="Vesta — for homeowners">
+            <div class="pcard-head">
+              <p class="pcard-cat">For Homeowners</p>
+              <h2 class="pcard-title">Vesta<span class="dot">.</span></h2>
+              <p class="pcard-sub">Find a contractor worth hiring.</p>
+              <span class="pcard-go">Explore Vesta <span class="arr">→</span></span>
+            </div>
+            <div class="pcard-stack">
+              <span class="pft" style="--i:0"><span class="pft-d">01</span>Vesta’s Read on each pro</span>
+              <span class="pft" style="--i:1"><span class="pft-d">02</span>Ranked by the record, not ads</span>
+              <span class="pft" style="--i:2"><span class="pft-d">03</span>Free — no pay-to-play</span>
+            </div>
+          </a>
+        </div>
       </div>
     </div>
   </div>
