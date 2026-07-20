@@ -411,23 +411,59 @@ a,button{transition:transform .14s}
    two universes never fight for space. Staging collapses the whole fork. ═══ */
 /* the fork now shows both product cards at once (Drew 7/20 — the empty page gets Atlas
    under Contractor, Vesta under Homeowner). Each column = a category label + its tilt card. */
-.fd-fork{margin:1.6rem auto 0;display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;max-width:min(780px,94vw);align-items:start}
-.fork-col{display:flex;flex-direction:column;align-items:stretch;gap:.85rem}
+.fd-fork{margin:1.6rem auto 0;display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;width:100%;max-width:min(720px,94vw);align-items:start}
+.fork-col{display:flex;flex-direction:column;align-items:stretch;gap:1rem}
 .fork-pill{display:flex;flex-direction:column;align-items:center;gap:.24rem;background:var(--nm);box-shadow:var(--nm-sm);border-radius:var(--r-pill);padding:.72rem 1.6rem;color:var(--ink);transition:box-shadow .2s,transform .15s,color .2s}
 .fork-pill b{font-family:var(--display);font-size:1.06rem;font-weight:500;letter-spacing:-.012em;line-height:1}
 .fork-pill span{font-family:var(--mono);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);line-height:1}
-/* the category labels are headers now, not toggles — the card below IS the door */
-.fork-pill.is-label{cursor:default;align-self:center}
-/* ── tilt card — a vanilla port of the React TiltCard (evade tilt + cursor spotlight) ── */
-.fork-card{min-height:0;text-decoration:none;transform-style:preserve-3d;will-change:transform;transition:transform .2s ease-out,box-shadow .3s ease}
-.fork-card .prod-feats{flex:0 0 auto}
-.fc-spot{position:absolute;inset:0;z-index:2;opacity:0;pointer-events:none;transition:opacity .3s ease;
-  background:radial-gradient(circle at var(--sx,50%) var(--sy,50%),rgba(255,255,255,.16),transparent 42%)}
-.prod-vesta .fc-spot{background:radial-gradient(circle at var(--sx,50%) var(--sy,50%),rgba(74,75,47,.09),transparent 42%)}
-.fork-card.tilt-on .fc-spot{opacity:1}
+/* the category labels are headers now, not toggles — the card below IS the door.
+   z-index above the stack so upward-cascading feature cards pass BEHIND the (opaque) label */
+.fork-pill.is-label{cursor:default;align-self:center;position:relative;z-index:6}
+
+/* ═══ THE PRODUCT STACKS — hero card on top, feature cards hidden behind it, revealed on
+   hover. Vanilla ports of two framer-motion components (Drew 7/20): Atlas = cascade-stagger,
+   Vesta = corner-fan. Spring physics → the site's --spring easing; hover-driven, no JS. ═══ */
+.pstack{position:relative;display:block;width:100%;max-width:340px;margin:0 auto;height:clamp(330px,46vh,384px);text-decoration:none}
+.scard{position:absolute;inset:0;border-radius:var(--r-card);overflow:hidden;
+  transition:transform .55s var(--spring),box-shadow .3s ease;will-change:transform;backface-visibility:hidden}
+/* the hero card carries the product breakdown; feature cards carry one label each */
+.sc-hero{display:flex;flex-direction:column;padding:clamp(1.5rem,2.4vw,1.95rem)}
+.sc-hero > *{position:relative;z-index:1}
+.sc-atlas{background:var(--dark-grad);color:var(--white);box-shadow:0 2px 6px rgba(40,41,22,.2),0 22px 48px -12px rgba(40,41,22,.5),inset 0 1px 0 rgba(255,255,255,.1)}
+.sc-atlas::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 85% 65% at 108% -8%,rgba(212,223,158,.16),transparent 60%);pointer-events:none}
+.sc-vesta{background:var(--nm);border:var(--nm-edge);color:var(--olive);box-shadow:var(--nm-out)}
+.sc-vesta::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 85% 65% at 108% -8%,rgba(212,223,158,.5),transparent 60%);pointer-events:none}
+.sc-line{font-family:var(--body);font-size:.85rem;font-weight:450;line-height:1.5;margin:.85rem 0 auto;color:rgba(255,255,255,.8)}
+.sc-vesta .sc-line{color:var(--ebony)}
+.sc-hero .prod-btn{margin-top:1.1rem;align-self:flex-start}
+/* feature cards — a lifted tile with its label; Atlas features light on the dark hero, Vesta features olive-dark on the light hero */
+.sc-feat{display:flex;padding:1.05rem 1.2rem;box-shadow:0 2px 6px rgba(40,41,22,.14),0 16px 34px -14px rgba(40,41,22,.4);border:1px solid rgba(255,255,255,.06)}
+.sc-feat-l{font-family:var(--display);font-size:1.02rem;font-weight:500;letter-spacing:-.01em;line-height:1.2}
+.pstack-cascade .sc-feat{background:var(--nm);color:var(--olive);border:var(--nm-edge)}
+.pstack-fan .sc-feat{background:var(--dark-grad);color:var(--tea)}
+/* where the label sits, so it PEEKS from behind the hero when the stack opens */
+.sc-below{align-items:flex-end}     /* cascades downward → bottom edge shows */
+.sc-above{align-items:flex-start}   /* cascades upward → top edge shows */
+.sc-fan{align-items:flex-start;justify-content:flex-end;text-align:right}  /* fans up-right → top-right shows */
+
+/* ── ATLAS · cascade-stagger (--dist = card index − center) ── */
+.pstack-cascade .scard{transform:translateY(calc(var(--dist) * 2px))}
+.pstack-cascade:hover .scard,.pstack-cascade:focus-visible .scard{
+  transform:translate(calc(var(--dist) * 20px), calc(var(--dist) * -34px - 16px)) rotate(calc(var(--dist) * 6deg)) scale(var(--sc))}
+/* ── VESTA · corner-fan (pivot at the bottom-left corner; --rot per card) ── */
+.pstack-fan .scard{transform-origin:0% 100%;transform:rotate(0deg)}
+.pstack-fan:hover .scard,.pstack-fan:focus-visible .scard{transform:rotate(var(--rot)) scale(var(--sc))}
+
 .fd.staged .fd-fork{display:none}
+@media(prefers-reduced-motion:reduce){ .scard{transition:none} .pstack:hover .scard{transform:none} .pstack-fan:hover .scard{transform:none} }
+/* touch / no-hover: no fan trigger — hold the stacks open in a gentle resting fan so the features read */
+@media(hover:none){
+  .pstack-cascade .scard{transform:translate(calc(var(--dist) * 11px), calc(var(--dist) * -22px - 11px)) rotate(calc(var(--dist) * 5deg)) scale(var(--sc))}
+  .pstack-fan .scard{transform:rotate(calc(var(--rot) * .82)) scale(var(--sc))}
+}
 @media(max-width:560px){
-  .fd-fork{grid-template-columns:1fr;gap:1.4rem;max-width:min(400px,94vw)}
+  .fd-fork{grid-template-columns:1fr;gap:2.2rem;max-width:min(360px,90vw)}
+  .pstack{height:340px}
 }
 /* CHATTING state — the moment anyone speaks, the fork leaves the room entirely: the
    conversation owns the column and no hover can stand the deck back up mid-thread */
@@ -739,32 +775,36 @@ a,button{transition:transform .14s}
       <div class="fd-fork" id="fdFork">
         <div class="fork-col">
           <div class="fork-pill is-label"><b>Contractor</b><span>run the business</span></div>
-          <a class="prod-card prod-atlas fork-card" href="/atlas" aria-label="Atlas — for contractors">
-            <span class="fc-spot" aria-hidden="true"></span>
-            <div class="prod-tag">For Contractors</div>
-            <div class="prod-name">Atlas<span class="dot">.</span></div>
-            <p class="prod-line">The managed front office behind the work.</p>
-            <ul class="prod-feats">
-              <li>Missed calls recovered by text</li>
-              <li>Leads qualified &amp; estimates booked</li>
-              <li>Follow-ups, reviews &amp; a monthly receipt</li>
-            </ul>
-            <span class="prod-btn">Explore Atlas <span class="arr">→</span></span>
+          <!-- ATLAS — cascade-stagger stack: the hero card (Atlas + what it is) sits on top;
+               the four feature cards hide behind it and cascade out on hover. -->
+          <a class="pstack pstack-cascade" href="/atlas" aria-label="Atlas — for contractors">
+            <div class="scard sc-feat sc-below" style="--dist:-2;z-index:3;--sc:.98"><span class="sc-feat-l">Booking &amp; scheduling</span></div>
+            <div class="scard sc-feat sc-below" style="--dist:-1;z-index:4;--sc:.98"><span class="sc-feat-l">Missed-call recovery</span></div>
+            <div class="scard sc-hero sc-atlas" style="--dist:0;z-index:5;--sc:1.05">
+              <div class="prod-tag">For Contractors</div>
+              <div class="prod-name">Atlas<span class="dot">.</span></div>
+              <p class="sc-line">The managed front office behind the work — it answers, books, follows up, and sends a receipt each month.</p>
+              <span class="prod-btn">Explore Atlas <span class="arr">→</span></span>
+            </div>
+            <div class="scard sc-feat sc-above" style="--dist:1;z-index:4;--sc:.98"><span class="sc-feat-l">Follow-up &amp; reviews</span></div>
+            <div class="scard sc-feat sc-above" style="--dist:2;z-index:3;--sc:.98"><span class="sc-feat-l">Monthly receipt</span></div>
           </a>
         </div>
         <div class="fork-col">
           <div class="fork-pill is-label"><b>Homeowner</b><span>hire with proof</span></div>
-          <a class="prod-card prod-vesta fork-card" href="/vesta" aria-label="Vesta — for homeowners">
-            <span class="fc-spot" aria-hidden="true"></span>
-            <div class="prod-tag">For Homeowners</div>
-            <div class="prod-name">Vesta<span class="dot">.</span></div>
-            <p class="prod-line">Find a contractor worth hiring.</p>
-            <ul class="prod-feats">
-              <li>Ask in your own words — get a real answer</li>
-              <li>Picks grounded in the public record</li>
-              <li>No ads, no pay-to-play, free</li>
-            </ul>
-            <span class="prod-btn">Explore Vesta <span class="arr">→</span></span>
+          <!-- VESTA — corner-fan stack: the hero card (Vesta + what it is) sits on top;
+               the four feature cards fan out from the bottom-left corner on hover. -->
+          <a class="pstack pstack-fan" href="/vesta" aria-label="Vesta — for homeowners">
+            <div class="scard sc-hero sc-vesta" style="--rot:-10deg;z-index:5;--sc:1">
+              <div class="prod-tag">For Homeowners</div>
+              <div class="prod-name">Vesta<span class="dot">.</span></div>
+              <p class="sc-line">Find a contractor worth hiring — tell Vesta the job in your words, get picks from the public record.</p>
+              <span class="prod-btn">Explore Vesta <span class="arr">→</span></span>
+            </div>
+            <div class="scard sc-feat sc-fan" style="--rot:0deg;z-index:4;--sc:1"><span class="sc-feat-l">Ask in your words</span></div>
+            <div class="scard sc-feat sc-fan" style="--rot:10deg;z-index:3;--sc:1.03"><span class="sc-feat-l">Public-record picks</span></div>
+            <div class="scard sc-feat sc-fan" style="--rot:20deg;z-index:2;--sc:1"><span class="sc-feat-l">A project brief</span></div>
+            <div class="scard sc-feat sc-fan" style="--rot:30deg;z-index:1;--sc:1"><span class="sc-feat-l">Free — no ads</span></div>
           </a>
         </div>
       </div>
@@ -794,35 +834,6 @@ a,button{transition:transform .14s}
     <span class="kicker">three surfaces, one system</span>
     <h2 class="sec-h">Run the business around the work.<br><em>Stop letting good work disappear.</em></h2>
     <p class="sec-sub">Atlas runs the moments contractors usually lose — first response, booking, follow-up, reviews, reactivation, and the receipt. Lens gives contractors control of the evidence. Vesta turns reviewed, source-labelled facts into a clearer homeowner decision. One system, one mission: good work should leave evidence that compounds.</p>
-  </div>
-  <div class="prod-grid">
-    <a class="prod-card prod-atlas rv" href="/atlas">
-      <div class="prod-tag">For Contractors</div>
-      <div class="prod-name">Atlas<span class="dot">.</span></div>
-      <p class="prod-line">The managed front office behind the work.</p>
-      <ul class="prod-feats">
-        <li>Inbound leads captured &amp; qualified</li>
-        <li>Estimates booked, jobs tracked</li>
-        <li>Review requests sent after a recorded close</li>
-        <li>Campaigns that run in slow months</li>
-        <li>Local discovery foundations maintained</li>
-        <li>A measured monthly operating receipt</li>
-      </ul>
-      <span class="prod-btn">Explore Atlas <span class="arr">→</span></span>
-    </a>
-    <a class="prod-card prod-vesta rv rv-d1" href="/vesta">
-      <div class="prod-tag">For Homeowners</div>
-      <div class="prod-name">Vesta<span class="dot">.</span></div>
-      <p class="prod-line">Tell Vesta what you're trying to get done.</p>
-      <ul class="prod-feats">
-        <li>Ask in your own words — get a real answer</li>
-        <li>Curated picks, with the why behind each</li>
-        <li>Every read grounded in the public record</li>
-        <li>A project brief ready to send</li>
-        <li>No ads, no pay-to-play, free</li>
-      </ul>
-      <span class="prod-btn">Explore Vesta <span class="arr">→</span></span>
-    </a>
   </div>
 </section>
 
@@ -1118,32 +1129,6 @@ a,button{transition:transform .14s}
 <script src="/home.js"></script>
 <script src="/cuelume.js"></script>
 <script src="/cue-init.js"></script>
-<script>
-/* ── THE FRONT DESK — the homepage fork. The homepage is the doorway: two product
-   cards (Atlas for contractors, Vesta for homeowners) shown at once, each a link OUT to
-   its desk. The tilt/spotlight is a vanilla port of the React TiltCard (evade tilt that
-   follows the cursor + a soft spotlight) — hover-only, motion-safe. ── */
-(function(){
-  if(!(window.matchMedia && matchMedia('(hover: hover)').matches)) return;   // touch: flat cards
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var LIMIT=11, SCALE=1.025, PERSP=1200, DIR=-1;   // DIR -1 = "evade" (tilt away from cursor)
-  [].forEach.call(document.querySelectorAll('.fork-card'),function(card){
-    card.addEventListener('pointermove',function(e){
-      var r=card.getBoundingClientRect();
-      var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
-      var xRot=(py-0.5)*(LIMIT*2)*DIR, yRot=(px-0.5)*-(LIMIT*2)*DIR;
-      card.style.transform='perspective('+PERSP+'px) rotateX('+xRot.toFixed(2)+'deg) rotateY('+yRot.toFixed(2)+'deg) scale3d('+SCALE+','+SCALE+','+SCALE+')';
-      card.style.setProperty('--sx',(px*100).toFixed(1)+'%');
-      card.style.setProperty('--sy',(py*100).toFixed(1)+'%');
-      card.classList.add('tilt-on');
-    });
-    card.addEventListener('pointerleave',function(){
-      card.style.transform='';   // fall back to the CSS resting/hover state
-      card.classList.remove('tilt-on');
-    });
-  });
-})();
-</script>
 
 </body>
 </html>
