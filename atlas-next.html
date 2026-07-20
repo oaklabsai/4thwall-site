@@ -1597,11 +1597,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       });
     })(container);
   }
-  var speakEnds=0;
-  function landAfterSay(fn){setTimeout(fn,Math.max(0,(speakEnds||0)-Date.now()))}
+  /* Screens land WITH the say, never after it (Drew 7/18: a click must answer instantly —
+     the old "speak, THEN assemble" beat read as lag, and clicks during any narration
+     inherited its leftover wait). The narration types above a screen that's already there. */
   function speak(html,extra){
-    var _plain=html.replace(/<[^>]+>/g,'').length;
-    speakEnds=Date.now()+(line.querySelectorAll('.w i').length?430:0)+Math.min(_plain*13,1300)+650;
     var old=line.querySelectorAll('.w i'),wait=0;
     if(old.length){for(var i=0;i<old.length;i++)old[i].style.transitionDelay=Math.min((old.length-i)*5,320)+'ms';line.classList.remove('in');line.classList.add('out');wait=430}
     setTimeout(function(){
@@ -2153,8 +2152,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function enterRoom(k){var r=ROOMS[k];if(!r)return walkOffice();
     setTalking(true);setActive('room:'+k);
     speak(r.d);   /* the hook only — the assembled screen already carries the title (h3) and the "← the office" door; repeating them here is the flow redundancy */
-    landAfterSay(function(){roomVisual(k)});}
-  function walkOffice(){setTalking(true);setActive('office');speak(OFFICE_LINE);landAfterSay(assembleOffice)}
+    roomVisual(k);}
+  function walkOffice(){setTalking(true);setActive('office');speak(OFFICE_LINE);assembleOffice()}
   var TAB_LINE={
     offer:'Here’s how the offer works — a managed service, not a software seat. The number follows the size of the front office we run for you, set on a 20-minute fit call in plain terms.',
     lens:'Lens is your free, private trust workspace — connect the tools you already run, review every fact your record supports, and control exactly what a homeowner could see. Nothing publishes without you.',
@@ -2169,7 +2168,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     if(key&&key.indexOf('room:')===0)return enterRoom(key.slice(5));
     setTalking(true);setActive(key);
     if(TAB_LINE[key])speak(TAB_LINE[key]);
-    landAfterSay(function(){assembleScreen(key)});
+    assembleScreen(key);
   }
 
   /* ══ THE MODEL LOOP — typed asks -> /api/atlas ══ */
@@ -2191,7 +2190,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       msgs.push({role:'assistant',content:s});
       speak(escT(s));
       if(window.cue)cue('chime');   // the desk answered
-      if(scr){setActive(scr);landAfterSay(function(){assembleScreen(scr,ar)})}
+      if(scr){setActive(scr);assembleScreen(scr,ar)}
     })
     .catch(function(){busy=false;thinkOff();speak(DEFLECT)});
   }
