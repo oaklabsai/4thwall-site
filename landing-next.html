@@ -398,6 +398,9 @@ a,button{transition:transform .14s}
 /* ════════ THE FRONT DESK — the hero is a conversation (P1 shell, zero model calls) ════════ */
 .fd{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:clamp(5.6rem,9vh,6.8rem) var(--pad) 4.6rem;position:relative;text-align:center}
 .fd-inner{width:min(660px,100%);display:flex;flex-direction:column;align-items:center}
+/* the three-surface fork breaks out wider than the hero's text column (Drew 7/20 — use the space) */
+.fd-inner:has(.fd-fork){width:min(1140px,94vw)}
+.fd-inner:has(.fd-fork) .fd-line,.fd-inner:has(.fd-fork) .fd-static-sub{max-width:34rem}
 /* the brand — the mark alone, on a raised neumorphic button */
 .fd-brand{display:grid;place-items:center;width:62px;height:62px;border-radius:20px;color:var(--olive);
   background:var(--nm);box-shadow:var(--nm-sm);border:1px solid rgba(255,255,255,.5);
@@ -410,8 +413,8 @@ a,button{transition:transform .14s}
    the bottom-right and FAN UP on hover. Vanilla port of the framer-motion PhotoStackCard
    (Drew 7/20), with feature bullets in place of photos. Dark→olive→cream tracks the brand
    ramp (Atlas = ink side, Lens = the #4A4B2F hinge, Vesta = tea side). No JS. ═══ */
-.fd-fork{margin:1.7rem auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;width:100%;max-width:min(960px,95vw)}
-.pcard{position:relative;display:block;height:clamp(300px,40vh,340px);padding:1.5rem 1.5rem 1.4rem;border-radius:var(--r-card);overflow:hidden;text-decoration:none;
+.fd-fork{margin:1.9rem auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;width:100%;max-width:min(1180px,94vw)}
+.pcard{position:relative;display:block;height:clamp(320px,42vh,380px);padding:1.9rem 1.9rem 1.7rem;border-radius:var(--r-card);overflow:hidden;text-decoration:none;
   transition:transform .3s var(--spring),box-shadow .3s ease}
 .pcard:hover{transform:translateY(-4px)}
 .pcard-atlas{background:var(--dark-grad);color:var(--white);box-shadow:0 2px 6px rgba(40,41,22,.2),0 22px 48px -12px rgba(40,41,22,.48),inset 0 1px 0 rgba(255,255,255,.1)}
@@ -420,30 +423,30 @@ a,button{transition:transform .14s}
 .pcard-vesta::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 110% -10%,rgba(212,223,158,.5),transparent 60%);pointer-events:none}
 /* the head sits above the stack (z) so the fanning tiles pass behind the title */
 .pcard-head{position:relative;z-index:5}
-.pcard-cat{font:600 .62rem/1 var(--mono);letter-spacing:.19em;text-transform:uppercase;color:var(--tea);margin-bottom:.7rem}
+.pcard-cat{font:600 .66rem/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--tea);margin-bottom:.8rem}
 .pcard-lens .pcard-cat{color:#D4DF9E}
 .pcard-vesta .pcard-cat{color:var(--olive)}
-.pcard-title{font-family:var(--display);font-size:clamp(1.9rem,3vw,2.5rem);font-weight:400;letter-spacing:-.04em;line-height:.95;margin-bottom:.5rem}
+.pcard-title{font-family:var(--display);font-size:clamp(2.2rem,3.4vw,3rem);font-weight:400;letter-spacing:-.04em;line-height:.95;margin-bottom:.6rem}
 .pcard-title .dot{color:var(--tea)}
 .pcard-vesta .pcard-title{color:var(--ink)}.pcard-vesta .pcard-title .dot{color:var(--olive)}
-.pcard-sub{font-family:var(--display);font-size:1rem;font-weight:400;line-height:1.35;color:rgba(255,255,255,.72);max-width:15ch;transition:opacity .3s ease}
+.pcard-sub{font-family:var(--display);font-size:1.1rem;font-weight:400;line-height:1.38;color:rgba(255,255,255,.74);max-width:22ch;transition:opacity .3s ease}
 .pcard-vesta .pcard-sub{color:var(--muted)}
 .pcard-go{display:inline-flex;align-items:center;gap:.45rem;margin-top:.9rem;font:600 .82rem/1 var(--body);color:var(--tea);transition:opacity .3s ease}
 .pcard-lens .pcard-go{color:#D4DF9E}.pcard-vesta .pcard-go{color:var(--olive)}
 .pcard-go .arr{transition:transform .25s var(--spring)}
 /* on hover the feature tiles fan up into the lower card, so the tagline + CTA step aside */
 .pcard:hover .pcard-sub,.pcard:focus-visible .pcard-sub,.pcard:hover .pcard-go,.pcard:focus-visible .pcard-go{opacity:0}
-/* the feature stack — anchored bottom-right, tiles fan UP on hover (staggered) */
-.pcard-stack{position:absolute;left:1.4rem;right:1.4rem;bottom:1.4rem;top:44%;pointer-events:none}
-.pft{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:.6rem;
-  padding:.72rem .9rem;border-radius:14px;font:600 .9rem/1.15 var(--body);letter-spacing:-.008em;
+/* the feature stack — anchored across the lower card, tiles fan UP on hover (staggered) */
+.pcard-stack{position:absolute;left:1.8rem;right:1.8rem;bottom:1.7rem;top:46%;pointer-events:none}
+.pft{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:.7rem;
+  padding:.82rem 1.05rem;border-radius:15px;font:600 .96rem/1.2 var(--body);letter-spacing:-.01em;
   background:var(--nm);color:var(--olive);border:var(--nm-edge);
   box-shadow:0 3px 8px rgba(40,41,22,.16),0 14px 30px -12px rgba(40,41,22,.42);
   transform-origin:bottom center;
   transform:translate(calc(var(--i) * 5px), calc(var(--i) * 5px)) rotate(calc(var(--i) * 2.5deg));
   transition:transform .5s var(--spring),box-shadow .3s ease;transition-delay:calc(var(--i) * .05s);
   z-index:calc(3 - var(--i));backface-visibility:hidden}
-.pft-d{font:600 .62rem/1 var(--mono);letter-spacing:.08em;color:var(--dim);flex:none}
+.pft-d{font:600 .64rem/1 var(--mono);letter-spacing:.08em;color:var(--dim);flex:none}
 /* fan open: tile i=0 climbs highest → reads top-to-bottom 01·02·03, each tilted into a fan */
 .pcard:hover .pft,.pcard:focus-visible .pft{
   transform:translate(calc((1 - var(--i)) * 7px), calc((2 - var(--i)) * -52px - 6px)) rotate(calc((1 - var(--i)) * 7deg)) scale(1.03);
@@ -460,7 +463,7 @@ a,button{transition:transform .14s}
   .pcard{height:auto;min-height:132px;padding:1.3rem 1.4rem}
   /* single-column: the stack would collide with the next card — inline the features as a row instead */
   .pcard-stack{position:static;margin-top:1.1rem;display:flex;flex-wrap:wrap;gap:.5rem;pointer-events:auto}
-  .pft{position:static;transform:none!important;box-shadow:none;padding:.5rem .8rem;font-size:.82rem;flex:0 0 auto}
+  .pft{position:static;transform:none!important;box-shadow:none;padding:.5rem .8rem;font-size:.82rem;flex:0 0 auto;white-space:normal}
   .pcard-sub{max-width:none}
 }
 /* CHATTING state — the moment anyone speaks, the fork leaves the room entirely: the
@@ -808,9 +811,9 @@ a,button{transition:transform .14s}
             <span class="pcard-go">Explore Vesta <span class="arr">→</span></span>
           </div>
           <div class="pcard-stack">
-            <span class="pft" style="--i:0"><span class="pft-d">01</span>Ask in your words</span>
-            <span class="pft" style="--i:1"><span class="pft-d">02</span>Public-record picks</span>
-            <span class="pft" style="--i:2"><span class="pft-d">03</span>A project brief</span>
+            <span class="pft" style="--i:0"><span class="pft-d">01</span>Vesta’s Read on each pro</span>
+            <span class="pft" style="--i:1"><span class="pft-d">02</span>Ranked by the record, not ads</span>
+            <span class="pft" style="--i:2"><span class="pft-d">03</span>Free — no pay-to-play</span>
           </div>
         </a>
       </div>
