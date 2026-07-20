@@ -177,10 +177,13 @@ Choose the screen that best serves what they just asked; when unsure, null.`;
 }
 
 // buffered model call with key + model rotation (no client streaming — the say is fully
-// validated before anything reaches the browser; the UI animates the reveal itself)
+// validated before anything reaches the browser; the UI animates the reveal itself).
+// Returns { raw, model, status } — model + last upstream status feed the handler's log line,
+// so a deflect storm is diagnosable from Vercel logs alone (nojson on WHICH model, 429 or not).
 async function generate(keys, messages, where){
   const system = systemPrompt(where);
   const startAt = (Math.random() * keys.length) | 0;
+  let lastStatus = null;
   for (const model of MODELS){
     const body = JSON.stringify({
       model, stream: false,
@@ -197,16 +200,17 @@ async function generate(keys, messages, where){
           headers: { 'Authorization': `Bearer ${key}`, 'Content-Type':'application/json' }, body });
         clearTimeout(timer);
         if (!r.ok){
+          lastStatus = r.status;
           if (r.status === 401 || r.status === 429 || r.status >= 500) continue;   // rotate
           break;                                                                    // next model
         }
         const j = await r.json();
         const raw = j.choices?.[0]?.message?.content || '';
-        if (raw.trim().length >= 2) return raw;
-      } catch { clearTimeout(timer); continue; }
+        if (raw.trim().length >= 2) return { raw, model, status: 200 };
+      } catch { clearTimeout(timer); lastStatus = 'abort'; continue; }
     }
   }
-  return null;
+  return { raw: null, model: null, status: lastStatus };
 }
 
 // tolerant JSON extraction (models wrap in prose / fences / partials)
@@ -272,18 +276,18 @@ export default async function handler(req, res){
   for (const m of messages) if (m.role === 'user')
     for (const n of (String(m.content).match(/\d+/g) || [])) echo.add(n);
 
-  let raw = null;
-  try { raw = await generate(keys, messages, where); } catch { /* fall through */ }
-  let parsed = raw ? extractJSON(raw) : null;
+  let gen = { raw: null, model: null, status: null };
+  try { gen = await generate(keys, messages, where); } catch { /* fall through */ }
+  let parsed = gen.raw ? extractJSON(gen.raw) : null;
 
   // one fresh regeneration before deflecting — a guard trip is usually a phrasing the model
   // doesn't repeat (measured 7/18: a natural storm-season follow-up deflected 3/4 without
   // this; the clean generations prove the answer is there). Never retries a safe answer.
   let retried = false;
-  if (raw && (!parsed || typeof parsed.say !== 'string' || !claimSafe(parsed.say, echo))){
+  if (gen.raw && (!parsed || typeof parsed.say !== 'string' || !claimSafe(parsed.say, echo))){
     retried = true;
-    try { raw = await generate(keys, messages, where); } catch { /* fall through */ }
-    const second = raw ? extractJSON(raw) : null;
+    try { gen = await generate(keys, messages, where); } catch { /* fall through */ }
+    const second = gen.raw ? extractJSON(gen.raw) : null;
     if (second && typeof second.say === 'string' && claimSafe(second.say, echo)) parsed = second;
   }
 
@@ -304,7 +308,7 @@ export default async function handler(req, res){
   // rerouted above, so a tripped turn can never carry args), clamped + whitelisted by cleanArgs.
   const args = screen === 'numbers' && parsed ? cleanArgs(parsed.args) : null;
 
-  console.log(`atlas: ${parsed ? (claimSafe(parsed.say||'', echo) ? 'ok' : 'unsafe→deflect') : 'nojson→deflect'} retried=${retried} aud=${aud||'null'} where=${where||'null'} screen=${screen||'null'} args=${args ? Object.keys(args).join(',') : 'null'}`);
+  console.log(`atlas: ${parsed ? (claimSafe(parsed.say||'', echo) ? 'ok' : 'unsafe→deflect') : 'nojson→deflect'} retried=${retried} model=${gen.model||'none'} upstream=${gen.status??'?'} rawlen=${gen.raw?gen.raw.length:0} aud=${aud||'null'} where=${where||'null'} screen=${screen||'null'} args=${args ? Object.keys(args).join(',') : 'null'}`);
   res.statusCode = 200;
   const out = { say, screen };
   if (aud) out.aud = aud;
