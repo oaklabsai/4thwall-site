@@ -1216,13 +1216,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
    of the room, fully visible at a glance. Phones zoom-to-fit the space; the Slack card fills
    it and lets its thread breathe (the thread scrolls itself as messages arrive — that's the
    simulation playing, not the page moving). */
-.rm-grid{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.5rem;margin-top:0;min-height:0;flex:1}
+.rm-grid{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.4rem;margin-top:0;min-height:0;flex:1}
 .rm-copy{flex:none;max-width:560px}
 .rm-copy .fds-kicker{font-size:1.05rem;margin-bottom:.05rem}
 .rm-copy .fds-h{font-size:clamp(1.15rem,2.1vw,1.35rem)}
-.rm-copy .fdg-d{margin:.25rem 0 .4rem}
-.rm-copy .fds-doors{justify-content:center;margin-top:.3rem;gap:.3rem 1.3rem}
-.rm-copy .fds-doors a{font-size:1.05rem}
+.rm-copy .fdg-d{margin:.15rem 0 .2rem;min-height:calc(3 * 1.55em)}   /* reserve the tallest desc (3 lines) in EVERY room — the scene height, and so the phone zoom, is identical across rooms (Drew 7/21) */
+.rm-copy .fds-doors{justify-content:center;margin-top:.15rem;gap:.3rem 1.3rem}
+.rm-copy .fds-doors a{font-size:.98rem}
 .rm-scene{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.45rem}
 .rm-scene .mcs-wrap{margin:0 auto;flex:none}
 /* room phones = the DEMO phone: same base width, same zoom-to-fit pipeline (Drew 7/20:
@@ -1245,6 +1245,28 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .slk-more[open] summary svg{transform:rotate(180deg)}
 .slk-more .slk-what{margin:.5rem auto 0}
 /* P4 · the cost chart — planning ranges with their provenance, desk material */
+/* ── the desk-card artifact (offer + lens, Drew 7/21) — claims as neumorphic tiles, not text rows.
+   One grammar: tea icon chip → mono label → Fraunces value → the claim's own note. One dark hero
+   tile per card (the tile that closes). Copy is IDENTICAL to the old rows — presentation only. */
+.art-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;width:100%;margin:.2rem 0 .9rem}
+.art-grid.g2{grid-template-columns:repeat(2,1fr)}
+.art-tile{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.3rem;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-out);padding:1rem .85rem .9rem}
+.art-ic{width:34px;height:34px;border-radius:50%;background:var(--tea);display:flex;align-items:center;justify-content:center;margin-bottom:.15rem}
+.art-ic svg{width:17px;height:17px;stroke:var(--olive);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.art-l{font:500 .62rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.art-v{font:600 1.18rem/1.15 var(--display);letter-spacing:-.015em;color:var(--ink)}
+.art-n{font:400 .72rem/1.5 var(--body);color:var(--muted)}
+.art-tile.hot{background:var(--dark-grad);border-color:transparent;box-shadow:0 6px 18px -5px rgba(67,68,42,.5)}
+.art-tile.hot .art-ic{background:rgba(212,223,158,.16)}
+.art-tile.hot .art-ic svg{stroke:var(--tea)}
+.art-tile.hot .art-l{color:rgba(212,223,158,.75)}
+.art-tile.hot .art-v{color:var(--tea)}
+.art-tile.hot .art-n{color:rgba(240,241,232,.72)}
+.art-note{font-family:var(--hand);font-size:1.12rem;font-weight:600;color:var(--olive);transform:rotate(-.5deg);display:inline-block;margin:0 auto .35rem;padding-bottom:4px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px}
+@media (max-width:640px){.art-grid,.art-grid.g2{grid-template-columns:1fr 1fr;gap:.5rem}.art-tile{padding:.75rem .6rem .7rem}.art-n{font-size:.66rem}.art-v{font-size:1.02rem}
+  .art-grid > .art-tile:last-child:nth-child(odd){grid-column:1/-1}   /* an odd last tile (the hero) spans the row — no orphan hole */
+}
 .fdc-row{display:grid;grid-template-columns:1fr auto;gap:.2rem .9rem;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.9rem 1.05rem;margin-bottom:.7rem}
 .fdc-job{font:600 .92rem/1.35 var(--body);color:var(--ink)}
 .fdc-range{font:600 .92rem/1.35 var(--mono);color:var(--olive);white-space:nowrap}
@@ -1458,7 +1480,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .abn-ask svg{width:16px;height:16px}
 /* the floating hamburger (mobile menu — Vesta parity, Drew 7/20) */
 /* the hamburger — Vesta's .vth-menu chip verbatim: 30px circle, --nm-sm rest, --nm-in press */
-.abn-ham{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:12px;z-index:125;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--nm);color:var(--ebony);border:none;box-shadow:var(--nm-sm);cursor:pointer}
+.abn-ham{position:absolute;top:10px;left:10px;z-index:3;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--nm);color:var(--ebony);border:none;box-shadow:var(--nm-sm);cursor:pointer}
 .abn-ham svg{width:15px;height:15px}
 .abn-ham:active{box-shadow:var(--nm-in)}
 /* ── the More sheet — the FULL desktop rail as a bottom sheet, so mobile is exactly as
@@ -1472,7 +1494,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 #absheet.open{transform:none}
 .abs-grab{display:none}
 .abs-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;padding-bottom:.4rem}
-.abs-glabel{display:inline-block;font-family:var(--hand);font-size:1.08rem;font-weight:600;color:var(--olive);transform:rotate(-2deg);line-height:1;margin:.85rem 0 .3rem .5rem}
+.abs-glabel{display:inline-block;font-family:var(--hand);font-size:1.08rem;font-weight:600;color:var(--olive);transform:rotate(-2deg);line-height:1;margin:.85rem 0 .3rem .5rem;padding-bottom:4px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px}   /* underlined section heads — the subject groups read at a glance (Drew 7/21) */
 .abs-scroll > .abs-glabel:first-child{margin-top:.3rem}
 .abs-item{display:flex;align-items:center;gap:.7rem;width:100%;border:none;background:none;cursor:pointer;border-radius:12px;padding:.62rem .55rem;font:500 .93rem/1.2 var(--body);letter-spacing:-.01em;color:var(--ebony);text-align:left}
 .abs-item:active{background:var(--white)}
@@ -1558,6 +1581,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   body.demo-open #acenter .fd .fd-chat{flex:none;margin-top:0}
   body.demo-open #acenter .fd .fd-demo-view{flex:1;min-height:0;display:flex;flex-direction:column}
   body.demo-open #acenter .fd .fd-screen{flex:1;min-height:0;margin-top:.4rem;display:flex;flex-direction:column}
+  /* screens whose header starts top-left (offer/lens/numbers/faq) clear the corner chips;
+     rooms center their content so they keep the tight top (phone keeps its height) */
+  body.demo-open #acenter .fd .fd-screen:not(:has(.rm-grid)){margin-top:2rem}
   /* mobile room copy compresses so the demo keeps the space (Drew 7/21) */
   body.demo-open .rm-copy .fds-h{font-size:1.1rem}
   body.demo-open .rm-copy .fdg-d{font-size:.78rem!important;line-height:1.5!important;margin:.15rem 0 .25rem}
@@ -1683,6 +1709,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <main id="acenter" role="main">
     <section class="fd" id="home">
       <div class="fd-inner">
+        <!-- mobile hamburger — INSIDE the card frame, mirroring the −/+ chip (it straddled the
+             card edge when fixed to the viewport — "slightly out of the frame", Drew 7/21) -->
+        <button id="abnHam" class="abn-ham" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h14M4 11h14M4 15.5h14"/></svg></button>
         <!-- mobile −/+ chip: parks/recalls the demo (two-way; Vesta .vth-menu parity, Drew 7/21) -->
         <button type="button" class="fd-flip" id="fdFlip" hidden aria-label="Show or hide the demo">−</button>
         <p class="fd-mat"><span class="kicker" id="fdMat">Atlas</span></p>
@@ -1716,10 +1745,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       </div>
     </section>
   </main>
-
-  <!-- ── MOBILE hamburger — the Vesta-parity menu (opens the full rail sheet). Lens + everything
-       else now lives behind this, so the dock stays symmetric (Drew 7/20). ── -->
-  <button id="abnHam" class="abn-ham" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h14M4 11h14M4 15.5h14"/></svg></button>
 
   <!-- ── MOBILE bottom nav — symmetric: two icons, the Ask Atlas pill, two icons (Drew 7/20) ── -->
   <nav id="abnav" aria-label="Atlas navigation">
@@ -2198,8 +2223,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     var r=ROOMS[k];if(!r)return assembleOffice();
     var scene=SCENES[k]||(k==='lead'?SIMS[0]:null);   /* Lead Response reuses the roofing sim — one copy, not two */
     showScreen('<div class="rm-grid">'+
-        '<div class="rm-copy"><span class="fds-kicker">inside the office</span><h3 class="fds-h">'+r.t+'</h3>'+
-        '<p class="fdg-d" style="font-size:.92rem;line-height:1.7">'+r.deep+'</p>'+
+        '<div class="rm-copy"><h3 class="fds-h">'+r.t+'</h3>'+   /* kicker dropped — chrome compresses so every room's phone lands the SAME size (Drew 7/21) */
+        '<p class="fdg-d" style="font-size:.92rem;line-height:1.55">'+r.deep+'</p>'+
         '<div class="fds-doors"><a data-door="office">← the office</a>'+
         (ROOM_DOORS[k]||'')+
         '<a href="'+CAL+'" target="_blank" rel="noopener">book the fit call →</a></div></div>'+
@@ -2248,10 +2273,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function offerVisual(){
     showScreen('<span class="fds-kicker">how the offer works</span><h3 class="fds-h">A managed service, not a software seat</h3>'+
       '<p class="fds-sub">The price follows the size of the front office we run for you — set on a 20-minute fit call, in plain numbers. No setup fee, no contract, nothing metered.</p>'+
-      '<div class="fdc-row"><div class="fdc-job">What’s included</div><div class="fdc-range">everything</div><p class="fdc-note">Every room of the office — answering, booking, follow-up, reviews, campaigns, discovery, the monthly receipt.</p></div>'+
-      '<div class="fdc-row"><div class="fdc-job">The term</div><div class="fdc-range">month to month</div><p class="fdc-note">No contract. Cancel anytime — the receipt has to keep earning its keep.</p></div>'+
-      '<div class="fdc-row"><div class="fdc-job">The guarantee</div><div class="fdc-range">30 days</div><p class="fdc-note">If the first month’s receipt doesn’t justify the fee, fire us. Thirty days, no contract.</p></div>'+
-      '<p class="fdc-method">If we’re not the right fit, we’ll say so first — the fit call is where we show it working and set the number in plain terms.</p>'+
+      '<div class="art-grid">'+
+        '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="12" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="12" width="7" height="7" rx="1.5"/><rect x="12" y="12" width="7" height="7" rx="1.5"/></svg></span><span class="art-l">What’s included</span><span class="art-v">Everything</span><p class="art-n">Every room of the office — answering, booking, follow-up, reviews, campaigns, discovery, the monthly receipt.</p></div>'+
+        '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><rect x="3" y="4" width="16" height="15" rx="2.5"/><path d="M3 9h16M7.5 2v4M14.5 2v4"/></svg></span><span class="art-l">The term</span><span class="art-v">Month to month</span><p class="art-n">No contract. Cancel anytime — the receipt has to keep earning its keep.</p></div>'+
+        '<div class="art-tile hot"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M11 2.5l7 3v5c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9v-5z"/><path d="M8 11l2.2 2.2L14.5 9"/></svg></span><span class="art-l">The guarantee</span><span class="art-v">30 days</span><p class="art-n">If the first month’s receipt doesn’t justify the fee, fire us. Thirty days, no contract.</p></div>'+
+      '</div>'+
+      '<span class="art-note">If we’re not the right fit, we’ll say so first — the fit call sets the number in plain terms.</span>'+
       '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a data-door="office">← the office</a></div>',
       wireScreenDoors);
   }
@@ -2260,10 +2287,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
        Same structural grammar as the offer room: rows, each claim on its own line. */
     showScreen('<span class="fds-kicker">the free workspace</span><h3 class="fds-h">Lens — own your record</h3>'+
       '<p class="fds-sub">Your business already generates proof every week — calls answered, estimates kept, jobs finished, reviews earned. Lens is the private workspace where that becomes a record you own.</p>'+
-      '<div class="fdc-row"><div class="fdc-job">What it is</div><div class="fdc-range">your record</div><p class="fdc-note">The operating record of your business, built from the tools you already run — nothing new to learn, nothing to migrate.</p></div>'+
-      '<div class="fdc-row"><div class="fdc-job">What you see</div><div class="fdc-range">every fact</div><p class="fdc-note">Each entry carries its source and can be corrected — you always know where a fact came from, and you hold the pen.</p></div>'+
-      '<div class="fdc-row"><div class="fdc-job">What you control</div><div class="fdc-range">all of it</div><p class="fdc-note">You decide exactly what a homeowner could ever see. Review it, hold it back, or publish it — nothing goes out without you.</p></div>'+
-      '<div class="fdc-row"><div class="fdc-job">What it costs</div><div class="fdc-range">free</div><p class="fdc-note">It’s your record. Owning it shouldn’t cost anything.</p></div>'+
+      '<div class="art-grid g2">'+
+        '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M4 3.5h10.5a2 2 0 0 1 2 2V18.5H6a2 2 0 0 1-2-2z"/><path d="M7.5 7.5h6M7.5 11h6"/></svg></span><span class="art-l">What it is</span><span class="art-v">Your record</span><p class="art-n">The operating record of your business, built from the tools you already run — nothing new to learn, nothing to migrate.</p></div>'+
+        '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M2.5 11s3-6 8.5-6 8.5 6 8.5 6-3 6-8.5 6-8.5-6-8.5-6z"/><circle cx="11" cy="11" r="2.6"/></svg></span><span class="art-l">What you see</span><span class="art-v">Every fact</span><p class="art-n">Each entry carries its source and can be corrected — you always know where a fact came from, and you hold the pen.</p></div>'+
+        '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M4 7h14M4 15h14"/><circle cx="8" cy="7" r="2.2"/><circle cx="14" cy="15" r="2.2"/></svg></span><span class="art-l">What you control</span><span class="art-v">All of it</span><p class="art-n">You decide exactly what a homeowner could ever see. Review it, hold it back, or publish it — nothing goes out without you.</p></div>'+
+        '<div class="art-tile hot"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M11.5 2.5l8 8-9 9-8-8v-6.5a2.5 2.5 0 0 1 2.5-2.5z"/><circle cx="7.5" cy="7.5" r="1.4"/></svg></span><span class="art-l">What it costs</span><span class="art-v">Free</span><p class="art-n">It’s your record. Owning it shouldn’t cost anything.</p></div>'+
+      '</div>'+
       '<div class="fds-doors"><a href="/lens">start free with Lens →</a><a data-door="office">← the office</a></div>',
       wireScreenDoors);
   }

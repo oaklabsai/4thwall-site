@@ -19,6 +19,7 @@
 <style>
 :root {
   --bg:#F0F1E8; --olive:#4A4B2F; --ebony:#6B654B; --tea:#D4DF9E; --white:#FFFFFF;
+  --ink:#12100E;   /* brand-ramp near-black — the Atlas conversation ink (chat parity, Drew 7/21) */
   --r-card:26px; --r-tile:22px; --r-pill:999px;
   /* row/tile shadows are ALIASED to the neumorphic duals — every soft surface in the app
      inherits the same-tone pillowed look from one place (the wallet-reference grammar) */
@@ -116,7 +117,10 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
      = jank). svh is the one unit that's always fully visible. */
   html, body { height:100svh; overflow:hidden; }
   body { position:fixed; top:0; left:0; right:0; height:100svh; width:100%; }
-  #app { min-height:0; height:100svh; overflow:hidden; }
+  /* fill the REAL viewport — the fixed 390px frame left #DDDECB bands either side on
+     wider phones (430pt Pro Max), which read as a second border (Drew 7/21). */
+  #app { width:100%; min-height:0; height:100svh; overflow:hidden; }
+  .psheet { width:100vw; }   /* the sheet spans the real width too — no side slivers on wide phones */
   .screen { min-height:0; height:100%; overflow:hidden; }
   .home-body { min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
   #deck { min-height:0; }
@@ -277,8 +281,13 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .vmsg .vbub { max-width:82%; border-radius:18px; border-bottom-left-radius:6px; padding:10px 13px; font-size:13.5px; line-height:1.5; color:var(--olive); background:var(--nm); box-shadow:var(--nm-sm); }
 .vmsg.me { justify-content:flex-end; }
 .vmsg.me .vbub { border-bottom-left-radius:18px; border-bottom-right-radius:6px; background:linear-gradient(180deg, rgba(74,75,47,.94), rgba(58,59,36,.9)); color:var(--white); box-shadow:4px 4px 10px rgba(74,75,47,.22), -3px -3px 8px rgba(255,255,255,.6); }
-.vthink { display:flex; align-items:center; gap:8px; margin:2px 0 12px 40px; font-size:11.5px; color:var(--ebony); animation:vmsgIn .3s ease both; }
-.vthink .sq { width:9px; height:9px; border-radius:3px; background:var(--tea); animation:sqSpin 1.1s ease-in-out infinite; }
+/* the thinking row — Atlas .fd-think cloned: three breathing dots + a quiet mono word */
+.vthink { display:flex; align-items:center; gap:.7rem; margin:8px 0 12px; font-family:var(--mono); font-size:.72rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); animation:vmsgIn .3s ease both; }
+.vthink .sq { width:auto; height:auto; border-radius:0; background:none; animation:none; display:inline-flex; gap:.35rem; }
+.vthink .sq i { width:6px; height:6px; border-radius:50%; background:var(--olive); opacity:.25; animation:vDot 1.2s ease-in-out infinite; }
+.vthink .sq i:nth-child(2) { animation-delay:.2s; }
+.vthink .sq i:nth-child(3) { animation-delay:.4s; }
+@keyframes vDot { 0%,100%{opacity:.18} 50%{opacity:.95} }
 @keyframes sqSpin { 0%,100%{ transform:rotate(0) scale(1);} 50%{ transform:rotate(135deg) scale(.82);} }
 .vthink .tl { color:var(--ebony); }
 /* the 2×2 starters — centred in the thread until the chat begins */
@@ -1038,18 +1047,13 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-bubble b, .vbub b { font-weight:700; color:var(--olive); }
 .vmsg.me .vbub b { color:inherit; }
 /* thinking — square two-inset loader + shimmering trace of thought (fires on real events) */
-.tc-think { display:flex; align-items:center; gap:10px; padding-top:3px; }
-.tc-sq { position:relative; width:19px; height:19px; flex-shrink:0; }
-.tc-sq span { position:absolute; border-radius:50px; box-shadow:inset 0 0 0 2px var(--olive); animation:tcSq 2.5s infinite; }
-.tc-sq span:nth-child(2) { animation-delay:-1.25s; }
-@keyframes tcSq {
-  0%{inset:0 10px 10px 0} 12.5%{inset:0 10px 0 0} 25%{inset:10px 10px 0 0} 37.5%{inset:10px 0 0 0}
-  50%{inset:10px 0 0 10px} 62.5%{inset:0 0 0 10px} 75%{inset:0 0 10px 10px} 87.5%{inset:0 0 10px 0} 100%{inset:0 10px 10px 0} }
-.tc-shimmer { font-family:var(--sans); font-size:13px; font-weight:500; letter-spacing:-.008em;
-  background:linear-gradient(90deg,#a4a288 0%,#a4a288 34%,#43452b 50%,#a4a288 66%,#a4a288 100%);
-  background-size:220% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
-  animation:tcShim 1.8s linear infinite; transition:opacity .2s; }
-@keyframes tcShim { 0%{background-position:210% 0} 100%{background-position:-210% 0} }
+/* the triage thinking row — same Atlas .fd-think clone as .vthink (one loading grammar) */
+.tc-think { display:flex; align-items:center; gap:.7rem; padding-top:3px; font-family:var(--mono); font-size:.72rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--ebony); }
+.tc-sq { flex-shrink:0; display:inline-flex; gap:.35rem; }
+.tc-sq span { width:6px; height:6px; border-radius:50%; background:var(--olive); opacity:.25; animation:vDot 1.2s ease-in-out infinite; }
+.tc-sq span:nth-child(2) { animation-delay:.2s; }
+.tc-sq span:nth-child(3) { animation-delay:.4s; }
+.tc-shimmer { transition:opacity .2s; }
 /* deck landing — real picks, real reasons (whyLine + record), photo tile w/ monogram fallback */
 .tc-deck { margin:2px 0 6px 37px; background:var(--nm); border:none; border-radius:24px; padding:17px 16px 18px; box-shadow:var(--nm-out); animation:tcMsgIn .4s var(--spring) both; }
 .tc-deck-kick { display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:9.5px; font-weight:500; letter-spacing:.13em; text-transform:uppercase; color:var(--ebony); margin-bottom:8px; }
@@ -1124,45 +1128,35 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-send.hot { background:var(--olive); color:var(--white); }
 .tc-err { font-size:11.5px; color:#9a3b2f; padding:2px 16px 4px 54px; }
 
-/* ═══ MOBILE: single-focus quote→response flow (Drew 7/20) ═══
-   Vesta's chat drops the two-sided iMessage bubbles for Atlas's rhythm — your words as a
-   handwritten quote, Vesta's reply as flowing serif right below, alternating down the column.
-   Restyle only; the thread/typer/deck machinery is untouched. Desktop keeps the bubbles. */
-@media (max-width:899.98px){
-  /* the composer's focus ring reads as an unwanted highlight on mobile (Drew 7/20) — both
-     composer surfaces (home vconv + triage) drop it; desktop keeps the accessibility ring. */
-  .home-search:focus-visible { outline:none; }
-  .tc-card:focus-within { border-color:rgba(74,75,47,.14); }
-}
-@media (max-width:899.98px){
-  .tc-thread { padding:18px 22px 6px; gap:22px; }
-  .tc-msg, .tc-msg.u, .tc-msg.v { flex-direction:column; align-items:stretch; gap:5px; max-width:100%; }
-  .tc-msg .tc-avatar { display:none; }                       /* no "them" label — the reply just lands */
-  /* your quote — Caveat, slanted, tea-marked, echoing Atlas's fd-you */
-  .tc-msg.u .tc-bubble { background:none; border:none; box-shadow:none; border-radius:0; padding:0; max-width:100%;
-    font-family:var(--script); font-weight:700; font-size:23px; line-height:1.24; color:var(--ebony); transform:rotate(-.5deg); }
-  .tc-msg.u .tc-bubble::before { content:'\201C'; }
-  .tc-msg.u .tc-bubble::after  { content:'\201D'; }
-  /* Vesta's reply — flowing serif, no bubble */
-  .tc-msg.v .tc-bubble { background:none; border:none; box-shadow:none; border-radius:0; padding:0;
-    font-family:var(--serif); font-size:17px; line-height:1.6; color:var(--olive); }
-  /* the resolving read keeps its pull-quote emphasis (tea quote-mark + italic) without a bubble */
-  .tc-msg.v .tc-bubble.tc-read { padding-left:20px; }
-  .tc-chips { padding-left:0; }
-  #tc-thread .v-handoff { margin-left:0; }
-
-  /* the HOME conversational chat (#vm-thread / .vmsg) — the surface the home composer opens —
-     gets the identical quote→response flow (this is the one visitors land on first). */
-  #s-home.vconv .vthread { padding:16px 14px 10px; }
-  .vmsg, .vmsg.me { flex-direction:column; align-items:stretch; gap:5px; margin-bottom:20px; max-width:100%; }
-  .vmsg .vav { display:none; }
-  .vmsg.me .vbub { background:none; border:none; box-shadow:none; border-radius:0; padding:0; max-width:100%;
-    font-family:var(--script); font-weight:700; font-size:23px; line-height:1.24; color:var(--ebony); transform:rotate(-.5deg); }
-  .vmsg.me .vbub::before { content:'\201C'; }
-  .vmsg.me .vbub::after  { content:'\201D'; }
-  .vmsg .vbub { background:none; border:none; box-shadow:none; border-radius:0; padding:0; max-width:100%;
-    font-family:var(--serif); font-size:17px; line-height:1.6; color:var(--olive); }
-}
+/* ═══ THE ATLAS CONVERSATION, CLONED (Drew 7/21 — both widths, one family) ═══
+   Vesta's chat is Atlas's chat: your words as a small centered Caveat quote (fd-you),
+   Vesta's reply as Fraunces 500 at Atlas's talking scale (fd-line), alternating down
+   the column. No bubbles, no avatars, no side-alignment — anywhere. Restyle only; the
+   thread/typer/deck machinery is untouched. Values are copied from atlas-next.html
+   (.fd.talking .fd-you / .fd-line) — change THERE first, mirror here. */
+.home-search:focus-visible { outline:none; }                 /* the ring read as a highlight (Drew 7/20) */
+.tc-card:focus-within { border-color:rgba(74,75,47,.14); }
+.tc-thread { padding:18px 22px 6px; gap:0; }
+.tc-msg, .tc-msg.u, .tc-msg.v { flex-direction:column; align-items:stretch; gap:5px; max-width:100%; }
+.tc-msg .tc-avatar { display:none; }                         /* no "them" label — the reply just lands */
+/* your quote — Atlas .fd-you: Caveat 600, centered, barely tilted */
+.tc-msg.u .tc-bubble, .vmsg.me .vbub { background:none; border:none; box-shadow:none; border-radius:0; padding:0; max-width:100%;
+  font-family:var(--script); font-weight:600; font-size:1.05rem; line-height:1.3; color:var(--ebony);
+  transform:rotate(-.4deg); text-align:center; margin:1.15rem auto .18rem; }
+.tc-msg.u .tc-bubble::before, .vmsg.me .vbub::before { content:'\201C'; }
+.tc-msg.u .tc-bubble::after,  .vmsg.me .vbub::after  { content:'\201D'; }
+/* Vesta's reply — Atlas .fd-line at talking scale: Fraunces 500, ink, roomy leading */
+.tc-msg.v .tc-bubble, .vmsg .vbub { background:none; border:none; box-shadow:none; border-radius:0; padding:0; max-width:100%;
+  font-family:var(--serif); font-weight:500; font-size:clamp(.98rem,1.7vw,1.15rem); line-height:1.65;
+  letter-spacing:-.012em; color:var(--ink); text-align:left; }
+/* the resolving read keeps its pull-quote emphasis without a bubble */
+.tc-msg.v .tc-bubble.tc-read { padding-left:20px; }
+.tc-chips { padding-left:0; }
+#tc-thread .v-handoff { margin-left:0; }
+/* the HOME conversational chat (#vm-thread / .vmsg) — identical flow */
+#s-home.vconv .vthread { padding:16px 14px 10px; }
+.vmsg, .vmsg.me { flex-direction:column; align-items:stretch; gap:5px; margin-bottom:14px; max-width:100%; }
+.vmsg .vav { display:none; }
 
 /* ===== SAVED LIST ===== */
 .favwrap { flex:1; min-height:0; overflow-y:auto; padding:2px 20px 130px; display:flex; flex-direction:column; gap:12px; }
@@ -1285,6 +1279,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms!important; animation-duration:.01ms!important; } }
 :focus-visible { outline:2.5px solid var(--tea); outline-offset:2px; }
+/* typing is not keyboard navigation — text fields never wear the tea ring (Drew 7/21:
+   "ugly yellow outline when typing a message"). Buttons/links keep the a11y ring. */
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none; }
 
 /* SEARCH OVERLAY */
 .vsearch { position:fixed; inset:0; z-index:80; background:rgba(74,75,47,.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity .25s; display:flex; flex-direction:column; align-items:center; padding:0 16px; }
@@ -3504,7 +3501,7 @@ function hstkAdvance(dir){
   // exit flies in the SAME direction the card was swiped — continuing the drag motion
   // (swipe-left advances forward = dir 1, and the card keeps going left, never snapping back
   // the opposite way). Arrows inherit it: next exits left, prev exits right.
-  front.style.transition = 'transform .26s cubic-bezier(.22,.61,.36,1), opacity .22s ease-in';
+  front.style.transition = 'transform .16s cubic-bezier(.22,.61,.36,1), opacity .14s ease-in';
   front.style.transform = 'translate('+(dir>0?-360:360)+'px,-4px) rotate('+(dir>0?-16:16)+'deg)';
   front.style.opacity = '0';
   front.style.pointerEvents = 'none';
@@ -3517,8 +3514,11 @@ function hstkAdvance(dir){
     void front.offsetWidth;
     hstkApply(true);
     hstkUpdateDots();
-    setTimeout(() => { hstkAnimating = false; }, 260);
-  }, 240);
+    // unlock as soon as the order has rotated — the promote-spring finishes visually on
+    // its own, and a fresh advance mid-ease just re-targets the transitions. The old
+    // 240+260ms lockout DROPPED rapid taps ("lag between switching options", Drew 7/21).
+    hstkAnimating = false;
+  }, 140);
 }
 // Retuned gesture: direction-locked (a 12px dead zone decides horizontal-swipe vs.
 // vertical-scroll intent so the deck never fights the page), rAF-batched (one transform
@@ -7058,7 +7058,7 @@ function exitConverseMobile(){
 const vmScroll=()=>{ const t=$('vm-thread'); if(t) t.scrollTop=t.scrollHeight; };
 function vmUser(text){ const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='vmsg me'; el.innerHTML='<span class="vbub"></span>'; el.querySelector('.vbub').textContent=text; t.appendChild(el); vmScroll(); }
 function vmVesta(){ const t=$('vm-thread'); if(!t) return null; const el=document.createElement('div'); el.className='vmsg'; el.innerHTML='<span class="vav">Vesta.</span><span class="vbub"></span>'; t.appendChild(el); vmScroll(); return el.querySelector('.vbub'); }
-function vmThink(label){ vmThinkOff(); const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='vthink'; el.id='vm-think'; el.innerHTML='<span class="sq"></span><span class="tl">'+esc(label)+'</span>'; t.appendChild(el); vmScroll(); }
+function vmThink(label){ vmThinkOff(); const t=$('vm-thread'); if(!t) return; const el=document.createElement('div'); el.className='vthink'; el.id='vm-think'; el.innerHTML='<span class="sq"><i></i><i></i><i></i></span><span class="tl">'+esc(label)+'</span>'; t.appendChild(el); vmScroll(); }
 function vmThinkWord(label){ const w=document.querySelector('#vm-think .tl'); if(w) w.textContent=label; else vmThink(label); }
 function vmThinkOff(){ const el=$('vm-think'); if(el) el.remove(); }
 // A hint tap opens the conversation with VESTA asking — it never speaks as the user. The
@@ -7365,7 +7365,7 @@ function tcThink(label){
   tcThinkOff();
   const t=$('tc-thread'); if(!t) return;
   const el=document.createElement('div'); el.className='tc-msg v'; el.id='tc-typing';
-  el.innerHTML='<div class="tc-avatar">Vesta.</div><div class="tc-think"><div class="tc-sq"><span></span><span></span></div><span class="tc-shimmer" id="tc-word">'+esc(label)+'</span></div>';
+  el.innerHTML='<div class="tc-avatar">Vesta.</div><div class="tc-think"><div class="tc-sq"><span></span><span></span><span></span></div><span class="tc-shimmer" id="tc-word">'+esc(label)+'</span></div>';
   t.appendChild(el); tcScroll();
 }
 function tcThinkWord(label){
