@@ -8,7 +8,7 @@
       simulation: true,
       publishable: false,
       contract: 'dual-source-trust-story-v1',
-      business: 'Northstar Roofing',
+      business: 'Redpoint Roofing',
       trade: 'Roofing',
       serviceArea: 'Fairfield County, CT',
       generatedAt: '2026-07-16T08:00:00Z'
@@ -44,7 +44,7 @@
     atlas: {
       verifiedJobs: 23,
       responseSample: 42,
-      medianResponse: '2.2 sec',
+      medianResponse: '12 sec',
       bookingSample: 26,
       bookingReliability: '88%',
       reviewsEarned: 8,
@@ -125,7 +125,7 @@
         shortQuestion: 'Inquiry handling',
         status: 'supported',
         sources: ['Atlas front office'],
-        answer: 'Across 42 answered inquiries in the last 90 days, Atlas recorded a median response of 2.2 seconds.',
+        answer: 'Across 42 answered inquiries in the last 90 days, Atlas recorded a median response of 12 seconds.',
         limitation: 'Response time describes the reply path Atlas runs, not availability, lead quality or workmanship.'
       },
       {
@@ -147,7 +147,7 @@
         limitation: 'Operational activity does not establish licensing, capacity, financial stability, safety or quality.'
       }
     ],
-    narrative: 'Northstar Roofing has provider-recorded roof replacement history. Through the Atlas front office 4THWALL runs for it, 42 inquiries were answered with a 2.2-second median response and 23 completed jobs were recorded.',
+    narrative: 'Redpoint Roofing has provider-recorded roof replacement history. Through the Atlas front office 4THWALL runs for it, 42 inquiries were answered with a 12-second median response and 23 completed jobs were recorded.',
     globalLimitation: 'This explanation is not a quality score, endorsement, ranking advantage, payment claim, safety claim or guarantee.'
   });
 })();
