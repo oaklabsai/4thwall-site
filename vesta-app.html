@@ -1144,6 +1144,18 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   .tc-msg.v .tc-bubble.tc-read { padding-left:20px; }
   .tc-chips { padding-left:0; }
   #tc-thread .v-handoff { margin-left:0; }
+
+  /* the HOME conversational chat (#vm-thread / .vmsg) — the surface the home composer opens —
+     gets the identical quote→response flow (this is the one visitors land on first). */
+  #s-home.vconv .vthread { padding:16px 14px 10px; }
+  .vmsg, .vmsg.me { flex-direction:column; align-items:stretch; gap:5px; margin-bottom:20px; max-width:100%; }
+  .vmsg .vav { display:none; }
+  .vmsg.me .vbub { background:none; border:none; box-shadow:none; border-radius:0; padding:0; max-width:100%;
+    font-family:var(--script); font-weight:700; font-size:23px; line-height:1.24; color:var(--ebony); transform:rotate(-.5deg); }
+  .vmsg.me .vbub::before { content:'\201C'; }
+  .vmsg.me .vbub::after  { content:'\201D'; }
+  .vmsg .vbub { background:none; border:none; box-shadow:none; border-radius:0; padding:0; max-width:100%;
+    font-family:var(--serif); font-size:17px; line-height:1.6; color:var(--olive); }
 }
 
 /* ===== SAVED LIST ===== */
@@ -7063,6 +7075,8 @@ function vmWindow(){
 async function vmTurn(text){
   if(vmDone||vmBusy) return; vmBusy=true; vmTurns++;
   hideResumeBand();
+  // drop the keyboard once the message is sent so the reply lands in a full-height view (Drew 7/20) — mobile only
+  if (window.matchMedia && window.matchMedia('(max-width:899.98px)').matches){ const _kb=$('hs-cin'); if(_kb) _kb.blur(); }
   const st=$('vstarters'); if(st) st.classList.remove('show');
   vmUser(text); vmMsgs.push({role:'user',content:text});
   const seq=traceSeq(text, vmDeckShown);
