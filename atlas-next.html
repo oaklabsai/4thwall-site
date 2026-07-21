@@ -1204,7 +1204,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .fdread.on i.keep{opacity:1;transform:scale(1.8);background:#cdd88f;box-shadow:0 0 0 4px rgba(212,223,158,.4)}
 .fdread-sub{font:500 .7rem/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--dim);transition:color .4s}
 /* doors under an assembled screen — handwritten so they read as invitations, not fine print (Drew 7/20) */
-.fds-doors{display:flex;gap:.5rem 1.6rem;flex-wrap:wrap;margin-top:1.1rem}
+.fds-doors{display:flex;justify-content:center;gap:.5rem 1.6rem;flex-wrap:wrap;margin-top:1.1rem}   /* centered everywhere (Drew 7/21) — one language with the rooms */
 .fds-doors a{font-family:var(--hand);font-weight:600;font-style:italic;font-size:1.18rem;line-height:1.25;color:var(--olive);cursor:pointer;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:4px;padding-bottom:.1rem;transition:color .18s}
 .fds-doors a:hover{color:var(--ink)}
 /* a room = its story beside its proof (the empty right half was doing nothing);
@@ -2105,8 +2105,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   };
   /* one real, checkable artifact per room where one exists — real beats simulated */
   var ROOM_DOORS={
-    lead:'<a data-door="sim">every trade — pick yours →</a><a href="/missed-calls">try it live →</a>',
-    storm:'<a data-door="numbers">what a storm week costs you →</a>',
+    /* lead has no entry — the Lead Response room is the informational room now (leadVisual),
+       and its doors live in that layout; the sim itself is "Watch a missed call" (Drew 7/21) */
+    storm:'<a data-door="numbers" data-panel="storm">what a storm week costs you →</a>',
     local:'<a href="/vesta">the homeowner side of your record →</a>'
   };
   var simGen=0, simIdx=0;
@@ -2221,7 +2222,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
   function roomVisual(k){
     var r=ROOMS[k];if(!r)return assembleOffice();
-    var scene=SCENES[k]||(k==='lead'?SIMS[0]:null);   /* Lead Response reuses the roofing sim — one copy, not two */
+    if(k==='lead')return leadVisual();   /* the informational room — the sim lives in "Watch a missed call", not here twice (Drew 7/21) */
+    var scene=SCENES[k]||null;
     showScreen('<div class="rm-grid">'+
         '<div class="rm-copy"><h3 class="fds-h">'+r.t+'</h3>'+   /* kicker dropped — chrome compresses so every room's phone lands the SAME size (Drew 7/21) */
         '<p class="fdg-d" style="font-size:.92rem;line-height:1.55">'+r.deep+'</p>'+
@@ -2234,6 +2236,22 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         wireScreenDoors();
         if(scene){mcsPlay(scene);fitMcsPhone();setTimeout(fitMcsPhone,60)}   /* same size pipeline as the 20-second demo */
       });
+  }
+  /* the Lead Response room — INFORMATIONAL by design (Drew 7/21): the live sim already has its
+     own room ("Watch a missed call"), so this one explains what lead response IS and why it
+     decides jobs, in the desk-card grammar, and ends by walking you into that demo. Copy stays
+     inside the pack: the hedged 15-second line is the only performance claim. */
+  function leadVisual(){
+    showScreen('<span class="fds-kicker">the front door of the office</span><h3 class="fds-h">Lead Response</h3>'+
+      '<p class="fds-sub">When you can’t pick up — on a roof, under a sink, driving — the job that just called doesn’t wait. Lead response is Atlas answering in your name, so the customer never starts calling down the list.</p>'+
+      '<div class="art-grid">'+
+        '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M4 4c0 8 6 14 14 14l1-4-4.5-1.5L12 15c-2.5-1.2-4.3-3-5.5-5.5l2.5-2.5L7.5 2.5 4 4z"/><path d="M14 3l5 5M19 3l-5 5"/></svg></span><span class="art-l">The moment</span><span class="art-v">A missed call</span><p class="art-n">Most callers don’t leave a voicemail — they call the next name on the list. The job is decided in the minutes you’re on a ladder.</p></div>'+
+        '<div class="art-tile hot"><span class="art-ic"><svg viewBox="0 0 22 22"><circle cx="11" cy="12" r="7.5"/><path d="M11 8v4l3 2M8.5 2h5"/></svg></span><span class="art-l">The reply</span><span class="art-v">15 seconds</span><p class="art-n">Supported texts and missed-call follow-ups typically get a first reply in 15 seconds after go-live — your prices, your service area, your name.</p></div>'+
+        '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><rect x="3" y="4" width="16" height="15" rx="2.5"/><path d="M3 9h16M7.5 2v4M14.5 2v4"/><path d="M7.5 13.5l2.3 2.3 4.5-4.5"/></svg></span><span class="art-l">The handoff</span><span class="art-v">Qualified</span><p class="art-n">It asks what happened, where, and how urgent — and can put the estimate on your calendar with the whole story attached, so you never ask twice.</p></div>'+
+      '</div>'+
+      '<span class="art-note">You keep your number, and you see every conversation live — nothing runs where you can’t watch it.</span>'+
+      '<div class="fds-doors"><a data-door="sim">watch a missed call happen →</a><a href="/missed-calls">try it live →</a><a data-door="office">← the office</a></div>',
+      wireScreenDoors);
   }
   /* zoom the whole phone (uniform, no reflow) so it is FULLY VISIBLE at a glance, both widths
      (Drew 7/21: no floor that forces overflow, no scrollbox). In a room, the .rm-scene flex box
@@ -2464,11 +2482,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
 
   function wireScreenDoors(){
-    var o=screen.querySelector('[data-door="office"]');if(o)o.addEventListener('click',function(e){e.preventDefault();openTab('office')});
-    var s=screen.querySelector('[data-door="sim"]');if(s)s.addEventListener('click',function(e){e.preventDefault();openTab('sim')});
-    var l=screen.querySelector('[data-door="lens"]');if(l)l.addEventListener('click',function(e){e.preventDefault();openTab('lens')});
-    var f=screen.querySelector('[data-door="fitcall"]');if(f)f.addEventListener('click',function(e){e.preventDefault();openTab('fitcall')});
-    var c=screen.querySelector('[data-door="contact"]');if(c)c.addEventListener('click',function(e){e.preventDefault();openTab('contact')});
+    /* generic by construction (Drew 7/21: the storm room's "numbers" door shipped unwired — a
+       dead tap; the per-door querySelector also only wired the FIRST fitcall door, leaving the
+       storm/office calculator CTAs dead). Every [data-door] routes through openTab, so a new
+       door can never ship dead again. data-panel rides along (the storm door lands on its own
+       calculator panel). */
+    [].forEach.call(screen.querySelectorAll('[data-door]'),function(a){
+      a.addEventListener('click',function(e){e.preventDefault();
+        var p=a.getAttribute('data-panel');
+        openTab(a.getAttribute('data-door'),p?{panel:p}:null)});
+    });
   }
   function assembleScreen(s,args){
     if(s==='office')return assembleOffice();
@@ -2502,13 +2525,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     faq:'The common questions, answered plainly — what’s included, whether it’s another tool to learn, how fast it goes live, and how to stop.',
     contact:'Tell us what’s on fire — a message reaches the founder directly. Or book the fit call any time.'
   };
-  function openTab(key){
+  function openTab(key,args){
     var _fdh=$('home');if(_fdh)_fdh.classList.toggle('sim-open',key==='sim');
     if(key==='office')return walkOffice();
     if(key&&key.indexOf('room:')===0)return enterRoom(key.slice(5));
     setTalking(true);setActive(key);whereNow=key;phRoom(key);setDemoMode(true);toTop();
     if(narr)narr.innerHTML='';   /* no per-room message — the screen speaks for itself (Drew 7/21) */
-    assembleScreen(key);
+    assembleScreen(key,args||null);
   }
 
   /* ══ THE MODEL LOOP — typed asks -> /api/atlas ══

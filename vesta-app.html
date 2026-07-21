@@ -2454,7 +2454,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
                 <!-- mobile: 3 handwritten hints on how to text Vesta, right above the composer -->
                 <div class="vst-hints" id="vst-hints" aria-label="Try texting Vesta">
                   <button class="vst-hint" type="button" data-open="Okay — tell me what&rsquo;s happening. What broke, where, and how urgent is it? I&rsquo;ll point you to who actually picks up.">Describe an emergency</button>
-                  <button class="vst-hint" type="button" data-open="Happy to check. Who are you looking at &mdash; a name or a company &mdash; and what do you already know about them?">Vet a contractor</button>
+                  <button class="vst-hint" type="button" data-vet data-open="Happy to check. Give me the name &mdash; the company or the person &mdash; and I&rsquo;ll pull what Fairfield County&rsquo;s record shows.">Vet a contractor</button>
                   <button class="vst-hint" type="button" data-open="Let&rsquo;s think it through. What are you hoping to take on &mdash; and are you just weighing the idea, or closer to making it happen?">Think through a project</button>
                 </div>
                 <div class="vst-grid">
@@ -7036,7 +7036,7 @@ let vmBusy=false, vmDone=false, vmMsgs=[], vmTurns=0, vmDeckShown=false, vmDeckK
 function enterConverseMobile(noFocus){
   const h=$('s-home'); if(!h) return;
   vmMsgs=[]; vmTurns=0; vmDone=false; vmBusy=false; vmDeckShown=false; vmDeckKey='';
-  vmFocusName=null; vmLastDeck=null;   // a fresh conversation carries no firm-focus or prior deck
+  vmFocusName=null; vmLastDeck=null; vmVetPending=false;   // a fresh conversation carries no firm-focus, prior deck, or armed vet lane
   const th=$('vm-thread'); if(th){ th.innerHTML=''; th.classList.remove('tc-resolved'); }
   const inp=$('hs-cin'); if(inp){ inp.value=''; inp.disabled=false; inp.placeholder='Describe it in your own words…'; }
   h.classList.add('vconv');
@@ -7072,6 +7072,92 @@ function vmVestaOpener(promptText){
   const bubble=vmVesta(); if(bubble){ const typer=mkTyper(bubble, vmScroll); typer.push(promptText); }
   const inp=$('hs-cin'); if(inp){ inp.disabled=false; inp.focus(); }
 }
+// ── THE VET LANE (Drew 7/21 — the 3 scenarios must actually lead somewhere) ──
+// "Vet a contractor" arms a ONE-SHOT name lookup: the next message resolves against the
+// client's own roster (contractors + silentContractors — the full county field, already in
+// memory). A confident hit answers with Vesta's REAL read and injects the same "focus" turn
+// Ask-Vesta-from-a-profile uses, so the brain is grounded on the actual firm from the next
+// turn on. Honest misses: a silent firm gets "I track them but won't guess"; an unknown name
+// gets the no-record answer + the vetting checklist + the offer of matched picks. Anything
+// that doesn't read as a name falls through to the normal model turn. Deterministic,
+// client-side, zero latency — the same house pattern as the 911/atlas guards.
+let vmVetPending = false;
+const VET_GEN = ['llc','inc','co','company','corp','corporation','the','and','of','ct','connecticut','county','fairfield','llp','ltd','sons','son','bros','brothers','a','i'];
+const VET_TRADE = ['roofing','roof','roofs','roofers','roofer','hvac','heating','cooling','air','mechanical','plumbing','plumber','plumbers','electric','electrical','electrician','paving','asphalt','sealcoating','lawn','landscaping','landscape','landscapes','painting','paint','painters','masonry','mason','tree','trees','flooring','floors','windows','doors','pool','pools','construction','contracting','contractor','contractors','improvement','improvements','remodeling','exteriors','general','home','services','service','group','care','pro','pros'];
+function vetNorm(s){ return String(s||'').toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
+function vetResolve(text){
+  const q = vetNorm(text);
+  if (!q || q.length < 3) return null;
+  const qTok = q.split(' ').filter(w => VET_GEN.indexOf(w)===-1);   // keep single letters — "K&J" norms to "k and j", the initials ARE the name
+  if (!qTok.length || qTok.every(w => VET_TRADE.indexOf(w)!==-1)) return null;   // all generic/trade words → not a name
+  const pool = contractors.concat(Array.isArray(silentContractors) ? silentContractors : []);
+  let best=null, bestScore=0, tie=false;
+  for (const c of pool){
+    const n = vetNorm(c.name); if (!n) continue;
+    const nTok = n.split(' ').filter(w => VET_GEN.indexOf(w)===-1);
+    let score = 0;
+    if (q.indexOf(n)!==-1 || n.indexOf(q)!==-1) score = 100;   // whole-name containment either way
+    else {
+      let overlap=0, distinct=0;
+      for (const t of nTok){ if (qTok.indexOf(t)!==-1){ overlap++; if (VET_TRADE.indexOf(t)===-1) distinct++; } }
+      if (distinct>=1 && (overlap>=2 || nTok.length<=2)) score = overlap*10 + distinct;
+    }
+    if (score>bestScore){ best=c; bestScore=score; tie=false; }
+    else if (score===bestScore && score>0 && best && vetNorm(best.name)!==n) tie=true;
+  }
+  if (!best || !bestScore || (tie && bestScore<100)) return null;   // ambiguous → honest miss beats a wrong firm
+  // strong = whole-name containment; a weak token hit ("who to call" → "Call The Plumber")
+  // only counts when the INPUT reads as a name — vmVetTurn enforces that.
+  return { firm: best, strong: bestScore >= 100 };
+}
+function vmVetChips(items){
+  const t=$('vm-thread'); if(!t) return;
+  const wrap=document.createElement('div'); wrap.className='tc-chips';
+  items.forEach(pair=>{ const bt=document.createElement('button'); bt.className='tc-chip'; bt.type='button'; bt.innerHTML='<span>'+esc(pair[0])+'</span>'; bt.onclick=()=>{ wrap.remove(); pair[1](); }; wrap.appendChild(bt); });
+  t.appendChild(wrap); vmScroll();
+}
+function vmVetTurn(text){
+  vmVetPending = false;
+  const t0 = String(text).trim();
+  // problem-shaped or question-shaped input isn't a name — unless the WHOLE firm name is
+  // contained in it ("what do you know about K&J Tree Service?"), the normal turn owns it
+  const nameish = t0.split(/\s+/).length<=6 && !/\?\s*$/.test(t0) && !/^(is|are|does|do|should|why|what|how|can|could|i|we|my|our|hi|hey|hello)\b/i.test(t0);
+  const r = vetResolve(text);
+  const hit = r && (r.strong || nameish) ? r.firm : null;
+  if (!hit && !nameish) return false;
+  vmBusy = true;
+  hideResumeBand();
+  if (window.matchMedia && window.matchMedia('(max-width:899.98px)').matches){ const _kb=$('hs-cin'); if(_kb) _kb.blur(); }
+  const st=$('vstarters'); if(st) st.classList.remove('show');
+  vmUser(text); vmMsgs.push({role:'user',content:text});
+  vmThink('Checking the county record');
+  setTimeout(()=>{
+    vmThinkOff();
+    let say, chips=null;
+    if (hit && hit.read){
+      say = 'I do track them — '+hit.name+(hit.town ? ', '+hit.town : '')+'. Here’s my read:\n\n'+readClip(hit.read)+'\n\nAsk me anything from here — whether their record fits your job, what they’re known for, or what to ask before you hire.';
+      vmMsgs.push({role:'assistant',content:JSON.stringify({ say:'Found '+hit.name+' — sharing Vesta’s read from the county record.', focus:{ name:hit.name, vestas_read:readClip(hit.read), known_for:(hit.knownFor||[]).slice(0,3) } }).slice(0,2900)});
+      vmFocusName = hit.name;
+      vmPlan = { kind:'firm', trade:hit.trade||'', tradeLabel:tradeLabelOf(hit.trade||''), firm:{ name:hit.name, read:hit.read||'', knownFor:(hit.knownFor||[]).slice(0,4) } };
+      const inp=$('hs-cin'); if(inp) inp.placeholder='Ask about '+hit.name+'…';
+      chips=[['Open their full profile →', ()=>openProfile(hit.placeId)]];
+    } else if (hit){
+      say = hit.name+' is in the field I track, but I don’t have a full evidence read on them yet — and I’d rather say less than guess. What I can do: line up the firms whose records I can stand behind for the same kind of work. What’s the job?';
+      vmMsgs.push({role:'assistant',content:JSON.stringify({ say:say.slice(0,220), resolved:null })});
+    } else {
+      say = 'I don’t have that name in my Fairfield County record — could be a spelling thing, or they work outside the field I track. Either way, three checks worth running on anyone:\n- **Registered** with the state under their real business name\n- An **itemized quote** you can compare line by line\n- **No big cash deposit** up front\n\nAnd if you tell me the job, I’ll line up pros whose records I can actually show you.';
+      vmMsgs.push({role:'assistant',content:JSON.stringify({ say:'No record of that name; shared the vetting checklist and offered matched picks.', resolved:null })});
+      chips=[['Browse every trade →', ()=>openDirectorySheet()]];
+    }
+    const b=vmVesta();
+    if (b){
+      const ty=mkTyper(b, vmScroll); ty.push(say);
+      setTimeout(()=>{ ty.finish(say).then(()=>{ if(chips) vmVetChips(chips); vmBusy=false; if(window.cue)cue('chime'); }); }, 1600);
+    } else { vmBusy=false; }
+    persistThread();
+  }, 800);
+  return true;
+}
 // The model's window: the last 12 turns — but the assistant turn carrying "picks" (or
 // "focus") is LOAD-BEARING: the server detects follow-up/focus mode by its presence, and
 // it holds everything the model knows about the shown picks. On a long thread a plain
@@ -7088,7 +7174,9 @@ function vmWindow(){
   return w;
 }
 async function vmTurn(text){
-  if(vmDone||vmBusy) return; vmBusy=true; vmTurns++;
+  if(vmDone||vmBusy) return;
+  if(vmVetPending && vmVetTurn(text)) return;   // the armed vet lane owns this turn (name-shaped input only; else falls through)
+  vmBusy=true; vmTurns++;
   hideResumeBand();
   // drop the keyboard once the message is sent so the reply lands in a full-height view (Drew 7/20) — mobile only
   if (window.matchMedia && window.matchMedia('(max-width:899.98px)').matches){ const _kb=$('hs-cin'); if(_kb) _kb.blur(); }
@@ -7832,8 +7920,11 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
     if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(text);
   }));
   // mobile handwritten hints (.vst-hint) open with VESTA asking — the user then types their own.
+  // The vet hint additionally ARMS the one-shot name lookup (the vet lane), so the promise
+  // "I'll pull what the record shows" is actually kept on the very next message.
   document.querySelectorAll('#vst-hints .vst-hint').forEach(b => b.addEventListener('click', ()=>{
     if(!TRI_OK){ openSearch(); return; }
+    vmVetPending = b.hasAttribute('data-vet');
     vmVestaOpener(b.dataset.open);
   }));
   // the 4 example messages (desktop) — tapping one opens the real conversation and
