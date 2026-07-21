@@ -1,0 +1,39 @@
+# Chat-brain guardrails — the standing regression net for both hemispheres (2026-07-20).
+# Two jobs with deliberately different blocking semantics:
+#   guards       — deterministic, offline, tests the COMMITTED governor logic. Hard gate on
+#                  every push touching the brains + daily. A failure here is a real code bug.
+#   live-battery — hits DEPLOYED prod (both /api/triage + /api/atlas), daily. Fails only on a
+#                  genuine 0/N dead-end (cred-battery exits non-zero on hard failures), so the
+#                  free NIM models' normal per-sample variance (a 2/3) never cries wolf. This
+#                  is what catches SILENT MODEL DRIFT — the hosted models changing under us
+#                  between deploys, which on-deploy checks can't see.
+name: chat-guardrails
+
+on:
+  push:
+    branches: [main]
+    paths: ['api/**', 'scripts/**', '.github/workflows/chat-guardrails.yml']
+  schedule:
+    - cron: '0 13 * * *'      # daily ~09:00 ET / 06:00 PT — a morning drift check
+  workflow_dispatch: {}        # run on demand from the Actions tab
+
+jobs:
+  guards:
+    name: governor unit suite (offline, blocking)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: node scripts/guard-units.mjs
+
+  live-battery:
+    name: live credibility battery (prod, daily)
+    # skip on push (the new code isn't deployed yet — it'd test stale prod); run on schedule/dispatch
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: node scripts/cred-battery.mjs

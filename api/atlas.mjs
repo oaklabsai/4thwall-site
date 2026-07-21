@@ -17,6 +17,7 @@
 const MODEL = process.env.TRIAGE_MODEL || 'nvidia/nemotron-3-super-120b-a12b';
 const MODEL_FALLBACK = process.env.TRIAGE_MODEL_FALLBACK || 'z-ai/glm-5.2';
 const MODELS = MODEL_FALLBACK && MODEL_FALLBACK !== MODEL ? [MODEL, MODEL_FALLBACK] : [MODEL];
+import { rateOk } from './_ratelimit.mjs';
 const isNemotron = m => /nemotron/.test(m);
 const ENDPOINT = 'https://integrate.api.nvidia.com/v1/chat/completions';
 const FIRST_TOKEN_CEILING_MS = 20000;
@@ -352,6 +353,8 @@ export default async function handler(req, res){
     return res.end(JSON.stringify({ ok: alive }));
   }
   if (req.method !== 'POST'){ res.statusCode = 405; return res.end('method not allowed'); }
+  // per-instance abuse floor — see api/_ratelimit.mjs (shared NIM pool; fail-open)
+  if (!rateOk(req)){ res.statusCode = 429; res.setHeader('Content-Type','application/json'); res.setHeader('Retry-After','30'); return res.end('{"error":"rate"}'); }
 
   let messages, where = null, clientAud = null;
   try {

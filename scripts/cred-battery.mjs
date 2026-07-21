@@ -74,3 +74,7 @@ for(const [tag,fn,msgs,ok] of CASES){
   if(worst)console.log(`   miss: ${JSON.stringify({mode:worst.mode,resolved:worst.resolved,ask:worst.ask,screen:worst.screen,say:(worst.say||'').slice(0,150)})}`);
 }
 console.log(hard?`\n${hard} case(s) at 0/${N} — real defects remain`:'\nNo hard failures.');
+// exit non-zero ONLY on a hard failure (a case at 0/N) so CI catches genuine drift while
+// tolerating NIM's normal per-sample variance (a 2/N is not a regression). See the daily
+// chat-guardrails workflow.
+process.exit(hard ? 1 : 0);
