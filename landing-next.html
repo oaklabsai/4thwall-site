@@ -775,32 +775,16 @@ a,button{transition:transform .14s}
 .pn{font-family:var(--hand);font-weight:600;color:var(--olive);font-size:1.14em;line-height:.9;white-space:nowrap;padding:0 .05em 3px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px}
 
-/* ═══ ATLAS COVERFLOW — vanilla port of the framer-motion CardCarousel (Drew 7/21).
-   A deck of the whole front office; active card centered + lifted, neighbours tilt
-   back, the set fans on hover. Transforms applied in JS (wireAtlasCarousel). ═══ */
-.acar{--acw:230px;max-width:var(--max);margin:0 auto;display:flex;flex-direction:column;align-items:center;-webkit-user-select:none;user-select:none;
-  overflow-x:clip;overflow-y:visible}  /* clip the wide in-flow track horizontally; keep the hover fan-up visible */
-.acar-stage{position:relative;height:clamp(250px,32vw,290px);width:var(--acw);display:flex;align-items:center;justify-content:flex-start;overflow:visible;perspective:1400px}
-.acar-track{display:flex;align-items:center;transition:transform .8s var(--spring);will-change:transform}
-.acar-card{flex:none;width:var(--acw);height:clamp(220px,28vw,258px);border-radius:var(--r-card);padding:1.5rem 1.4rem;display:flex;flex-direction:column;cursor:pointer;transform-origin:center center;backface-visibility:hidden;
-  background:var(--dark-grad);color:var(--white);box-shadow:0 2px 6px rgba(40,41,22,.2),0 22px 48px -12px rgba(40,41,22,.45),inset 0 1px 0 rgba(255,255,255,.1);
-  transition:transform .8s var(--spring),box-shadow .4s ease,opacity .5s ease}
-.acar-card.on{box-shadow:0 4px 14px rgba(40,41,22,.3),0 30px 60px -14px rgba(40,41,22,.6),inset 0 1px 0 rgba(255,255,255,.14),0 0 0 1.5px rgba(212,223,158,.4)}
-.acar-num{font:600 .6rem/1 var(--mono);letter-spacing:.18em;color:var(--tea);opacity:.7}
-.acar-ic{width:44px;height:44px;border-radius:13px;background:rgba(212,223,158,.14);display:grid;place-items:center;color:var(--tea);margin:1.05rem 0 auto}
-.acar-card.on .acar-ic{background:var(--tea-grad);color:var(--olive)}
-.acar-ic svg{width:22px;height:22px}
-.acar-t{font-family:var(--display);font-size:1.16rem;font-weight:500;letter-spacing:-.02em;line-height:1.12;margin-bottom:.4rem}
-.acar-d{font:400 .8rem/1.5 var(--body);color:rgba(255,255,255,.66)}
-.acar-nav{display:flex;align-items:center;gap:.9rem;margin-top:1.9rem}
-.acar-arrow{width:40px;height:40px;border-radius:50%;background:var(--nm);box-shadow:var(--nm-sm);color:var(--olive);display:grid;place-items:center;transition:box-shadow .2s,transform .15s}
-.acar-arrow:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
-.acar-arrow:active{box-shadow:var(--nm-in);transform:none}
-.acar-arrow svg{width:18px;height:18px}
-.acar-dots{display:flex;align-items:center;gap:.4rem}
-.acar-dot{height:6px;width:6px;border-radius:99px;background:rgba(74,75,47,.25);cursor:pointer;transition:width .3s var(--spring),background .3s}
-.acar-dot.on{width:22px;background:var(--olive)}
-@media(max-width:640px){.acar{--acw:212px}}
+/* ═══ FEATURE MARQUEE — vanilla port of Originkit's CurvedLoop (Drew 7/21).
+   The whole offer arced across a curved textPath, auto-scrolling + drag-nudgeable,
+   fading at both edges. Replaces the coverflow deck. Driven by wireFeatureBanner(). ═══ */
+.fbanner{position:relative;width:100%;height:clamp(180px,23vw,280px);margin:.4rem auto 0;overflow:hidden}
+.fb-svg{position:absolute;inset:0;width:100%;height:100%;display:block;
+  fill:var(--olive);font-family:var(--display);font-weight:500;font-size:56px;letter-spacing:.005em;
+  visibility:hidden;-webkit-user-select:none;user-select:none}
+.fb-svg #featText{cursor:grab;touch-action:pan-y}
+.fb-svg #featText:active{cursor:grabbing}
+@media(prefers-reduced-motion:reduce){.fb-svg #featText{cursor:default}}
 
 /* the thesis block under a deck — Atlas + Vesta share it */
 .atx{max-width:660px;margin:3rem auto 0;text-align:center}
@@ -958,24 +942,22 @@ a,button{transition:transform .14s}
     <p class="sec-sub"><span class="pn">Atlas</span> runs every part of the business that happens around the job — the answering, the qualifying, the booking, the follow-up, the reviews, the campaigns — as one managed service, in your name.</p>
   </div>
 
-  <!-- coverflow deck of the offer — the breadth is the point (vanilla CardCarousel port) -->
-  <div class="acar rv" id="atlasCar">
-    <div class="acar-stage">
-      <div class="acar-track" id="atlasTrack">
-        <div class="acar-card"><span class="acar-num">01</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Missed-call recovery</h3><p class="acar-d">A call you can’t take gets a text back in your name — in seconds, day or night.</p></div></div>
-        <div class="acar-card"><span class="acar-num">02</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 13l2 2 4-4"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Lead qualification</h3><p class="acar-d">What happened, where, how urgent — so you get a real job, not a voicemail to chase.</p></div></div>
-        <div class="acar-card"><span class="acar-num">03</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Estimates booked</h3><p class="acar-d">Qualified estimates land on your calendar with the details already attached.</p></div></div>
-        <div class="acar-card"><span class="acar-num">04</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Follow-up</h3><p class="acar-d">The quote that went quiet gets a nudge — persistent, polite, never forgotten.</p></div></div>
-        <div class="acar-card"><span class="acar-num">05</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Review requests</h3><p class="acar-d">The ask goes out the moment the job closes, while the work is still fresh.</p></div></div>
-        <div class="acar-card"><span class="acar-num">06</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Seasonal &amp; storm campaigns</h3><p class="acar-d">When a storm hits or a month runs slow, past customers hear from you first.</p></div></div>
-        <div class="acar-card"><span class="acar-num">07</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">The monthly receipt</h3><p class="acar-d">A record of what came in, got answered, and got booked. Measured, not claimed.</p></div></div>
-      </div>
-    </div>
-    <div class="acar-nav">
-      <button class="acar-arrow" data-dir="-1" aria-label="Previous surface"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <div class="acar-dots" id="atlasDots"></div>
-      <button class="acar-arrow" data-dir="1" aria-label="Next surface"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-    </div>
+  <!-- the offer on a curved marquee (vanilla port of Originkit CurvedLoop) — the breadth, at a glance -->
+  <div class="fbanner rv" role="img" aria-label="Atlas features: missed-call recovery, lead qualification, estimates booked, follow-up, review requests, seasonal and storm campaigns, the monthly receipt">
+    <svg class="fb-svg" viewBox="0 0 1440 360" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <path id="featPath" d="M-120,300 Q720,70 1560,300" fill="none" stroke="transparent"></path>
+        <linearGradient id="featFade" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="white" stop-opacity="0"></stop>
+          <stop offset="11%" stop-color="white" stop-opacity="1"></stop>
+          <stop offset="89%" stop-color="white" stop-opacity="1"></stop>
+          <stop offset="100%" stop-color="white" stop-opacity="0"></stop>
+        </linearGradient>
+        <mask id="featMask"><rect width="100%" height="100%" fill="url(#featFade)"></rect></mask>
+      </defs>
+      <text id="featMeasure" xml:space="preserve" style="visibility:hidden;opacity:0;pointer-events:none"></text>
+      <text id="featText" xml:space="preserve" mask="url(#featMask)"><textPath id="featTextPath" href="#featPath" xml:space="preserve"></textPath></text>
+    </svg>
   </div>
 
   <!-- the importance: why the whole office matters, not just the phone -->
@@ -1198,52 +1180,93 @@ a,button{transition:transform .14s}
     tilt();
   }
 
-  /* ── Atlas coverflow — vanilla port of the framer-motion CardCarousel ── */
-  var acar = document.getElementById('atlasCar');
-  if (acar){
-    var track = document.getElementById('atlasTrack');
-    var cards = [].slice.call(track.children);
-    var dotsWrap = document.getElementById('atlasDots');
-    var active = Math.floor(cards.length / 2), hovered = false;
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    cards.forEach(function(_, i){
-      var d = document.createElement('span');
-      d.className = 'acar-dot';
-      d.addEventListener('click', function(){ go(i); });
-      dotsWrap.appendChild(d);
-    });
-    var dots = [].slice.call(dotsWrap.children);
-    function cardW(){ return cards[0].getBoundingClientRect().width || 230; }
-    function render(){
-      track.style.transform = 'translateX(' + (-active * cardW()) + 'px)';
-      cards.forEach(function(c, i){
-        var diff = i - active;
-        c.classList.toggle('on', i === active);
-        if (reduce){
-          c.style.transform = '';
-          c.style.opacity = i === active ? 1 : .32;
-          c.style.zIndex = i === active ? 3 : 1;
-          return;
+  /* ── Atlas feature marquee — vanilla port of Originkit's CurvedLoop ── */
+  var fb = document.querySelector('.fbanner');
+  if (fb){
+    var FEATURES = 'Missed-call recovery  ·  Lead qualification  ·  Estimates booked  ·  Follow-up  ·  Review requests  ·  Seasonal & storm campaigns  ·  The monthly receipt  ·  ';
+    var svg = fb.querySelector('.fb-svg');
+    var measure = fb.querySelector('#featMeasure');
+    var path = fb.querySelector('#featPath');
+    var textPath = fb.querySelector('#featTextPath');
+    var textEl = fb.querySelector('#featText');
+    measure.textContent = FEATURES;
+    var reduceM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var GAP = 44;                        // viewBox-unit gap between copies
+    var MAX_SPEED = 800, BASE_VELOCITY = 16;   // % → px/sec below
+    var actualV = -(BASE_VELOCITY / 100) * MAX_SPEED;   // negative = flows left
+    var DRAG_FACTOR = 10 * 0.1;
+
+    var spacing = 0, tspans = [], raf = 0, last = 0;
+    var isDragging = false, dragV = 0, lastX = 0;
+
+    function build(){
+      var pathLen = path.getTotalLength();
+      var tw = measure.getComputedTextLength();
+      spacing = tw + GAP;
+      if (!(pathLen > 0 && spacing > 0)) return false;
+      var repeats = Math.ceil(pathLen / spacing) + 2;
+      if (tspans.length !== repeats){
+        textPath.textContent = '';
+        tspans = [];
+        for (var i = 0; i < repeats; i++){
+          var t = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          t.setAttribute('x', i * spacing);
+          t.setAttribute('xml:space', 'preserve');
+          t.textContent = FEATURES;
+          textPath.appendChild(t);
+          tspans.push(t);
         }
-        var rot = (hovered ? 18 : 6) * diff;
-        var sc  = i === active ? 1.06 : (hovered ? 0.66 : 0.82);
-        var y   = hovered ? diff * 22 : 0;
-        c.style.transform = 'translateY(' + y + 'px) rotate(' + rot + 'deg) scale(' + sc + ')';
-        c.style.opacity = i === active ? 1 : (hovered ? .8 : .9);
-        c.style.zIndex = i === active ? 5 : (3 - Math.abs(diff));
-      });
-      dots.forEach(function(d, i){ d.classList.toggle('on', i === active); });
+      }
+      svg.style.visibility = 'visible';
+      return true;
     }
-    function go(i){ active = Math.max(0, Math.min(cards.length - 1, i)); render(); }
-    cards.forEach(function(c, i){ c.addEventListener('click', function(){ go(i); }); });
-    acar.querySelectorAll('.acar-arrow').forEach(function(b){
-      b.addEventListener('click', function(){ go(active + (+b.getAttribute('data-dir'))); });
+    function tick(now){
+      var delta = now - last; last = now;
+      if (tspans.length){
+        var maxX = (tspans.length - 1) * spacing;
+        var moveBy;
+        if (isDragging){ moveBy = dragV; }
+        else {
+          moveBy = actualV * (delta / 1000) + dragV;
+          if (Math.abs(dragV) > 0.01) dragV *= 0.96; else dragV = 0;
+        }
+        for (var i = 0; i < tspans.length; i++){
+          var x = parseFloat(tspans[i].getAttribute('x') || '0') + moveBy;
+          if (x < -spacing) x = maxX;
+          if (x > maxX) x = -spacing;
+          tspans[i].setAttribute('x', x);
+        }
+        if (isDragging){ dragV *= 0.9; if (Math.abs(dragV) < 0.01) dragV = 0; }
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    textEl.addEventListener('pointerdown', function(e){
+      try { textEl.setPointerCapture(e.pointerId); } catch(_){}
+      isDragging = true; lastX = e.clientX; dragV = 0;
     });
-    var stage = acar.querySelector('.acar-stage');
-    stage.addEventListener('mouseenter', function(){ hovered = true; render(); });
-    stage.addEventListener('mouseleave', function(){ hovered = false; render(); });
-    window.addEventListener('resize', render, {passive:true});
-    render();
+    textEl.addEventListener('pointermove', function(e){
+      if (!isDragging) return;
+      dragV = (e.clientX - lastX) * DRAG_FACTOR; lastX = e.clientX;
+    });
+    function endDrag(e){
+      if (!isDragging) return;
+      try { textEl.releasePointerCapture(e.pointerId); } catch(_){}
+      isDragging = false;
+    }
+    textEl.addEventListener('pointerup', endDrag);
+    textEl.addEventListener('pointercancel', endDrag);
+
+    function start(){
+      if (!build()) return;
+      if (reduceM) return;               // static curve, no auto-scroll
+      last = performance.now();
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(tick);
+    }
+    start();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(start);
+    window.addEventListener('resize', build, {passive:true});
   }
 })();
 </script>
