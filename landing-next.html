@@ -770,6 +770,80 @@ a,button{transition:transform .14s}
 .vp-req{margin-top:.9rem;background:var(--dark-grad);color:var(--tea);border-radius:14px;text-align:center;font:600 .9rem/1 var(--body);padding:.85rem}
 .vp-note{font:500 .68rem/1.6 var(--mono);color:var(--dim);margin-top:.8rem;text-align:center}
 .lens-caps{margin-top:1.6rem}
+
+/* ── product name inline — Caveat + tea scribble (Drew 7/21: every prose mention) ── */
+.pn{font-family:var(--hand);font-weight:600;color:var(--olive);font-size:1.14em;line-height:.9;white-space:nowrap;padding:0 .05em 3px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px}
+
+/* ═══ ATLAS COVERFLOW — vanilla port of the framer-motion CardCarousel (Drew 7/21).
+   A deck of the whole front office; active card centered + lifted, neighbours tilt
+   back, the set fans on hover. Transforms applied in JS (wireAtlasCarousel). ═══ */
+.acar{--acw:230px;max-width:var(--max);margin:0 auto;display:flex;flex-direction:column;align-items:center;-webkit-user-select:none;user-select:none}
+.acar-stage{position:relative;height:clamp(250px,32vw,290px);width:var(--acw);display:flex;align-items:center;justify-content:flex-start;overflow:visible;perspective:1400px}
+.acar-track{display:flex;align-items:center;transition:transform .8s var(--spring);will-change:transform}
+.acar-card{flex:none;width:var(--acw);height:clamp(220px,28vw,258px);border-radius:var(--r-card);padding:1.5rem 1.4rem;display:flex;flex-direction:column;cursor:pointer;transform-origin:center center;backface-visibility:hidden;
+  background:var(--dark-grad);color:var(--white);box-shadow:0 2px 6px rgba(40,41,22,.2),0 22px 48px -12px rgba(40,41,22,.45),inset 0 1px 0 rgba(255,255,255,.1);
+  transition:transform .8s var(--spring),box-shadow .4s ease,opacity .5s ease}
+.acar-card.on{box-shadow:0 4px 14px rgba(40,41,22,.3),0 30px 60px -14px rgba(40,41,22,.6),inset 0 1px 0 rgba(255,255,255,.14),0 0 0 1.5px rgba(212,223,158,.4)}
+.acar-num{font:600 .6rem/1 var(--mono);letter-spacing:.18em;color:var(--tea);opacity:.7}
+.acar-ic{width:44px;height:44px;border-radius:13px;background:rgba(212,223,158,.14);display:grid;place-items:center;color:var(--tea);margin:1.05rem 0 auto}
+.acar-card.on .acar-ic{background:var(--tea-grad);color:var(--olive)}
+.acar-ic svg{width:22px;height:22px}
+.acar-t{font-family:var(--display);font-size:1.16rem;font-weight:500;letter-spacing:-.02em;line-height:1.12;margin-bottom:.4rem}
+.acar-d{font:400 .8rem/1.5 var(--body);color:rgba(255,255,255,.66)}
+.acar-nav{display:flex;align-items:center;gap:.9rem;margin-top:1.9rem}
+.acar-arrow{width:40px;height:40px;border-radius:50%;background:var(--nm);box-shadow:var(--nm-sm);color:var(--olive);display:grid;place-items:center;transition:box-shadow .2s,transform .15s}
+.acar-arrow:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
+.acar-arrow:active{box-shadow:var(--nm-in);transform:none}
+.acar-arrow svg{width:18px;height:18px}
+.acar-dots{display:flex;align-items:center;gap:.4rem}
+.acar-dot{height:6px;width:6px;border-radius:99px;background:rgba(74,75,47,.25);cursor:pointer;transition:width .3s var(--spring),background .3s}
+.acar-dot.on{width:22px;background:var(--olive)}
+@media(max-width:640px){.acar{--acw:212px}}
+
+/* the thesis block under a deck — Atlas + Vesta share it */
+.atx{max-width:660px;margin:3rem auto 0;text-align:center}
+.atx-lead{font-family:var(--display);font-size:clamp(1.3rem,2.4vw,1.7rem);font-weight:500;font-style:italic;letter-spacing:-.02em;line-height:1.3;color:var(--ink);margin-bottom:1.1rem}
+.atx p{font-size:1rem;line-height:1.7;color:var(--muted);margin-bottom:1rem}
+.atx p:last-child{margin-bottom:0}
+.atx p b{color:var(--olive);font-weight:600}
+
+/* ═══ VESTA hover-expand profile card — vanilla port of the framer-motion
+   WorkflowBuilderCard (Drew 7/21). Header always shows; the Read + tags reveal
+   on hover; footer holds the record + the request action. ═══ */
+.vwc-stage{display:flex;justify-content:center;padding:0 var(--pad)}
+.vwc{width:min(400px,100%);background:var(--nm);border:var(--nm-edge);border-radius:var(--r-card);box-shadow:var(--nm-sm);overflow:hidden;cursor:pointer;transition:transform .35s var(--spring),box-shadow .35s ease}
+.vwc:hover{transform:translateY(-6px);box-shadow:var(--sh-card)}
+.vwc-img{position:relative;height:118px;background:var(--dark-grad);display:flex;align-items:flex-end;padding:.85rem 1rem;overflow:hidden}
+.vwc-img::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 110% -10%,rgba(212,223,158,.22),transparent 60%)}
+.vwc-trade{position:relative;font:600 .64rem/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--tea)}
+.vwc-fic{position:absolute;top:.7rem;right:.8rem;font:500 .52rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.72);background:rgba(0,0,0,.24);border-radius:99px;padding:.32rem .55rem}
+.vwc-body{padding:1.05rem 1.15rem}
+.vwc-meta{display:flex;align-items:center;gap:.5rem;font:500 .6rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.vwc-status{display:inline-flex;align-items:center;gap:.35rem}
+.vwc-status i{width:7px;height:7px;border-radius:50%;background:#8aa64f}
+.vwc-name{font-family:var(--display);font-size:1.2rem;font-weight:600;letter-spacing:-.015em;color:var(--ink);margin-top:.3rem}
+.vwc-reveal{max-height:0;opacity:0;overflow:hidden;margin-top:0;transition:max-height .35s ease,opacity .3s ease,margin .35s ease}
+.vwc:hover .vwc-reveal{max-height:240px;opacity:1;margin-top:.85rem}
+.vwc-read{font:400 .84rem/1.55 var(--body);color:var(--olive);background:rgba(212,223,158,.32);border-radius:12px;padding:.7rem .8rem}
+.vwc-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
+.vwc-tag{font:500 .62rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ebony);background:var(--nm);box-shadow:var(--nm-sm);border-radius:99px;padding:.42rem .62rem}
+.vwc-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;border-top:1px solid var(--line);padding:.85rem 1.15rem}
+.vwc-rec{font:500 .66rem/1.3 var(--mono);letter-spacing:.03em;color:var(--dim)}
+.vwc-req{display:inline-flex;align-items:center;gap:.4rem;font:600 .78rem/1 var(--body);color:var(--tea);background:var(--dark-grad);border-radius:99px;padding:.6rem 1rem;box-shadow:0 4px 13px -3px rgba(67,68,42,.5)}
+.vwc-hint{max-width:420px;margin:1.1rem auto 0;text-align:center;font:400 .74rem/1.55 var(--body);color:var(--dim)}
+@media(hover:none){.vwc-reveal{max-height:240px;opacity:1;margin-top:.85rem}}
+
+/* What is Slack? — the explainer dropdown, ported from Atlas (Drew 7/21) */
+.slk-more{max-width:430px;margin:1.6rem auto 0}
+.slk-more>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;font:600 .82rem/1 var(--body);color:var(--ebony);padding:.72rem 1.1rem;background:var(--nm);box-shadow:var(--nm-sm);border-radius:var(--r-pill);transition:box-shadow .2s,color .2s}
+.slk-more>summary::-webkit-details-marker{display:none}
+.slk-more>summary:hover{color:var(--olive);box-shadow:var(--nm-out)}
+.slk-more>summary svg{width:15px;height:15px;transition:transform .25s}
+.slk-more[open]>summary svg{transform:rotate(180deg)}
+.slk-what{display:flex;align-items:flex-start;gap:.65rem;text-align:left;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-in);padding:.9rem 1rem;margin-top:.7rem;font:400 .82rem/1.6 var(--body);color:var(--muted)}
+.slk-what b{color:var(--ink);font-weight:600}
+.slk-logo{width:20px;height:20px;flex:none;margin-top:.15rem}
 </style>
 </head>
 <body>
@@ -807,8 +881,8 @@ a,button{transition:transform .14s}
 
     <!-- the brand claim — moved up from the old products section to lead the hero -->
     <div class="fd-intro">
-      <h1 class="sec-h">Run the business around the work.<br><em>Stop letting good work disappear.</em></h1>
-      <p class="sec-sub">Atlas answers, qualifies, books, and follows up — so no lead dies in voicemail. Lens keeps your side of the record, and you control what shows. Vesta is the free guide homeowners use to hire on evidence, not ads. One mission: good work should leave evidence that compounds.</p>
+      <h1 class="sec-h">Good work shouldn’t disappear.<br><em>It should compound.</em></h1>
+      <p class="sec-sub"><span class="pn">Atlas</span> answers, qualifies, books, and follows up — so no lead dies in voicemail. <span class="pn">Lens</span> keeps your side of the record, and you control what shows. <span class="pn">Vesta</span> is the free guide homeowners use to hire on evidence, not ads. One mission: good work should leave evidence that compounds.</p>
       <div class="hero-fast">
         <span>In a hurry?</span>
         <a href="/missed-calls">Try the missed-call demo →</a>
@@ -875,34 +949,42 @@ a,button{transition:transform .14s}
   <a class="fd-cue" href="#atlas-sec">the whole story <span>↓</span></a>
 </section>
 
-<!-- ════════════════ ATLAS — the front office, explained ════════════════ -->
+<!-- ════════════════ ATLAS — the whole front office, explained ════════════════ -->
 <section class="sec sec-products-top" id="atlas-sec">
   <div class="sec-head rv">
     <span class="kicker">for contractors · atlas</span>
-    <h2 class="sec-h">One managed front office.<br><em>The whole journey carried through.</em></h2>
-    <p class="sec-sub">A homeowner calls while you’re on a roof. Atlas texts back in your name, asks the approved questions, books the estimate, follows up, requests the review — and ends every month with a receipt.</p>
+    <h2 class="sec-h">Not a receptionist.<br><em>The whole front office.</em></h2>
+    <p class="sec-sub"><span class="pn">Atlas</span> runs every part of the business that happens around the job — the answering, the qualifying, the booking, the follow-up, the reviews, the campaigns — as one managed service, in your name.</p>
   </div>
-  <div class="how-grid">
-    <div class="how-card rv">
-      <span class="how-num">01</span>
-      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-      <h3 class="how-t">Missed calls recovered</h3>
-      <p class="how-d">When you cannot pick up, Atlas follows up by text and starts collecting what the homeowner needs — around the clock, in English or Spanish.</p>
-      <span class="b-stat-inline"><b>15 seconds</b> typical first reply</span>
+
+  <!-- coverflow deck of the offer — the breadth is the point (vanilla CardCarousel port) -->
+  <div class="acar rv" id="atlasCar">
+    <div class="acar-stage">
+      <div class="acar-track" id="atlasTrack">
+        <div class="acar-card"><span class="acar-num">01</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Missed-call recovery</h3><p class="acar-d">A call you can’t take gets a text back in your name — in seconds, day or night.</p></div></div>
+        <div class="acar-card"><span class="acar-num">02</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 13l2 2 4-4"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Lead qualification</h3><p class="acar-d">What happened, where, how urgent — so you get a real job, not a voicemail to chase.</p></div></div>
+        <div class="acar-card"><span class="acar-num">03</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Estimates booked</h3><p class="acar-d">Qualified estimates land on your calendar with the details already attached.</p></div></div>
+        <div class="acar-card"><span class="acar-num">04</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Follow-up</h3><p class="acar-d">The quote that went quiet gets a nudge — persistent, polite, never forgotten.</p></div></div>
+        <div class="acar-card"><span class="acar-num">05</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Review requests</h3><p class="acar-d">The ask goes out the moment the job closes, while the work is still fresh.</p></div></div>
+        <div class="acar-card"><span class="acar-num">06</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">Seasonal &amp; storm campaigns</h3><p class="acar-d">When a storm hits or a month runs slow, past customers hear from you first.</p></div></div>
+        <div class="acar-card"><span class="acar-num">07</span><div class="acar-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg></div><div style="margin-top:auto"><h3 class="acar-t">The monthly receipt</h3><p class="acar-d">A record of what came in, got answered, and got booked. Measured, not claimed.</p></div></div>
+      </div>
     </div>
-    <div class="how-card rv rv-d1">
-      <span class="how-num">02</span>
-      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg></div>
-      <h3 class="how-t">Qualified &amp; booked</h3>
-      <p class="how-d">Atlas asks what happened, where, and how urgent — then places a qualified estimate on your calendar with the context already attached.</p>
-    </div>
-    <div class="how-card rv rv-d2">
-      <span class="how-num">03</span>
-      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-      <h3 class="how-t">Followed through &amp; measured</h3>
-      <p class="how-d">Reminders, review requests, seasonal campaigns — and a month-end receipt of the work Atlas actually operated, not a promise.</p>
+    <div class="acar-nav">
+      <button class="acar-arrow" data-dir="-1" aria-label="Previous surface"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div class="acar-dots" id="atlasDots"></div>
+      <button class="acar-arrow" data-dir="1" aria-label="Next surface"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
+
+  <!-- the importance: why the whole office matters, not just the phone -->
+  <div class="atx rv">
+    <p class="atx-lead">Most contractors don’t lose work because they’re bad at the job. They lose it in the gaps.</p>
+    <p>The call that came in while you were on a roof. The estimate that never got a second text. The happy customer nobody asked for a review. The client who’d forgotten your name by spring. Each one is quiet — and each one is a job that should have been yours.</p>
+    <p><span class="pn">Atlas</span> is the managed front office that closes those gaps. It answers and qualifies the lead, books the estimate with the context attached, follows up on the quote, asks for the review the moment the job lands, and runs the seasonal and storm campaigns that pull past customers back — <b>all measured, all in your name.</b></p>
+    <p>Every month ends with a receipt: what came in, what got answered, what got booked. Not a dashboard you have to run. A record that <b>compounds</b> — into reviews, into reputation, into the next job finding you first.</p>
+  </div>
+
   <p class="sec-note rv">Built for homeowner-facing trades — roofing, HVAC, plumbing, electrical, paving, lawn care, and more</p>
   <div class="showcase-caps rv">
     <a href="/atlas" class="btn-dark">Explore Atlas <span class="arr">→</span></a>
@@ -913,30 +995,35 @@ a,button{transition:transform .14s}
 <section class="sec" id="vesta-sec">
   <div class="sec-head rv">
     <span class="kicker">for homeowners · vesta</span>
-    <h2 class="sec-h">Then the homeowner asks —<br><em>and Vesta answers with evidence.</em></h2>
-    <p class="sec-sub">Say the job in plain words. Vesta routes it to the right trade and returns the firms whose public record actually fits — with the why shown, never ranked by payment.</p>
+    <h2 class="sec-h">The guide that can’t<br><em>be bought.</em></h2>
+    <p class="sec-sub"><span class="pn">Vesta</span> ranks Fairfield County contractors on one thing only — their public record. No ads, no boosted listings, no top spot for sale.</p>
   </div>
-  <div class="how-grid">
-    <div class="how-card rv">
-      <span class="how-num">01</span>
-      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-      <h3 class="how-t">Say the job in plain words</h3>
-      <p class="how-d">“My roof is leaking in Stamford” is enough. Vesta finds the right trade and the firms whose record actually fits the job.</p>
-    </div>
-    <div class="how-card rv rv-d1">
-      <span class="how-num">02</span>
-      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-      <h3 class="how-t">Vesta’s Read on every pro</h3>
-      <p class="how-d">A plain-English read of each firm — what they’re known for, what their record supports — before you ever call.</p>
-    </div>
-    <div class="how-card rv rv-d2">
-      <span class="how-num">03</span>
-      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <h3 class="how-t">Ranked by the record, not ads</h3>
-      <p class="how-d">Free for homeowners. No ads, no boosted listings, no pay-to-play — a firm’s standing comes only from the evidence.</p>
+
+  <!-- hover-expand profile card (vanilla WorkflowBuilderCard port) — labeled fictional sample -->
+  <div class="vwc-stage rv">
+    <div class="vwc">
+      <div class="vwc-img"><span class="vwc-trade">Roofing · Stamford, CT</span><span class="vwc-fic">Sample · fictional</span></div>
+      <div class="vwc-body">
+        <div class="vwc-meta"><span>Vesta’s Read</span><span>·</span><span class="vwc-status"><i></i>Illustrative</span></div>
+        <h3 class="vwc-name">Redpoint Roofing</h3>
+        <div class="vwc-reveal">
+          <p class="vwc-read">A fast, storm-ready roofer built for emergencies — known for same-week leak response and 1–2 day replacements. Strongest when the roof can’t wait; a clear fit for urgent work.</p>
+          <div class="vwc-tags"><span class="vwc-tag">Emergency leaks</span><span class="vwc-tag">Storm response</span><span class="vwc-tag">1–2 day replace</span></div>
+        </div>
+      </div>
+      <div class="vwc-foot">
+        <span class="vwc-rec">Ranked by record · not ads</span>
+        <span class="vwc-req">Request <span class="arr">→</span></span>
+      </div>
     </div>
   </div>
-  <p class="sec-note rv">Drawing from 463 evidence-backed Fairfield County profiles — free, no account needed</p>
+  <p class="vwc-hint rv">Hover to see the Read. One illustrative profile — the live guide holds 463 evidence-backed Fairfield County firms.</p>
+
+  <div class="atx rv">
+    <p>Every other “find a contractor” site sells the top spot. <span class="pn">Vesta</span> can’t — there’s nothing to buy. A firm’s place comes only from what’s true: the reviews, the tenure, the licensing, the pattern of how it actually works.</p>
+    <p><span class="pn">Vesta</span> reads all of it and writes one plain-English Read for each firm — what they’re genuinely known for, what the evidence supports — before a homeowner ever picks up the phone. It’s the same record <span class="pn">Atlas</span> helps a contractor build: <b>good work, made legible to the person deciding who to trust.</b></p>
+  </div>
+
   <div class="showcase-caps rv">
     <a href="/vesta" class="btn-soft">Open Vesta →</a>
   </div>
@@ -947,14 +1034,14 @@ a,button{transition:transform .14s}
   <div class="sec-head rv">
     <span class="kicker">and Lens ties them together · early access</span>
     <h2 class="sec-h">Give homeowners a reason<br><em>to choose you.</em></h2>
-    <p class="sec-sub">Lens is the free, private trust workspace for contractors — in early access now. Connect the tools you already run, review every fact they support, and control exactly what a homeowner could see. Nothing publishes without you.</p>
+    <p class="sec-sub"><span class="pn">Lens</span> is the free, private trust workspace for contractors — in early access now. Connect the tools you already run, review every fact they support, and control exactly what a homeowner could see. Nothing publishes without you.</p>
   </div>
   <div class="how-grid">
     <div class="how-card rv">
       <span class="how-num">Step 01</span>
       <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M12 9v6"/><circle cx="12" cy="12" r="9"/></svg></div>
       <h3 class="how-t">Connect what you already use</h3>
-      <p class="how-d">Link the job and scheduling tools your business already runs on. Lens reads permitted history only — source-labeled, never guessed, never edited after the fact.</p>
+      <p class="how-d">Link the job and scheduling tools your business already runs on. <span class="pn">Lens</span> reads permitted history only — source-labeled, never guessed, never edited after the fact.</p>
     </div>
     <div class="how-card rv rv-d1">
       <span class="how-num">Step 02</span>
@@ -979,17 +1066,17 @@ a,button{transition:transform .14s}
 <section class="showcase" id="showcase">
   <div class="sec-head rv">
     <span class="kicker">see it working</span>
-    <h2 class="sec-h">Miss a call.<br><em>Watch Atlas recover the conversation.</em></h2>
-    <p class="sec-sub">This is what the system looks like on a real morning — the lead qualified, the estimate booked, the follow-up carried, all delivered where you already work.</p>
+    <h2 class="sec-h">Miss a call.<br><em>Watch the conversation come back.</em></h2>
+    <p class="sec-sub">Here’s a real morning: the lead answered, qualified, and booked — then handed to you in one place, the whole thread attached. It arrives wherever you already are — your phone, your inbox, or a private channel we set up for your crew.</p>
   </div>
   <div class="showcase-stage rv">
     <div class="showcase-card" id="showcaseCard">
       <div class="showcase-chrome">
         <div class="chrome-dots"><i></i><i></i><i></i></div>
-        <span class="chrome-title">Atlas — example lead feed</span>
+        <span class="chrome-title">Your channel — example lead feed</span>
         <span class="chrome-live">Demo</span>
       </div>
-      <img src="/atlas-slack.png" alt="Atlas operations assistant — example lead feed in Slack" loading="lazy">
+      <img src="/atlas-slack.png" alt="Atlas operations assistant — example lead feed in a private Slack channel" loading="lazy">
     </div>
   </div>
   <div class="showcase-caps rv">
@@ -998,6 +1085,10 @@ a,button{transition:transform .14s}
     <span class="proof-chip">Carries the follow-up</span>
     <a href="/missed-calls" class="btn-soft">Try it yourself →</a>
   </div>
+  <details class="slk-more rv">
+    <summary>What is Slack?<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg></summary>
+    <div class="slk-what"><svg class="slk-logo" viewBox="0 0 122.8 122.8" aria-hidden="true"><path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zM32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z" fill="#E01E5A"/><path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zM45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/><path d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2zM90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/><path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z" fill="#ECB22E"/></svg><span><b>Slack is a free messaging app</b> — like a group text, organized into channels. We set up a private one for your business and post every lead, booking, and update into it. Nothing to learn: you read it on your phone like any chat. Prefer plain text or email? <span class="pn">Atlas</span> delivers there too.</span></div>
+  </details>
 </section>
 
 <!-- ════════════════ CTA ════════════════ -->
@@ -1005,7 +1096,7 @@ a,button{transition:transform .14s}
   <div class="cta-panel rv">
     <span class="cta-eyebrow">get started today</span>
     <h2 class="cta-h">The business around the work.<br><em>Handled.</em></h2>
-    <p class="cta-body">Start with the missed-call proof, then see how Atlas carries qualification, booking, follow-up, reviews, campaigns, local discovery, operator briefs, and the monthly receipt as one managed service.</p>
+    <p class="cta-body">Start with the missed-call proof, then see how <span class="pn">Atlas</span> carries qualification, booking, follow-up, reviews, campaigns, local discovery, operator briefs, and the monthly receipt as one managed service.</p>
     <a href="/missed-calls" class="cta-btn">Try the demo <span class="arr">→</span></a>
     <p class="cta-note"><a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" target="_blank" rel="noopener">Or book a 20-minute fit call</a> &nbsp;·&nbsp; Built and operated from Stamford, CT</p>
   </div>
@@ -1104,6 +1195,54 @@ a,button{transition:transform .14s}
       if (!ticking){ requestAnimationFrame(tilt); ticking = true; }
     }, {passive:true});
     tilt();
+  }
+
+  /* ── Atlas coverflow — vanilla port of the framer-motion CardCarousel ── */
+  var acar = document.getElementById('atlasCar');
+  if (acar){
+    var track = document.getElementById('atlasTrack');
+    var cards = [].slice.call(track.children);
+    var dotsWrap = document.getElementById('atlasDots');
+    var active = Math.floor(cards.length / 2), hovered = false;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    cards.forEach(function(_, i){
+      var d = document.createElement('span');
+      d.className = 'acar-dot';
+      d.addEventListener('click', function(){ go(i); });
+      dotsWrap.appendChild(d);
+    });
+    var dots = [].slice.call(dotsWrap.children);
+    function cardW(){ return cards[0].getBoundingClientRect().width || 230; }
+    function render(){
+      track.style.transform = 'translateX(' + (-active * cardW()) + 'px)';
+      cards.forEach(function(c, i){
+        var diff = i - active;
+        c.classList.toggle('on', i === active);
+        if (reduce){
+          c.style.transform = '';
+          c.style.opacity = i === active ? 1 : .32;
+          c.style.zIndex = i === active ? 3 : 1;
+          return;
+        }
+        var rot = (hovered ? 18 : 6) * diff;
+        var sc  = i === active ? 1.06 : (hovered ? 0.66 : 0.82);
+        var y   = hovered ? diff * 22 : 0;
+        c.style.transform = 'translateY(' + y + 'px) rotate(' + rot + 'deg) scale(' + sc + ')';
+        c.style.opacity = i === active ? 1 : (hovered ? .8 : .9);
+        c.style.zIndex = i === active ? 5 : (3 - Math.abs(diff));
+      });
+      dots.forEach(function(d, i){ d.classList.toggle('on', i === active); });
+    }
+    function go(i){ active = Math.max(0, Math.min(cards.length - 1, i)); render(); }
+    cards.forEach(function(c, i){ c.addEventListener('click', function(){ go(i); }); });
+    acar.querySelectorAll('.acar-arrow').forEach(function(b){
+      b.addEventListener('click', function(){ go(active + (+b.getAttribute('data-dir'))); });
+    });
+    var stage = acar.querySelector('.acar-stage');
+    stage.addEventListener('mouseenter', function(){ hovered = true; render(); });
+    stage.addEventListener('mouseleave', function(){ hovered = false; render(); });
+    window.addEventListener('resize', render, {passive:true});
+    render();
   }
 })();
 </script>
