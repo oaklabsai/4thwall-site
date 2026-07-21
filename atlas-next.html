@@ -1054,7 +1054,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
    Reuses the .fd-line / .fd-you letterize CSS; overrides the single-hero centering into a
    stacked transcript. #acenter-scoped so it beats .fd.staged .fd-line's hero min-height. ══ */
 .fd-thread{width:100%;max-width:560px;margin:1.1rem auto 0;display:flex;flex-direction:column;transition:opacity .22s ease}
-#acenter .fd-thread .fd-you{display:none;text-align:left;transform:rotate(-.4deg);margin:1.15rem 0 .18rem;max-width:none}
+#acenter .fd-thread .fd-you{display:none;text-align:center;transform:rotate(-.4deg);margin:1.15rem auto .18rem;max-width:none}
 #acenter .fd-thread .fd-you.show{display:block}
 #acenter .fd-thread .fd-line{text-align:left;justify-items:start;place-items:start;display:block;min-height:0;max-width:none;margin:0 0 .3rem}
 #acenter .fd-thread .fd-line:first-child{margin-top:.3rem}
@@ -1201,8 +1201,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
    stacked on mobile, where vertical space is the scarce thing instead.
    The title lives INSIDE the copy column so the phone column can start at the top
    of the screen and fit whole — the same vertical room the 20-second demo gets. */
-.rm-grid{display:grid;gap:1rem;align-items:start;margin-top:.15rem}
-.rm-grid .mcs-wrap{margin:0 auto}
+/* a room = its story then its proof, CENTERED and stacked (Drew 7/21 — the left/right flank
+   is gone). The copy sits on top; the scene fills the rest and scrolls INSIDE its own box, so
+   a tall demo (Local Discovery, Operator Briefs, Booking) never grows the page frame. */
+.rm-grid{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.9rem;margin-top:.15rem;min-height:0;flex:1}
+.rm-copy{flex:none;max-width:540px}
+.rm-copy .fds-doors{justify-content:center}
+.rm-scene{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.7rem;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.rm-scene .fdc-method{margin:0;max-width:420px}
+.rm-scene::-webkit-scrollbar{display:none}
+.rm-scene .mcs-wrap{margin:0 auto}
 /* room phones = the DEMO phone: same base width, same zoom-to-fit pipeline (Drew 7/20:
    one phone size everywhere a phone demonstrates) */
 .rm-scene .mcs-phone{width:min(294px,84vw)}
@@ -1210,12 +1218,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .rm-scene .mcs-when{font-size:.62rem}
 .rm-scene .mcs-syschip{font-size:.63rem}
 @media(min-width:900px){
-  /* the copy column needs a real floor — minmax(0,1fr) beside an auto column collapses to nothing */
-  .rm-grid{grid-template-columns:minmax(250px,1fr) minmax(0,350px);gap:2.2rem;align-items:center}
-  .rm-grid .fdg-d{margin-bottom:0}
-  .rm-copy{text-align:left}
-  .rm-scene{width:100%}
-  .rm-scene .slk{width:100%}
+  .rm-scene .slk{width:100%;max-width:420px}
+}
+@media(max-width:899px){
+  /* on mobile the room lives in the scrolling card; cap the scene so it can't stretch the card */
+  .rm-scene{max-height:58svh}
 }
 /* P4 · the cost chart — planning ranges with their provenance, desk material */
 .fdc-row{display:grid;grid-template-columns:1fr auto;gap:.2rem .9rem;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.9rem 1.05rem;margin-bottom:.7rem}
@@ -1475,16 +1482,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .abn-ham{display:none}
   #abscrim,#absheet{display:none}
   #acenter .fd.staged .fd-dock{bottom:1.4rem}
-  /* ── room open: the room's components flank the conversation (Drew 7/20) ──
-     Copy pinned to the far left, the demo scene to the far right, so the conversation
-     column running down the centre stays the focus instead of a block stacked beneath it. */
-  #acenter .fd.staged:has(.rm-grid){justify-content:center;padding-bottom:8.5rem}
-  #acenter .fd.staged:has(.rm-grid) .fd-inner{width:min(1300px,100%);max-width:none}
-  #acenter .fd.staged:has(.rm-grid) .fd-chat{margin-bottom:.6rem}
-  #acenter .fd.staged:has(.rm-grid) .fd-screen{width:100%}
-  .fd.staged .rm-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(4rem,22vw,24rem);align-items:center}
-  .fd.staged .rm-copy{max-width:340px}
-  .fd.staged .rm-scene{margin-left:auto;max-width:330px;width:100%}
+  /* ── room open: story + proof CENTERED and fit to the locked shell, no flank (Drew 7/21) ──
+     the room column fills the shell height; the scene scrolls inside itself, so the wordmark
+     stays pinned at the top (never clipped) and the page never scrolls. */
+  #acenter .fd.staged:has(.rm-grid){justify-content:flex-start;overflow:hidden;padding-top:clamp(2rem,4.5vh,3.2rem);padding-bottom:6.2rem}
+  #acenter .fd.staged:has(.rm-grid) .fd-inner{width:min(780px,100%);max-width:none;flex:1;min-height:0}
+  #acenter .fd.staged:has(.rm-grid) .fd-chat{flex:none;margin-top:.2rem}
+  #acenter .fd.staged:has(.rm-grid) .fd-demo-view{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
+  #acenter .fd.staged:has(.rm-grid) .fd-screen{flex:1;min-height:0;margin-top:.8rem;display:flex;flex-direction:column;width:100%}
 }
 @media(max-width:899px){
   #arail{display:none}
@@ -2131,7 +2136,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     if(well&&well.offsetParent){ cBottom=well.getBoundingClientRect().top-12; }
     else { cBottom=window.innerHeight-(window.innerWidth<900?90:14); }
     var z=(cBottom-pr.top-below)/natural;
-    phone.style.zoom=inRoom?Math.max(0.78,Math.min(1,z)):Math.max(0.5,Math.min(1.3,z));
+    phone.style.zoom=inRoom?Math.max(0.7,Math.min(1,z)):Math.max(0.5,Math.min(1.3,z));
   }
   window.addEventListener('resize',fitMcsPhone);
   function simVisual(){
@@ -2352,9 +2357,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function toTop(){var fd=$('home');if(fd)fd.scrollTop=0;window.scrollTo(0,0)}
   function enterRoom(k){var r=ROOMS[k];if(!r)return walkOffice();
     setTalking(true);setActive('room:'+k);whereNow='room:'+k;phRoom(k);setDemoMode(true);toTop();
-    narrate(r.d);   /* the hook only — the assembled screen already carries the title (h3) and the "the office" door */
+    /* no per-room message — each room shows only the "Atlas" wordmark + the demo/explanation (Drew 7/21).
+       The assembled screen already carries the title (h3); a narration line above it was redundant. */
     roomVisual(k);}
-  function walkOffice(){setTalking(true);setActive('office');whereNow='office';phRoom('office');setDemoMode(true);toTop();narrate(OFFICE_LINE);assembleOffice()}
+  function walkOffice(){setTalking(true);setActive('office');whereNow='office';phRoom('office');setDemoMode(true);toTop();assembleOffice()}
   var TAB_LINE={
     offer:'Here’s how the offer works — a managed service, not a software seat. The number follows the size of the front office we run for you, set on a 20-minute fit call in plain terms.',
     lens:'Lens is your free, private trust workspace — connect the tools you already run, review every fact your record supports, and control exactly what a homeowner could see. Nothing publishes without you.',
@@ -2368,7 +2374,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     if(key==='office')return walkOffice();
     if(key&&key.indexOf('room:')===0)return enterRoom(key.slice(5));
     setTalking(true);setActive(key);whereNow=key;phRoom(key);setDemoMode(true);toTop();
-    if(TAB_LINE[key])narrate(TAB_LINE[key]); else if(narr)narr.innerHTML='';   /* sim has no intro line */
+    if(narr)narr.innerHTML='';   /* no per-room message — the screen speaks for itself (Drew 7/21) */
     assembleScreen(key);
   }
 
@@ -2610,8 +2616,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
   var DEEPLINK=/^(office|offer|lens|faq|numbers|contact|sim|fitcall|room:(lead|storm|camp|book|follow|reviews|local|briefs))$/;
   var _qtab=null;try{_qtab=new URLSearchParams(location.search).get('tab')}catch(e){}
-  speak(GREET);
+  speak(GREET);   /* the greeting + landing deck live in the thread — one Chat toggle away */
+  /* land inside the office room on arrival (Drew 7/21); a deep-link tab still wins */
   if(_qtab&&DEEPLINK.test(_qtab))setTimeout(function(){openTab(_qtab)},700);
+  else walkOffice();
 })();
 </script>
 
