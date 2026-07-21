@@ -43,8 +43,8 @@
     { "source": "/sitemap.xml", "destination": "/api/sitemap" }
   ],
   "redirects": [
-    { "source": "/workspace",             "destination": "/lens#waitlist",                      "permanent": false },
-    { "source": "/workspace/(.*)",        "destination": "/lens#waitlist",                      "permanent": false },
+    { "source": "/workspace",             "destination": "/lens",                               "permanent": false },
+    { "source": "/workspace/(.*)",        "destination": "/lens",                               "permanent": false },
     { "source": "/trades.html",           "destination": "/atlas",                              "permanent": true },
     { "source": "/trades",                "destination": "/atlas",                              "permanent": true },
     { "source": "/ops.html",              "destination": "/atlas",                              "permanent": true },
