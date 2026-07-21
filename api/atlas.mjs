@@ -114,6 +114,10 @@ export function claimSafe(say, echoNums){
   if (/\bcorrect it in the (app|inbox)\b/i.test(t)) return false;
   if (/\b(jobber|servicetitan|service titan|housecall|workiz|acculynx|buildertrend|quickbooks)\b/i.test(t)) return false;
   if (/\batlas (partner|pro|verified|premium)\b/i.test(t)) return false;    // invented labels
+  // language overclaim (measured 7/21): "fully bilingual", "the homeowner guide is bilingual" —
+  // dressing past the grounded line (calls + texts in English or Spanish, nothing more).
+  if (/\bbilingual\b/i.test(t)) return false;
+  if (/\b(fully|completely|entirely)\s+(translated|in spanish|spanish)\b/i.test(t)) return false;
   // any bare performance number that isn't the one hedged claim (15s) or the standing terms
   // (20-min call, 30-day guarantee, 463 Vesta profiles) is an unreceipted claim → deflect.
   // Two measured false-positives softened 7/18 (a storm-season follow-up deflected 3/4):
@@ -149,7 +153,7 @@ THE FLYWHEEL (say ONLY as customer benefit, never as our strategy): Atlas runs y
 
 ATLAS (the contractor's front office): A managed front office, SMS-first. When a call is missed, the customer gets a text back in YOUR name — your prices, your service area — within moments. It captures what they need, books the estimate if you want, sends reminders, follows up on quotes, asks for the review when the job closes, and runs seasonal and storm campaigns to your past customers. You keep your number; you see everything live in your own private channel. Supported inbound texts and missed-call follow-ups typically get a first reply in 15 seconds after go-live (keep those exact hedges: "supported", "typically", "after go-live"). Every month ends with a receipt: leads answered, response times, estimates booked — measured by the system, not claimed by us. If asked who runs it: it's managed — we operate it, you watch it work; a person answers for it, the founder. Asked to PROVE the 15-second line: the sim is the proof — open "sim" and let them watch it reply in real time; never say you are "timing it now."
 The rooms of the office (each maps to a screen you can open): Lead Response, Storm Mode, Seasonal Campaigns, Booking, Follow-up, Review Generation, Local Discovery, Operator Briefs.
-Languages: calls and texts are answered and qualified in English or Spanish — the customer is answered in the language they wrote in (a Spanish version of the live demo exists at /missed-calls-es). That is the WHOLE claim: it's the system answering, so never invent staffing details ("our team includes Spanish speakers", "bilingual staff"). Asked about any OTHER language: don't guess — honest deflection to the fit call.
+Languages: calls and texts are answered and qualified in English or Spanish — the customer is answered in the language they wrote in (a Spanish version of the live demo exists at /missed-calls-es). That is the WHOLE claim: it's the system answering, so never invent staffing details ("our team includes Spanish speakers", "bilingual staff"), never use the word "bilingual", and never claim Vesta, the homeowner guide, or any other surface is translated or "fully bilingual" — the claim covers the calls and texts, nothing more. Asked about any OTHER language: don't guess — honest deflection to the fit call.
 
 LENS (free, beta): 4THWALL's free, private trust workspace for contractors. Connect the tools you already run, review every fact your operating record supports — each source-labeled and correction-capable — and control exactly what a homeowner could see. Nothing publishes without you. Free to start at /lens.
 
@@ -336,6 +340,8 @@ export function canonicalForTrip(say){
   if (/\b(approve|approval)\b[^.?!]{0,30}\b(answers?|repl(y|ies)|messages?|goes live)\b/i.test(t)
    || /\b(it|the system|atlas) learns\b/i.test(t) || /\blearns from\b/i.test(t) || /\bcorrect it in the (app|inbox)\b/i.test(t))
     return { say: 'The system answers from what you’ve given it — your prices, your services, your words — and you see every thread live in your own private channel, so nothing runs where you can’t watch it. Where it matters, a person answers for it: the founder.', screen: 'faq' };
+  if (/\bbilingual\b/i.test(t) || /\b(fully|completely|entirely)\s+(translated|in spanish|spanish)\b/i.test(t))
+    return { say: 'Calls and texts are answered and qualified in English or Spanish — the customer is answered in the language they wrote in, and you see it all in your channel. There’s a Spanish version of the live demo if you want to watch it work.', screen: 'sim' };
   return null;
 }
 
@@ -425,12 +431,36 @@ export default async function handler(req, res){
 
   let say = parsed && typeof parsed.say === 'string' ? parsed.say.replace(/<unk>/g, '').trim() : '';
   let screen = parsed && typeof parsed.screen === 'string' && SCREENS.has(parsed.screen) ? parsed.screen : null;
-  const aud = cleanAud(parsed && parsed.aud) || clientAud;   // model's read this turn, else last known
+  let aud = cleanAud(parsed && parsed.aud) || clientAud;   // model's read this turn, else last known
+
+  // ── contractor lock (routing-misfire guard, Drew 7/21) ──────────────────────────────
+  // Measured live: "a lot of MY customers speak spanish — can YOUR system handle that?" — an
+  // unambiguous contractor (first-person operator language, a question ABOUT the service) —
+  // flipped aud→homeowner and routed to vesta. First-person operator language is a contractor,
+  // full stop; the model may not flip it. EXCEPTION: a contractor asking about the homeowner
+  // SIDE (what homeowners see, Vesta ranking/placement) is a real contractor→vesta case and
+  // must survive (measured good: "what do homeowners see about me" → vesta). Mirrors triage's
+  // atlasSignal: read the user's own words, don't trust the model's audience flip.
+  const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+  const lastUserT = String(lastUserMsg && lastUserMsg.content || '');
+  const operatorSignal =
+       /\b(my|our)\s+(customers?|clients?|crew|guys|team|business|company|shop|office|trucks?|leads?|jobs?|quotes?|reviews?|number|phone|trade)\b/i.test(lastUserT)
+    || /\b(your|the)\s+(system|service|bot|desk|thing|software)\b[^.?!]{0,34}\b(handle|do|does|work|answer|cover|manage|deal)\b/i.test(lastUserT)
+    || /\b(i|we)\s+(run|own|operate)\b/i.test(lastUserT)
+    || /\bfor\s+(my|our)\s+(business|company|shop|trade|crew|customers)\b/i.test(lastUserT);
+  const askedHomeownerSide =
+    /\b(homeowner|vesta|rank(ed|ing)?|placement|my (profile|listing|page)|how do (homeowners|people|customers|they) (find|see|choose|pick))\b/i.test(lastUserT);
+  const contractorLocked = operatorSignal && !askedHomeownerSide;
+  if (contractorLocked) aud = 'contractor';
 
   // homeowner clamp (defense in depth, mirrors the prompt): a homeowner never lands on a
   // contractor screen — no fit-call pitch, no calculators, no offer.
   const HOMEOWNER_SCREENS = new Set(['vesta', 'contact']);
   if (aud === 'homeowner' && screen && !HOMEOWNER_SCREENS.has(screen)) screen = 'vesta';
+  // …and the mirror: a locked contractor whose turn is NOT about the homeowner side must not
+  // get dumped on the homeowner guide (the vesta misfire). Drop the wrong screen — the say
+  // still answers, and the composer keeps the turn alive (never a dead end).
+  if (contractorLocked && screen === 'vesta') screen = null;
 
   // the final authority: anything the pack forbids never ships. A tripped answer first
   // tries its class's canonical truth (see canonicalForTrip) — the pack answer to the
