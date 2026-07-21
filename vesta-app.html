@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
 <title>Vesta — Find a contractor worth hiring. | 4THWALL</title>
 <meta name="description" content="Vesta matches you with vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care, painters, masons, tree crews, flooring pros, window & door installers, pool pros. Each one read and summarized by Vesta. No ads, no pay-to-play.">
 <link rel="canonical" href="https://4thwall.solutions/vesta">
@@ -1128,6 +1128,12 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    Vesta's chat drops the two-sided iMessage bubbles for Atlas's rhythm — your words as a
    handwritten quote, Vesta's reply as flowing serif right below, alternating down the column.
    Restyle only; the thread/typer/deck machinery is untouched. Desktop keeps the bubbles. */
+@media (max-width:899.98px){
+  /* the composer's focus ring reads as an unwanted highlight on mobile (Drew 7/20) — both
+     composer surfaces (home vconv + triage) drop it; desktop keeps the accessibility ring. */
+  .home-search:focus-visible { outline:none; }
+  .tc-card:focus-within { border-color:rgba(74,75,47,.14); }
+}
 @media (max-width:899.98px){
   .tc-thread { padding:18px 22px 6px; gap:22px; }
   .tc-msg, .tc-msg.u, .tc-msg.v { flex-direction:column; align-items:stretch; gap:5px; max-width:100%; }
