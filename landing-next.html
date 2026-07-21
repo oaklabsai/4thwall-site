@@ -264,6 +264,7 @@ a,button{transition:transform .14s}
 .sec-h{font-family:var(--display);font-weight:500;font-size:clamp(1.85rem,3.8vw,2.9rem);line-height:1.08;letter-spacing:-.03em;color:var(--ink)}
 .sec-h em{font-style:italic;font-weight:400;color:var(--olive)}
 .sec-sub{margin-top:1rem;font-size:1rem;line-height:1.6;color:var(--muted)}
+.sec-note{margin:2.2rem auto 0;max-width:720px;text-align:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
 
 /* ════════════════ HOW IT WORKS — 3 soft steps ════════════════ */
 .how-grid{max-width:940px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
@@ -793,8 +794,6 @@ a,button{transition:transform .14s}
   <a href="/lens" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg></span>Lens — early access</a>
   <a href="/vesta" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Vesta — for homeowners</a>
   <a href="/thesis" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Thesis — why we build this</a>
-  <a href="#how" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>How Atlas works</a>
-  <a href="#features" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="7" height="7" rx="1"/><rect x="15" y="3" width="7" height="7" rx="1"/><rect x="2" y="14" width="7" height="7" rx="1"/><rect x="15" y="14" width="7" height="7" rx="1"/></svg></span>What you get with Atlas</a>
   <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="drop-a drop-cta" target="_blank" rel="noopener">Book a call →</a>
 </div>
 
@@ -808,7 +807,6 @@ a,button{transition:transform .14s}
 
     <!-- the brand claim — moved up from the old products section to lead the hero -->
     <div class="fd-intro">
-      <span class="kicker">welcome to 4THWALL</span>
       <h1 class="sec-h">Run the business around the work.<br><em>Stop letting good work disappear.</em></h1>
       <p class="sec-sub">Atlas answers, qualifies, books, and follows up — so no lead dies in voicemail. Lens keeps your side of the record, and you control what shows. Vesta is the free guide homeowners use to hire on evidence, not ads. One mission: good work should leave evidence that compounds.</p>
       <div class="hero-fast">
@@ -874,62 +872,72 @@ a,button{transition:transform .14s}
     </div>
   </div>
 
-  <a class="fd-cue" href="#showcase">the whole story <span>↓</span></a>
+  <a class="fd-cue" href="#atlas-sec">the whole story <span>↓</span></a>
 </section>
 
-<!-- ════════════════ SHOWCASE — Atlas, working (proof after the offer) ════════════════ -->
-<section class="showcase" id="showcase">
+<!-- ════════════════ ATLAS — the front office, explained ════════════════ -->
+<section class="sec sec-products-top" id="atlas-sec">
   <div class="sec-head rv">
-    <span class="kicker">start with the fastest proof</span>
-    <h2 class="sec-h">Miss a call.<br><em>Watch Atlas recover the conversation.</em></h2>
-    <p class="sec-sub">The missed call is where the leak becomes obvious. It is the first proof of a larger system that carries the lead through booking, follow-up, reviews, campaigns, and the month-end receipt.</p>
+    <span class="kicker">for contractors · atlas</span>
+    <h2 class="sec-h">One managed front office.<br><em>The whole journey carried through.</em></h2>
+    <p class="sec-sub">A homeowner calls while you’re on a roof. Atlas texts back in your name, asks the approved questions, books the estimate, follows up, requests the review — and ends every month with a receipt.</p>
   </div>
-  <div class="showcase-stage rv">
-    <div class="showcase-card" id="showcaseCard">
-      <div class="showcase-chrome">
-        <div class="chrome-dots"><i></i><i></i><i></i></div>
-        <span class="chrome-title">Atlas — example lead feed</span>
-        <span class="chrome-live">Demo</span>
-      </div>
-      <img src="/atlas-slack.png" alt="Atlas operations assistant — example lead feed in Slack" loading="eager">
+  <div class="how-grid">
+    <div class="how-card rv">
+      <span class="how-num">01</span>
+      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+      <h3 class="how-t">Missed calls recovered</h3>
+      <p class="how-d">When you cannot pick up, Atlas follows up by text and starts collecting what the homeowner needs — around the clock, in English or Spanish.</p>
+      <span class="b-stat-inline"><b>15 seconds</b> typical first reply</span>
+    </div>
+    <div class="how-card rv rv-d1">
+      <span class="how-num">02</span>
+      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg></div>
+      <h3 class="how-t">Qualified &amp; booked</h3>
+      <p class="how-d">Atlas asks what happened, where, and how urgent — then places a qualified estimate on your calendar with the context already attached.</p>
+    </div>
+    <div class="how-card rv rv-d2">
+      <span class="how-num">03</span>
+      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      <h3 class="how-t">Followed through &amp; measured</h3>
+      <p class="how-d">Reminders, review requests, seasonal campaigns — and a month-end receipt of the work Atlas actually operated, not a promise.</p>
     </div>
   </div>
+  <p class="sec-note rv">Built for homeowner-facing trades — roofing, HVAC, plumbing, electrical, paving, lawn care, and more</p>
   <div class="showcase-caps rv">
-    <span class="proof-chip">Qualifies the lead</span>
-    <span class="proof-chip">Books the estimate</span>
-    <span class="proof-chip">Carries the follow-up</span>
-    <a href="/missed-calls" class="btn-soft">Try it yourself →</a>
+    <a href="/atlas" class="btn-dark">Explore Atlas <span class="arr">→</span></a>
   </div>
 </section>
 
-<!-- ════════════════ VESTA PREVIEW — the other side of the system ════════════════ -->
-<section class="showcase" id="vesta-preview">
+<!-- ════════════════ VESTA — the homeowner side, explained ════════════════ -->
+<section class="sec" id="vesta-sec">
   <div class="sec-head rv">
-    <span class="kicker">the other side of the same system</span>
+    <span class="kicker">for homeowners · vesta</span>
     <h2 class="sec-h">Then the homeowner asks —<br><em>and Vesta answers with evidence.</em></h2>
     <p class="sec-sub">Say the job in plain words. Vesta routes it to the right trade and returns the firms whose public record actually fits — with the why shown, never ranked by payment.</p>
   </div>
-  <div class="vp-stage rv">
-    <div class="vp-frame">
-      <div class="vp-query"><span class="vp-q-mark">✦</span>“my roof is leaking in Stamford”</div>
-      <div class="vp-deck-h">Vesta’s picks for active leak — emergency</div>
-      <div class="vp-card">
-        <div class="vp-badge">✦ matched to your job</div>
-        <div class="vp-name">Redpoint Roofing <span>Stamford, CT · Roofing</span></div>
-        <p class="vp-read">Does active leak — emergency · fast leak &amp; storm response · in and done quickly</p>
-        <div class="vp-cols">
-          <div><b>Known for</b><span>✓ Fast leak &amp; storm response</span><span>✓ 1–2 day replacements</span></div>
-          <div><b>Best for</b><span>✓ Active leak or emergency</span><span>✓ Full roof replacement</span></div>
-        </div>
-        <div class="vp-req">✦ Request through Vesta <span class="arr">→</span></div>
-      </div>
-      <p class="vp-note">Illustrative example with a fictional contractor — the live guide draws from 463 evidence-backed Fairfield County profiles.</p>
+  <div class="how-grid">
+    <div class="how-card rv">
+      <span class="how-num">01</span>
+      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <h3 class="how-t">Say the job in plain words</h3>
+      <p class="how-d">“My roof is leaking in Stamford” is enough. Vesta finds the right trade and the firms whose record actually fits the job.</p>
+    </div>
+    <div class="how-card rv rv-d1">
+      <span class="how-num">02</span>
+      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+      <h3 class="how-t">Vesta’s Read on every pro</h3>
+      <p class="how-d">A plain-English read of each firm — what they’re known for, what their record supports — before you ever call.</p>
+    </div>
+    <div class="how-card rv rv-d2">
+      <span class="how-num">03</span>
+      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <h3 class="how-t">Ranked by the record, not ads</h3>
+      <p class="how-d">Free for homeowners. No ads, no boosted listings, no pay-to-play — a firm’s standing comes only from the evidence.</p>
     </div>
   </div>
+  <p class="sec-note rv">Drawing from 463 evidence-backed Fairfield County profiles — free, no account needed</p>
   <div class="showcase-caps rv">
-    <span class="proof-chip">Grounded in the public record</span>
-    <span class="proof-chip">No ads, no pay-to-play</span>
-    <span class="proof-chip">Free for homeowners</span>
     <a href="/vesta" class="btn-soft">Open Vesta →</a>
   </div>
 </section>
@@ -937,7 +945,7 @@ a,button{transition:transform .14s}
 <!-- ════════════════ LENS — explained ════════════════ -->
 <section class="sec" id="lens">
   <div class="sec-head rv">
-    <span class="kicker">between the two sits Lens · early access</span>
+    <span class="kicker">and Lens ties them together · early access</span>
     <h2 class="sec-h">Give homeowners a reason<br><em>to choose you.</em></h2>
     <p class="sec-sub">Lens is the free, private trust workspace for contractors — in early access now. Connect the tools you already run, review every fact they support, and control exactly what a homeowner could see. Nothing publishes without you.</p>
   </div>
@@ -967,94 +975,28 @@ a,button{transition:transform .14s}
   </div>
 </section>
 
-<!-- ════════════════ TRADE BAND ════════════════ -->
-<div class="trade-band rv">
-  <p class="trade-band-label">Built for homeowner-facing trades</p>
-  <div class="trade-chips">
-    <span class="trade-chip">Roofing</span>
-    <span class="trade-chip">HVAC</span>
-    <span class="trade-chip">Plumbing</span>
-    <span class="trade-chip">Electrical</span>
-    <span class="trade-chip">Paving</span>
-    <span class="trade-chip">Lawn Care</span>
-    <span class="trade-chip trade-chip-more">+ more</span>
-  </div>
-</div>
-
-<!-- ════════════════ HOW IT WORKS ════════════════ -->
-<section class="sec" id="how">
+<!-- ════════════════ THE PROOF — Atlas working, in Slack ════════════════ -->
+<section class="showcase" id="showcase">
   <div class="sec-head rv">
-    <span class="kicker">how atlas works</span>
-    <h2 class="sec-h">From first contact to earned reputation,<br><em>one journey carried through.</em></h2>
+    <span class="kicker">see it working</span>
+    <h2 class="sec-h">Miss a call.<br><em>Watch Atlas recover the conversation.</em></h2>
+    <p class="sec-sub">This is what the system looks like on a real morning — the lead qualified, the estimate booked, the follow-up carried, all delivered where you already work.</p>
   </div>
-  <div class="how-grid">
-    <div class="how-card rv">
-      <span class="how-num">Step 01</span>
-      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-      <h3 class="how-t">The lead reaches you</h3>
-      <p class="how-d">A homeowner texts or calls while you're working. Supported inbound texts are handled immediately; when a call goes unanswered, Atlas follows up by text so the conversation does not die in voicemail.</p>
-    </div>
-    <div class="how-card rv rv-d1">
-      <span class="how-num">Step 02</span>
-      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg></div>
-      <h3 class="how-t">Qualified &amp; booked</h3>
-      <p class="how-d">Atlas asks the approved questions — what happened, where, how urgent — and can place a qualified estimate on your calendar with the context already attached.</p>
-    </div>
-    <div class="how-card rv rv-d2">
-      <span class="how-num">Step 03</span>
-      <div class="how-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <h3 class="how-t">Followed through &amp; measured</h3>
-      <p class="how-d">Reminders, lead follow-up, review requests, seasonal reactivation, and the month-end receipt keep the work moving after the first reply.</p>
+  <div class="showcase-stage rv">
+    <div class="showcase-card" id="showcaseCard">
+      <div class="showcase-chrome">
+        <div class="chrome-dots"><i></i><i></i><i></i></div>
+        <span class="chrome-title">Atlas — example lead feed</span>
+        <span class="chrome-live">Demo</span>
+      </div>
+      <img src="/atlas-slack.png" alt="Atlas operations assistant — example lead feed in Slack" loading="lazy">
     </div>
   </div>
-</section>
-
-<!-- ════════════════ FEATURES BENTO ════════════════ -->
-<section class="sec" id="features">
-  <div class="sec-head rv">
-    <span class="kicker">what you get with atlas</span>
-    <h2 class="sec-h">One managed front office.<br><em>Measured, month after month.</em></h2>
-  </div>
-  <div class="bento">
-    <div class="b-tile rv">
-      <div class="b-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg></div>
-      <h3 class="b-t">Missed calls recovered</h3>
-      <p class="b-d">When you cannot pick up, Atlas follows up by text and starts collecting what the homeowner needs — around the clock, in English or Spanish.</p>
-      <span class="b-stat-inline"><b>15 seconds</b> typical first reply</span>
-    </div>
-    <div class="b-tile rv rv-d1">
-      <div class="b-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-      <h3 class="b-t">Estimates booked</h3>
-      <p class="b-d">Qualified leads land on your calendar with the details already collected — not a voicemail to chase.</p>
-    </div>
-    <div class="b-tile rv rv-d2">
-      <div class="b-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <h3 class="b-t">Review requests carried through</h3>
-      <p class="b-d">The request goes out when the job closes, while the experience is still fresh — consistently, without relying on someone to remember.</p>
-    </div>
-    <div class="b-tile rv">
-      <div class="b-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div>
-      <h3 class="b-t">Storm &amp; seasonal campaigns</h3>
-      <p class="b-d">When a storm hits or a slow month looms, campaigns go out to past customers — work generated, not waited for.</p>
-    </div>
-    <div class="b-tile rv rv-d1">
-      <div class="b-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-      <h3 class="b-t">Everything in one place</h3>
-      <p class="b-d">Supported leads, bookings, review requests, and campaigns arrive as operator briefs — with the context attached, right where you already work.</p>
-    </div>
-    <div class="b-tile rv rv-d2">
-      <div class="b-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <h3 class="b-t">A record that starts compounding</h3>
-      <p class="b-d">Atlas measures the work it actually operates — responses, bookings, follow-ups, and recorded outcomes — so every month ends with a receipt, not a promise.</p>
-      <span class="b-kpi"><b>Measured</b> · source-labeled · correction-capable</span>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════ GUARANTEE ════════════════ -->
-<section class="sec">
-  <div class="guar rv">
-    <h2 class="guar-h">Supported inbound texts and missed-call follow-ups typically receive Atlas’s first reply in <em>15 seconds after go-live.</em></h2>
+  <div class="showcase-caps rv">
+    <span class="proof-chip">Qualifies the lead</span>
+    <span class="proof-chip">Books the estimate</span>
+    <span class="proof-chip">Carries the follow-up</span>
+    <a href="/missed-calls" class="btn-soft">Try it yourself →</a>
   </div>
 </section>
 
