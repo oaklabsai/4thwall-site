@@ -42,19 +42,28 @@
       btn.disabled = true;
       status.classList.remove('error');
       status.textContent = 'Saving your spot…';
-      fetch('/api/waitlist', {
+      // Direct Supabase REST insert — anon key is public by design; the
+      // insert-only RLS policy on lens_waitlist is the guard (no read path).
+      // 201 = saved, 409 = already on the list (also a success to the signer-upper).
+      var DB = 'https://vinytnzzgryodyrftabg.supabase.co';
+      var KEY = 'sb_publishable_IEQcNbThGZblpzqNnEeDeg_r5LXSyzt';
+      fetch(DB + '/rest/v1/lens_waitlist', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, company: company }),
-      }).then(function (r) { return r.json().catch(function () { return {}; }); })
-        .then(function (data) {
-          if (data && data.ok) {
+        headers: {
+          apikey: KEY,
+          Authorization: 'Bearer ' + KEY,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({ email: email.toLowerCase(), company: company.slice(0, 120) || null, source: 'lens' }),
+      }).then(function (r) {
+          if (r.ok || r.status === 409) {
             form.querySelectorAll('.wl-field,.wl-submit').forEach(function (el) { el.hidden = true; });
             status.textContent = "You're on the list. We'll email you when your workspace is ready.";
           } else {
             btn.disabled = false;
             status.classList.add('error');
-            status.textContent = (data && data.error) || 'Could not save your spot. Try again in a minute.';
+            status.textContent = 'Could not save your spot. Try again in a minute.';
           }
         })
         .catch(function () {
