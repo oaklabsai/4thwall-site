@@ -6595,6 +6595,15 @@ function mdLite(t){
   for (const raw of lines){
     const s = raw.trim();
     if (!s){ flush(); continue; }
+    // the model sometimes emits procedural steps INLINE ("lead. - Step one - Step two") on one line —
+    // break them into real bullets so long answers read as a list, not a run-on of dashes (Drew 7/20)
+    if ((s.match(/\s[-–]\s+[A-Z0-9"“]/g)||[]).length >= 2){
+      const parts = s.split(/\s[-–]\s+/);
+      const lead = (parts.shift()||'').trim();
+      if (lead){ para.push(inline(lead)); flush(); }
+      parts.forEach(p=>{ const x=p.trim(); if(x) out.push('<span class="md-li"><span class="d">–</span><span>'+inline(x)+'</span></span>'); });
+      continue;
+    }
     let m = s.match(/^[-•·]\s+(.*)/);
     if (m){ flush(); out.push('<span class="md-li"><span class="d">–</span><span>'+inline(m[1])+'</span></span>'); continue; }
     m = s.match(/^(\d{1,2})[.)]\s+(.*)/);
