@@ -1124,6 +1124,28 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .tc-send.hot { background:var(--olive); color:var(--white); }
 .tc-err { font-size:11.5px; color:#9a3b2f; padding:2px 16px 4px 54px; }
 
+/* ═══ MOBILE: single-focus quote→response flow (Drew 7/20) ═══
+   Vesta's chat drops the two-sided iMessage bubbles for Atlas's rhythm — your words as a
+   handwritten quote, Vesta's reply as flowing serif right below, alternating down the column.
+   Restyle only; the thread/typer/deck machinery is untouched. Desktop keeps the bubbles. */
+@media (max-width:899.98px){
+  .tc-thread { padding:18px 22px 6px; gap:22px; }
+  .tc-msg, .tc-msg.u, .tc-msg.v { flex-direction:column; align-items:stretch; gap:5px; max-width:100%; }
+  .tc-msg .tc-avatar { display:none; }                       /* no "them" label — the reply just lands */
+  /* your quote — Caveat, slanted, tea-marked, echoing Atlas's fd-you */
+  .tc-msg.u .tc-bubble { background:none; border:none; box-shadow:none; border-radius:0; padding:0; max-width:100%;
+    font-family:var(--script); font-weight:700; font-size:23px; line-height:1.24; color:var(--ebony); transform:rotate(-.5deg); }
+  .tc-msg.u .tc-bubble::before { content:'\201C'; }
+  .tc-msg.u .tc-bubble::after  { content:'\201D'; }
+  /* Vesta's reply — flowing serif, no bubble */
+  .tc-msg.v .tc-bubble { background:none; border:none; box-shadow:none; border-radius:0; padding:0;
+    font-family:var(--serif); font-size:17px; line-height:1.6; color:var(--olive); }
+  /* the resolving read keeps its pull-quote emphasis (tea quote-mark + italic) without a bubble */
+  .tc-msg.v .tc-bubble.tc-read { padding-left:20px; }
+  .tc-chips { padding-left:0; }
+  #tc-thread .v-handoff { margin-left:0; }
+}
+
 /* ===== SAVED LIST ===== */
 .favwrap { flex:1; min-height:0; overflow-y:auto; padding:2px 20px 130px; display:flex; flex-direction:column; gap:12px; }
 .fav-intro { font-size:12.5px; color:var(--ebony); line-height:1.55; background:rgba(212,223,158,.24); border:1px solid rgba(74,75,47,.08); border-radius:14px; padding:13px 16px; margin-bottom:2px; }
@@ -7279,7 +7301,11 @@ function wireTriageChat(){
   if (inp) inp.addEventListener('input', ()=> snd.classList.toggle('hot', !!inp.value.trim()));
   const form = $('tc-form');
   if (form) form.addEventListener('submit', e => { e.preventDefault(); const v=(inp.value||'').trim();
-    if (v && S.triChat && !S.triChat.done && !S.triChat.busy){ inp.value=''; snd.classList.remove('hot'); triTurn(v); } });
+    if (v && S.triChat && !S.triChat.done && !S.triChat.busy){ inp.value=''; snd.classList.remove('hot');
+      /* drop the keyboard once the message is sent so the reply lands in a full-height view (Drew 7/20) —
+         mobile only; on desktop there's no keyboard and blurring would just steal the caret. */
+      if (window.matchMedia && window.matchMedia('(max-width:899.98px)').matches) inp.blur();
+      triTurn(v); } });
   // Returning to a conversation (back from the walkthrough): replay the thread from the
   // kept history so nothing said is lost — the DOM was rebuilt, the words weren't.
   const c = S.triChat;

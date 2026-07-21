@@ -1408,11 +1408,42 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   #abnav{display:none}
   #abscrim,#absheet{display:none}
   #acenter .fd.staged .fd-well{bottom:1.4rem}
+  /* ── room open: the room's components flank the conversation (Drew 7/20) ──
+     Copy pinned to the far left, the demo scene to the far right, so the conversation
+     column running down the centre stays the focus instead of a block stacked beneath it. */
+  #acenter .fd.staged:has(.rm-grid){justify-content:center;padding-bottom:8.5rem}
+  #acenter .fd.staged:has(.rm-grid) .fd-inner{width:min(1300px,100%);max-width:none}
+  #acenter .fd.staged:has(.rm-grid) .fd-chat{margin-bottom:.6rem}
+  #acenter .fd.staged:has(.rm-grid) .fd-screen{width:100%}
+  .fd.staged .rm-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(4rem,22vw,24rem);align-items:center}
+  .fd.staged .rm-copy{max-width:340px}
+  .fd.staged .rm-scene{margin-left:auto;max-width:330px;width:100%}
 }
+/* resting Lens promo — desktop never shows it (Lens lives in the rail); mobile pins it above the composer */
+.fd-lens-rest{display:none}
+.flr-k{font-family:var(--hand);font-weight:600;font-style:italic;font-size:1.02rem;color:var(--olive);line-height:1;transform:rotate(-1.5deg)}
+.flr-t{font-family:var(--display);font-weight:600;font-size:.98rem;color:var(--ink);line-height:1.2}
+.flr-go{font-family:var(--body);font-weight:600;font-size:.78rem;color:var(--olive);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px;margin-top:.1rem}
+
 @media(max-width:899px){
   #arail{display:none}
   #app{padding-bottom:0}
   #acenter{min-height:100svh}
+  /* the resting Lens promo lives above the docked composer during a conversation, then fades */
+  .fd.staged .fd-lens-rest{display:flex;flex-direction:column;align-items:center;gap:.12rem;text-align:center;
+    position:fixed;left:50%;transform:translateX(-50%);bottom:calc(8.1rem + env(safe-area-inset-bottom));
+    width:min(600px,calc(100% - 2.2rem));z-index:69;background:var(--nm);border:var(--nm-edge);border-radius:18px;
+    box-shadow:var(--nm-out);padding:.6rem 1rem .65rem;text-decoration:none;cursor:pointer;
+    transition:opacity .55s ease,transform .55s var(--spring)}
+  .fd.staged.lens-gone .fd-lens-rest{opacity:0;transform:translateX(-50%) translateY(12px);pointer-events:none}
+  /* room screens carry their own Lens door — no need to double it there */
+  .fd.staged.req-open .fd-lens-rest,.fd.sim-open .fd-lens-rest{display:none}
+  /* ── the conversation sits inside a neumorphic card, matching Vesta's home surface (Drew 7/20) ──
+     Same-tone --nm ground defined by the soft dual shadow + hairline edge (true neumorphism). */
+  #acenter .fd .fd-inner{width:min(560px,100%);margin:0 auto;background:var(--nm);border:var(--nm-edge);
+    border-radius:26px;box-shadow:var(--nm-out);padding:1.7rem 1.3rem 1.9rem}
+  /* the docked composer floats just below the card, so don't double-frame it there */
+  #acenter .fd.staged .fd-inner{padding-bottom:1.3rem}
   /* the composer is FIXED to the viewport on mobile (the .fd.staged .fd-well global rule);
      clear room for it + the bottom nav so screen content never runs underneath */
   #acenter .fd.staged{padding-bottom:15rem}
@@ -1518,6 +1549,13 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
           </form>
           <button type="button" class="fd-demo" id="fdDemo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4" fill="currentColor" stroke="none"/></svg>Would you like to see a 20-second demo?</button>
         </div>
+        <!-- resting Lens promo — pinned above the mobile composer during a conversation,
+             fades out once the chat runs long (Drew 7/20) -->
+        <a class="fd-lens-rest" id="fdLensRest" data-door="lens" role="button" tabindex="0">
+          <span class="flr-k">the free workspace</span>
+          <span class="flr-t">Lens — own your record</span>
+          <span class="flr-go">start free with Lens</span>
+        </a>
         <div class="fd-screen" id="fdScreen" hidden></div>
       </div>
     </section>
@@ -1639,6 +1677,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   var screen=$('fdScreen');
   function paintScreen(html,instant){
     screen.hidden=false;screen.classList.remove('in');screen.innerHTML=html;
+    /* the room/screen door links read as quiet nav, not CTAs — strip the ←/→ glyphs (Drew 7/20).
+       Scoped to .fds-doors so the resolution CTAs (.res-cta) and office-card affordances keep theirs. */
+    [].forEach.call(screen.querySelectorAll('.fds-doors a'),function(a){a.textContent=a.textContent.replace(/\s*[←→]\s*/g,' ').replace(/\s+/g,' ').trim();});
     [].forEach.call(screen.children,function(c,i){c.style.transitionDelay=instant?'0ms':Math.min(i*80,640)+'ms'});
     void screen.offsetWidth;screen.classList.add('in');
     var fd=$('home');if(fd&&!fd.classList.contains('staged'))fd.classList.add('staged');
@@ -2242,13 +2283,18 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     })
     .catch(function(){busy=false;thinkOff();deflectLocal()});
   }
+  var atlasTurns=0;   // typed asks so far — the resting Lens promo fades once the chat runs long
   function input(q,display){
     if(busy)return;
     simGen++;setTalking(true);setActive(null);echo(display||q);toTop();
+    if(++atlasTurns>=3){var _lh=$('home');if(_lh)_lh.classList.add('lens-gone')}
     if(/^\s*(walk the office|the office|back to the office|every room)\s*$/i.test(q)){walkOffice();return}
     ask(q);
   }
   $('fdWell').addEventListener('submit',function(e){e.preventDefault();var q=say.value.trim();if(!q)return;say.value='';if(window.innerWidth<900)say.blur();phVis();input(q)});
+  /* the resting Lens promo opens the Lens room (it lives outside #fdScreen, so wire it here) */
+  var _fdLens=$('fdLensRest');
+  if(_fdLens)_fdLens.addEventListener('click',function(e){e.preventDefault();openTab('lens')});
 
   /* ── placeholder cycling — ROOM-AWARE: standing in a room, the composer suggests questions
      about THAT room (the room is there to be asked; the visitor shouldn't have to guess that) ── */
