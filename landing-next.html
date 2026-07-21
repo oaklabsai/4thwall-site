@@ -143,10 +143,9 @@ a,button{transition:transform .14s}
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 6px}
 
 /* ── reveal-on-scroll ── */
-.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s var(--spring)}
-.rv.in{opacity:1;transform:none}
-.rv-d1{transition-delay:.08s}.rv-d2{transition-delay:.16s}.rv-d3{transition-delay:.24s}
-@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+/* scroll-reveal removed site-wide (Drew 7/21 — hurt the mobile experience); .rv markup
+   stays in the DOM harmlessly (no-op) so nothing needs re-touching per section */
+.rv{opacity:1;transform:none}
 
 /* ════════════════ NAV — floating soft pill ════════════════ */
 /* the option bar — glassy pill; every page is a control with a name and an intent.
@@ -179,32 +178,16 @@ a,button{transition:transform .14s}
 .nav-cta span{font-family:var(--mono);font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(212,223,158,.75);line-height:1}
 .nav-cta:hover{box-shadow:0 7px 18px -4px rgba(67,68,42,.6);transform:translateY(-1px)}
 .nav-cta:active{transform:scale(.97)}
-.menu-btn{display:none;width:40px;height:40px;align-items:center;justify-content:center;background:var(--nm);color:var(--olive);border-radius:50%;box-shadow:var(--nm-sm);flex-shrink:0}
-.menu-btn:active{box-shadow:var(--nm-in)}
-.menu-btn svg{width:16px;height:16px}
-@media(max-width:900px){
-  .nav-links{display:none}
-  .menu-btn{display:flex}
-  .nav-cta{padding:.45rem 1rem}
+/* mobile: the pill stays one row, always visible — no hamburger, no dropdown sheet
+   (matches /thesis's nav exactly, Drew 7/21: "needs to look uniform") */
+@media(max-width:640px){
+  .nav-a{padding:.45rem .6rem}
+  .nav-a b{font-size:.72rem}
+  .nav-a span{display:none}
+  .nav-cta{padding:.45rem .85rem}
+  .nav-cta b{font-size:.72rem}
   .nav-cta span{display:none}
-  .nav-cta b{font-size:.8rem}
 }
-
-/* mobile dropdown — a soft lifted card */
-.nav-drop{position:fixed;top:72px;right:1rem;left:auto;width:min(320px,calc(100vw - 2rem));z-index:320;
-  background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--sh-card);
-  overflow:hidden;opacity:0;transform:translateY(-8px) scale(.97);pointer-events:none;
-  transition:opacity .24s var(--spring),transform .24s var(--spring);transform-origin:top right}
-.nav-drop.is-open{opacity:1;transform:none;pointer-events:all}
-.drop-a{display:flex;align-items:center;gap:.85rem;padding:.9rem 1.1rem;color:var(--ebony);font-size:.92rem;font-weight:500;border-bottom:1px solid rgba(74,75,47,.08);transition:background .15s,color .15s}
-.drop-a:last-child{border-bottom:none}
-.drop-a:hover{background:rgba(255,255,255,.6);color:var(--olive)}
-.drop-a .d-icon{width:19px;height:19px;flex-shrink:0;color:var(--dim);display:flex}
-.drop-a .d-icon svg{width:19px;height:19px}
-.drop-a.drop-cta{background:var(--dark-grad);color:var(--white);font-weight:600;justify-content:center}
-.drop-a.drop-cta:hover{background:var(--dark-grad);color:var(--white)}
-.drop-bd{display:none;position:fixed;inset:0;z-index:310}
-.drop-bd.is-open{display:block}
 
 /* ════════════════ HERO ════════════════ */
 .hero{padding:clamp(6.5rem,12vh,9.5rem) var(--pad) 0;text-align:center;position:relative}
@@ -400,12 +383,12 @@ a,button{transition:transform .14s}
 .fd-inner{width:min(660px,100%);display:flex;flex-direction:column;align-items:center}
 /* the three-surface fork breaks out wider than the hero's text column (Drew 7/20 — use the space) */
 .fd-inner:has(.fd-fork){width:min(1140px,94vw)}
-/* the brand mark leads the hero on a lifted neumorphic square (in place of "Welcome!") */
-.fd-logo{display:grid;place-items:center;width:clamp(66px,7vw,86px);aspect-ratio:1;border-radius:22px;color:var(--olive);
-  background:var(--nm);box-shadow:var(--nm-out);border:1px solid rgba(255,255,255,.55);
-  margin:1.1rem auto 1.5rem;transition:box-shadow .25s ease,transform .2s var(--spring)}
-.fd-logo svg{width:46%;height:auto;display:block}
-.fd-logo:hover{transform:translateY(-2px);box-shadow:var(--nm-out),0 10px 24px -8px rgba(74,75,47,.28)}
+/* the brand mark leads the hero — same plate as /thesis's .brand (Drew 7/21: uniform) */
+.fd-logo{display:inline-grid;place-items:center;width:58px;height:58px;border-radius:18px;color:var(--olive);
+  background:var(--nm);box-shadow:var(--nm-sm);border:1px solid rgba(255,255,255,.5);
+  margin:1.1rem auto 1.5rem;transition:box-shadow .2s,transform .18s var(--spring)}
+.fd-logo svg{width:26px;height:26px;display:block}
+.fd-logo:hover{transform:translateY(-1px);box-shadow:var(--nm-out)}
 /* the brand claim leading the hero — reading width, centered above the cards */
 .fd-intro{max-width:min(680px,92vw);margin:0 auto 2rem}
 .fd-intro .sec-h{margin-top:.5rem}
@@ -793,32 +776,6 @@ a,button{transition:transform .14s}
 .atx p:last-child{margin-bottom:0}
 .atx p b{color:var(--olive);font-weight:600}
 
-/* ═══ VESTA hover-expand profile card — vanilla port of the framer-motion
-   WorkflowBuilderCard (Drew 7/21). Header always shows; the Read + tags reveal
-   on hover; footer holds the record + the request action. ═══ */
-.vwc-stage{display:flex;justify-content:center;padding:0 var(--pad)}
-.vwc{width:min(400px,100%);background:var(--nm);border:var(--nm-edge);border-radius:var(--r-card);box-shadow:var(--nm-sm);overflow:hidden;cursor:pointer;transition:transform .35s var(--spring),box-shadow .35s ease}
-.vwc:hover{transform:translateY(-6px);box-shadow:var(--sh-card)}
-.vwc-img{position:relative;height:118px;background:var(--dark-grad);display:flex;align-items:flex-end;padding:.85rem 1rem;overflow:hidden}
-.vwc-img::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 110% -10%,rgba(212,223,158,.22),transparent 60%)}
-.vwc-trade{position:relative;font:600 .64rem/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--tea)}
-.vwc-fic{position:absolute;top:.7rem;right:.8rem;font:500 .52rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.72);background:rgba(0,0,0,.24);border-radius:99px;padding:.32rem .55rem}
-.vwc-body{padding:1.05rem 1.15rem}
-.vwc-meta{display:flex;align-items:center;gap:.5rem;font:500 .6rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
-.vwc-status{display:inline-flex;align-items:center;gap:.35rem}
-.vwc-status i{width:7px;height:7px;border-radius:50%;background:#8aa64f}
-.vwc-name{font-family:var(--display);font-size:1.2rem;font-weight:600;letter-spacing:-.015em;color:var(--ink);margin-top:.3rem}
-.vwc-reveal{max-height:0;opacity:0;overflow:hidden;margin-top:0;transition:max-height .35s ease,opacity .3s ease,margin .35s ease}
-.vwc:hover .vwc-reveal{max-height:240px;opacity:1;margin-top:.85rem}
-.vwc-read{font:400 .84rem/1.55 var(--body);color:var(--olive);background:rgba(212,223,158,.32);border-radius:12px;padding:.7rem .8rem}
-.vwc-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
-.vwc-tag{font:500 .62rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ebony);background:var(--nm);box-shadow:var(--nm-sm);border-radius:99px;padding:.42rem .62rem}
-.vwc-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;border-top:1px solid var(--line);padding:.85rem 1.15rem}
-.vwc-rec{font:500 .66rem/1.3 var(--mono);letter-spacing:.03em;color:var(--dim)}
-.vwc-req{display:inline-flex;align-items:center;gap:.4rem;font:600 .78rem/1 var(--body);color:var(--tea);background:var(--dark-grad);border-radius:99px;padding:.6rem 1rem;box-shadow:0 4px 13px -3px rgba(67,68,42,.5)}
-.vwc-hint{max-width:420px;margin:1.1rem auto 0;text-align:center;font:400 .74rem/1.55 var(--body);color:var(--dim)}
-@media(hover:none){.vwc-reveal{max-height:240px;opacity:1;margin-top:.85rem}}
-
 /* What is Slack? — the explainer dropdown, ported from Atlas (Drew 7/21) */
 .slk-more{max-width:430px;margin:1.6rem auto 0}
 .slk-more>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;font:600 .82rem/1 var(--body);color:var(--ebony);padding:.72rem 1.1rem;background:var(--nm);box-shadow:var(--nm-sm);border-radius:var(--r-pill);transition:box-shadow .2s,color .2s}
@@ -842,19 +799,7 @@ a,button{transition:transform .14s}
     <a href="/thesis" class="nav-a"><b>Thesis</b><span>why we exist</span></a>
   </div>
   <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="nav-cta" target="_blank" rel="noopener"><b>Book a fit call</b><span>20 min · plain numbers</span></a>
-  <button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-expanded="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
-  </button>
 </nav>
-
-<div class="drop-bd" id="dropBd"></div>
-<div class="nav-drop" id="navDrop" role="dialog" aria-modal="false" aria-label="Site navigation">
-  <a href="/atlas" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Atlas — for contractors</a>
-  <a href="/lens" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg></span>Lens — early access</a>
-  <a href="/vesta" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Vesta — for homeowners</a>
-  <a href="/thesis" class="drop-a"><span class="d-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Thesis — why we build this</a>
-  <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="drop-a drop-cta" target="_blank" rel="noopener">Book a call →</a>
-</div>
 
 <!-- ════════════════ THE FRONT DESK — the hero is a conversation (P1: every screen deterministic) ════════════════ -->
 <section class="fd" id="home">
@@ -1005,26 +950,6 @@ a,button{transition:transform .14s}
     </div>
   </div>
 
-  <!-- one illustrative Read (vanilla WorkflowBuilderCard port) — labeled fictional sample -->
-  <div class="vwc-stage rv">
-    <div class="vwc">
-      <div class="vwc-img"><span class="vwc-trade">Roofing · Stamford, CT</span><span class="vwc-fic">Sample · fictional</span></div>
-      <div class="vwc-body">
-        <div class="vwc-meta"><span>Vesta’s Read</span><span>·</span><span class="vwc-status"><i></i>Illustrative</span></div>
-        <h3 class="vwc-name">Redpoint Roofing</h3>
-        <div class="vwc-reveal">
-          <p class="vwc-read">A fast, storm-ready roofer built for emergencies — known for same-week leak response and 1–2 day replacements. Strongest when the roof can’t wait; a clear fit for urgent work.</p>
-          <div class="vwc-tags"><span class="vwc-tag">Emergency leaks</span><span class="vwc-tag">Storm response</span><span class="vwc-tag">1–2 day replace</span></div>
-        </div>
-      </div>
-      <div class="vwc-foot">
-        <span class="vwc-rec">Ranked by record · not ads</span>
-        <span class="vwc-req">Request <span class="arr">→</span></span>
-      </div>
-    </div>
-  </div>
-  <p class="vwc-hint rv">Hover to see the Read. One illustrative profile — the live guide holds 463 evidence-backed Fairfield County firms.</p>
-
   <div class="atx rv">
     <p class="atx-lead">Every other “find a contractor” site is an auction. The top result paid to be there.</p>
     <p>That’s the quiet problem with hiring a contractor: the sites that promise to help are selling the very ranking you’re trusting. The most-advertised firm isn’t the best one — it’s the one that spent the most to reach you. And the roofer who does honest work and never buys ads simply never shows up.</p>
@@ -1163,31 +1088,6 @@ a,button{transition:transform .14s}
   var onScroll = function(){ nav.classList.toggle('scrolled', window.scrollY > 24); };
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
-
-  /* mobile menu */
-  var btn = document.getElementById('menuBtn'),
-      drop = document.getElementById('navDrop'),
-      bd = document.getElementById('dropBd');
-  function setMenu(open){
-    drop.classList.toggle('is-open', open);
-    bd.classList.toggle('is-open', open);
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
-  btn.addEventListener('click', function(){ setMenu(!drop.classList.contains('is-open')); });
-  bd.addEventListener('click', function(){ setMenu(false); });
-  drop.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setMenu(false); }); });
-
-  /* reveal on scroll */
-  if ('IntersectionObserver' in window){
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, {rootMargin:'0px 0px -8% 0px', threshold:.05});
-    document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
-  } else {
-    document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); });
-  }
 
   /* showcase tilt — straightens as it scrolls into view */
   var card = document.getElementById('showcaseCard');
