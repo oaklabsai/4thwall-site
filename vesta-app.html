@@ -7930,7 +7930,11 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   if (window.visualViewport){
     const vv = window.visualViewport;
     const setKb = () => {
-      const kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+      let kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+      // iOS Safari's dynamic toolbars shrink the VISUAL viewport at REST, so with no keyboard
+      // this delta is a phantom ~50-110px — which flipped s-home into .kb-open and HID the
+      // explorable cards + hints (Drew's "not fully loading", 7/21). A real keyboard is ~200px+.
+      if (kb < 130) kb = 0;
       document.documentElement.style.setProperty('--kb', kb + 'px');
       // keyboard up on the mobile home empty-state: the explorable cards + hints don't fit the
       // shortened viewport and spill over the composer — collapse them so only the Vesta

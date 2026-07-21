@@ -2776,6 +2776,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     var vv=window.visualViewport;
     var setKb=function(){
       var kb=Math.max(0,Math.round(window.innerHeight-vv.height-vv.offsetTop));
+      // iOS Safari's dynamic toolbars shrink the VISUAL viewport at REST, so with no keyboard
+      // this delta is a phantom ~50-110px — which was lifting the composer mid-screen and
+      // sliding the bottom nav away (Drew, 7/21). A real keyboard is ~200px+; ignore below the cut.
+      if(kb<130)kb=0;
       document.documentElement.style.setProperty('--kb',kb+'px');
       document.body.classList.toggle('kb-open',kb>0);
     };
