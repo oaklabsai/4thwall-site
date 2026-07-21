@@ -650,6 +650,10 @@ section{position:relative;z-index:2}
 .faq-all-n{font-family:var(--mono);font-size:.58rem;color:var(--orange);letter-spacing:.08em;margin-right:.4rem}
 .faq-all-a{font-size:.85rem;line-height:1.72;color:var(--muted)}
 @media(max-width:640px){.faq-all-grid{grid-template-columns:1fr;gap:1.6rem;padding:1.4rem 1.4rem 1.8rem}.faq-toggle{padding:1.2rem 1.4rem}}
+/* the Atlas screen's FAQ fits the locked stage (Drew 7/21: no scroll) — tighter grid, same answers */
+#fdScreen .faq-all-grid{padding:.2rem 0 .6rem;gap:.9rem 2rem}
+#fdScreen .faq-all-q{font-size:.9rem;margin-bottom:.2rem}
+#fdScreen .faq-all-a{font-size:.72rem;line-height:1.5}
 
 /* ── CONTACT — Claude composer ─────── */
 .composer-section{padding:4.5rem 0 6rem}
@@ -1064,6 +1068,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .fd-demo-view{display:none;width:100%;transition:opacity .22s ease}
 .fd.demo-mode .fd-demo-view{display:block}
 .fd.demo-mode .fd-thread{display:none}
+/* rooms/screens carry no "Atlas" sign (Drew 7/21) — the wordmark belongs to the conversation */
+.fd.demo-mode .fd-mat{display:none}
+.fd.demo-mode .fd-think{display:none}
 /* the smooth swap: the leaving view fades to 0; the arriving view fades 0→1 on the class flip */
 .fd.view-swapping .fd-thread,.fd.view-swapping .fd-demo-view{opacity:0}
 .fd-narr{font-family:var(--display);font-weight:500;font-size:clamp(1rem,1.8vw,1.2rem);line-height:1.6;letter-spacing:-.012em;color:var(--ink);text-align:left;max-width:560px;margin:0 auto 1.3rem;min-height:0}
@@ -1083,9 +1090,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .fd-toggle:hover{box-shadow:var(--nm-out);transform:translateY(-1px)}
 .fd-toggle[hidden]{display:none}
 .fd.demo-mode .fd-toggle{color:var(--ebony)}
-/* the mobile "Hide" affordance rides the room breakdown itself (desktop uses the dock toggle) */
-.fd-hide{display:none;align-items:center;gap:.3rem;margin:0 0 1rem;background:var(--nm);color:var(--olive);border:var(--nm-edge);border-radius:var(--r-pill);padding:.5rem .95rem;font:600 .8rem/1 var(--body);box-shadow:var(--nm-sm);cursor:pointer}
-.fd-hide svg{width:15px;height:15px}
+/* the mobile −/+ chip — Vesta's .vth-menu grammar exactly: a small circle, --nm ground,
+   --nm-sm rest, --nm-in press. Sits top-left in the card's open space; − parks the demo,
+   + brings it back (the one-way "Hide" is gone — Drew 7/21). */
+.fd-flip{display:none;position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;border:none;align-items:center;justify-content:center;color:var(--ebony);background:var(--nm);box-shadow:var(--nm-sm);z-index:3;cursor:pointer;font:600 1.05rem/1 var(--body);padding:0}
+.fd-flip:active{box-shadow:var(--nm-in)}
+.fd-flip[hidden]{display:none!important}
 
 /* ══ LANDING DECK — Vesta-parity entry cards (office/offer/numbers); gone once talking (Drew 7/20).
    Compact so the greeting hero still fits the viewport: a 3-across row on desktop, a swipe-snap
@@ -1152,7 +1162,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .fd.staged.req-open .fd-dock{display:none}
 /* watching a demo — hide the "Welcome!", greeting + composer entirely; all the room goes to the phone */
 #acenter .fd.sim-open .fd-mat,#acenter .fd.sim-open .fd-chat{display:none}
-#acenter .fd.sim-open .fd-narr,#acenter .fd.sim-open .fd-hide{display:none}
+#acenter .fd.sim-open .fd-narr{display:none}
 #acenter .fd.sim-open.staged{padding-top:clamp(.9rem,2vh,1.8rem);padding-bottom:1rem}
 .fd-brand,.fd-brand svg,.fd-tagline,.fd-mat,.fd-line,.fd-you{transition:all .6s var(--spring)}
 .fd.staged .fd-brand{width:46px;height:46px;border-radius:15px}
@@ -1201,29 +1211,39 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
    stacked on mobile, where vertical space is the scarce thing instead.
    The title lives INSIDE the copy column so the phone column can start at the top
    of the screen and fit whole — the same vertical room the 20-second demo gets. */
-/* a room = its story then its proof, CENTERED and stacked (Drew 7/21 — the left/right flank
-   is gone). The copy sits on top; the scene fills the rest and scrolls INSIDE its own box, so
-   a tall demo (Local Discovery, Operator Briefs, Booking) never grows the page frame. */
-.rm-grid{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.9rem;margin-top:.15rem;min-height:0;flex:1}
-.rm-copy{flex:none;max-width:540px}
-.rm-copy .fds-doors{justify-content:center}
-.rm-scene{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.7rem;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
-.rm-scene .fdc-method{margin:0;max-width:420px}
-.rm-scene::-webkit-scrollbar{display:none}
-.rm-scene .mcs-wrap{margin:0 auto}
+/* a room = its story then its proof, CENTERED and stacked (Drew 7/21). Batch-5 correction:
+   the demo is NEVER caged in a scrollbox — the COPY compresses and the demo takes the rest
+   of the room, fully visible at a glance. Phones zoom-to-fit the space; the Slack card fills
+   it and lets its thread breathe (the thread scrolls itself as messages arrive — that's the
+   simulation playing, not the page moving). */
+.rm-grid{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.5rem;margin-top:0;min-height:0;flex:1}
+.rm-copy{flex:none;max-width:560px}
+.rm-copy .fds-kicker{font-size:1.05rem;margin-bottom:.05rem}
+.rm-copy .fds-h{font-size:clamp(1.15rem,2.1vw,1.35rem)}
+.rm-copy .fdg-d{margin:.25rem 0 .4rem}
+.rm-copy .fds-doors{justify-content:center;margin-top:.3rem;gap:.3rem 1.3rem}
+.rm-copy .fds-doors a{font-size:1.05rem}
+.rm-scene{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.45rem}
+.rm-scene .mcs-wrap{margin:0 auto;flex:none}
 /* room phones = the DEMO phone: same base width, same zoom-to-fit pipeline (Drew 7/20:
    one phone size everywhere a phone demonstrates) */
 .rm-scene .mcs-phone{width:min(294px,84vw)}
 .rm-scene .mcs-b{font-size:.8rem}
 .rm-scene .mcs-when{font-size:.62rem}
 .rm-scene .mcs-syschip{font-size:.63rem}
-@media(min-width:900px){
-  .rm-scene .slk{width:100%;max-width:420px}
-}
-@media(max-width:899px){
-  /* on mobile the room lives in the scrolling card; cap the scene so it can't stretch the card */
-  .rm-scene{max-height:58svh}
-}
+/* the Slack card takes the room (Drew 7/21: "the slack demo should take priority and fully
+   express itself") — it stretches to the space; its thread fills the card and auto-scrolls
+   as the simulation posts. */
+.rm-scene .slk{width:100%;max-width:460px;flex:1;min-height:180px;display:flex;flex-direction:column}
+.rm-scene .slk .slk-thread{flex:1;min-height:0;max-height:none}
+/* the honesty label stays visible — one quiet line; the Slack explainer folds into a dropdown */
+.rm-scene .slk-cap{flex:none;font:500 .62rem/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim);text-align:center}
+.slk-more{flex:none;width:100%;max-width:460px;text-align:left}
+.slk-more summary{display:inline-flex;align-items:center;gap:.4rem;list-style:none;cursor:pointer;font:600 .78rem/1 var(--body);color:var(--olive);background:var(--nm);border:var(--nm-edge);border-radius:var(--r-pill);padding:.45rem .9rem;box-shadow:var(--nm-sm)}
+.slk-more summary::-webkit-details-marker{display:none}
+.slk-more summary svg{width:12px;height:12px;transition:transform .2s}
+.slk-more[open] summary svg{transform:rotate(180deg)}
+.slk-more .slk-what{margin:.5rem auto 0}
 /* P4 · the cost chart — planning ranges with their provenance, desk material */
 .fdc-row{display:grid;grid-template-columns:1fr auto;gap:.2rem .9rem;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.9rem 1.05rem;margin-bottom:.7rem}
 .fdc-job{font:600 .92rem/1.35 var(--body);color:var(--ink)}
@@ -1437,17 +1457,20 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .abn-ask{color:var(--tea);background:var(--dark-grad);border-radius:var(--r-pill);flex:0 0 auto;padding:9px 15px;flex-direction:row;gap:6px;box-shadow:0 4px 13px -3px rgba(67,68,42,.5);font-size:11px;text-transform:none;letter-spacing:-.01em}
 .abn-ask svg{width:16px;height:16px}
 /* the floating hamburger (mobile menu — Vesta parity, Drew 7/20) */
-.abn-ham{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:14px;z-index:125;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:14px;background:var(--nm);color:var(--olive);border:1px solid rgba(74,75,47,.13);box-shadow:10px 13px 28px rgba(74,75,47,.16), -8px -8px 20px rgba(255,255,255,.82), inset 0 1px 0 rgba(255,255,255,.72);cursor:pointer}
-.abn-ham svg{width:22px;height:22px}
+/* the hamburger — Vesta's .vth-menu chip verbatim: 30px circle, --nm-sm rest, --nm-in press */
+.abn-ham{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:12px;z-index:125;display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--nm);color:var(--ebony);border:none;box-shadow:var(--nm-sm);cursor:pointer}
+.abn-ham svg{width:15px;height:15px}
 .abn-ham:active{box-shadow:var(--nm-in)}
 /* ── the More sheet — the FULL desktop rail as a bottom sheet, so mobile is exactly as
    thorough as desktop (built from the same RAIL array = one source of truth, zero drift).
    The fit call rides pinned at the bottom, nearest the thumb. ── */
 #abscrim{position:fixed;inset:0;z-index:130;background:rgba(18,16,14,.35);opacity:0;pointer-events:none;transition:opacity .3s ease}
 #abscrim.open{opacity:1;pointer-events:auto}
-#absheet{position:fixed;left:0;right:0;bottom:0;z-index:131;background:var(--bg);border-radius:22px 22px 0 0;box-shadow:0 -14px 44px rgba(40,41,22,.28);transform:translateY(103%);transition:transform .42s var(--spring);max-height:76svh;display:flex;flex-direction:column;padding:.4rem .9rem calc(.8rem + env(safe-area-inset-bottom))}
+/* the menu — Vesta's ☰ drawer geometry verbatim: a left-slide --nm panel (was a bottom sheet;
+   Drew 7/21 — "use the same hamburger drop down style we use with vesta") */
+#absheet{position:fixed;top:0;left:0;bottom:0;right:auto;z-index:131;width:83%;max-width:340px;background:var(--nm);border-radius:0;box-shadow:8px 0 40px -8px rgba(18,16,14,.4);transform:translateX(-100%);transition:transform .28s cubic-bezier(.22,1,.36,1);max-height:none;display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom))}
 #absheet.open{transform:none}
-.abs-grab{width:38px;height:4px;border-radius:2px;background:rgba(74,75,47,.25);margin:.35rem auto .2rem;flex:none}
+.abs-grab{display:none}
 .abs-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;padding-bottom:.4rem}
 .abs-glabel{display:inline-block;font-family:var(--hand);font-size:1.08rem;font-weight:600;color:var(--olive);transform:rotate(-2deg);line-height:1;margin:.85rem 0 .3rem .5rem}
 .abs-scroll > .abs-glabel:first-child{margin-top:.3rem}
@@ -1482,16 +1505,18 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   .abn-ham{display:none}
   #abscrim,#absheet{display:none}
   #acenter .fd.staged .fd-dock{bottom:1.4rem}
-  /* ── room open: story + proof CENTERED and fit to the locked shell, no flank (Drew 7/21) ──
-     the room column fills the shell height; the scene scrolls inside itself, so the wordmark
-     stays pinned at the top (never clipped) and the page never scrolls.
-     Scoped to .demo-mode: in convo-led mode a model-attached room screen stays PARKED behind
-     the Demo toggle (not shown under the thread), and the conversation keeps its own scroll. */
-  #acenter .fd.staged.demo-mode:has(.rm-grid){justify-content:flex-start;overflow:hidden;padding-top:clamp(2rem,4.5vh,3.2rem);padding-bottom:6.2rem}
-  #acenter .fd.staged.demo-mode:has(.rm-grid) .fd-inner{width:min(780px,100%);max-width:none;flex:1;min-height:0}
-  #acenter .fd.staged.demo-mode:has(.rm-grid) .fd-chat{flex:none;margin-top:.2rem}
-  #acenter .fd.staged.demo-mode:has(.rm-grid) .fd-demo-view{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
-  #acenter .fd.staged.demo-mode:has(.rm-grid) .fd-screen{flex:1;min-height:0;margin-top:.8rem;display:flex;flex-direction:column;width:100%}
+  /* ── demo-mode = a fixed stage, EVERY screen (Drew 7/21: no scroll on any page) ──
+     The wordmark leaves the stage, the screen column fills the locked shell, and each
+     assembler's content is compressed to fit it. Scoped to .demo-mode: in convo-led a
+     model-attached screen stays PARKED behind the toggle and the thread keeps its scroll. */
+  #acenter .fd.staged.demo-mode{justify-content:flex-start;overflow:hidden;padding-top:clamp(1.1rem,2.5vh,1.8rem);padding-bottom:6.2rem}
+  #acenter .fd.staged.demo-mode .fd-inner{width:min(780px,100%);max-width:none;flex:1;min-height:0}
+  #acenter .fd.staged.demo-mode .fd-chat{flex:none;margin-top:0}
+  #acenter .fd.staged.demo-mode .fd-demo-view{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
+  #acenter .fd.staged.demo-mode .fd-screen{flex:1;min-height:0;margin-top:.5rem;display:flex;flex-direction:column;width:100%}
+  /* the calculators need real width to sit input-beside-result and stay short */
+  #acenter .fd.staged.demo-mode:has(.ri-module) .fd-inner{width:min(940px,100%)}
+  #acenter .fd.staged.demo-mode:has(.ri-module) .fd-screen{width:min(900px,100%)}
 }
 @media(max-width:899px){
   #arail{display:none}
@@ -1499,7 +1524,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   #acenter{min-height:100svh}
   /* ── the conversation sits inside a neumorphic card, matching Vesta's home surface (Drew 7/20) ──
      Same-tone --nm ground defined by the soft dual shadow + hairline edge (true neumorphism). */
-  #acenter .fd .fd-inner{width:min(560px,100%);margin:0 auto;background:var(--nm);border:1px solid rgba(74,75,47,.13);
+  #acenter .fd .fd-inner{position:relative;width:min(560px,100%);margin:0 auto;background:var(--nm);border:1px solid rgba(74,75,47,.13);
     border-radius:27px;padding:1.7rem 1.3rem 1.9rem;
     /* Vesta's home-card neumorphic — the cleaner reference; both surfaces now uniform (Drew 7/20) */
     box-shadow:10px 13px 28px rgba(74,75,47,.16), -8px -8px 20px rgba(255,255,255,.82), inset 0 1px 0 rgba(255,255,255,.72)}
@@ -1516,9 +1541,29 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   #acenter .fd.staged .fd-dock{transition:bottom .22s cubic-bezier(.33,.11,.16,1)}
   body.kb-open.abn-showing #acenter .fd.staged .fd-dock{bottom:calc(1.1rem + var(--kb,0px))}
   body.kb-open #abnav{transform:translateY(100%);transition:transform .18s ease}
-  /* mobile: the "Hide" chip rides the room breakdown; the desktop dock toggle stays desktop-only */
-  .fd-hide{display:inline-flex}
+  /* mobile: the circular −/+ chip (Vesta .vth-menu parity) toggles the demo BOTH ways —
+     the old one-way "Hide" left no path back (Drew 7/21). Desktop keeps the dock toggle. */
+  .fd-flip{display:flex}
   .fd-toggle{display:none!important}
+  /* ── demo-mode LOCKS the mobile shell (Drew 7/21: no scroll, mobile too) ──
+     The card fills the viewport above the composer+nav; assemblers compress to fit;
+     phones zoom-to-fit the real space. Conversation (convo-led) keeps its natural scroll. */
+  body.demo-open{overflow:hidden}
+  /* the lock lives on #app — it's the column flex parent; #acenter's flex:1 then fills it
+     exactly (height on the flex ITEM loses to the flex algorithm — the 1059px bug) */
+  body.demo-open #app{height:100svh;overflow:hidden}
+  body.demo-open #acenter{min-height:0;overflow:hidden;display:flex;flex-direction:column}
+  body.demo-open #acenter .fd{flex:1;min-height:0;overflow:hidden;display:flex;padding-top:calc(env(safe-area-inset-top) + .6rem);padding-bottom:calc(8.6rem + env(safe-area-inset-bottom))}
+  body.demo-open #acenter .fd .fd-inner{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding-top:1.1rem;padding-bottom:.9rem}
+  body.demo-open #acenter .fd .fd-chat{flex:none;margin-top:0}
+  body.demo-open #acenter .fd .fd-demo-view{flex:1;min-height:0;display:flex;flex-direction:column}
+  body.demo-open #acenter .fd .fd-screen{flex:1;min-height:0;margin-top:.4rem;display:flex;flex-direction:column}
+  /* mobile room copy compresses so the demo keeps the space (Drew 7/21) */
+  body.demo-open .rm-copy .fds-h{font-size:1.1rem}
+  body.demo-open .rm-copy .fdg-d{font-size:.78rem!important;line-height:1.5!important;margin:.15rem 0 .25rem}
+  body.demo-open .rm-copy .fds-doors a{font-size:.95rem}
+  body.demo-open .rm-copy .fds-kicker{font-size:.95rem}
+  body.demo-open #fdScreen .fds-sub{font-size:.78rem;margin:.25rem 0 .7rem}
 }
 
 /* ═══ REVENUE CALCULATOR CSS (rescued from atlas.html's in-body <style>; the folded-in "numbers" tab) ═══ */
@@ -1579,6 +1624,40 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .ri-module .res-cta:hover{background:var(--green-2);transform:translateY(-1px)}
 .ri-module .arr{font-family:var(--display);font-size:.92rem;line-height:1}
 @media(max-width:460px){.ri-module .pill-tab{font-size:.7rem;padding:.34rem .78rem}.ri-module .res-big{font-size:1.9rem}}
+/* ── batch-5 compaction (Drew 7/21: half the calculator was off-screen — the numbers fit the
+   stage now, no scroll). Same module, tighter rhythm; nothing removed, everything visible. */
+.ri-module .pill-tabs{margin-bottom:.7rem}
+.ri-module .inp{padding:1.1rem 1.2rem}
+.ri-module .inp-head{margin-bottom:.8rem}
+.ri-module .inp-head h3{font-size:1.12rem}
+.ri-module .inp-head p{font-size:.72rem;line-height:1.45}
+.ri-module .field{margin-bottom:.68rem}
+.ri-module .res{padding:1.1rem 1.2rem}
+.ri-module .res-eyebrow{margin-bottom:.7rem}
+.ri-module .res-big{font-size:clamp(1.7rem,3vw,2.2rem);margin-bottom:.7rem}
+.ri-module .res-rows{margin-bottom:.7rem}
+.ri-module .res-row{padding:.32rem 0}
+.ri-module .rrl{font-size:.7rem}
+.ri-module .res-price{font-size:.68rem;line-height:1.45;margin-bottom:.6rem}
+.ri-module .res-cta{padding:.5rem 1.05rem;font-size:.75rem}
+@media(max-width:899px){
+  .ri-module .inp{padding:.7rem .95rem .6rem}
+  .ri-module .res{padding:.8rem .95rem}
+  .ri-module .inp-head{display:none}     /* the active tab already names the calculator */
+  .ri-module .field{margin-bottom:.4rem}
+  .ri-module .field-top{margin-bottom:.18rem}
+  .ri-module .pill-tabs{gap:4px;margin-bottom:.5rem}
+  .ri-module .pill-tab{font-size:.62rem;padding:.3rem .6rem}
+  .ri-module .pill-tab .pnum{display:none}
+  .ri-module .res-eyebrow{display:none}
+  .ri-module .res-big{font-size:1.45rem;margin-bottom:.4rem}
+  .ri-module .res-rows{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-bottom:.55rem}
+  .ri-module .res-row{padding:.22rem 0}
+  .ri-module .rrl{font-size:.62rem}
+  .ri-module .rrv{font-size:.66rem}
+  .ri-module .res-price{display:none}    /* the fit-call line lives in the CTA on mobile */
+  #fdScreen .ri-module ~ .fds-doors,#fdScreen .ri-module + .fds-doors{display:none}   /* CTA + bottom nav carry these */
+}
 
 </style>
 </head>
@@ -1604,6 +1683,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <main id="acenter" role="main">
     <section class="fd" id="home">
       <div class="fd-inner">
+        <!-- mobile −/+ chip: parks/recalls the demo (two-way; Vesta .vth-menu parity, Drew 7/21) -->
+        <button type="button" class="fd-flip" id="fdFlip" hidden aria-label="Show or hide the demo">−</button>
         <p class="fd-mat"><span class="kicker" id="fdMat">Atlas</span></p>
         <div class="fd-chat">
           <!-- the accumulating conversation — quote/response stacks + scrolls, read-back (Drew 7/20) -->
@@ -1629,7 +1710,6 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <!-- the demo/explanation surface — rooms, offer, numbers. Sibling of .fd-chat so the
              20-sec sim (which hides .fd-chat) still shows. Priority-toggled against the thread. -->
         <div class="fd-demo-view" id="fdDemoView">
-          <button type="button" class="fd-hide" id="fdHide" aria-label="Hide the demo and return to the conversation"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5l-5 5 5 5"/></svg>Hide</button>
           <p class="fd-narr" id="fdNarr" aria-live="polite"></p>
           <div class="fd-screen" id="fdScreen"></div>
         </div>
@@ -1781,20 +1861,23 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       var f=$('home'); if(!f) return;
       f.classList.toggle('demo-mode',on);
       f.classList.toggle('convo-led',!on);
+      document.body.classList.toggle('demo-open',on);   /* mobile: demo-mode locks the shell (no scroll) */
       /* drop the fade-mask a tick later so the arriving view is on-screen when it clears
          (timer, not rAF — rAF is paused on a backgrounded tab and would strand it at opacity 0) */
       setTimeout(function(){var g=$('home');if(g)g.classList.remove('view-swapping')},20);
       refreshToggle();
-      if(on) toTop(); else scrollThread();
+      if(on){ toTop(); fitMcsPhone(); setTimeout(fitMcsPhone,60); } else scrollThread();
     },200);
   }
   function refreshToggle(){
-    var fd=$('home'),tg=$('fdToggle'),lbl=$('fdToggleLbl'); if(!fd||!tg) return;
-    if(!screenLoaded){ tg.hidden=true; return; }
+    var fd=$('home'),tg=$('fdToggle'),lbl=$('fdToggleLbl'),flip=$('fdFlip'); if(!fd||!tg) return;
     var demo=fd.classList.contains('demo-mode');
+    if(!screenLoaded){ tg.hidden=true; if(flip)flip.hidden=true; return; }
     tg.hidden=false;
     if(lbl) lbl.textContent=demo?'Chat':'Demo';
     tg.setAttribute('aria-label',demo?'Return to the conversation':'Show the demo');
+    if(flip){ flip.hidden=false; flip.textContent=demo?'−':'+';
+      flip.setAttribute('aria-label',demo?'Hide the demo':'Show the demo'); }
   }
 
   /* ── the assembled screen ── */
@@ -2034,13 +2117,17 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     '<path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z" fill="#ECB22E"/></svg>';
   function sceneHTML(sc){
     if(sc&&sc.slack){
+      /* the Slack card takes the room and its thread breathes (Drew 7/21). The honesty label
+         stays VISIBLE — a labeled simulation must say so at a glance, never behind a click.
+         Only the "what is Slack" explainer consolidates into the dropdown. */
       return '<div class="slk">'+
           '<div class="slk-head">'+SLACK_LOGO+'<span class="slk-hash">#</span>'+(sc.channel||'foh')+'<span class="slk-tag">your channel</span></div>'+
           '<div class="slk-thread" id="mcsThread"></div>'+
         '</div>'+
-        '<p class="fdc-method">A labeled simulation of your own Slack channel — these are the formats the system posts.</p>'+
+        '<p class="slk-cap">A labeled simulation of your own Slack channel</p>'+
+        '<details class="slk-more"><summary>What is Slack?<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg></summary>'+
         '<div class="slk-what">'+SLACK_LOGO+'<span><b>What is Slack?</b> A free messaging app — like texting, but organized into channels. '+
-        'We set up a private channel for your business and post updates like these into it. Nothing to learn: you read it on your phone, like any chat.</span></div>';
+        'We set up a private channel for your business and post updates like these into it. Nothing to learn: you read it on your phone, like any chat.</span></div></details>';
     }
     return mcsPhoneHTML({tabs:false});
   }
@@ -2100,8 +2187,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   /* ══ ASSEMBLERS (pure visual) ══ */
   function assembleOffice(){
     var keys=Object.keys(ROOMS);
-    showScreen('<span class="fds-kicker">the office</span><h3 class="fds-h">You do the work. This runs around it.</h3>'+
-      cfCards(officeItems(keys))+
+    /* no header block (Drew 7/21) — the cards ARE the office; the receipt line + doors stay
+       above the fold, never buried behind a scroll */
+    showScreen(cfCards(officeItems(keys))+
       '<p class="fdc-method">Every month ends with a receipt, not a story — responses, bookings, follow-ups, recorded outcomes. And the record is yours: in Lens you review every fact, and nothing publishes without you. If we’re not the right fit, we’ll say so first.</p>'+
       '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a data-door="lens">start free with Lens →</a></div>',
       function(){wireCoverflow(keys,screen,enterRoom);wireScreenDoors()});
@@ -2122,23 +2210,31 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         if(scene){mcsPlay(scene);fitMcsPhone();setTimeout(fitMcsPhone,60)}   /* same size pipeline as the 20-second demo */
       });
   }
-  /* zoom the whole phone (uniform, no reflow) so it AND the caption/cycler below it clear the docked composer — a step back, not shrunken.
-     Room phones ride the SAME pipeline as the 20-second demo (one phone size everywhere),
-     with a higher legibility floor and a cap at the demo's base size; on mobile, rooms
-     stack and scroll, so the fitter stands down there. */
+  /* zoom the whole phone (uniform, no reflow) so it is FULLY VISIBLE at a glance, both widths
+     (Drew 7/21: no floor that forces overflow, no scrollbox). In a room, the .rm-scene flex box
+     IS the available space — the copy above it is compressed, so the phone gets the rest and
+     fits it exactly (cap 1: never blown up past the demo's base size). The 20-second-demo tab
+     keeps its composer-relative fit. */
   function fitMcsPhone(){
     var phone=document.querySelector('.mcs-phone[data-fit]'); if(!phone)return;
-    var inRoom=!!phone.closest('.rm-scene');
+    var scene=phone.closest('.rm-scene');
     phone.style.zoom='1';
-    if(inRoom&&window.innerWidth<900)return;
+    if(scene){
+      /* zoom scales the PHONE only — the caption/cycler below it keeps its size, so solve for
+         the phone against the space left after the fixed parts: z=(avail−fixed)/phoneH */
+      var wrap=phone.closest('.mcs-wrap')||phone;
+      var avail=scene.clientHeight, need=wrap.scrollHeight, ph=phone.getBoundingClientRect().height||610;
+      if(avail>40&&ph>0) phone.style.zoom=Math.max(0.4,Math.min(1,(avail-(need-ph))/ph));
+      return;
+    }
     var pr=phone.getBoundingClientRect(), natural=pr.height||610;
-    var last=document.querySelector('#fdScreen .fdc-method')||$('mcsTabs');
-    var below=last?Math.max(96,last.getBoundingClientRect().bottom-pr.bottom):150;   // trade tabs + method line
+    var last=$('mcsTabs');
+    var below=last?Math.max(96,last.getBoundingClientRect().bottom-pr.bottom):150;   // trade tabs + caption
     var well=document.querySelector('#acenter .fd-well'), cBottom;
     if(well&&well.offsetParent){ cBottom=well.getBoundingClientRect().top-12; }
     else { cBottom=window.innerHeight-(window.innerWidth<900?90:14); }
     var z=(cBottom-pr.top-below)/natural;
-    phone.style.zoom=inRoom?Math.max(0.7,Math.min(1,z)):Math.max(0.5,Math.min(1.3,z));
+    phone.style.zoom=Math.max(0.5,Math.min(1.3,z));
   }
   window.addEventListener('resize',fitMcsPhone);
   function simVisual(){
@@ -2160,8 +2256,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       wireScreenDoors);
   }
   function lensVisual(){
+    /* the concrete overview (Drew 7/21 — the one-sentence abstract read as nothing).
+       Same structural grammar as the offer room: rows, each claim on its own line. */
     showScreen('<span class="fds-kicker">the free workspace</span><h3 class="fds-h">Lens — own your record</h3>'+
-      '<p class="fds-sub">Connect the tools you already run, review every fact your operating record supports — each source-labeled and correction-capable — and control exactly what a homeowner could see. Nothing publishes without you.</p>'+
+      '<p class="fds-sub">Your business already generates proof every week — calls answered, estimates kept, jobs finished, reviews earned. Lens is the private workspace where that becomes a record you own.</p>'+
+      '<div class="fdc-row"><div class="fdc-job">What it is</div><div class="fdc-range">your record</div><p class="fdc-note">The operating record of your business, built from the tools you already run — nothing new to learn, nothing to migrate.</p></div>'+
+      '<div class="fdc-row"><div class="fdc-job">What you see</div><div class="fdc-range">every fact</div><p class="fdc-note">Each entry carries its source and can be corrected — you always know where a fact came from, and you hold the pen.</p></div>'+
+      '<div class="fdc-row"><div class="fdc-job">What you control</div><div class="fdc-range">all of it</div><p class="fdc-note">You decide exactly what a homeowner could ever see. Review it, hold it back, or publish it — nothing goes out without you.</p></div>'+
+      '<div class="fdc-row"><div class="fdc-job">What it costs</div><div class="fdc-range">free</div><p class="fdc-note">It’s your record. Owning it shouldn’t cost anything.</p></div>'+
       '<div class="fds-doors"><a href="/lens">start free with Lens →</a><a data-door="office">← the office</a></div>',
       wireScreenDoors);
   }
@@ -2182,9 +2284,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
      exposed to window so the injected inline handlers resolve. NO published price: the office
      panel keeps its cost-of-a-hire math but the punchline is the fit call, matching offerVisual. */
   function revenueHTML(){
-    return '<span class="fds-kicker">the numbers</span><h3 class="fds-h">The math the business is ignoring</h3>'+
-      '<p class="fds-sub">Three calculators, one number that changes the conversation. Move the sliders — the math is yours, from your own inputs.</p>'+
-      '<div class="ri-module" id="revenue-intelligence">'+
+    /* no header block (Drew 7/21: half the calculator was off-screen) — the tabs carry the
+       framing; every vertical pixel goes to the calculator itself */
+    return '<div class="ri-module" id="revenue-intelligence">'+
       '<div class="pill-tabs" role="tablist">'+
         '<button class="pill-tab active" onclick="riSwitchTab(\'missed\',this)" role="tab"><span class="pnum">01</span> Missed leads</button>'+
         '<button class="pill-tab" onclick="riSwitchTab(\'storm\',this)" role="tab"><span class="pnum">02</span> Storm season</button>'+
@@ -2192,7 +2294,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       '</div>'+
       /* 01 MISSED */
       '<div class="calc-panel active" id="ri-panel-missed"><div class="inp">'+
-        '<div class="inp-head"><h3>What slow replies<br>are <em>costing you</em></h3><p>Adjust the sliders. The number on the right is what you’re leaving behind every month.</p></div>'+
+        '<div class="inp-head"><h3>What slow replies are <em>costing you</em></h3><p>Adjust the sliders. The number on the right is what you’re leaving behind every month.</p></div>'+
         '<div class="field"><div class="field-top"><span class="field-label">Average job value</span><span class="field-val" id="ml-jv-d">$12,000</span></div><input type="range" id="ml-jv" min="1000" max="60000" step="500" value="12000" oninput="riCalcMissed()"></div>'+
         '<div class="field"><div class="field-top"><span class="field-label">Leads per week</span><span class="field-val" id="ml-lw-d">12 leads</span></div><input type="range" id="ml-lw" min="2" max="60" step="1" value="12" oninput="riCalcMissed()"></div>'+
         '<div class="field"><div class="field-top"><span class="field-label">Your response time</span><span class="field-val" id="ml-rt-d">3 hrs</span></div><input type="range" id="ml-rt" min="5" max="480" step="5" value="180" oninput="riCalcMissed()"></div>'+
@@ -2206,7 +2308,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         '<a data-door="fitcall" class="res-cta">Close this gap <span class="arr">→</span></a></div></div>'+
       /* 02 STORM */
       '<div class="calc-panel" id="ri-panel-storm"><div class="inp">'+
-        '<div class="inp-head"><h3>Your storm season<br><em>revenue potential</em></h3><p>Storm Mode works inbound conversations concurrently instead of leaving a voicemail pile for the end of the day. Model what that recovered capacity could be worth.</p></div>'+
+        '<div class="inp-head"><h3>Your storm season <em>revenue potential</em></h3><p>Storm Mode works inbound conversations concurrently instead of leaving a voicemail pile for the end of the day. Model what that recovered capacity could be worth.</p></div>'+
         '<div class="field"><div class="field-top"><span class="field-label">Storm events per year</span><span class="field-val" id="st-ev-d">6 events</span></div><input type="range" id="st-ev" min="1" max="20" step="1" value="6" oninput="riCalcStorm()"></div>'+
         '<div class="field"><div class="field-top"><span class="field-label">Leads per storm event</span><span class="field-val" id="st-lp-d">30 leads</span></div><input type="range" id="st-lp" min="5" max="100" step="5" value="30" oninput="riCalcStorm()"></div>'+
         '<div class="field"><div class="field-top"><span class="field-label">Average repair job value</span><span class="field-val" id="st-jv-d">$8,000</span></div><input type="range" id="st-jv" min="500" max="30000" step="500" value="8000" oninput="riCalcStorm()"></div>'+
@@ -2220,7 +2322,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         '<a data-door="fitcall" class="res-cta">Activate storm mode <span class="arr">→</span></a></div></div>'+
       /* 03 OFFICE */
       '<div class="calc-panel" id="ri-panel-office"><div class="inp">'+
-        '<div class="inp-head"><h3>You don’t need<br>a hire. You need <em>this.</em></h3><p>The real cost of a local hire includes benefits, management overhead, and zero after-hours coverage.</p></div>'+
+        '<div class="inp-head"><h3>You don’t need a hire. You need <em>this.</em></h3><p>The real cost of a local hire includes benefits, management overhead, and zero after-hours coverage.</p></div>'+
         '<div class="field"><div class="field-top"><span class="field-label">Leads per week</span><span class="field-val" id="om-lw-d">15 leads</span></div><input type="range" id="om-lw" min="2" max="80" step="1" value="15" oninput="riCalcOffice()"></div>'+
         '<div class="field"><div class="field-top"><span class="field-label">Hourly wage</span><span class="field-val" id="om-wg-d">$28/hr</span></div><input type="range" id="om-wg" min="18" max="55" step="1" value="28" oninput="riCalcOffice()"></div>'+
         '<div class="field"><div class="field-top"><span class="field-label">Hours per week</span><span class="field-val" id="om-hr-d">32 hrs</span></div><input type="range" id="om-hr" min="10" max="45" step="1" value="32" oninput="riCalcOffice()"></div>'+
@@ -2269,8 +2371,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function assembleFAQ(){
     var items=FAQ.map(function(f,i){var n=(i<9?'0':'')+(i+1);
       return '<div class="faq-all-item"><p class="faq-all-q"><span class="faq-all-n">'+n+' —</span>'+f[0]+'</p><p class="faq-all-a">'+f[1]+'</p></div>'}).join('');
-    showScreen('<span class="fds-kicker">common questions</span><h3 class="fds-h">The answers, in plain terms</h3>'+
-      '<div class="faq-all-grid" style="margin-top:1rem">'+items+'</div>'+
+    showScreen('<span class="fds-kicker">common questions</span>'+
+      '<div class="faq-all-grid" style="margin-top:.4rem">'+items+'</div>'+
       '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the fit call →</a><a data-door="contact">talk to us →</a><a data-door="office">← the office</a></div>',
       wireScreenDoors);
   }
@@ -2549,6 +2651,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function freshConversation(){
     exitSim();
     var fd=$('home'); if(fd) fd.className='fd';
+    document.body.classList.remove('demo-open');   /* the fresh start unlocks the mobile shell */
     if(thread) thread.innerHTML='';
     if(narr) narr.innerHTML='';
     if(screen) screen.innerHTML='';
@@ -2592,7 +2695,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   wire('fdDemo',function(){if(window.cue)cue('tick');openTab('sim')});
   /* the demo/chat priority toggle (desktop) + the room-breakdown Hide chip (mobile) — Drew 7/20 */
   wire('fdToggle',function(){var fd=$('home');if(window.cue)cue('tick');setDemoMode(!(fd&&fd.classList.contains('demo-mode')))});
-  wire('fdHide',function(){exitSim();setDemoMode(false)});
+  wire('fdFlip',function(){var fd=$('home'),demo=fd&&fd.classList.contains('demo-mode');if(window.cue)cue('tick');if(demo)exitSim();setDemoMode(!demo)});
   wire('abnNumbers',function(){openTab('numbers')});
   wire('abnAsk',function(){if(window.cue)cue('tick');freshConversation()});
   wire('abnHam',function(){if(window.cue)cue('tick');openSheet()});
