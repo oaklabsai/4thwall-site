@@ -1484,12 +1484,14 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   #acenter .fd.staged .fd-dock{bottom:1.4rem}
   /* ── room open: story + proof CENTERED and fit to the locked shell, no flank (Drew 7/21) ──
      the room column fills the shell height; the scene scrolls inside itself, so the wordmark
-     stays pinned at the top (never clipped) and the page never scrolls. */
-  #acenter .fd.staged:has(.rm-grid){justify-content:flex-start;overflow:hidden;padding-top:clamp(2rem,4.5vh,3.2rem);padding-bottom:6.2rem}
-  #acenter .fd.staged:has(.rm-grid) .fd-inner{width:min(780px,100%);max-width:none;flex:1;min-height:0}
-  #acenter .fd.staged:has(.rm-grid) .fd-chat{flex:none;margin-top:.2rem}
-  #acenter .fd.staged:has(.rm-grid) .fd-demo-view{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
-  #acenter .fd.staged:has(.rm-grid) .fd-screen{flex:1;min-height:0;margin-top:.8rem;display:flex;flex-direction:column;width:100%}
+     stays pinned at the top (never clipped) and the page never scrolls.
+     Scoped to .demo-mode: in convo-led mode a model-attached room screen stays PARKED behind
+     the Demo toggle (not shown under the thread), and the conversation keeps its own scroll. */
+  #acenter .fd.staged.demo-mode:has(.rm-grid){justify-content:flex-start;overflow:hidden;padding-top:clamp(2rem,4.5vh,3.2rem);padding-bottom:6.2rem}
+  #acenter .fd.staged.demo-mode:has(.rm-grid) .fd-inner{width:min(780px,100%);max-width:none;flex:1;min-height:0}
+  #acenter .fd.staged.demo-mode:has(.rm-grid) .fd-chat{flex:none;margin-top:.2rem}
+  #acenter .fd.staged.demo-mode:has(.rm-grid) .fd-demo-view{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
+  #acenter .fd.staged.demo-mode:has(.rm-grid) .fd-screen{flex:1;min-height:0;margin-top:.8rem;display:flex;flex-direction:column;width:100%}
 }
 @media(max-width:899px){
   #arail{display:none}
