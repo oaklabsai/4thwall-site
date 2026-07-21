@@ -156,7 +156,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 /* VESTA LIVE — the front door. Soft, muted sage (not glossy), raised from the page's
    own material. Ungendered: "we'll point you to the right pro," not diagnosis-only —
    Vesta helps with anything home-related, not just active problems. */
-.home-search { display:flex; align-items:center; gap:13px; width:100%; background:var(--tea-grad); border:none; border-radius:22px; padding:14px 17px; cursor:pointer; box-shadow:var(--nm-out); margin-bottom:18px; text-align:left; outline:none; }
+.home-search { display:flex; align-items:center; gap:13px; width:100%; background:var(--nm); border:1px solid rgba(255,255,255,.55); border-radius:22px; padding:14px 17px; cursor:pointer; box-shadow:var(--nm-out); margin-bottom:18px; text-align:left; outline:none; }
 .home-search:active { box-shadow:var(--nm-in); }
 .home-search:focus-visible { outline:2.5px solid var(--olive); outline-offset:2px; }
 .home-search .hs-spark { width:30px; height:30px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.6); box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 2px 2px 5px rgba(74,75,47,.14), -2px -2px 5px rgba(255,255,255,.7); }
@@ -182,14 +182,14 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
    becoming the composer. Wired to the real /api/triage stream (vmTurn). ════════ */
 .hs-cin { display:none; flex:1; min-width:0; border:none; background:none; outline:none; -webkit-appearance:none; appearance:none; border-radius:0; font-family:var(--sans); font-size:14.5px; color:var(--olive); padding:2px 0; }   /* appearance:none — border:none alone doesn't remove iOS's native text-field chrome (the light box Drew saw) */
 .hs-cin::placeholder { color:rgba(74,75,47,.5); }
-.hs-csend { display:none; width:38px; height:38px; border-radius:50%; border:none; background:var(--olive); color:var(--white); align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 6px 14px -5px rgba(74,75,47,.5); cursor:pointer; }
+.hs-csend { display:none; width:38px; height:38px; border-radius:50%; border:none; background:var(--dark-grad); color:var(--tea); align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 13px -3px rgba(67,68,42,.5); cursor:pointer; }
 .hs-csend svg { width:16px; height:16px; }
 /* the folds are transparent on desktop (children flow normally); only mobile morphs */
 .vfold { display:contents; }
 .vthread-fold { display:none; }
 @media (min-width:900px){
   /* desktop composer — a carved cream input with a raised send, per the mockup */
-  #s-home .home-search { max-width:600px; background:var(--nm); box-shadow:var(--nm-in); border-radius:var(--r-pill); padding:8px 8px 8px 22px; cursor:text; margin-bottom:26px; }
+  #s-home .home-search { max-width:600px; background:var(--nm); border:1px solid rgba(255,255,255,.55); box-shadow:var(--nm-out); border-radius:var(--r-pill); padding:8px 8px 8px 22px; cursor:text; margin-bottom:26px; }
   #s-home .home-search .hs-tx, #s-home .home-search .hs-spark { display:none; }
   #s-home .home-search .hs-cin, #s-home .home-search .hs-csend { display:flex; }
 }
@@ -271,6 +271,29 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .vd-rn, .vd-del { flex:0 0 auto; width:33px; background:none; border:none; color:var(--olive); opacity:.5; font-size:13px; cursor:pointer; }
 .vd-rn:active, .vd-del:active { opacity:1; }
 @media (min-width:900px){ .vdrawer { display:none !important; } }
+
+/* ── the full navigation menu (mobile) — Atlas's #absheet parity: a left-slide --nm panel whose
+   subject headers are Caveat, slanted and underlined (Drew 7/21 — "the hamburger menu with all the
+   categories, just like atlas has"). The ☰ opens this; "Your chats" lives inside it. ── */
+.vmenu { position:fixed; inset:0; z-index:95; }
+.vmenu[hidden] { display:none; }
+.vms-scrim { position:absolute; inset:0; background:rgba(18,16,14,.35); opacity:0; transition:opacity .26s; }
+.vmenu.open .vms-scrim { opacity:1; }
+.vms-panel { position:absolute; top:0; left:0; bottom:0; width:83%; max-width:340px; background:var(--nm); box-shadow:8px 0 40px -8px rgba(18,16,14,.4); transform:translateX(-100%); transition:transform .28s cubic-bezier(.22,1,.36,1); display:flex; flex-direction:column; padding:calc(14px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom)); }
+.vmenu.open .vms-panel { transform:none; }
+.vms-head { display:flex; align-items:center; justify-content:space-between; padding:4px 6px 6px; }
+.vms-brand { font-family:var(--script); font-size:23px; font-weight:700; color:var(--olive); transform:rotate(-2deg); line-height:1; }
+.vms-close { width:30px; height:30px; border-radius:50%; border:none; background:var(--nm); box-shadow:var(--nm-sm); color:var(--ebony); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.vms-close:active { box-shadow:var(--nm-in); }
+.vms-close svg { width:12px; height:12px; }
+.vms-scroll { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; min-height:0; padding-bottom:.4rem; }
+.vms-glabel { display:inline-block; font-family:var(--script); font-size:1.12rem; font-weight:600; color:var(--olive); transform:rotate(-2deg); line-height:1; margin:.9rem 0 .3rem .5rem; padding-bottom:4px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 4px; }
+.vms-scroll > .vms-glabel:first-child { margin-top:.2rem; }
+.vms-item { display:flex; align-items:center; gap:.7rem; width:100%; border:none; background:none; cursor:pointer; border-radius:12px; padding:.62rem .55rem; font-family:var(--sans); font-weight:500; font-size:.93rem; line-height:1.2; letter-spacing:-.01em; color:var(--ebony); text-align:left; text-decoration:none; }
+.vms-item:active { background:var(--white); }
+.vms-item svg { width:20px; height:20px; flex:none; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; color:var(--olive); }
+@media (min-width:900px){ .vmenu { display:none !important; } }
 .vth-scroll { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; display:flex; flex-direction:column; padding:2px; }
 .vth-scroll::before { content:''; flex:1 0 0; }
 .vth-scroll::-webkit-scrollbar { display:none; }
@@ -323,15 +346,15 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
   /* keyboard up: hide the explorable cards + hints (they overflow the shortened viewport and
      spill over the composer) — leaves the Vesta wordmark clean at the top. (Drew, 7/10) */
   #s-home.vconv.kb-open .home-stack, #s-home.vconv.kb-open .vst-hints { display:none; }
-  /* the composer "text bubble" — de-greened to the dark tone (matches the sent bubbles),
-     soft-lifted. Light text + a tea send button pop against the dark. */
-  #s-home.vconv .home-search { background:var(--dark-grad); box-shadow:0 2px 6px rgba(40,41,22,.18), 0 14px 30px -10px rgba(40,41,22,.45), inset 0 1px 0 rgba(255,255,255,.08); }
-  #s-home.vconv .home-search:active { box-shadow:0 1px 3px rgba(40,41,22,.2), inset 0 2px 6px rgba(0,0,0,.28); }
-  #s-home.vconv .home-search .hs-spark { background:var(--nm); box-shadow:0 3px 7px -1px rgba(0,0,0,.42), 0 1px 2px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.75); }
+  /* the composer "text bubble" — the Atlas .fd-well look: a cream neumorphic raised pill,
+     dark text + a dark-grad send that pops against the cream (Drew 7/21 — "same input bar as Atlas"). */
+  #s-home.vconv .home-search { background:var(--nm); box-shadow:var(--nm-out); }
+  #s-home.vconv .home-search:active { box-shadow:var(--nm-in); }
+  #s-home.vconv .home-search .hs-spark { background:var(--nm); box-shadow:var(--nm-sm); }
   #s-home.vconv .home-search .hs-spark svg { color:var(--olive); }
-  #s-home.vconv .hs-cin { color:#fff; }
-  #s-home.vconv .hs-cin::placeholder { color:rgba(255,255,255,.55); }
-  #s-home.vconv .hs-csend { background:var(--tea-grad); color:var(--olive); box-shadow:0 4px 12px -3px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.5); }
+  #s-home.vconv .hs-cin { color:var(--olive); }
+  #s-home.vconv .hs-cin::placeholder { color:rgba(74,75,47,.5); }
+  #s-home.vconv .hs-csend { background:var(--dark-grad); color:var(--tea); box-shadow:0 4px 13px -3px rgba(67,68,42,.5); }
   /* ── Ask Vesta as a dismissible OVERLAY. Opened from a trade/directory, the chat floats over
      the current screen instead of navigating home (which buried it under the swipe deck and locked
      the page). The underlying screen is never unmounted, so its scroll survives; X minimizes back
@@ -2438,7 +2461,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
           <!-- the thread — grows in place when the conversation opens (mobile morph) -->
           <div class="vfold vthread-fold" id="vthread-fold"><div class="vfold-in">
             <div class="vthread">
-              <button class="vth-menu" id="vth-menu" type="button" aria-label="Your chats"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5h13M2.5 9h13M2.5 13.5h13"/></svg></button>
+              <button class="vth-menu" id="vth-menu" type="button" aria-haspopup="dialog" aria-label="Menu"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5h13M2.5 9h13M2.5 13.5h13"/></svg></button>
               <button class="vth-x" id="vth-x" type="button" aria-label="New chat"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14"/></svg></button>
               <!-- mobile: the Vesta wordmark is a PERSISTENT header — it's the one thing that stays
                    when a text conversation begins; the cards + hints below animate away. Desktop
@@ -2474,6 +2497,16 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
               <div class="vd-head"><span class="vd-title">Your chats</span><button class="vd-close" id="vd-close" type="button" aria-label="Close"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4l10 10M14 4L4 14"/></svg></button></div>
               <button class="vd-new" id="vd-new" type="button"><span class="vd-plus">+</span> New chat</button>
               <div class="vd-list" id="vdrawer-list"></div>
+            </aside>
+          </div>
+
+          <!-- ☰ NAV MENU (mobile) — the full category nav, Atlas #absheet parity. Built by JS from
+               `trades` (one source of truth). Caveat/slanted/underlined subject headers. -->
+          <div class="vmenu" id="vmenu" hidden>
+            <div class="vms-scrim" id="vms-scrim"></div>
+            <aside class="vms-panel" role="dialog" aria-modal="true" aria-label="Menu">
+              <div class="vms-head"><span class="vms-brand">Vesta</span><button class="vms-close" id="vms-close" type="button" aria-label="Close"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4l10 10M14 4L4 14"/></svg></button></div>
+              <div class="vms-scroll" id="vmenu-list"></div>
             </aside>
           </div>
 
@@ -7025,6 +7058,62 @@ function renderDrawer(){
 }
 function openDrawer(){ renderDrawer(); const d=$('vdrawer'); if(d){ d.hidden=false; requestAnimationFrame(()=>d.classList.add('open')); } }
 function closeDrawer(){ const d=$('vdrawer'); if(d){ d.classList.remove('open'); setTimeout(()=>{ if(!d.classList.contains('open')) d.hidden=true; }, 260); } }
+
+/* ── ☰ NAV MENU (mobile) — the full category nav, Atlas #absheet parity. Built once, from
+   `trades` (one source of truth). Every item lands somewhere real — no dead ends. ── */
+const VMENU_IC = {
+  ask:'<svg viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4V5z"/></svg>',
+  dir:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.7 8.3l-2.3 5.4-5.4 2.3 2.3-5.4z"/></svg>',
+  vet:'<svg viewBox="0 0 24 24"><path d="M12 3l7 2.5V11c0 4-2.9 6.9-7 8.5C7.9 17.9 5 15 5 11V5.5z"/><path d="M9.2 11.4l2 2 3.6-3.8"/></svg>',
+  saved:'<svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></svg>',
+  history:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>',
+  chats:'<svg viewBox="0 0 24 24"><path d="M4 5h16v10H8l-4 3V5z"/><path d="M8 9h8M8 12h5"/></svg>',
+  atlas:'<svg viewBox="0 0 24 24"><rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M8.5 7.5V5.5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/></svg>',
+  home:'<svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>'
+};
+function vmsItem(attr, ic, label){ return '<button class="vms-item" type="button" '+attr+'>'+ic+'<span>'+label+'</span></button>'; }
+function buildVMenu(){
+  const sc=$('vmenu-list'); if(!sc) return;
+  let h='';
+  h+='<span class="vms-glabel">Find your pro</span>';
+  h+=vmsItem('data-act="ask"',VMENU_IC.ask,'Ask Vesta');
+  h+=vmsItem('data-act="directory"',VMENU_IC.dir,'Browse the directory');
+  h+=vmsItem('data-act="vet"',VMENU_IC.vet,'Vet a contractor');
+  h+='<span class="vms-glabel">Browse by trade</span>';
+  h+=trades.map(t=>vmsItem('data-trade="'+t.key+'"',ICONS[t.icon]||'',t.label)).join('');
+  h+='<span class="vms-glabel">Your place</span>';
+  h+=vmsItem('data-act="saved"',VMENU_IC.saved,'Saved');
+  h+=vmsItem('data-act="history"',VMENU_IC.history,'Recently viewed');
+  h+=vmsItem('data-act="chats"',VMENU_IC.chats,'Your chats');
+  h+='<span class="vms-glabel">More</span>';
+  h+='<a class="vms-item" href="/atlas">'+VMENU_IC.atlas+'<span>For contractors</span></a>';
+  h+='<a class="vms-item" href="/">'+VMENU_IC.home+'<span>4THWALL home</span></a>';
+  sc.innerHTML=h;
+  sc.addEventListener('click',e=>{
+    const b=e.target.closest('[data-act],[data-trade]'); if(!b) return;
+    const act=b.getAttribute('data-act'), tr=b.getAttribute('data-trade');
+    closeVMenu();
+    if(tr){ openBrowse(tr,{walk:false}); return; }
+    if(act==='ask'){ goHome(); }
+    else if(act==='directory'){ if(typeof openDirectorySheet==='function') openDirectorySheet(); else location.href='/directory'; }
+    else if(act==='vet'){ vmMenuVet(); }
+    else if(act==='saved'){ S.savedTab='saved'; showSaved(); }
+    else if(act==='history'){ S.savedTab='history'; showSaved(); }
+    else if(act==='chats'){ openDrawer(); }
+  });
+}
+/* mirror the "Vet a contractor" hint's real path (not a fragile synthetic click): drop to the
+   home chat, then arm the vet lane + type the opener — falling back to search if triage is down. */
+function vmMenuVet(){
+  goHome();
+  requestAnimationFrame(()=>{
+    if(typeof TRI_OK!=='undefined' && !TRI_OK){ if(typeof openSearch==='function') openSearch(); return; }
+    vmVetPending = true;
+    vmVestaOpener('Happy to check. Give me the name — the company or the person — and I’ll pull what Fairfield County’s record shows.');
+  });
+}
+function openVMenu(){ const m=$('vmenu'); if(!m) return; if(!m.dataset.built){ buildVMenu(); m.dataset.built='1'; } m.hidden=false; requestAnimationFrame(()=>m.classList.add('open')); }
+function closeVMenu(){ const m=$('vmenu'); if(!m) return; m.classList.remove('open'); setTimeout(()=>{ if(!m.classList.contains('open')) m.hidden=true; }, 300); }
 // the 2b "resume band" retired in favour of the drawer; this stays a no-op so the conversation
 // entry points that used to dismiss the band don't error.
 function hideResumeBand(){ const rb=$('vresume'); if(rb) rb.hidden=true; }
@@ -7905,9 +7994,11 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
       else newThread();   // mobile X = start a fresh chat (the current one is filed in the ☰ drawer, not lost)
     }); }
   // ☰ chats drawer
-  { const m=$('vth-menu'); if(m) m.addEventListener('click', openDrawer); }
+  { const m=$('vth-menu'); if(m) m.addEventListener('click', openVMenu); }
   { const c=$('vd-close'); if(c) c.addEventListener('click', closeDrawer); }
   { const s=$('vd-scrim'); if(s) s.addEventListener('click', closeDrawer); }
+  { const c=$('vms-close'); if(c) c.addEventListener('click', closeVMenu); }
+  { const s=$('vms-scrim'); if(s) s.addEventListener('click', closeVMenu); }
   { const n=$('vd-new'); if(n) n.addEventListener('click', newThread); }
   { const list=$('vdrawer-list'); if(list) list.addEventListener('click', e=>{
       const op=e.target.closest('.vd-open'); if(op){ openThread(op.dataset.id); return; }
