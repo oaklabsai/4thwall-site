@@ -1205,18 +1205,19 @@ a,button{transition:transform .14s}
       var tw = measure.getComputedTextLength();
       spacing = tw + GAP;
       if (!(pathLen > 0 && spacing > 0)) return false;
-      var repeats = Math.ceil(pathLen / spacing) + 2;
-      if (tspans.length !== repeats){
-        textPath.textContent = '';
-        tspans = [];
-        for (var i = 0; i < repeats; i++){
-          var t = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-          t.setAttribute('x', i * spacing);
-          t.setAttribute('xml:space', 'preserve');
-          t.textContent = FEATURES;
-          textPath.appendChild(t);
-          tspans.push(t);
-        }
+      // enough copies that one is always entering as another exits (spacing can exceed pathLen)
+      var repeats = Math.max(3, Math.ceil(pathLen / spacing) + 2);
+      // ALWAYS rebuild + re-tile to i*spacing — reusing stale positions across a
+      // font-load/resize re-measure is what collapsed every copy onto one off-path point
+      textPath.textContent = '';
+      tspans = [];
+      for (var i = 0; i < repeats; i++){
+        var t = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        t.setAttribute('x', i * spacing);
+        t.setAttribute('xml:space', 'preserve');
+        t.textContent = FEATURES;
+        textPath.appendChild(t);
+        tspans.push(t);
       }
       svg.style.visibility = 'visible';
       return true;
@@ -1267,6 +1268,8 @@ a,button{transition:transform .14s}
     start();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(start);
     window.addEventListener('resize', build, {passive:true});
+    // rAF pauses on a hidden tab; on return, reset the clock so the delta doesn't jump the marquee
+    document.addEventListener('visibilitychange', function(){ if (!document.hidden) last = performance.now(); });
   }
 })();
 </script>
