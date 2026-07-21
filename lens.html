@@ -10,7 +10,7 @@
   <link rel="icon" href="/logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@300;400;500;600;700&family=Caveat:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
   <link rel="stylesheet" href="/lens.css">
   <script src="/lens-demo-data.js" defer></script>
   <script src="/lens.js" defer></script>
@@ -27,19 +27,18 @@
       <a class="nav-link" href="#control">Your control</a>
     </div>
     <div class="nav-actions">
-      <a class="btn btn-soft btn-sm" href="/workspace?mode=demo">Explore the demo</a>
-      <a class="btn btn-dark btn-sm" href="/workspace/signin">Create workspace</a>
+      <a class="btn btn-dark btn-sm" href="#waitlist">Join the waitlist</a>
     </div>
   </nav>
 
   <main class="public-main">
     <section class="hero">
       <div>
-        <div class="eyebrow">A trust workspace for contractors <span class="beta-pill">Beta</span></div>
+        <div class="eyebrow">A trust workspace for contractors <span class="beta-pill">Early access</span></div>
         <h1>Your work already tells a <em>story.</em></h1>
         <p class="hero-copy">Lens turns the operating history inside your business tools into clear, source-backed answers a homeowner can understand—while you keep control of every record.</p>
         <div class="hero-actions">
-          <a class="btn btn-dark" href="/workspace?mode=demo">Open the interactive workspace <span aria-hidden="true">→</span></a>
+          <a class="btn btn-dark" href="#waitlist">Join the waitlist <span aria-hidden="true">→</span></a>
           <a class="btn btn-ghost" href="#homeowner-view">See the homeowner view</a>
         </div>
         <div class="trust-line">
@@ -149,10 +148,22 @@
       </div>
     </section>
 
-    <section class="public-cta">
+    <section class="public-cta" id="waitlist">
       <div class="cta-panel">
-        <div><h2>See what your record can <em>prove.</em></h2><p>Start with the workspace, connect only when you are ready, and review the result before anything can become homeowner-visible.</p></div>
-        <div class="cta-actions"><a class="btn btn-tea" href="/workspace/signin">Create your workspace</a><a class="btn btn-ghost" href="/workspace?mode=demo">Explore the demo</a></div>
+        <div class="cta-copy">
+          <div class="eyebrow">Early access</div>
+          <h2>See what your record can <em>prove.</em></h2>
+          <p>Lens is being built out with its first contractors right now. Leave your email and you'll get access as workspaces open up.</p>
+        </div>
+        <form class="waitlist-form" id="waitlist-form" novalidate>
+          <label class="sr-only" for="wl-email">Email address</label>
+          <div class="wl-field"><input class="wl-input" id="wl-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@yourcompany.com" required></div>
+          <label class="sr-only" for="wl-company">Company (optional)</label>
+          <div class="wl-field"><input class="wl-input" id="wl-company" name="company" type="text" autocomplete="organization" placeholder="Company (optional)"></div>
+          <button class="btn btn-dark wl-submit" type="submit">Save my spot</button>
+          <p class="wl-status" id="wl-status" role="status" aria-live="polite"></p>
+          <p class="wl-note">No spam, no sharing — one email when your workspace is ready.</p>
+        </form>
       </div>
     </section>
   </main>
