@@ -778,7 +778,8 @@ a,button{transition:transform .14s}
 /* ═══ ATLAS COVERFLOW — vanilla port of the framer-motion CardCarousel (Drew 7/21).
    A deck of the whole front office; active card centered + lifted, neighbours tilt
    back, the set fans on hover. Transforms applied in JS (wireAtlasCarousel). ═══ */
-.acar{--acw:230px;max-width:var(--max);margin:0 auto;display:flex;flex-direction:column;align-items:center;-webkit-user-select:none;user-select:none}
+.acar{--acw:230px;max-width:var(--max);margin:0 auto;display:flex;flex-direction:column;align-items:center;-webkit-user-select:none;user-select:none;
+  overflow-x:clip;overflow-y:visible}  /* clip the wide in-flow track horizontally; keep the hover fan-up visible */
 .acar-stage{position:relative;height:clamp(250px,32vw,290px);width:var(--acw);display:flex;align-items:center;justify-content:flex-start;overflow:visible;perspective:1400px}
 .acar-track{display:flex;align-items:center;transition:transform .8s var(--spring);will-change:transform}
 .acar-card{flex:none;width:var(--acw);height:clamp(220px,28vw,258px);border-radius:var(--r-card);padding:1.5rem 1.4rem;display:flex;flex-direction:column;cursor:pointer;transform-origin:center center;backface-visibility:hidden;
