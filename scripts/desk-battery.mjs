@@ -1,285 +1,115 @@
-// THE FRONT DESK BATTERY (front-desk.md law 6) — the gate before any pack/line change
-// and before the index.html swap. Two parts:
-//   A · ROUTING — evals the LIVE page's real desk script in a DOM shim and drives the
-//       real input path: lane entry, house lines, triage entry, the deflection floor,
-//       the outage fallback. No re-implementation — the deployed code is what runs.
-//   B · CLAIM SAFETY — lints every deterministic L line against the knowledge pack's
-//       banned list (front-desk-knowledge.md §9): self-labels, "certified", voice bans,
-//       exclamation marks, numbers outside the receipted allowlist, price figures.
-// The triage MODEL's behavior is owned by scripts/vesta-*.mjs — this battery only
-// asserts the desk ENTERS triage; it never grades the model.
-// Run: node scripts/desk-battery.mjs [--local]   (default tests the LIVE /next)
+// 4THWALL homepage contract.
+//
+// The conversational contractor desk now lives on /atlas and is covered by
+// atlas-battery.mjs. This gate owns the public homepage: one brand per
+// audience, a claim-safe Atlas Workspace demonstration, valid inline code and
+// no regression to Slack or Lens as a separate contractor product.
+//
+// Run:
+//   node scripts/desk-battery.mjs          # local source (blocking)
+//   node scripts/desk-battery.mjs --live   # deployed homepage
 
 import { readFileSync } from 'node:fs';
 
-const LIVE = 'https://4thwall.solutions/next';
-const local = process.argv.includes('--local');
+const live = process.argv.includes('--live');
+const html = live
+  ? await (await fetch('https://4thwall.solutions/')).text()
+  : readFileSync(new URL('../landing-next.html', import.meta.url), 'utf8');
+const atlasHtml = live
+  ? await (await fetch('https://4thwall.solutions/atlas')).text()
+  : readFileSync(new URL('../atlas-next.html', import.meta.url), 'utf8');
 
-// ── fetch the page, extract the desk script (the block that carries THE FRONT DESK) ──
-async function getSource(){
-  const html = local
-    ? readFileSync(new URL('../landing-next.html', import.meta.url), 'utf8')
-    : await (await fetch(LIVE)).text();
-  const blocks = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
-  const src = blocks.find(b => b.includes('THE FRONT DESK'));
-  if (!src) throw new Error('desk script block not found');
-  return src;
+let pass = 0;
+let fail = 0;
+function check(name, condition) {
+  console.log(`${condition ? '✓' : '✗'} ${name}`);
+  condition ? pass++ : fail++;
 }
 
-// ── minimal DOM shim — only what the desk engine touches ──
-function el(id){
-  const handlers = {};
-  const e = {
-    id, _html:'', textContent:'', className:'', value:'', placeholder:'', hidden:false,
-    style:{}, dataset:{}, disabled:false,
-    classList:{ _s:new Set(),
-      add(...c){c.forEach(x=>this._s.add(x))}, remove(...c){c.forEach(x=>this._s.delete(x))},
-      toggle(c,f){ (f===undefined? !this._s.has(c):f) ? this._s.add(c):this._s.delete(c); },
-      contains(c){return this._s.has(c)} },
-    get innerHTML(){ return this._html; },
-    set innerHTML(v){ this._html = v; },
-    get childNodes(){ return []; },
-    get children(){ return []; },
-    get offsetWidth(){ return 0; },
-    setAttribute(){}, appendChild(){}, replaceChild(){}, scrollIntoView(){},
-    querySelector(){ return null; }, querySelectorAll(){ return []; },
-    addEventListener(t,fn){ (handlers[t]=handlers[t]||[]).push(fn); },
-    dispatchEvent(ev){ (handlers[ev.type]||[]).forEach(fn=>fn(ev)); },
-    _handlers: handlers,
-  };
-  return e;
+const withoutCode = html
+  .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+  .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+  .replace(/<!--[\s\S]*?-->/g, '');
+
+check('document title names Atlas Workspace', /<title>4THWALL — Atlas Workspace/.test(html));
+check(
+  'description states the accountable front office',
+  /Atlas Workspace is the accountable front office/.test(html),
+);
+check(
+  'hero carries the adopted contractor promise',
+  /You do the work\.[\s\S]{0,80}Atlas keeps the job moving\./.test(withoutCode),
+);
+check(
+  'hero explains crew, Atlas and the work in one private place',
+  /every lead, job, teammate decision and follow-up in one private place/.test(withoutCode),
+);
+
+const audienceCards = [...withoutCode.matchAll(/class="fork-col\b/g)].length;
+check('exactly two audience cards', audienceCards === 2);
+check('Atlas is the contractor door', /For Contractors[\s\S]{0,500}Atlas Workspace/.test(withoutCode));
+check('Vesta is the homeowner door', /Vesta[\s\S]{0,500}For Homeowners/.test(withoutCode));
+check('Lens is not a navigation or product door', !/href="\/lens(?:["#?])/.test(withoutCode));
+check('structured data exposes only Atlas and Vesta brands', !/"name": "Lens"/.test(html));
+
+check('workspace demonstration exists', /class="aw-demo"/.test(withoutCode));
+check(
+  'demonstration is labeled in the component',
+  /Labeled example/.test(withoutCode)
+    && /Product demonstration · example company and records · no customer outcome claimed/.test(withoutCode),
+);
+check('workspace demonstration shows exact ownership', /Alex assigned Sam/.test(withoutCode));
+check('workspace demonstration shows Atlas state', /Atlas succeeded/.test(withoutCode));
+check('workspace demonstration shows named decision authority', /Only Sam can answer/.test(withoutCode));
+
+check('no Slack asset remains on the active homepage', !/atlas-slack\.png/i.test(html));
+check('no Slack explanation remains on the active homepage', !/What is Slack|private Slack|Slack channel/i.test(withoutCode));
+check('founding-contractor action is present', /Apply as a founding contractor/.test(withoutCode));
+check('reduced-motion handling remains present', /prefers-reduced-motion:\s*reduce/.test(html));
+check('mobile workspace proof has a responsive rule', /@media\(max-width:760px\)\{\.aw-demo/.test(html));
+
+const atlasWithoutStylesAndComments = atlasHtml
+  .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+  .replace(/<!--[\s\S]*?-->/g, '');
+check('contractor page is named Atlas Workspace', /<title>Atlas Workspace/.test(atlasHtml));
+check('contractor page renders a first-party Workspace room', /Room ·[\s\S]{0,200}Atlas Workspace/.test(atlasWithoutStylesAndComments));
+check(
+  'contractor page labels simulated records without claiming customer outcomes',
+  /Product demonstration · example company and records · no customer outcome claimed/.test(atlasWithoutStylesAndComments),
+);
+check(
+  'contractor page has no active Slack explainer or logo',
+  !/What is Slack|SLACK_LOGO|atlas-slack\.png/i.test(atlasWithoutStylesAndComments),
+);
+
+const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
+check('HTML ids are unique', new Set(ids).size === ids.length);
+
+const jsonScripts = [...html.matchAll(
+  /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
+)].map((match) => match[1]);
+let jsonValid = jsonScripts.length > 0;
+for (const source of jsonScripts) {
+  try {
+    JSON.parse(source);
+  } catch {
+    jsonValid = false;
+  }
 }
+check('structured data parses', jsonValid);
 
-// a tiny in-memory Storage so F5's localStorage reads/writes work in the shim
-function makeStore(seed){
-  const d = seed ? { fd_memory: JSON.stringify(seed) } : {};
-  return { getItem: k => (k in d ? d[k] : null), setItem: (k,v) => { d[k] = String(v); }, removeItem: k => { delete d[k]; } };
+const inlineScripts = [...html.matchAll(
+  /<script>([\s\S]*?)<\/script>/g,
+)].map((match) => match[1]);
+let scriptValid = inlineScripts.length > 0;
+for (const source of inlineScripts) {
+  try {
+    Function(source);
+  } catch {
+    scriptValid = false;
+  }
 }
+check('inline homepage code parses', scriptValid);
 
-// One fresh desk instance per case. probeOK controls the GET /api/triage health probe;
-// seedMem pre-seeds localStorage to simulate a returning visitor (F5).
-function boot(src, { probeOK = true, seedMem = null } = {}){
-  const ids = ['fdMat','fdYou','fdLine','fdSay','fdWell','fdPh','fdMic','fdThink','fdThinkW','fdScreen','fdFork','forkCo','forkHo','fdReveal','revHide','catOffice','catStack'];
-  const els = Object.fromEntries(ids.map(i => [i, el(i)]));
-  const posts = [];                       // recorded triage POSTs
-  const location = { href:'' };           // handoff fallback lands here
-  const env = {
-    document: {
-      getElementById: id => els[id] || el(id),
-      createElement: () => el('x'), createTextNode: t => ({ textContent:t }),
-      createDocumentFragment: () => el('frag'),
-      querySelector: () => null, querySelectorAll: () => [],
-      activeElement: null,
-    },
-    window: {},                            // no HOME in the shim → logEvent no-ops
-    location,
-    fetch: (url, opts) => {
-      if (opts && opts.method === 'POST'){ posts.push(JSON.parse(opts.body)); return new Promise(()=>{}); }
-      if (String(url).includes('desk-guide.json')) return Promise.resolve({ ok:true, json: () => Promise.resolve(GUIDE_JSON) });
-      return Promise.resolve({ ok: probeOK });
-    },
-    setTimeout: (fn) => { fn(); return 0; },  // transitions collapse — state lands synchronously
-    clearTimeout: () => {}, setInterval: () => 0, clearInterval: () => {},
-    sessionStorage: { getItem:()=>null, setItem:()=>{}, },
-    localStorage: makeStore(seedMem),
-    Date, JSON, Object, Array, String, Math, Promise, encodeURIComponent, TextDecoder,
-    Event: class { constructor(type){ this.type = type; } preventDefault(){} },
-    SpeechRecognition: undefined, webkitSpeechRecognition: undefined,
-  };
-  env.window = env;                        // window.HOME lookups resolve against env (undefined)
-  new Function(...Object.keys(env), src)(...Object.values(env));
-  const say = (q) => { els.fdSay.value = q; els.fdWell.dispatchEvent({ type:'submit', preventDefault(){} }); };
-  const spoken = () => els.fdLine.innerHTML.replace(/<[^>]+>/g,'');
-  return { els, posts, location, say, spoken };
-}
-
-// ── the extracted L table for the claim lint (same source, isolated eval) ──
-function extractL(src){
-  const m = src.match(/var L=\{([\s\S]*?)\};/);
-  if (!m) throw new Error('L table not found');
-  return new Function('CAL', 'return {' + m[1] + '};')('CAL_URL');
-}
-
-const strip = s => String(s).replace(/<[^>]+>/g,'');
-
-// front-desk-knowledge.md §9, encoded. "not a software seat" is the pack's own approved
-// framing; "Connect the tools" is the pack's approved Lens verb — both stay legal.
-function lintLine(key, text){
-  const bad = [];
-  const t = strip(text);
-  if (/AI[- ]powered/i.test(t)) bad.push('self-label "AI-powered"');
-  if (/\breceptionist\b/i.test(t)) bad.push('self-label "receptionist"');
-  if (/\bplatform\b/i.test(t)) bad.push('self-label "platform"');
-  if (/\bsoftware\b/i.test(t) && !/not a software/i.test(t)) bad.push('self-label "software"');
-  if (/\bcertified\b/i.test(t)) bad.push('"certified"');
-  if (/\bConnect\b(?! the tools)/.test(t)) bad.push('product name "Connect"');
-  if (/\b(synergy|seamless|game-changing|revolutioni[sz]e|leverage|streamline)\b/i.test(t)) bad.push('voice.md banned word');
-  if (/!/.test(t)) bad.push('exclamation mark');
-  if (/\$|\b1,?500\b/.test(t)) bad.push('price figure (fit-call posture: the desk never states the number)');
-  const nums = t.match(/\d+/g) || [];
-  const allow = new Set(['4','15','20','60']);   // 4THWALL · 15-second guarantee (hedged) · 20-min call · 60-second demo
-  for (const n of nums) if (!allow.has(n)) bad.push(`unreceipted number "${n}"`);
-  return bad;
-}
-
-// ═══ run ═══
-const src = await getSource();
-// the P4 screens assemble from /desk-guide.json — same source discipline as the page
-const GUIDE_JSON = local
-  ? JSON.parse(readFileSync(new URL('../desk-guide.json', import.meta.url), 'utf8'))
-  : await (await fetch('https://4thwall.solutions/desk-guide.json')).json();
-const flush = () => new Promise(r => setImmediate(r));
-console.log(`desk battery — source: ${local ? 'local file' : LIVE} (${src.length} chars · guide: ${Object.keys(GUIDE_JSON.trades).length} trades)\n`);
-
-let fails = 0;
-const check = (tag, ok, note='') => {
-  console.log(`${ok ? '  ✓' : '  ✗ FAIL'} ${tag}${!ok && note ? ' — ' + note : ''}`);
-  if (!ok) fails++;
-};
-
-// A · ROUTING — each case boots a fresh desk (real code, clean state)
-{ const d = boot(src);
-  check('A1 first paint ends voicing both doors (the fork lands after the break)', /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
-{ const d = boot(src);
-  // decks build EAGERLY at boot (first hover must be instant) but stay tucked away until
-  // a pill is hovered/tapped; hide × and any typed ask collapse them again.
-  const builtHidden = /Lead Response/.test(d.els.catOffice.innerHTML) && /Roofing/.test(d.els.catStack.innerHTML)
-    && d.els.catOffice.hidden === true && d.els.catStack.hidden === true;
-  d.els.forkHo.dispatchEvent({ type:'mouseenter' });
-  const hoShown = d.els.catStack.hidden === false && d.els.catOffice.hidden === true && d.els.revHide.hidden === false;
-  d.els.forkCo.dispatchEvent({ type:'mouseenter' });
-  const coShown = d.els.catOffice.hidden === false && d.els.catStack.hidden === true;
-  d.els.revHide.dispatchEvent({ type:'click' });
-  const tucked = d.els.catOffice.hidden === true && d.els.catStack.hidden === true && d.els.revHide.hidden === true;
-  check('A26 landing → decks eager-built, hidden until pill hover, one at a time, hide × tucks away; fork spoken; no auto-sim',
-    builtHidden && hoShown && coShown && tucked
-    && /Operator Briefs/.test(d.els.catOffice.innerHTML) && /Masonry/.test(d.els.catStack.innerHTML)
-    // the final door: each deck's last card is a clean exit to the full product
-    && /The full Atlas/.test(d.els.catOffice.innerHTML) && /open Atlas/.test(d.els.catOffice.innerHTML)
-    && /The full Vesta/.test(d.els.catStack.innerHTML) && /open Vesta/.test(d.els.catStack.innerHTML)
-    && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())
-    && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
-{ const d = boot(src);
-  // CHATTING state: any ask collapses the cards AND retires the fork for the session —
-  // a stray hover mid-conversation must NOT stand the deck back up over the thread
-  d.els.forkHo.dispatchEvent({ type:'mouseenter' });
-  d.say('my roof is leaking in Stamford');
-  const collapsed = d.els.catStack.hidden === true && d.els.catOffice.hidden === true
-    && d.els.revHide.hidden === true;
-  d.els.forkHo.dispatchEvent({ type:'mouseenter' });
-  d.els.forkCo.dispatchEvent({ type:'mouseenter' });
-  const noResurrect = d.els.catStack.hidden === true && d.els.catOffice.hidden === true;
-  check('A30 typed ask → cards collapse AND hover cannot resurrect them mid-conversation',
-    collapsed && noResurrect); }
-{ // every trade-card ask reaches the real triage — the exact phrasings the cards fire
-  // ("plumbing"/"electrician"/"painting" deflected before the suffix-tolerant stems)
-  const asks = ['I have a plumbing problem','I need an electrician','the house needs painting','my chimney needs repointing'];
-  const ok = asks.every(q => { const d = boot(src); d.say(q); return d.posts.length === 1; });
-  check('A33 trade-card phrasings (plumbing/electrician/painting/masonry) all reach the triage, never the deflect', ok); }
-{ const d = boot(src); d.say('contractor');
-  // sync timers: the co arc (blanket → why → THE OFFICE) plays through at boot
-  const s = d.els.fdScreen.innerHTML;
-  check('A2 "contractor" → the FULL estate lands (all 8 rooms + receipt + posture + doors, zero price figures)',
-    /Lead Response/.test(s) && /Storm Mode/.test(s) && /Seasonal Campaigns/.test(s) && /Booking/.test(s)
-    && /Follow-up/.test(s) && /Review Generation/.test(s) && /Local Discovery/.test(s) && /Operator Briefs/.test(s)
-    && /receipt, not a story/.test(s) && /say so first/.test(s)
-    && /book the 20-minute fit call/.test(s) && !/\$|\b\d,?\d{3}\b/.test(s)); }
-{ const d = boot(src); d.say('storm season is coming');
-  check('A28 storm ask (cold) → Storm Mode room direct (depth of directions)',
-    /Storm Mode/.test(d.spoken()) && /concurrently/.test(d.els.fdScreen.innerHTML)); }
-{ const d = boot(src); d.say('how do you handle reviews?');
-  check('A29 reviews ask → the Review Generation room, not a flat line',
-    /Review Generation/.test(d.els.fdScreen.innerHTML) && /right moment/.test(d.els.fdScreen.innerHTML)); }
-{ const d = boot(src); d.say('why is vesta free?');
-  check('A30 trust probe → the who\'s-behind-this line (free, no pay-to-recommend, no method talk)',
-    /free for homeowners/.test(d.spoken()) && /no one can pay to be recommended/i.test(d.spoken())); }
-{ const d = boot(src); d.say('homeowner');
-  check('A31 homeowner arc → blanket + absolution land before the ask (ends on the neighbor line)',
-    /like you.d tell a neighbor/.test(d.spoken())); }
-{ const d = boot(src); d.say('homeowner');
-  check('A3 "homeowner" → job-examples line', /like you.d tell a neighbor/.test(d.spoken())); }
-{ const d = boot(src); d.say('homeowner'); d.say('the AC died upstairs');
-  check('A4 ho lane free text → REAL triage entered', d.posts.length === 1 && d.posts[0].messages?.[0]?.content === 'the AC died upstairs', JSON.stringify(d.posts)); }
-{ const d = boot(src); d.say('my roof is leaking near the chimney');
-  check('A5 cold job words → triage entered (no lane needed)', d.posts.length === 1); }
-{ const d = boot(src); d.say('my roof is leaking'); d.say('and my sink too');
-  check('A6 second input while desk is thinking → held (one thought at a time)', d.posts.length === 1); }
-{ const d = boot(src, { probeOK:false });
-  await new Promise(r => setImmediate(r));   // let the health probe's microtask settle (TRI_OK=false)
-  d.say('homeowner'); d.say('my roof is leaking');
-  check('A7 triage DOWN → /vesta handoff floor (never a dead end)', d.location.href.startsWith('/vesta?q='), 'href=' + d.location.href); }
-{ const d = boot(src); d.say('how much does atlas cost');
-  check('A8 pricing ask → fit-call posture, zero price figures', /fit call/i.test(d.spoken()) && !/\$|\d,?\d{3}/.test(d.spoken())); }
-{ const d = boot(src); d.say('are you better than Angi?');
-  check('A9 competitor bait → honest deflection to a person', /deserves a person/.test(d.spoken())); }
-{ const d = boot(src); d.say('what are your profit margins?');
-  check('A10 oversharing probe → deflection (never strategy internals)', /deserves a person/.test(d.spoken())); }
-{ const d = boot(src); d.say('tell me about atlas');
-  check('A11 atlas ask → Atlas line', /managed front office/.test(d.spoken())); }
-{ const d = boot(src); d.say('what is lens?');
-  check('A12 lens ask → Lens line (free, nothing publishes without you)', /free/.test(d.spoken()) && /Nothing publishes without you/.test(d.spoken())); }
-{ const d = boot(src); d.say('do you handle seo?');
-  check('A13 seo ask → the Local Discovery room (kept-current signals, no ranking guarantees)',
-    /Local Discovery/.test(d.spoken()) && /maintained as part of the office/.test(d.els.fdScreen.innerHTML)
-    && !/guarantee/i.test(d.els.fdScreen.innerHTML)); }
-{ const d = boot(src); d.say('i keep missing calls on jobs');
-  // shim timers run sync: the whole performance plays through to the closing lead
-  check('A14 missed-calls ask → the desk PERFORMS the missed call (sim assembled, labeled, hedged; closing lead voiced)',
-    /Incoming call/.test(d.els.fdScreen.innerHTML) && /A simulation, labeled as one/.test(d.els.fdScreen.innerHTML)
-    && /typically get a first reply in 15 seconds after go-live/.test(d.els.fdScreen.innerHTML)
-    && /That.s Atlas/.test(d.spoken()) && /live demo/.test(d.spoken())); }
-{ const d = boot(src); d.say('how does it all compound?');
-  check('A22 flywheel ask → spoken line + the flywheel drawn (4 nodes, proof-never-ads)',
-    /evidence makes the work/.test(d.spoken()) && /fdfw-n/.test(d.els.fdScreen.innerHTML)
-    && /never ads/.test(d.els.fdScreen.innerHTML)); }
-{ const d = boot(src); d.say('who are you guys?');
-  check('A15 house ask → the belief line', /good work should leave evidence/i.test(d.spoken())); }
-{ const d = boot(src); d.say('qwerty asdf zxcv');
-  check('A16 nonsense → deflection, never a guess', /deserves a person/.test(d.spoken())); }
-
-// P4 — the rich components (deterministic screens; zero model calls)
-{ const d = boot(src); d.say('how much does a new roof cost?'); await flush(); await flush();
-  const s = d.els.fdScreen.innerHTML;
-  check('A17 homeowner cost ask → cost chart, NOT the Atlas offer line',
-    /What roofing costs in Fairfield County/.test(s) && /planning estimates, not quotes/.test(s) && /updated/.test(s) && !/fit call/i.test(d.spoken())); }
-{ const d = boot(src); d.say('how much does Atlas cost?'); await flush(); await flush();
-  check('A18 Atlas cost ask still → fit-call posture (no cost chart)',
-    /fit call/i.test(d.spoken()) && !/planning estimates/.test(d.els.fdScreen.innerHTML)); }
-{ const d = boot(src); d.say('what should I ask a plumber before I hire?'); await flush(); await flush();
-  const s = d.els.fdScreen.innerHTML;
-  check('A19 hiring ask → the per-trade checklist screen', /What to ask plumbers before you hire/.test(s) && /P-class license/.test(s)); }
-{ const d = boot(src); d.say('homeowner'); d.say('what does paving cost?'); await flush(); await flush();
-  check('A20 ho-lane cost ask → chart (never sent to the model)',
-    d.posts.length === 0 && /What paving costs/.test(d.els.fdScreen.innerHTML)); }
-{ const d = boot(src); d.say('what does a pool cost?'); await flush(); await flush();
-  check('A21 no cost data for trade → honest line, no invented numbers',
-    /don.t carry planning numbers/.test(d.spoken()) && !/\$/.test(d.els.fdScreen.innerHTML)); }
-
-// F5 — return-visit memory (localStorage only; seeded into the shim)
-{ const d = boot(src, { seedMem: { v:1, ts: Date.now(), deck:{ trade:'roofing', job:'roof-replacement', label:'roof replacement', tradeLabel:'Roofing' }, job:'roof-replacement', trade:'roofing', firm:'Summit Ridge Roofing', sent:true } });
-  check('A23 return visit (request sent) → welcome-back, names the firm, resume+fresh offered',
-    /Welcome back/.test(d.spoken()) && /Summit Ridge Roofing/.test(d.spoken()) && /how did it go/i.test(d.spoken())
-    && /data-act="resume"/.test(d.els.fdLine.innerHTML) && /data-act="fresh"/.test(d.els.fdLine.innerHTML)); }
-{ const d = boot(src, { seedMem: { v:1, ts: Date.now()-3*864e5, deck:{ trade:'paving', job:'new-driveway-installation', label:'new driveway installation', tradeLabel:'Paving' }, job:'new-driveway-installation', trade:'paving' } });
-  check('A24 return visit (matched, not sent) → welcome-back + resume, NOT "how did it go"',
-    /Welcome back/.test(d.spoken()) && /data-act="resume"/.test(d.els.fdLine.innerHTML) && !/how did it go/i.test(d.spoken())); }
-{ const d = boot(src);
-  check('A25 first-time visitor (no memory) → the fork spoken, never welcome-back',
-    !/Welcome back/.test(d.spoken()) && /contractor/.test(d.spoken()) && /homeowner/.test(d.spoken())); }
-{ const d = boot(src, { seedMem: { v:1, ts: Date.now(), deck:{ trade:'roofing', job:'roof-replacement', label:'roof replacement', tradeLabel:'Roofing' }, firm:'Summit Ridge Roofing' } });
-  check('A27 returning visitor → memory greeting wins; decks built but tucked behind the pills',
-    /Welcome back/.test(d.spoken()) && /Lead Response/.test(d.els.catOffice.innerHTML)
-    && d.els.catOffice.hidden === true
-    && !/Incoming call/.test(d.els.fdScreen.innerHTML)); }
-
-// B · CLAIM SAFETY — every deterministic line, linted against the pack's banned list
-const L = extractL(src);
-let lintBad = 0;
-for (const [key, text] of Object.entries(L)){
-  const bad = lintLine(key, text);
-  if (bad.length){ lintBad++; console.log(`  ✗ FAIL B·L.${key} — ${bad.join(' · ')}`); }
-}
-check(`B1 all ${Object.keys(L).length} L lines pack-clean (banned list §9)`, lintBad === 0);
-
-console.log(`\n${fails === 0 ? 'DESK BATTERY GREEN' : 'DESK BATTERY RED — ' + fails + ' failure(s)'}`);
-process.exit(fails === 0 ? 0 : 1);
+console.log(`\n${pass}/${pass + fail} passed${fail ? ' — FAILURES ABOVE' : ''}`);
+process.exit(fail ? 1 : 0);

@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=overlays-content">
-<title>Atlas — The Front Desk | 4THWALL</title>
-<meta name="description" content="Atlas runs the work around the job for homeowner-facing contractors: missed-call text recovery, qualification, booking, follow-up, review requests, campaigns, local discovery, operator briefs, and a measured monthly receipt.">
+<title>Atlas Workspace — The Accountable Front Office | 4THWALL</title>
+<meta name="description" content="Every lead, job, teammate decision and follow-up in one private contractor workspace, with Atlas handling authorized work and showing what happened.">
 <link rel="canonical" href="https://4thwall.solutions/atlas">
 <link rel="icon" href="/logo.png" type="image/png">
 <link rel="apple-touch-icon" href="/logo.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#ECEDE2">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Atlas — You do the work. Atlas runs the business around it.">
-<meta property="og:description" content="A fully managed front office for homeowner-facing contractors — from missed-call recovery through booking, follow-up, reviews, campaigns, and the monthly receipt.">
+<meta property="og:title" content="Atlas Workspace — You do the work. Atlas keeps the job moving.">
+<meta property="og:description" content="The accountable front office for home-service contractors: crew, Atlas, decisions and evidence in one first-party workspace.">
 <meta property="og:image" content="https://4thwall.solutions/logo.png">
 <meta property="og:url" content="https://4thwall.solutions/atlas">
 <meta property="og:site_name" content="4THWALL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Atlas — The managed front office behind the work">
-<meta name="twitter:description" content="Missed-call recovery, booking, follow-up, reviews, campaigns, local discovery, and a measured monthly receipt — carried through as one service.">
+<meta name="twitter:title" content="Atlas Workspace — The accountable front office">
+<meta name="twitter:description" content="You do the work. Atlas keeps the job moving — with every owner, decision and action on the record.">
 <meta name="twitter:image" content="https://4thwall.solutions/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1231,19 +1231,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .rm-scene .mcs-b{font-size:.8rem}
 .rm-scene .mcs-when{font-size:.62rem}
 .rm-scene .mcs-syschip{font-size:.63rem}
-/* the Slack card takes the room (Drew 7/21: "the slack demo should take priority and fully
-   express itself") — it stretches to the space; its thread fills the card and auto-scrolls
-   as the simulation posts. */
+/* The Atlas workroom stretches to the available space while its example posts
+   arrive on the shared record. */
 .rm-scene .slk{width:100%;max-width:460px;flex:1;min-height:180px;display:flex;flex-direction:column}
 .rm-scene .slk .slk-thread{flex:1;min-height:0;max-height:none}
-/* the honesty label stays visible — one quiet line; the Slack explainer folds into a dropdown */
+/* The honesty label stays visible under every example workroom. */
 .rm-scene .slk-cap{flex:none;font:500 .62rem/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim);text-align:center}
-.slk-more{flex:none;width:100%;max-width:460px;text-align:left}
-.slk-more summary{display:inline-flex;align-items:center;gap:.4rem;list-style:none;cursor:pointer;font:600 .78rem/1 var(--body);color:var(--olive);background:var(--nm);border:var(--nm-edge);border-radius:var(--r-pill);padding:.45rem .9rem;box-shadow:var(--nm-sm)}
-.slk-more summary::-webkit-details-marker{display:none}
-.slk-more summary svg{width:12px;height:12px;transition:transform .2s}
-.slk-more[open] summary svg{transform:rotate(180deg)}
-.slk-more .slk-what{margin:.5rem auto 0}
 /* P4 · the cost chart — planning ranges with their provenance, desk material */
 /* ── the desk-card artifact (offer + lens, Drew 7/21) — claims as neumorphic tiles, not text rows.
    One grammar: tea icon chip → mono label → Fraunces value → the claim's own note. One dark hero
@@ -1315,17 +1308,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 .mcs-tab.on{background:var(--dark-grad);color:var(--tea);box-shadow:var(--nm-sm);cursor:default}
 .mcs-tab.on:hover{transform:none;color:var(--tea)}
 @media (prefers-reduced-motion:reduce){.mcs-typing i{animation:none}}
-/* ── the OWNER's surface is a Slack channel, not a phone (worker: slack_webhook_foh is a
-   required go-live field; storm/leads/bookings → #foh, GBP+local → #boh). Customer-facing
-   rooms use the phone; owner-facing rooms use this. ── */
-.slk{width:min(400px,100%);background:var(--white);border:var(--nm-edge);border-radius:16px;box-shadow:var(--nm-out);overflow:hidden;display:flex;flex-direction:column}
+/* The owner's surface is a first-party Atlas workroom. Customer-facing scenes
+   still use the phone; crew-facing scenes land on the shared operating record. */
+.slk{width:min(400px,100%);background:var(--nm);border:var(--nm-edge);border-radius:18px;box-shadow:var(--nm-out);overflow:hidden;display:flex;flex-direction:column}
 .slk-head{display:flex;align-items:center;gap:.3rem;padding:.65rem .85rem;border-bottom:1px solid var(--line);background:var(--well);font:600 .78rem/1 var(--body);color:var(--ink)}
-.slk-head .slk-logo{margin-right:.35rem}
-.slk-logo{width:15px;height:15px;flex:none}
-/* "what is Slack?" — for the operator who has never used it; the surface names itself */
-.slk-what{display:flex;align-items:flex-start;gap:.6rem;text-align:left;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);box-shadow:var(--nm-sm);padding:.75rem .9rem;margin:.7rem auto 0;max-width:400px;font:400 .78rem/1.55 var(--body);color:var(--muted)}
-.slk-what .slk-logo{width:20px;height:20px;margin-top:.15rem}
-.slk-what b{color:var(--ink);font-weight:600}
+.slk-workmark{width:22px;height:22px;display:grid;place-items:center;margin-right:.35rem;border-radius:7px;background:var(--dark-grad);color:var(--tea);font:600 .62rem/1 var(--display)}
 .slk-hash{color:var(--dim);font-weight:500}
 .slk-tag{margin-left:auto;font:500 .55rem/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--olive);background:var(--tea-grad);border-radius:var(--r-pill);padding:.3rem .5rem}
 .slk-thread{padding:.75rem .85rem;display:flex;flex-direction:column;gap:.7rem;min-height:180px;max-height:min(330px,42svh);overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -1702,7 +1689,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <aside id="arail" aria-label="Atlas">
     <a class="ar-brand" href="/" aria-label="4THWALL home">
       <svg class="ar-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
-      <b>Atlas</b>
+      <b>Atlas Workspace</b>
     </a>
     <nav class="ar-nav" id="arNav" aria-label="Atlas sections"></nav>
     <div class="ar-foot">
@@ -1724,7 +1711,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <button id="abnHam" class="abn-ham" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h14M4 11h14M4 15.5h14"/></svg></button>
         <!-- mobile −/+ chip: parks/recalls the demo (two-way; Vesta .vth-menu parity, Drew 7/21) -->
         <button type="button" class="fd-flip" id="fdFlip" hidden aria-label="Show or hide the demo">−</button>
-        <p class="fd-mat"><span class="kicker" id="fdMat">Atlas</span></p>
+        <p class="fd-mat"><span class="kicker" id="fdMat">Atlas Workspace</span></p>
         <div class="fd-chat">
           <!-- the accumulating conversation — quote/response stacks + scrolls, read-back (Drew 7/20) -->
           <div class="fd-thread" id="fdThread" aria-live="polite"></div>
@@ -1795,7 +1782,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function $(id){return document.getElementById(id)}
   var thread=$('fdThread'),narr=$('fdNarr'),say=$('fdSay');
   if(!thread||!say)return;
-  var mat=$('fdMat');if(mat)mat.textContent='Atlas';
+  var mat=$('fdMat');if(mat)mat.textContent='Atlas Workspace';
   function escT(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
 
   /* ── revenue calculators: math verbatim from atlas.html; exposed globally for the injected
@@ -1835,8 +1822,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   };
   var riCalcMissed=window.riCalcMissed,riCalcStorm=window.riCalcStorm,riCalcOffice=window.riCalcOffice;
 
-  var GREET='You do the work. Atlas runs the office around it. Ask me anything — <a data-say="what does Atlas do?">what it does</a>, <a data-say="how does the offer work?">the offer</a>, <a data-say="I keep missing calls on the job">a problem you’re having</a> — or <a data-say="walk the office">walk the office</a>.';
-  var OFFICE_LINE='This is the office Atlas runs around your work. Walk any room — or ask about <a data-say="how does storm season work?">storm season</a>, <a data-say="how do you handle reviews?">reviews</a>, or <a data-say="how does the offer work?">the offer</a>.';
+  var GREET='You do the work. Atlas keeps the job moving. Ask me anything — <a data-say="what does Atlas do?">what it does</a>, <a data-say="how does the offer work?">the offer</a>, <a data-say="I keep missing calls on the job">a problem you’re having</a> — or <a data-say="walk the office">walk the workspace</a>.';
+  var OFFICE_LINE='This is the workspace where your crew and Atlas keep the work moving. Walk any room — or ask about <a data-say="how does storm season work?">storm season</a>, <a data-say="how do you handle reviews?">reviews</a>, or <a data-say="how does the offer work?">the offer</a>.';
   var DEFLECT='That one deserves a person, not a guess — <a href="'+CAL+'" target="_blank" rel="noopener">book a 20-minute fit call</a> and ask the founder directly.';
   var FRESH='Fresh start — what would you like to know? Ask about <a data-say="what does Atlas do?">what Atlas does</a>, <a data-say="how does the offer work?">the offer</a>, or <a data-say="I keep missing calls on the job">a problem you’re having</a>.';
 
@@ -2082,7 +2069,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       ['them','Perfect — sending this to the owner to confirm a morning slot. Nothing goes on the calendar without him.']
     ]},
     book:{slack:true,channel:'foh',turns:[
-      ['sys','A lead just qualified — this is your channel, not ours'],
+      ['sys','A lead just qualified — its customer room is now on your record'],
       ['them','📅 *Estimate booked — Maria O.*\nStorm damage · shingles off, ceiling stain (still wet)\n14 Oak Lane, Fairfield\n*Thursday 9:00 AM*\n_On your calendar. She’s been told, and gets a reminder Wednesday night._','11:48 AM'],
       ['them','Everything she told me is on the card — you don’t have to ask her twice.','11:48 AM'],
       ['me','perfect','11:52 AM'],
@@ -2105,7 +2092,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       ['sys','Asked on the day the work happened — not months later, from memory']
     ]},
     local:{slack:true,channel:'boh',turns:[
-      ['sys','Tuesday — the back-of-house channel, where the record gets kept'],
+      ['sys','Tuesday — the local-discovery workroom, where the record gets kept'],
       ['them','📍 *GBP post published — Summit Ridge Roofing*\n_“Storm season prep: what to check on your roof before August.”_','6:15 AM'],
       ['them','📉 *Local visibility moved*\n“roof repair fairfield” · position 3 → 7\n_Measured against live results, not a dashboard estimate._','6:15 AM'],
       ['them','“emergency roof repair fairfield county” — you now appear where you didn’t last month.','6:15 AM'],
@@ -2117,7 +2104,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       ['them','🌩️ *Storm Mode ACTIVATED — Summit Ridge Roofing*\nSevere Thunderstorm Warning\nZIP: 06824\n_The bot is now in storm-mode voice._','2:41 PM'],
       ['them','⏱ *Follow-up waiting 30+ minutes*\nDan R. answered about Tuesday’s quote and nobody has replied yet.','4:12 PM'],
       ['me','on it — calling him now','4:13 PM'],
-      ['sys','The weather cron, the counter and the timer all report here — you just read it']
+      ['sys','The weather check, the counter and the timer report to the exact room that needs attention']
     ]}
   };
   /* one real, checkable artifact per room where one exists — real beats simulated */
@@ -2148,29 +2135,18 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       '</div>'+
       '<p class="fdc-method">A labeled simulation — the <a href="/missed-calls" style="color:var(--olive)">live demo</a> answers for real.</p>';
   }
-  /* the scene picks its own chrome: customer-facing scenes render a phone, owner-facing
-     scenes render the client's Slack channel (the surface the worker actually posts to) */
+  /* Customer-facing scenes render a phone; owner-facing scenes render the
+     first-party Atlas workroom where the crew and Atlas share the record. */
   function slkEsc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
   function slkFmt(t){return slkEsc(t).replace(/\*([^*]+)\*/g,'<b>$1</b>').replace(/_([^_]+)_/g,'<i>$1</i>')}
-  /* the official Slack mark — the surface should NAME itself for people who've never used Slack */
-  var SLACK_LOGO='<svg class="slk-logo" viewBox="0 0 122.8 122.8" aria-hidden="true">'+
-    '<path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zM32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z" fill="#E01E5A"/>'+
-    '<path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zM45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/>'+
-    '<path d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2zM90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/>'+
-    '<path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zM77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z" fill="#ECB22E"/></svg>';
   function sceneHTML(sc){
     if(sc&&sc.slack){
-      /* the Slack card takes the room and its thread breathes (Drew 7/21). The honesty label
-         stays VISIBLE — a labeled simulation must say so at a glance, never behind a click.
-         Only the "what is Slack" explainer consolidates into the dropdown. */
+      /* A labeled example of the first-party room, never a customer claim. */
       return '<div class="slk">'+
-          '<div class="slk-head">'+SLACK_LOGO+'<span class="slk-hash">#</span>'+(sc.channel||'foh')+'<span class="slk-tag">your channel</span></div>'+
+          '<div class="slk-head"><span class="slk-workmark">4W</span><span class="slk-hash">Room ·</span>'+(sc.channel||'crew office')+'<span class="slk-tag">Atlas Workspace</span></div>'+
           '<div class="slk-thread" id="mcsThread"></div>'+
         '</div>'+
-        '<p class="slk-cap">A labeled simulation of your own Slack channel</p>'+
-        '<details class="slk-more"><summary>What is Slack?<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg></summary>'+
-        '<div class="slk-what">'+SLACK_LOGO+'<span><b>What is Slack?</b> A free messaging app — like texting, but organized into channels. '+
-        'We set up a private channel for your business and post updates like these into it. Nothing to learn: you read it on your phone, like any chat.</span></div></details>';
+        '<p class="slk-cap">Product demonstration · example company and records · no customer outcome claimed</p>';
     }
     return mcsPhoneHTML({tabs:false});
   }
@@ -2233,7 +2209,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     /* no header block (Drew 7/21) — the cards ARE the office; the receipt line + doors stay
        above the fold, never buried behind a scroll */
     showScreen(cfCards(officeItems(keys))+
-      '<p class="fdc-method">Every month ends with a receipt, not a story — responses, bookings, follow-ups, recorded outcomes. And the record is yours: in Lens you review every fact, and nothing publishes without you. If we’re not the right fit, we’ll say so first.</p>'+
+      '<p class="fdc-method">Every month ends with a receipt, not a story — responses, bookings, follow-ups, recorded outcomes. Your record is included inside Atlas: review every fact, correct what is wrong, and nothing publishes without you. If we’re not the right fit, we’ll say so first.</p>'+
       '<div class="fds-doors"><a href="'+CAL+'" target="_blank" rel="noopener">book the 20-minute fit call →</a><a href="/missed-calls">run the live demo →</a><a data-door="lens">see your record →</a></div>',
       function(){wireCoverflow(keys,screen,enterRoom);wireScreenDoors()});
   }
@@ -2318,10 +2294,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       wireScreenDoors);
   }
   function lensVisual(){
-    /* the concrete overview (Drew 7/21 — the one-sentence abstract read as nothing).
-       Same structural grammar as the offer room: rows, each claim on its own line. */
-    showScreen('<span class="fds-kicker">the free workspace</span><h3 class="fds-h">Lens — own your record</h3>'+
-      '<p class="fds-sub">Your business already generates proof every week — calls answered, estimates kept, jobs finished, reviews earned. Lens is the private workspace where that becomes a record you own.</p>'+
+    showScreen('<span class="fds-kicker">included free inside Atlas</span><h3 class="fds-h">Your record — own what the work proves</h3>'+
+      '<p class="fds-sub">Your business already generates proof every week — calls answered, estimates kept, jobs finished, reviews earned. The Lens capability inside Atlas Workspace is where that becomes a record you own.</p>'+
       '<div class="art-grid g2">'+
         '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M4 3.5h10.5a2 2 0 0 1 2 2V18.5H6a2 2 0 0 1-2-2z"/><path d="M7.5 7.5h6M7.5 11h6"/></svg></span><span class="art-l">What it is</span><span class="art-v">Your record</span><p class="art-n">The operating record of your business, built from the tools you already run — nothing new to learn, nothing to migrate.</p></div>'+
         '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M2.5 11s3-6 8.5-6 8.5 6 8.5 6-3 6-8.5 6-8.5-6-8.5-6z"/><circle cx="11" cy="11" r="2.6"/></svg></span><span class="art-l">What you see</span><span class="art-v">Every fact</span><p class="art-n">Each entry carries its source and can be corrected — you always know where a fact came from, and you hold the pen.</p></div>'+
@@ -2536,7 +2510,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function walkOffice(){setTalking(true);setActive('office');whereNow='office';phRoom('office');setDemoMode(true);toTop();assembleOffice()}
   var TAB_LINE={
     offer:'Here’s how the offer works — a managed service, not a software seat. The number follows the size of the front office we run for you, set on a 20-minute fit call in plain terms.',
-    lens:'Your record is free and private, inside your Atlas workspace — connect the tools you already run, review every fact it supports, and control exactly what a homeowner could see. Nothing publishes without you.',
+    lens:'Your record is free and private inside Atlas Workspace — connect permitted history, review every supported fact, correct what is wrong and control exactly what a homeowner could see. Nothing publishes without you.',
     fitcall:'The next step is a 20-minute fit call with the founder — we show the office working on your business, in plain numbers, and set the fee from there.',
     numbers:'Here are the calculators — the real cost of slow replies, storm seasons, and hiring for the desk. Move the sliders; the math is yours, from your own numbers.',
     faq:'The common questions, answered plainly — what’s included, whether it’s another tool to learn, how fast it goes live, and how to stop.',
@@ -2598,7 +2572,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   /* ── placeholder cycling — ROOM-AWARE: standing in a room, the composer suggests questions
      about THAT room (the room is there to be asked; the visitor shouldn't have to guess that) ── */
-  var PH=['I keep missing calls on the job','what does Atlas do?','how does storm season work?','what does it cost?','how do you handle reviews?','what is Lens?'];
+  var PH=['I keep missing calls on the job','what does Atlas do?','how does storm season work?','what does it cost?','how do you handle reviews?','what is my record?'];
   var PH_ROOM={
     lead:['what counts as a missed call?','can it book the estimate too?','what does it text in my name?'],
     storm:['what happens when 9 calls hit at once?','how do you know a storm hit my area?','what does a storm week cost me?'],
@@ -2672,7 +2646,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     {key:'room:briefs',label:'Operator Briefs',ic:'briefs'},
     {group:'Working together'},
     {key:'offer',label:'The offer',ic:'offer'},
-    {key:'lens',label:'Lens — your record',ic:'lens'},
+    {key:'lens',label:'Your record — included',ic:'lens'},
     {key:'faq',label:'Common questions',ic:'faq'},
     {group:'See it work'},
     {key:'sim',label:'Watch a missed call',ic:'sim'},

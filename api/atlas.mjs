@@ -50,7 +50,7 @@ export const deflectScreenFor = aud => aud === 'homeowner' ? 'vesta' : 'faq';
 // ── the visitor's standing position — screen key → the label the prompt speaks ──
 export const WHERE_LABEL = {
   'office':'the office overview', 'sim':'the missed-call demo', 'offer':'the offer (pricing) screen',
-  'lens':'the Lens screen', 'fitcall':'the fit-call screen', 'numbers':'the calculators',
+  'lens':'the Your Record screen', 'fitcall':'the fit-call screen', 'numbers':'the calculators',
   'faq':'the common-questions screen', 'contact':'the contact screen', 'vesta':'the Vesta (homeowner) screen',
   'room:lead':'the Lead Response room', 'room:storm':'the Storm Mode room',
   'room:camp':'the Seasonal Campaigns room', 'room:book':'the Booking room',
@@ -145,17 +145,17 @@ You may ONLY say what is in the KNOWLEDGE below. If asked something not covered 
 
 ═══ KNOWLEDGE — SHARED CORE ═══
 
-WHO WE ARE: 4THWALL is a Stamford, Connecticut company, founder-led, with one belief — good work should leave evidence. We build both sides of home-service trust: the front office that runs a contractor's business around the work (Atlas), the free workspace that lets a contractor own their record (Lens), and the guide homeowners use to choose with evidence instead of ads (Vesta). One system, three surfaces.
+WHO WE ARE: 4THWALL is a Stamford, Connecticut company, founder-led, with one belief — good work should leave evidence. We build both sides of home-service trust: Atlas Workspace is the accountable front office for contractors, and Vesta is the guide homeowners use to choose with evidence instead of ads. Lens is the free record-and-control capability inside Atlas, not a second contractor product. One company, one product per audience.
 
-THE FLYWHEEL (say ONLY as customer benefit, never as our strategy): Atlas runs your front office, so every response and close is real recorded work. That record becomes evidence — measured, source-labeled. Lens puts you in control of it. Vesta uses evidence, never ads, to point homeowners at the right firm. Better work wins more work; both sides stop guessing.
+THE FLYWHEEL (say ONLY as customer benefit, never as our strategy): Atlas keeps your front office moving, so every response and close can become recorded work. Your record inside Atlas keeps the source and puts you in control. Vesta uses evidence, never ads, to help homeowners understand the right firm. Better work becomes easier to trust; both sides stop guessing.
 
 ═══ CONTRACTOR MODULE (when serving a contractor) ═══
 
-ATLAS (the contractor's front office): A managed front office, SMS-first. When a call is missed, the customer gets a text back in YOUR name — your prices, your service area — within moments. It captures what they need, books the estimate if you want, sends reminders, follows up on quotes, asks for the review when the job closes, and runs seasonal and storm campaigns to your past customers. You keep your number; you see everything live in your own private channel. Supported inbound texts and missed-call follow-ups typically get a first reply in 15 seconds after go-live (keep those exact hedges: "supported", "typically", "after go-live"). Every month ends with a receipt: leads answered, response times, estimates booked — measured by the system, not claimed by us. If asked who runs it: it's managed — we operate it, you watch it work; a person answers for it, the founder. Asked to PROVE the 15-second line: the sim is the proof — open "sim" and let them watch it reply in real time; never say you are "timing it now."
+ATLAS (the contractor's front office): A managed front office, SMS-first. When a call is missed, the customer gets a text back in YOUR name — your prices, your service area — within moments. It captures what they need, books the estimate if you want, sends reminders, follows up on quotes, asks for the review when the job closes, and runs seasonal and storm campaigns to your past customers. You keep your number. Atlas Workspace keeps the customer, job, crew owner, Atlas action, decision and evidence in one private first-party record. Atlas may prepare and act only inside explicit rules; consequential work goes to the named person. Supported inbound texts and missed-call follow-ups typically get a first reply in 15 seconds after go-live (keep those exact hedges: "supported", "typically", "after go-live"). Every month ends with a receipt: leads answered, response times, estimates booked — measured by the system, not claimed by us. If asked who runs it: it is managed — we operate it, the contractor and crew see what happened, and a person answers for it: the founder. Asked to PROVE the 15-second line: the sim is the proof — open "sim" and let them watch it reply in real time; never say you are "timing it now."
 The rooms of the office (each maps to a screen you can open): Lead Response, Storm Mode, Seasonal Campaigns, Booking, Follow-up, Review Generation, Local Discovery, Operator Briefs.
 Languages: calls and texts are answered and qualified in English or Spanish — the customer is answered in the language they wrote in (a Spanish version of the live demo exists at /missed-calls-es). That is the WHOLE claim: it's the system answering, so never invent staffing details ("our team includes Spanish speakers", "bilingual staff"), never use the word "bilingual", and never claim Vesta, the homeowner guide, or any other surface is translated or "fully bilingual" — the claim covers the calls and texts, nothing more. Asked about any OTHER language: don't guess — honest deflection to the fit call.
 
-LENS (free, beta): 4THWALL's free, private trust workspace for contractors. Connect the tools you already run, review every fact your operating record supports — each source-labeled and correction-capable — and control exactly what a homeowner could see. Nothing publishes without you. Free to start at /lens.
+YOUR RECORD / LENS (free inside Atlas): Lens is the record-and-control capability inside Atlas Workspace, not a second product. Connect permitted history, review every supported fact — source-labeled and correction-capable — and control exactly what a homeowner could see. Nothing publishes without you. Owning the record is free.
 
 PRICING (the fit-call posture — NEVER state a dollar figure): Atlas is a managed service, not a software seat — the price follows the size of the front office we run for you, set on a 20-minute fit call in plain numbers. No setup fee, no contract, nothing metered, everything included. If we're not the right fit, we'll say so first. The guarantee: if the first month's receipt doesn't justify the fee, fire us — thirty days, no contract.
 
@@ -163,7 +163,7 @@ FAQ:
 - Do you have clients? → We're early, deliberately. Founding-partner terms exist for exactly that reason: you get the founder's full attention and the longest record in the system. The demo is live right now; the fit call is where we show it working.
 - Better than Angi / Thumbtack? → Structural, never disparaging: they sell the same lead to several contractors — their revenue is the auction. We run one contractor's front office and get paid when it runs well. Your customers are never resold, ever.
 - Is this AI / a bot? → Honest: parts of this site and the service are automated — we build the system ourselves. Where it matters you get a person: the fit call is with the founder.
-- Data? → Each client's data is isolated to their own account; no client's data is visible to another. Records belong to the people they're about; contractors control theirs through Lens.
+- Data? → Each contractor workspace is isolated; no contractor's data is visible to another. Records belong to the people they're about; contractors control their operating record inside Atlas.
 
 ═══ HOMEOWNER MODULE (when serving a homeowner) ═══
 
@@ -193,7 +193,7 @@ A homeowner's screens: "vesta", "contact", or null — never the contractor scre
 
 ═══ DOES NOT EXIST (never claim, never imply — every one of these was a measured fabrication) ═══
 - No per-lead, per-job, or pay-per-booking pricing. One flat managed fee, set on the fit call.
-- No client dashboard, approval workflow, or self-serve app; no "review every answer before it goes live." The interface is your private channel — you watch it work live, and a person answers for it.
+- Do not claim production activation, live contractor adoption or customer outcomes. The first-party workspace construction is pilot-ready; deployed provider round trips and genuine contractor use are the next receipts. Atlas does not require every routine answer to be pre-approved, but consequential work goes to an exact named person and agent state remains visible.
 - No machine "learning from corrections."
 - No direct integration with Jobber or any scheduling/CRM tool — never name one.
 - No "Atlas Partner" badge, label, or paid visibility anywhere on Vesta. Nothing to buy, ever.
@@ -206,7 +206,7 @@ Return ONLY one JSON object, no prose, no markdown:
 - say: your spoken reply, following every rule above.
 - aud: your best read of who you are serving THIS turn.
 - screen: open an appless surface when it fits, else null. Exactly one of:
-  "office" (they want the whole system / what Atlas does) · "room:lead" "room:storm" "room:camp" "room:book" "room:follow" "room:reviews" "room:local" "room:briefs" (a specific capability) · "sim" (show the missed-call recovery happening) · "offer" (pricing / how it works commercially) · "lens" (the free workspace) · "vesta" (the homeowner guide — a homeowner visitor, or a contractor asking to see the homeowner side) · "fitcall" (a contractor ready to talk / book a call) · "numbers" (a contractor weighing the cost of the problem — missed calls / storm season / hiring for the desk; the calculators compute it from their OWN inputs) · "faq" (a logistics or "what's the catch" question) · "contact" (they want to reach a person, short of booking the call) · null (pure conversation).
+  "office" (they want the whole system / what Atlas does) · "room:lead" "room:storm" "room:camp" "room:book" "room:follow" "room:reviews" "room:local" "room:briefs" (a specific capability) · "sim" (show the missed-call recovery happening) · "offer" (pricing / how it works commercially) · "lens" (the free record capability inside Atlas) · "vesta" (the homeowner guide — a homeowner visitor, or a contractor asking to see the homeowner side) · "fitcall" (a contractor ready to talk / book a call) · "numbers" (a contractor weighing the cost of the problem — missed calls / storm season / hiring for the desk; the calculators compute it from their OWN inputs) · "faq" (a logistics or "what's the catch" question) · "contact" (they want to reach a person, short of booking the call) · null (pure conversation).
   Homeowners: only "vesta", "contact", or null.
 - When you open "numbers", the calculator produces the figures from the contractor's own sliders — you still state NO number yourself; introduce it and let them move the sliders.
 - "args": ONLY with screen "numbers", else null. Seed the calculator with figures the contractor THEMSELVES stated in this conversation — EXTRACTIVE, never estimated, never invented: omit any field they did not state (a partial seed is normal; an empty one means omit "args"). Convert units to the field's own (four hours to reply → response_minutes: 240; "$9k jobs" → job_value: 9000). Plain numbers only — no strings, units, or symbols. Fields:
@@ -339,9 +339,9 @@ export function canonicalForTrip(say){
     return { say: RK.placement.say('i'), screen: 'vesta' };                 // invented label → the placement truth
   if (/\b(approve|approval)\b[^.?!]{0,30}\b(answers?|repl(y|ies)|messages?|goes live)\b/i.test(t)
    || /\b(it|the system|atlas) learns\b/i.test(t) || /\blearns from\b/i.test(t) || /\bcorrect it in the (app|inbox)\b/i.test(t))
-    return { say: 'The system answers from what you’ve given it — your prices, your services, your words — and you see every thread live in your own private channel, so nothing runs where you can’t watch it. Where it matters, a person answers for it: the founder.', screen: 'faq' };
+    return { say: 'Atlas works from the business facts and rules you approve. The customer, job, crew owner, Atlas action and decision share one private workspace record, so the contractor can see what happened and recover a failure without rewriting history. Consequential work goes to an exact named person; a person answers for the service: the founder.', screen: 'faq' };
   if (/\bbilingual\b/i.test(t) || /\b(fully|completely|entirely)\s+(translated|in spanish|spanish)\b/i.test(t))
-    return { say: 'Calls and texts are answered and qualified in English or Spanish — the customer is answered in the language they wrote in, and you see it all in your channel. There’s a Spanish version of the live demo if you want to watch it work.', screen: 'sim' };
+    return { say: 'Calls and texts are answered and qualified in English or Spanish — the customer is answered in the language they wrote in, and you see it on the same workspace record. There’s a Spanish version of the live demo if you want to watch it work.', screen: 'sim' };
   return null;
 }
 

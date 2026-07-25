@@ -41,7 +41,7 @@ t('mid-thousands → price canonical', /fit call/.test((canonicalForTrip('Most f
 t('per-lead → price canonical', /flat fee/.test((canonicalForTrip('You pay per lead that converts.') || {}).say || ''));
 t('jobber → tool canonical', /don't plug/.test((canonicalForTrip('We pass booked jobs into Jobber.') || {}).say || ''));
 t('atlas partner → placement canonical', /^No —/.test((canonicalForTrip('You get the Atlas Partner label in the feed.') || {}).say || ''));
-t('learns-from → mechanics canonical', /private channel/.test((canonicalForTrip('It learns from every correction you make.') || {}).say || ''));
+t('learns-from → mechanics canonical', /private workspace record/.test((canonicalForTrip('It learns from every correction you make.') || {}).say || ''));
 t('hype word → null (deflect path)', canonicalForTrip('It is a seamless game-changing platform.') === null);
 const canons = ['You pay per lead.', 'Most fall in mid-thousands per month.', 'We pass jobs into Jobber.', 'Atlas Partner label.', 'It learns from corrections.', 'a real person here'].map(s => canonicalForTrip(s)).filter(Boolean);
 t('every canonical passes claimSafe', canons.every(c => claimSafe(c.say)));
