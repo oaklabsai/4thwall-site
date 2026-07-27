@@ -406,7 +406,8 @@ a,button{transition:transform .14s}
 .fd-shot{position:relative;min-width:0}
 .fd-shot-plate{position:relative;border-radius:var(--r-card);overflow:hidden;background:var(--nm);
   border:var(--nm-edge);box-shadow:0 3px 8px rgba(40,41,22,.13),0 30px 60px -18px rgba(40,41,22,.34);
-  aspect-ratio:16/11}
+  /* the capture's own ratio (3200x2066) so nothing is cropped away */
+  aspect-ratio:1600/1033}
 /* the label sits UNDER the image: present it covers, missing or still loading it
    reads as an empty frame instead of spilling the alt text across the hero.
    font-size:0 hides the broken-image alt visually — `alt` stays in the a11y tree. */
@@ -851,9 +852,11 @@ a,button{transition:transform .14s}
     <a href="/vesta" class="nav-a"><b>Vesta</b><span>for homeowners</span></a>
     <a href="/thesis" class="nav-a"><b>Thesis</b><span>why we exist</span></a>
   </div>
-  <div class="nav-util">
-    <a href="https://app.4thwall.solutions/signin">Log in</a>
-  </div>
+  <!-- ⚠ SWAP-BACK (#105): the Log in utility lived here, behind a hairline,
+       between the product list and the CTA. It is pulled rather than pointed
+       at the fit call, because the nav CTA is already a fit call and two
+       identical buttons is worse than one. Restore when the workspace is
+       deployed:  <div class="nav-util"><a href="https://app.4thwall.solutions/signin">Log in</a></div>  -->
   <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="nav-cta" target="_blank" rel="noopener"><b>Book a fit call</b><span>20 min · plain numbers</span></a>
 </nav>
 
@@ -883,7 +886,12 @@ a,button{transition:transform .14s}
                ask questions of. LOG IN goes to the real workspace. Nothing else
                competes with them here; the fit call lives in the nav. -->
           <a class="btn-dark" href="/atlas">Learn more about Atlas <span class="arr">→</span></a>
-          <a class="btn-soft" href="https://app.4thwall.solutions/signin">Log in to your workspace</a>
+          <!-- ⚠ SWAP-BACK, one line: when app.4thwall.solutions resolves (#105),
+               restore href="https://app.4thwall.solutions/signin" and the label
+               "Log in to your workspace". Until then the workspace is client-only
+               and a fit call is genuinely how a stranger gets one -- a Log in
+               button pointing at unresolved DNS is worse than no button. -->
+          <a class="btn-soft" href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" target="_blank" rel="noopener">Book a fit call</a>
         </div>
         <div class="hero-fast">
           <span>In a hurry?</span>
