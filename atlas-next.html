@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=overlays-content">
-<title>Atlas Workspace — The Accountable Front Office | 4THWALL</title>
+<title>Atlas — the whole office for home-service contractors | 4THWALL</title>
 <meta name="description" content="Every lead, job, teammate decision and follow-up in one private contractor workspace, with Atlas handling authorized work and showing what happened.">
 <link rel="canonical" href="https://4thwall.solutions/atlas">
 <link rel="icon" href="/logo.png" type="image/png">
@@ -11,14 +11,14 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#ECEDE2">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Atlas Workspace — You do the work. Atlas keeps the job moving.">
-<meta property="og:description" content="The accountable front office for home-service contractors: crew, Atlas, decisions and evidence in one first-party workspace.">
+<meta property="og:title" content="Atlas — You do the work. Atlas runs the office.">
+<meta property="og:description" content="The best contractor in town loses jobs to whoever picks up first, then finishes work nobody can verify. Atlas answers in your name and writes down what actually happened.">
 <meta property="og:image" content="https://4thwall.solutions/logo.png">
 <meta property="og:url" content="https://4thwall.solutions/atlas">
 <meta property="og:site_name" content="4THWALL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Atlas Workspace — The accountable front office">
-<meta name="twitter:description" content="You do the work. Atlas keeps the job moving — with every owner, decision and action on the record.">
+<meta name="twitter:title" content="Atlas — the whole office for home-service contractors">
+<meta name="twitter:description" content="You do the work. Atlas runs the office — every lead answered in your name, every finished job on the record.">
 <meta name="twitter:image" content="https://4thwall.solutions/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1689,7 +1689,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   <aside id="arail" aria-label="Atlas">
     <a class="ar-brand" href="/" aria-label="4THWALL home">
       <svg class="ar-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
-      <b>Atlas Workspace</b>
+      <b>Atlas</b>
     </a>
     <nav class="ar-nav" id="arNav" aria-label="Atlas sections"></nav>
     <div class="ar-foot">
@@ -1711,7 +1711,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
         <button id="abnHam" class="abn-ham" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h14M4 11h14M4 15.5h14"/></svg></button>
         <!-- mobile −/+ chip: parks/recalls the demo (two-way; Vesta .vth-menu parity, Drew 7/21) -->
         <button type="button" class="fd-flip" id="fdFlip" hidden aria-label="Show or hide the demo">−</button>
-        <p class="fd-mat"><span class="kicker" id="fdMat">Atlas Workspace</span></p>
+        <p class="fd-mat"><span class="kicker" id="fdMat">Atlas</span></p>
         <div class="fd-chat">
           <!-- the accumulating conversation — quote/response stacks + scrolls, read-back (Drew 7/20) -->
           <div class="fd-thread" id="fdThread" aria-live="polite"></div>
@@ -1768,7 +1768,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 /* ══════════ THE ATLAS DESK — app shell (rail + center chat), Vesta's structure. ══════════
    The center IS the conversation; the left rail is the office as tabs. A tab and a typed ask
    are ONE system — both drive the center. Deterministic shell (greet, office, rooms, sim,
-   offer, Lens, fit call); the ANSWERS come from /api/atlas (the claim-bounded contractor brain,
+   offer, the record room, fit call); the ANSWERS come from /api/atlas (the claim-bounded contractor brain,
    {say, screen}). Model text is DATA: escaped, never markup. Homeowner half omitted by design. */
 (function(){
   var CAL='https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE';
@@ -1782,7 +1782,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   function $(id){return document.getElementById(id)}
   var thread=$('fdThread'),narr=$('fdNarr'),say=$('fdSay');
   if(!thread||!say)return;
-  var mat=$('fdMat');if(mat)mat.textContent='Atlas Workspace';
+  var mat=$('fdMat');if(mat)mat.textContent='Atlas';
   function escT(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
 
   /* ── revenue calculators: math verbatim from atlas.html; exposed globally for the injected
@@ -1822,10 +1822,10 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   };
   var riCalcMissed=window.riCalcMissed,riCalcStorm=window.riCalcStorm,riCalcOffice=window.riCalcOffice;
 
-  var GREET='You do the work. Atlas keeps the job moving. Ask me anything — <a data-say="what does Atlas do?">what it does</a>, <a data-say="how does the offer work?">the offer</a>, <a data-say="I keep missing calls on the job">a problem you’re having</a> — or <a data-say="walk the office">walk the workspace</a>.';
-  var OFFICE_LINE='This is the workspace where your crew and Atlas keep the work moving. Walk any room — or ask about <a data-say="how does storm season work?">storm season</a>, <a data-say="how do you handle reviews?">reviews</a>, or <a data-say="how does the offer work?">the offer</a>.';
+  var GREET='You do the work. Atlas runs the office. The best contractor in town shouldn’t lose the job to whoever picks up first — so ask me anything: <a data-say="what does Atlas do?">what it does</a>, <a data-say="how does the offer work?">your plan</a>, <a data-say="I keep missing calls on the job">a problem you’re having</a> — or <a data-say="walk the office">walk the office</a>.';
+  var OFFICE_LINE='This is the office your crew and Atlas run together. Walk any room — or ask about <a data-say="how does storm season work?">storm season</a>, <a data-say="how do you handle reviews?">reviews</a>, or <a data-say="how does the offer work?">your plan</a>.';
   var DEFLECT='That one deserves a person, not a guess — <a href="'+CAL+'" target="_blank" rel="noopener">book a 20-minute fit call</a> and ask the founder directly.';
-  var FRESH='Fresh start — what would you like to know? Ask about <a data-say="what does Atlas do?">what Atlas does</a>, <a data-say="how does the offer work?">the offer</a>, or <a data-say="I keep missing calls on the job">a problem you’re having</a>.';
+  var FRESH='Fresh start — what would you like to know? Ask about <a data-say="what does Atlas do?">what Atlas does</a>, <a data-say="how does the offer work?">your plan</a>, or <a data-say="I keep missing calls on the job">a problem you’re having</a>.';
 
   /* ── per-letter blur reveal ── */
   function letterize(container){
@@ -1941,9 +1941,9 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       deep:'The quote you sent Tuesday gets followed up on. The lead that went quiet in March gets a reason to come back. Nothing dies in a notebook.'},
     reviews:{t:'Review Generation',d:'The ask, at the moment the job closes.',
       deep:'Reviews come from asking at the right moment. Atlas sends the request when the job closes, every time — the record compounds instead of evaporating.'},
-    local:{t:'Local Discovery',d:'The signals that make good work findable, kept current.',
+    local:{t:'Being found',d:'The signals that make good work findable, kept current.',
       deep:'Your pages, listings, and local signals — maintained as part of the office, not sold as an add-on. Clearer facts for the systems homeowners actually search with; honest work, honestly findable.'},
-    briefs:{t:'Operator Briefs',d:'It watches your week before you think to ask.',
+    briefs:{t:'The week',d:'It watches your week before you think to ask.',
       deep:'Atlas watches for storm threats in your market, notices when a lead goes quiet, and counts your week before you think to look. It’s not waiting for a question — it’s already thinking about your business.'}
   };
   function svg(inner){return '<div class="cf-diag"><svg viewBox="0 0 120 40" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg></div>'}
@@ -2143,7 +2143,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     if(sc&&sc.slack){
       /* A labeled example of the first-party room, never a customer claim. */
       return '<div class="slk">'+
-          '<div class="slk-head"><span class="slk-workmark">4W</span><span class="slk-hash">Room ·</span>'+(sc.channel||'crew office')+'<span class="slk-tag">Atlas Workspace</span></div>'+
+          '<div class="slk-head"><span class="slk-workmark">4W</span><span class="slk-hash">Room ·</span>'+(sc.channel||'crew office')+'<span class="slk-tag">Atlas</span></div>'+
           '<div class="slk-thread" id="mcsThread"></div>'+
         '</div>'+
         '<p class="slk-cap">Product demonstration · example company and records · no customer outcome claimed</p>';
@@ -2282,8 +2282,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     });
   }
   function offerVisual(){
-    showScreen('<span class="fds-kicker">how the offer works</span><h3 class="fds-h">A managed service, not a software seat</h3>'+
-      '<p class="fds-sub">The price follows the size of the front office we run for you — set on a 20-minute fit call, in plain numbers. No setup fee, no contract, nothing metered.</p>'+
+    showScreen('<span class="fds-kicker">your plan</span><h3 class="fds-h">A managed service, not a software seat</h3>'+
+      '<p class="fds-sub">The price follows the size of the office we run for you — set on a 20-minute fit call, in plain numbers. No setup fee, no contract, nothing metered.</p>'+
       '<div class="art-grid">'+
         '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="12" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="12" width="7" height="7" rx="1.5"/><rect x="12" y="12" width="7" height="7" rx="1.5"/></svg></span><span class="art-l">What’s included</span><span class="art-v">Everything</span><p class="art-n">Every room of the office — answering, booking, follow-up, reviews, campaigns, discovery, the monthly receipt.</p></div>'+
         '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><rect x="3" y="4" width="16" height="15" rx="2.5"/><path d="M3 9h16M7.5 2v4M14.5 2v4"/></svg></span><span class="art-l">The term</span><span class="art-v">Month to month</span><p class="art-n">No contract. Cancel anytime — the receipt has to keep earning its keep.</p></div>'+
@@ -2295,7 +2295,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   }
   function lensVisual(){
     showScreen('<span class="fds-kicker">included free inside Atlas</span><h3 class="fds-h">Your record — own what the work proves</h3>'+
-      '<p class="fds-sub">Your business already generates proof every week — calls answered, estimates kept, jobs finished, reviews earned. The Lens capability inside Atlas Workspace is where that becomes a record you own.</p>'+
+      '<p class="fds-sub">Your business already generates proof every week — calls answered, estimates kept, jobs finished, reviews earned. The record room inside Atlas is where that becomes a record you own.</p>'+
       '<div class="art-grid g2">'+
         '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M4 3.5h10.5a2 2 0 0 1 2 2V18.5H6a2 2 0 0 1-2-2z"/><path d="M7.5 7.5h6M7.5 11h6"/></svg></span><span class="art-l">What it is</span><span class="art-v">Your record</span><p class="art-n">The operating record of your business, built from the tools you already run — nothing new to learn, nothing to migrate.</p></div>'+
         '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M2.5 11s3-6 8.5-6 8.5 6 8.5 6-3 6-8.5 6-8.5-6-8.5-6z"/><circle cx="11" cy="11" r="2.6"/></svg></span><span class="art-l">What you see</span><span class="art-v">Every fact</span><p class="art-n">Each entry carries its source and can be corrected — you always know where a fact came from, and you hold the pen.</p></div>'+
@@ -2402,7 +2402,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     ['Does Atlas answer phone calls?','Atlas is SMS-first today. It handles supported inbound texts and follows up by text when a call is missed; it does not pretend a live person answered the phone. Responses use rules and language approved with you, and sensitive or unusual situations hand off with context.'],
     ['What if a lead asks something Atlas can’t handle?','It hands off to you with full context — who they are, what they need, what’s been said. You walk into the conversation already informed.'],
     ['Do I have to switch off my CRM?','Usually not. Atlas is designed to work alongside the tools and scheduling process you already use. We confirm the exact integration and data path during fit review rather than promising compatibility we have not verified.'],
-    ['What does it cost?','It’s a flat monthly managed-service fee — no setup fee, no per-user charge, no per-call fee, nothing metered. The number follows the size of the front office we run for you and is set on a 20-minute fit call, in plain terms. Founding partners get founder pricing in exchange for case-study participation and referral introductions. Month to month — leave with 30 days’ notice.'],
+    ['What does it cost?','It’s a flat monthly managed-service fee — no setup fee, no per-user charge, no per-call fee, nothing metered. The number follows the size of the office we run for you and is set on a 20-minute fit call, in plain terms. Founding partners get founder pricing in exchange for case-study participation and referral introductions. Month to month — leave with 30 days’ notice.'],
     ['How long does deployment take?','Atlas is configured in days. Carrier registration and approval can control the final go-live date, so we give you the real dependency instead of pretending configuration means live. We do not call it live until a watched inbound test passes.'],
     ['What if I want to stop?','Give 30 days’ notice. There is no long-term contract or cancellation penalty. We export the records you own and wind down the operated service cleanly.']
   ];
@@ -2509,8 +2509,8 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     roomVisual(k);}
   function walkOffice(){setTalking(true);setActive('office');whereNow='office';phRoom('office');setDemoMode(true);toTop();assembleOffice()}
   var TAB_LINE={
-    offer:'Here’s how the offer works — a managed service, not a software seat. The number follows the size of the front office we run for you, set on a 20-minute fit call in plain terms.',
-    lens:'Your record is free and private inside Atlas Workspace — connect permitted history, review every supported fact, correct what is wrong and control exactly what a homeowner could see. Nothing publishes without you.',
+    offer:'Here’s your plan — a managed service, not a software seat. The number follows the size of the office we run for you, set on a 20-minute fit call in plain terms.',
+    lens:'Your record is free and private inside Atlas — connect permitted history, review every supported fact, correct what is wrong and control exactly what a homeowner could see. Nothing publishes without you.',
     fitcall:'The next step is a 20-minute fit call with the founder — we show the office working on your business, in plain numbers, and set the fee from there.',
     numbers:'Here are the calculators — the real cost of slow replies, storm seasons, and hiring for the desk. Move the sliders; the math is yours, from your own numbers.',
     faq:'The common questions, answered plainly — what’s included, whether it’s another tool to learn, how fast it goes live, and how to stop.',
@@ -2642,11 +2642,11 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     {key:'room:book',label:'Booking',ic:'book'},
     {key:'room:follow',label:'Follow-up',ic:'follow'},
     {key:'room:reviews',label:'Reviews',ic:'reviews'},
-    {key:'room:local',label:'Local Discovery',ic:'local'},
-    {key:'room:briefs',label:'Operator Briefs',ic:'briefs'},
-    {group:'Working together'},
-    {key:'offer',label:'The offer',ic:'offer'},
-    {key:'lens',label:'Your record — included',ic:'lens'},
+    {key:'room:local',label:'Being found',ic:'local'},
+    {key:'room:briefs',label:'The week',ic:'briefs'},
+    {group:'Your setup'},
+    {key:'offer',label:'Your plan',ic:'offer'},
+    {key:'lens',label:'Your record',ic:'lens'},
     {key:'faq',label:'Common questions',ic:'faq'},
     {group:'See it work'},
     {key:'sim',label:'Watch a missed call',ic:'sim'},
@@ -2688,7 +2688,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
   /* leaving the demo through a control that bypasses openTab must restore the hidden chat,
      or the tap answers into a display:none element (the dead-tap bug) */
   function exitSim(){var h=$('home');if(h&&h.classList.contains('sim-open')){h.classList.remove('sim-open');fitMcsPhone()}}
-  function youAnswer(){exitSim();setTalking(true);setActive(null);speak('Your workspace is free and private, and your record lives inside it. <a href="'+WORKSPACE_SIGNUP+'">Create your workspace</a>, or <a data-say="how does the offer work?">hear the offer</a>.')}
+  function youAnswer(){exitSim();setTalking(true);setActive(null);speak('Your workspace is free and private, and your record lives inside it. <a href="'+WORKSPACE_SIGNUP+'">Create your workspace</a>, or <a data-say="how does the offer work?">hear your plan</a>.')}
   /* Ask Atlas — start a genuinely fresh conversation (Drew 7/20): clear the thread + any demo,
      drop back to the greeting, and open with a question. */
   function freshConversation(){
