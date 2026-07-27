@@ -406,8 +406,8 @@ a,button{transition:transform .14s}
 .fd-shot{position:relative;min-width:0}
 .fd-shot-plate{position:relative;border-radius:var(--r-card);overflow:hidden;background:var(--nm);
   border:var(--nm-edge);box-shadow:0 3px 8px rgba(40,41,22,.13),0 30px 60px -18px rgba(40,41,22,.34);
-  /* the capture's own ratio (3200x2066) so nothing is cropped away */
-  aspect-ratio:1600/1033}
+  /* the capture's own ratio (1492x1390) so nothing is cropped away */
+  aspect-ratio:746/695}
 /* the label sits UNDER the image: present it covers, missing or still loading it
    reads as an empty frame instead of spilling the alt text across the hero.
    font-size:0 hides the broken-image alt visually — `alt` stays in the a11y tree. */
@@ -416,15 +416,6 @@ a,button{transition:transform .14s}
   letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
 .fd-shot-plate img{position:relative;z-index:1;display:block;width:100%;height:100%;
   object-fit:cover;object-position:left top;font-size:0;color:transparent}
-/* honest chips: what the product DOES, never how well it performs — we have no
-   client data, and a performance number here would be a claim we cannot back. */
-.fd-chips{position:absolute;left:clamp(-1.4rem,-1.6vw,-.6rem);top:14%;display:grid;gap:.7rem;z-index:4}
-.fd-chip{display:flex;align-items:center;gap:.6rem;padding:.62rem .95rem;border-radius:14px;
-  background:var(--nm);border:1px solid rgba(255,255,255,.6);
-  box-shadow:0 2px 5px rgba(40,41,22,.1),0 12px 26px -10px rgba(40,41,22,.3)}
-.fd-chip svg{width:15px;height:15px;flex:none;color:var(--olive)}
-.fd-chip b{font-size:.79rem;font-weight:650;color:var(--ink);white-space:nowrap}
-.fd-chip span{display:block;font-size:.68rem;color:var(--muted);white-space:nowrap}
 .fd-ctas{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
 
 @media(max-width:900px){
@@ -432,8 +423,6 @@ a,button{transition:transform .14s}
   .fd-inner:has(.fd-shot) .fd-logo{margin:0 auto 1.2rem}
   .fd-inner:has(.fd-shot) .fd-intro{text-align:center}
   .fd-ctas{justify-content:center}
-  .fd-chips{position:static;grid-template-columns:1fr;margin-top:1rem}
-  .fd-chip b,.fd-chip span{white-space:normal}
 }
 /* the brand mark leads the hero — same plate as /thesis's .brand (Drew 7/21: uniform) */
 .fd-logo{display:inline-grid;place-items:center;width:58px;height:58px;border-radius:18px;color:var(--olive);
@@ -906,22 +895,6 @@ a,button{transition:transform .14s}
       <div class="fd-shot-plate">
         <img src="/atlas-workspace.png" width="1600" height="1080" loading="eager" decoding="async"
              alt="The Atlas workspace Home screen for a roofing company: a left rail of rooms — Home, Inbox, Booking, Customers, Follow-up, Reviews, Storm, Campaigns — a “Needs you” panel holding one answer the Dispatcher wrote and has not sent, and a weekly panel comparing conversations that came in against jobs booked.">
-      </div>
-      <!-- Capability, never performance. We have no clients, so any number here
-           would be a claim with nothing behind it. -->
-      <div class="fd-chips" aria-label="What the workspace guarantees">
-        <span class="fd-chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 1 1-9-9"/></svg>
-          <span><b>Nothing sends without you</b><span>Every customer message waits for a yes</span></span>
-        </span>
-        <span class="fd-chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M8 13h8M8 17h5"/></svg>
-          <span><b>Every job leaves a record</b><span>Yours to keep and export, always</span></span>
-        </span>
-        <span class="fd-chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
-          <span><b>Roofing, paving, masonry</b><span>The trades most software skips</span></span>
-        </span>
       </div>
     </div>
   </div>
