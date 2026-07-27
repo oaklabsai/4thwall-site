@@ -160,6 +160,16 @@ a,button{transition:transform .14s}
 .nav-home svg{width:17px;height:17px}
 .topnav:active{transform:translateX(-50%)} /* keep centered — override the universal press */
 .nav-links{display:flex;align-items:center;gap:.35rem}
+/* Log in is a UTILITY, not a fourth product. It sits outside the product list,
+   behind a hairline, single-line and quieter — the grammar every bank and mail
+   client already taught the contractor. A stranger reads past it; a customer
+   goes straight to it. */
+.nav-util{display:flex;align-items:center;gap:.5rem;padding-left:.6rem;margin-left:.25rem;
+  border-left:1px solid rgba(74,75,47,.16)}
+.nav-util a{font-size:.79rem;font-weight:600;color:var(--muted);padding:.5rem .7rem;
+  white-space:nowrap;border-radius:var(--r-pill);transition:color .18s,background .18s}
+.nav-util a:hover{color:var(--olive);background:rgba(74,75,47,.06)}
+.nav-util a:active{opacity:.65}
 /* text lives on its own inside the bar — no pills in the pill; subtle lift + olive on hover */
 .nav-a{display:flex;flex-direction:column;align-items:center;gap:.24rem;padding:.5rem .95rem;transition:transform .18s}
 .nav-a b{font-size:.84rem;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1;transition:color .18s;padding-bottom:2px}
@@ -840,7 +850,9 @@ a,button{transition:transform .14s}
     <a href="/atlas" class="nav-a"><b>Atlas</b><span>for contractors</span></a>
     <a href="/vesta" class="nav-a"><b>Vesta</b><span>for homeowners</span></a>
     <a href="/thesis" class="nav-a"><b>Thesis</b><span>why we exist</span></a>
-    <a href="https://app.4thwall.solutions/signin" class="nav-a"><b>Log in</b><span>your workspace</span></a>
+  </div>
+  <div class="nav-util">
+    <a href="https://app.4thwall.solutions/signin">Log in</a>
   </div>
   <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="nav-cta" target="_blank" rel="noopener"><b>Book a fit call</b><span>20 min · plain numbers</span></a>
 </nav>
@@ -862,13 +874,14 @@ a,button{transition:transform .14s}
         <h1 class="sec-h">You do the work.<br><em>Atlas runs the office.</em></h1>
         <p class="sec-sub"><span class="pn">Atlas</span> answers, books, follows up and asks for the review — in your name, on your number, at 9pm on a Sunday. Nothing reaches a customer until you say so, and every finished job leaves a record you own. Built for the roofers, pavers and masons who never had an office to begin with.</p>
         <div class="fd-ctas">
+          <!-- A hero is for strangers, and a stranger has nothing to log into.
+               Both doors here are first-visit doors; Log in lives in the nav. -->
           <a class="btn-dark" href="/atlas">See the workspace <span class="arr">→</span></a>
-          <a class="btn-soft" href="https://app.4thwall.solutions/signin">Log in</a>
+          <a class="btn-soft" href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" target="_blank" rel="noopener">Book a fit call</a>
         </div>
         <div class="hero-fast">
           <span>In a hurry?</span>
           <a href="/missed-calls">Try the missed-call demo →</a>
-          <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" target="_blank" rel="noopener">Book a 20-min fit call →</a>
         </div>
       </div>
     </div>
