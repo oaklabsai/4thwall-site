@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="google-site-verification" content="cb0TWuB6_uWIhHMBxoH5bSVsIQQ0oMMfyoS_SzQjENg">
-<title>4THWALL — Atlas Workspace for Home-Service Contractors</title>
-<meta name="description" content="Atlas Workspace is the accountable front office for home-service contractors — every lead, job, teammate decision and follow-up in one private workspace.">
+<title>4THWALL — Atlas, the whole office for home-service contractors</title>
+<meta name="description" content="Atlas is the whole office for home-service contractors — every lead, job, teammate decision and follow-up in one private workspace.">
 <link rel="canonical" href="https://4thwall.solutions/">
 <link rel="icon" href="/logo.png" type="image/png">
 <link rel="apple-touch-icon" href="/logo.png">
@@ -13,12 +13,12 @@
 <meta name="theme-color" content="#ECEDE2">
 <meta property="og:type" content="website">
 <meta property="og:title" content="4THWALL — You do the work. Atlas keeps the job moving.">
-<meta property="og:description" content="The accountable front office for home-service contractors — every lead, job, teammate decision and follow-up in one private workspace.">
+<meta property="og:description" content="The whole office for home-service contractors — every lead, job, teammate decision and follow-up in one private workspace.">
 <meta property="og:image" content="https://4thwall.solutions/logo.png">
 <meta property="og:url" content="https://4thwall.solutions/">
 <meta property="og:site_name" content="4THWALL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="4THWALL — Atlas Workspace for home-service contractors">
+<meta name="twitter:title" content="4THWALL — Atlas for home-service contractors">
 <meta name="twitter:description" content="You do the work. Atlas keeps the job moving — accountable, governed and on your record.">
 <meta name="twitter:image" content="https://4thwall.solutions/logo.png">
 <script type="application/ld+json">
@@ -45,7 +45,7 @@
       "sameAs": [
         "https://share.google/s9kflTZ1ZogZUeCE1"
       ],
-      "description": "4th Wall Solutions builds Atlas Workspace, an accountable front office where home-service contractors and Atlas carry every lead and job, and Vesta, the homeowner-facing trust surface.",
+      "description": "4th Wall Solutions builds Atlas, a whole office where home-service contractors and Atlas carry every lead and job, and Vesta, the homeowner-facing trust surface.",
       "brand": [
         {
           "@type": "Brand",
@@ -57,7 +57,7 @@
           "@type": "Brand",
           "name": "Atlas",
           "url": "https://4thwall.solutions/atlas",
-          "description": "The accountable front office for home-service contractors: every lead, job, teammate decision and follow-up in one private workspace, with Atlas operating inside explicit rules."
+          "description": "The whole office for home-service contractors: every lead, job, teammate decision and follow-up in one private workspace, with Atlas operating inside explicit rules."
         }
       ]
     },
@@ -256,7 +256,7 @@ a,button{transition:transform .14s}
 .how-d{font-size:.84rem;line-height:1.55;color:var(--muted)}
 @media(max-width:640px){.how-grid{grid-template-columns:1fr;max-width:420px}}
 
-/* ════════════════ BENTO — everything a front office does ════════════════ */
+/* ════════════════ BENTO — everything an office does ════════════════ */
 .bento{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
 .b-tile{background:var(--nm);border-radius:var(--r-tile);padding:1.4rem 1.35rem;box-shadow:var(--nm-sm);display:flex;flex-direction:column;gap:.5rem;transition:transform .25s var(--spring),box-shadow .25s ease}
 .b-tile:hover{transform:translateY(-4px);box-shadow:var(--nm-out)}
@@ -379,6 +379,51 @@ a,button{transition:transform .14s}
 .fd-inner{width:min(660px,100%);display:flex;flex-direction:column;align-items:center}
 /* the three-surface fork breaks out wider than the hero's text column (Drew 7/20 — use the space) */
 .fd-inner:has(.fd-fork){width:min(1140px,94vw)}
+
+/* ── the split hero (Drew 7/26): claim on the left, the product itself on the
+   right. We have no customer logos to stack, so the proof is the workspace —
+   a real screenshot of a real seeded workspace, not an illustration. ── */
+.fd-inner:has(.fd-shot){width:min(1220px,96vw);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);
+  gap:clamp(2rem,4vw,3.6rem);align-items:center;text-align:left}
+.fd-split-copy{min-width:0}
+.fd-inner:has(.fd-shot) .fd-logo{margin:0 0 1.4rem}
+.fd-inner:has(.fd-shot) .fd-intro{max-width:none;margin:0;text-align:left}
+.fd-inner:has(.fd-shot) .sec-sub{margin-left:0;margin-right:0}
+
+/* the screenshot rides a lifted plate, cropped from the left so the rail and the
+   first panels read at any width; it is a picture of software, so it keeps a
+   frame rather than floating. */
+.fd-shot{position:relative;min-width:0}
+.fd-shot-plate{position:relative;border-radius:var(--r-card);overflow:hidden;background:var(--nm);
+  border:var(--nm-edge);box-shadow:0 3px 8px rgba(40,41,22,.13),0 30px 60px -18px rgba(40,41,22,.34);
+  aspect-ratio:16/11}
+/* the label sits UNDER the image: present it covers, missing or still loading it
+   reads as an empty frame instead of spilling the alt text across the hero.
+   font-size:0 hides the broken-image alt visually — `alt` stays in the a11y tree. */
+.fd-shot-plate::after{content:"the workspace";position:absolute;inset:0;z-index:0;
+  display:grid;place-items:center;font:500 .7rem/1 var(--mono);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.fd-shot-plate img{position:relative;z-index:1;display:block;width:100%;height:100%;
+  object-fit:cover;object-position:left top;font-size:0;color:transparent}
+/* honest chips: what the product DOES, never how well it performs — we have no
+   client data, and a performance number here would be a claim we cannot back. */
+.fd-chips{position:absolute;left:clamp(-1.4rem,-1.6vw,-.6rem);top:14%;display:grid;gap:.7rem;z-index:4}
+.fd-chip{display:flex;align-items:center;gap:.6rem;padding:.62rem .95rem;border-radius:14px;
+  background:var(--nm);border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 2px 5px rgba(40,41,22,.1),0 12px 26px -10px rgba(40,41,22,.3)}
+.fd-chip svg{width:15px;height:15px;flex:none;color:var(--olive)}
+.fd-chip b{font-size:.79rem;font-weight:650;color:var(--ink);white-space:nowrap}
+.fd-chip span{display:block;font-size:.68rem;color:var(--muted);white-space:nowrap}
+.fd-ctas{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
+
+@media(max-width:900px){
+  .fd-inner:has(.fd-shot){grid-template-columns:1fr;text-align:center}
+  .fd-inner:has(.fd-shot) .fd-logo{margin:0 auto 1.2rem}
+  .fd-inner:has(.fd-shot) .fd-intro{text-align:center}
+  .fd-ctas{justify-content:center}
+  .fd-chips{position:static;grid-template-columns:1fr;margin-top:1rem}
+  .fd-chip b,.fd-chip span{white-space:normal}
+}
 /* the brand mark leads the hero — same plate as /thesis's .brand (Drew 7/21: uniform) */
 .fd-logo{display:inline-grid;place-items:center;width:58px;height:58px;border-radius:18px;color:var(--olive);
   background:var(--nm);box-shadow:var(--nm-sm);border:1px solid rgba(255,255,255,.5);
@@ -768,7 +813,7 @@ a,button{transition:transform .14s}
 .atx p:last-child{margin-bottom:0}
 .atx p b{color:var(--olive);font-weight:600}
 
-/* Atlas Workspace proof. The visual mirrors the first-party contractor
+/* Atlas proof. The visual mirrors the first-party contractor
    workspace and is explicitly labeled as an example. */
 .aw-demo{display:grid;grid-template-columns:210px minmax(0,1fr);width:min(1040px,100%);min-height:560px;background:#F0F1E8;border:1.5px solid rgba(74,75,47,.13);border-radius:28px;overflow:hidden;box-shadow:var(--sh-card);color:#12100E;text-align:left}
 .aw-rail{display:flex;flex-direction:column;padding:1.35rem 1rem;background:#ECEDE2;border-right:1px solid rgba(74,75,47,.12)}
@@ -795,6 +840,7 @@ a,button{transition:transform .14s}
     <a href="/atlas" class="nav-a"><b>Atlas</b><span>for contractors</span></a>
     <a href="/vesta" class="nav-a"><b>Vesta</b><span>for homeowners</span></a>
     <a href="/thesis" class="nav-a"><b>Thesis</b><span>why we exist</span></a>
+    <a href="https://app.4thwall.solutions/signin" class="nav-a"><b>Log in</b><span>your workspace</span></a>
   </div>
   <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" class="nav-cta" target="_blank" rel="noopener"><b>Book a fit call</b><span>20 min · plain numbers</span></a>
 </nav>
@@ -802,23 +848,58 @@ a,button{transition:transform .14s}
 <!-- ════════════════ THE FRONT DESK — the hero is a conversation (P1: every screen deterministic) ════════════════ -->
 <section class="fd" id="home">
   <div class="fd-inner">
-    <!-- the brand mark leads the hero on a lifted neumorphic square (in place of "Welcome!") -->
-    <a href="/" class="fd-logo" aria-label="4THWALL — home">
-      <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
-    </a>
+    <div class="fd-split-copy">
+      <!-- the brand mark leads the hero on a lifted neumorphic square (in place of "Welcome!") -->
+      <a href="/" class="fd-logo" aria-label="4THWALL — home">
+        <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="square" aria-hidden="true"><polyline points="94.5,5.5 5.5,5.5 5.5,94.5 70,94.5"/><line x1="94.5" y1="5.5" x2="94.5" y2="70"/></svg>
+      </a>
 
-    <!-- the brand claim — moved up from the old products section to lead the hero -->
-    <div class="fd-intro">
-      <h1 class="sec-h">You do the work.<br><em>Atlas keeps the job moving.</em></h1>
-      <p class="sec-sub"><span class="pn">Atlas Workspace</span> is the accountable front office for home-service contractors — every lead, job, teammate decision and follow-up in one private place, with Atlas handling the authorized work between them. <span class="pn">Vesta</span> is the homeowner side of the same mission: good work should leave evidence that compounds.</p>
-      <div class="hero-fast">
-        <span>In a hurry?</span>
-        <a href="/missed-calls">Try the missed-call demo →</a>
-        <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" target="_blank" rel="noopener">Book a 20-min fit call →</a>
+      <!-- The claim states the SEGMENT, not the technology. "Answers the phone" is
+           a hill defended by a $1B competitor selling to companies that already
+           have a call centre; the contractor we are for has no office at all.
+           (`intel/avoca.md`) -->
+      <div class="fd-intro">
+        <h1 class="sec-h">You do the work.<br><em>Atlas runs the office.</em></h1>
+        <p class="sec-sub"><span class="pn">Atlas</span> answers, books, follows up and asks for the review — in your name, on your number, at 9pm on a Sunday. Nothing reaches a customer until you say so, and every finished job leaves a record you own. Built for the roofers, pavers and masons who never had an office to begin with.</p>
+        <div class="fd-ctas">
+          <a class="btn-dark" href="/atlas">See the workspace <span class="arr">→</span></a>
+          <a class="btn-soft" href="https://app.4thwall.solutions/signin">Log in</a>
+        </div>
+        <div class="hero-fast">
+          <span>In a hurry?</span>
+          <a href="/missed-calls">Try the missed-call demo →</a>
+          <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0PiSroPIChYspBn3LWhZ68fw6E7GAhS3wyOziRMBplq5KCxA15lmVzAYTPjmiedJdM9klAvSwE" target="_blank" rel="noopener">Book a 20-min fit call →</a>
+        </div>
       </div>
     </div>
 
-    <div class="fd-chat">
+    <!-- The product IS the proof. A screenshot of the real workspace, not a drawing
+         of one: the room names on it are the room names in the build. -->
+    <div class="fd-shot">
+      <div class="fd-shot-plate">
+        <img src="/atlas-workspace.png" width="1600" height="1080" loading="eager" decoding="async"
+             alt="The Atlas workspace Home screen for a roofing company: a left rail of rooms — Home, Inbox, Booking, Customers, Follow-up, Reviews, Storm, Campaigns — a “Needs you” panel holding one answer the Dispatcher wrote and has not sent, and a weekly panel comparing conversations that came in against jobs booked.">
+      </div>
+      <!-- Capability, never performance. We have no clients, so any number here
+           would be a claim with nothing behind it. -->
+      <div class="fd-chips" aria-label="What the workspace guarantees">
+        <span class="fd-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 1 1-9-9"/></svg>
+          <span><b>Nothing sends without you</b><span>Every customer message waits for a yes</span></span>
+        </span>
+        <span class="fd-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M8 13h8M8 17h5"/></svg>
+          <span><b>Every job leaves a record</b><span>Yours to keep and export, always</span></span>
+        </span>
+        <span class="fd-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
+          <span><b>Roofing, paving, masonry</b><span>The trades most software skips</span></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="fd-chat">
       <!-- One brand per audience: Atlas for contractors, Vesta for homeowners. -->
       <div class="fd-fork" id="fdFork">
         <div class="fork-col fc-atlas">
@@ -826,8 +907,8 @@ a,button{transition:transform .14s}
           <a class="pcard pcard-atlas" href="/atlas" aria-label="Atlas — for contractors">
             <div class="pcard-head">
               <p class="pcard-cat">For Contractors</p>
-              <h2 class="pcard-title">Atlas Workspace<span class="dot">.</span></h2>
-              <p class="pcard-sub">The accountable front office behind the work.</p>
+              <h2 class="pcard-title">Atlas<span class="dot">.</span></h2>
+              <p class="pcard-sub">The whole office behind the work.</p>
               <span class="pcard-go">Explore Atlas <span class="arr">→</span></span>
             </div>
             <div class="pcard-stack">
@@ -855,17 +936,16 @@ a,button{transition:transform .14s}
         </div>
       </div>
     </div>
-  </div>
 
   <a class="fd-cue" href="#atlas-sec">the whole story <span>↓</span></a>
 </section>
 
-<!-- ════════════════ ATLAS — the whole front office, explained ════════════════ -->
+<!-- ════════════════ ATLAS — the whole office, explained ════════════════ -->
 <section class="sec sec-products-top" id="atlas-sec">
   <div class="sec-head rv">
     <span class="kicker">for contractors · atlas</span>
-    <h2 class="sec-h">Not a receptionist.<br><em>An accountable front office.</em></h2>
-    <p class="sec-sub"><span class="pn">Atlas Workspace</span> keeps the entire operating journey together — answering, qualification, booking, crew handoff, decisions, follow-up, reviews, campaigns and the source-valid record — as one managed service, in your name.</p>
+    <h2 class="sec-h">Not a receptionist.<br><em>The whole office.</em></h2>
+    <p class="sec-sub"><span class="pn">Atlas</span> keeps the entire operating journey together — answering, qualification, booking, crew handoff, decisions, follow-up, reviews, campaigns and the source-valid record — as one managed service, in your name.</p>
   </div>
 
   <!-- the offer on a curved marquee (vanilla port of Originkit CurvedLoop) — the breadth, at a glance -->
@@ -890,7 +970,7 @@ a,button{transition:transform .14s}
   <div class="atx rv">
     <p class="atx-lead">Most contractors don’t lose work because they’re bad at the job. They lose it in the gaps.</p>
     <p>The call that came in while you were on the job. The estimate that never got a second text. The happy customer nobody asked for a review. The client who’d forgotten your name by spring. Each one is quiet — and each one is a job that should have been yours.</p>
-    <p><span class="pn">Atlas</span> is the managed front office that closes those gaps. It answers and qualifies the lead, books the estimate with the context attached, follows up on the quote, asks for the review the moment the job lands, and runs the seasonal and storm campaigns that pull past customers back — <b>all measured, all in your name.</b></p>
+    <p><span class="pn">Atlas</span> is the managed office that closes those gaps. It answers and qualifies the lead, books the estimate with the context attached, follows up on the quote, asks for the review the moment the job lands, and runs the seasonal and storm campaigns that pull past customers back — <b>all measured, all in your name.</b></p>
     <p>Every month ends with a receipt: what came in, what got answered, what got booked. Not a dashboard you have to run. A record that <b>compounds</b> — into reviews, into reputation, into the next job finding you first.</p>
   </div>
 
@@ -908,7 +988,7 @@ a,button{transition:transform .14s}
     <p class="sec-sub"><span class="pn">Vesta</span> ranks Fairfield County contractors on one thing only — their public record. No ads, no boosted listings, no top spot for sale.</p>
   </div>
 
-  <!-- how Vesta works — same pill grammar as Lens -->
+  <!-- how Vesta works — same pill grammar as the record room -->
   <div class="how-grid">
     <div class="how-card rv">
       <span class="how-num">Step 01</span>
@@ -943,12 +1023,12 @@ a,button{transition:transform .14s}
   </div>
 </section>
 
-<!-- ════════════════ THE RECORD — Lens is a capability inside Atlas ════════════════ -->
+<!-- ════════════════ THE RECORD — a room inside Atlas, not a separate product ════════════════ -->
 <section class="sec" id="record">
   <div class="sec-head rv">
     <span class="kicker">your record · inside Atlas</span>
     <h2 class="sec-h">Own what the work<br><em>proves.</em></h2>
-    <p class="sec-sub"><span class="pn">Your record</span> is the free Lens capability inside Atlas Workspace. Connect permitted history, review every supported fact, correct what is wrong and control exactly what could leave your workspace. Nothing publishes without you.</p>
+    <p class="sec-sub"><span class="pn">Your record</span> is a room inside Atlas, included — not a second product and not a second bill. Connect permitted history, review every supported fact, correct what is wrong and control exactly what could leave your workspace. Nothing publishes without you.</p>
   </div>
   <div class="how-grid">
     <div class="how-card rv">
@@ -976,7 +1056,7 @@ a,button{transition:transform .14s}
   </div>
 </section>
 
-<!-- ════════════════ THE PROOF — Atlas Workspace, one accountable room ════════════════ -->
+<!-- ════════════════ THE PROOF — Atlas, one accountable room ════════════════ -->
 <section class="showcase" id="showcase">
   <div class="sec-head rv">
     <span class="kicker">one job · one accountable place</span>
@@ -984,9 +1064,9 @@ a,button{transition:transform .14s}
     <p class="sec-sub">The customer room opens from the source event. Your crew sees who owns the next move, what Atlas did, what needs a decision and what evidence came back — without rebuilding the story in another app.</p>
   </div>
   <div class="showcase-stage rv">
-    <div class="aw-demo" role="img" aria-label="Labeled Atlas Workspace demonstration showing an example customer room, exact teammate ownership, Atlas state and a human decision">
+    <div class="aw-demo" role="img" aria-label="Labeled Atlas demonstration showing an example customer room, exact teammate ownership, Atlas state and a human decision">
       <aside class="aw-rail">
-        <div class="aw-brand">4THWALL<small>Atlas Workspace</small></div>
+        <div class="aw-brand">4THWALL<small>Atlas</small></div>
         <div class="aw-nav">
           <span class="aw-nav-label">The office</span>
           <span class="aw-link">Today <span class="aw-count">3</span></span>
