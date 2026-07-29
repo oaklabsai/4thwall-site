@@ -429,13 +429,20 @@ export function sayGuard(say, messages, deck){
   const DISPATCH =
     /\b(i|we)('ll| will|'m| am|'re| are)?\s+(send(ing)?|dispatch(ing)?|have|get|got)\b[^.!?]{0,26}\b(someone|help|a (pro|plumber|tech(nician)?|crew|team|roofer|electrician))\b[^.!?]{0,26}\b(out|over|to you|coming|headed|on the way|right away|right now|tonight|today|within the hour)\b/i;
   const DISPATCH2 = /\b(help|someone|a (pro|plumber|tech(nician)?|crew|team))('s| is| will be)? (on (the|its|their) way|en route)\b/i;
-  const VETTING = /\bbackground[- ]?check|\b(insurance|insured)[^.!?]{0,20}\bverif|\bverify (their |the )?(insurance|licens)|\bdrug[- ]?test|\bwe (personally )?(inspect|interview|screen|meet)\b[^.!?]{0,16}\b(them|every|each|all|firms?|pros?|contractors?)\b/i;
+  // Strip only claims that Vesta PERFORMS vetting it does not perform. The older noun-only
+  // pattern also erased the honest disclosure "Vesta does not run background checks or
+  // verify insurance" — exactly the sentence a skeptical homeowner needs to hear.
+  const vettingOverclaim = s =>
+       /\b(?:we|vesta)\s+(?:personally\s+)?(?:run|perform|verif|check|screen|inspect|interview)\w*\b[^.!?]{0,30}\b(background|insurance|insured|licens|contractors?|firms?|pros?)\b/i.test(s)
+    || /\b(?:we|vesta)\s+do(?:es)?\s+(?!not\b)[^.!?]{0,24}\b(background|insurance|insured|licens|contractors?|firms?|pros?)\b/i.test(s)
+    || /\b(?:background[- ]?checked|insurance[- ]?verified|verified (?:insurance|licens))\b/i.test(s)
+    || /\bdrug[- ]?test(?:ed|ing)?\b/i.test(s);
   const PERSONHOOD = /\breal (person|human)\b|\b(i'?m|i am) (a )?(real )?(person|human)\b/i;
   let parts = String(say).split(/(?<=[.!?])\s+/);
   parts = parts.filter(s =>
        !(priceShaped(s) && !allDigitsEchoed(s))
     && !DISPATCH.test(s) && !DISPATCH2.test(s)
-    && !VETTING.test(s) && !PERSONHOOD.test(s)
+    && !vettingOverclaim(s) && !PERSONHOOD.test(s)
     && !DIY_PROC.test(s));
   let out = parts.join(' ').trim();
   // Models still occasionally obey the no-number rule by opening with a wall:
@@ -454,6 +461,140 @@ export function sayGuard(say, messages, deck){
   return deck
     ? `Got it — I'll line up vetted ${deck.tradeLabel.toLowerCase()} pros for ${deck.label} now.`
     : `Here's the honest answer: the right local pro should look at this — and lining up exactly that is what I do. Tell me a bit about what's going on and I'll point you right.`;
+}
+
+// A sprawling answer makes Vesta feel like a generic model even when every sentence is safe.
+// Bound ordinary turns while preserving the final ownership/next-step sentence when one exists.
+// Emergency and price-teach turns receive larger budgets at the call site.
+export function boundSay(say, maxWords = 65){
+  const source = String(say || '').trim();
+  const count = value => String(value || '').trim().split(/\s+/).filter(Boolean).length;
+  if (!source || count(source) <= maxWords) return source;
+
+  const parts = source.split(/(?<=[.!?])\s+|\n+/).map(s => s.trim()).filter(Boolean);
+  const ownership = [...parts].reverse().find(s =>
+    /\b(whenever you|when you(?:'|’)re ready|tell me|say the word|i can line up|i(?:'|’)ll line up|i can match|i(?:'|’)ll match)\b/i.test(s));
+  const kept = [];
+  const reserved = ownership ? count(ownership) : 0;
+  for (const part of parts){
+    if (part === ownership) continue;
+    const candidate = [...kept, part].join(' ');
+    if (count(candidate) + reserved > maxWords) break;
+    kept.push(part);
+  }
+  if (ownership && count([...kept, ownership].join(' ')) <= maxWords) kept.push(ownership);
+  if (kept.length) return kept.join(' ');
+
+  const words = source.split(/\s+/).slice(0, maxWords);
+  return words.join(' ').replace(/[,;:—–-]+$/, '') + (/[.!?]$/.test(words.at(-1) || '') ? '' : '.');
+}
+
+// Detect only explicit, named multi-trade work. The server supplies the sequencing value the
+// prompt asks for and lets the live bank decide whether the first phase can resolve. This is
+// deliberately conservative: two distinct named phases are required, and ambiguous symptoms
+// still stay with the normal conversational resolver.
+export function multiTradePlan(text){
+  const t = String(text || '');
+  const projectFraming =
+       /\b(redo|renovat|remodel|makeover|planning|project|want to|looking to)\b/i.test(t)
+    || /\b(install|replace|build|add|remove|take down|repaint|plant)\b/i.test(t)
+    || /\bnew\s+(patio|roof|flooring|floors?|windows?|doors?|lawn|sod|driveway)\b/i.test(t)
+    || /\b(tree removal|fresh sod)\b/i.test(t);
+  if (!projectFraming) return null;
+  const phases = [];
+  const add = (key, label, trade, jobs, test) => { if (test.test(t)) phases.push({ key, label, trade, jobs }); };
+  add('tree', 'tree removal and site prep', 'tree', ['tree-removal'], /\b(tree removal|remove|take|taking|taken)\b[^.?!]{0,22}\btrees?\b|\btrees?\b[^.?!]{0,22}\b(remove|take|taking|taken) down\b/i);
+  add('plumbing', 'plumbing rough-in', 'plumbing', ['fixture-or-small-repair'], /\b(plumbing|pipes?|water lines?|drain lines?)\b/i);
+  add('hvac', 'heating and cooling rough-in', 'hvac', ['system-repair-not-cooling','routine-maintenance-tuneup'], /\b(hvac|ductwork|heating|cooling|furnace|air conditioning)\b/i);
+  add('electrical', 'electrical rough-in', 'electrical', ['rewiring-old-home','panel-or-service-upgrade'], /\b(electrical|rewir(?:e|ing)|outlets?|lighting|panel upgrade)\b/i);
+  add('hardscape', 'patio and hardscape', /\b(concrete|pavers?|driveway)\b/i.test(t) ? 'paving' : 'masonry',
+    /\b(concrete|pavers?|driveway)\b/i.test(t) ? ['concrete-patio-or-walkway','new-driveway'] : ['patio-or-walkway'],
+    /\b(stone|brick|concrete|paver)\s+(patio|walkway)|\b(patio|walkway|retaining wall|hardscape|driveway)\b/i);
+  add('roofing', 'roof and exterior envelope', 'roofing', ['full-roof-replacement','roof-plus-siding-gutters'], /\b(roof replacement|replace the roof|new roof|roofing)\b/i);
+  add('windows', 'windows and doors', 'windows_doors', ['window-replacement','door-installation'], /\b(windows?|doors?)\b/i);
+  add('painting', 'painting and finishes', 'painting', ['interior-painting','exterior-painting'], /\b(paint|painting|repaint)\b/i);
+  add('flooring', 'finished flooring', 'flooring', ['new-floor-installation','floor-replacement'], /\b(flooring|new floors?|replace the floors?)\b/i);
+  add('lawn', 'final grading, planting and sod', 'lawn', ['full-relandscape','planting-and-garden-beds'], /\b(sod|lawn|landscap|planting|garden beds?)\b/i);
+  if (phases.length < 2) return null;
+
+  const labels = phases.map(p => p.label);
+  const sequence = labels.length === 2
+    ? `${labels[0]} first, then ${labels[1]}`
+    : `${labels.slice(0, -1).join(', ')}, then ${labels.at(-1)}`;
+  return {
+    phases,
+    say: `That is a ${labels.length}-phase project, not one generic contractor search. I’d sequence it as ${sequence}. I’ll start with the first phase now; when that is set, we can move to the next without making you repeat the plan.`,
+  };
+}
+
+// Product-identity questions carry the trust contract, so the answer cannot vary by model.
+// Pay-to-play truth wins even when the speaker also sounds like a contractor; ordinary
+// contractor sign-up questions receive the clean Atlas handoff.
+export function vestaIdentityRoute(text, contractorSignal = false){
+  const t = String(text || '');
+  const promptInjection =
+       /\b(ignore|disregard|forget|override)\b[^.?!]{0,35}\b(previous|prior|above|system|instructions?|rules?|prompt)\b/i.test(t)
+    || /\b(show|reveal|repeat|print|give me)\b[^.?!]{0,35}\b(system prompt|hidden prompt|instructions?|developer message|secret key)\b/i.test(t);
+  if (promptInjection) return {
+    mode:'learn',
+    say:'I cannot expose private instructions or change the evidence rules. I can still help with the public product: describe the home project, ask how Vesta evaluates a contractor, or ask what evidence a recommendation uses.',
+  };
+  const payToPlay =
+       /\b(pay|paying|paid|payment|money)\b[^.?!]{0,60}\b(recommend|recommendation|rank|placement|listed|feature|pick|show up)\b/i.test(t)
+    || /\b(recommend|recommendation|rank|placement|listed|feature|pick|show up)\b[^.?!]{0,60}\b(pay|paying|paid|payment|money)\b/i.test(t)
+    || /\b(sponsored|pay[- ]to[- ]play|kickback)\b/i.test(t);
+  if (payToPlay) return {
+    mode:'learn',
+    say:'No — contractors do not pay to be recommended on Vesta. Each profile is built from the public record, including registrations or licenses where the trade carries them, years in the record, and what homeowners’ own reviews actually say. Evidence — never ads or payment — decides the picks, and every pick shows its why.',
+  };
+  const vettingLimits =
+       /\b(background[- ]?check|verify (?:their |the )?(?:insurance|licens)|insurance verified|insured|licensed|registered)\b/i.test(t)
+    && /\b(do you|does vesta|are (?:they|the|these)|have (?:they|you)|how do you know|really)\b/i.test(t);
+  if (vettingLimits) return {
+    mode:'learn',
+    say:'Vesta does not run background checks or verify insurance. It reads the public record — state registration or license where applicable, years in the record, and homeowner reviews — and shows the source and why. Insurance and current job readiness must be confirmed directly with the contractor.',
+  };
+  const definition =
+       /\bwhat(?:'s| is)\s+vesta\b/i.test(t)
+    || /\bwhat does vesta do\b/i.test(t)
+    || /\bexplain vesta\b/i.test(t);
+  if (definition) return {
+    mode:'learn',
+    say:'Vesta is a free Fairfield County homeowner guide built by 4THWALL. Describe the job and it narrows the public record to relevant contractor picks, each with a plain-English why. Contractors cannot buy placement; Vesta shows the evidence it used so you can judge the next step.',
+  };
+  const method =
+       /\bhow (?:do|does) (?:you|vesta)\s+(?:choose|rank|pick|recommend|vet|score|select)\b/i.test(t)
+    || /\bwhat (?:decides|determines)\b[^.?!]{0,30}\b(rank|ranking|recommend|pick|order)\b/i.test(t);
+  if (method) return {
+    mode:'learn',
+    say:'Vesta narrows by the job, then reads public registration or license records where applicable, time in the public record, and patterns in homeowner reviews. It does not publish a magic score or let payment move a contractor up. Each recommendation shows the evidence and why it fits.',
+  };
+  const contractorEntry = /\b(get|getting|be|being)\s+(?:my|our|the|a)?\s*(?:business|company|firm|contractor|pro)?\s*(?:listed|on vesta)\b/i.test(t)
+    || /\b(sign|signing)\s+(?:my|our|the|a)?\s*(?:business|company|firm|contractor|pro)?\s*up\b/i.test(t)
+    || /\b(join|joining)\s+(?:vesta|the network|as a (?:contractor|pro))\b/i.test(t);
+  if (contractorSignal && contractorEntry) return {
+    mode:'atlas',
+    say:'You’re in the right company, but on the homeowner side. Atlas is the contractor side of 4THWALL: a managed front office and private workspace that keeps the customer, job, owner, action and handoff together. Open Atlas to see how it works and talk directly with the founder about whether your business fits.',
+  };
+  return null;
+}
+
+// Once real picks are on screen, the visitor is no longer asking for generic advice — they
+// are testing whether Vesta will invent private facts about those firms. Price and schedule
+// are not in the public profile record, so answer the decision method without pretending
+// to know either. This also makes repeated follow-ups stable across model generations.
+export function vestaFollowupRoute(text, followUp = false, focusMode = false){
+  if (!followUp && !focusMode) return null;
+  const t = String(text || '');
+  if (/\b(cheapest|lowest price|best value|best deal|most affordable|which .* costs? less|compare .* pric|price)\b/i.test(t)) return {
+    mode:'learn',
+    say:'Vesta does not rank these firms by price because it does not have a live, comparable quote from each one. Ask for itemized quotes against the same scope, materials and exclusions; then compare the totals only after the work is truly equivalent.',
+  };
+  if (/\b(fastest|soonest|available|availability|schedule|come (?:out|over)|start first|earliest)\b/i.test(t)) return {
+    mode:'learn',
+    say:'Vesta does not have live access to these firms’ schedules. Contact each one and ask for the earliest site visit plus the earliest realistic start date after scope is confirmed. Availability can change quickly, so the contractor should confirm it directly.',
+  };
+  return null;
 }
 
 export default async function handler(req, res){
@@ -645,6 +786,50 @@ export default async function handler(req, res){
     || /\bmy\s+(business|company|crew|firm)\b[^.?!]{0,26}\b(listed|sign(ed)? up|get on|join)\b/i.test(atlasText);
   const isAtlas = (parsed.mode === 'atlas' || atlasSignal) && parsed.mode !== 'emergency';
   if (isAtlas){ parsed.mode = 'atlas'; parsed.resolved = null; deck = null; parsed.ask = null; parsed.chips = null; }
+  const identityRoute = parsed.mode !== 'emergency' ? vestaIdentityRoute(atlasText, isAtlas) : null;
+  if (identityRoute){
+    parsed.mode = identityRoute.mode;
+    parsed.say = identityRoute.say;
+    parsed.resolved = null;
+    deck = null;
+    parsed.ask = null;
+    parsed.chips = null;
+  } else if (isAtlas && !/\bAtlas\b/i.test(String(parsed.say))){
+    parsed.say = String(parsed.say).replace(/\s*$/, '') + ' Atlas is the contractor side of 4THWALL, and that is where your next step lives.';
+  }
+  const followupRoute = !identityRoute && !isAtlas && parsed.mode !== 'emergency'
+    ? vestaFollowupRoute(atlasText, followUp, focusMode) : null;
+  if (followupRoute){
+    parsed.mode = followupRoute.mode;
+    parsed.say = followupRoute.say;
+    parsed.resolved = null;
+    deck = null;
+    parsed.ask = null;
+    parsed.chips = null;
+  }
+  // MULTI-TRADE COHERENCE — the model sometimes acknowledges three scopes, then collapses the
+  // entire project into landscaping. For explicit named phases, sequence them deterministically
+  // and resolve only the first phase against the same live bank. Later phases remain in context.
+  const multiPlan = !followUp && !focusMode && !isAtlas && parsed.mode !== 'emergency'
+    ? multiTradePlan(atlasText) : null;
+  if (multiPlan){
+    let first = null;
+    for (const phase of multiPlan.phases){
+      for (const job of phase.jobs){
+        const candidate = bankValidate(bank, phase.trade, job);
+        if (candidate){ first = candidate; break; }
+      }
+      if (first) break;
+    }
+    if (first){
+      deck = first;
+      parsed.mode = 'plan';
+      parsed.resolved = { trade: first.trade, job: first.job, urgency: 'routine' };
+      parsed.ask = null;
+      parsed.chips = null;
+      parsed.say = multiPlan.say;
+    }
+  }
   // RESOLVED-TURN COHERENCE (the M1 clamp): a resolved turn is a handoff, not an interview.
   // The contract says ask/chips are null and the say is a final reassuring line — but the
   // model leaks a trailing question into a resolved say (seen live 7/12: resolved gutters +
@@ -777,8 +962,14 @@ export default async function handler(req, res){
   // EVERY say before the final frame. The client reconciles the bubble to the final say
   // (typer.finish(final.say)), so what survives here is what the homeowner sees.
   const guarded = sayGuard(String(parsed.say), messages, deck);
-  const guardTripped = guarded !== String(parsed.say);
-  parsed.say = guarded;
+  const wordBudget = parsed.mode === 'emergency' ? 90
+    : PRICE_QUESTION.test(lastText) ? 110
+    : followUp ? 90
+    : focusMode ? 80
+    : 65;
+  const bounded = boundSay(guarded, wordBudget);
+  const guardTripped = bounded !== String(parsed.say);
+  parsed.say = bounded;
   const chips = Array.isArray(parsed.chips)
     ? parsed.chips.filter(c => typeof c === 'string' && c.trim()).slice(0, 4) : [];
   send({ t:'f',

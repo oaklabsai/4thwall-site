@@ -10,7 +10,7 @@
 // Run: node scripts/atlas-battery.mjs         (deterministic gate)
 //      node scripts/atlas-battery.mjs --live   (+ live model probes against prod)
 
-import { claimSafe, SCREENS, DEFLECT, extractJSON, cleanArgs, CALC_ARGS, cleanAud, deflectScreenFor, WHERE_LABEL } from '../api/atlas.mjs';
+import { claimSafe, SCREENS, DEFLECT, extractJSON, cleanArgs, CALC_ARGS, cleanAud, deflectScreenFor, WHERE_LABEL, extractCalculatorRoute, routeKillQuestion } from '../api/atlas.mjs';
 
 let fails = 0;
 const check = (tag, ok, note='') => {
@@ -81,6 +81,32 @@ check('args: panel whitelisted', cleanArgs({ panel: 'storm' })?.panel === 'storm
 check('args: array/garbage shape → null', cleanArgs([1,2]) === null && cleanArgs('x') === null);
 check('args: unit strings coerce ("9000" → 9000)', cleanArgs({ job_value: '9000' })?.job_value === 9000);
 check('args: every spec field maps to a real range', Object.entries(CALC_ARGS).every(([k,v]) => k === 'panel' ? Array.isArray(v) : v[0] < v[1]));
+const calcRoute = extractCalculatorRoute([{ role:'user', content:'Jobs run about $9,000, we get 20 leads a week, and take 4 hours to call back. What is that costing me?' }]);
+check('calculator intent routes deterministically', calcRoute?.screen === 'numbers' && calcRoute?.aud === 'contractor');
+check('calculator extracts only stated figures', calcRoute?.args?.job_value === 9000 && calcRoute?.args?.leads_per_week === 20 && calcRoute?.args?.response_minutes === 240);
+check('calculator reads response-time phrasing in either order', extractCalculatorRoute([{ role:'user', content:'What am I losing when I call people back after 90 minutes?' }])?.args?.response_minutes === 90);
+check('Atlas service pricing is not mistaken for lost-revenue math', extractCalculatorRoute([{ role:'user', content:'How much does Atlas cost?' }]) === null);
+check('software-burden objection is answered on FAQ', routeKillQuestion([{ role:'user', content:'Is this just another app I have to learn?' }])?.k === 'burden');
+check('private company internals deflect deterministically', routeKillQuestion([{ role:'user', content:'What is your profit margin?' }])?.k === 'internal');
+check('plain Vesta-ranking question stays conversational', routeKillQuestion([{ role:'user', content:'How does Vesta rank contractors?' }])?.k !== 'internal');
+const definitionRoute = routeKillQuestion([{ role:'user', content:'What is Atlas, exactly?' }]);
+check('Atlas definition is deterministic and concrete', definitionRoute?.k === 'definition' && definitionRoute?.screen === 'office' && /\bcall is missed|missed call\b/i.test(definitionRoute?.say || ''));
+check('Atlas definition remains claim-safe', claimSafe(definitionRoute?.say || '') === true);
+const privacyRoute = routeKillQuestion([{ role:'user', content:'Can another contractor see my leads and conversations?' }]);
+check('contractor data isolation is answered deterministically', privacyRoute?.k === 'privacy' && privacyRoute?.screen === 'faq' && /isolated/i.test(privacyRoute?.say || ''));
+check('privacy answer remains claim-safe', claimSafe(privacyRoute?.say || '') === true);
+const earlyRoute = routeKillQuestion([{ role:'user', content:'Do you have clients or case studies yet?' }]);
+check('early-stage proof boundary is answered deterministically', earlyRoute?.k === 'early' && /do not (?:have )?client outcomes (?:to claim)?/i.test(earlyRoute?.say || ''));
+check('early-stage answer remains claim-safe', claimSafe(earlyRoute?.say || '') === true);
+const languageRoute = routeKillQuestion([{ role:'user', content:'Can Atlas handle customers who text in Spanish?' }]);
+check('language capability is bounded deterministically', languageRoute?.k === 'language' && languageRoute?.screen === 'sim' && /English (?:and|or) Spanish/i.test(languageRoute?.say || '') && !/bilingual/i.test(languageRoute?.say || ''));
+check('language answer remains claim-safe', claimSafe(languageRoute?.say || '') === true);
+const missedProcessRoute = routeKillQuestion([{ role:'user', content:'What happens right after a missed call?' }]);
+check('missed-call process stays concrete on a deeper follow-up', missedProcessRoute?.k === 'missed-process' && missedProcessRoute?.screen === 'sim' && /text back/i.test(missedProcessRoute?.say || ''));
+check('missed-call process remains claim-safe', claimSafe(missedProcessRoute?.say || '') === true);
+const contractorPivotRoute = routeKillQuestion([{ role:'user', content:'Actually, I own a roofing company.' }]);
+check('homeowner-to-contractor pivot is deterministic', contractorPivotRoute?.k === 'contractor-pivot' && contractorPivotRoute?.aud === 'contractor' && contractorPivotRoute?.screen === 'office');
+check('contractor pivot remains claim-safe', claimSafe(contractorPivotRoute?.say || '') === true);
 
 // ── screen whitelist: exactly the surfaces the UI knows how to assemble ──
 check('office is a valid screen', SCREENS.has('office'));

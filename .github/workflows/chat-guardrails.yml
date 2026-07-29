@@ -12,7 +12,7 @@ name: chat-guardrails
 on:
   push:
     branches: [main]
-    paths: ['api/**', 'scripts/**', '.github/workflows/chat-guardrails.yml']
+    paths: ['api/**', 'scripts/**', 'tests/**', 'atlas-next.html', 'vesta-app.html', '.github/workflows/chat-guardrails.yml']
   schedule:
     - cron: '0 13 * * *'      # daily ~09:00 ET / 06:00 PT — a morning drift check
   workflow_dispatch: {}        # run on demand from the Actions tab
@@ -25,7 +25,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '22' }
-      - run: node scripts/guard-units.mjs
+      - name: Run public bot release gates
+        run: |
+          node scripts/guard-units.mjs
+          node scripts/public-bot-qa.mjs
+          node tests/triage-logic.test.mjs
+          node scripts/atlas-battery.mjs
+          node scripts/desk-battery.mjs
+          node tests/lens-contract.test.mjs
 
   live-battery:
     name: live credibility battery (prod, daily)

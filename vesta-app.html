@@ -3520,8 +3520,8 @@ function hstkCardData(){
   const topEmerg = emergTop[0];
   const topPriced = cfd ? cfd.priced[0] : null;
   // Vesta's read — the mockup's static copy (design source of truth).
-  const brokenTake = 'Plumbing &amp; HVAC are your safest 11pm calls &mdash; most answer within the hour.';
-  const planTake = 'Line up masonry first &mdash; it books out furthest of the trades you&rsquo;ll want.';
+  const brokenTake = 'Gas, fire, sparking or active flooding means safety first &mdash; Vesta helps after everyone is safe.';
+  const planTake = 'Start with structure, water and electrical work; finishes come after.';
   const dirTake = 'Every firm here earns its place on record alone &mdash; none paid to appear.';
   // Order is Drew's call (2026-07-07): browse leads, planning second, emergency triage third.
   return [
@@ -3529,10 +3529,10 @@ function hstkCardData(){
       note:'The whole field Vesta tracks — ranked by record, never ad spend.', take:dirTake,
       cta:'Take me to the directory', ctaAction:'directory' },
     { spot:'plan', kick:'Planning', h:'Planning <span class="squig">a project?</span>',
-      note:'Every job maps to real work county firms are proven to do.', take:planTake,
+      note:'Describe the project; Vesta narrows it to the right trade and shows the record behind each match.', take:planTake,
       cta:'Start planning', ctaAction:'triage-plan' },
     { spot:'broken', kick:'Urgent', h:'Something <span class="squig">broken?</span>',
-      note:'Live problems, routed to firms whose records show they answer.', take:brokenTake,
+      note:'Live problems, routed to the right trade with evidence behind each match.', take:brokenTake,
       cta:'Walk me through it', ctaAction:'triage-broken' },
   ];
 }
@@ -3755,9 +3755,9 @@ function renderHome(){
     // live Q1 bank; project pills map to real jobs in each firm's review record.
     [
       ['Something <span class="squig">broken?</span>', 'Something’s broken',
-       'Live problems, routed to the firms whose records show they actually answer.', PROBLEMS_BROKEN, 'broken'],
+       'Live problems, routed to the right trade with evidence behind each match.', PROBLEMS_BROKEN, 'broken'],
       ['Planning <span class="squig">a project?</span>', 'Planning a project',
-       'Every job below maps to work county firms are proven to do — from their real review records, not a category menu.', PROBLEMS_PLANNING, 'plan'],
+       'Describe the project; Vesta narrows it to the right trade and shows the record behind each match.', PROBLEMS_PLANNING, 'plan'],
     ].forEach(([html, plain, sub, list, mode]) => {
       const sec = document.createElement('div'); sec.className = 'prob-section';
       const h = document.createElement('h2'); h.className = 'home-sec-h'; h.innerHTML = html;
@@ -6637,7 +6637,7 @@ function triageAreaHTML(){
   return '<div class="mw-inner">'+
     '<div class="mw-kicker">'+SPARK+'Vesta Match<span class="mw-step">'+mwStepSuffix('area')+'</span></div>'+
     '<h1 class="mw-q">What are you <span class="squig">planning?</span></h1>'+
-    '<p class="mw-hint">Pick the part of the home — Vesta shows the real jobs county firms are proven to do there.</p>'+
+    '<p class="mw-hint">Pick the part of the home — Vesta shows the job types it can match there, then explains the record behind each pick.</p>'+
     '<div class="mw-opts">'+TRIAGE_AREAS.map((a,i)=>TRI_ROW(a.icon, a.label, a.hint, ' data-i="'+i+'"')).join('')+'</div>'+
     (TRI_OK ? '<button class="mw-describe" id="mw-desc" type="button">or just describe it →</button>' : '')+
   '</div>';

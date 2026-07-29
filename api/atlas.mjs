@@ -85,6 +85,79 @@ export function cleanArgs(a){
   return Object.keys(out).length ? out : null;
 }
 
+// High-intent calculator turns should not depend on model routing luck. Extract only figures
+// the contractor actually typed, then pass them through the same whitelist/clamp used for
+// model output. A partial seed is useful; an invented seed is never acceptable.
+const statedNumber = raw => {
+  const n = Number(String(raw || '').replace(/[,$\s]/g, ''));
+  return Number.isFinite(n) ? n : null;
+};
+export function extractCalculatorRoute(messages){
+  const last = [...(Array.isArray(messages) ? messages : [])].reverse().find(m => m && m.role === 'user');
+  const t = String(last && last.content || '');
+  const wantsMath =
+       /\bwhat (?:am i|are we|is this|is that)[^.?!]{0,48}\b(losing|costing)\b/i.test(t)
+    || /\bhow much[^.?!]{0,42}\b(missed|slow|delay|storm|hire|office)[^.?!]{0,24}\b(cost|los)/i.test(t)
+    || /\b(run|show|do)\s+(?:me\s+)?the numbers\b/i.test(t)
+    || /\b(calculat(?:e|or)|cost of slow replies|cost of missed calls)\b/i.test(t);
+  const atlasPrice = /\b(how much|price|pricing|cost|fee|charge)\b[^.?!]{0,40}\batlas\b/i.test(t)
+    || /\batlas\b[^.?!]{0,40}\b(how much|price|pricing|cost|fee|charge)\b/i.test(t);
+  if (!wantsMath || atlasPrice) return null;
+
+  const storm = /\bstorm|hail|weather event\b/i.test(t);
+  const office = !storm && /\b(hir(?:e|ing)|office (?:person|manager|admin)|admin|wage|salary|payroll)\b/i.test(t);
+  const panel = storm ? 'storm' : office ? 'office' : 'missed';
+  const args = { panel };
+
+  const money = t.match(/\$\s*([\d,.]+)\s*(k)?\b/i)
+    || t.match(/\b([\d,.]+)\s*(k)?\s*(?:dollars?|bucks?)\b/i);
+  if (money){
+    const base = statedNumber(money[1]);
+    const value = base == null ? null : Math.round(base * (money[2] ? 1000 : 1));
+    if (value != null){
+      if (panel === 'storm') args.storm_job_value = value;
+      else if (panel === 'office' && /\b(hour|hourly|wage)\b/i.test(t)) args.wage_per_hour = value;
+      else args.job_value = value;
+    }
+  }
+
+  const weeklyLeads = t.match(/\b(\d+(?:\.\d+)?)\s+(?:new\s+)?leads?\s+(?:a|per|each)\s+week\b/i);
+  if (weeklyLeads){
+    const value = statedNumber(weeklyLeads[1]);
+    if (panel === 'office') args.office_leads_per_week = value;
+    else args.leads_per_week = value;
+  }
+  const perStorm = t.match(/\b(\d+(?:\.\d+)?)\s+leads?\s+(?:a|per|each)\s+storm\b/i);
+  if (perStorm) args.leads_per_storm = statedNumber(perStorm[1]);
+  const storms = t.match(/\b(\d+(?:\.\d+)?)\s+(?:storms?|weather events?)\s+(?:a|per|each)\s+year\b/i);
+  if (storms) args.storm_events = statedNumber(storms[1]);
+
+  const response = t.match(/\b(\d+(?:\.\d+)?)\s*(minutes?|mins?|hours?|hrs?)\b[^.?!]{0,34}\b(call|text|reply|respond|response|follow)/i)
+    || t.match(/\b(call|text|reply|respond|response|follow)[^.?!]{0,34}\b(\d+(?:\.\d+)?)\s*(minutes?|mins?|hours?|hrs?)\b/i);
+  if (response){
+    const amountFirst = /^\d/.test(String(response[1] || ''));
+    const amount = statedNumber(amountFirst ? response[1] : response[2]);
+    const unit = String(amountFirst ? response[2] : response[3] || '');
+    if (amount != null) args.response_minutes = Math.round(amount * (/hour|hr/i.test(unit) ? 60 : 1));
+  }
+  const hours = t.match(/\b(\d+(?:\.\d+)?)\s+hours?\s+(?:a|per|each)\s+week\b/i);
+  if (hours && panel === 'office') args.office_hours_week = statedNumber(hours[1]);
+  const close = t.match(/\b(\d+(?:\.\d+)?)\s*%\s+(?:close|closing|conversion)\b/i);
+  if (close) args[panel === 'storm' ? 'storm_close_pct' : 'close_rate_pct'] = statedNumber(close[1]);
+  const afterHours = t.match(/\b(\d+(?:\.\d+)?)\s*%\s+after[- ]hours\b/i);
+  if (afterHours) args.after_hours_pct = statedNumber(afterHours[1]);
+  const dropped = t.match(/\b(\d+(?:\.\d+)?)\s*%\s+(?:dropped|missed|lost)\b/i);
+  if (dropped && panel === 'storm') args.dropped_pct = statedNumber(dropped[1]);
+
+  return {
+    k: 'calculator',
+    say: 'Let’s make the leak visible using your own numbers. I’ve opened the matching calculator with what you already gave me; adjust anything that varies and it will show the cost of the gap without turning an estimate into a promise.',
+    screen: 'numbers',
+    aud: 'contractor',
+    args: cleanArgs(args),
+  };
+}
+
 // ── §9 banned list, server-side. A tripped `say` is replaced by DEFLECT, never shipped.
 //    "not a software seat" is the pack's own approved framing; the negated form stays legal.
 export function claimSafe(say, echoNums){
@@ -311,6 +384,47 @@ const ROUTER = [
     test: t => /\b(jobber|servicetitan|service titan|housecall( pro)?|workiz|acculynx|buildertrend|quickbooks)\b/i.test(t),
     say: () => "We don't plug into your scheduling tools today — Atlas runs ahead of the schedule, not inside it. It catches the missed call, holds the conversation, and books the estimate; what lands on your calendar is yours to run in the tools you already use. If a direct connection matters for your setup, bring it to the fit call — that's exactly what the founder wants to hear.",
     screen: () => 'faq', aud: () => 'contractor' },
+  { k: 'definition',
+    test: t => /\b(what is|what does|explain|tell me about|who is)\s+atlas\b/i.test(t)
+            || /\batlas\b[^.?!]{0,28}\b(what (?:is|does)|work|for whom|who is it for)\b/i.test(t),
+    say: () => 'Atlas is the managed, SMS-first front office for homeowner-facing contractors. When a call is missed, the customer gets a text back in the contractor’s name; Atlas captures what they need, can book an approved estimate slot, records the handoff and keeps the work visible in one private workspace. The contractor keeps the number, the customer and the record.',
+    screen: () => 'office', aud: () => 'contractor' },
+  { k: 'missed-process',
+    test: t => /\b(missed|unanswered)\s+(?:phone )?calls?\b/i.test(t)
+            && /\b(what happens|then what|after|first|walk me through|how does|handle)\b/i.test(t),
+    say: () => 'The missed call triggers a text back in the contractor’s name. Atlas captures what the customer needs, keeps the conversation tied to that lead, and can offer only approved estimate slots. The owner can see the customer, job, next action and handoff in the same private workspace instead of reconstructing the call later.',
+    screen: () => 'sim', aud: () => 'contractor' },
+  { k: 'privacy',
+    test: t => /\b(who (?:can )?sees?|competitor|another contractor|other contractors?|shared|private|privacy|own)\b[^.?!]{0,55}\b(data|leads?|customers?|conversations?|record|workspace)\b/i.test(t)
+            || /\b(data|leads?|customers?|conversations?|record|workspace)\b[^.?!]{0,55}\b(private|shared|visible|belong|owned|competitor)\b/i.test(t),
+    say: () => 'Each contractor workspace is isolated — another contractor cannot see your leads, customers or conversations. The operating record belongs to the people it is about; you control your contractor record inside Atlas, and nothing from it becomes homeowner-facing merely because it exists.',
+    screen: () => 'faq', aud: () => 'contractor' },
+  { k: 'early',
+    test: t => /\b(do you have|any|show me|where are)\b[^.?!]{0,38}\b(clients?|customers?|case studies|results?|proof|testimonials?)\b/i.test(t)
+            || /\b(clients?|customers?|case studies|results?|proof|testimonials?)\b[^.?!]{0,38}\b(yet|real|live|have)\b/i.test(t),
+    say: () => 'We’re early, deliberately, and we do not have client outcomes to claim yet. Founding-partner terms exist for that reason: the founder operates the first circuit closely, the live demo shows the response experience, and the monthly receipt is designed to count what actually happened rather than turn a demo into a result.',
+    screen: () => 'faq', aud: () => 'contractor' },
+  { k: 'language',
+    test: t => /\b(spanish|english|language|español|habla)\b/i.test(t)
+            && /\b(text|customer|lead|conversation|answer|reply|handle|support|speak|write)\b/i.test(t),
+    say: () => 'Supported text conversations can be answered and qualified in English or Spanish — the customer is answered in the language they wrote in, and the conversation stays on the same workspace record. That claim is about supported texts, not live voice answering or a translated homeowner product.',
+    screen: () => 'sim', aud: () => 'contractor' },
+  { k: 'contractor-pivot',
+    test: t => /\b(actually|to be clear|i should mention)\b[^.?!]{0,28}\b(i|we)\s+(own|run|operate)\b[^.?!]{0,28}\b(company|business|firm|shop|crew)\b/i.test(t),
+    say: () => 'Then Atlas is your side of 4THWALL. It is the managed front office and private workspace for a homeowner-facing contractor: missed calls become text conversations, the job and next action stay visible, and the handoff remains tied to an accountable owner. Vesta is the homeowner side; Atlas is the operating side for your business.',
+    screen: () => 'office', aud: () => 'contractor' },
+  { k: 'burden',
+    test: t => /\b(another|just an?)\s+(app|dashboard|login|tool)\b/i.test(t)
+            || /\b(have|need|got)\s+to\s+(learn|manage|babysit|monitor|check)\b[^.?!]{0,28}\b(app|dashboard|atlas|this|it)\b/i.test(t),
+    say: () => 'You are not buying another dashboard to babysit. Atlas is managed: we operate the front office, your team sees the customer, job, owner, action and handoff in one private workspace, and consequential decisions still go to the exact person responsible. The point is less office chasing, not more screen time.',
+    screen: () => 'faq', aud: () => 'contractor' },
+  { k: 'internal',
+    test: t => /\b(profit margin|gross margin|net margin|burn rate|runway|cap table|roadmap|company strategy|matching algorithm|secret sauce)\b/i.test(t)
+            || /\b(your|4thwall(?:'s)?|company|annual)\s+revenue\b/i.test(t)
+            || /\b(exact|proprietary)\b[^.?!]{0,30}\b(rank(?:ing)? formula|weights?|algorithm|score calculation)\b/i.test(t)
+            || /\bhow (?:do|does) (?:you|4thwall)\s+make money\b/i.test(t),
+    say: () => DEFLECT,
+    screen: () => 'faq' },
   { k: 'price-pressed',   // a ballpark demanded after the fit-call posture — hold, warmly (§7)
     test: (t, msgs) => /\b(price|pricing|cost|charge|how much|ballpark|rate|fee|per month)\b/i.test(t)
       && /\b(ballpark|range|rough (number|idea)|just (tell|give) me|hundreds or thousands|before i book|without (a|the) call|not booking)\b/i.test(t)
@@ -346,6 +460,8 @@ export function canonicalForTrip(say){
 }
 
 export function routeKillQuestion(messages){
+  const calculator = extractCalculatorRoute(messages);
+  if (calculator) return calculator;
   const last = [...messages].reverse().find(m => m.role === 'user');
   const t = String(last && last.content || '');
   for (const r of ROUTER){
@@ -400,6 +516,7 @@ export default async function handler(req, res){
     console.log(`atlas: router=${routed.k} aud=${rAud||'null'} screen=${rScreen||'null'}`);
     const out = { say: routed.say, screen: rScreen };
     if (rAud) out.aud = rAud;
+    if (routed.args) out.args = routed.args;
     if (wantDiag) out._diag = { stage: 'router:' + routed.k, retried: false, model: null, upstream: null, rawlen: 0, rawHead: null };
     res.statusCode = 200;
     return res.end(JSON.stringify(out));
