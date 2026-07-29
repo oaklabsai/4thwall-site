@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=overlays-content">
 <title>Atlas — the whole office for home-service contractors | 4THWALL</title>
-<meta name="description" content="Every lead, job, teammate decision and follow-up in one private contractor workspace, with Atlas handling authorized work and showing what happened.">
+<meta name="description" content="A managed, SMS-first front desk and private contractor workspace for missed-call recovery, supported inbound texts, approved booking, handoffs, review requests and measured receipts.">
 <link rel="canonical" href="https://4thwall.solutions/atlas">
 <link rel="icon" href="/logo.png" type="image/png">
 <link rel="apple-touch-icon" href="/logo.png">
@@ -12,13 +12,13 @@
 <meta name="theme-color" content="#ECEDE2">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Atlas — You do the work. Atlas runs the office.">
-<meta property="og:description" content="The best contractor in town loses jobs to whoever picks up first, then finishes work nobody can verify. Atlas answers in your name and writes down what actually happened.">
+<meta property="og:description" content="Atlas responds to supported inbound texts and missed calls in your name, can book approved slots, and keeps the contractor handoff visible.">
 <meta property="og:image" content="https://4thwall.solutions/logo.png">
 <meta property="og:url" content="https://4thwall.solutions/atlas">
 <meta property="og:site_name" content="4THWALL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Atlas — the whole office for home-service contractors">
-<meta name="twitter:description" content="You do the work. Atlas runs the office — every lead answered in your name, every finished job on the record.">
+<meta name="twitter:description" content="You do the work. Atlas handles supported inbound texts and missed-call follow-up, then shows the contractor what happened.">
 <meta name="twitter:image" content="https://4thwall.solutions/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1933,16 +1933,16 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   /* ══ THE OFFICE — eight rooms ══ */
   var ROOMS={
-    lead:{t:'Lead Response',d:'Every call and text answered and qualified — around the clock, in English or Spanish.',
+    lead:{t:'Lead Response',d:'Missed callers and inbound texts get an immediate, qualified text response.',
       deep:'When you can’t pick up, Atlas follows up by text right away. The approved questions get asked — what happened, where, how urgent — and supported texts typically get a first reply in 15 seconds after go-live.',sim:true},
     storm:{t:'Storm Mode',d:'Storm volume, the same operating standard.',
-      deep:'When inbound calls and texts surge after a storm, Atlas works the conversations concurrently — instead of leaving a stack of voicemails for the end of the day. The busiest week of your year runs like a normal one.'},
+      deep:'When inbound texts and missed calls surge after a storm, Atlas works the text conversations concurrently — instead of leaving a stack of voicemails for the end of the day. The busiest week of your year stays organized.'},
     camp:{t:'Seasonal Campaigns',d:'Your market’s seasons, worked on schedule.',
-      deep:'Campaigns built around your market’s rhythm — storm response, renovation windows, inspection cycles. Written, scheduled, and sent without you touching a keyboard.'},
+      deep:'Campaigns built around your market’s rhythm — storm response, renovation windows, inspection cycles. Atlas prepares the message and audience for owner approval before anything is sent.'},
     book:{t:'Booking &amp; Scheduling',d:'Qualified estimates, on the calendar, context attached.',
       deep:'When a lead qualifies, Atlas can place the estimate directly on your calendar — with what happened, where, and how urgent already written up for you.'},
-    follow:{t:'Follow-up',d:'Quotes chased, quiet leads revived.',
-      deep:'The quote you sent Tuesday gets followed up on. The lead that went quiet in March gets a reason to come back. Nothing dies in a notebook.'},
+    follow:{t:'Follow-up',d:'Customer follow-ups assigned, visible, and escalated.',
+      deep:'When a customer needs a person, Atlas records the handoff, alerts the right owner, and escalates it if it sits unresolved. Automated quote chasing remains a pilot capability, not a production promise.'},
     reviews:{t:'Review Generation',d:'The ask, at the moment the job closes.',
       deep:'Reviews come from asking at the right moment. Atlas sends the request when the job closes, every time — the record compounds instead of evaporating.'},
     local:{t:'Being found',d:'The signals that make good work findable, kept current.',
@@ -2079,13 +2079,12 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
       ['me','perfect','11:52 AM'],
       ['sys','If the calendar ever rejects a slot, it says so here and asks you to confirm by hand']
     ]},
-    follow:{clock:'4:10',turns:[
-      ['sys','Quote sent Tuesday — no reply'],
-      ['them','Hi Dan — following up on the roof quote from Tuesday. Any questions on it?','day 3, sent for you'],
-      ['sys','No answer'],
-      ['them','No rush — is it the timing or the number? Either one we can work with.','day 7'],
-      ['me','Honestly the number. I’m getting one more quote.'],
-      ['them','Completely fair. I’ll tell the owner you’re comparing — he can walk you through what’s in ours so you’re comparing the same scope.']
+    follow:{slack:true,channel:'foh',turns:[
+      ['sys','A customer asked for the owner after Atlas captured the request'],
+      ['them','👤 *Human handoff — Dan R.*\nRoof replacement request · comparing scopes\nOwner requested by name\n_Assigned to Sam · waiting 22 minutes_','4:10 PM'],
+      ['them','Everything Dan already shared is attached. Atlas will not answer the pricing question for you.','4:10 PM'],
+      ['me','calling him now','4:12 PM'],
+      ['sys','Handoff resolved by Sam · 4:26 PM']
     ]},
     reviews:{clock:'5:32',turns:[
       ['sys','Job closed 20 minutes ago'],
@@ -2289,7 +2288,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     showScreen('<span class="fds-kicker">your plan</span><h3 class="fds-h">A managed service, not a software seat</h3>'+
       '<p class="fds-sub">The price follows the size of the office we run for you — set on a 20-minute fit call, in plain numbers. No setup fee, no contract, nothing metered.</p>'+
       '<div class="art-grid">'+
-        '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="12" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="12" width="7" height="7" rx="1.5"/><rect x="12" y="12" width="7" height="7" rx="1.5"/></svg></span><span class="art-l">What’s included</span><span class="art-v">Everything</span><p class="art-n">Every room of the office — answering, booking, follow-up, reviews, campaigns, discovery, the monthly receipt.</p></div>'+
+        '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="12" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="12" width="7" height="7" rx="1.5"/><rect x="12" y="12" width="7" height="7" rx="1.5"/></svg></span><span class="art-l">What’s included</span><span class="art-v">One managed lane</span><p class="art-n">Supported text response, qualification, approved booking, reminders, human handoffs, review requests, operator briefs and a measured receipt.</p></div>'+
         '<div class="art-tile"><span class="art-ic"><svg viewBox="0 0 22 22"><rect x="3" y="4" width="16" height="15" rx="2.5"/><path d="M3 9h16M7.5 2v4M14.5 2v4"/></svg></span><span class="art-l">The term</span><span class="art-v">Month to month</span><p class="art-n">No contract. Cancel anytime — the receipt has to keep earning its keep.</p></div>'+
         '<div class="art-tile hot"><span class="art-ic"><svg viewBox="0 0 22 22"><path d="M11 2.5l7 3v5c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9v-5z"/><path d="M8 11l2.2 2.2L14.5 9"/></svg></span><span class="art-l">The guarantee</span><span class="art-v">30 days</span><p class="art-n">If the first month’s receipt doesn’t justify the fee, fire us. Thirty days, no contract.</p></div>'+
       '</div>'+
@@ -2401,7 +2400,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
 
   /* ══ COMMON QUESTIONS — the FAQ (static; #06 cost answer reconciled to the fit-call posture) ══ */
   var FAQ=[
-    ['What’s actually included?','No picking required. Atlas includes missed-call text recovery, inbound text response, qualification, booking, reminders and follow-up, review requests, seasonal campaigns, local discovery foundations, real-time operator briefs, and the measured monthly receipt. What changes is how each part is configured to your trade, service area, schedule, and operating rules.'],
+    ['What’s actually included?','Atlas currently includes missed-call text recovery, supported inbound text response, qualification, approved booking slots, appointment reminders, recorded human handoffs, approved review requests, owner-approved campaign preparation, operator briefs, and a measured monthly receipt. What changes is how each part is configured to your trade, service area, schedule, and operating rules.'],
     ['Is this another software tool I have to learn?','No. We build it. We run it. We tune it. You text us when you want something changed. The only thing you’ll see is the dashboard — and that’s optional.'],
     ['Does Atlas answer phone calls?','Atlas is SMS-first today. It handles supported inbound texts and follows up by text when a call is missed; it does not pretend a live person answered the phone. Responses use rules and language approved with you, and sensitive or unusual situations hand off with context.'],
     ['What if a lead asks something Atlas can’t handle?','It hands off to you with full context — who they are, what they need, what’s been said. You walk into the conversation already informed.'],
@@ -2582,7 +2581,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     storm:['what happens when 9 calls hit at once?','how do you know a storm hit my area?','what does a storm week cost me?'],
     camp:['what campaigns would run for my trade?','do I write anything myself?','when do they go out?'],
     book:['how does it get on my calendar?','what if the time does not work for me?','does the customer get reminders?'],
-    follow:['how long do you chase a quote?','what do you say on day seven?','can it revive old leads?'],
+    follow:['what creates a human handoff?','who gets alerted?','what if nobody responds?'],
     reviews:['when does the review ask go out?','what if the job went badly?','where do the reviews land?'],
     local:['what listings do you keep current?','how do homeowners actually find me?','what is a local signal?'],
     briefs:['what lands in my Monday brief?','how do I know if a lead went quiet?','what gets flagged to me?'],
@@ -2595,7 +2594,7 @@ footer{background:var(--ink);color:var(--cream);padding:3.5rem 0 1.6rem;position
     faq:['is this another tool to learn?','how fast does it go live?','how do I stop?'],
     contact:['how do I reach the founder?','can I just text you?'],
     sim:['is this a real conversation?','can I try it on my own phone?'],
-    office:['what rooms are included?','who chases my quotes?','what happens in a storm week?']
+    office:['what rooms are included?','how do follow-ups work?','what happens in a storm week?']
   };
   var phEl=$('fdPh'),phIdx=0,phList=PH;
   function phRoom(k){phList=(k&&PH_ROOM[k])||PH;phIdx=0;if(phEl&&!say.value&&document.activeElement!==say)phShow(phList[0])}

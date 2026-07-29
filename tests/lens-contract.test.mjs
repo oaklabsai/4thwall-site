@@ -56,16 +56,14 @@ test('contractor review states fail out of the preview by default', async () => 
   assert.match(workspace, /Question source record/);
 });
 
-test('workspace and auth routes are non-indexable while Lens is public', async () => {
+test('legacy Lens/workspace doors retire into Atlas while internal surfaces stay non-indexable', async () => {
   const config = JSON.parse(await text('vercel.json'));
-  const rewrites = new Map(config.rewrites.map((row) => [row.source, row.destination]));
-  assert.equal(rewrites.get('/lens'), '/lens.html');
-  assert.equal(rewrites.get('/workspace'), '/workspace.html');
-  assert.equal(rewrites.get('/workspace/signin'), '/workspace-signin.html');
-  assert.equal(rewrites.get('/auth/workspace'), '/workspace-auth-callback.html');
+  const redirects = new Map(config.redirects.map((row) => [row.source, row.destination]));
+  assert.equal(redirects.get('/lens'), '/atlas');
+  assert.equal(redirects.get('/workspace'), '/atlas');
+  assert.equal(redirects.get('/workspace/(.*)'), '/atlas');
   const workspaceHeader = config.headers.find((row) => row.source === '/workspace(.*)');
   assert.match(JSON.stringify(workspaceHeader), /noindex/);
-  assert.doesNotMatch(await text('lens.html'), /name="robots" content="noindex/);
 });
 
 test('provider availability copy does not overclaim portability', async () => {

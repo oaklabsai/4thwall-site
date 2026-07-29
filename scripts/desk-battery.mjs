@@ -31,36 +31,35 @@ const withoutCode = html
   .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
   .replace(/<!--[\s\S]*?-->/g, '');
 
-check('document title names Atlas Workspace', /<title>4THWALL — Atlas Workspace/.test(html));
+check('document title names Atlas as the contractor product', /<title>4THWALL — Atlas,/.test(html));
 check(
-  'description states the accountable front office',
-  /Atlas Workspace is the accountable front office/.test(html),
+  'description states the managed SMS-first front desk',
+  /Atlas is a managed, SMS-first front desk/.test(html),
 );
 check(
   'hero carries the adopted contractor promise',
-  /You do the work\.[\s\S]{0,80}Atlas keeps the job moving\./.test(withoutCode),
+  /You do the work\.[\s\S]{0,120}Atlas runs the office\./.test(withoutCode),
 );
 check(
-  'hero explains crew, Atlas and the work in one private place',
-  /every lead, job, teammate decision and follow-up in one private place/.test(withoutCode),
+  'hero states the currently operated response lane',
+  /responds to supported inbound texts and missed calls in your name/.test(withoutCode),
 );
 
 const audienceCards = [...withoutCode.matchAll(/class="fork-col\b/g)].length;
 check('exactly two audience cards', audienceCards === 2);
-check('Atlas is the contractor door', /For Contractors[\s\S]{0,500}Atlas Workspace/.test(withoutCode));
+check('Atlas is the contractor door', /For Contractors[\s\S]{0,500}<h2 class="pcard-title">Atlas/.test(withoutCode));
 check('Vesta is the homeowner door', /Vesta[\s\S]{0,500}For Homeowners/.test(withoutCode));
 check('Lens is not a navigation or product door', !/href="\/lens(?:["#?])/.test(withoutCode));
 check('structured data exposes only Atlas and Vesta brands', !/"name": "Lens"/.test(html));
 
-check('workspace demonstration exists', /class="aw-demo"/.test(withoutCode));
+check('workspace product capture exists', /class="fd-shot"/.test(withoutCode) && /atlas-workspace\.png/.test(withoutCode));
 check(
-  'demonstration is labeled in the component',
-  /Labeled example/.test(withoutCode)
-    && /Product demonstration · example company and records · no customer outcome claimed/.test(withoutCode),
+  'workspace capture names the actual governed rooms',
+  /Needs you/.test(withoutCode) && /Dispatcher wrote and has not sent/.test(withoutCode),
 );
-check('workspace demonstration shows exact ownership', /Alex assigned Sam/.test(withoutCode));
-check('workspace demonstration shows Atlas state', /Atlas succeeded/.test(withoutCode));
-check('workspace demonstration shows named decision authority', /Only Sam can answer/.test(withoutCode));
+check('homepage does not promise live voice answering', !/answers every call|answers the phone|live voice answering/i.test(withoutCode));
+check('homepage does not promise automated quote chasing', !/follows up on the quote|chases? (?:the )?quote/i.test(withoutCode));
+check('homepage campaign copy preserves owner approval', /Campaigns are prepared for your approval before anything is sent/.test(withoutCode));
 
 check('no Slack asset remains on the active homepage', !/atlas-slack\.png/i.test(html));
 check('no Slack explanation remains on the active homepage', !/What is Slack|private Slack|Slack channel/i.test(withoutCode));
@@ -71,8 +70,8 @@ check('mobile workspace proof has a responsive rule', /@media\(max-width:760px\)
 const atlasWithoutStylesAndComments = atlasHtml
   .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
   .replace(/<!--[\s\S]*?-->/g, '');
-check('contractor page is named Atlas Workspace', /<title>Atlas Workspace/.test(atlasHtml));
-check('contractor page renders a first-party Workspace room', /Room ·[\s\S]{0,200}Atlas Workspace/.test(atlasWithoutStylesAndComments));
+check('contractor page is named Atlas', /<title>Atlas —/.test(atlasHtml));
+check('contractor page renders a first-party Atlas room', /Room ·/.test(atlasHtml) && /<span class="slk-tag">Atlas/.test(atlasHtml));
 check(
   'contractor page labels simulated records without claiming customer outcomes',
   /Product demonstration · example company and records · no customer outcome claimed/.test(atlasWithoutStylesAndComments),

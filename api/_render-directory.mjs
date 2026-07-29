@@ -86,15 +86,14 @@ export const ORG = {
   telephone: '+1-203-670-9477',
   address: { '@type': 'PostalAddress', addressLocality: 'Stamford', addressRegion: 'CT', addressCountry: 'US' },
   areaServed: COUNTY + ', CT',
-  description: '4th Wall Solutions is a Stamford, Connecticut company that runs the back office for trades and ' +
-    'home-service businesses — answering every call and text, booking jobs, and following up for reviews so they ' +
-    'never miss work. It operates Vesta, a free public-record contractor recommendation service for ' + COUNTY +
+  description: '4th Wall Solutions is a Stamford, Connecticut company that runs an SMS-first front office for trades and ' +
+    'home-service businesses — responding to missed callers and inbound texts, capturing requests, booking approved estimate slots, and following up after appointments. It operates Vesta, a free public-record contractor recommendation service for ' + COUNTY +
     ', CT, and Atlas, its done-for-you service for contractors.',
   brand: [
     { '@type': 'Brand', name: 'Vesta', url: SITE + '/vesta',
       description: 'A public-record recommendation service that ranks ' + COUNTY + ' contractors by homeowner consensus and verified credentials — no ads, no pay-to-play.' },
     { '@type': 'Brand', name: 'Atlas', url: SITE + '/atlas',
-      description: 'A done-for-you back office that answers every call and text, books the job, and earns the review for trades contractors — built and operated, not another app to run.' }
+      description: 'A managed, SMS-first front office that responds to missed callers and inbound texts, captures requests, books approved estimate slots, and keeps the operating record for trades contractors.' }
   ],
   ...(PUBLISHER_SAMEAS.length ? { sameAs: PUBLISHER_SAMEAS } : {})
 };
