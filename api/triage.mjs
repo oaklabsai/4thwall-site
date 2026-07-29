@@ -409,6 +409,8 @@ const PRICE_UNIT_OK = /\d[\d,]*\s?-?\s?(sq|square|feet|foot|ft|amp|volt|watt|gal
 // hoisted from resolveClamp (2026-07-20) so the say governor can extend the DIY strip to
 // unresolved turns — see resolveClamp's original comment block for the rule's history.
 const DIY_PROC = /\b(lift|remov|unscrew|loosen|tighten|jiggl|wiggl|reset|adjust|replac|reattach|reconnect|check|inspect)\w*\b[^.!?]*\b(lid|flapper|chain|float|fill[- ]?valve|shut[- ]?off valve|breaker|fuse|handle|washer|cartridge|o-?ring|gasket|tank lid|p-?trap|thermostat)\b/i;
+const PRICE_QUESTION = /\b(how much|price|pricing|cost|quote|estimate|ballpark|budget|expensive|cheap)\b/i;
+const REFUSAL_FIRST = /^I\s+(?:can(?:not|'t|’t)|do(?: not|n't|n’t))\s+(?:give|provide|quote|estimate|know|have)[\s\S]{0,180}?(?:[.!?](?:\s+|$)|[—–:]\s*)/i;
 export function sayGuard(say, messages, deck){
   const userDigits = new Set();
   for (const m of messages) if (m.role === 'user')
@@ -435,7 +437,19 @@ export function sayGuard(say, messages, deck){
     && !DISPATCH.test(s) && !DISPATCH2.test(s)
     && !VETTING.test(s) && !PERSONHOOD.test(s)
     && !DIY_PROC.test(s));
-  const out = parts.join(' ').trim();
+  let out = parts.join(' ').trim();
+  // Models still occasionally obey the no-number rule by opening with a wall:
+  // "I can't give specific pricing — it varies by..." The homeowner asked for
+  // help judging a price, not a recitation of our limitation. On an explicit
+  // price turn, deterministically remove only that opening clause and lead
+  // with the useful remainder. If the model supplied no teaching at all, use
+  // a narrow source-free comparison rule rather than shipping the refusal.
+  const lastUser = [...messages].reverse().find((message) => message.role === 'user');
+  if (out && PRICE_QUESTION.test(String(lastUser?.content || '')) && REFUSAL_FIRST.test(out)) {
+    out = out.replace(REFUSAL_FIRST, '').trim();
+    if (out) out = out[0].toUpperCase() + out.slice(1);
+    else out = 'The useful comparison is the itemized scope: make sure each bid covers the same work, materials and exclusions before comparing the totals.';
+  }
   if (out) return out;
   return deck
     ? `Got it — I'll line up vetted ${deck.tradeLabel.toLowerCase()} pros for ${deck.label} now.`

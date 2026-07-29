@@ -21,6 +21,18 @@ t('strips insurance-verify', !/verif/.test(sayGuard('We verify their insurance a
 t('strips personhood', !/real person/.test(sayGuard("You're talking to a real person here. Tell me about the leak.", M, null)));
 t('strips DIY on unresolved turn', !/flapper/.test(sayGuard('First lift the tank lid and check the flapper for wear. If that fails, a plumber can sort it quickly.', M, null)));
 t('floor line when everything strips', sayGuard('Expect to pay $12,000.', M, null).length > 40);
+t(
+  'price question strips refusal-first opener and keeps the teach',
+  sayGuard(
+    "I can't give specific pricing—it varies by roof size, materials, and local labor—but compare the itemized scope line by line.",
+    [U('How much should a roof cost?')],
+    null,
+  ).startsWith('It varies by roof size'),
+);
+t(
+  'price question with only a refusal gets the comparison floor',
+  /itemized scope/.test(sayGuard("I can't provide a ballpark without seeing it.", [U('Can you give me a ballpark?')], null)),
+);
 
 // ── sayGuard keeps legitimate Vesta language ──
 const k1 = 'Where the stain sits is what separates a roof leak from a plumbing leak.';
