@@ -530,7 +530,7 @@ export function multiTradePlan(text){
 // Product-identity questions carry the trust contract, so the answer cannot vary by model.
 // Pay-to-play truth wins even when the speaker also sounds like a contractor; ordinary
 // contractor sign-up questions receive the clean Atlas handoff.
-export function vestaIdentityRoute(text, contractorSignal = false){
+export function vestaIdentityRoute(text, contractorSignal = false, postMatch = false){
   const t = String(text || '');
   const promptInjection =
        /\b(ignore|disregard|forget|override)\b[^.?!]{0,35}\b(previous|prior|above|system|instructions?|rules?|prompt)\b/i.test(t)
@@ -538,6 +538,14 @@ export function vestaIdentityRoute(text, contractorSignal = false){
   if (promptInjection) return {
     mode:'learn',
     say:'I cannot expose private instructions or change the evidence rules. I can still help with the public product: describe the home project, ask how Vesta evaluates a contractor, or ask what evidence a recommendation uses.',
+  };
+  const namedFirm =
+       /\bwhat do you think (?:about|of)\b[^?]{2,70}/i.test(t)
+    || /\btell me about\b[^?]{2,70}\b(?:roofing|plumbing|electric|hvac|heating|cooling|painting|masonry|paving|landscap|tree|flooring|windows?|doors?|contractor|company|firm)\b/i.test(t)
+    || /\bis\b[^?]{2,55}\b(?:good|reputable|legit|trustworthy)\b/i.test(t);
+  if (namedFirm) return {
+    mode:'learn',
+    say:'I will not invent an opinion about a named firm. If it has a Vesta profile, judge it from the source-linked public record and review patterns shown there; if I do not have that profile in this conversation, I cannot assess it. Confirm insurance and current job readiness directly with the contractor.',
   };
   const payToPlay =
        /\b(pay|paying|paid|payment|money)\b[^.?!]{0,60}\b(recommend|recommendation|rank|placement|listed|feature|pick|show up)\b/i.test(t)
@@ -569,6 +577,16 @@ export function vestaIdentityRoute(text, contractorSignal = false){
     mode:'learn',
     say:'Vesta narrows by the job, then reads public registration or license records where applicable, time in the public record, and patterns in homeowner reviews. It does not publish a magic score or let payment move a contractor up. Each recommendation shows the evidence and why it fits.',
   };
+  const priceQuestion = !postMatch && /\b(how much|fair price|what should .* cost|cost to|price for|pricing|compare .* quotes?|is .* quote)\b/i.test(t);
+  if (priceQuestion){
+    const roof = /\broof|shingle/i.test(t);
+    return {
+      mode:'learn',
+      say: roof
+        ? 'A defensible roof comparison starts with size, pitch, tear-off layers, deck repair, material, flashing and warranty. Ask for itemized quotes against the same scope and exclusions before comparing totals; a low bid with missing work is not the cheaper roof.'
+        : 'A defensible comparison starts with the exact scope, material, access, removal work, permits and warranty. Ask for itemized quotes against the same scope and exclusions before comparing totals; a low bid with missing work is not the cheaper job.',
+    };
+  }
   const contractorEntry = /\b(get|getting|be|being)\s+(?:my|our|the|a)?\s*(?:business|company|firm|contractor|pro)?\s*(?:listed|on vesta)\b/i.test(t)
     || /\b(sign|signing)\s+(?:my|our|the|a)?\s*(?:business|company|firm|contractor|pro)?\s*up\b/i.test(t)
     || /\b(join|joining)\s+(?:vesta|the network|as a (?:contractor|pro))\b/i.test(t);
@@ -786,7 +804,7 @@ export default async function handler(req, res){
     || /\bmy\s+(business|company|crew|firm)\b[^.?!]{0,26}\b(listed|sign(ed)? up|get on|join)\b/i.test(atlasText);
   const isAtlas = (parsed.mode === 'atlas' || atlasSignal) && parsed.mode !== 'emergency';
   if (isAtlas){ parsed.mode = 'atlas'; parsed.resolved = null; deck = null; parsed.ask = null; parsed.chips = null; }
-  const identityRoute = parsed.mode !== 'emergency' ? vestaIdentityRoute(atlasText, isAtlas) : null;
+  const identityRoute = parsed.mode !== 'emergency' ? vestaIdentityRoute(atlasText, isAtlas, followUp || focusMode) : null;
   if (identityRoute){
     parsed.mode = identityRoute.mode;
     parsed.say = identityRoute.say;

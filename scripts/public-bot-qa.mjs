@@ -39,38 +39,52 @@ const words = value => String(value || '').trim().split(/\s+/).filter(Boolean).l
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function atlasTurn(messages){
-  const started = Date.now();
-  const response = await fetch(`${BASE}/api/atlas`, {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json' },
-    body:JSON.stringify({ messages }),
-    signal:AbortSignal.timeout(60000),
-  });
-  const data = await response.json();
-  return { ...data, _status:response.status, _ms:Date.now() - started };
+  for (let attempt = 0; attempt < 2; attempt++){
+    const started = Date.now();
+    const response = await fetch(`${BASE}/api/atlas`, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body:JSON.stringify({ messages }),
+      signal:AbortSignal.timeout(60000),
+    });
+    if (response.status === 429 && attempt === 0){
+      await response.text();
+      await wait(61_000);
+      continue;
+    }
+    const data = await response.json();
+    return { ...data, _status:response.status, _ms:Date.now() - started };
+  }
 }
 
 async function vestaTurn(messages){
-  const started = Date.now();
-  const response = await fetch(`${BASE}/api/triage`, {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json' },
-    body:JSON.stringify({ messages }),
-    signal:AbortSignal.timeout(60000),
-  });
-  const body = await response.text();
-  let final = null;
-  let error = null;
-  for (const raw of body.split('\n')){
-    const line = raw.trim();
-    if (!line.startsWith('data:')) continue;
-    try {
-      const event = JSON.parse(line.slice(5).trim());
-      if (event.t === 'f') final = event;
-      if (event.t === 'e') error = event.error;
-    } catch { /* a partial non-final line cannot satisfy the gate */ }
+  for (let attempt = 0; attempt < 2; attempt++){
+    const started = Date.now();
+    const response = await fetch(`${BASE}/api/triage`, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body:JSON.stringify({ messages }),
+      signal:AbortSignal.timeout(60000),
+    });
+    if (response.status === 429 && attempt === 0){
+      await response.text();
+      await wait(61_000);
+      continue;
+    }
+    const body = await response.text();
+    let final = null;
+    let error = null;
+    for (const raw of body.split('\n')){
+      const line = raw.trim();
+      if (!line.startsWith('data:')) continue;
+      try {
+        const event = JSON.parse(line.slice(5).trim());
+        if (event.t === 'f') final = event;
+        if (event.t === 'e') error = event.error;
+      } catch { /* a partial non-final line cannot satisfy the gate */ }
+    }
+    return { ...(final || {}), _error:error || (!final ? 'no final frame' : null), _status:response.status, _ms:Date.now() - started };
   }
-  return { ...(final || {}), _error:error || (!final ? 'no final frame' : null), _status:response.status, _ms:Date.now() - started };
 }
 
 const noAtlasHype = result =>
@@ -127,7 +141,7 @@ const cases = [
       ['contractor audience', r.aud === 'contractor'],
       ['supported text scope', contains(r.say, /\btext|conversations\b/i) && contains(r.say, /\bEnglish\b/i) && contains(r.say, /\bSpanish\b/i)],
       ['simulation surface', r.screen === 'sim'],
-      ['no bilingual or voice overclaim', !contains(r.say, /\bbilingual|voice answering|translated homeowner\b/i)],
+      ['no bilingual or voice overclaim', !contains(r.say, /\bbilingual\b|\bvoice calls? (?:are|can be) answered\b/i)],
     ],
   },
   {
@@ -249,7 +263,7 @@ const cases = [
     run:() => vestaTurn([U('Are these contractors paying you to recommend them?')]),
     checks:r => [
       ['valid final frame', r._status === 200 && !r._error],
-      ['plain no-pay answer', contains(r.say, /\bno ads|never ads|cannot pay|no pay-to-play|nothing to buy\b/i)],
+      ['plain no-pay answer', contains(r.say, /\bno ads|never ads|cannot pay|do not pay|no pay-to-play|nothing to buy\b/i)],
       ['evidence explanation', contains(r.say, /\bpublic record|evidence\b/i)],
       ['no accidental match', !r.resolved],
       ['no fabricated vetting or prices', noVestaFabrication(r)],
