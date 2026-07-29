@@ -959,6 +959,49 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .vname.vname--active::before { content:''; position:absolute; left:-12px; top:50%; transform:translateY(-50%); width:4px; height:.62em; border-radius:3px; background:var(--olive); }
 @keyframes vnameFlash { 0%,100% { color:var(--ebony); } 30%,60% { color:var(--olive); opacity:1; } }
 .vname.flash { animation:vnameFlash 1.4s ease; }
+/* ── RICH PRO CARD (desktop feed) ──────────────────────────────────────────
+   The names-only feed put the whole read behind a hover, which gives a visitor
+   nothing at a glance and nothing at all on touch. This is the decision card:
+   photo, identity, standing, the LEDE of the read, what they're best for, and
+   the record — enough to choose from. The full read stays in the panel and the
+   profile, so the card is an entry point, not a duplicate. */
+.vfeed.vfeed--rich { gap:18px; padding:8px 0 44px; }
+.vfeed--rich .vname { display:grid; grid-template-columns:172px minmax(0,1fr); gap:0;
+  font-family:var(--sans); font-size:inherit; letter-spacing:normal; line-height:normal;
+  color:var(--ebony); opacity:1; padding:0; transform:none; overflow:hidden;
+  background:var(--nm); border:var(--nm-edge); border-radius:var(--r-tile); box-shadow:var(--nm-sm);
+  transition:box-shadow .24s ease, transform .3s var(--spring); }
+.vfeed--rich .vname:hover, .vfeed--rich .vname:focus-visible { transform:translateY(-2px); box-shadow:var(--nm-out); opacity:1; }
+.vfeed.vfeed--rich.vfeed--hot .vname:not(:hover) { opacity:1; }   /* no sibling-dimming on cards */
+.vfeed--rich .vname.vname--active { box-shadow:var(--nm-out); border-color:rgba(74,75,47,.3); }
+.vfeed--rich .vname.vname--active::before { display:none; }
+.vpro-media { position:relative; background:rgba(74,75,47,.07); min-height:100%; overflow:hidden; }
+.vpro-media img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .4s ease; }
+.vpro-media.on img { opacity:1; }
+.vpro-mono { position:absolute; inset:0; display:grid; place-items:center; font-family:var(--serif);
+  font-size:34px; font-weight:500; color:rgba(74,75,47,.34); letter-spacing:.02em; }
+.vpro-media.on .vpro-mono { display:none; }
+.vpro-standing { position:absolute; left:10px; bottom:10px; z-index:2; display:inline-flex; align-items:center; gap:5px;
+  padding:5px 9px; border-radius:999px; background:rgba(18,16,14,.66); color:#F6F5EE;
+  font-family:var(--mono); font-size:9px; letter-spacing:.09em; text-transform:uppercase;
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+.vpro-body { padding:16px 18px 15px; display:flex; flex-direction:column; gap:7px; min-width:0; text-align:left; }
+.vpro-name { font-family:var(--serif); font-weight:500; font-size:21px; line-height:1.12; letter-spacing:-.018em; color:var(--olive); }
+.vpro-town { font-family:var(--sans); font-size:10.5px; font-weight:600; letter-spacing:.055em;
+  text-transform:uppercase; color:var(--ebony); opacity:.66; }
+.vpro-read { font-family:var(--sans); font-size:13px; line-height:1.55; color:var(--ebony); margin:2px 0 0;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
+.vpro-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:1px; }
+.vpro-tags span { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:999px;
+  background:var(--tea-2,#E1E9B7); color:var(--olive); font-family:var(--sans); font-size:11px; font-weight:600; }
+.vpro-tags svg { width:11px; height:11px; }
+.vpro-rec { display:flex; flex-wrap:wrap; gap:14px; margin-top:auto; padding-top:9px; border-top:1px solid rgba(74,75,47,.1); }
+.vpro-rec span { display:flex; flex-direction:column; line-height:1.15; }
+.vpro-rec b { font-family:var(--sans); font-size:12.5px; font-weight:700; color:var(--olive); }
+.vpro-rec small { font-family:var(--mono); font-size:8.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ebony); opacity:.6; }
+@media(max-width:1180px){ .vfeed--rich .vname { grid-template-columns:132px minmax(0,1fr); } .vpro-name { font-size:19px; } }
+@media(prefers-reduced-motion:reduce){ .vfeed--rich .vname { transition:none } }
+
 /* the floating profile card that rides the cursor */
 .vname-card { position:absolute; top:0; left:0; z-index:40; width:272px; pointer-events:none;
   background:var(--nm); border:var(--nm-edge); border-radius:var(--r-tile); box-shadow:var(--nm-out); overflow:hidden;
@@ -4652,7 +4695,43 @@ function feedMoreHTML(con){
 // the read, best-for) lives in the hover card and the click-panel, so the list stays a clean
 // typographic index of the field.
 function nameRowHTML(con, i){
-  return '<button class="vname" type="button" data-place="'+esc(con.placeId)+'" style="--d:'+(Math.min(i||0,14)*24)+'ms">'+esc(con.name)+'</button>';
+  // The decision card. Everything here is substantiated: the photo is the firm's
+  // own Places cover, the standing is a percentile band over Vesta's rank score
+  // (never a fabricated trust score), the review figure is a public COUNT and
+  // never the prohibited raw star rating. The lede is the opening of the read —
+  // the full read lives in the panel and the profile, so this is an entry point,
+  // not a second copy of the profile.
+  const glance = splitRead(con.read || '');
+  const lede = glance.lede || readClip(con.read || '');
+  const tags = ((con.bestFor && con.bestFor.length) ? con.bestFor : (con.knownFor || [])).slice(0, 2);
+  const standing = con.ratingBand === 'top10' ? 'Top 10% county'
+                 : con.ratingBand === 'top25' ? 'Top 25% county' : '';
+  const cover = con.placeId ? HOME.apiUrl('/cover?placeId=' + encodeURIComponent(con.placeId) + '&w=420') : '';
+
+  const rec = [];
+  if (con.totalReviews) rec.push('<span><b>' + Number(con.totalReviews).toLocaleString('en-US') + '</b><small>Public reviews</small></span>');
+  if (con.sinceYear)    rec.push('<span><b>Since ' + esc(con.sinceYear) + '</b><small>State record</small></span>');
+  if (con.registered)   rec.push('<span><b>Active</b><small>CT registration</small></span>');
+  else if (con.certs && con.certs.length) rec.push('<span><b>Verified</b><small>' + esc(con.certs[0]) + '</small></span>');
+
+  return '<button class="vname" type="button" data-place="' + esc(con.placeId) + '" ' +
+      'style="--d:' + (Math.min(i || 0, 14) * 24) + 'ms" ' +
+      'aria-label="' + esc(con.name) + ', ' + esc(con.town) + '. Open the full read.">' +
+    '<span class="vpro-media">' +
+      '<span class="vpro-mono" aria-hidden="true">' + esc(monogram(con.name)) + '</span>' +
+      (cover ? '<img alt="" decoding="async" loading="lazy" src="' + esc(cover) + '" ' +
+        'onload="this.parentElement.classList.add(\'on\')" onerror="this.remove()">' : '') +
+      (standing ? '<span class="vpro-standing">' + esc(standing) + '</span>' : '') +
+    '</span>' +
+    '<span class="vpro-body">' +
+      '<span class="vpro-name" style="view-transition-name:' + vtName(con.placeId) + '">' + esc(con.name) + '</span>' +
+      '<span class="vpro-town">' + esc(con.town) + ' · ' + esc(tradeLabelOf(con.trade)) + '</span>' +
+      (lede ? '<p class="vpro-read">' + esc(lede) + '</p>' : '') +
+      (tags.length ? '<span class="vpro-tags">' + tags.map(v =>
+        '<span>' + CHECK + esc(trecHumanize(v)) + '</span>').join('') + '</span>' : '') +
+      (rec.length ? '<span class="vpro-rec">' + rec.slice(0, 3).join('') + '</span>' : '') +
+    '</span>' +
+  '</button>';
 }
 // The floating profile that rides the cursor on hover — the essence of the profile:
 // a work photo, the name/town/trade, Vesta's read (lede), and the two best-for tags.
@@ -4685,7 +4764,9 @@ function feedListHTML(list){
       inner += nameRowHTML(con, i++);
     });
   }
-  return '<div class="vfeed" id="vfeed">'+inner+'<div class="vname-card" id="vname-card" aria-hidden="true"></div></div>';
+  // vfeed--rich: the rows carry the photo/read/record themselves, so the
+  // cursor-riding hover card is redundant here (and never existed on touch).
+  return '<div class="vfeed vfeed--rich" id="vfeed">'+inner+'</div>';
 }
 // Click a name → the full analysis fills the desktop panel (reuses renderPanel — same read the
 // deck shows). Hover fills the cursor-card; leave restores the field rail is NOT auto — a click
@@ -4698,7 +4779,10 @@ function selectName(con, btn){
 }
 function wireNamesFeed(list){
   const vf = $('vfeed'); if (!vf) return;
-  const card = $('vname-card'); if (!card) return;
+  // The cursor-riding card is OPTIONAL now — the rich feed carries the read on
+  // the card itself and drops #vname-card. Clicks are wired unconditionally
+  // below; an early return here used to take the click handler with it.
+  const card = $('vname-card');
   const byId = {}; list.forEach(c => byId[c.placeId] = c);
   let raf = 0, mx = 0, my = 0;
   function place(){
@@ -4711,19 +4795,32 @@ function wireNamesFeed(list){
     const top = Math.min(Math.max(my, ch/2 + 8), Math.max(ch/2 + 8, r.height - ch/2 - 8));
     card.style.left = left+'px'; card.style.top = top+'px';
   }
-  vf.addEventListener('mousemove', e => {
-    const r = vf.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
-    if (!raf) raf = requestAnimationFrame(place);
+  if (card){
+    vf.addEventListener('mousemove', e => {
+      const r = vf.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
+      if (!raf) raf = requestAnimationFrame(place);
+    });
+    vf.addEventListener('mouseleave', () => { vf.classList.remove('vfeed--hot'); card.classList.remove('vname-card--on'); });
+  }
+  // Cover photos: an inline onload misses any image that finished loading before
+  // the handler was attached (cache/fast net) — 31 of 40 stayed at opacity 0 on
+  // the first run. Sweep once for anything already decoded, and belt-and-brace
+  // the rest with a listener.
+  vf.querySelectorAll('.vpro-media img').forEach(img => {
+    const reveal = () => { if (img.naturalWidth) img.parentElement.classList.add('on'); };
+    if (img.complete) reveal(); else img.addEventListener('load', reveal, {once:true});
   });
-  vf.addEventListener('mouseleave', () => { vf.classList.remove('vfeed--hot'); card.classList.remove('vname-card--on'); });
+
   vf.querySelectorAll('.vname').forEach(btn => {
     const con = byId[btn.dataset.place]; if (!con) return;
-    btn.addEventListener('mouseenter', () => {
-      vf.classList.add('vfeed--hot');
-      card.innerHTML = nameCardInner(con);
-      card.classList.add('vname-card--on');
-      place();
-    });
+    if (card){
+      btn.addEventListener('mouseenter', () => {
+        vf.classList.add('vfeed--hot');
+        card.innerHTML = nameCardInner(con);
+        card.classList.add('vname-card--on');
+        place();
+      });
+    }
     btn.addEventListener('click', () => selectName(con, btn));
   });
 }
