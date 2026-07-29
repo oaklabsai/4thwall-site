@@ -708,6 +708,49 @@ export default async function handler(req, res){
   // signal as follow-up — grounds Vesta on real firm facts, so GLM (the honesty-obeying
   // conversationalist) should lead here too, and the forced resolver stays out of it.
   const focusMode = !followUp && messages.some(m => m.role === 'assistant' && m.content.indexOf('"focus"') !== -1);
+  // Trust-critical public questions and explicit multi-trade projects do not need a model
+  // generation before the server can answer them. Running these routes here keeps known
+  // truths fast and available during model congestion; the live bank still authorizes any
+  // multi-trade resolve. The model remains the flexible path for ordinary diagnosis/intake.
+  const preLastUser = [...messages].reverse().find(m => m.role === 'user');
+  const preText = String(preLastUser && preLastUser.content || '');
+  const PRE_TRADE_ID = 'contractor|plumber|electrician|roofer|painter|landscaper|hvac|mason|carpenter|handyman|builder|paver';
+  const preAtlasSignal =
+       /\b(i|we)\s+(own|run|operate|started)\b[^.?!]{0,26}\b(business|company|shop|crew|firm|contracting)\b/i.test(preText)
+    || new RegExp(`\\bi'?m\\s+(a|an)\\s+(${PRE_TRADE_ID})\\b`, 'i').test(preText)
+    || new RegExp(`\\b(get|getting|sign|signing)\\s+(my|our)\\s+(business|company|${PRE_TRADE_ID})\\b[^.?!]{0,26}\\b(listed|signed up|up|on)\\b`, 'i').test(preText)
+    || /\bmy\s+(business|company|crew|firm)\b[^.?!]{0,26}\b(listed|sign(ed)? up|get on|join)\b/i.test(preText);
+  const preEmergency =
+       /\b(smell (?:of )?gas|gas smell|fire|sparking|burning outlet|active flood|flooding right now|water (?:is )?(?:pouring|gushing))\b/i.test(preText);
+  const sendStatic = (route, deck = null, resolved = null) => {
+    const budget = PRICE_QUESTION.test(preText) ? 110 : followUp ? 90 : 65;
+    const say = boundSay(sayGuard(route.say, messages, deck), budget);
+    send({ t:'d', c:say });
+    send({ t:'f', say, ask:null, chips:null, mode:route.mode, resolved, deck, call:null });
+    return res.end();
+  };
+  if (!preEmergency){
+    const preIdentity = vestaIdentityRoute(preText, preAtlasSignal, followUp || focusMode);
+    if (preIdentity) return sendStatic(preIdentity);
+    const preFollowup = vestaFollowupRoute(preText, followUp, focusMode);
+    if (preFollowup) return sendStatic(preFollowup);
+    const preMulti = !followUp && !focusMode && !preAtlasSignal ? multiTradePlan(preText) : null;
+    if (preMulti){
+      let first = null;
+      for (const phase of preMulti.phases){
+        for (const job of phase.jobs){
+          const candidate = bankValidate(bank, phase.trade, job);
+          if (candidate){ first = candidate; break; }
+        }
+        if (first) break;
+      }
+      if (first) return sendStatic(
+        { mode:'plan', say:preMulti.say },
+        first,
+        { trade:first.trade, job:first.job, urgency:'routine' },
+      );
+    }
+  }
   // Turn-1 fast-path resolver launches CONCURRENTLY with the talker — by the time the
   // talker's stream finishes, this answer is already waiting (zero added latency). Only
   // consulted if the talker leaves a first-turn fix/plan message unresolved.

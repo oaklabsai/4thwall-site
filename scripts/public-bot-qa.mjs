@@ -39,51 +39,61 @@ const words = value => String(value || '').trim().split(/\s+/).filter(Boolean).l
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function atlasTurn(messages){
-  for (let attempt = 0; attempt < 2; attempt++){
-    const started = Date.now();
-    const response = await fetch(`${BASE}/api/atlas`, {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body:JSON.stringify({ messages }),
-      signal:AbortSignal.timeout(60000),
-    });
-    if (response.status === 429 && attempt === 0){
-      await response.text();
-      await wait(61_000);
-      continue;
+  for (let attempt = 0; attempt < 3; attempt++){
+    try {
+      const started = Date.now();
+      const response = await fetch(`${BASE}/api/atlas`, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body:JSON.stringify({ messages }),
+        signal:AbortSignal.timeout(60000),
+      });
+      if (response.status === 429 && attempt < 2){
+        await response.text();
+        await wait(61_000);
+        continue;
+      }
+      const data = await response.json();
+      return { ...data, _status:response.status, _ms:Date.now() - started };
+    } catch (error){
+      if (attempt === 2) throw error;
+      await wait(1_500);
     }
-    const data = await response.json();
-    return { ...data, _status:response.status, _ms:Date.now() - started };
   }
 }
 
 async function vestaTurn(messages){
-  for (let attempt = 0; attempt < 2; attempt++){
-    const started = Date.now();
-    const response = await fetch(`${BASE}/api/triage`, {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body:JSON.stringify({ messages }),
-      signal:AbortSignal.timeout(60000),
-    });
-    if (response.status === 429 && attempt === 0){
-      await response.text();
-      await wait(61_000);
-      continue;
+  for (let attempt = 0; attempt < 3; attempt++){
+    try {
+      const started = Date.now();
+      const response = await fetch(`${BASE}/api/triage`, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body:JSON.stringify({ messages }),
+        signal:AbortSignal.timeout(60000),
+      });
+      if (response.status === 429 && attempt < 2){
+        await response.text();
+        await wait(61_000);
+        continue;
+      }
+      const body = await response.text();
+      let final = null;
+      let error = null;
+      for (const raw of body.split('\n')){
+        const line = raw.trim();
+        if (!line.startsWith('data:')) continue;
+        try {
+          const event = JSON.parse(line.slice(5).trim());
+          if (event.t === 'f') final = event;
+          if (event.t === 'e') error = event.error;
+        } catch { /* a partial non-final line cannot satisfy the gate */ }
+      }
+      return { ...(final || {}), _error:error || (!final ? 'no final frame' : null), _status:response.status, _ms:Date.now() - started };
+    } catch (error){
+      if (attempt === 2) throw error;
+      await wait(1_500);
     }
-    const body = await response.text();
-    let final = null;
-    let error = null;
-    for (const raw of body.split('\n')){
-      const line = raw.trim();
-      if (!line.startsWith('data:')) continue;
-      try {
-        const event = JSON.parse(line.slice(5).trim());
-        if (event.t === 'f') final = event;
-        if (event.t === 'e') error = event.error;
-      } catch { /* a partial non-final line cannot satisfy the gate */ }
-    }
-    return { ...(final || {}), _error:error || (!final ? 'no final frame' : null), _status:response.status, _ms:Date.now() - started };
   }
 }
 
