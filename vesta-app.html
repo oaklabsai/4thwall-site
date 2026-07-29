@@ -999,6 +999,11 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .vpro-rec span { display:flex; flex-direction:column; line-height:1.15; }
 .vpro-rec b { font-family:var(--sans); font-size:12.5px; font-weight:700; color:var(--olive); }
 .vpro-rec small { font-family:var(--mono); font-size:8.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ebony); opacity:.6; }
+.vpro-full { align-self:flex-start; margin-top:9px; display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--sans); font-size:12px; font-weight:650; color:var(--olive); cursor:pointer;
+  padding:6px 12px; border-radius:999px; background:rgba(74,75,47,.06); transition:background .18s ease, gap .2s var(--spring); }
+.vpro-full:hover, .vpro-full:focus-visible { background:rgba(74,75,47,.12); gap:9px; outline:none; }
+.vpro-full b { font-weight:600; }
 @media(max-width:1180px){ .vfeed--rich .vname { grid-template-columns:132px minmax(0,1fr); } .vpro-name { font-size:19px; } }
 @media(prefers-reduced-motion:reduce){ .vfeed--rich .vname { transition:none } }
 
@@ -1290,7 +1295,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .va-sec { margin-top:22px; }
 .va-lbl { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ebony); margin-bottom:9px; }
 .va-dot { width:6px; height:6px; border-radius:50%; background:var(--tea); }
-.va-read { font-size:14.5px; line-height:1.6; color:var(--olive); }
+/* clamped so the panel fits at a glance — the whole synthesis is on the profile */
+.va-read { font-size:14.5px; line-height:1.6; color:var(--olive);
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:8; overflow:hidden; }
 .va-themes { display:flex; flex-wrap:wrap; gap:7px; }
 .va-theme { font-size:12.5px; color:var(--olive); border:1.5px solid rgba(74,75,47,.16); background:rgba(74,75,47,.03); border-radius:var(--r-pill); padding:6px 14px; }
 .va-why { list-style:none; display:flex; flex-direction:column; gap:9px; }
@@ -4558,15 +4565,19 @@ function confidenceSignals(con){
 // second copy of the synthesis paragraph. Only a sparse profile (no structured
 // highlights at all) falls back to the prose so the tier is never empty.
 function evidenceHTML(con){
+  // Capped so the panel reads at a glance instead of scrolling (Drew 7/29).
+  // An uncapped knownFor list plus the FULL synthesis ran the panel well past
+  // the viewport; the complete read and every fact live on the full profile,
+  // which the card links to directly.
   const level = confidence(con), note = confidenceNote(con), signals = confidenceSignals(con);
   const highlights = con.knownFor.length
-    ? '<div class="va-sec"><div class="va-lbl">What homeowners highlight</div><ul class="va-strengths">'+con.knownFor.map(k=>'<li>'+CHECK+'<span>'+esc(k)+'</span></li>').join('')+'</ul></div>'
+    ? '<div class="va-sec"><div class="va-lbl">What homeowners highlight</div><ul class="va-strengths">'+con.knownFor.slice(0,4).map(k=>'<li>'+CHECK+'<span>'+esc(k)+'</span></li>').join('')+'</ul></div>'
     : (con.read ? '<div class="va-sec"><div class="va-lbl"><span class="va-dot"></span>Vesta’s read</div><p class="va-read">'+esc(con.read)+'</p></div>' : '');
   return highlights +
     '<div class="va-sec"><div class="va-lbl">Our confidence in this read</div>'+
       '<div class="va-conf"><div class="va-conf-l"><span class="va-shield">'+SHIELD+'</span>'+level+' confidence</div>'+
       '<div class="va-conf-n">'+esc(note)+'</div>'+
-      (signals.length?'<ul class="va-checklist">'+signals.map(s=>'<li>'+CHECK+'<span>'+esc(s)+'</span></li>').join('')+'</ul>':'')+
+      (signals.length?'<ul class="va-checklist">'+signals.slice(0,3).map(s=>'<li>'+CHECK+'<span>'+esc(s)+'</span></li>').join('')+'</ul>':'')+
       '</div></div>';
 }
 function analysisHTML(con){
@@ -4577,7 +4588,8 @@ function analysisHTML(con){
     (con.standing?'<div class="va-band">'+esc(con.standing)+'</div>':'')+
     (con.verified.length?'<div class="va-chips">'+con.verified.map(v=>'<span class="va-chip">'+CHECK+esc(v)+'</span>').join('')+'</div>':'')+
     evidenceHTML(con)+
-    (con.placeId?'<a class="va-full va-cta" href="/c/'+encodeURIComponent(con.placeId)+'" data-place="'+esc(con.placeId)+'">See the full profile <span aria-hidden="true">→</span></a>':'')+
+    // The full-profile CTA moved onto the card (Drew 7/29) — it belongs to the
+    // firm it opens, not to a panel on the far side of the screen.
     '<div class="va-actions"><button class="va-req">Request through Vesta</button><button class="va-bm'+(isLiked(con.placeId)?' on':'')+'" data-place="'+esc(con.placeId)+'" aria-label="Save '+esc(con.name)+'">'+BOOKMARK+'</button></div>'+
     '<p class="va-note">No obligation · free to request</p>';
 }
@@ -4730,6 +4742,12 @@ function nameRowHTML(con, i){
       (tags.length ? '<span class="vpro-tags">' + tags.map(v =>
         '<span>' + CHECK + esc(trecHumanize(v)) + '</span>').join('') + '</span>' : '') +
       (rec.length ? '<span class="vpro-rec">' + rec.slice(0, 3).join('') + '</span>' : '') +
+      // The profile link belongs to the firm it opens, not to a panel across the
+      // screen. It is a <span role=link> because this card is itself a <button>
+      // and nesting an <a> inside a button is invalid; the click handler below
+      // navigates and stops the card's own select from firing.
+      (con.placeId ? '<span class="vpro-full" role="link" tabindex="0" data-full="' +
+        esc(con.placeId) + '">See the full profile <b aria-hidden="true">→</b></span>' : '') +
     '</span>' +
   '</button>';
 }
@@ -4822,6 +4840,14 @@ function wireNamesFeed(list){
       });
     }
     btn.addEventListener('click', () => selectName(con, btn));
+  });
+
+  // "See the full profile" lives on the card now. Stop the card's own select
+  // from firing underneath it.
+  vf.querySelectorAll('[data-full]').forEach(el => {
+    const go = (e) => { e.stopPropagation(); e.preventDefault(); openProfile(el.dataset.full); };
+    el.addEventListener('click', go);
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') go(e); });
   });
 }
 function feedRecordBits(con){

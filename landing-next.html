@@ -795,6 +795,41 @@ a,button{transition:transform .14s}
 .pn{font-family:var(--hand);font-weight:600;color:var(--olive);font-size:1.14em;line-height:.9;white-space:nowrap;padding:0 .05em 3px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 5px}
 
+/* ═══ THE LOOP — pinned index cards down one side of a write-up. A vanilla port
+   (no React/framer-motion): the dashed connector is a CSS stroke-dashoffset
+   animation, the "pinned" feel is the neumorphic plate + a slight rotation, and
+   the step numeral uses Caveat — our own hand — where the reference reached for
+   Comic Sans. Deliberately states the mechanism as DESIGNED, not as a wheel
+   already spinning: 0 clients, and the claim ladder governs. ═══ */
+.loop{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);gap:clamp(1.6rem,4vw,3.4rem);
+  align-items:center;max-width:var(--max);margin:0 auto}
+.loop-copy p{margin:.9rem 0 0}
+.loop-stack{position:relative;display:flex;flex-direction:column;gap:.85rem;padding:.4rem 0}
+.loop-line{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible}
+.loop-line path{fill:none;stroke:var(--line-strong);stroke-width:2;stroke-linecap:round;
+  stroke-dasharray:8 6;animation:loopDash 3s linear infinite}
+@keyframes loopDash{to{stroke-dashoffset:-140}}
+.loop-card{position:relative;z-index:1;background:var(--nm);border:var(--nm-edge);border-radius:var(--r-tile);
+  box-shadow:var(--nm-sm);padding:.55rem;transition:transform .3s var(--spring),box-shadow .3s var(--spring)}
+.loop-card:nth-child(odd){transform:rotate(-1.1deg)}
+.loop-card:nth-child(even){transform:rotate(1.1deg)}
+.loop-card:hover{transform:rotate(0deg) scale(1.022);box-shadow:var(--nm-out);z-index:3}
+.loop-pin{position:absolute;top:-9px;left:50%;transform:translateX(-50%);z-index:2;color:var(--olive);
+  filter:drop-shadow(0 3px 5px rgba(74,75,47,.28))}
+.loop-inner{background:var(--tea-2);border:1px solid rgba(74,75,47,.14);border-radius:12px;
+  padding:.95rem 1.05rem .9rem}
+.loop-n{display:block;font-family:var(--hand);font-size:1.75rem;font-weight:700;line-height:1;
+  color:var(--olive);margin-bottom:.3rem}
+.loop-card h3{font-family:var(--display);font-size:1.02rem;font-weight:500;letter-spacing:-.02em;
+  line-height:1.2;margin:0 0 .25rem;color:var(--ink)}
+.loop-card p{margin:0;font-size:.83rem;line-height:1.5;color:var(--muted)}
+@media(max-width:900px){
+  .loop{grid-template-columns:1fr;gap:1.4rem}
+  .loop-line{display:none}          /* the connector only reads on the tall stack */
+  .loop-card:nth-child(odd),.loop-card:nth-child(even){transform:none}
+}
+@media(prefers-reduced-motion:reduce){ .loop-line path{animation:none} .loop-card{transition:none} }
+
 /* ═══ FEATURE MARQUEE — vanilla port of Originkit's CurvedLoop (Drew 7/21).
    The whole offer arced across a curved textPath, auto-scrolling + drag-nudgeable,
    fading at both edges. Replaces the coverflow deck. Driven by wireFeatureBanner(). ═══ */
@@ -1030,6 +1065,64 @@ a,button{transition:transform .14s}
 
   <div class="showcase-caps rv">
     <a href="/vesta" class="btn-soft">Open Vesta →</a>
+  </div>
+</section>
+
+<!-- ════════════════ THE LOOP — how the two sides feed each other ════════════════
+     Sits here on purpose: the Vesta section above ends on "it's the same record
+     Atlas helps a contractor build," and this is that sentence drawn. Stated as
+     the mechanism by design — never as a wheel already turning (0 clients). -->
+<section class="sec" id="loop-sec">
+  <div class="loop">
+    <div class="loop-copy rv">
+      <span class="kicker">how the two sides meet</span>
+      <h2 class="sec-h">One loop,<br><em>not two products.</em></h2>
+      <p><span class="pn">Atlas</span> and <span class="pn">Vesta</span> are not a bundle. They are two ends of the same loop — and the thing joining them is the record of work actually done.</p>
+      <p>Every job a contractor finishes leaves evidence: how fast they responded, what they completed, what their customers said afterward. That record belongs to the contractor. It is source-labeled and correctable, and nothing leaves the workspace without them.</p>
+      <p>On the homeowner side, that same evidence is what a person reads before deciding who to trust — <b>so doing good work is what makes you easier to find.</b> Not an ad budget. Not a placement fee.</p>
+      <p class="sec-note" style="margin-top:1.1rem;text-align:left">This is how the system is designed to compound. We are pre-revenue and say so plainly — the loop is the mechanism, not a result we are claiming yet.</p>
+    </div>
+
+    <div class="loop-stack rv" role="list" aria-label="How the loop works, in five steps">
+      <svg class="loop-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M 50 4 C 84 18, 16 30, 50 44 C 84 58, 16 72, 50 96"/>
+      </svg>
+
+      <article class="loop-card" role="listitem">
+        <span class="loop-pin" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3a1 1 0 0 1 .117 1.993l-.117 .007v4.764l1.894 3.789a1 1 0 0 1 .1 .331l.006 .116v2a1 1 0 0 1 -.883 .993l-.117 .007h-4v4a1 1 0 0 1 -1.993 .117l-.007 -.117v-4h-4a1 1 0 0 1 -.993 -.883l-.007 -.117v-2a1 1 0 0 1 .06 -.34l.046 -.107l1.894 -3.791v-4.762a1 1 0 0 1 -.117 -1.993l.117 -.007h8z"/></svg></span>
+        <div class="loop-inner"><span class="loop-n">01</span>
+          <h3>The call gets answered</h3>
+          <p>Atlas responds in your name while you’re on the job, works out what they need, and can book a slot you approved.</p></div>
+      </article>
+
+      <article class="loop-card" role="listitem">
+        <span class="loop-pin" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3a1 1 0 0 1 .117 1.993l-.117 .007v4.764l1.894 3.789a1 1 0 0 1 .1 .331l.006 .116v2a1 1 0 0 1 -.883 .993l-.117 .007h-4v4a1 1 0 0 1 -1.993 .117l-.007 -.117v-4h-4a1 1 0 0 1 -.993 -.883l-.007 -.117v-2a1 1 0 0 1 .06 -.34l.046 -.107l1.894 -3.791v-4.762a1 1 0 0 1 -.117 -1.993l.117 -.007h8z"/></svg></span>
+        <div class="loop-inner"><span class="loop-n">02</span>
+          <h3>The work leaves evidence</h3>
+          <p>Response times, completed jobs, the review asked for at the right moment — captured as it happens, not reconstructed later.</p></div>
+      </article>
+
+      <article class="loop-card" role="listitem">
+        <span class="loop-pin" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3a1 1 0 0 1 .117 1.993l-.117 .007v4.764l1.894 3.789a1 1 0 0 1 .1 .331l.006 .116v2a1 1 0 0 1 -.883 .993l-.117 .007h-4v4a1 1 0 0 1 -1.993 .117l-.007 -.117v-4h-4a1 1 0 0 1 -.993 -.883l-.007 -.117v-2a1 1 0 0 1 .06 -.34l.046 -.107l1.894 -3.791v-4.762a1 1 0 0 1 -.117 -1.993l.117 -.007h8z"/></svg></span>
+        <div class="loop-inner"><span class="loop-n">03</span>
+          <h3>The record stays yours</h3>
+          <p>Source-labeled, correctable, and yours to control. You decide what a homeowner is allowed to see before any of it leaves.</p></div>
+      </article>
+
+      <article class="loop-card" role="listitem">
+        <span class="loop-pin" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3a1 1 0 0 1 .117 1.993l-.117 .007v4.764l1.894 3.789a1 1 0 0 1 .1 .331l.006 .116v2a1 1 0 0 1 -.883 .993l-.117 .007h-4v4a1 1 0 0 1 -1.993 .117l-.007 -.117v-4h-4a1 1 0 0 1 -.993 -.883l-.007 -.117v-2a1 1 0 0 1 .06 -.34l.046 -.107l1.894 -3.791v-4.762a1 1 0 0 1 -.117 -1.993l.117 -.007h8z"/></svg></span>
+        <div class="loop-inner"><span class="loop-n">04</span>
+          <h3>Homeowners read it, not ads</h3>
+          <p>On Vesta a homeowner sees what your record actually supports — and what it doesn’t. No boosted listings, nothing for sale.</p></div>
+      </article>
+
+      <article class="loop-card" role="listitem">
+        <span class="loop-pin" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3a1 1 0 0 1 .117 1.993l-.117 .007v4.764l1.894 3.789a1 1 0 0 1 .1 .331l.006 .116v2a1 1 0 0 1 -.883 .993l-.117 .007h-4v4a1 1 0 0 1 -1.993 .117l-.007 -.117v-4h-4a1 1 0 0 1 -.993 -.883l-.007 -.117v-2a1 1 0 0 1 .06 -.34l.046 -.107l1.894 -3.791v-4.762a1 1 0 0 1 -.117 -1.993l.117 -.007h8z"/></svg></span>
+        <div class="loop-inner"><span class="loop-n">05</span>
+          <h3>Good work compounds</h3>
+          <p>The next job thickens the record, which makes the next homeowner easier to win. The wheel turns on the work, not the ad spend.</p></div>
+      </article>
+    </div>
   </div>
 </section>
 
