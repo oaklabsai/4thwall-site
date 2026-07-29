@@ -406,16 +406,16 @@ a,button{transition:transform .14s}
 .fd-shot{position:relative;min-width:0}
 .fd-shot-plate{position:relative;border-radius:var(--r-card);overflow:hidden;background:var(--nm);
   border:var(--nm-edge);box-shadow:0 3px 8px rgba(40,41,22,.13),0 30px 60px -18px rgba(40,41,22,.34);
-  /* the capture's own ratio (1492x1390) so nothing is cropped away */
-  aspect-ratio:746/695}
-/* the label sits UNDER the image: present it covers, missing or still loading it
+  /* the motion clip's own ratio (1920x1080) — was 746/695 for the static capture */
+  aspect-ratio:16/9}
+/* the label sits UNDER the media: present it covers, missing or still loading it
    reads as an empty frame instead of spilling the alt text across the hero.
    font-size:0 hides the broken-image alt visually — `alt` stays in the a11y tree. */
 .fd-shot-plate::after{content:"the workspace";position:absolute;inset:0;z-index:0;
   display:grid;place-items:center;font:500 .7rem/1 var(--mono);
   letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-.fd-shot-plate img{position:relative;z-index:1;display:block;width:100%;height:100%;
-  object-fit:cover;object-position:left top;font-size:0;color:transparent}
+.fd-shot-plate img,.fd-shot-plate video{position:relative;z-index:1;display:block;width:100%;height:100%;
+  object-fit:cover;object-position:center top;font-size:0;color:transparent}
 .fd-ctas{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
 
 @media(max-width:900px){
@@ -889,12 +889,22 @@ a,button{transition:transform .14s}
       </div>
     </div>
 
-    <!-- The product IS the proof. A screenshot of the real workspace, not a drawing
-         of one: the room names on it are the room names in the build. -->
+    <!-- 2026-07-29: swapped the static capture for a motion rendering of the workspace
+         (Drew's call). This is a GENERATED clip, not a screen recording — the label
+         below is load-bearing, not decorative (claim ladder). Static PNG kept as the
+         <img> fallback + poster, so a browser that can't play video still shows the
+         real screenshot rather than nothing. -->
     <div class="fd-shot">
       <div class="fd-shot-plate">
-        <img src="/atlas-workspace.png" width="1600" height="1080" loading="eager" decoding="async"
-             alt="The Atlas workspace Home screen for a roofing company: a left rail of rooms — Home, Inbox, Booking, Customers, Follow-up, Reviews, Storm, Campaigns — a “Needs you” panel holding one answer the Dispatcher wrote and has not sent, and a weekly panel comparing conversations that came in against jobs booked.">
+        <video autoplay muted loop playsinline preload="auto"
+               poster="/media/hero-atlas-poster.jpg"
+               width="1600" height="900"
+               aria-label="Motion rendering of the Atlas workspace Home screen: rooms in the left rail, a “Needs you” panel, and a weekly panel comparing conversations against jobs booked.">
+          <source src="/media/hero-atlas.webm" type="video/webm">
+          <source src="/media/hero-atlas.mp4" type="video/mp4">
+          <img src="/atlas-workspace.png" width="1600" height="1080" loading="eager" decoding="async"
+               alt="The Atlas workspace Home screen for a roofing company: a left rail of rooms — Home, Inbox, Booking, Customers, Follow-up, Reviews, Storm, Campaigns — a “Needs you” panel holding one answer the Dispatcher wrote and has not sent, and a weekly panel comparing conversations that came in against jobs booked.">
+        </video>
       </div>
     </div>
   </div>
@@ -1121,6 +1131,14 @@ a,button{transition:transform .14s}
   var onScroll = function(){ nav.classList.toggle('scrolled', window.scrollY > 24); };
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
+
+  /* hero motion clip — CSS can't stop an autoplaying <video>; honor the same
+     reduced-motion preference the showcase tilt below already respects. */
+  var heroVid = document.querySelector('.fd-shot-plate video');
+  if (heroVid && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    heroVid.removeAttribute('autoplay');
+    heroVid.pause();
+  }
 
   /* showcase tilt — straightens as it scrolls into view */
   var card = document.getElementById('showcaseCard');
