@@ -1132,12 +1132,26 @@ a,button{transition:transform .14s}
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
-  /* hero motion clip — CSS can't stop an autoplaying <video>; honor the same
-     reduced-motion preference the showcase tilt below already respects. */
+  /* hero motion clip — the declarative `autoplay` attribute alone is
+     unreliable on mobile: cellular/data-saver policies and back-forward-cache
+     restores can silently block it, and the browser falls back to a manual
+     play affordance. Drew's call: this hero never shows that — force .play()
+     from JS (redundant with the attribute, not a replacement for it) and
+     retry on the events that commonly unblock it. No reduced-motion opt-out
+     for this asset — it's muted, decorative, and must always run. */
   var heroVid = document.querySelector('.fd-shot-plate video');
-  if (heroVid && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    heroVid.removeAttribute('autoplay');
-    heroVid.pause();
+  if (heroVid){
+    heroVid.muted = true; // belt-and-braces alongside the HTML attribute
+    var tryPlay = function(){ var p = heroVid.play(); if (p && p.catch) p.catch(function(){}); };
+    tryPlay();
+    heroVid.addEventListener('canplay', tryPlay, {once:true});
+    heroVid.addEventListener('loadeddata', tryPlay, {once:true});
+    document.addEventListener('visibilitychange', function(){ if (!document.hidden) tryPlay(); });
+    // Data-saver/cellular blocks can lift after the first touch anywhere on
+    // the page — a silent, one-time nudge, not a visible "tap to play" UI.
+    ['touchstart','scroll'].forEach(function(evt){
+      document.addEventListener(evt, tryPlay, {once:true, passive:true});
+    });
   }
 
   /* showcase tilt — straightens as it scrolls into view */
