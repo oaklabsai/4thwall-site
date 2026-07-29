@@ -214,6 +214,125 @@ document.addEventListener('DOMContentLoaded', async function(){
     const on = S.cmp.has(key);
     return '<button type="button" class="vcmp-btn' + (on ? ' on' : '') + '" data-cmp="' + esc(key) + '">' + (on ? '✓ Comparing' : '+ Compare') + '</button>';
   }
+
+  // ── The trade-browse deck ────────────────────────────────────────────────
+  // One pro held large instead of a wall of tiles. Vesta carries no photos by
+  // doctrine, so the hero of the card is the Read — the plain-English synthesis
+  // — set in the serif and given room. Chips and the public footprint support
+  // it; they never lead.
+  function proCard(p){
+    const isV = !!p.location_id;                      // verified-network shape
+    const e   = p._enr;
+    const href = isV ? '/pro/' + encodeURIComponent(p.location_id)
+                     : '/c/' + encodeURIComponent(p.place_id) + (S.zip ? '?zip=' + encodeURIComponent(S.zip) : '');
+    const key  = (isV ? 'v:' : 'l:') + (isV ? p.location_id : p.place_id);
+    const name = isV ? p.business_name : p.name;
+    const sub  = isV ? HOME.tradeLabel(p.trade)
+                     : [p.primary_type ? esc(p.primary_type) : '', esc(shortAddr(p.address))].filter(Boolean).join(' · ');
+
+    const tag = isV ? '<span class="vrib">✓ Verified network</span>'
+              : e   ? '<span class="vtag">✓ Vesta-analyzed</span>'
+                    : '<span class="badge plain">Public record only</span>';
+
+    const chips = isV ? (HOME.badgeChips(p) + fpHtml(p.registry)) : (e ? enrChips(e) : '');
+
+    // The Read leads when we actually have one. When we don't, say so plainly
+    // rather than dressing the card with filler.
+    const read = (e && e.synthesis)
+      ? '<div class="pcard-read"><span class="lbl">Vesta&rsquo;s read</span><p>' + esc(e.synthesis) + '</p></div>'
+      : '<div class="pcard-read"><span class="lbl">Vesta&rsquo;s read</span><p style="opacity:.55">Not analyzed yet &mdash; only the public record below.</p></div>';
+
+    const act = isV
+      ? '<a class="pill pill-orange pill-sm" href="' + href + '">See the record <span class="arr">&rarr;</span></a>'
+      : '<button type="button" class="pill pill-orange pill-sm" data-req="' + esc(p.place_id) + '">Request <span class="arr">&rarr;</span></button>' +
+        '<a class="pill pill-ghost pill-sm" href="' + href + '">View profile</a>';
+
+    return '<article class="pcard-pro">' +
+      '<div class="pcard-eyebrow">' + tag + '</div>' +
+      '<a class="cardlink" href="' + href + '"><h3>' + esc(name) + '</h3></a>' +
+      '<div class="sub">' + sub + '</div>' +
+      '<div class="pcard-rule"></div>' +
+      read + chips + (isV ? '' : pubHtml(p)) +
+      '<div class="pcard-foot">' + act + cmpBtn(key) + '</div>' +
+    '</article>';
+  }
+
+  function proCarousel(list, id){
+    if (!list.length) return '';
+    const slides = list.map((p, i) =>
+      '<div class="pcar-slide' + (i === 0 ? ' on' : '') + '" role="group" aria-roledescription="slide" ' +
+      'aria-label="' + (i + 1) + ' of ' + list.length + '">' + proCard(p) + '</div>').join('');
+    const dots = list.map((_, i) =>
+      '<button type="button" class="pcar-dot' + (i === 0 ? ' on' : '') + '" data-go="' + i + '" ' +
+      'aria-label="Go to pro ' + (i + 1) + '"></button>').join('');
+    const arrow = (d) => '<button type="button" class="pcar-nav pcar-' + d + '" data-nav="' + d + '" ' +
+      'aria-label="' + (d === 'prev' ? 'Previous' : 'Next') + ' pro">' +
+      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="' +
+      (d === 'prev' ? '15 18 9 12 15 6' : '9 18 15 12 9 6') + '"/></svg></button>';
+    return '<div class="pcar" id="' + id + '" data-n="' + list.length + '">' +
+      (list.length > 1 ? arrow('prev') : '') +
+      '<div class="pcar-view"><div class="pcar-track">' + slides + '</div></div>' +
+      (list.length > 1 ? arrow('next') : '') +
+      (list.length > 1 ? '<div class="pcar-dots">' + dots + '</div>' : '') +
+    '</div>';
+  }
+
+  // Pointer-drag + arrows + dots + keyboard, looping. Transform-only so the
+  // drag stays on the compositor; no layout work per frame.
+  function wireProCarousel(id){
+    const root = $(id); if (!root) return;
+    const track = root.querySelector('.pcar-track');
+    const slides = [...root.querySelectorAll('.pcar-slide')];
+    const dots = [...root.querySelectorAll('.pcar-dot')];
+    const n = slides.length; if (!n) return;
+    let i = 0, startX = 0, dx = 0, dragging = false, w = 0;
+
+    const paint = () => {
+      // Centre the active slide: on desktop the slide is <100% wide, so the
+      // track is offset by half the leftover to keep it visually centred.
+      const view = root.querySelector('.pcar-view').getBoundingClientRect().width;
+      w = slides[0].getBoundingClientRect().width;
+      const centre = (view - w) / 2;
+      track.style.transform = 'translate3d(' + (centre - i * w + dx) + 'px,0,0)';
+      slides.forEach((s, k) => s.classList.toggle('on', k === i));
+      dots.forEach((d, k) => d.classList.toggle('on', k === i));
+    };
+    const go = (k) => { i = (k % n + n) % n; dx = 0; paint(); };
+
+    root.querySelectorAll('[data-nav]').forEach(b =>
+      b.addEventListener('click', () => go(i + (b.dataset.nav === 'next' ? 1 : -1))));
+    dots.forEach(d => d.addEventListener('click', () => go(+d.dataset.go)));
+    slides.forEach((s, k) => s.addEventListener('click', (ev) => {
+      // Tapping a peeked neighbour brings it forward — but never swallow a
+      // click meant for a link or button inside the card.
+      if (k !== i && !ev.target.closest('a,button')) { ev.preventDefault(); go(k); }
+    }));
+
+    root.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('a,button')) return;
+      dragging = true; startX = e.clientX; dx = 0;
+      root.classList.add('dragging'); root.setPointerCapture(e.pointerId);
+    });
+    root.addEventListener('pointermove', (e) => { if (dragging){ dx = e.clientX - startX; paint(); } });
+    const end = () => {
+      if (!dragging) return;
+      dragging = false; root.classList.remove('dragging');
+      const moved = dx; dx = 0;
+      if (Math.abs(moved) > Math.min(90, w * .18)) go(i + (moved < 0 ? 1 : -1)); else paint();
+    };
+    root.addEventListener('pointerup', end);
+    root.addEventListener('pointercancel', end);
+
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight'){ e.preventDefault(); go(i + 1); }
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); go(i - 1); }
+    });
+    root.tabIndex = 0;
+
+    addEventListener('resize', paint, {passive:true});
+    paint();
+  }
   function vCard(p){
     const href = '/pro/' + encodeURIComponent(p.location_id);
     const key = 'v:' + p.location_id;
@@ -392,20 +511,23 @@ document.addEventListener('DOMContentLoaded', async function(){
     const analyzed = listed ? listed.filter(p => p._enr) : [];
     const rest = listed ? listed.filter(p => !p._enr) : [];
 
+    const decks = [];   // carousels to wire after the HTML lands
     if (hasV){
-      html += '<h2 class="section-h" style="margin-top:.2rem">Proven near you</h2><div class="grid">' + d.verified.map(p => {
-        cmpRegister('v:' + p.location_id, { kind:'v', name:p.business_name, trade:p.trade, badges:p.badges, registry:p.registry });
-        return vCard(p);
-      }).join('') + '</div>';
+      d.verified.forEach(p => cmpRegister('v:' + p.location_id,
+        { kind:'v', name:p.business_name, trade:p.trade, badges:p.badges, registry:p.registry }));
+      html += '<h2 class="section-h" style="margin-top:.2rem">Proven near you</h2>' +
+              proCarousel(d.verified, 'pcar-v');
+      decks.push('pcar-v');
     }
     // Lead the public-record section with whichever tier we actually have.
     const pubLead = analyzed.length ? 'Vesta-analyzed near you' : (hasV ? 'Also nearby — the public record' : 'Pros near you — the public record');
     html += '<h2 class="section-h"' + (hasV ? '' : ' style="margin-top:.2rem"') + '>' + pubLead + '</h2>';
 
-    const reg = (p) => {
-      cmpRegister('l:' + p.place_id, { kind:'l', name:p.name, primary_type:p.primary_type, rating:p.rating, rating_count:p.rating_count });
-      return listedCard(p);
-    };
+    // regOnly registers for Compare; reg also returns the grid card. The deck
+    // builds its own markup, so it needs the registration without the card.
+    const regOnly = (p) => cmpRegister('l:' + p.place_id,
+      { kind:'l', name:p.name, primary_type:p.primary_type, rating:p.rating, rating_count:p.rating_count });
+    const reg = (p) => { regOnly(p); return listedCard(p); };
     if (!d.lens_configured){
       html += '<div class="warn">Live local search is coming online — verified network results are shown. Check back soon.</div>';
     } else if (listed === null){
@@ -414,9 +536,13 @@ document.addEventListener('DOMContentLoaded', async function(){
       html += '<div class="empty">No listed pros came back for that search — try a broader keyword or a different trade.</div>';
     } else {
       if (analyzed.length){
-        html += '<div class="grid">' + analyzed.map(reg).join('') + '</div>';
+        analyzed.forEach(regOnly);
+        html += proCarousel(analyzed, 'pcar-a');
+        decks.push('pcar-a');
         if (S.trade) html += '<p class="vdir-link"><a href="/fairfield-county/' + esc(S.trade) + '">See every Vesta-analyzed ' + esc(tLower(S.trade)) + ' in Fairfield County →</a></p>';
       }
+      // The un-analyzed tail stays a grid on purpose: there is no Read to hold
+      // large, and a deck would make thin cards feel like the main event.
       if (rest.length){
         if (analyzed.length) html += '<h3 class="section-h sub">More nearby — listed only</h3>';
         html += '<div class="grid">' + rest.map(reg).join('') + '</div>';
@@ -424,6 +550,7 @@ document.addEventListener('DOMContentLoaded', async function(){
       html += HONEST + ATTR;
     }
     c.innerHTML = html;
+    decks.forEach(wireProCarousel);
     renderCmpBar();
   }
 

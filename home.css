@@ -113,6 +113,75 @@ nav.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;just
 .card-block{background:var(--cream-2);border:1px solid var(--line);border-radius:18px;padding:clamp(1.3rem,2.6vw,1.9rem);margin:.9rem 0;max-width:680px}
 a.cardlink:hover h3{color:var(--orange)}
 
+/* ── PRO CAROUSEL — the trade-browse deck ─────────────────────
+   One pro at a time, held large, with the neighbours peeking so the set still
+   reads as a set (a strict single slide would hide that there IS a comparison
+   to make, and comparison-on-evidence is the whole point of Vesta).
+   Vesta has no photos by doctrine, so the hero of each card is the Read, not
+   an image. Driven by wireProCarousel() in vesta.html. */
+/* min-width:0 all the way down — without it the flex track's max-content width
+   (every slide, side by side) leaks into whatever grid/flex parent holds the
+   deck and stretches it. The overflow:hidden clips the paint, not the sizing. */
+.pcar{position:relative;margin:1rem 0 .4rem;min-width:0}
+.pcar-view{overflow:hidden;padding:.5rem 0 .2rem;min-width:0}
+.pcar-track{display:flex;align-items:stretch;will-change:transform;
+  transition:transform .52s cubic-bezier(.22,1,.36,1)}
+.pcar.dragging .pcar-track{transition:none}
+.pcar-slide{flex:0 0 var(--pcar-slide,100%);min-width:0;padding:0 .5rem;box-sizing:border-box;
+  display:flex;opacity:.42;transform:scale(.94);transform-origin:center center;
+  transition:opacity .45s ease,transform .45s cubic-bezier(.22,1,.36,1)}
+.pcar-slide.on{opacity:1;transform:scale(1)}
+.pcar-slide > *{width:100%}
+/* every slide the same height so the track never jumps between pros */
+.pcar-track{align-items:stretch}
+.pcar-slide .pcard-pro{height:100%}
+/* the deck card — taller, quieter, editorial. Same rim/lift vocabulary as .card. */
+.pcard-pro{background:#fff;border:1px solid var(--line);border-radius:22px;
+  padding:clamp(1.3rem,2.4vw,1.85rem);display:flex;flex-direction:column;gap:.55rem;
+  box-shadow:0 2px 5px rgba(74,75,47,.05),0 22px 50px -26px rgba(74,75,47,.3)}
+.pcar-slide.on .pcard-pro{box-shadow:0 3px 8px rgba(74,75,47,.07),0 30px 66px -24px rgba(74,75,47,.38)}
+.pcard-eyebrow{display:flex;align-items:center;justify-content:space-between;gap:.7rem;min-height:1.2rem}
+.pcard-pro h3{font-family:var(--display);font-size:clamp(1.25rem,2.3vw,1.6rem);font-weight:500;
+  letter-spacing:-.025em;line-height:1.15;margin:.1rem 0 0}
+.pcard-pro .sub{font-size:.82rem;color:var(--muted);line-height:1.5}
+.pcard-rule{height:1px;background:var(--line);margin:.75rem 0 .1rem}
+/* the Read — the hero of the card (business/vesta-profiles.md: the read IS the product) */
+.pcard-read{margin:.2rem 0 .1rem}
+.pcard-read .lbl{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim);margin-bottom:.45rem}
+/* The Read runs anywhere from a sentence to 200+ words. Unclamped it made the
+   deck card taller than the viewport and every slide a different height, which
+   a carousel cannot absorb. Clamped to a readable opening; the full read lives
+   on the profile, which is where "See the record" goes. */
+.pcard-read p{font-family:var(--display);font-size:clamp(1rem,1.7vw,1.14rem);font-style:italic;
+  line-height:1.55;letter-spacing:-.01em;color:var(--ink);margin:0;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:7;overflow:hidden}
+@media(max-width:899px){ .pcard-read p{-webkit-line-clamp:6} }
+.pcard-foot{margin-top:auto;padding-top:.9rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+/* controls */
+.pcar-nav{position:absolute;top:calc(50% - 1.2rem);transform:translateY(-50%);z-index:4;
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#fff;
+  color:var(--ink);display:grid;place-items:center;cursor:pointer;
+  box-shadow:0 6px 18px -8px rgba(74,75,47,.45);transition:transform .18s,box-shadow .18s,opacity .18s}
+.pcar-nav:hover{transform:translateY(-50%) scale(1.06);box-shadow:0 10px 26px -10px rgba(74,75,47,.55)}
+.pcar-nav:active{transform:translateY(-50%) scale(.97)}
+.pcar-prev{left:-6px}.pcar-next{right:-6px}
+.pcar-dots{display:flex;justify-content:center;gap:.4rem;margin-top:.85rem;flex-wrap:wrap}
+.pcar-dot{width:7px;height:7px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  background:var(--line);transition:background .25s,width .25s}
+.pcar-dot.on{background:var(--ink);width:20px;border-radius:99px}
+.pcar-count{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var(--dim)}
+@media(min-width:900px){ .pcar{--pcar-slide:62%} .pcar-view{padding:.5rem 0 .2rem} }
+@media(max-width:899px){
+  .pcar{--pcar-slide:100%;margin-inline:0}
+  .pcar-slide{padding:0 .25rem;opacity:1;transform:none}   /* no dimmed peek on a phone */
+  .pcar-nav{display:none}                                   /* swipe, don't hunt for arrows */
+  .pcar-track{transition-duration:.42s}
+}
+@media(prefers-reduced-motion:reduce){
+  .pcar-track,.pcar-slide{transition:none}
+}
+
 /* ── BADGES (render ONLY what the ledger sent) ─────────────── */
 .badges{display:flex;flex-wrap:wrap;gap:.35rem;margin:.3rem 0}
 .badge{display:inline-flex;align-items:center;gap:.3rem;background:var(--orange-soft);color:var(--orange-2);border:1px solid rgba(74,75,47,.18);border-radius:50px;padding:.28rem .7rem;font-size:.72rem;font-weight:600;letter-spacing:-.005em}
@@ -540,7 +609,10 @@ body.v-shell .searchbar{max-width:600px}
 /* ── Main grid: center + sticky rail ── */
 .vmain-grid{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:1.5rem;align-items:start}
 .va-rail{position:sticky;top:0;display:flex;flex-direction:column;gap:.85rem;min-width:0}
-@media(max-width:1120px){.vmain-grid{grid-template-columns:1fr}.va-rail{position:static;margin-top:1.6rem}}
+/* minmax(0,1fr), not 1fr: a plain 1fr track sizes to max-content, and the pro
+   carousel's flex row (N slides at 100%) then forces the column far wider than
+   the phone — 828px inside a 335px parent. Matches the desktop rule above. */
+@media(max-width:1120px){.vmain-grid{grid-template-columns:minmax(0,1fr)}.va-rail{position:static;margin-top:1.6rem}}
 
 /* ── Rail panels ── */
 .va-panel{background:var(--vk-2);border:1px solid var(--vline);border-radius:16px;padding:1.1rem 1.2rem}
