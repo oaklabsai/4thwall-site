@@ -33,6 +33,7 @@ const MODEL = process.env.TRIAGE_MODEL || 'nvidia/nemotron-3-super-120b-a12b';
 const MODEL_FALLBACK = process.env.TRIAGE_MODEL_FALLBACK || 'z-ai/glm-5.2';
 const MODELS = MODEL_FALLBACK && MODEL_FALLBACK !== MODEL ? [MODEL, MODEL_FALLBACK] : [MODEL];
 import { rateOk } from './_ratelimit.mjs';
+import { vestaConversationRoute } from '../lib/conversation-state.mjs';
 const isNemotron = m => /nemotron/.test(m);
 const IS_NEMOTRON = isNemotron(MODEL);
 const ENDPOINT = 'https://integrate.api.nvidia.com/v1/chat/completions';
@@ -580,6 +581,8 @@ function hiringQuestions(trade){
 export function vestaDecisionRoute(text, messages = [], followUp = false, focusMode = false){
   const t = String(text || '');
   const trade = inferVestaTrade(messages, t);
+  const conversation = vestaConversationRoute(messages);
+  if (conversation) return conversation;
   if (/\b(first[- ]time (?:homeowner|home owner)|new homeowner|just bought (?:my|our) first (?:house|home))\b/i.test(t)
       && /\b(do not know|don(?:'|’)t know|no idea|not sure|which|what kind|where to start)\b/i.test(t)) return {
     mode:'fix',

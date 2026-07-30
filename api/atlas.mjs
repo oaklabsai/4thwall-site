@@ -18,6 +18,7 @@ const MODEL = process.env.TRIAGE_MODEL || 'nvidia/nemotron-3-super-120b-a12b';
 const MODEL_FALLBACK = process.env.TRIAGE_MODEL_FALLBACK || 'z-ai/glm-5.2';
 const MODELS = MODEL_FALLBACK && MODEL_FALLBACK !== MODEL ? [MODEL, MODEL_FALLBACK] : [MODEL];
 import { rateOk } from './_ratelimit.mjs';
+import { atlasConversationRoute } from '../lib/conversation-state.mjs';
 const isNemotron = m => /nemotron/.test(m);
 const ENDPOINT = 'https://integrate.api.nvidia.com/v1/chat/completions';
 const FIRST_TOKEN_CEILING_MS = 20000;
@@ -612,6 +613,13 @@ export function canonicalForTrip(say){
 export function routeKillQuestion(messages){
   const calculator = extractCalculatorRoute(messages);
   if (calculator) return calculator;
+  const conversation = atlasConversationRoute(messages);
+  if (conversation) return {
+    k:`conversation-${conversation.kind}`,
+    say:conversation.say,
+    screen:conversation.screen,
+    aud:conversation.aud,
+  };
   const last = [...messages].reverse().find(m => m.role === 'user');
   const t = String(last && last.content || '');
   for (const r of ROUTER){

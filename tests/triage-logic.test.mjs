@@ -1,6 +1,7 @@
 // Vesta triage logic suite — pure-function tests over the REAL exports (no drift).
 // Run: node tests/triage-logic.test.mjs
 import { bankValidate, extractJSON, extractiveOK, boundSay, multiTradePlan, professionalBuyerSignal, inferVestaTrade, vestaIdentityRoute, vestaFollowupRoute, vestaDecisionRoute, sayGuard } from '../api/triage.mjs';
+import { buildVestaConversationState, vestaConversationRoute } from '../lib/conversation-state.mjs';
 let n=0, f=0; const T=(name,cond)=>{ n++; if(!cond){ f++; console.log('FAIL:',name); } };
 
 const bank = {
@@ -149,6 +150,52 @@ const guaranteeCoach = vestaDecisionRoute('Can Vesta guarantee the contractor yo
 T('recommendation coaching refuses future guarantees', /No source can guarantee/i.test(guaranteeCoach?.say || '') && /source-linked public evidence/i.test(guaranteeCoach?.say || '') && /legible decision, not a promise/i.test(guaranteeCoach?.say || ''));
 const unevenQuoteCoach = vestaIdentityRoute('One quote is much higher but detailed. The cheaper bids are one line. Which is better?', false);
 T('uneven quote coaching normalizes scope before totals', /not comparable yet/i.test(unevenQuoteCoach?.say || '') && /legible scope, not proof/i.test(unevenQuoteCoach?.say || '') && /written alternate or safe phasing/i.test(unevenQuoteCoach?.say || ''));
+const quoteConversation = [
+  {role:'user',content:"I'm a first-time homeowner planning a roof replacement. I have three bids."},
+  {role:'assistant',content:'I can help compare the scopes.'},
+  {role:'user',content:"One is higher and itemized; the cheaper two are one line. I'm nervous about sounding difficult if I ask them to redo the quotes."},
+  {role:'assistant',content:'Written clarity is not nitpicking.'},
+  {role:'user',content:'Put it together. What is my exact next move?'},
+];
+const quoteState = buildVestaConversationState(quoteConversation);
+const quoteSynthesis = vestaConversationRoute(quoteConversation);
+T('Vesta state retains quote context and conflict with source turns',
+  quoteState.trade?.value==='roofing' && quoteState.quoteCount?.value===3
+  && quoteState.quoteShape?.value==='uneven' && quoteState.quoteShape?.turn===2
+  && quoteState.conflict?.value===true);
+T('quote synthesis produces one roof-specific comparable-scope action',
+  quoteSynthesis?.kind==='synthesis' && /tear-off layers/i.test(quoteSynthesis.say)
+  && /compare equivalent scopes, not totals/i.test(quoteSynthesis.say)
+  && /normal decision hygiene, not confrontation/i.test(quoteSynthesis.say));
+const repairedCorrection = [
+  {role:'user',content:'I thought my furnace needed replacement.'},
+  {role:'assistant',content:'Repair versus replacement needs an inspection.'},
+  {role:'user',content:'Actually, the HVAC tech says it is repairable. I am not deciding repair versus replace now; I am comparing two repair proposals.'},
+  {role:'assistant',content:'Understood.'},
+  {role:'user',content:'Before you advise me, tell me what you understand so far.'},
+];
+const repairedState = buildVestaConversationState(repairedCorrection);
+const repairedRecap = vestaConversationRoute(repairedCorrection);
+T('latest homeowner correction replaces the obsolete replacement decision',
+  repairedState.repairDecision?.value==='repair_proposals' && repairedState.repairDecision?.turn===2
+  && repairedState.quoteCount?.value===2);
+T('Vesta exposes its corrected common ground before advising',
+  repairedRecap?.kind==='recap' && /two HVAC repair proposals/i.test(repairedRecap.say)
+  && /Replacement is no longer the decision/i.test(repairedRecap.say)
+  && /correct it/i.test(repairedRecap.say));
+const activeChangeConversation = [
+  {role:'user',content:"We're midway through a bathroom remodel."},
+  {role:'assistant',content:'Tell me what changed.'},
+  {role:'user',content:"The contractor says wall damage means more money, but has only told me verbally. I'm afraid asking for proof will make him walk."},
+  {role:'assistant',content:'Reasonable written clarity is not nitpicking.'},
+  {role:'user',content:'Give me the exact order of what I should do next.'},
+];
+const activeChangeSynthesis = vestaConversationRoute(activeChangeConversation);
+T('mid-job synthesis integrates evidence change control and relationship risk',
+  activeChangeSynthesis?.kind==='synthesis' && /photos or other evidence/i.test(activeChangeSynthesis.say)
+  && /written change order before added work continues/i.test(activeChangeSynthesis.say)
+  && /calm request for shared facts/i.test(activeChangeSynthesis.say)
+  && /immediate safety protection/i.test(activeChangeSynthesis.say));
 const pickCoach = vestaDecisionRoute('Which one is best for me?', [{role:'assistant',content:'{"picks":[{"name":"A"},{"name":"B"}]}'}], true, false);
 T('post-match choice coaching uses shown evidence and confirms live facts', /evidence shown/i.test(pickCoach?.say || '') && /confirm the live facts/i.test(pickCoach?.say || ''));
 const negativeVetting = 'Vesta does not run background checks or verify insurance. Confirm those directly with the contractor.';

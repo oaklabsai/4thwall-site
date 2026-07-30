@@ -11,6 +11,7 @@
 //      node scripts/atlas-battery.mjs --live   (+ live model probes against prod)
 
 import { claimSafe, SCREENS, DEFLECT, extractJSON, cleanArgs, CALC_ARGS, cleanAud, deflectScreenFor, WHERE_LABEL, extractCalculatorRoute, extractContractorContext, routeKillQuestion } from '../api/atlas.mjs';
+import { buildAtlasConversationState, atlasConversationRoute } from '../lib/conversation-state.mjs';
 
 let fails = 0;
 const check = (tag, ok, note='') => {
@@ -122,6 +123,40 @@ check('business-specific blueprint uses retained context', blueprintRoute?.k ===
 check('business-specific blueprint remains claim-safe', claimSafe(blueprintRoute?.say || '') === true);
 const noContextBlueprint = routeKillQuestion([{ role:'user', content:'Give me a blueprint for my business.' }]);
 check('blueprint asks for only the missing business facts', noContextBlueprint?.k === 'blueprint' && /what trade/i.test(noContextBlueprint?.say || '') && /where does a good lead/i.test(noContextBlueprint?.say || ''));
+const wholeOperation = [
+  { role:'user', content:"I run a roofing company. We're booked six weeks out and don't need more install leads." },
+  { role:'assistant', content:'Then more leads are not the value case.' },
+  { role:'user', content:"My wife handles the phones, but service and warranty callbacks disappear when she's tied up. Half the other calls are junk." },
+  { role:'assistant', content:'That is an operating role, not a gap to erase.' },
+  { role:'user', content:'Put that together. What exactly would you do for us, and what would you leave alone?' },
+];
+const wholeState = buildAtlasConversationState(wholeOperation);
+const wholeRoute = atlasConversationRoute(wholeOperation);
+check('conversation state retains trade capacity desk lane and noise with source turns',
+  wholeState.trade?.value === 'roofing' && wholeState.capacity?.value === 'full'
+  && wholeState.desk?.value === 'family' && wholeState.lane?.value === 'service'
+  && wholeState.noise?.value === 'spam' && wholeState.lane?.turn === 2);
+check('whole-operation synthesis narrows the fit without erasing the current desk',
+  wholeRoute?.kind === 'synthesis' && wholeRoute?.screen === 'room:follow'
+  && /do not use Atlas to create more demand/i.test(wholeRoute.say)
+  && /do not replace your family-run desk/i.test(wholeRoute.say)
+  && /watched mix of real and junk calls/i.test(wholeRoute.say));
+check('whole-operation synthesis remains claim-safe', claimSafe(wholeRoute?.say || '') === true);
+const correctedWorkflow = [
+  { role:'user', content:'We miss calls and I thought Atlas should book every estimate.' },
+  { role:'assistant', content:'Booking can be one Atlas workflow.' },
+  { role:'user', content:'Actually, keep booking with our dispatcher. The only lane I want help with is unanswered follow-up after a missed call.' },
+  { role:'assistant', content:'Understood.' },
+  { role:'user', content:'Based on that correction, what should you set up first?' },
+];
+const correctedState = buildAtlasConversationState(correctedWorkflow);
+const correctedRoute = atlasConversationRoute(correctedWorkflow);
+check('latest workflow correction wins over an older booking request',
+  correctedState.lane?.value === 'followup' && correctedState.lane?.turn === 2
+  && correctedState.desk?.value === 'dispatcher');
+check('corrected workflow keeps the dispatcher and starts in Follow-up',
+  correctedRoute?.screen === 'room:follow' && /^Start with Follow-up/i.test(correctedRoute?.say || '')
+  && /Keep booking with your dispatcher/i.test(correctedRoute?.say || ''));
 const fitRoute = routeKillQuestion([{ role:'user', content:'I am a solo contractor. Is Atlas a fit for a business this small?' }]);
 check('fit answer can honestly disqualify a working desk', fitRoute?.k === 'fit' && /may only duplicate/i.test(fitRoute?.say || '') && fitRoute?.screen === 'fitcall');
 check('fit answer remains claim-safe', claimSafe(fitRoute?.say || '') === true);
