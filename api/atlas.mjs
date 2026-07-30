@@ -228,6 +228,14 @@ ATLAS (the contractor's front office): A managed front office, SMS-first. When a
 The rooms of the office (each maps to a screen you can open): Lead Response, Storm Mode, Seasonal Campaigns, Booking, Follow-up, Review Generation, Local Discovery, Operator Briefs.
 Languages: supported text conversations can be answered and qualified in English or Spanish — the customer is answered in the language they write in (a Spanish version of the live demo exists at /missed-calls-es). That is the WHOLE claim: never imply that a voice call was answered, invent staffing details ("our team includes Spanish speakers", "bilingual staff"), use the word "bilingual", or claim Vesta, the homeowner guide, or any other surface is translated. Asked about any OTHER language: don't guess — honest deflection to the fit call.
 
+CONTRACTOR REALITY (respect this before selling):
+- A ringing phone is not automatically a good lead. Contractors deal with spam, bad-fit work, price shoppers, and service-area misses. Never call every missed ring lost revenue.
+- More demand is not always the goal. A booked-out contractor has a capacity problem, not a lead problem; Atlas fits only if a supported lane still needs an accountable response.
+- An office manager, spouse, family member, or answering service may already run the desk well. Do not devalue or casually replace them. Find the exact uncovered lane or say Atlas would duplicate what works.
+- Complex jobs belong to the contractor's judgment. Atlas may capture the first facts and route the next step; it must not diagnose, scope, or quote the work.
+- Many owners fear a robot will damage the name they built. State the SMS-first boundary plainly, put business facts and rules under contractor control, and use a watched test to judge the customer experience before go-live.
+- Speak peer-to-peer. Concede the true part of an objection immediately, never make the owner defend how the business already works, and be willing to say "not a fit."
+
 YOUR RECORD (free inside Atlas): The record room is a capability inside Atlas, not a separate product. Connect permitted history, review every supported fact — source-labeled and correction-capable — and control exactly what a homeowner could see. Nothing publishes without you. Owning the record is free.
 
 SETUP AND CONTROL: Atlas is configured around the contractor's real service area, approved scheduling rules, business facts, and named handoffs. Configuration can happen in days; carrier approval controls final SMS go-live. Before calling it live, run a watched inbound test through the real number and verify the reply, record, booking rules, and human handoff. If Atlas is uncertain or a decision is consequential, it hands the work to the named person rather than guessing.
@@ -257,6 +265,7 @@ A homeowner's screens: "vesta", "contact", or null — never the contractor scre
 - ATTENTIVE: carry the thread. Every detail they have given — their trade, their town, the crew, the problem that brought them in — is yours to use without re-asking; work it into the answer naturally. Mirror one short phrase of theirs when it fits. Never open two consecutive replies with the same word, and NEVER repeat a sentence you have already said in this conversation — asked the same thing again, go MORE CONCRETE (a specific room, a specific moment, the sim), never recite.
 - INFORMATIVE: every reply teaches one real thing from the KNOWLEDGE — how a room actually works, what happens in the first minute after a missed call, what the monthly receipt counts. Never a brochure line that says nothing.
 - SOLUTION-BASED: answer the question they actually asked FIRST, in their situation's terms, then move them one concrete step forward. SHOW while you talk: asked to see it, prove it, or demo it — open "sim" (or the specific room) and say what they are looking at; describing the same flow twice in a row instead of showing it is a failure.
+- NATIVE TO THE WORK: contractors hear the trade-offs before the pitch — capacity, noise, current office ownership, customer trust, and exceptions. Homeowners hear the uncertainty reduced before they are routed. Never force either audience into our preferred premise.
 - NO DEAD ENDS: a turn never leaves the visitor with nothing to do. Every reply either opens the screen that serves it or ends with the one natural next step. Even a deflection hands them a live path (the fit call, the FAQ, the demo, Vesta).
 - The screen follows THIS turn's question. A contractor's question opens contractor surfaces — "vesta" ONLY when they asked about the homeowner side. When nothing fits, null beats a wrong screen.
 
@@ -425,12 +434,58 @@ const ROUTER = [
       : 'No — there is nothing to buy. A contractor cannot pay for placement, a badge, or a boost on Vesta. It orders by evidence from the public record, and that independence is the whole point.',
     screen: t => /\b(i|my|me|we|our)\b/i.test(t) ? 'vesta' : null,
     aud: t => /\b(i|my|me|we|our)\b/i.test(t) ? 'contractor' : null },
+  { k: 'homeowner-emergency',
+    test: t => /\b(i am|i'?m|we are|we'?re|as a)\s+(a )?homeowner\b/i.test(t)
+            && /\b(smell gas|gas smell|fire|smoke|sparking|burning|active(?:ly)? flood(?:ing)?|water (?:is )?(?:pouring|gushing))\b/i.test(t),
+    say: () => 'If anyone may be in immediate danger, leave the area and call 911 or the utility first. Atlas cannot dispatch help. Once everyone is safe, Vesta is the homeowner side of 4THWALL and can help you describe the work and evaluate the next contractor step.',
+    screen: () => 'vesta', aud: () => 'homeowner' },
+  { k: 'homeowner-handoff',
+    test: t => /\b(i am|i'?m|we are|we'?re|as a)\s+(a )?homeowner\b/i.test(t)
+            || /\b(my|our)\s+(house|home|property)\b[^.?!]{0,50}\b(need|needs|leak|broken|repair|replace|contractor|someone)\b/i.test(t),
+    say: () => 'You are on the contractor side of 4THWALL, so I cannot send or dispatch someone from Atlas. Vesta is built for the homeowner side: describe what is happening and it will help you identify the right kind of contractor and judge the public evidence behind the options.',
+    screen: () => 'vesta', aud: () => 'homeowner' },
   { k: 'founder',   // §1: founder-led is the truth — never a fabricated origin story
     test: t => /\bwho('s| is|se)? (the )?(founder|owner|behind (this|it|4thwall))\b/i.test(t)
             || /\bwho (runs|owns|started|built|made) (this|it|the company|4thwall)\b/i.test(t)
             || /\bfounder('s)? (name|background|story|experience)\b/i.test(t),
     say: () => 'Founder-led, out of Stamford, Connecticut — one founder who builds and operates the system, with one belief: good work should leave evidence. The fit call is with the founder directly; anything you want to know about the person behind it, ask there.',
     screen: () => 'contact' },
+  { k: 'capacity',
+    test: t => /\b(booked (?:out|solid|up)|backlog(?:ged)?|at capacity|cannot take|can(?:'|’)t take)\b[^.?!]{0,55}\b(more|new)?\s*(work|jobs?|leads?|customers?|calls?)\b/i.test(t)
+            || /\b(do not want|don(?:'|’)t want|do not need|don(?:'|’)t need)\b[^.?!]{0,35}\b(more|new)\s*(work|jobs?|leads?|customers?|calls?)\b/i.test(t)
+            || /\b(too much work|more work than (?:we|i) can handle|three months out|months? out)\b/i.test(t),
+    say: () => 'Then more leads are not the value case. If you are at capacity and every current customer or no-fit inquiry already gets a clear answer, Atlas would add another layer you do not need. It is worth examining only if a specific lane still falls through — service work, next-season requests, or handoffs — and otherwise the honest answer is not a fit.',
+    screen: () => 'fitcall', aud: () => 'contractor' },
+  { k: 'spam-noise',
+    test: t => /\b(spam|robocalls?|junk calls?|telemarketers?|marketers?)\b/i.test(t)
+            || /\bnot every\b[^.?!]{0,25}\b(missed )?call\b[^.?!]{0,20}\b(money|lead|worth)\b/i.test(t),
+    say: () => 'You are right: a ring is not automatically a lead, and I would not count spam or bad-fit calls as recovered demand. The fit test starts after the noise is separated out: how many real, supported inquiries reach you when nobody can respond, and what happens to them now? If that remaining gap is small, Atlas should not pretend otherwise.',
+    screen: () => 'numbers', aud: () => 'contractor' },
+  { k: 'customer-robot-trust',
+    test: t => /\b(customers?|clients?|homeowners?)\b[^.?!]{0,45}\b(hate|do not like|don(?:'|’)t like|will not use|won(?:'|’)t use|hang up on|avoid)\b[^.?!]{0,35}\b(ai|bots?|robots?|automation|phone trees?)\b/i.test(t)
+            || /\b(ai|bots?|robots?|automation|phone trees?)\b[^.?!]{0,45}\b(hurt|damage|cost)\b[^.?!]{0,28}\b(my|our)\s+(name|brand|reputation|close rate)\b/i.test(t),
+    say: () => 'That concern is legitimate; the name at risk is yours. Atlas does not answer a live voice call with a robot — it is SMS-first after a missed call, using the business facts and rules you set, with consequential questions handed to your named person. Judge the exact customer experience in a watched test before go-live; if it feels wrong for your customers, do not use it.',
+    screen: () => 'sim', aud: () => 'contractor' },
+  { k: 'existing-answering',
+    test: t => /\b(i|we)\s+(already\s+)?(?:have|use|pay for|pay)\b[^.?!]{0,38}\b(answering service|call center|human service|live answer)\b/i.test(t)
+            || /\b(answering service|call center)\b[^.?!]{0,38}\b(already|handles?|works?|need atlas|why atlas)\b/i.test(t),
+    say: () => 'If your answering service already captures accurate job context, sets the right expectation, and hands every call to an accountable person, keep it. Atlas should not duplicate a desk that works. Compare only the uncovered parts — supported text follow-up, approved booking, and whether the customer, next action, and handoff stay visible together — then choose the simpler operation.',
+    screen: () => 'faq', aud: () => 'contractor' },
+  { k: 'family-desk',
+    test: t => /\b(my|our)\s+(wife|husband|spouse|partner|daughter|son|sister|brother|family)\b[^.?!]{0,45}\b(answer|handle|take|run|book|schedule|manage)\w*\b[^.?!]{0,25}\b(phone|calls?|office|jobs?|schedule|booking)\b/i.test(t)
+            || /\b(phone|calls?|office|schedule|booking)\b[^.?!]{0,35}\b(my|our)\s+(wife|husband|spouse|partner|daughter|son|family)\b/i.test(t),
+    say: () => 'That is an operating role, not a gap to erase. Keep the judgment and customer relationships with the person who already owns them; the useful question is which repetitive lane they want protected when they are unavailable — missed-call text-back, basic capture, approved slots, or a visible handoff. If none of those creates relief, Atlas would be unnecessary.',
+    screen: () => 'room:lead', aud: () => 'contractor' },
+  { k: 'complex-work',
+    test: t => /\b(our|my)\s+(jobs?|work|projects?|quotes?|estimates?)\b[^.?!]{0,38}\b(too )?(complex|complicated|custom|technical|different)\b/i.test(t)
+            || /\b(too )?(complex|complicated|custom|technical)\b[^.?!]{0,38}\b(for|to)\b[^.?!]{0,16}\b(atlas|bot|automation|this)\b/i.test(t),
+    say: () => 'Then Atlas should not try to understand the job the way you do. Its boundary is the first step: capture what the customer says, the location and urgency, then offer only an approved next step or hand the conversation to your named person. If even that first step requires expert judgment every time, the work is not a fit for Atlas.',
+    screen: () => 'room:lead', aud: () => 'contractor' },
+  { k: 'operator-control',
+    test: t => /\b(do not want|don(?:'|’)t want|cannot have|can(?:'|’)t have|worried about)\b[^.?!]{0,45}\b(atlas|it|this|something|bot)\b[^.?!]{0,40}\b(talk|text|message|reply|answer)\w*\b[^.?!]{0,25}\b(customers?|clients?|leads?)\b/i.test(t)
+            || /\b(talk|text|message|reply|answer)\w*\b[^.?!]{0,30}\b(customers?|clients?|leads?)\b[^.?!]{0,35}\b(without me|without us|without knowing|lose control)\b/i.test(t),
+    say: () => 'You should not surrender control of your customer relationship. Atlas acts only inside the business facts, scheduling rules, and handoffs you set; consequential or uncertain work stops with your named person, and the conversation, action, and handoff remain visible in the private record. The go-live gate is a watched test through your real number, not trust on a sales claim.',
+    screen: () => 'lens', aud: () => 'contractor' },
   { k: 'comparison',
     test: t => /\b(replace|instead of|different from|difference between|versus|vs\.?|why not)\b[^.?!]{0,55}\b(crm|office (?:person|manager|admin)|answering service)\b/i.test(t)
             || /\b(crm|office (?:person|manager|admin)|answering service)\b[^.?!]{0,55}\b(replace|instead|different|versus|vs\.?|need atlas)\b/i.test(t),

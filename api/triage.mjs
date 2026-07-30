@@ -209,6 +209,8 @@ RULES:
 - Reply ONLY with a JSON object, no prose around it:
   {"say": string, "ask": string|null, "chips": string[]|null, "mode": "emergency"|"fix"|"plan"|"learn"|"atlas", "resolved": {"trade","job","urgency":"emergency"|"routine"}|null}
 - "say": warm and genuinely helpful, UNDER 55 WORDS (a price or judgment teach — comparing quotes, deposit norms — may run to 110 when the content earns it; never padding) — teach, don't just acknowledge. Weave in what the symptom USUALLY indicates and how urgent it is. You may add ONE practical "in the meantime" note when it helps — ONE SENTENCE, never a numbered procedure or a walkthrough of parts (adjusting flappers, chains, and valves is the pro's job, not a chat message). Safety notes always qualify: shut the water off at the valve, don't touch a sparking outlet, leave if you smell gas. THE BALANCE: as useful as a knowledgeable neighbor who's seen this before — but never REDLINING. Redlining = a definitive diagnosis, step-by-step repair instructions, or any price/timeline promise. Stay hedged ("usually", "often", "likely") and land on a pro assessing it.
+- HOMEOWNER REALITY: the visitor may be a first-time owner, embarrassed that they do not know the trade, afraid of being taken, worried that ordinary questions will make a contractor walk, or trying to compare proposals that describe different work. Reduce shame without becoming sentimental. They are not expected to diagnose the house or prove they are a worthy customer. Name the decision principle, translate the ambiguity, then give one exact next move.
+- POWER AND TRUST: clear written questions are not "nitpicking." Treat responsiveness, willingness to define scope, and documented changes as operating evidence without guessing anyone's motive. Never blame a homeowner for being ghosted, and never promise that a contractor is trustworthy.
 - STRUCTURE inside "say" (use real \\n newlines in the JSON string): when you have 2+ distinct FACTS or safety steps, break them into "- " dash bullets (max 4, each under 12 words) after a one-line lead; you may bold ONE key phrase per message with **…**. BULLETS ARE NEVER QUESTIONS — your one question lives in "ask" (with chips), nowhere else. A single-thought reply stays one short paragraph. Structure is for teaching, not for interviewing.
 - "mode": classify the conversation every turn.
   emergency = active danger or damage happening RIGHT NOW (fire, gas smell, sparking/burning, water flooding in, no heat in a hard freeze). Vesta is NOT a dispatch service — do NOT resolve, do NOT match, do NOT promise anyone is coming; give the decisive safety response (see EMERGENCY HANDLING).
@@ -578,12 +580,52 @@ function hiringQuestions(trade){
 export function vestaDecisionRoute(text, messages = [], followUp = false, focusMode = false){
   const t = String(text || '');
   const trade = inferVestaTrade(messages, t);
+  if (/\b(first[- ]time (?:homeowner|home owner)|new homeowner|just bought (?:my|our) first (?:house|home))\b/i.test(t)
+      && /\b(do not know|don(?:'|’)t know|no idea|not sure|which|what kind|where to start)\b/i.test(t)) return {
+    mode:'fix',
+    say:'You are not supposed to know the trade or diagnose the house — that translation is my job.',
+    ask:'What changed, where do you notice it, and is anything unsafe or actively getting worse right now?',
+  };
+  if (/\b(are they|is (?:he|she|the contractor)|contractors?)\b[^.?!]{0,45}\b(ignore|dismiss|ghost)\w*\b[^.?!]{0,35}\b(because|since)\b[^.?!]{0,18}\b(i am|i'?m)\s+(a )?woman\b/i.test(t)
+      || /\bbecause (?:i am|i'?m) a woman\b/i.test(t)) return {
+    mode:'learn',
+    say:'I cannot know their motive from the silence, but you do not need to prove why to treat the behavior as evidence. Send one concise written request with the job, town, timing, and a yes-or-no fit question. If they still do not respond, move on; reliable communication is part of the work.',
+  };
+  if (/\b(nitpick(?:y|ing)?|piss (?:him|her|them) off|annoy (?:him|her|them)|afraid to ask|scared to ask|might walk|will walk|rock the boat)\b/i.test(t)) return {
+    mode:'learn',
+    say:'Reasonable written clarity is not nitpicking. Protect the relationship by calmly restating what both sides agreed: the included work, the next milestone, and how any change will be approved before it affects price or schedule. A contractor who can explain the plan is easier to work with, not harder.',
+  };
+  if (/\b(nobody|no one|none of (?:them|the contractors?)|contractors)\b[^.?!]{0,40}\b(call(?:s|ed)? back|respond(?:s|ed)?|get(?:s|ting)? back|reply|ghost)\b/i.test(t)
+      || /\bam i doing something wrong\b/i.test(t)) return {
+    mode:'learn',
+    say:'That silence is not proof you asked wrong. Availability and responsiveness are operating evidence. Send one short written request with the work, town, timing, and “Is this a fit for you to quote?” Then set a follow-up point and contact alternatives instead of indefinitely chasing one firm.',
+  };
   const questions =
        /\bwhat (?:should|do) i ask\b/i.test(t)
     || /\bquestions?\b[^.?!]{0,35}\b(ask|contractor|roofer|plumber|electrician|hvac|before hiring|interview)\b/i.test(t)
     || /\bbefore i hire\b[^.?!]{0,28}\bwhat\b/i.test(t);
   if (questions) return { mode:'learn', say:hiringQuestions(trade) };
 
+  if (/\b(change order|changed? the (?:price|scope)|price (?:went|is going) up|more money|additional (?:work|cost)|found (?:more|other|additional) work|unexpected work)\b/i.test(t)
+      && /\b(midway|mid-project|after (?:they|work|the job)|already started|opened|during|now|wants?|asking|charge)\b/i.test(t)) return {
+    mode:'learn',
+    say:'Do not decide from “we found more” alone. Ask for the changed condition in writing, photos or other evidence, the revised scope, and the exact effect on price and schedule. Approve or reject a written change order before that added work continues, except when immediate safety protection cannot wait.',
+  };
+  if (/\b(what should|does|should)\b[^.?!]{0,28}\b(contract|proposal|written estimate|agreement)\b[^.?!]{0,20}\b(include|say|have|cover)\b/i.test(t)
+      || /\bcontract checklist\b/i.test(t)) return {
+    mode:'learn',
+    say:'A usable contract makes the job legible: exact scope and materials, exclusions, payment milestones tied to work, change-order approval, permit responsibility, cleanup, schedule assumptions, and separate workmanship and manufacturer warranties. Make sure the legal business name matches the firm you researched, and do not rely on verbal additions.',
+  };
+  if (/\b(references?|past customers?)\b/i.test(t)
+      && /\b(ask for|call|contact|trust|useful|matter|check|verify|what should i ask)\b/i.test(t)) return {
+    mode:'learn',
+    say:'References are selected by the contractor, so use them as one signal, not a guarantee. Ask permission before contacting anyone, request a project similar to yours, and ask what changed, how communication worked, and whether warranty follow-through was needed. Compare that with public records and broader review patterns.',
+  };
+  if (/\b(can (?:you|vesta)|does vesta|will (?:you|vesta))\b[^.?!]{0,35}\b(guarantee|promise|assure)\b[^.?!]{0,35}\b(contractor|firm|pro|good|trustworthy|safe|work)\b/i.test(t)
+      || /\bguaranteed (?:contractor|pick|recommendation)\b/i.test(t)) return {
+    mode:'learn',
+    say:'No source can guarantee how a future job will go. Vesta can show why a firm fits from source-linked public evidence and relevant review patterns; you still confirm the live scope, insurance, permit responsibility, availability, and warranty directly. The value is a legible decision, not a promise about the future.',
+  };
   if (/\b(red flags?|warning signs?|what should i avoid|deposit|money up front|upfront payment|pressure to pay|cash only|no contract|won(?:'t|’t) put .* in writing)\b/i.test(t)) return {
     mode:'learn',
     say:'Treat pressure as information. Pause if the scope is vague, exclusions are missing, changes stay verbal, payment runs far ahead of documented work, the name on the paperwork does not match the firm, or they resist permit and warranty questions. One concern may be explainable; several together are a reason to stop and compare another firm.',
@@ -668,6 +710,14 @@ export function vestaIdentityRoute(text, contractorSignal = false, postMatch = f
   if (method) return {
     mode:'learn',
     say:'Vesta narrows by the job, then reads public registration or license records where applicable, time in the public record, and patterns in homeowner reviews. It does not publish a magic score or let payment move a contractor up. Each recommendation shows the evidence and why it fits.',
+  };
+  const unevenQuotes =
+       /\b(one|this)\s+(?:quote|bid|estimate)\b[^.?!]{0,55}\b(higher|expensive|more|detailed|itemized)\b/i.test(t)
+    && /\b(other|cheaper|lower|one[- ]line|vague|less)\b/i.test(t)
+    || /\b(cheaper|lower)\s+(?:quote|bid|estimate)s?\b[^.?!]{0,45}\b(one[- ]line|vague|less detail|not detailed)\b/i.test(t);
+  if (unevenQuotes) return {
+    mode:'learn',
+    say:'Those totals are not comparable yet. A detailed proposal is evidence of a legible scope, not proof of better workmanship; a one-line bid may simply omit work. Ask every bidder to itemize the same materials, removal, permits, exclusions, cleanup, change rules, and warranty. If the preferred scope exceeds the budget, ask for a written alternate or safe phasing — not hidden deletions.',
   };
   const priceQuestion = !postMatch && /\b(how much|fair price|what should .* cost|cost to|price for|pricing|compare .* quotes?|is .* quote)\b/i.test(t);
   if (priceQuestion){
@@ -975,8 +1025,8 @@ export default async function handler(req, res){
     parsed.say = decisionRoute.say;
     parsed.resolved = null;
     deck = null;
-    parsed.ask = null;
-    parsed.chips = null;
+    parsed.ask = decisionRoute.ask || null;
+    parsed.chips = decisionRoute.chips || null;
   }
   // MULTI-TRADE COHERENCE — the model sometimes acknowledges three scopes, then collapses the
   // entire project into landscaping. For explicit named phases, sequence them deterministically

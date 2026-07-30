@@ -195,6 +195,17 @@ const cases = [
     ],
   },
   {
+    bot:'Atlas', name:'gives a homeowner immediate-danger guidance before Vesta',
+    run:() => atlasTurn([U("I'm a homeowner and I smell gas in the basement. Can you send someone?")]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['homeowner audience', r.aud === 'homeowner'],
+      ['safety action comes first', /^If anyone may be in immediate danger/i.test(String(r.say || '')) && contains(r.say, /\b911\b/)],
+      ['does not pretend to dispatch', contains(r.say, /\bcannot dispatch\b/i)],
+      ['Vesta follows only after safety', contains(r.say, /\bonce everyone is safe\b/i) && r.screen === 'vesta'],
+    ],
+  },
+  {
     bot:'Atlas', name:'corrects audience when a visitor reveals they are a contractor',
     run:() => atlasTurn([
       U('I am looking at this as a homeowner.'),
@@ -346,6 +357,84 @@ const cases = [
     ],
   },
   {
+    bot:'Atlas', name:'recognizes capacity instead of forcing a growth pitch',
+    run:() => atlasTurn([U("We're booked three months out and do not want more work. Why would we need Atlas?")]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['does not sell more leads', contains(r.say, /\bmore leads are not the value case\b/i)],
+      ['states the no-fit condition', contains(r.say, /\bnot a fit|do not need\b/i)],
+      ['looks only for a specific uncovered lane', contains(r.say, /\bspecific lane\b/i) && contains(r.say, /\bservice work|next-season|handoffs\b/i)],
+      ['contractor audience', r.aud === 'contractor'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'separates real demand from spam and bad-fit calls',
+    run:() => atlasTurn([U("Half my calls are spam. Don't tell me every missed call is money.")]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['agrees a ring is not a lead', contains(r.say, /\bring is not automatically a lead\b/i)],
+      ['does not count noise as recovered demand', contains(r.say, /\bspam or bad-fit calls\b/i) && contains(r.say, /\brecovered demand\b/i)],
+      ['admits a small gap may not justify Atlas', contains(r.say, /\bremaining gap is small\b/i)],
+      ['contractor audience', r.aud === 'contractor'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'handles customer distrust of robots without minimizing it',
+    run:() => atlasTurn([U("My customers hate robots. I won't let this hurt my name.")]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['takes reputation risk seriously', contains(r.say, /\bname at risk is yours\b/i)],
+      ['states SMS-first voice boundary', contains(r.say, /\bdoes not answer a live voice call\b/i) && contains(r.say, /\bSMS-first\b/i)],
+      ['puts the real experience through a watched test', contains(r.say, /\bwatched test\b/i) && contains(r.say, /\bdo not use it\b/i)],
+      ['simulation surface', r.screen === 'sim'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'respects an existing human answering service',
+    run:() => atlasTurn([U('I already pay a human answering service. Why would I need Atlas?')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['says to keep a working service', contains(r.say, /\bkeep it\b/i)],
+      ['rejects duplicate complexity', contains(r.say, /\bshould not duplicate a desk that works\b/i)],
+      ['defines the only useful comparison', contains(r.say, /\buncovered parts\b/i) && contains(r.say, /\bvisible together\b/i)],
+      ['FAQ surface', r.screen === 'faq'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'treats a spouse-run desk as an operating role',
+    run:() => atlasTurn([U('My wife handles the phones and books the jobs. Are you trying to replace her?')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['does not erase the role', contains(r.say, /\boperating role, not a gap to erase\b/i)],
+      ['keeps judgment and relationships with the current owner', contains(r.say, /\bjudgment and customer relationships\b/i)],
+      ['seeks only repetitive relief', contains(r.say, /\brepetitive lane\b/i)],
+      ['admits Atlas may be unnecessary', contains(r.say, /\bunnecessary\b/i)],
+    ],
+  },
+  {
+    bot:'Atlas', name:'bounds itself when the work is genuinely complex',
+    run:() => atlasTurn([U('Our jobs are too complicated and custom for a bot to understand.')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['does not claim trade expertise', contains(r.say, /\bshould not try to understand the job the way you do\b/i)],
+      ['limits itself to the first step', contains(r.say, /\bfirst step\b/i) && contains(r.say, /\blocation and urgency\b/i)],
+      ['states the hard no-fit boundary', contains(r.say, /\bnot a fit for Atlas\b/i)],
+      ['contractor audience', r.aud === 'contractor'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'answers the owner-control objection with a real gate',
+    run:() => atlasTurn([U("I don't want something texting my customers without me knowing what it says.")]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['protects the customer relationship', contains(r.say, /\bshould not surrender control\b/i)],
+      ['names the bounded rules', contains(r.say, /\bbusiness facts, scheduling rules, and handoffs\b/i)],
+      ['keeps actions visible', contains(r.say, /\bconversation, action, and handoff remain visible\b/i)],
+      ['uses a watched go-live gate', contains(r.say, /\bwatched test through your real number\b/i)],
+      ['record surface', r.screen === 'lens'],
+    ],
+  },
+  {
     bot:'Vesta', name:'explains what Vesta is',
     run:() => vestaTurn([U('What is Vesta, exactly?')]),
     checks:r => [
@@ -471,6 +560,108 @@ const cases = [
       ['no dollar guess', noVestaFabrication(r)],
       ['not a refusal-first wall', !/^(I can(?:not|'t|’t)|I do not|I don’t)/i.test(String(r.say || '').trim())],
       ['earned length only', words(r.say) <= 110],
+    ],
+  },
+  {
+    bot:'Vesta', name:'removes first-time homeowner shame and begins with symptoms',
+    run:() => vestaTurn([U("I just bought my first house and don't know what kind of contractor I need.")]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['normalizes not knowing the trade', contains(r.say, /\bnot supposed to know the trade\b/i)],
+      ['does not diagnose or invent a match', !r.resolved],
+      ['asks for observable facts', contains(r.ask, /\bwhat changed\b/i) && contains(r.ask, /\bwhere\b/i)],
+      ['checks immediate safety', contains(r.ask, /\bunsafe|actively getting worse\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'does not make the homeowner prove why she is being dismissed',
+    run:() => vestaTurn([U('Are contractors ignoring me because I am a woman?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['does not invent motive', contains(r.say, /\bcannot know their motive\b/i)],
+      ['does not burden the homeowner with proving it', contains(r.say, /\bdo not need to prove why\b/i)],
+      ['turns behavior into operating evidence', contains(r.say, /\bbehavior as evidence\b/i)],
+      ['gives a bounded next move', contains(r.say, /\byes-or-no fit question\b/i) && contains(r.say, /\bmove on\b/i)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'treats written clarity as relationship protection not nitpicking',
+    run:() => vestaTurn([U("I don't want to be nitpicky or piss him off. He might walk off the job.")]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['plainly rejects the shame premise', contains(r.say, /\bwritten clarity is not nitpicking\b/i)],
+      ['protects the relationship through shared facts', contains(r.say, /\bwhat both sides agreed\b/i)],
+      ['names scope and change control', contains(r.say, /\bincluded work\b/i) && contains(r.say, /\bchange will be approved\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'handles pre-hire silence without blaming the homeowner',
+    run:() => vestaTurn([U('Nobody calls me back. Am I doing something wrong?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['does not blame the homeowner', contains(r.say, /\bnot proof you asked wrong\b/i)],
+      ['treats response as evidence', contains(r.say, /\bresponsiveness are operating evidence\b/i)],
+      ['gives an exact concise outreach structure', contains(r.say, /\bwork, town, timing\b/i) && contains(r.say, /\bis this a fit for you to quote\b/i)],
+      ['prevents endless chasing', contains(r.say, /\binstead of indefinitely chasing\b/i)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'compares a detailed bid with cheaper one-line bids',
+    run:() => vestaTurn([U('One quote is much higher but detailed. The cheaper bids are one line. Which is better?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['refuses a false total comparison', contains(r.say, /\bnot comparable yet\b/i)],
+      ['uses detail as a bounded signal', contains(r.say, /\blegible scope, not proof\b/i)],
+      ['normalizes the scopes', contains(r.say, /\bitemize the same\b/i) && contains(r.say, /\bexclusions\b/i)],
+      ['offers honest budget alternatives', contains(r.say, /\bwritten alternate or safe phasing\b/i)],
+      ['no fabricated price', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'requires evidence and written approval for a mid-job change',
+    run:() => vestaTurn([U('They found more work midway and want more money. What should I do?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['does not accept a verbal assertion', contains(r.say, /\bdo not decide from\b/i)],
+      ['asks for evidence and revised scope', contains(r.say, /\bphotos or other evidence\b/i) && contains(r.say, /\brevised scope\b/i)],
+      ['requires written approval before continuation', contains(r.say, /\bwritten change order before\b/i)],
+      ['preserves the safety exception', contains(r.say, /\bimmediate safety protection\b/i)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'makes a contractor agreement legible',
+    run:() => vestaTurn([U('What should the contractor contract include before I sign?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['names scope and exclusions', contains(r.say, /\bexact scope and materials\b/i) && contains(r.say, /\bexclusions\b/i)],
+      ['ties payment to work', contains(r.say, /\bpayment milestones tied to work\b/i)],
+      ['includes change permit cleanup and warranties', contains(r.say, /\bchange-order approval\b/i) && contains(r.say, /\bpermit responsibility\b/i) && contains(r.say, /\bcleanup\b/i) && contains(r.say, /\bwarranties\b/i)],
+      ['guards against verbal additions', contains(r.say, /\bdo not rely on verbal additions\b/i)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'uses contractor references as one signal rather than a guarantee',
+    run:() => vestaTurn([U('Should I trust the references a contractor gives me?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['explains selection bias', contains(r.say, /\bselected by the contractor\b/i)],
+      ['does not turn a reference into proof', contains(r.say, /\bone signal, not a guarantee\b/i)],
+      ['asks project-relevant operating questions', contains(r.say, /\bproject similar to yours\b/i) && contains(r.say, /\bwhat changed\b/i) && contains(r.say, /\bwarranty follow-through\b/i)],
+      ['triangulates with broader evidence', contains(r.say, /\bpublic records and broader review patterns\b/i)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'does not turn evidence into a guarantee',
+    run:() => vestaTurn([U('Can Vesta guarantee the contractor you recommend will do good work?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['plainly rejects a future guarantee', contains(r.say, /\bno source can guarantee\b/i)],
+      ['states what Vesta can show', contains(r.say, /\bsource-linked public evidence\b/i)],
+      ['keeps live facts with the homeowner', contains(r.say, /\bconfirm the live scope\b/i) && contains(r.say, /\bdirectly\b/i)],
+      ['defines the real value', contains(r.say, /\blegible decision, not a promise\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
     ],
   },
   {

@@ -140,6 +140,26 @@ check('human comparison remains claim-safe', claimSafe(comparisonRoute?.say || '
 const valueRoute = routeKillQuestion([{ role:'user', content:'Is it worth it for my company?' }]);
 check('value question opens an evidence-based calculator path', valueRoute?.k === 'value' && valueRoute?.screen === 'numbers' && /your facts/i.test(valueRoute?.say || ''));
 check('value answer remains claim-safe', claimSafe(valueRoute?.say || '') === true);
+const realityRoutes = [
+  ['capacity', 'We are booked three months out and do not want more work.', 'fitcall'],
+  ['spam-noise', 'Half my calls are spam. Not every missed call is money.', 'numbers'],
+  ['customer-robot-trust', 'My customers hate robots and I will not let one hurt our name.', 'sim'],
+  ['existing-answering', 'I already pay a human answering service. Why do I need Atlas?', 'faq'],
+  ['family-desk', 'My wife handles the phones and books the jobs.', 'room:lead'],
+  ['complex-work', 'Our jobs are too complicated and custom for a bot.', 'room:lead'],
+  ['operator-control', 'I do not want something texting my customers without me knowing.', 'lens'],
+];
+for (const [key, content, screen] of realityRoutes){
+  const route = routeKillQuestion([{ role:'user', content }]);
+  check(`contractor reality: ${key} routes deterministically`, route?.k === key && route?.screen === screen && route?.aud === 'contractor');
+  check(`contractor reality: ${key} remains claim-safe`, claimSafe(route?.say || '') === true);
+}
+const homeownerRoute = routeKillQuestion([{ role:'user', content:"I'm a homeowner and my roof is leaking. Can you send someone?" }]);
+check('explicit homeowner reaches Vesta without model routing', homeownerRoute?.k === 'homeowner-handoff' && homeownerRoute?.aud === 'homeowner' && homeownerRoute?.screen === 'vesta');
+check('homeowner handoff does not claim dispatch', /\bcannot send or dispatch\b/i.test(homeownerRoute?.say || '') && claimSafe(homeownerRoute?.say || '') === true);
+const homeownerEmergency = routeKillQuestion([{ role:'user', content:"I'm a homeowner and I smell gas in the basement." }]);
+check('homeowner danger gets safety before Vesta', homeownerEmergency?.k === 'homeowner-emergency' && /^If anyone may be in immediate danger/i.test(homeownerEmergency?.say || '') && /911/.test(homeownerEmergency?.say || ''));
+check('homeowner danger answer remains claim-safe', claimSafe(homeownerEmergency?.say || '') === true);
 
 // ── screen whitelist: exactly the surfaces the UI knows how to assemble ──
 check('office is a valid screen', SCREENS.has('office'));
