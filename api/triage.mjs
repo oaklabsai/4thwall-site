@@ -868,8 +868,10 @@ export default async function handler(req, res){
   const sendStatic = (route, deck = null, resolved = null) => {
     const budget = PRICE_QUESTION.test(preText) ? 110 : followUp ? 90 : 65;
     const say = boundSay(sayGuard(route.say, messages, deck), budget);
+    const chips = Array.isArray(route.chips)
+      ? route.chips.filter(c => typeof c === 'string' && c.trim()).slice(0, 4) : [];
     send({ t:'d', c:say });
-    send({ t:'f', say, ask:null, chips:null, mode:route.mode, resolved, deck, call:null });
+    send({ t:'f', say, ask:route.ask || null, chips:chips.length ? chips : null, mode:route.mode, resolved, deck, call:null });
     return res.end();
   };
   if (!preEmergency){
