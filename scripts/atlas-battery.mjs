@@ -10,7 +10,7 @@
 // Run: node scripts/atlas-battery.mjs         (deterministic gate)
 //      node scripts/atlas-battery.mjs --live   (+ live model probes against prod)
 
-import { claimSafe, SCREENS, DEFLECT, extractJSON, cleanArgs, CALC_ARGS, cleanAud, deflectScreenFor, WHERE_LABEL, extractCalculatorRoute, routeKillQuestion } from '../api/atlas.mjs';
+import { claimSafe, SCREENS, DEFLECT, extractJSON, cleanArgs, CALC_ARGS, cleanAud, deflectScreenFor, WHERE_LABEL, extractCalculatorRoute, extractContractorContext, routeKillQuestion } from '../api/atlas.mjs';
 
 let fails = 0;
 const check = (tag, ok, note='') => {
@@ -107,6 +107,39 @@ check('missed-call process remains claim-safe', claimSafe(missedProcessRoute?.sa
 const contractorPivotRoute = routeKillQuestion([{ role:'user', content:'Actually, I own a roofing company.' }]);
 check('homeowner-to-contractor pivot is deterministic', contractorPivotRoute?.k === 'contractor-pivot' && contractorPivotRoute?.aud === 'contractor' && contractorPivotRoute?.screen === 'office');
 check('contractor pivot remains claim-safe', claimSafe(contractorPivotRoute?.say || '') === true);
+const context = extractContractorContext([
+  { role:'user', content:'I run a roofing company. My crews are on roofs all day and miss calls.' },
+  { role:'assistant', content:'Tell me more.' },
+  { role:'user', content:'What would you set up first?' },
+]);
+check('Atlas remembers trade and operating pain across turns', context.trade === 'roofing' && context.pain === 'missed');
+const blueprintRoute = routeKillQuestion([
+  { role:'user', content:'I run a roofing company. My crews are on roofs all day and miss calls.' },
+  { role:'assistant', content:'Tell me more.' },
+  { role:'user', content:'What would you set up first?' },
+]);
+check('business-specific blueprint uses retained context', blueprintRoute?.k === 'blueprint' && blueprintRoute?.screen === 'room:lead' && /roofing business/i.test(blueprintRoute?.say || '') && /service-area edges/i.test(blueprintRoute?.say || ''));
+check('business-specific blueprint remains claim-safe', claimSafe(blueprintRoute?.say || '') === true);
+const noContextBlueprint = routeKillQuestion([{ role:'user', content:'Give me a blueprint for my business.' }]);
+check('blueprint asks for only the missing business facts', noContextBlueprint?.k === 'blueprint' && /what trade/i.test(noContextBlueprint?.say || '') && /where does a good lead/i.test(noContextBlueprint?.say || ''));
+const fitRoute = routeKillQuestion([{ role:'user', content:'I am a solo contractor. Is Atlas a fit for a business this small?' }]);
+check('fit answer can honestly disqualify a working desk', fitRoute?.k === 'fit' && /may only duplicate/i.test(fitRoute?.say || '') && fitRoute?.screen === 'fitcall');
+check('fit answer remains claim-safe', claimSafe(fitRoute?.say || '') === true);
+const accuracyRoute = routeKillQuestion([{ role:'user', content:'What happens when Atlas gets something wrong?' }]);
+check('failure answer names stopping, handoff and recovery', accuracyRoute?.k === 'accuracy' && /stops short of guessing/i.test(accuracyRoute?.say || '') && /recovered/i.test(accuracyRoute?.say || '') && accuracyRoute?.screen === 'lens');
+check('failure answer remains claim-safe', claimSafe(accuracyRoute?.say || '') === true);
+const limitsRoute = routeKillQuestion([{ role:'user', content:'Does Atlas answer live phone calls? What will it not do?' }]);
+check('limits answer states current non-promises', limitsRoute?.k === 'limits' && /does not promise live voice/i.test(limitsRoute?.say || '') && /quote chasing/i.test(limitsRoute?.say || ''));
+check('limits answer remains claim-safe', claimSafe(limitsRoute?.say || '') === true);
+const setupRoute = routeKillQuestion([{ role:'user', content:'What do you need from me to set Atlas up and go live?' }]);
+check('setup answer includes carrier and watched-test gates', setupRoute?.k === 'setup' && /carrier approval/i.test(setupRoute?.say || '') && /watched inbound test/i.test(setupRoute?.say || ''));
+check('setup answer remains claim-safe', claimSafe(setupRoute?.say || '') === true);
+const comparisonRoute = routeKillQuestion([{ role:'user', content:'Does Atlas replace my office manager?' }]);
+check('human comparison preserves consequential judgment', comparisonRoute?.k === 'comparison' && /people are unnecessary/i.test(comparisonRoute?.say || '') && /named person/i.test(comparisonRoute?.say || ''));
+check('human comparison remains claim-safe', claimSafe(comparisonRoute?.say || '') === true);
+const valueRoute = routeKillQuestion([{ role:'user', content:'Is it worth it for my company?' }]);
+check('value question opens an evidence-based calculator path', valueRoute?.k === 'value' && valueRoute?.screen === 'numbers' && /your facts/i.test(valueRoute?.say || ''));
+check('value answer remains claim-safe', claimSafe(valueRoute?.say || '') === true);
 
 // ── screen whitelist: exactly the surfaces the UI knows how to assemble ──
 check('office is a valid screen', SCREENS.has('office'));

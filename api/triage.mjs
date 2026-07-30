@@ -527,6 +527,98 @@ export function multiTradePlan(text){
   };
 }
 
+// Vesta serves more than homeowners: builders, general contractors, property teams and
+// real-estate professionals also use the public evidence to source trades. Their first-person
+// professional identity must not be mistaken for "take me to Atlas" when the actual intent is
+// finding a trade for a project.
+export function professionalBuyerSignal(text){
+  const t = String(text || '');
+  const professional = /\b(i'?m|i am|we are|as)\s+(?:a|an)?\s*(builder|general contractor|gc|realtor|real[- ]estate agent|property manager|property management|facilities manager|construction manager)\b/i.test(t)
+    || /\b(my|our)\s+(project|property|building|client|development|renovation)\b/i.test(t);
+  const sourcing = /\b(looking for|need|find|source|sourcing|hire|line up|recommend)\b[^.?!]{0,45}\b(roofer|plumber|electrician|hvac|painter|landscaper|mason|paver|carpenter|contractor|subcontractor|sub|trade|crew|firm|company)\b/i.test(t)
+    || /\b(roofer|plumber|electrician|hvac|painter|landscaper|mason|paver|carpenter|contractor|subcontractor|sub|trade|crew|firm|company)\b[^.?!]{0,45}\b(for|on)\b[^.?!]{0,30}\b(project|property|client|renovation|build|job)\b/i.test(t);
+  return professional && sourcing;
+}
+
+const VESTA_TRADE_SIGNALS = [
+  ['roofing', /\b(roof(?:er|ing)?|shingle|flashing|gutter)\b/i],
+  ['plumbing', /\b(plumb(?:er|ing)?|pipe|drain|fixture|water heater)\b/i],
+  ['HVAC', /\b(hvac|heating|cooling|furnace|air conditioning|heat pump)\b/i],
+  ['electrical', /\b(electric(?:al|ian)?|panel|rewir|outlet|lighting)\b/i],
+  ['painting', /\b(paint(?:er|ing)?|coating)\b/i],
+  ['masonry', /\b(mason(?:ry)?|chimney|brick|stone|patio)\b/i],
+  ['landscaping', /\b(landscap|lawn|tree|arborist)\b/i],
+  ['windows and doors', /\b(window|door)\b/i],
+  ['paving', /\b(pav(?:er|ing)|driveway|asphalt|concrete)\b/i],
+];
+
+export function inferVestaTrade(messages, text = ''){
+  const conversation = [
+    ...(Array.isArray(messages) ? messages : [])
+      .filter(m => m && m.role === 'user')
+      .map(m => String(m.content || '')),
+    String(text || ''),
+  ].join(' ');
+  return VESTA_TRADE_SIGNALS.find(([, test]) => test.test(conversation))?.[0] || null;
+}
+
+function hiringQuestions(trade){
+  const tailored = {
+    roofing:'Ask each roofer to put the same things in writing: tear-off layers, deck-repair allowance, flashing and ventilation work, exact material, who pulls any required permit, workmanship warranty, exclusions, and cleanup. The revealing question is, “What could change this scope after you open the roof, and how will you document it before charging me?”',
+    plumbing:'Ask each plumber about the diagnostic fee, exact scope and parts, access or wall-opening work, cleanup, who handles any required permit, and the labor warranty. The revealing question is, “What do you know now, what still requires diagnosis, and what would make the price change?”',
+    HVAC:'Ask each HVAC firm for the equipment model, sizing assumptions, duct or electrical changes, who handles any required permit, commissioning steps, and labor versus manufacturer warranty. The revealing question is, “What evidence says this is the right repair or system size for this house?”',
+    electrical:'Ask each electrician for the exact circuits or service work, panel and device specifications, access and patching responsibility, who pulls any required permit, inspection plan, and labor warranty. The revealing question is, “What will be inspected, and what existing conditions could change the scope?”',
+    painting:'Ask each painter about surface preparation, repairs, primer, product and coats, protected areas, cleanup, schedule assumptions, and the workmanship warranty. The revealing question is, “What preparation is included that I will not see once the finish coat is on?”',
+  };
+  return tailored[trade] || 'Ask every firm for the same written scope: included work, materials, exclusions, access and cleanup, permit responsibility if applicable, schedule assumptions, payment milestones, and workmanship warranty. Then ask, “What could change this scope, and how will you document and approve that change before charging me?”';
+}
+
+// Source-free decision coaching: useful principles Vesta can give without diagnosing a home,
+// inventing a contractor fact, quoting a local law, or pretending to know live price/schedule.
+export function vestaDecisionRoute(text, messages = [], followUp = false, focusMode = false){
+  const t = String(text || '');
+  const trade = inferVestaTrade(messages, t);
+  const questions =
+       /\bwhat (?:should|do) i ask\b/i.test(t)
+    || /\bquestions?\b[^.?!]{0,35}\b(ask|contractor|roofer|plumber|electrician|hvac|before hiring|interview)\b/i.test(t)
+    || /\bbefore i hire\b[^.?!]{0,28}\bwhat\b/i.test(t);
+  if (questions) return { mode:'learn', say:hiringQuestions(trade) };
+
+  if (/\b(red flags?|warning signs?|what should i avoid|deposit|money up front|upfront payment|pressure to pay|cash only|no contract|won(?:'t|’t) put .* in writing)\b/i.test(t)) return {
+    mode:'learn',
+    say:'Treat pressure as information. Pause if the scope is vague, exclusions are missing, changes stay verbal, payment runs far ahead of documented work, the name on the paperwork does not match the firm, or they resist permit and warranty questions. One concern may be explainable; several together are a reason to stop and compare another firm.',
+  };
+  if (/\b(how (?:should|do) i read|can i trust|what should i look for in|what matters in|review patterns?|fake reviews?)\b[^.?!]{0,24}\breviews?\b|\breview patterns?\b/i.test(t)) return {
+    mode:'learn',
+    say:'Read reviews for repeated operating patterns, not the average alone: jobs like yours, recent communication, scope changes, cleanup, warranty follow-through, and how the firm responds when something goes wrong. A glowing review about a different kind of job is weak evidence for yours. Check public registration or license records separately where the trade carries them.',
+  };
+  if (/\b(permit|who pulls|building department|inspection)\b/i.test(t)) return {
+    mode:'learn',
+    say:'Permit requirements depend on the town and exact scope, so I will not guess from a chat. Ask the contractor to state in writing whether a permit and inspection are required, who will pull it, and whose name appears on it; then confirm that answer with your town building department before work starts.',
+  };
+  if (/\b(warrant(?:y|ies)|workmanship guarantee|manufacturer warranty)\b/i.test(t)) return {
+    mode:'learn',
+    say:'Separate the workmanship warranty from the manufacturer warranty. Get the term, covered work, exclusions, transferability, claim process, and who pays labor or access costs in writing. A long material warranty does not answer who fixes bad installation, so ask for one example of how a workmanship claim is handled.',
+  };
+  if (/\b(ghosted|no[- ]?show|stopped responding|won(?:'t|’t) call back|disappeared)\b/i.test(t)) return {
+    mode:'learn',
+    say:'Preserve the paper trail first: contract, scope, payments, photos, and every contact attempt. Send one calm written message naming the unfinished issue and a reasonable response deadline. Do not send more money without a clear documented basis. If safety, an open permit, or a large loss is involved, contact the relevant town office or a qualified local professional.',
+  };
+  if (/\b(repair or replace|fix or replace|worth repairing|should i replace|can this be repaired)\b/i.test(t)) return {
+    mode:'learn',
+    say:`That decision needs an inspection, but you can make the comparison disciplined${trade ? ` for the ${trade} work` : ''}: ask what failed, whether the cause is known, what the repair leaves untouched, expected remaining life, warranty on each option, and what evidence would make replacement necessary. Get both scopes in writing before comparing totals.`,
+  };
+  if (/\bhow many\b[^.?!]{0,20}\b(quote|bid|estimate)s?\b/i.test(t)) return {
+    mode:'learn',
+    say:'Get enough independent written scopes to expose disagreement, not a ritual number for its own sake. If the first bids describe different work, another bid may help only after you normalize the scope, materials and exclusions. Stop when you understand the major choices and can explain why the selected scope fits the job.',
+  };
+  if ((followUp || focusMode) && /\b(which|who)\b[^.?!]{0,35}\b(best|better|right for me|should i choose)\b/i.test(t)) return {
+    mode:'learn',
+    say:'Choose against the job, not a generic winner. Use only the evidence shown for each firm: relevance to this scope, public-record continuity, and review patterns that match what you care about. Then confirm the live facts Vesta cannot know — scope, availability, insurance, permit responsibility and warranty — directly with the finalists.',
+  };
+  return null;
+}
+
 // Product-identity questions carry the trust contract, so the answer cannot vary by model.
 // Pay-to-play truth wins even when the speaker also sounds like a contractor; ordinary
 // contractor sign-up questions receive the clean Atlas handoff.
@@ -715,11 +807,12 @@ export default async function handler(req, res){
   const preLastUser = [...messages].reverse().find(m => m.role === 'user');
   const preText = String(preLastUser && preLastUser.content || '');
   const PRE_TRADE_ID = 'contractor|plumber|electrician|roofer|painter|landscaper|hvac|mason|carpenter|handyman|builder|paver';
-  const preAtlasSignal =
+  const preProfessionalBuyer = professionalBuyerSignal(preText);
+  const preAtlasSignal = !preProfessionalBuyer && (
        /\b(i|we)\s+(own|run|operate|started)\b[^.?!]{0,26}\b(business|company|shop|crew|firm|contracting)\b/i.test(preText)
     || new RegExp(`\\bi'?m\\s+(a|an)\\s+(${PRE_TRADE_ID})\\b`, 'i').test(preText)
     || new RegExp(`\\b(get|getting|sign|signing)\\s+(my|our)\\s+(business|company|${PRE_TRADE_ID})\\b[^.?!]{0,26}\\b(listed|signed up|up|on)\\b`, 'i').test(preText)
-    || /\bmy\s+(business|company|crew|firm)\b[^.?!]{0,26}\b(listed|sign(ed)? up|get on|join)\b/i.test(preText);
+    || /\bmy\s+(business|company|crew|firm)\b[^.?!]{0,26}\b(listed|sign(ed)? up|get on|join)\b/i.test(preText));
   const preEmergency =
        /\b(smell (?:of )?gas|gas smell|fire|sparking|burning outlet|active flood|flooding right now|water (?:is )?(?:pouring|gushing))\b/i.test(preText);
   const sendStatic = (route, deck = null, resolved = null) => {
@@ -734,6 +827,8 @@ export default async function handler(req, res){
     if (preIdentity) return sendStatic(preIdentity);
     const preFollowup = vestaFollowupRoute(preText, followUp, focusMode);
     if (preFollowup) return sendStatic(preFollowup);
+    const preDecision = vestaDecisionRoute(preText, messages, followUp, focusMode);
+    if (preDecision) return sendStatic(preDecision);
     const preMulti = !followUp && !focusMode && !preAtlasSignal ? multiTradePlan(preText) : null;
     if (preMulti){
       let first = null;
@@ -840,12 +935,17 @@ export default async function handler(req, res){
   const atlasLastUser = [...messages].reverse().find(m => m.role === 'user');
   const atlasText = String(atlasLastUser && atlasLastUser.content || '');
   const TRADE_ID = 'contractor|plumber|electrician|roofer|painter|landscaper|hvac|mason|carpenter|handyman|builder|paver';
-  const atlasSignal =
+  const professionalBuyer = professionalBuyerSignal(atlasText);
+  const atlasSignal = !professionalBuyer && (
        /\b(i|we)\s+(own|run|operate|started)\b[^.?!]{0,26}\b(business|company|shop|crew|firm|contracting)\b/i.test(atlasText)
     || new RegExp(`\\bi'?m\\s+(a|an)\\s+(${TRADE_ID})\\b`, 'i').test(atlasText)
     || new RegExp(`\\b(get|getting|sign|signing)\\s+(my|our)\\s+(business|company|${TRADE_ID})\\b[^.?!]{0,26}\\b(listed|signed up|up|on)\\b`, 'i').test(atlasText)
-    || /\bmy\s+(business|company|crew|firm)\b[^.?!]{0,26}\b(listed|sign(ed)? up|get on|join)\b/i.test(atlasText);
-  const isAtlas = (parsed.mode === 'atlas' || atlasSignal) && parsed.mode !== 'emergency';
+    || /\bmy\s+(business|company|crew|firm)\b[^.?!]{0,26}\b(listed|sign(ed)? up|get on|join)\b/i.test(atlasText));
+  if (professionalBuyer && parsed.mode === 'atlas'){
+    parsed.mode = 'plan';
+    parsed.say = 'You are sourcing a trade for a real project, so Vesta is the right side of 4THWALL. I’ll treat this as a scope-and-evidence search: define the work clearly, narrow to relevant public-record profiles, then compare the live scope, schedule, insurance, permit responsibility and warranty directly with the finalists.';
+  }
+  const isAtlas = !professionalBuyer && (parsed.mode === 'atlas' || atlasSignal) && parsed.mode !== 'emergency';
   if (isAtlas){ parsed.mode = 'atlas'; parsed.resolved = null; deck = null; parsed.ask = null; parsed.chips = null; }
   const identityRoute = parsed.mode !== 'emergency' ? vestaIdentityRoute(atlasText, isAtlas, followUp || focusMode) : null;
   if (identityRoute){
@@ -863,6 +963,16 @@ export default async function handler(req, res){
   if (followupRoute){
     parsed.mode = followupRoute.mode;
     parsed.say = followupRoute.say;
+    parsed.resolved = null;
+    deck = null;
+    parsed.ask = null;
+    parsed.chips = null;
+  }
+  const decisionRoute = !identityRoute && !followupRoute && !isAtlas && parsed.mode !== 'emergency'
+    ? vestaDecisionRoute(atlasText, messages, followUp, focusMode) : null;
+  if (decisionRoute){
+    parsed.mode = decisionRoute.mode;
+    parsed.say = decisionRoute.say;
     parsed.resolved = null;
     deck = null;
     parsed.ask = null;

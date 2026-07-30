@@ -1,6 +1,6 @@
 // Vesta triage logic suite — pure-function tests over the REAL exports (no drift).
 // Run: node tests/triage-logic.test.mjs
-import { bankValidate, extractJSON, extractiveOK, boundSay, multiTradePlan, vestaIdentityRoute, vestaFollowupRoute, sayGuard } from '../api/triage.mjs';
+import { bankValidate, extractJSON, extractiveOK, boundSay, multiTradePlan, professionalBuyerSignal, inferVestaTrade, vestaIdentityRoute, vestaFollowupRoute, vestaDecisionRoute, sayGuard } from '../api/triage.mjs';
 let n=0, f=0; const T=(name,cond)=>{ n++; if(!cond){ f++; console.log('FAIL:',name); } };
 
 const bank = {
@@ -112,6 +112,27 @@ T('post-match price question stays honest and useful', priceFollowup?.mode==='le
 const scheduleFollowup = vestaFollowupRoute('Who can come fastest?', true, false);
 T('post-match availability question stays honest and useful', scheduleFollowup?.mode==='learn' && /does not have live access.*schedules/i.test(scheduleFollowup.say) && /confirm it directly/i.test(scheduleFollowup.say));
 T('ordinary intake does not trigger a follow-up route', vestaFollowupRoute('Who can fix my roof?', false, false)===null);
+T('builder sourcing a trade stays on the Vesta demand side', professionalBuyerSignal('I am a builder looking for a roofer for a client renovation')===true);
+T('contractor seeking placement is not mistaken for a professional buyer', professionalBuyerSignal('I run a roofing company. How do I get my business listed?')===false);
+T('trade inference remembers an earlier roof turn', inferVestaTrade([{role:'user',content:'I need a roof replaced'},{role:'assistant',content:'I can help.'}], 'What should I ask them?')==='roofing');
+const roofQuestions = vestaDecisionRoute('What should I ask them?', [{role:'user',content:'I need a roof replaced'}]);
+T('follow-up hiring questions use remembered roof context', roofQuestions?.mode==='learn' && /tear-off layers/i.test(roofQuestions.say) && /open the roof/i.test(roofQuestions.say));
+const hvacQuestions = vestaDecisionRoute('What should I ask the HVAC companies?', []);
+T('HVAC hiring questions are trade-specific', /equipment model/i.test(hvacQuestions?.say || '') && /sizing assumptions/i.test(hvacQuestions?.say || ''));
+const redFlags = vestaDecisionRoute('What red flags should I watch for before hiring?', []);
+T('red-flag coaching teaches a decision rule without inventing facts', redFlags?.mode==='learn' && /scope is vague/i.test(redFlags.say) && /several together/i.test(redFlags.say));
+const reviewCoach = vestaDecisionRoute('How should I read contractor reviews?', []);
+T('review coaching prioritizes relevant repeated patterns', /repeated operating patterns/i.test(reviewCoach?.say || '') && /jobs like yours/i.test(reviewCoach?.say || ''));
+const permitCoach = vestaDecisionRoute('Who pulls the permit, and do I need one?', []);
+T('permit coaching preserves the town-and-scope boundary', /depend on the town and exact scope/i.test(permitCoach?.say || '') && /town building department/i.test(permitCoach?.say || ''));
+const warrantyCoach = vestaDecisionRoute('What should the warranty actually say?', []);
+T('warranty coaching separates workmanship from manufacturer coverage', /workmanship warranty/i.test(warrantyCoach?.say || '') && /manufacturer warranty/i.test(warrantyCoach?.say || ''));
+const ghostCoach = vestaDecisionRoute('My contractor ghosted me after taking a payment. What now?', []);
+T('ghosting recovery preserves evidence and avoids reckless payment advice', /paper trail/i.test(ghostCoach?.say || '') && /Do not send more money/i.test(ghostCoach?.say || ''));
+const replaceCoach = vestaDecisionRoute('Should I repair or replace the furnace?', []);
+T('repair-versus-replace coaching avoids diagnosis and structures the comparison', /needs an inspection/i.test(replaceCoach?.say || '') && /what failed/i.test(replaceCoach?.say || ''));
+const pickCoach = vestaDecisionRoute('Which one is best for me?', [{role:'assistant',content:'{"picks":[{"name":"A"},{"name":"B"}]}'}], true, false);
+T('post-match choice coaching uses shown evidence and confirms live facts', /evidence shown/i.test(pickCoach?.say || '') && /confirm the live facts/i.test(pickCoach?.say || ''));
 const negativeVetting = 'Vesta does not run background checks or verify insurance. Confirm those directly with the contractor.';
 T('truthful negative vetting disclosure survives the output guard', sayGuard(negativeVetting, [{role:'user',content:'Do you background check them?'}], null)===negativeVetting);
 T('positive background-check claim is stripped by the output guard', !/background/i.test(sayGuard('Vesta runs background checks on every contractor. Ask me about your job.', [{role:'user',content:'How do you vet them?'}], null)));

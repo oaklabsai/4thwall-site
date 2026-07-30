@@ -257,6 +257,95 @@ const cases = [
     ],
   },
   {
+    bot:'Atlas', name:'builds a front-office blueprint from retained business context',
+    run:() => atlasTurn([
+      U('I run a roofing company. My crews are on roofs all day and miss calls.'),
+      A(JSON.stringify({ say:'That sounds like an unowned response gap.', screen:'room:lead', aud:'contractor' })),
+      U('What would you set up first for us?'),
+    ]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['remembers the roofing business', contains(r.say, /\broofing business\b/i)],
+      ['prescribes Lead Response first', contains(r.say, /\bstart with Lead Response\b/i)],
+      ['defines a real exception test', contains(r.say, /\bservice-area edges|must never guess\b/i)],
+      ['opens the Lead Response room', r.screen === 'room:lead'],
+      ['contractor audience', r.aud === 'contractor'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'gives an honest fit answer including a disqualifier',
+    run:() => atlasTurn([U('I am a solo contractor. Is Atlas a fit for a business this small?')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['fit is based on ownership not headcount', contains(r.say, /\bless on headcount|ownership\b/i)],
+      ['states when Atlas may not add value', contains(r.say, /\bduplicate|already gets a fast|desk that works\b/i)],
+      ['fit-call surface', r.screen === 'fitcall'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'explains how errors stop and recover',
+    run:() => atlasTurn([U('What happens when Atlas gets something wrong or does not know?')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['does not pretend omniscience', contains(r.say, /\bstops short of guessing|uncertain\b/i)],
+      ['names the human-control path', contains(r.say, /\bnamed person\b/i)],
+      ['names visible recovery', contains(r.say, /\brecord\b/i) && contains(r.say, /\brecovered\b/i)],
+      ['record surface', r.screen === 'lens'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'states deliberate production boundaries',
+    run:() => atlasTurn([U('Does Atlas answer live phone calls? What will it not do?')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['no live-voice promise', contains(r.say, /\bdoes not promise live voice\b/i)],
+      ['no automatic quote or campaign overclaim', contains(r.say, /\bquote chasing\b/i) && contains(r.say, /\bunapproved campaign\b/i)],
+      ['consequential work stays human-owned', contains(r.say, /\bnamed person\b/i)],
+      ['FAQ surface', r.screen === 'faq'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'explains the real go-live gate',
+    run:() => atlasTurn([U('What do you need from me to set Atlas up and go live?')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['names setup inputs', contains(r.say, /\bservice area\b/i) && contains(r.say, /\bscheduling rules\b/i) && contains(r.say, /\bnamed handoffs\b/i)],
+      ['carrier approval is explicit', contains(r.say, /\bcarrier approval\b/i)],
+      ['watched inbound test is explicit', contains(r.say, /\bwatched inbound test\b/i)],
+      ['fit-call surface', r.screen === 'fitcall'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'compares itself with an office manager without devaluing people',
+    run:() => atlasTurn([U('Does Atlas replace my office manager?')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['does not claim people are unnecessary', contains(r.say, /\bnot a claim that people are unnecessary\b/i)],
+      ['separates repeatable work from judgment', contains(r.say, /\brepeatable front-office path\b/i) && contains(r.say, /\bconsequential judgment\b/i)],
+      ['offers a real fit test', contains(r.say, /\bduplicate|unowned response gap\b/i)],
+    ],
+  },
+  {
+    bot:'Atlas', name:'turns a vague value question into an evidence test',
+    run:() => atlasTurn([U('Is Atlas worth it for my company?')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['uses contractor facts rather than a promise', contains(r.say, /\byour facts\b/i) && contains(r.say, /\blead volume\b/i)],
+      ['defines the decision question', contains(r.say, /\bmeasured response gap\b/i)],
+      ['calculator surface', r.screen === 'numbers'],
+    ],
+  },
+  {
+    bot:'Atlas', name:'separates a demo from production proof',
+    run:() => atlasTurn([U('Can I see Atlas working? Show me the demo and prove it.')]),
+    checks:r => [
+      ['valid answer', r._status === 200 && noAtlasHype(r)],
+      ['demo is not called a client result', contains(r.say, /\bdemonstration, not a client result\b/i)],
+      ['names the production evidence path', contains(r.say, /\bwatched inbound test\b/i) && contains(r.say, /\bmonthly receipt\b/i)],
+      ['simulation surface', r.screen === 'sim'],
+    ],
+  },
+  {
     bot:'Vesta', name:'explains what Vesta is',
     run:() => vestaTurn([U('What is Vesta, exactly?')]),
     checks:r => [
@@ -382,6 +471,108 @@ const cases = [
       ['no dollar guess', noVestaFabrication(r)],
       ['not a refusal-first wall', !/^(I can(?:not|'t|’t)|I do not|I don’t)/i.test(String(r.say || '').trim())],
       ['earned length only', words(r.say) <= 110],
+    ],
+  },
+  {
+    bot:'Vesta', name:'remembers the trade and gives tailored hiring questions',
+    run:() => vestaTurn([
+      U('I need my roof replaced.'),
+      A('I can help you compare roofing firms for that scope.'),
+      U('What should I ask them before I hire anyone?'),
+    ]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['remembers roofing context', contains(r.say, /\btear-off layers\b/i) && contains(r.say, /\bflashing\b/i)],
+      ['asks a revealing change-order question', contains(r.say, /\bwhat could change this scope\b/i)],
+      ['no accidental match', !r.resolved],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'teaches clustered red flags rather than fear',
+    run:() => vestaTurn([U('What red flags should I watch for before hiring a contractor?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['names concrete warning patterns', contains(r.say, /\bvague\b/i) && contains(r.say, /\bverbal\b/i) && contains(r.say, /\bpayment\b/i)],
+      ['uses a balanced cluster rule', contains(r.say, /\bone concern may be explainable\b/i) && contains(r.say, /\bseveral together\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'teaches how to read reviews as evidence',
+    run:() => vestaTurn([U('How should I read contractor reviews? The stars all look the same.')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['prioritizes repeated patterns', contains(r.say, /\brepeated operating patterns\b/i)],
+      ['requires job relevance and recency', contains(r.say, /\bjobs like yours\b/i) && contains(r.say, /\brecent communication\b/i)],
+      ['separates public records', contains(r.say, /\bpublic registration or license records separately\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'handles permit questions without inventing local law',
+    run:() => vestaTurn([U('Who should pull the permit, and do I need one for this job?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['states town-and-scope dependency', contains(r.say, /\bdepend on the town and exact scope\b/i)],
+      ['gives a written contractor question', contains(r.say, /\bstate in writing\b/i) && contains(r.say, /\bwhose name appears\b/i)],
+      ['gives authoritative next check', contains(r.say, /\btown building department\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'separates workmanship and manufacturer warranties',
+    run:() => vestaTurn([U('What should a contractor warranty actually say?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['separates warranty types', contains(r.say, /\bworkmanship warranty\b/i) && contains(r.say, /\bmanufacturer warranty\b/i)],
+      ['names decision fields', contains(r.say, /\bexclusions\b/i) && contains(r.say, /\bclaim process\b/i)],
+      ['tests the real failure path', contains(r.say, /\bhow a workmanship claim is handled\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'gives a sober recovery path after ghosting',
+    run:() => vestaTurn([U('My contractor ghosted me after taking a payment. What should I do now?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['preserves evidence first', contains(r.say, /\bpaper trail\b/i) && contains(r.say, /\bphotos\b/i)],
+      ['creates a written deadline', contains(r.say, /\bwritten message\b/i) && contains(r.say, /\bresponse deadline\b/i)],
+      ['does not encourage more payment', contains(r.say, /\bdo not send more money\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'structures repair versus replacement without diagnosing',
+    run:() => vestaTurn([U('Should I repair or replace my furnace?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['requires inspection', contains(r.say, /\bneeds an inspection\b/i)],
+      ['structures the comparison', contains(r.say, /\bwhat failed\b/i) && contains(r.say, /\bremaining life\b/i) && contains(r.say, /\bwarranty\b/i)],
+      ['does not choose an outcome', !contains(r.say, /\byou should (?:repair|replace)\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'answers how many quotes with a stopping rule',
+    run:() => vestaTurn([U('How many quotes should I get before choosing?')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['does not use a ritual count', contains(r.say, /\bnot a ritual number\b/i)],
+      ['normalizes scope first', contains(r.say, /\bnormalize the scope\b/i)],
+      ['gives a decision stopping rule', contains(r.say, /\bstop when you understand\b/i)],
+      ['no fabricated vetting or prices', noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'keeps a professional buyer on the sourcing side',
+    run:() => vestaTurn([U('I am a builder looking for tree service, a mason, and a landscaper for a client backyard renovation: remove two trees, build a stone patio, then install fresh sod.')]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['does not send the buyer to Atlas', r.mode !== 'atlas' && !contains(r.say, /\bcontractor side of 4THWALL\b/i)],
+      ['sequences the project', contains(r.say, /\bfirst\b.*\bthen\b|\bphase\b/i)],
+      ['resolves the first trade phase', r.resolved?.trade === 'tree'],
+      ['retains later phases', contains(r.say, /\bpatio\b/i) && contains(r.say, /\bsod\b/i)],
     ],
   },
   {

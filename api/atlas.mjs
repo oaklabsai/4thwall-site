@@ -230,6 +230,8 @@ Languages: supported text conversations can be answered and qualified in English
 
 YOUR RECORD (free inside Atlas): The record room is a capability inside Atlas, not a separate product. Connect permitted history, review every supported fact — source-labeled and correction-capable — and control exactly what a homeowner could see. Nothing publishes without you. Owning the record is free.
 
+SETUP AND CONTROL: Atlas is configured around the contractor's real service area, approved scheduling rules, business facts, and named handoffs. Configuration can happen in days; carrier approval controls final SMS go-live. Before calling it live, run a watched inbound test through the real number and verify the reply, record, booking rules, and human handoff. If Atlas is uncertain or a decision is consequential, it hands the work to the named person rather than guessing.
+
 PRICING (the fit-call posture — NEVER state a dollar figure): Atlas is a managed service, not a software seat — the price follows the size of the front office we run for you, set on a 20-minute fit call in plain numbers. No setup fee, no contract, nothing metered, everything included. If we're not the right fit, we'll say so first. The guarantee: if the first month's receipt doesn't justify the fee, fire us — thirty days, no contract.
 
 FAQ:
@@ -359,6 +361,56 @@ export function extractJSON(text){
 // company. These answers decide trust, so they are served deterministically from the pack
 // (front-desk-knowledge.md §1/§7/§8/§10a) — same house pattern as triage's 911/atlas guards.
 // Runs BEFORE the model (works during outages too); the model keeps every other question.
+const CONTRACTOR_TRADES = [
+  ['roofing', /\b(roof(?:er|ing)?|gutter|siding)\b/i],
+  ['HVAC', /\b(hvac|heating|cooling|furnace|air conditioning)\b/i],
+  ['plumbing', /\b(plumb(?:er|ing)?|drain|pipe)\b/i],
+  ['electrical', /\b(electric(?:al|ian)?|rewir|panel)\b/i],
+  ['painting', /\b(paint(?:er|ing)?)\b/i],
+  ['masonry', /\b(mason(?:ry)?|chimney|stonework)\b/i],
+  ['paving', /\b(pav(?:er|ing)|driveway|asphalt)\b/i],
+  ['landscaping', /\b(landscap|lawn|tree service)\b/i],
+  ['windows and doors', /\b(window|door)\b/i],
+];
+
+export function extractContractorContext(messages){
+  const userText = (Array.isArray(messages) ? messages : [])
+    .filter(m => m && m.role === 'user')
+    .map(m => String(m.content || ''))
+    .join(' ');
+  const trade = CONTRACTOR_TRADES.find(([, test]) => test.test(userText))?.[0] || null;
+  let pain = null;
+  if (/\b(storm|hail|weather event|surge|after a storm)\b/i.test(userText)) pain = 'storm';
+  else if (/\b(miss(?:ed|ing)?|unanswered|cannot answer|can(?:'|’)t answer|on (?:a |the )?(?:roof|job|site)|voicemail)\b[^.?!]{0,42}\b(call|lead|phone)|\b(call|lead|phone)\b[^.?!]{0,42}\b(miss(?:ed|ing)?|unanswered|cannot answer|can(?:'|’)t answer|voicemail)\b/i.test(userText)) pain = 'missed';
+  else if (/\b(slow|late|hours? later|next day|forget|chasing)\b[^.?!]{0,42}\b(reply|response|respond|call back|follow[- ]?up|lead)|\b(follow[- ]?up|reply|response)\b[^.?!]{0,42}\b(slow|late|forget|chasing)\b/i.test(userText)) pain = 'followup';
+  else if (/\b(schedule|scheduling|book|booking|calendar|appointment)\b/i.test(userText)) pain = 'booking';
+  else if (/\b(review|reputation)\b/i.test(userText)) pain = 'reviews';
+  else if (/\b(campaign|seasonal|old leads?|past customers?)\b/i.test(userText)) pain = 'campaigns';
+  return { trade, pain, userText };
+}
+
+function atlasBlueprint(messages){
+  const { trade, pain } = extractContractorContext(messages);
+  if (!trade && !pain) return {
+    say:'I can map the first Atlas workflow around your business, but I need two facts rather than a generic pitch: what trade are you in, and where does a good lead most often stall — the missed call, qualification, booking, or handoff?',
+    screen:'office',
+  };
+  const subject = trade ? `For your ${trade} business` : 'For what you described';
+  const plans = {
+    storm:'I would start with Storm Mode: hold the surge in one queue, capture the job and location, and send anything urgent or outside the approved rules to a named person. Lead Response should be proven first, so storm volume does not magnify a weak handoff.',
+    missed:'I would start with Lead Response: missed call, text in your name, capture the job, location and urgency, then offer only approved estimate slots or send the handoff to a named person. The watched test should include your service-area edges and the questions Atlas must never guess at.',
+    followup:'I would start with Follow-up: keep the unanswered lead, next action and exact owner together, then escalate unresolved work instead of letting it disappear into someone’s memory. The fit test is whether every exception has a named person and a clear stopping rule.',
+    booking:'I would start with Booking: define the estimate slots Atlas may offer, the information required before booking, and the exceptions that must go to a person. The watched test should prove both a clean booking and a case Atlas is not allowed to book.',
+    reviews:'I would start with Review Generation: define what counts as an eligible completed appointment, prepare the approved request, and keep the request tied to the job record. It should come after the completion and handoff facts are reliable.',
+    campaigns:'I would start with Seasonal Campaigns only after Lead Response is sound. Atlas can prepare an owner-approved message, but it should never broadcast merely because a draft exists; audience, approval and handoff ownership need to be explicit.',
+  };
+  const generic = 'I would start with Lead Response: define the customer facts to capture, the estimate slots Atlas may offer, and the exact person who owns every exception. Then run one watched inbound test through the real number before adding follow-up, reviews, or campaigns.';
+  return {
+    say:`${subject}, ${plans[pain] || generic}`,
+    screen:pain === 'storm' ? 'room:storm' : pain === 'booking' ? 'room:book' : pain === 'followup' ? 'room:follow' : pain === 'reviews' ? 'room:reviews' : pain === 'campaigns' ? 'room:camp' : 'room:lead',
+  };
+}
+
 const ROUTER = [
   { k: 'bot',   // "am I talking to a bot?" — the honest §8 answer, never personhood
     test: t => /(are you|am i (talk|speak|chatt)ing (to|with)|is this)[^.?!]{0,40}\b(a )?(bot|robot|an? ai|automated|real person|human)\b/i.test(t)
@@ -379,16 +431,59 @@ const ROUTER = [
             || /\bfounder('s)? (name|background|story|experience)\b/i.test(t),
     say: () => 'Founder-led, out of Stamford, Connecticut — one founder who builds and operates the system, with one belief: good work should leave evidence. The fit call is with the founder directly; anything you want to know about the person behind it, ask there.',
     screen: () => 'contact' },
+  { k: 'comparison',
+    test: t => /\b(replace|instead of|different from|difference between|versus|vs\.?|why not)\b[^.?!]{0,55}\b(crm|office (?:person|manager|admin)|answering service)\b/i.test(t)
+            || /\b(crm|office (?:person|manager|admin)|answering service)\b[^.?!]{0,55}\b(replace|instead|different|versus|vs\.?|need atlas)\b/i.test(t),
+    say: t => /\boffice (?:person|manager|admin)|answering service\b/i.test(t)
+      ? 'Atlas is not a claim that people are unnecessary. It owns the repeatable front-office path — missed-call response, capture, approved booking, reminders and visible handoffs — while consequential judgment stays with a named person. The fit question is whether it removes an unowned response gap or merely duplicates a desk that already answers it well.'
+      : 'Atlas usually sits ahead of the tools you already use. It owns the missed-call conversation, capture, approved booking and accountable handoff; your existing customer and scheduling tools can remain where the confirmed work is run. The fit call should map the boundary plainly so Atlas does not duplicate a process that already works.',
+    screen: () => 'faq', aud: () => 'contractor' },
   { k: 'tool',   // named third-party tools — honest, no invented integrations (and the
                  // Jobber announce-hold: nothing is claimed until Jobber publishes the app)
     test: t => /\b(jobber|servicetitan|service titan|housecall( pro)?|workiz|acculynx|buildertrend|quickbooks)\b/i.test(t),
     say: () => "We don't plug into your scheduling tools today — Atlas runs ahead of the schedule, not inside it. It catches the missed call, holds the conversation, and books the estimate; what lands on your calendar is yours to run in the tools you already use. If a direct connection matters for your setup, bring it to the fit call — that's exactly what the founder wants to hear.",
     screen: () => 'faq', aud: () => 'contractor' },
+  { k: 'blueprint',
+    test: t => /\b(what would you|how would atlas|how would this|what should (?:we|i)|where would you)\b[^.?!]{0,70}\b(start|set up|setup|work for|do for|handle|my (?:business|company|shop|crew))\b/i.test(t)
+            || /\b(build|give|show|map)\b[^.?!]{0,35}\b(plan|blueprint|workflow)\b/i.test(t),
+    say: (t, msgs) => atlasBlueprint(msgs).say,
+    screen: (t, msgs) => atlasBlueprint(msgs).screen,
+    aud: () => 'contractor' },
   { k: 'definition',
     test: t => /\b(what is|what does|explain|tell me about|who is)\s+atlas\b/i.test(t)
             || /\batlas\b[^.?!]{0,28}\b(what (?:is|does)|work|for whom|who is it for)\b/i.test(t),
     say: () => 'Atlas is the managed, SMS-first front office for homeowner-facing contractors. When a call is missed, the customer gets a text back in the contractor’s name; Atlas captures what they need, can book an approved estimate slot, records the handoff and keeps the work visible in one private workspace. The contractor keeps the number, the customer and the record.',
     screen: () => 'office', aud: () => 'contractor' },
+  { k: 'fit',
+    test: t => /\b(is|would)\s+atlas\b[^.?!]{0,35}\b(right|good fit|fit|make sense)\b/i.test(t)
+            || /\b(would this|is this)\b[^.?!]{0,35}\b(work for|fit|make sense for)\b[^.?!]{0,30}\b(my|a|our)\b/i.test(t)
+            || /\b(too small|too big|solo|one[- ]man|small crew)\b[^.?!]{0,45}\b(atlas|business|company|fit)\b/i.test(t),
+    say: () => 'Fit depends less on headcount than on ownership. If earned demand arrives while nobody can answer, or leads and handoffs get chased across people, Atlas may fit. If every lead already gets a fast, accountable response and the record stays complete, we may only duplicate a desk that works — and we should say so on the fit call.',
+    screen: () => 'fitcall', aud: () => 'contractor' },
+  { k: 'accuracy',
+    test: t => /\b(what happens|what if|when)\b[^.?!]{0,40}\b(atlas|it|this)\b[^.?!]{0,35}\b(wrong|mistake|confused|doesn(?:'|’)t know|uncertain|fails?)\b/i.test(t)
+            || /\b(human|person)\b[^.?!]{0,35}\b(take over|handoff|step in|reach|escalat)\b/i.test(t),
+    say: () => 'Atlas works only inside the business facts, scheduling rules and handoffs you approve. If it is uncertain or the decision is consequential, it stops short of guessing and sends the work to the named person. The same private record keeps the customer, job, Atlas action, decision and handoff together so a failure can be seen and recovered.',
+    screen: () => 'lens', aud: () => 'contractor' },
+  { k: 'limits',
+    test: t => /\b(what (?:can(?:not|'t|’t)|won(?:'t|’t)|doesn(?:'t|’t))|limitations?|limits?|not do|off limits)\b[^.?!]{0,45}\b(atlas|it|this)?\b/i.test(t)
+            || /\b(answer|handle)\b[^.?!]{0,25}\b(live )?(?:phone|voice) calls?\b/i.test(t)
+            || /\b(quote chasing|send quotes?|automatic campaigns?|broadcast)\b/i.test(t),
+    say: () => 'The current boundaries are deliberate: Atlas does not promise live voice answering, automated quote chasing, unapproved campaign broadcasts, or independent consequential judgment. It handles supported text and missed-call workflows inside approved rules; uncertainty, exceptions and decisions with real consequence go to a named person.',
+    screen: () => 'faq', aud: () => 'contractor' },
+  { k: 'setup',
+    test: t => /\b(how long does|what does it take to|when can|what do you need(?: from me)? to|how do (?:we|i))\b[^.?!]{0,45}\b(set up|setup|onboard|start|go live|implement)\b/i.test(t)
+            || /\b(atlas setup|set up atlas|setting up atlas|atlas onboarding|carrier approval|sms go-live)\b/i.test(t),
+    say: () => 'Setup starts with your real service area, business facts, approved scheduling rules and named handoffs. Configuration can happen in days, but carrier approval controls final SMS go-live. Before calling it live, we run a watched inbound test through the real number and verify the reply, record, booking rules and human handoff.',
+    screen: () => 'fitcall', aud: () => 'contractor' },
+  { k: 'value',
+    test: t => /\b(is (?:atlas|it) worth it|would (?:atlas|it) pay for itself|what is the value|show me the value|make financial sense|return on)\b/i.test(t),
+    say: () => 'The honest value test uses your facts, not a generic promise: lead volume, job value, response delay and what already gets recovered. Open the calculator, use your real operating numbers, then make the fit call answer one question — is the measured response gap larger than the front office needed to close it?',
+    screen: () => 'numbers', aud: () => 'contractor' },
+  { k: 'demo',
+    test: t => /\b(show me|can i see|watch|demo|prove)\b[^.?!]{0,40}\b(atlas|it|this|working|missed call|response)\b/i.test(t),
+    say: () => 'Use the missed-call demo to judge the response experience yourself: what the customer receives, what Atlas captures, and where the handoff goes. It is a demonstration, not a client result; the production proof is the watched inbound test and, after go-live, the measured monthly receipt.',
+    screen: () => 'sim', aud: () => 'contractor' },
   { k: 'missed-process',
     test: t => /\b(missed|unanswered)\s+(?:phone )?calls?\b/i.test(t)
             && /\b(what happens|then what|after|first|walk me through|how does|handle)\b/i.test(t),
@@ -465,7 +560,7 @@ export function routeKillQuestion(messages){
   const last = [...messages].reverse().find(m => m.role === 'user');
   const t = String(last && last.content || '');
   for (const r of ROUTER){
-    if (r.test(t, messages)) return { k: r.k, say: r.say(t), screen: r.screen ? r.screen(t) : null, aud: r.aud ? r.aud(t) : null };
+    if (r.test(t, messages)) return { k: r.k, say: r.say(t, messages), screen: r.screen ? r.screen(t, messages) : null, aud: r.aud ? r.aud(t, messages) : null };
   }
   return null;
 }
