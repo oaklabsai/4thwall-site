@@ -180,7 +180,7 @@ T('latest homeowner correction replaces the obsolete replacement decision',
   repairedState.repairDecision?.value==='repair_proposals' && repairedState.repairDecision?.turn===2
   && repairedState.quoteCount?.value===2);
 T('Vesta exposes its corrected common ground before advising',
-  repairedRecap?.kind==='recap' && /two HVAC repair proposals/i.test(repairedRecap.say)
+  repairedRecap?.kind==='recap' && /two repair proposals for your HVAC system/i.test(repairedRecap.say)
   && /Replacement is no longer the decision/i.test(repairedRecap.say)
   && /correct it/i.test(repairedRecap.say));
 const activeChangeConversation = [
