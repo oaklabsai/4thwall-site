@@ -7385,6 +7385,16 @@ function vmWindow(){
   }
   return w;
 }
+// The API keeps teaching and interviewing as separate fields: `say` carries the useful
+// read; `ask` carries the one next question. Both belong in Vesta's visible turn. Keeping
+// them separate on the wire prevents model question drift; joining them here prevents the
+// interface from silently dropping the interview step. Exact-repeat guard handles a model
+// that also leaked the question into `say`.
+function triageSpoken(final, streamed=''){
+  const say=String((final&&final.say)||streamed||'').trim();
+  const ask=String((final&&final.ask)||'').trim();
+  return ask&&!say.toLowerCase().includes(ask.toLowerCase()) ? (say?`${say} ${ask}`:ask) : say;
+}
 async function vmTurn(text){
   if(vmDone||vmBusy) return;
   if(vmVetPending && vmVetTurn(text)) return;   // the armed vet lane owns this turn (name-shaped input only; else falls through)
@@ -7425,9 +7435,10 @@ async function vmTurn(text){
         vmMsgs.push({role:'assistant',content:JSON.stringify({say:streamed.slice(0,220),resolved:null})}); persistThread(); vmBusy=false; return; }
       throw new Error(evErr||'no final');
     }
-    if(!typer){ if(!streamed && !final.say){ stopTrace(); vmThinkOff(); } else reveal(); }
-    if(typer) await typer.finish(final.say||streamed);
-    vmMsgs.push({role:'assistant',content:JSON.stringify({say:(final.say||'').slice(0,220),resolved:final.resolved||null})});
+    const spoken=triageSpoken(final,streamed);
+    if(!typer){ if(!streamed && !spoken){ stopTrace(); vmThinkOff(); } else reveal(); }
+    if(typer) await typer.finish(spoken);
+    vmMsgs.push({role:'assistant',content:JSON.stringify({say:spoken.slice(0,220),resolved:final.resolved||null})});
     persistThread();
     // Emergency doctrine: an emergency turn is a COMPLETE safety + call hand-off — never a deck,
     // never a walk-through offer, never a dead-end. Vesta is not dispatch. Land her say, surface a
@@ -7740,11 +7751,12 @@ async function triTurn(text){
         c.msgs.push({ role:'assistant', content: JSON.stringify({ say: streamed.slice(0,220), resolved:null }) }); c.busy = false; return; }
       throw new Error(evErr || 'no final');
     }
-    if (!typer){ if (!streamed && !final.say){ stopTrace(); tcThinkOff(); } else reveal(); }
-    if (typer) await typer.finish(final.say || streamed);
+    const spoken=triageSpoken(final,streamed);
+    if (!typer){ if (!streamed && !spoken){ stopTrace(); tcThinkOff(); } else reveal(); }
+    if (typer) await typer.finish(spoken);
     c.mode = final.mode || 'fix';
     // history stays under the server's message cap; the model needs continuity, not verbatim
-    c.msgs.push({ role:'assistant', content: JSON.stringify({ say:(final.say||'').slice(0,220), resolved: final.resolved||null }) });
+    c.msgs.push({ role:'assistant', content: JSON.stringify({ say:spoken.slice(0,220), resolved: final.resolved||null }) });
     if(final.mode==='atlas'){ c.busy=false; tcAtlasHandoff(); return; }   // contractor, not homeowner → hand off to Atlas
     // client-side gate — the same bank check triageEnter runs; the server already validated,
     // this catches a bank drift or a not-yet-loaded bank (fails back into the conversation)

@@ -19,6 +19,7 @@ if (!process.argv.includes('--live')){
     ['Vesta has no unreceipted one-hour response claim', !/most answer within the hour/i.test(vestaSource)],
     ['Vesta does not call directory work proven outcomes', !/firms are proven to do|records show they (?:actually )?answer/i.test(vestaSource)],
     ['Vesta carries a bounded conversation window', /messages:vmWindow\(\)/.test(vestaSource)],
+    ['Vesta renders the API follow-up question in both chat surfaces', (vestaSource.match(/const spoken=triageSpoken\(final,streamed\);/g) || []).length === 2],
     ['Atlas carries location and audience context', /where:whereNow,aud:audNow/.test(atlasSource)],
   ];
   let failed = 0;
