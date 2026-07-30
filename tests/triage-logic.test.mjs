@@ -167,6 +167,12 @@ T('quote synthesis produces one roof-specific comparable-scope action',
   quoteSynthesis?.kind==='synthesis' && /tear-off layers/i.test(quoteSynthesis.say)
   && /compare equivalent scopes, not totals/i.test(quoteSynthesis.say)
   && /normal decision hygiene, not confrontation/i.test(quoteSynthesis.say));
+const quoteUpdate = vestaConversationRoute(quoteConversation.slice(0, 3));
+T('Vesta acts as soon as a later turn completes the quote decision state',
+  quoteUpdate?.kind==='grounding' && /not comparable yet/i.test(quoteUpdate.say)
+  && /asking for clarity is not being difficult/i.test(quoteUpdate.say)
+  && /all three roofers/i.test(quoteUpdate.say)
+  && !/line up|match/i.test(quoteUpdate.say));
 const repairedCorrection = [
   {role:'user',content:'I thought my furnace needed replacement.'},
   {role:'assistant',content:'Repair versus replacement needs an inspection.'},
@@ -196,6 +202,11 @@ T('mid-job synthesis integrates evidence change control and relationship risk',
   && /written change order before added work continues/i.test(activeChangeSynthesis.say)
   && /calm request for shared facts/i.test(activeChangeSynthesis.say)
   && /immediate safety protection/i.test(activeChangeSynthesis.say));
+const activeChangeUpdate = vestaConversationRoute(activeChangeConversation.slice(0, 3));
+T('Vesta connects separated mid-project and change-order facts immediately',
+  activeChangeUpdate?.kind==='grounding' && /verbal “more work” claim/i.test(activeChangeUpdate.say)
+  && /photos or other evidence/i.test(activeChangeUpdate.say)
+  && /written change order before added work continues/i.test(activeChangeUpdate.say));
 const pickCoach = vestaDecisionRoute('Which one is best for me?', [{role:'assistant',content:'{"picks":[{"name":"A"},{"name":"B"}]}'}], true, false);
 T('post-match choice coaching uses shown evidence and confirms live facts', /evidence shown/i.test(pickCoach?.say || '') && /confirm the live facts/i.test(pickCoach?.say || ''));
 const negativeVetting = 'Vesta does not run background checks or verify insurance. Confirm those directly with the contractor.';

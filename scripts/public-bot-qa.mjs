@@ -879,6 +879,22 @@ const cases = [
     ],
   },
   {
+    bot:'Vesta', name:'uses a later quote detail immediately without selling another match',
+    run:() => vestaTurn([
+      U("I'm a first-time homeowner planning a roof replacement. I have three bids."),
+      A('I can help you compare the scopes instead of guessing from the totals.'),
+      U("One is higher and itemized; the cheaper two are one line. I'm nervous about sounding difficult if I ask them to redo the quotes."),
+    ]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['connects the prior roof and bid context', contains(r.say, /\ball three roofers\b/i) && contains(r.say, /\btear-off layers\b/i) && contains(r.say, /\bflashing\b/i)],
+      ['answers the decision instead of selling another match', contains(r.say, /\bnot comparable yet\b/i) && !contains(r.say, /\bline up|match (?:you|with)\b/i)],
+      ['does not equate detail with quality', contains(r.say, /\bmore legible, not automatically better\b/i)],
+      ['removes the conflict shame', contains(r.say, /\basking for clarity is not being difficult\b/i)],
+      ['no accidental match or fabricated price', !r.resolved && noVestaFabrication(r)],
+    ],
+  },
+  {
     bot:'Vesta', name:'lets a homeowner correction replace an obsolete decision',
     run:() => vestaTurn([
       U('I thought my furnace needed replacement.'),
@@ -912,6 +928,22 @@ const cases = [
       ['requires written approval before added work', contains(r.say, /\bwritten change order\b/i) && contains(r.say, /\bbefore added work continues\b/i)],
       ['keeps the request calm and legitimate', contains(r.say, /\bcalm request for shared facts\b/i)],
       ['preserves the safety exception', contains(r.say, /\bimmediate safety protection\b/i)],
+      ['no accidental match or fabricated price', !r.resolved && noVestaFabrication(r)],
+    ],
+  },
+  {
+    bot:'Vesta', name:'connects separated mid-job context before another prompt is needed',
+    run:() => vestaTurn([
+      U("We're midway through a bathroom remodel."),
+      A('Tell me what changed.'),
+      U("The contractor says wall damage means more money, but has only told me verbally. I'm afraid asking for proof will make him walk."),
+    ]),
+    checks:r => [
+      ['valid final frame', r._status === 200 && !r._error],
+      ['rejects the verbal assertion as a decision', contains(r.say, /\bverbal .*more work.* claim\b/i)],
+      ['asks for evidence and revised scope now', contains(r.say, /\bphotos or other evidence\b/i) && contains(r.say, /\brevised scope\b/i)],
+      ['requires written approval before added work', contains(r.say, /\bwritten change order before added work continues\b/i)],
+      ['keeps the request calm and legitimate', contains(r.say, /\bcalm request for shared facts\b/i)],
       ['no accidental match or fabricated price', !r.resolved && noVestaFabrication(r)],
     ],
   },
