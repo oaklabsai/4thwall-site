@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;height:100%;background:#F0F1E8;overflow:hidden}
+.stage{position:fixed;inset:0;display:grid;place-items:center;
+ background:radial-gradient(circle at 88% 0%, rgba(90,93,50,.10), transparent 32rem),#F0F1E8}
+img{position:absolute;transform-origin:center center;will-change:transform}
+</style></head><body>
+<div class="stage"><img id="p" src="atlas-workspace.png"></div>
+<script>
+const q=new URLSearchParams(location.search);
+const s=parseFloat(q.get('s')||'1'), x=parseFloat(q.get('x')||'0'), y=parseFloat(q.get('y')||'0');
+const img=document.getElementById('p');
+img.onload=()=>{
+  const vw=innerWidth, vh=innerHeight;
+  const base=Math.min(vw/img.naturalWidth, vh/img.naturalHeight)*0.92;
+  img.style.width=(img.naturalWidth*base)+'px';
+  img.style.transform=`translate(${x}%, ${y}%) scale(${s})`;
+  document.title='ready';
+};
+</script></body></html>
