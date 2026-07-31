@@ -8218,6 +8218,16 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   const pq = (new URLSearchParams(location.search).get('place')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,200);
   const deepId = dm ? dm[1] : (pq.length>=8 ? pq : null);
   if (deepId) openProfile(deepId);
+  // Deep-link: /vesta/<slug> — the shareable form. vercel.json rewrites the path to
+  // ?slug=, we resolve it to a place_id and open the same profile. This exists because
+  // these links get TEXTED to contractors during calls: a raw Google place_id reads as
+  // spam, a name does not. ?place= and /c/ both keep working — the slug is an alias.
+  const sq = (new URLSearchParams(location.search).get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,64);
+  if (!deepId && sq) {
+    HOME.db('/vesta_slugs?slug=eq.' + encodeURIComponent(sq) + '&select=place_id&limit=1')
+      .then(rows => { const id = rows && rows[0] && rows[0].place_id; if (id) openProfile(id); })
+      .catch(() => {});   // unresolvable slug just lands on the normal Vesta home
+  }
   // Deep-link: ?q= runs the same problem→job routing as the search box, once the bank is
   // loaded (routeJobSeed only offers seeds the live bank honors). Directory facet links use
   // this to land in the match flow with the need preselected; trade-only falls back to browse.
