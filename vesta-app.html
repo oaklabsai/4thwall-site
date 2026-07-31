@@ -5471,6 +5471,12 @@ async function openProfile(placeId){
     const enr = Array.isArray(enrRows) && enrRows[0] ? enrRows[0] : null;
     profData = { placeId, p:data.place, enr, claimed:!!data.claimed, unlocked:data.unlocked||null };
     renderProfile();
+    // Put the shareable URL in the address bar. Without this the bar still reads
+    // "/vesta" while a profile is open, so a contractor looking at his own page has
+    // no way to see, copy or bookmark it — and neither does a homeowner who wants to
+    // send it to their spouse. replaceState, not pushState: opening a profile is not
+    // a history entry the in-app back button should have to unwind.
+    syncProfileUrl(placeId);
     // Rendering changes the scroll height; reset the actual owner again after
     // the real profile and photo grid exist so a prior profile can never leak in.
     if (sc) sc.scrollTop=0;
@@ -5478,11 +5484,35 @@ async function openProfile(placeId){
     $('prof-wrap').innerHTML = profErrorHTML(); wireProfBack();
   }
 }
+// place_id -> slug, resolved once per firm and remembered. Failure is silent by
+// design: a missing slug just leaves the URL alone, it never blocks the profile.
+const SLUG_CACHE = new Map();
+async function syncProfileUrl(placeId){
+  try {
+    let slug = SLUG_CACHE.get(placeId);
+    if (slug === undefined){
+      const rows = await HOME.db('/vesta_slugs?place_id=eq.'+encodeURIComponent(placeId)+'&select=slug&limit=1');
+      slug = (rows && rows[0] && rows[0].slug) || null;
+      SLUG_CACHE.set(placeId, slug);
+    }
+    // Only if this profile is still the one on screen — an impatient tap must not
+    // leave the address bar pointing at a firm the visitor already navigated away from.
+    if (slug && S.screen === 'profile' && profData && profData.placeId === placeId){
+      history.replaceState(history.state, '', '/vesta/' + slug);
+    }
+  } catch(_){}
+}
+function restoreVestaUrl(){
+  try {
+    if (/^\/vesta\/[^/]+$/.test(location.pathname)) history.replaceState(history.state, '', '/vesta');
+  } catch(_){}
+}
 function profErrorHTML(){
   return ''+
     '<div class="prof-error">We couldn’t load that profile.<br>It may have moved — <a href="/vesta">back to Vesta</a>.</div>';
 }
 function backFromProfile(){
+  restoreVestaUrl();   // leaving the profile: the URL must stop naming that firm
   const f = S.profFrom;
   if (f && f.screen==='browse'){
     S.mode=f.mode; S.activeTrade=f.trade;
