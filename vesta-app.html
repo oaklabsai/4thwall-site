@@ -1877,7 +1877,15 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
 .prof-seal svg { width:100%; height:100%; display:block; }
 .pseal-lg { font-family:var(--mono); font-size:7.4px; font-weight:700; letter-spacing:1.5px; fill:var(--olive); }
 .pseal-sm { font-family:var(--mono); font-size:5.6px; font-weight:500; letter-spacing:1.7px; fill:var(--ebony); }
-@media (max-width:620px){ .prof-seal { width:58px; height:58px; } .prof-nameline { gap:11px; } }
+/* Under 620px the seal shrinks to hold the name line; at 58px the ring legend
+   is illegible, so it drops and the check carries the mark on its own. */
+@media (max-width:620px){
+  .prof-seal { width:58px; height:58px; }
+  .prof-nameline { gap:11px; }
+  .pseal-lg, .pseal-sm { display:none; }
+  .prof-seal circle[r="24"] { r:31; }
+  .pseal-ck { transform:scale(1.24); transform-origin:50px 50px; }
+}
 .prof-req { display:inline-flex; align-items:center; gap:8px; margin-top:18px; background:var(--olive); color:var(--white); font-family:var(--sans); font-size:15px; font-weight:600; border:none; border-radius:var(--r-pill); padding:14px 24px; cursor:pointer; box-shadow:0 2px 6px rgba(74,75,47,.2),0 12px 32px -6px rgba(74,75,47,.42); text-decoration:none; transition:transform .12s; }
 .prof-req:hover { transform:translateY(-1px); }
 .prof-ask { display:inline-flex; align-items:center; gap:8px; margin-top:14px; background:var(--card,#fff); color:var(--olive); font-family:var(--sans); font-size:14px; font-weight:600; border:1.5px solid rgba(74,75,47,.28); border-radius:var(--r-pill); padding:11px 20px; cursor:pointer; box-shadow:0 1px 3px rgba(74,75,47,.10); transition:transform .12s, border-color .12s, box-shadow .12s; }
@@ -2182,7 +2190,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
      they are chrome. The verified-owner SEAL is not in this row; it rides the
      business name, so it survives here without costing the layout. */
   .prof-desk-hero .prof-badges { display:none; }
-  .prof-desk-hero .prof-seal { width:52px; height:52px; }
+  /* 68px is the floor for a legible ring: the legend is 7.4 units of a 100-unit
+     viewBox, so a 52px seal renders it under 4px. Below this, drop the words. */
+  .prof-desk-hero .prof-seal { width:68px; height:68px; }
   .prof-summary { margin:8px 0 0; max-width:60ch; padding-top:8px; border-top:1px solid rgba(74,75,47,.11); font-size:11.5px; line-height:1.35; color:var(--ebony); }
   .prof-signature { margin-top:10px; padding-top:9px; }
   .prof-signature p { margin-top:4px; font-size:13px; line-height:1.34; }
@@ -5562,7 +5572,7 @@ const PROF_SEAL =
   '<path id="pseal-b" d="M50,50 m-30,0 a30,30 0 1,0 60,0" fill="none"/></defs>'+
   '<circle cx="50" cy="50" r="40.5" fill="none" stroke="var(--olive)" stroke-width="1.1" opacity=".38"/>'+
   '<circle cx="50" cy="50" r="24" fill="var(--olive)"/>'+
-  '<path d="M42 50.5 L47.6 56 L58.5 44.6" fill="none" stroke="var(--tea)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>'+
+  '<path class="pseal-ck" d="M42 50.5 L47.6 56 L58.5 44.6" fill="none" stroke="var(--tea)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>'+
   '<text class="pseal-lg"><textPath href="#pseal-t" startOffset="50%" text-anchor="middle">VERIFIED OWNER</textPath></text>'+
   '<text class="pseal-sm"><textPath href="#pseal-b" startOffset="50%" text-anchor="middle">VESTA</textPath></text>'+
   '</svg></span>';
