@@ -8218,11 +8218,13 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   const pq = (new URLSearchParams(location.search).get('place')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,200);
   const deepId = dm ? dm[1] : (pq.length>=8 ? pq : null);
   if (deepId) openProfile(deepId);
-  // Deep-link: /vesta/<slug> — the shareable form. vercel.json rewrites the path to
-  // ?slug=, we resolve it to a place_id and open the same profile. This exists because
-  // these links get TEXTED to contractors during calls: a raw Google place_id reads as
-  // spam, a name does not. ?place= and /c/ both keep working — the slug is an alias.
-  const sq = (new URLSearchParams(location.search).get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,64);
+  // Deep-link: /vesta/<slug> — the shareable form. Read from the PATH, not from the
+  // rewrite's ?slug= param: a Vercel rewrite is server-side, so the browser keeps the
+  // clean URL and location.search is empty. The path is the only thing the client sees.
+  // This exists because these links get TEXTED to contractors during calls: a raw
+  // Google place_id reads as spam, a name does not. ?place= and /c/ keep working.
+  const sm = location.pathname.match(/^\/vesta\/([a-z0-9][a-z0-9-]{1,63})\/?$/i);
+  const sq = (sm && sm[1].toLowerCase() !== 'search') ? sm[1].toLowerCase() : '';
   if (!deepId && sq) {
     HOME.db('/vesta_slugs?slug=eq.' + encodeURIComponent(sq) + '&select=place_id&limit=1')
       .then(rows => { const id = rows && rows[0] && rows[0].place_id; if (id) openProfile(id); })
