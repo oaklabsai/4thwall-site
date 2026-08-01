@@ -315,6 +315,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .vthink .tl { color:var(--ebony); }
 /* the 2×2 starters — centred in the thread until the chat begins */
 .vstarters { display:none; }
+/* the browse column's greeting — GLOBAL hide so it can never leak onto the home or
+   mobile; only .vpanel--chat (≥900px block) turns it on. */
+.vcol-greet { display:none; }
 #s-home.vconv .vstarters.show { display:flex; flex-direction:column; gap:14px; position:absolute; left:14px; right:14px; top:50%; transform:translateY(-50%); animation:vmsgIn .5s var(--spring) .4s both; }
 /* the mobile Vesta wordmark — Caveat, tea-scribble underline, slanted. Lives in the PERSISTENT
    thread header (.vth-hero) so it's the one thing that stays when a conversation begins. */
@@ -1742,12 +1745,17 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
   .vpanel--chat .home-search { flex:0 0 auto; max-width:none; margin:10px 0 0; padding:8px 8px 8px 18px; border-radius:var(--r-pill); background:var(--nm); border:1px solid rgba(255,255,255,.55); box-shadow:var(--nm-out); cursor:text; }
   .vpanel--chat .home-search .hs-tx, .vpanel--chat .home-search .hs-spark { display:none; }
   .vpanel--chat .home-search .hs-cin, .vpanel--chat .home-search .hs-csend { display:flex; }
-  /* empty state — the home hero's explorable card stack and mobile hints are hero
-     objects with no room in a 392px column; they'd push the composer off-screen. */
+  /* Empty state — the column is an open invitation, not a menu (Drew 8/1). The home
+     hero's four preset questions, explorable card stack and mobile hints all stay
+     behind; the column shows only the wordmark and one line, and the visitor says
+     what they actually came for. */
   .vpanel--chat .vstarters.show { display:flex; flex-direction:column; gap:12px; position:absolute; left:10px; right:10px; top:50%; transform:translateY(-50%); }
-  .vpanel--chat .vstarters .home-stack, .vpanel--chat .vstarters .vst-hints { display:none; }
-  .vpanel--chat .vst-grid { grid-template-columns:1fr; gap:8px; }
-  .vpanel--chat .vst-head { font-size:15px; }
+  .vpanel--chat .vstarters .home-stack, .vpanel--chat .vstarters .vst-hints, .vpanel--chat .vstarters .vst-grid { display:none; }
+  .vpanel--chat .vst-head { display:none; }        /* replaced by .vcol-greet */
+  .vpanel--chat .vcol-greet { display:block; text-align:center; }
+  .vpanel--chat .vcol-greet .sig { display:inline-block; font-family:var(--script); font-size:34px; font-weight:700; line-height:1; color:var(--olive); transform:rotate(-3deg); padding-bottom:7px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5C18 2 34 6.5 52 4S88 1.5 108 4.5' fill='none' stroke='%23D4DF9E' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 8px; }
+  .vpanel--chat .vcol-greet p { margin:14px 0 0; font-family:var(--sans); font-size:14px; line-height:1.5; color:var(--ebony); }
   /* the transcript type scale (.vmsg rules) is sized for the 600px centred home
      thread; step it down so it reads comfortably in a 392px column */
   .vpanel--chat .vmsg .vbub { font-size:15px; line-height:1.6; }
@@ -2847,6 +2855,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
               <div class="vstarters" id="vstarters">
                 <!-- desktop empty state keeps "Vesta. How can I help?" + the 2×2 grid (untouched) -->
                 <div class="vst-head"><span class="sig">Vesta.</span> What are you trying to get done?</div>
+                <!-- the browse column's empty state: wordmark + one open line, no preset
+                     questions (the home keeps its own 2×2 above). CSS-swapped in .vpanel--chat. -->
+                <div class="vcol-greet"><span class="sig">Vesta</span><p>Is there something specific we can help you with?</p></div>
                 <!-- mobile: the explorable cards, centred, ARE the empty state (the chat is the whole
                      UI); desktop keeps the 2×2 starters below and never shows the stack -->
                 <div class="home-stack" id="home-stack" aria-label="Find your way in"></div>
@@ -5530,13 +5541,14 @@ function mountChatInPanel(){
     columnAskInvite();
   }
 }
-// The column's invitation line — trade-aware, but only where a trade is actually in
-// view (the saved list shares this screen, and tradeLabelOf('') would render "Ask
-// about …"). One source for mount AND the column X's new-chat reset.
+// The column's invitation line. Deliberately TRADE-NEUTRAL: the visitor switches
+// trades in the sidebar without the column re-rendering, so "Ask about plumbing…"
+// would sit there stale and wrong the moment they moved to roofing (Drew 8/1).
+// A firm-focused thread keeps its own "Ask about <firm>…" — that one can't drift,
+// because the focus IS the thread.
 function columnAskInvite(){
   const inp=$('hs-cin'); if(!inp || vmFocusName) return;
-  const tl = (S.mode==='trade' && S.activeTrade) ? tradeLabelOf(S.activeTrade) : '';
-  inp.placeholder = tl ? 'Ask about '+tl.toLowerCase()+'…' : 'Describe it in your own words…';
+  inp.placeholder = 'Describe it in your own words…';
 }
 function unmountChatFromPanel(){
   const p=$('vpanel');
@@ -6093,8 +6105,10 @@ function profEvidenceRailHTML(){
     ['guide','Before you hire','Questions worth asking',profIntelGuideHTML()],
     ['sources','Sources & method','Evidence, freshness, Google context',profIntelSourcesHTML()]
   ];
-  return '<aside class="prof-desk-evidence" aria-label="Explore the evidence"><span class="prof-evidence-kick">Explore the evidence</span><nav class="prof-evidence-nav">'+items.map((it,i)=>
-    '<section class="prof-evidence-group'+(i===0?' open':'')+'"><button class="prof-evidence-item'+(i===0?' active':'')+'" type="button" data-evidence-toggle="'+it[0]+'" aria-expanded="'+(i===0?'true':'false')+'" aria-controls="prof-evidence-panel-'+it[0]+'"><span class="prof-evidence-label"><b>'+it[1]+'</b><small>'+it[2]+'</small></span><span class="prof-evidence-hover" aria-hidden="true"><b>'+it[1]+'</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button><div class="prof-evidence-panel" id="prof-evidence-panel-'+it[0]+'"'+(i===0?'':' hidden')+'>'+it[3]+'</div></section>'
+  // Every section starts CLOSED — the visitor chooses what to open (Drew 8/1);
+  // nothing is pre-expanded on their behalf.
+  return '<aside class="prof-desk-evidence" aria-label="Explore the evidence"><span class="prof-evidence-kick">Explore the evidence</span><nav class="prof-evidence-nav">'+items.map(it=>
+    '<section class="prof-evidence-group"><button class="prof-evidence-item" type="button" data-evidence-toggle="'+it[0]+'" aria-expanded="false" aria-controls="prof-evidence-panel-'+it[0]+'"><span class="prof-evidence-label"><b>'+it[1]+'</b><small>'+it[2]+'</small></span><span class="prof-evidence-hover" aria-hidden="true"><b>'+it[1]+'</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button><div class="prof-evidence-panel" id="prof-evidence-panel-'+it[0]+'" hidden>'+it[3]+'</div></section>'
   ).join('')+'</nav></aside>';
 }
 function profMobileContactHTML(){
@@ -6547,10 +6561,11 @@ function profLeadHTML(){
 function profIntelReadHTML(){
   const enr=profData.enr||{}; if (!enr.synthesis) return '';
   const s=splitRead(enr.synthesis);
+  // the methodology caption ("Vesta's interpretation of the pattern…") removed (Drew 8/1) —
+  // provenance lives in Sources & method; the read stands on its own.
   return '<div class="prof-intel-read">'+
     (s.lede?'<p class="prof-intel-lede">'+esc(s.lede)+'</p>':'')+
-    (s.rest?'<p>'+esc(s.rest)+'</p>':'')+
-    '<p class="prof-intel-source">Vesta’s interpretation of the pattern across public homeowner reviews—not a copied review or business-written bio.</p></div>';
+    (s.rest?'<p>'+esc(s.rest)+'</p>':'')+'</div>';
 }
 function profDisplayKnown(){
   const enr=profData.enr||{};
@@ -6690,8 +6705,7 @@ function renderProfile(){
   // contact and service/record live as an intentional right-hand stack.
   const trade=pTradeKey(); const profileLabel=PTRADE_PROFILE[trade] || 'Contractor';
   const title = '<header class="prof-desk-title"><div><p class="prof-desk-label">'+esc(profileLabel)+' profile</p>'+
-    '<p class="prof-desk-intro">Fairfield County evidence file · ranked by Vesta.</p></div>'+
-    '<span class="prof-desk-proof">✦ Ranked by the record, never by payment</span></header>';
+    '<p class="prof-desk-intro">Fairfield County evidence file · ranked by Vesta.</p></div></header>';   // "Ranked by the record, never by payment" pill removed (Drew 8/1)
   const hero = desktop()
     ? '<section class="prof-desk-hero prof-desk-panel"><div class="prof-header-identity">'+profProfileIdentityHTML()+'</div><div class="prof-header-contact">'+profActionRailHTML()+'</div></section>'
     : '<section class="prof-desk-hero prof-desk-panel">'+profLeadHTML()+'</section>';
@@ -6787,9 +6801,11 @@ function wireProfile(){
   });
   const evidenceItems=[...document.querySelectorAll('[data-evidence-toggle]')];
   evidenceItems.forEach(item=>item.addEventListener('click',()=>{
-    const wanted='prof-evidence-panel-'+item.dataset.evidenceToggle;
+    // nothing is open by default, so the open one must also CLOSE on a second click —
+    // otherwise the first section a visitor opens can never be put away again.
+    const closing = item.getAttribute('aria-expanded')==='true';
     evidenceItems.forEach(other=>{
-      const on=other===item, panel=$(other.getAttribute('aria-controls'));
+      const on=!closing && other===item, panel=$(other.getAttribute('aria-controls'));
       other.classList.toggle('active',on);
       other.setAttribute('aria-expanded',on?'true':'false');
       const group=other.closest('.prof-evidence-group'); if(group) group.classList.toggle('open',on);

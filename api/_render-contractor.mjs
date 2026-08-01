@@ -1193,7 +1193,7 @@ export function renderContractorHTML(enr, siblings = [], opts = {}) {
     '<header class="cp-titlebar"><div>' +
       '<a class="crumb" href="' + (trade ? '/fairfield-county/' + trade : '/vesta') + '">← ' + esc(label ? label + ' in ' + COUNTY : 'Vesta') + '</a>' +
       '<h1>' + esc(label) + ' profile</h1><p>Fairfield County evidence file · ranked by Vesta.</p>' +
-    '</div><span class="cp-no-pay">✦ Ranked by the record, never by payment</span></header>' +
+    '</div></header>' +   // "Ranked by the record, never by payment" pill removed (Drew 8/1; kept in step with the in-app profile)
     '<div class="cp-layout">' + hero + rail + body + '</div>' +
   '</section>';
 
