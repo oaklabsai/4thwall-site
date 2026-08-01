@@ -270,7 +270,9 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .vd-prev { font-family:var(--sans); font-size:11.5px; color:var(--olive); opacity:.72; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .vd-rn, .vd-del { flex:0 0 auto; width:33px; background:none; border:none; color:var(--olive); opacity:.5; font-size:13px; cursor:pointer; }
 .vd-rn:active, .vd-del:active { opacity:1; }
-@media (min-width:900px){ .vdrawer { display:none !important; } }
+/* the drawer was mobile-only; on desktop it now lives inside the Vesta Live column
+   (mountChatInPanel relocates it), so the blanket kill-switch has to spare that one */
+@media (min-width:900px){ .vdrawer { display:none !important; } .vpanel--chat .vdrawer { display:block !important; } }
 
 /* ── the full navigation menu (mobile) — Atlas's #absheet parity: a left-slide --nm panel whose
    subject headers are Caveat, slanted and underlined (Drew 7/21 — "the hamburger menu with all the
@@ -1736,7 +1738,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
   /* clamp, not fixed: at 1440px the thread gets its full 392; at a 1000px window it
      narrows to the 326 rail width the feed was already proven against — a hard 392
      would crush the cards on small desktops */
-  .vpanel--chat { width:clamp(326px,30vw,392px); padding:16px 18px 14px; display:flex; flex-direction:column; overflow:hidden; }
+  .vpanel--chat { position:relative; width:clamp(326px,30vw,392px); padding:16px 18px 14px; display:flex; flex-direction:column; overflow:hidden; }   /* relative: the saved-chats drawer covers this column only */
   .vpanel--chat .vfold { display:flex; flex-direction:column; }
   .vpanel--chat #vthread-fold { display:flex; flex:1 1 auto; min-height:0; grid-template-rows:none; transition:none; }
   .vpanel--chat #vthread-fold > .vfold-in { display:flex; flex-direction:column; flex:1 1 auto; min-height:0; height:auto; opacity:1; transform:none; overflow:hidden; transition:none; }
@@ -1764,6 +1766,22 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
   /* the column names itself, in the same grammar the analysis head used */
   .vpanel-chathead { flex:0 0 auto; display:flex; align-items:center; gap:7px; margin:0 0 10px; font-family:var(--serif); font-size:16px; font-weight:600; letter-spacing:-.01em; color:var(--olive); }
   .vpanel-chathead .va-spark { display:flex; color:var(--olive); }
+
+  /* ── saved chats, reachable on desktop ───────────────────────────────────
+     The ☰ is desktop-hidden globally (the home morph has no drawer); inside the
+     column it's the only way back to a filed conversation, so it returns here.
+     The drawer itself stops being a full-screen slide-in and becomes a panel
+     that covers ONLY the column — the feed stays readable behind it. */
+  .vpanel--chat .vth-menu { display:flex; }
+  .vpanel--chat .vdrawer { position:absolute; inset:0; z-index:12; border-radius:inherit; overflow:hidden; }
+  .vpanel--chat .vd-scrim { background:rgba(18,16,14,.22); }
+  /* motion only — never opacity. A panel that starts transparent is invisible if the
+     transition doesn't run (transitions are frozen while a document is hidden), so
+     the worst case here is "no slide", not "no drawer". */
+  .vpanel--chat .vd-panel { width:100%; max-width:none; padding:14px 12px; box-shadow:none; background:var(--nm);
+    transform:translateY(-10px); opacity:1; transition:transform .24s cubic-bezier(.22,1,.36,1); }
+  .vpanel--chat .vdrawer.open .vd-panel { transform:none; }
+  .vpanel--chat .vd-item { background:var(--nm); }
   /* mirror the home rule — a "new chat" X over an empty thread is nothing to close */
   .vpanel--chat .vthread:has(.vstarters.show) .vth-x { display:none; }
 
@@ -5523,7 +5541,11 @@ function panelOwnedByChat(){ const p=$('vpanel'); return !!(p && p.classList.con
 let chatSlots = null;              // [{n, parent, next}] — the nodes' home positions
 function mountChatInPanel(){
   const p=$('vpanel'); if(!p) return;
-  const nodes=[$('vthread-fold'), $('home-search')];
+  // #vdrawer travels with the thread: it lives inside the offscreen home, so on
+  // desktop its saved chats were unreachable — the column's ✕ filed conversations
+  // with no door back to them. Moving the real element (not a copy) keeps
+  // renderDrawer/openThread and the #vdrawer-list handlers working untouched.
+  const nodes=[$('vthread-fold'), $('home-search'), $('vdrawer')];
   if (nodes.some(n=>!n) || p.contains(nodes[0])) return;          // missing, or already mounted
   if (!chatSlots) chatSlots = nodes.map(n=>({ n, parent:n.parentNode, next:n.nextSibling }));
   p.innerHTML='';                                                  // drop whatever the rail/panel left
@@ -5540,6 +5562,25 @@ function mountChatInPanel(){
     const st=$('vstarters'); if(st) st.classList.add('show');
     columnAskInvite();
   }
+  syncColumnChatsBtn();
+}
+// enterConverseMobile() — which every reset/restore path runs through — stamps
+// .vconv onto the OFFSCREEN home. Harmless to look at, but it's the flag vSubmit
+// reads, so the column must scrub it after any such path. One helper, one rule.
+function columnAfterThreadChange(){
+  if(!panelOwnedByChat()) return;
+  $('s-home').classList.remove('vconv');
+  syncColumnChatsBtn();
+}
+// The ☰ opens saved chats. It appears only once something is actually filed —
+// a permanent button onto an empty list is a dead end, and the column has no
+// room to spend on one.
+function syncColumnChatsBtn(){
+  const b=$('vth-menu'); if(!b) return;
+  if(!panelOwnedByChat()){ b.style.display=''; b.setAttribute('aria-label','Menu'); return; }   // mobile/home: CSS owns it
+  let n=0; try { const s=loadThreads(); n=s.order.filter(id=>s.threads[id]).length; } catch(_){}
+  b.style.display = n ? 'flex' : 'none';
+  b.setAttribute('aria-label', 'Saved chats ('+n+')');   // in the column it opens the drawer, not the nav
 }
 // The column's invitation line. Deliberately TRADE-NEUTRAL: the visitor switches
 // trades in the sidebar without the column re-rendering, so "Ask about plumbing…"
@@ -7790,6 +7831,7 @@ function restoreThreadData(t){
   if (vmLastDeck && t.deckLast) vmDeck(vmLastDeck.trade, vmLastDeck.job, null, vmLastDeck.mode||'fix', true);
   else if (vmLastDeck) vmReopenPicks(vmLastDeck);
   vmScroll();
+  columnAfterThreadChange();
 }
 function openThread(id){
   const store=loadThreads(); const t=store.threads[id];
@@ -7818,8 +7860,8 @@ function renameThread(id){
 function deleteThread(id){
   const store=loadThreads(); delete store.threads[id]; store.order=store.order.filter(x=>x!==id);
   if(store.activeId===id) store.activeId=null; saveThreads(store);
-  if(currentThreadId===id){ currentThreadId=null; vmFocusName=null; vmLastDeck=null; enterConverseMobile(true); const i=$('hs-cin'); if(i) i.blur(); }
-  renderDrawer();
+  if(currentThreadId===id){ currentThreadId=null; vmFocusName=null; vmLastDeck=null; enterConverseMobile(true); const i=$('hs-cin'); if(i) i.blur(); columnAfterThreadChange(); columnAskInvite(); }
+  renderDrawer(); syncColumnChatsBtn();
 }
 // ── the ☰ drawer ──
 function renderDrawer(){
@@ -7837,7 +7879,10 @@ function renderDrawer(){
       '<button class="vd-del" type="button" data-id="'+esc(id)+'" aria-label="Delete">✕</button></div>';
   }).join('');
 }
-function openDrawer(){ renderDrawer(); const d=$('vdrawer'); if(d){ d.hidden=false; requestAnimationFrame(()=>d.classList.add('open')); } }
+// force a reflow between the display change and the class, rather than waiting on
+// requestAnimationFrame — rAF is paused whenever the document is hidden (a background
+// tab), which left the drawer un-opened with no way back. Same idiom openSheet uses.
+function openDrawer(){ renderDrawer(); const d=$('vdrawer'); if(d){ d.hidden=false; void d.offsetHeight; d.classList.add('open'); } }
 function closeDrawer(){ const d=$('vdrawer'); if(d){ d.classList.remove('open'); setTimeout(()=>{ if(!d.classList.contains('open')) d.hidden=true; }, 260); } }
 
 /* ── ☰ NAV MENU (mobile) — the full category nav, Atlas #absheet parity. Built once, from
@@ -8797,16 +8842,18 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
       // in the drawer; the column resets to its invitation. exitConverseMobile() would
       // only strip classes off the OFFSCREEN home — a visibly dead button here.
       if (panelOwnedByChat()){
-        newThread();
-        $('s-home').classList.remove('vconv');   // undo the entry side effect — the home was never morphed
-        columnAskInvite();                       // trade-aware placeholder, starters already shown by the reset
+        newThread();                  // files the old chat — the ☰ is how it comes back
+        columnAfterThreadChange();    // scrub the offscreen .vconv, refresh the ☰
+        columnAskInvite();
         return;
       }
       if (desktop()) exitConverseMobile();
       else newThread();   // mobile X = start a fresh chat (the current one is filed in the ☰ drawer, not lost)
     }); }
   // ☰ chats drawer
-  { const m=$('vth-menu'); if(m) m.addEventListener('click', openVMenu); }
+  // ☰ — mobile: the category nav menu (chats live one level inside it). In the
+  // column the left sidebar already IS the nav, so ☰ goes straight to saved chats.
+  { const m=$('vth-menu'); if(m) m.addEventListener('click', ()=>{ if(panelOwnedByChat()) openDrawer(); else openVMenu(); }); }
   { const c=$('vd-close'); if(c) c.addEventListener('click', closeDrawer); }
   { const s=$('vd-scrim'); if(s) s.addEventListener('click', closeDrawer); }
   { const c=$('vms-close'); if(c) c.addEventListener('click', closeVMenu); }
