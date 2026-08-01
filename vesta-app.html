@@ -272,7 +272,7 @@ a.va-full:active, a.fc-fullpill:active, a.am-atlas-link:active { transform:scale
 .vd-rn:active, .vd-del:active { opacity:1; }
 /* the drawer was mobile-only; on desktop it now lives inside the Vesta Live column
    (mountChatInPanel relocates it), so the blanket kill-switch has to spare that one */
-@media (min-width:900px){ .vdrawer { display:none !important; } .vpanel--chat .vdrawer { display:block !important; } }
+@media (min-width:900px){ .vdrawer { display:none !important; } .vpanel--chat .vdrawer:not([hidden]) { display:block !important; } }
 
 /* ── the full navigation menu (mobile) — Atlas's #absheet parity: a left-slide --nm panel whose
    subject headers are Caveat, slanted and underlined (Drew 7/21 — "the hamburger menu with all the
@@ -7883,7 +7883,15 @@ function renderDrawer(){
 // requestAnimationFrame — rAF is paused whenever the document is hidden (a background
 // tab), which left the drawer un-opened with no way back. Same idiom openSheet uses.
 function openDrawer(){ renderDrawer(); const d=$('vdrawer'); if(d){ d.hidden=false; void d.offsetHeight; d.classList.add('open'); } }
-function closeDrawer(){ const d=$('vdrawer'); if(d){ d.classList.remove('open'); setTimeout(()=>{ if(!d.classList.contains('open')) d.hidden=true; }, 260); } }
+function closeDrawer(){
+  const d=$('vdrawer'); if(!d) return;
+  d.classList.remove('open');
+  // mobile slides the panel off-screen over 280ms, so it waits before hiding. The
+  // column's panel only shifts 10px — waiting would leave it fully covering the
+  // column with nothing visibly happening, which reads as a stuck drawer.
+  if (panelOwnedByChat()){ d.hidden=true; return; }
+  setTimeout(()=>{ if(!d.classList.contains('open')) d.hidden=true; }, 260);
+}
 
 /* ── ☰ NAV MENU (mobile) — the full category nav, Atlas #absheet parity. Built once, from
    `trades` (one source of truth). Every item lands somewhere real — no dead ends. ── */
