@@ -1723,6 +1723,42 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline:none
   .vpanel .va-bm { width:44px; border-radius:14px; }
   .vpanel .va-note { margin-top:9px; }
 
+  /* ── ASK VESTA *IS* THE BROWSE COLUMN (desktop, Drew 8/1) ──────────────────
+     The right column is the live conversation, not a static analysis panel. The
+     ONE thread is physically relocated here (mountChatInPanel) — same nodes, same
+     ids — so streaming, persistence and the chats drawer keep working untouched;
+     only the skin changes. The home hero's morph is undone: out here it's a plain
+     flex stack (thread grows, composer pinned), and every `#s-home.vconv …`
+     selector stops matching, so the panel restates what it still needs. */
+  /* clamp, not fixed: at 1440px the thread gets its full 392; at a 1000px window it
+     narrows to the 326 rail width the feed was already proven against — a hard 392
+     would crush the cards on small desktops */
+  .vpanel--chat { width:clamp(326px,30vw,392px); padding:16px 18px 14px; display:flex; flex-direction:column; overflow:hidden; }
+  .vpanel--chat .vfold { display:flex; flex-direction:column; }
+  .vpanel--chat #vthread-fold { display:flex; flex:1 1 auto; min-height:0; grid-template-rows:none; transition:none; }
+  .vpanel--chat #vthread-fold > .vfold-in { display:flex; flex-direction:column; flex:1 1 auto; min-height:0; height:auto; opacity:1; transform:none; overflow:hidden; transition:none; }
+  .vpanel--chat .vthread { flex:1 1 auto; min-height:0; height:auto; }
+  /* the composer: `#s-home .home-search` styles it on the home screen, so restate */
+  .vpanel--chat .home-search { flex:0 0 auto; max-width:none; margin:10px 0 0; padding:8px 8px 8px 18px; border-radius:var(--r-pill); background:var(--nm); border:1px solid rgba(255,255,255,.55); box-shadow:var(--nm-out); cursor:text; }
+  .vpanel--chat .home-search .hs-tx, .vpanel--chat .home-search .hs-spark { display:none; }
+  .vpanel--chat .home-search .hs-cin, .vpanel--chat .home-search .hs-csend { display:flex; }
+  /* empty state — the home hero's explorable card stack and mobile hints are hero
+     objects with no room in a 392px column; they'd push the composer off-screen. */
+  .vpanel--chat .vstarters.show { display:flex; flex-direction:column; gap:12px; position:absolute; left:10px; right:10px; top:50%; transform:translateY(-50%); }
+  .vpanel--chat .vstarters .home-stack, .vpanel--chat .vstarters .vst-hints { display:none; }
+  .vpanel--chat .vst-grid { grid-template-columns:1fr; gap:8px; }
+  .vpanel--chat .vst-head { font-size:15px; }
+  /* the transcript type scale (.vmsg rules) is sized for the 600px centred home
+     thread; step it down so it reads comfortably in a 392px column */
+  .vpanel--chat .vmsg .vbub { font-size:15px; line-height:1.6; }
+  .vpanel--chat .vmsg.me .vbub { font-size:.97rem; margin:.9rem auto .15rem; }
+  .vpanel--chat .vthread { padding:4px 2px 0; }
+  /* the column names itself, in the same grammar the analysis head used */
+  .vpanel-chathead { flex:0 0 auto; display:flex; align-items:center; gap:7px; margin:0 0 10px; font-family:var(--serif); font-size:16px; font-weight:600; letter-spacing:-.01em; color:var(--olive); }
+  .vpanel-chathead .va-spark { display:flex; color:var(--olive); }
+  /* mirror the home rule — a "new chat" X over an empty thread is nothing to close */
+  .vpanel--chat .vthread:has(.vstarters.show) .vth-x { display:none; }
+
   .fcard { padding:12px; border:1px solid rgba(255,255,255,.52); border-radius:24px; box-shadow:var(--nm-sm); }
   .fcard:hover { box-shadow:var(--nm-out); }
   .fcard-summary { display:grid; grid-template-columns:minmax(190px,30%) minmax(0,1fr); gap:18px; align-items:stretch; }
@@ -4905,7 +4941,12 @@ function wireAnalysis(root, con){
   const bm = root.querySelector('.va-bm');
   if (bm){ bm.classList.toggle('on', isLiked(con.placeId)); bm.addEventListener('click', () => { const now=toggleLike(con.placeId); bm.classList.toggle('on', now); if(S.mode==='saved'){ renderSaved(); } }); }
 }
+// Ask Vesta owns the desktop browse column now (Drew 8/1), so nothing may repaint
+// over the mounted thread — an innerHTML write here would destroy the live chat's
+// nodes. Guarded rather than deleted: analysisHTML() is still the MOBILE sheet's
+// body, and this stays the honest fallback if the chat is ever not mounted.
 function renderPanel(con){
+  if (panelOwnedByChat()) return;
   const p = $('vpanel'); if(!p) return;
   if (!con){
     p.innerHTML = '<div class="va-head"><span class="va-spark">'+SPARK+'</span>Vesta’s analysis</div>'+
@@ -5100,12 +5141,15 @@ function feedListHTML(list){
   // cursor-riding hover card is redundant here (and never existed on touch).
   return '<div class="vfeed vfeed--rich" id="vfeed">'+inner+'</div>';
 }
-// Click a name → the full analysis fills the desktop panel (reuses renderPanel — same read the
-// deck shows). Hover fills the cursor-card; leave restores the field rail is NOT auto — a click
-// commits the selection, another name replaces it, a re-render (trade/filter) returns the rail.
+// SELECT = highlight the row and (when it still owns the column) fill the analysis
+// panel. Deliberately NON-navigating: focusFeedCard() calls this programmatically
+// just to light up a card — a deck landing or a return-to-browse — so navigating
+// from in here would yank the reader into a profile they never asked for. Opening
+// the profile belongs to the real click, in wireNamesFeed below.
 function selectName(con, btn){
   document.querySelectorAll('#vfeed .vname--active').forEach(b => b.classList.remove('vname--active'));
   if (btn) btn.classList.add('vname--active');
+  if (panelOwnedByChat()) return;     // the column is Vesta Live; nothing to paint
   renderPanel(con); pushHistory(con,'view');
   const p = $('vpanel'); if (p) p.scrollTop = 0;
 }
@@ -5153,7 +5197,14 @@ function wireNamesFeed(list){
         place();
       });
     }
-    btn.addEventListener('click', () => selectName(con, btn));
+    // A real click selects, and — once Ask Vesta owns the column — also opens the
+    // profile, because the analysis panel that used to answer the click is gone.
+    // Same destination as the card's own "See the full profile" pill, and the same
+    // thing a tap does on mobile, so both breakpoints finally behave alike.
+    btn.addEventListener('click', () => {
+      selectName(con, btn);
+      if (panelOwnedByChat()){ logView(con.placeId, con.trade); openProfile(con.placeId); }
+    });
   });
 
   // "See the full profile" lives on the card now. Stop the card's own select
@@ -5416,7 +5467,11 @@ function wireFieldPanel(container, apply){
   }));
 }
 let _railTrade = null;
+// Same guard as renderPanel: the static field rail (method / compare / "describe the
+// job") was the column's resting state, and its own "Ask Vesta →" card was a stub for
+// exactly what the column now IS. Never paint over the live thread.
 function renderFeedRail(){
+  if (panelOwnedByChat()) return;
   const p=$('vpanel'); if(!p) return;
   const top=feedSource().slice(0,3);
   const rows=top.map(con=>{
@@ -5438,6 +5493,62 @@ function renderFeedRail(){
     '<section class="feedrail-card"><span class="feedrail-kicker">Need help choosing?</span><h2 class="feedrail-title">Describe the job in your own words.</h2><p class="feedrail-copy">Vesta will narrow the field and explain why each match fits.</p><button class="feedrail-cta" id="feedrail-help" type="button"><span>Ask Vesta</span><span aria-hidden="true">→</span></button></section>'+
     '<p class="feedrail-private">'+PROF_FACT_IC.shield+'<span>Your information is not auctioned or resold.</span></p>';
   const help=$('feedrail-help'); if(help) help.addEventListener('click',openSearch);
+}
+
+/* ═══ ASK VESTA AS THE BROWSE COLUMN (desktop) ══════════════════════════════
+   Drew 8/1: "the entire right side column should be ask vesta instead."
+
+   The live thread is RELOCATED here, not rebuilt. A second chat instance on a
+   third surface would fork the engine (typers, streaming, persistence, the
+   drawer, focus-mode) into two copies that drift — the maintenance trap the desk
+   split already flagged. Moving the real nodes keeps every id intact, so every
+   $('vm-thread') / $('hs-cin') lookup in the engine resolves exactly as before
+   and NO engine function needed a change. Only CSS knows the difference.
+
+   Home is where these nodes live at rest; we remember each one's exact slot so
+   leaving browse (or dropping below the desktop breakpoint) restores the home
+   hero untouched. */
+function panelOwnedByChat(){ const p=$('vpanel'); return !!(p && p.classList.contains('vpanel--chat')); }
+let chatSlots = null;              // [{n, parent, next}] — the nodes' home positions
+function mountChatInPanel(){
+  const p=$('vpanel'); if(!p) return;
+  const nodes=[$('vthread-fold'), $('home-search')];
+  if (nodes.some(n=>!n) || p.contains(nodes[0])) return;          // missing, or already mounted
+  if (!chatSlots) chatSlots = nodes.map(n=>({ n, parent:n.parentNode, next:n.nextSibling }));
+  p.innerHTML='';                                                  // drop whatever the rail/panel left
+  p.classList.add('vpanel--chat');
+  p.insertAdjacentHTML('beforeend', '<div class="vpanel-chathead"><span class="va-spark">'+SPARK+'</span>Vesta Live</div>');
+  nodes.forEach(n=>p.appendChild(n));
+  // A completed request (vmDone) locks the conversation — vmTurn drops every send —
+  // so the composer must not sit there enabled and silently eating messages.
+  const inp=$('hs-cin'); if(inp) inp.disabled = !!vmDone;
+  // A thread in progress simply keeps rendering (its DOM moved with it). With no
+  // thread yet the column needs its invitation: #s-home.vconv drives the empty
+  // state at home and can't reach here, so show it explicitly.
+  if (!vmMsgs.length){
+    const st=$('vstarters'); if(st) st.classList.add('show');
+    columnAskInvite();
+  }
+}
+// The column's invitation line — trade-aware, but only where a trade is actually in
+// view (the saved list shares this screen, and tradeLabelOf('') would render "Ask
+// about …"). One source for mount AND the column X's new-chat reset.
+function columnAskInvite(){
+  const inp=$('hs-cin'); if(!inp || vmFocusName) return;
+  const tl = (S.mode==='trade' && S.activeTrade) ? tradeLabelOf(S.activeTrade) : '';
+  inp.placeholder = tl ? 'Ask about '+tl.toLowerCase()+'…' : 'Describe it in your own words…';
+}
+function unmountChatFromPanel(){
+  const p=$('vpanel');
+  if (!chatSlots || !p || !p.classList.contains('vpanel--chat')) return;
+  chatSlots.forEach(s => s.parent.insertBefore(s.n, s.next));      // next===null ⇒ append: same slot
+  p.classList.remove('vpanel--chat');
+  p.innerHTML='';   // AFTER the chat nodes are safely home — clears the header we injected
+}
+// Browse+desktop is the only place the column exists; every other screen (and every
+// width below the breakpoint, where the column is display:none) hands the chat back.
+function syncChatColumn(){
+  if (desktop() && S.screen==='browse') mountChatInPanel(); else unmountChatFromPanel();
 }
 // ── Silent-firm coverage tail ──────────────────────────────────────────────
 // Honest, collapsed "N more, not yet reviewed" section. Count-only firms: what's on
@@ -6877,6 +6988,9 @@ function showScreen(name){
   // any real navigation tears down the Ask Vesta overlay cleanly (e.g. a resolved match lands a deck)
   if (document.body.classList.contains('ask-ov')){ document.body.classList.remove('ask-ov'); const hh=$('s-home'); if(hh) hh.classList.remove('ask-ov-home'); }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('s-'+name).classList.add('active'); S.screen=name; if (name!=='home') stopSearchRotator();
+  // hand the live thread to (or back from) the desktop browse column — must run
+  // BEFORE the screen paints its panel, so renderFeedRail/renderPanel see the guard
+  syncChatColumn();
 }
 // User picked a trade/problem: run the triage first (when the trade has a bank + the entry is
 // user-initiated), else go straight to browse. opts.walk===false = passive land (desktop auto/resize).
@@ -7621,7 +7735,11 @@ function autoNameOf(t){
 // snapshot the live conversation into its saved thread (creating one on first real turn).
 function persistThread(){
   try {
-    if (desktop()) return;   // the drawer is a mobile surface; desktop is unchanged
+    // The drawer is a mobile surface — but the browse COLUMN's ✕ (new chat) routes
+    // through here too, and without filing, that ✕ would be the one button in the
+    // product that destroys a conversation unrecoverably. File column threads; the
+    // desktop home morph stays unpersisted as before. (Fable pre-ship review, 8/1.)
+    if (desktop() && !panelOwnedByChat()) return;
     if (vmMsgs.filter(m=>m.role==='user').length < 1) return;   // only real conversations are filed
     const store = loadThreads();
     if(!currentThreadId) currentThreadId = newThreadId();
@@ -8636,7 +8754,13 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   function vSubmit(){
     const inp=$('hs-cin'); if(!inp) return; const v=(inp.value||'').trim(); if(!v) return; inp.value='';
     if (!TRI_OK){ openSearch(v); return; }
-    if(!$('s-home').classList.contains('vconv')) enterConverseMobile(); vmTurn(v);
+    // The browse column is ALREADY a live conversation surface — never route it through
+    // the home-morph entry. enterConverseMobile() is a full reset (vmMsgs=[] + thread
+    // wipe); keyed off #s-home.vconv it fired on column sends whenever that offscreen
+    // class was absent — e.g. right after the X — silently destroying the visitor's
+    // whole conversation on their next message. (Fable pre-ship review, 8/1.)
+    if(!$('s-home').classList.contains('vconv') && !panelOwnedByChat()) enterConverseMobile();
+    vmTurn(v);
   }
   { const hs=$('home-search'); if(hs) hs.addEventListener('click', e=>{
       if (e.target.closest('.hs-cin, .hs-csend')) return;
@@ -8653,6 +8777,15 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   // rest home anymore — the chat IS the home — so X resets to a fresh conversation (cards back).
   { const x=$('vth-x'); if(x) x.addEventListener('click', ()=>{
       if (document.body.classList.contains('ask-ov')){ closeAskOverlay(); return; }   // overlay: X = minimize back to where you were
+      // browse column: X honestly means its label — "New chat". The old thread is filed
+      // in the drawer; the column resets to its invitation. exitConverseMobile() would
+      // only strip classes off the OFFSCREEN home — a visibly dead button here.
+      if (panelOwnedByChat()){
+        newThread();
+        $('s-home').classList.remove('vconv');   // undo the entry side effect — the home was never morphed
+        columnAskInvite();                       // trade-aware placeholder, starters already shown by the reset
+        return;
+      }
       if (desktop()) exitConverseMobile();
       else newThread();   // mobile X = start a fresh chat (the current one is filed in the ☰ drawer, not lost)
     }); }
@@ -8734,6 +8867,7 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
   let _wasDesktop = desktop();
   window.addEventListener('resize', () => {
     const d = desktop(); if (d===_wasDesktop) return; _wasDesktop = d;
+    syncChatColumn();   // crossing the breakpoint: the column only exists on desktop
     if (S.screen==='browse'){ if (S.mode==='saved') renderSaved(); else { showDeck(); updateBrowseHead(); renderDeck(); } }
   });
   // Deep-link: ?place= opens the profile in-app. (/c/:placeId itself is SERVER-rendered
