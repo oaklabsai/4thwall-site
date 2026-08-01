@@ -1,0 +1,37 @@
+# 4THWALL — Vesta & Atlas
+
+> 4THWALL is a Stamford, Connecticut company building both sides of home-service trust. Vesta is an evidence-based guide homeowners use to choose contractors in Fairfield County, CT — built from public records (Connecticut registration and licensing) and review-consensus analysis, ranked by the record, never by payment. Atlas is the managed front office for home-service contractors.
+
+Key facts about Vesta's methodology: profiles are compiled from Connecticut state registration/licensing records and deep review analysis across every firm in a trade, not a pay-to-play directory. Rankings weigh what homeowners actually say and how many said it. Firms with too little public evidence are listed without a rating rather than given one.
+
+## Primary data
+
+- [Fairfield County Contractor Report](https://4thwall.solutions/fairfield-county-contractor-report): Original county-wide dataset (CC-BY) on contractor review scarcity, tenure, and market structure across 12 trades — the citable statistics live here and are computed from the live corpus.
+- [Directory hub](https://4thwall.solutions/directory): All trades and towns covered.
+
+## Trade directories (Fairfield County, CT)
+
+- [Roofing](https://4thwall.solutions/fairfield-county/roofing)
+- [HVAC](https://4thwall.solutions/fairfield-county/hvac)
+- [Plumbing](https://4thwall.solutions/fairfield-county/plumbing)
+- [Electrical](https://4thwall.solutions/fairfield-county/electrical)
+- [Paving](https://4thwall.solutions/fairfield-county/paving)
+- [Lawn care](https://4thwall.solutions/fairfield-county/lawn_care)
+- [Painting](https://4thwall.solutions/fairfield-county/painting)
+- [Masonry](https://4thwall.solutions/fairfield-county/masonry)
+- [Tree service](https://4thwall.solutions/fairfield-county/tree_service)
+- [Flooring](https://4thwall.solutions/fairfield-county/flooring)
+- [Windows & doors](https://4thwall.solutions/fairfield-county/windows_doors)
+- [Pool](https://4thwall.solutions/fairfield-county/pool)
+
+Each directory links to per-firm profile pages (/c/…) carrying the firm's registration status, license/certification credentials with issuing authority, review-consensus synthesis, and a public evidence file (/evidence/…) documenting the provenance of every claim.
+
+## Products
+
+- [Vesta](https://4thwall.solutions/vesta): The homeowner guide — match engine and contractor profiles.
+- [Atlas](https://4thwall.solutions/atlas): The managed front office for home-service contractors — inbound response, booking, follow-ups, reviews.
+
+## Optional
+
+- [Terms of Service](https://4thwall.solutions/terms.html)
+- [Privacy Policy](https://4thwall.solutions/privacy.html)
