@@ -31,18 +31,18 @@ const withoutCode = html
   .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
   .replace(/<!--[\s\S]*?-->/g, '');
 
-check('document title names Atlas as the contractor product', /<title>4THWALL — Atlas,/.test(html));
+check('document title states the 4THWALL category', /<title>4THWALL — The operating layer around the work<\/title>/.test(html));
 check(
-  'description states the managed SMS-first front desk',
-  /Atlas is a managed, SMS-first front desk/.test(html),
+  'description states the Atlas lifecycle and Vesta relationship',
+  /Atlas connects the customer lifecycle around the job/.test(html) && /Vesta makes the public record easier to understand/.test(html),
 );
 check(
-  'hero carries the adopted contractor promise',
-  /You do the work\.[\s\S]{0,120}Atlas runs the office\./.test(withoutCode),
+  'hero carries the adopted lifecycle promise',
+  /Every customer interaction should[\s\S]{0,120}move the business forward\./.test(withoutCode),
 );
 check(
   'hero states the currently operated response lane',
-  /responds to supported inbound texts and missed calls in your name/.test(withoutCode),
+  /starting with supported inbound texts and missed-call recovery/.test(withoutCode),
 );
 
 const audienceCards = [...withoutCode.matchAll(/class="fork-col\b/g)].length;
@@ -66,6 +66,9 @@ check('no Slack explanation remains on the active homepage', !/What is Slack|pri
 check('founding-contractor action is present', /Apply as a founding contractor/.test(withoutCode));
 check('reduced-motion handling remains present', /prefers-reduced-motion:\s*reduce/.test(html));
 check('mobile workspace proof has a responsive rule', /@media\(max-width:760px\)\{\.aw-demo/.test(html));
+check('Atlas evidence remains private before any public use', /operated evidence remains private first/.test(withoutCode));
+check('homepage states that nothing becomes public automatically', /Nothing becomes public automatically/.test(withoutCode));
+check('Vesta does not claim to certify workmanship', /without pretending that a profile certifies workmanship/.test(withoutCode));
 
 const atlasWithoutStylesAndComments = atlasHtml
   .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
