@@ -16,11 +16,55 @@ const DB_BASE = process.env.SUPABASE_URL || 'https://vinytnzzgryodyrftabg.supaba
 const DB_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_IEQcNbThGZblpzqNnEeDeg_r5LXSyzt';
 
 const VALID_PLACE_ID = /^[A-Za-z0-9_-]{8,200}$/;
+const VALID_SLUG = /^[a-z0-9-]{1,120}$/;
 const FRESH = 'public, s-maxage=86400, stale-while-revalidate=604800';
 
+// Resolve a readable slug to its place id. Three distinct answers, because the
+// caller must treat them differently: a place id (found), null (no such slug —
+// a real 404), or undefined (the lookup itself failed — retryable, never cache
+// it as "gone").
+async function placeIdForSlug(slug) {
+  try {
+    const r = await fetch(
+      DB_BASE + '/rest/v1/vesta_slugs?slug=eq.' + encodeURIComponent(slug) + '&select=place_id&limit=1',
+      { headers: { apikey: DB_KEY, Authorization: 'Bearer ' + DB_KEY, Accept: 'application/json' } }
+    );
+    if (!r.ok) return undefined;
+    const rows = await r.json();
+    if (!Array.isArray(rows)) return undefined;
+    return (rows[0] && rows[0].place_id) || null;
+  } catch (_) { return undefined; }
+}
+
 export default async function handler(req, res) {
-  const placeId = String((req.query && req.query.placeId) || '').trim();
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
+
+  // Two doors into the same profile: /c/<placeId> is the machine URL, /vesta/<slug>
+  // is the readable one we hand humans — claim emails send it and the app writes it
+  // into the address bar, so it's the URL that actually gets shared. Both render
+  // here; the renderer's canonical is always the /c/ form, so credit consolidates
+  // on one URL. Before 2026-08-02 the slug door served the SPA shell with a
+  // canonical pointing at /vesta, which made 705 profiles invisible to every AI
+  // crawler that doesn't run JS — on the one URL people actually receive.
+  const slug = String((req.query && req.query.slug) || '').trim().toLowerCase();
+  let placeId = String((req.query && req.query.placeId) || '').trim();
+
+  if (!placeId && slug) {
+    if (!VALID_SLUG.test(slug)) {
+      res.setHeader('Cache-Control', FRESH);
+      return res.status(404).send(renderNotFoundHTML());
+    }
+    const resolved = await placeIdForSlug(slug);
+    if (resolved === undefined) {   // upstream hiccup -> retryable, same rule as below
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(503).send(renderNotFoundHTML());
+    }
+    if (resolved === null) {        // no such slug -> a genuine 404
+      res.setHeader('Cache-Control', FRESH);
+      return res.status(404).send(renderNotFoundHTML());
+    }
+    placeId = resolved;
+  }
 
   // Malformed id -> a genuine 404 (not a profile URL). Safe to cache.
   if (!VALID_PLACE_ID.test(placeId)) {
