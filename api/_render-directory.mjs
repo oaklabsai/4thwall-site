@@ -141,6 +141,9 @@ export function tradeLabel(t) {
   return s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : 'General';
 }
 const tLower = (t) => (t === 'hvac' ? 'HVAC' : tradeLabel(t).toLowerCase());
+// Plural actor form — "hiring roofing" is not English; "hiring roofing contractors" is.
+const TRADE_PROS = { roofing: 'roofers', hvac: 'HVAC contractors', plumbing: 'plumbers', electrical: 'electricians', paving: 'paving contractors', lawn_care: 'lawn & landscaping pros', painting: 'painters', masonry: 'masons', tree_service: 'tree crews', flooring: 'flooring installers', windows_doors: 'window & door installers', pool: 'pool pros' };
+const tPros = (t) => TRADE_PROS[t] || (tLower(t) + ' contractors');
 
 // HTML escaping — identical to home.js HOME.esc.
 export function esc(s) {
@@ -209,6 +212,42 @@ function marketBar(rows, trade) {
   return '<div class="market-bar">' + statsHtml +
     '<p class="mb-tag">Ranked by homeowner consensus, weighted by how many homeowners said it — ' +
     'no ads, no pay-to-play, no paid placement.</p></div>';
+}
+
+// The verify block — the hub's extraction unit (route-map § THE WAR PLAN, Phase
+// 0D). GSC 8/02: ~86% of every impression the site earns lands on these eight
+// trade hubs, and they carried no self-contained passage that answered a
+// verification question. This is one: a single 134–167-word passage (the measured
+// optimum for AI answer extraction) that names the county, the trade and real
+// counts from THIS page's own rows, so a lifted passage still says what it is
+// about. Trade-level editorial about no business — same honesty class as the
+// profile hiring guide. Stats are computed, never hardcoded.
+function verifyBlock(rows, trade) {
+  const tl = tLower(trade);
+  const n = rows.length;
+  const nReg = rows.filter((p) => p.registered).length;
+  const nCred = rows.filter((p) =>
+    (Array.isArray(p.trade_license) && p.trade_license.length) ||
+    (Array.isArray(p.certifications) && p.certifications.length)).length;
+  const regSentence = nReg
+    ? 'Of the ' + n + ' ' + tl + ' companies on this page, ' + nReg +
+      ' hold an active Connecticut Home Improvement Contractor registration — a fact you can confirm yourself in the ' +
+      'Department of Consumer Protection’s public registry rather than take from a website.'
+    : 'Confirm registration yourself in the Connecticut Department of Consumer Protection’s public registry rather than taking it from a website.';
+  const credSentence = nCred
+    ? ' Where the work requires a trade credential, ask to see it: ' + nCred +
+      ' of these firms carry a trade licence or manufacturer certification Vesta was able to verify.'
+    : ' Where the work requires a trade credential, ask to see it before the job is scheduled.';
+  return '<section class="verify-block" id="verify" aria-labelledby="verify-h">' +
+    '<h2 class="section-h" id="verify-h">How to verify ' + esc(tPros(trade)) + ' in ' + COUNTY + ', CT</h2>' +
+    '<p class="note" style="margin-top:-.2rem">General guidance for the trade — not a claim about any business below.</p>' +
+    '<p class="vb-body">Before hiring ' + esc(tPros(trade)) + ' in ' + COUNTY + ', Connecticut, four checks separate a documented contractor ' +
+      'from a confident-sounding one. ' + esc(regSentence) + esc(credSentence) +
+      ' Read the review record for its pattern rather than its average: one five-star score says far less than what many ' +
+      'homeowners repeat about the same crew, which is what Vesta’s plain-English read of each firm below reports. ' +
+      'The fourth check is the one no public registry can answer — ask for a current certificate of insurance naming you ' +
+      'before any work begins, and confirm who is actually doing the work if the firm subcontracts.</p>' +
+  '</section>';
 }
 
 // M7 (standalone) — trust-criteria explainer. On the directory the cards show
@@ -482,6 +521,32 @@ export const BIZ_TYPE = {
 };
 const bizType = (trade) => BIZ_TYPE[trade] || 'HomeAndConstructionBusiness';
 
+// Hub FAQ — same fan-out lever as the profile pages, answered from THIS page's
+// own rendered counts. Only emitted when the page actually has rows, and every
+// answer restates what the visible verify block says. No invented numbers.
+function hubFaqNodes(trade, rows, canonical) {
+  if (!Array.isArray(rows) || !rows.length) return [];
+  const tl = tLower(trade);
+  const pros = tPros(trade);
+  const nReg = rows.filter((p) => p.registered).length;
+  const qa = [
+    ['How do you verify ' + pros + ' in ' + COUNTY + ', CT?',
+     'Confirm Connecticut Home Improvement Contractor registration in the Department of Consumer Protection’s public registry, ' +
+     'ask to see any trade licence the work requires, read the review record for its repeated pattern rather than its average ' +
+     'star score, and request a current certificate of insurance naming you before work begins. Of the ' + rows.length + ' ' + tl +
+     ' companies listed on this Vesta page, ' + nReg + ' hold an active Connecticut registration.'],
+    ['How does Vesta rank ' + pros + ' in ' + COUNTY + '?',
+     'Vesta ranks by what homeowners consistently say in the public review record, weighted by how many said it, alongside ' +
+     'Connecticut registration and licensing where they apply. Placement is never sold: there are no ads, no pay-to-play and ' +
+     'no paid placement on this page, and raw star scores are not published.']
+  ];
+  return [{
+    '@type': 'FAQPage',
+    '@id': canonical + '#faq',
+    mainEntity: qa.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } }))
+  }];
+}
+
 function jsonLd(trade, label, rows, canonical) {
   const items = rows.map((p, i) => {
     const url = SITE + '/c/' + encodeURIComponent(p.place_id);
@@ -531,7 +596,8 @@ function jsonLd(trade, label, rows, canonical) {
       numberOfItems: items.length,
       itemListOrder: 'https://schema.org/ItemListOrderDescending',
       itemListElement: items
-    }
+    },
+    ...hubFaqNodes(trade, rows, canonical)
   ];
 
   // Escape "<" so the JSON can never break out of the <script> tag.
@@ -564,6 +630,8 @@ export function shell({ title, description, canonical, headExtra, body }) {
     '<style>' +
       '.dir-count{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vdim)}' +
       // M6 market trust bar
+      '.verify-block{margin:1.4rem 0 1.1rem}' +
+      '.verify-block .vb-body{max-width:68ch;margin:.7rem 0 0;font-size:.97rem;line-height:1.62;color:var(--vink,#12100e)}' +
       '.market-bar{margin:.4rem 0 1.1rem;padding:.85rem 1rem;border:1px solid var(--line,rgba(74,75,47,.16));border-radius:12px;background:rgba(212,223,158,.07)}' +
       '.mb-stats{display:flex;flex-wrap:wrap;align-items:baseline;gap:.55rem;font-size:.95rem;color:var(--vink,#12100e)}' +
       '.mb-stat b{font-weight:600}.mb-sep{color:var(--vdim);opacity:.6}' +
@@ -706,6 +774,7 @@ export function renderDirectoryHTML(trade, rows) {
     stripHtml(trade) +
     '<h2 class="section-h">' + esc(label) + ' contractors in ' + COUNTY + '</h2>' +
     marketBar(rows, trade) +
+    verifyBlock(rows, trade) +
     criteriaExplainer(trade) +
     '<div class="grid" style="margin-top:1rem">' + rows.map((p) => card(p, trade)).join('') + '</div>' +
     costSection(trade) +

@@ -80,6 +80,19 @@ function monthYear(iso) {
   return MONTHS[m - 1] + ' ' + y;
 }
 
+// Trim prose to ~max words, cutting at the last sentence boundary that fits so
+// an extracted passage never ends mid-thought. Falls back to a word cut + "…".
+// Why this exists: AI answer engines lift a passage, not a page — a passage that
+// ends mid-sentence reads as broken wherever it lands (route-map § THE WAR PLAN).
+function trimWords(text, max) {
+  const words = String(text || '').trim().split(/\s+/);
+  if (!words.length || !words[0]) return '';
+  if (words.length <= max) return words.join(' ');
+  const cut = words.slice(0, max).join(' ');
+  const lastStop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+  return lastStop > cut.length * 0.45 ? cut.slice(0, lastStop + 1) : cut.replace(/[,;:]$/, '') + '…';
+}
+
 // Trade hiring guides (Vesta editorial · trade-level · about no business).
 // Ported verbatim from the old contractor.html so the page reads identically.
 const HIRING_GUIDE = {
@@ -275,6 +288,41 @@ const STANDING_SPECIALTY = {
 // (The old version of this block also carried volume/rating/tenure-band
 // "Where it stands" cards that restated standing in prose on every profile —
 // cut per Drew's rule: standing appears in exactly ONE place, the dot strip.)
+// The answer block — the extraction unit (route-map § THE WAR PLAN, Phase 0A).
+// Sits in the hero, inside the first ~60 words of rendered text, and is written
+// to be SELF-CONTAINED: it names the firm, the trade and the town before the
+// verdict, so a passage lifted into an AI answer still says who it is about.
+// Measured basis: relevance + in-page position are the primary citation
+// determinants (252k-trial factorial study); answer belongs in the first 200
+// words. The visible "verified <Mon YYYY>" rides here rather than only in the
+// rail because `.cp-facts` is display:none under 760px — the freshness signal
+// was invisible to every mobile reader and to anything reading mobile HTML.
+// Honesty: every branch degrades to what we actually hold. No synthesis, no
+// verdict — it says so.
+function answerBlock(enr, trade) {
+  const city = enr.city || COUNTY;
+  const tl = tLowerOf(trade) || 'contractor';
+  const verified = monthYear(enr.enriched_at);
+  const art = /^[aeiouAEIOU]|^HVAC/.test(tl) ? 'an ' : 'a ';
+  const lead = enr.business_name + ' is ' + art + tl + ' company in ' + city + ', Connecticut. ';
+  let read;
+  if (enr.synthesis) {
+    read = trimWords(enr.synthesis, 46);
+  } else if (Array.isArray(enr.known_for) && enr.known_for.length) {
+    const topics = enr.known_for.map((k) => k && k.label).filter(Boolean).slice(0, 3);
+    read = topics.length
+      ? 'Vesta has not published a full written read yet; the public review record points to ' +
+        topics.join(', ').replace(/, ([^,]*)$/, ' and $1') + '.'
+      : 'Vesta has not published a written read on this firm yet.';
+  } else {
+    read = 'Vesta lists this firm from the public record and has not published an analytical read yet.';
+  }
+  return '<div class="cp-why">' +
+    '<span>' + (enr.synthesis ? 'Vesta’s read' : 'What Vesta knows') +
+      (verified ? ' · verified ' + esc(verified) : '') + '</span>' +
+    '<p>' + esc(lead + read) + '</p></div>';
+}
+
 function vestaReadBlock(enr, trade) {
   if (!enr) return '';
   const firms = TRADE_FIRMS[trade] || (tLowerOf(trade) ? tLowerOf(trade) + ' contractors' : 'pros');
@@ -793,6 +841,57 @@ function credentials(enr, trade) {
   return out;
 }
 
+// FAQPage — the fan-out lever (route-map § THE WAR PLAN, Phase 0B). AI answer
+// engines decompose "should I hire X" into sub-questions; FAQ-marked pages are
+// measurably likelier to be the passage that answers one. Every Q here is a real
+// verification sub-question, and every A is built ONLY from a field that renders
+// on this page — no invented answers, no question we can't answer from the
+// record. A firm with no synthesis and no credential gets no FAQ node at all
+// (returns [] below the 2-question floor), because a one-question FAQ is padding.
+function faqNodes(enr, trade, label, canonical) {
+  const city = enr.city || COUNTY;
+  const tl = tLowerOf(trade) || 'contractor';
+  const verified = monthYear(enr.enriched_at);
+  const qa = [];
+
+  if (enr.synthesis) qa.push([
+    'What do homeowners say about ' + enr.business_name + '?',
+    trimWords(enr.synthesis, 90) + ' This is Vesta’s read of the public review record for ' +
+      enr.business_name + ' in ' + city + ', CT' + (verified ? ', last verified ' + verified : '') + '.'
+  ]);
+
+  const licensed = Array.isArray(enr.trade_license) && enr.trade_license.length;
+  if (enr.registered || licensed) qa.push([
+    'Is ' + enr.business_name + ' licensed or registered in Connecticut?',
+    enr.business_name + ' ' +
+      (enr.registered && licensed
+        ? 'holds an active Connecticut Home Improvement Contractor registration and a ' + tl + ' trade licence'
+        : enr.registered
+          ? 'holds an active Connecticut Home Improvement Contractor registration'
+          : 'holds a Connecticut ' + tl + ' trade licence') +
+      ', checked by Vesta against the state registry' + (verified ? ' in ' + verified : '') +
+      '. Always confirm current status and insurance directly with the contractor before work begins.'
+  ]);
+
+  const guide = HIRING_GUIDE[trade];
+  if (guide && guide.length) qa.push([
+    'What should you check before hiring ' + (TRADE_PROS[trade] || tl + ' contractors') + ' in ' + COUNTY + ', CT?',
+    guide.slice(0, 3).map((g) => g.t).join('; ') + '. ' + trimWords(guide[0].d, 40) +
+      ' This is general guidance for the trade, not a claim about ' + enr.business_name + '.'
+  ]);
+
+  if (qa.length < 2) return [];
+  return [{
+    '@type': 'FAQPage',
+    '@id': canonical + '#faq',
+    mainEntity: qa.map(([q, a]) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a }
+    }))
+  }];
+}
+
 function profileJsonLd(enr, trade, label, canonical) {
   // knowsAbout = the head trade + the firm's OWN specialties/known-for topics
   // (flat roof, EV chargers, slate & cedar, …). Entity engines use these
@@ -857,7 +956,8 @@ function profileJsonLd(enr, trade, label, canonical) {
         { '@type': 'ListItem', position: 2, name: label + ' in ' + COUNTY + ', CT', item: SITE + '/fairfield-county/' + trade },
         { '@type': 'ListItem', position: 3, name: enr.business_name }
       ]
-    }
+    },
+    ...faqNodes(enr, trade, label, canonical)
   ];
 
   // Escape "<" so the JSON can never break out of the <script> tag.
@@ -877,8 +977,9 @@ const ATLAS_MOMENT_CSS =
   '.cp-shell{width:min(1380px,calc(100% - 2*var(--pad)));margin:0 auto;padding:2.1rem 0 3rem}' +
   '.cp-titlebar{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;margin:0 0 1.25rem;padding:.2rem .5rem}' +
   '.cp-titlebar .crumb{margin:0 0 .45rem}' +
-  '.cp-titlebar h1{font-family:var(--display);font-size:clamp(2rem,3.2vw,3.05rem);font-weight:500;line-height:1;letter-spacing:-.035em;color:var(--pitch)}' +
+  '.cp-titlebar h1,.cp-titlebar .cp-titlebar-h{font-family:var(--display);font-size:clamp(2rem,3.2vw,3.05rem);font-weight:500;line-height:1;letter-spacing:-.035em;color:var(--pitch)}' +
   '.cp-titlebar p{font-size:.9rem;color:rgba(18,16,14,.58);margin-top:.55rem}' +
+  '.cp-titlebar .cp-titlebar-h{margin-top:0;color:var(--pitch)}' +
   '.cp-no-pay{display:inline-flex;align-items:center;gap:.45rem;flex:none;font-family:var(--mono);font-size:.59rem;letter-spacing:.11em;text-transform:uppercase;color:var(--khaki-deep);padding:.62rem .9rem;border-radius:999px;background:var(--cp-surface);box-shadow:inset 2px 2px 4px rgba(48,50,28,.12),inset -2px -2px 4px rgba(255,255,255,.76)}' +
   '.cp-layout{display:grid;grid-template-columns:minmax(0,1.85fr) minmax(300px,.82fr);grid-template-areas:"hero rail" "body rail";gap:1.35rem;align-items:start}' +
   '.neu-panel{border:1px solid rgba(255,255,255,.42);background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(212,223,158,.07)),var(--cp-surface);border-radius:25px;box-shadow:12px 12px 28px -16px var(--cp-lo),-10px -10px 24px -16px var(--cp-hi)}' +
@@ -926,8 +1027,8 @@ const ATLAS_MOMENT_CSS =
   '.cp-body .trec-chip{box-shadow:inset 1px 1px 2px rgba(48,50,28,.07),inset -1px -1px 2px rgba(255,255,255,.48)}' +
   '.cp-primary-action:focus-visible,.cp-secondary-action:focus-visible,.cp-page a:focus-visible,.cp-page button:focus-visible{outline:3px solid var(--tea);outline-offset:3px}' +
   '@media(max-width:980px){.cp-layout{grid-template-columns:minmax(0,1fr) minmax(275px,.72fr)}.cp-identity{display:block}.cp-why{margin-top:1.1rem;max-width:none}}' +
-  '@media(max-width:760px){body.cp-page{--cp-bg:#EEF0E4}.cp-shell{width:100%;padding:1.1rem var(--pad) 2rem}.cp-titlebar{display:block;padding:0 .15rem;margin-bottom:1rem}.cp-titlebar h1{font-size:2rem}.cp-no-pay{margin-top:.8rem}.cp-layout{display:flex;flex-direction:column;gap:.9rem}.cp-hero-card{order:1;width:100%;padding:1.15rem;border-radius:22px}.cp-rail{order:2;position:static;width:100%}.cp-body{order:3;width:100%;padding:1.2rem;border-radius:22px}.cp-facts{display:none}.cp-actions{padding:1.15rem;border-radius:22px}.cp-business-name{font-size:clamp(1.75rem,9vw,2.5rem)}.cp-why{font-size:.92rem}.cp-hero-card .cp-photos{margin-top:1.2rem}.cp-actions .cp-card-title{font-size:1.55rem}.atlas-moment{border-radius:20px}}' +
-  '@media(max-width:430px){.cp-no-pay{font-size:.52rem}.cp-titlebar h1{font-size:1.75rem}.cp-profile-type{font-size:.56rem}.cp-analysis-badge{font-size:.67rem}.cp-body{padding:1.05rem}.cp-body .vverify .vv-grid{grid-template-columns:1fr}}' +
+  '@media(max-width:760px){body.cp-page{--cp-bg:#EEF0E4}.cp-shell{width:100%;padding:1.1rem var(--pad) 2rem}.cp-titlebar{display:block;padding:0 .15rem;margin-bottom:1rem}.cp-titlebar h1,.cp-titlebar .cp-titlebar-h{font-size:2rem}.cp-no-pay{margin-top:.8rem}.cp-layout{display:flex;flex-direction:column;gap:.9rem}.cp-hero-card{order:1;width:100%;padding:1.15rem;border-radius:22px}.cp-rail{order:2;position:static;width:100%}.cp-body{order:3;width:100%;padding:1.2rem;border-radius:22px}.cp-facts{display:none}.cp-actions{padding:1.15rem;border-radius:22px}.cp-business-name{font-size:clamp(1.75rem,9vw,2.5rem)}.cp-why{font-size:.92rem}.cp-hero-card .cp-photos{margin-top:1.2rem}.cp-actions .cp-card-title{font-size:1.55rem}.atlas-moment{border-radius:20px}}' +
+  '@media(max-width:430px){.cp-no-pay{font-size:.52rem}.cp-titlebar h1,.cp-titlebar .cp-titlebar-h{font-size:1.75rem}.cp-profile-type{font-size:.56rem}.cp-analysis-badge{font-size:.67rem}.cp-body{padding:1.05rem}.cp-body .vverify .vv-grid{grid-template-columns:1fr}}' +
   '.hw-count{font-family:var(--mono,inherit);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--vmut,#6b654b);margin:.1rem 0 1rem}' +
   '.hw-count strong{font-family:var(--display,inherit);font-size:1.15rem;font-weight:600;letter-spacing:-.01em;color:var(--vink,#5C5346)}' +
   /* Vesta's read — the same voice as the app card: spark kicker + the serif, slightly up-sized. */
@@ -1125,7 +1226,14 @@ export function renderContractorHTML(enr, siblings = [], opts = {}) {
   const indexable = isIndexable(enr);
   const hasRead = !!(enr.synthesis || (Array.isArray(enr.known_for) && enr.known_for.length));
 
-  const title = enr.business_name + ' — ' + label + ' in ' + (enr.city || COUNTY) + ', CT | Vesta';
+  // Verification-intent title (route-map § THE WAR PLAN, Phase 0B). GSC 8/02:
+  // we already sit page-one on "<firm> reviews / rating" queries and take ~zero
+  // clicks — the old title read like every other directory result and promised
+  // nothing the searcher was asking for. "Reviews analyzed" is the literal
+  // product (the synthesis IS an analysis of the public review record) and is
+  // claimed ONLY when a synthesis exists; without one we make no such promise.
+  const title = enr.business_name + ' — ' + label + ' in ' + (enr.city || COUNTY) + ', CT' +
+    (enr.synthesis ? ' | Reviews analyzed by Vesta' : ' | Vesta');
   const description = enr.synthesis
     ? String(enr.synthesis).slice(0, 154) + (String(enr.synthesis).length > 154 ? '…' : '')
     : (hasRead
@@ -1135,21 +1243,18 @@ export function renderContractorHTML(enr, siblings = [], opts = {}) {
   // Request-through-Vesta CTA (a plain link — no JS needed).
   const reqHref = '/vesta/search?mode=request&place=' + encodeURIComponent(enr.place_id) +
     (enr.zip ? '&zip=' + encodeURIComponent(enr.zip) : '') + (trade ? '&trade=' + trade : '');
-  const firstRead = enr.synthesis
-    ? String(enr.synthesis).split(/(?<=[.!?])\s/)[0].slice(0, 240)
-    : (hasRead
-        ? 'Vesta found a substantive public record and a consistent pattern in the work homeowners mention.'
-        : 'This profile is listed from the public record; Vesta has not published an analytical read yet.');
-
   const hero =
     '<section class="cp-hero-card neu-panel" id="hero">' +
       '<div class="cp-identity"><div class="cp-identity-main">' +
         '<p class="cp-profile-type">' + esc(label) + ' profile · ' + esc(COUNTY) + '</p>' +
-        '<h2 class="cp-business-name" style="view-transition-name:vt-name-' + String(enr.place_id || '').replace(/[^A-Za-z0-9]/g, '') + '">' + esc(enr.business_name) + '</h2>' +
+        // H1 = the entity, not the page type. The firm's name is what every
+        // verification query ("<firm> reviews") is about, and it was an h2 under
+        // a generic "<Trade> profile" h1. Class-based styling — no visual change.
+        '<h1 class="cp-business-name" style="view-transition-name:vt-name-' + String(enr.place_id || '').replace(/[^A-Za-z0-9]/g, '') + '">' + esc(enr.business_name) + '</h1>' +
         '<p class="cp-location">' + esc((enr.city || COUNTY) + ', Connecticut') + '</p>' +
         '<span class="cp-analysis-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.8 8.1-7 10-4.2-1.9-7-5.4-7-10V6l7-3Z"/><path d="m9 12 2 2 4-5"/></svg>' +
           (hasRead ? 'Vesta-analyzed' : 'Public-record listing') + '</span>' +
-      '</div><div class="cp-why"><span>' + (hasRead ? 'Why it merits a closer look' : 'What Vesta knows') + '</span><p>' + esc(firstRead) + '</p></div></div>' +
+      '</div>' + answerBlock(enr, trade) + '</div>' +
       // Live Google photos, show-don't-store. Empty mount collapses.
       '<div id="cp-photos" data-mount="photos" class="cp-photos"></div>' +
     '</section>';
@@ -1192,7 +1297,9 @@ export function renderContractorHTML(enr, siblings = [], opts = {}) {
   const profile = '<section class="cp-shell">' +
     '<header class="cp-titlebar"><div>' +
       '<a class="crumb" href="' + (trade ? '/fairfield-county/' + trade : '/vesta') + '">← ' + esc(label ? label + ' in ' + COUNTY : 'Vesta') + '</a>' +
-      '<h1>' + esc(label) + ' profile</h1><p>Fairfield County evidence file · ranked by Vesta.</p>' +
+      // Demoted from <h1> so the firm's name can hold it (see hero). Same class
+      // hook added to the CSS rule, so this renders pixel-identically.
+      '<p class="cp-titlebar-h">' + esc(label) + ' profile</p><p>Fairfield County evidence file · ranked by Vesta.</p>' +
     '</div></header>' +   // "Ranked by the record, never by payment" pill removed (Drew 8/1; kept in step with the in-app profile)
     '<div class="cp-layout">' + hero + rail + body + '</div>' +
   '</section>';
