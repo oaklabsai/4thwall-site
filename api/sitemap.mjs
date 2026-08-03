@@ -8,7 +8,7 @@
 // switch). A newly-enriched profile joins the sitemap automatically; that's the
 // pipeline. Until the flip, this emits exactly the static surface (no /c/), so
 // cutting over from the old static sitemap.xml is a no-op for Google.
-import { SITE, TRADES } from './_render-directory.mjs';
+import { SITE, TRADES, profileUrl } from './_render-directory.mjs';
 import { INDEXING_ENABLED } from './_render-contractor.mjs';
 
 const DB_BASE = process.env.SUPABASE_URL || 'https://vinytnzzgryodyrftabg.supabase.co';
@@ -28,16 +28,19 @@ export function sitemapXml(entries) {
 
 export default async function handler(req, res) {
   const entries = [];
-  for (const p of STATIC_PATHS) entries.push({ loc: SITE + p });
-  for (const t of TRADES) entries.push({ loc: SITE + '/fairfield-county/' + t });
+  // Static and hub entries are pushed AFTER the profile fetch now, because the
+  // hubs borrow their lastmod from the profiles they list (see below).
+  const staticEntries = [];
+  for (const p of STATIC_PATHS) staticEntries.push({ loc: SITE + p });
 
   // /c/ deep profiles — only the index-ready set (index_status='ready', earned via
   // vesta_lint), only once indexing is on.
   let fetchOk = !INDEXING_ENABLED; // nothing to fetch while the gate is off
+  const tradeLastmod = Object.create(null);   // trade -> newest enriched_at of its listed firms
   if (INDEXING_ENABLED) {
     try {
       const r = await fetch(DB_BASE + '/rest/v1/profile_enrichment_public' +
-        '?index_status=eq.ready&select=place_id,enriched_at&order=rank_score.desc.nullslast&limit=2000', {
+        '?index_status=eq.ready&select=place_id,slug,trade,enriched_at&order=rank_score.desc.nullslast&limit=2000', {
         headers: { apikey: DB_KEY, Authorization: 'Bearer ' + DB_KEY, Accept: 'application/json' }
       });
       if (r.ok) {
@@ -46,14 +49,32 @@ export default async function handler(req, res) {
           fetchOk = true;
           for (const row of rows) {
             if (!row.place_id) continue;
-            entries.push({
-              loc: SITE + '/c/' + encodeURIComponent(row.place_id),
-              lastmod: row.enriched_at ? String(row.enriched_at).slice(0, 10) : null
-            });
+            const lastmod = row.enriched_at ? String(row.enriched_at).slice(0, 10) : null;
+            entries.push({ loc: profileUrl(row), lastmod });
+            // A hub's freshness IS the freshness of the firms it lists, so take the
+            // newest. Stating it beats omitting it: these 8 pages carry the large
+            // majority of our impressions, and a hub with no lastmod is a hub a
+            // crawler has no reason to revisit. Derived from real enrichment dates,
+            // never stamped with "today" -- an inflated date is a lie engines
+            // eventually price in.
+            if (row.trade && lastmod && (!tradeLastmod[row.trade] || lastmod > tradeLastmod[row.trade])) {
+              tradeLastmod[row.trade] = lastmod;
+            }
           }
         }
       }
     } catch (_) { /* fall through: serve the static surface, don't cache a partial */ }
+  }
+
+  // Newest profile anywhere = the corpus's freshness, which is what /directory and
+  // the Vesta landing actually represent.
+  const newest = Object.values(tradeLastmod).sort().pop() || null;
+  for (const e of staticEntries) {
+    if (newest && (e.loc === SITE + '/directory' || e.loc === SITE + '/vesta')) e.lastmod = newest;
+    entries.push(e);
+  }
+  for (const t of TRADES) {
+    entries.push({ loc: SITE + '/fairfield-county/' + t, lastmod: tradeLastmod[t] || null });
   }
 
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');

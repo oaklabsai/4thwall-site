@@ -19,6 +19,11 @@
 // Staleness clock (documented default, 2026-07-17): enrichment runs on a roughly
 // monthly-to-quarterly cadence today. fresh ≤120d · aging ≤270d · stale >270d.
 // A stale doc still serves (the date is the honesty), labelled stale.
+// Shared so the evidence doc's `profile` pointer can never drift from the URL the
+// page itself canonicalises to -- the same no-drift rule this module opens with.
+// _render-directory.mjs imports nothing, so this adds no cycle.
+import { profilePath } from './_render-directory.mjs';
+
 export function staleness(enrichedAt, now = Date.now()) {
   if (!enrichedAt) return 'stale';
   const days = (now - Date.parse(enrichedAt)) / 86400000;
@@ -131,7 +136,7 @@ export function evidenceDoc(enr, tradeLabelText, site) {
       name: enr.business_name,
       trade: enr.trade || null,
       area: 'Fairfield County, CT',
-      profile: site + '/c/' + encodeURIComponent(enr.place_id)
+      profile: site + profilePath(enr)
     },
     as_of: asOf,
     staleness: staleness(enr.enriched_at),

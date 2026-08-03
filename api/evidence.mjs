@@ -11,7 +11,7 @@
 // same gate the crawlable pages use. Everything else is a 404 — a profile Vesta
 // hasn't fully vetted is not citable evidence.
 import { profileQuery, isIndexable } from './_render-contractor.mjs';
-import { tradeLabel, SITE } from './_render-directory.mjs';
+import { tradeLabel, SITE, profileUrl } from './_render-directory.mjs';
 import { evidenceDoc } from './_blocks.mjs';
 
 const DB_BASE = process.env.SUPABASE_URL || 'https://vinytnzzgryodyrftabg.supabase.co';
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   if (!placeId) {
     try {
       const r = await fetch(DB_BASE + '/rest/v1/profile_enrichment_public' +
-        '?index_status=eq.ready&select=place_id,business_name,trade,city,enriched_at&order=trade,business_name&limit=2000', {
+        '?index_status=eq.ready&select=place_id,business_name,trade,city,enriched_at,slug&order=trade,business_name&limit=2000', {
         headers: { apikey: DB_KEY, Authorization: 'Bearer ' + DB_KEY, Accept: 'application/json' }
       });
       if (!r.ok) throw new Error('upstream');
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
           city: row.city || null,
           as_of: row.enriched_at ? String(row.enriched_at).slice(0, 10) : null,
           evidence: SITE + '/evidence/' + encodeURIComponent(row.place_id),
-          profile: SITE + '/c/' + encodeURIComponent(row.place_id)
+          profile: profileUrl(row)
         }))
       }, null, 1));
     } catch (_) {

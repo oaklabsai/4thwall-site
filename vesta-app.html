@@ -3,13 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
-<title>Vesta — Find a contractor worth hiring. | 4THWALL</title>
+<title>Vesta — Find a contractor worth hiring in Fairfield County, CT | 4THWALL</title>
 <meta name="description" content="Vesta matches you with vetted Fairfield County contractors — roofers, HVAC, plumbers, electricians, pavers, lawn care, painters, masons, tree crews, flooring pros, window & door installers, pool pros. Each one read and summarized by Vesta. No ads, no pay-to-play.">
 <link rel="canonical" href="https://4thwall.solutions/vesta">
 <meta property="og:title" content="Vesta — Find a contractor worth hiring.">
 <meta property="og:description" content="Vetted Fairfield County contractors, each read and summarized by Vesta. No ads, no pay-to-play.">
 <meta property="og:url" content="https://4thwall.solutions/vesta">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://4thwall.solutions/og-vesta.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Vesta">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://4thwall.solutions/og-vesta.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://vinytnzzgryodyrftabg.supabase.co">
@@ -5318,7 +5324,10 @@ function syncFeedSaveUI(card, now){
 }
 function feedMenuAction(act, con, card){
   if (act==='save'){ syncFeedSaveUI(card, toggleLike(con.placeId)); }
-  else if (act==='copy'){ try{ navigator.clipboard.writeText(location.origin+'/c/'+con.placeId); }catch(_){ } }
+  // Copy hands the visitor a URL they will paste to someone else, so it must be
+  // the readable canonical form, not the place id. Resolve the slug first; fall
+  // back to /c/ only if the lookup fails, since /c/ still serves the same page.
+  else if (act==='copy'){ profileShareUrl(con.placeId).then((u) => { try{ navigator.clipboard.writeText(u); }catch(_){ } }); }
   else if (act==='profile'){ location.href='/c/'+encodeURIComponent(con.placeId); }
   else if (act==='hide'){ FEED_HIDDEN.add(con.placeId); pushHistory(con,'pass'); card.style.transition='opacity .2s, transform .2s'; card.style.opacity='0'; card.style.transform='translateX(24px)'; setTimeout(renderFeed,200); }
 }
@@ -5965,14 +5974,25 @@ async function openProfile(placeId){
 // place_id -> slug, resolved once per firm and remembered. Failure is silent by
 // design: a missing slug just leaves the URL alone, it never blocks the profile.
 const SLUG_CACHE = new Map();
+async function slugFor(placeId){
+  let slug = SLUG_CACHE.get(placeId);
+  if (slug === undefined){
+    const rows = await HOME.db('/vesta_slugs?place_id=eq.'+encodeURIComponent(placeId)+'&select=slug&limit=1');
+    slug = (rows && rows[0] && rows[0].slug) || null;
+    SLUG_CACHE.set(placeId, slug);
+  }
+  return slug;
+}
+// The shareable address of a profile — /vesta/<slug> is canonical. Never throws:
+// a failed lookup degrades to /c/, which serves the identical page.
+async function profileShareUrl(placeId){
+  try { const s = await slugFor(placeId); if (s) return location.origin + '/vesta/' + s; }
+  catch(_){}
+  return location.origin + '/c/' + encodeURIComponent(placeId);
+}
 async function syncProfileUrl(placeId){
   try {
-    let slug = SLUG_CACHE.get(placeId);
-    if (slug === undefined){
-      const rows = await HOME.db('/vesta_slugs?place_id=eq.'+encodeURIComponent(placeId)+'&select=slug&limit=1');
-      slug = (rows && rows[0] && rows[0].slug) || null;
-      SLUG_CACHE.set(placeId, slug);
-    }
+    const slug = await slugFor(placeId);
     // Only if this profile is still the one on screen — an impatient tap must not
     // leave the address bar pointing at a firm the visitor already navigated away from.
     if (slug && S.screen === 'profile' && profData && profData.placeId === placeId){

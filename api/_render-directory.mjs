@@ -9,6 +9,25 @@
 // live public view. `api/directory.js` fetches the rows and calls renderDirectoryHTML.
 
 export const SITE = 'https://4thwall.solutions';
+
+// The public address of a profile. /vesta/<slug> is the canonical form; /c/<place_id>
+// keeps serving the identical page forever (no redirect, nothing 404s).
+//
+// Why the slug wins: it is already the URL we HAND OUT. The claim email builds it
+// (4thwall-home home/index.ts), and the Vesta app rewrites the address bar to it the
+// moment a profile opens -- so every share, bookmark and future inbound link points
+// at the slug, while canonical was consolidating credit onto the place-id URL that
+// nobody ever sees. It is also the readable form: a contractor who gets
+// "/c/ChIJAQAAAGQe6IkRKbfFNucI8gk" in a claim email reads it as spam.
+//
+// Lives here rather than in _render-contractor.mjs because that module imports from
+// this one; this is the base of the pair, so both renderers can share one definition.
+// Falls back to /c/ when a row has no slug, so the canonical stays self-referential
+// and valid rather than broken or duplicated.
+export const profilePath = (p) => (p && p.slug)
+  ? '/vesta/' + encodeURIComponent(p.slug)
+  : '/c/' + encodeURIComponent(p && p.place_id);
+export const profileUrl = (p) => SITE + profilePath(p);
 export const COUNTY = 'Fairfield County';
 
 // Vesta's canonical trade order — MUST mirror home.js HOME.TRADES.
@@ -112,7 +131,7 @@ export const publisherNodes = () => [ORG, WEBSITE];
 // The exact directory read (mirrors directory.html): established-first, raw stars
 // never leave the DB (rank_score is the volume-weighted homeowner-consensus score).
 export const DIRECTORY_SELECT =
-  'place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,specialties,synthesis';
+  'place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,specialties,synthesis,slug';
 export const directoryQuery = (trade) =>
   '/profile_enrichment_public?trade=eq.' + encodeURIComponent(trade) +
   '&order=rank_score.desc.nullslast&limit=50&select=' + DIRECTORY_SELECT;
@@ -164,7 +183,7 @@ function stripHtml(active) {
 }
 
 function card(p, trade) {
-  const href = '/c/' + encodeURIComponent(p.place_id);
+  const href = profilePath(p);
   const chips = [];
   if (p.registered) {
     const yr = p.hic_issue_date ? +String(p.hic_issue_date).slice(0, 4) : 0;
@@ -222,22 +241,43 @@ function marketBar(rows, trade) {
 // counts from THIS page's own rows, so a lifted passage still says what it is
 // about. Trade-level editorial about no business — same honesty class as the
 // profile hiring guide. Stats are computed, never hardcoded.
+// Trades Connecticut governs by a state TRADE LICENCE (P-1 plumbing, S-1 heating
+// & cooling, E-1 electrical) rather than by Home Improvement Contractor
+// registration. Licensed firms working inside their trade are commonly not HIC
+// registrants, so a low registration count on these hubs is normal -- it is not a
+// signal that the field is unqualified.
+//
+// This ordering is a correctness fix, not styling. Leading an HVAC page with "3 of
+// 48 hold HIC registration" tells a homeowner the wrong thing first: it reads as
+// 45 unqualified firms when the licence, which most of them DO hold, is the
+// credential that actually governs the work.
+const LICENCE_LED = new Set(['hvac', 'plumbing', 'electrical']);
+
 function verifyBlock(rows, trade) {
   const tl = tLower(trade);
   const n = rows.length;
+  const licenceLed = LICENCE_LED.has(trade);
   const nReg = rows.filter((p) => p.registered).length;
   const nCred = rows.filter((p) =>
     (Array.isArray(p.trade_license) && p.trade_license.length) ||
     (Array.isArray(p.certifications) && p.certifications.length)).length;
-  const regSentence = nReg
+  const regBody = nReg
     ? 'Of the ' + n + ' ' + tl + ' companies on this page, ' + nReg +
       ' hold an active Connecticut Home Improvement Contractor registration — a fact you can confirm yourself in the ' +
       'Department of Consumer Protection’s public registry rather than take from a website.'
     : 'Confirm registration yourself in the Connecticut Department of Consumer Protection’s public registry rather than taking it from a website.';
-  const credSentence = nCred
-    ? ' Where the work requires a trade credential, ask to see it: ' + nCred +
+  const credBody = nCred
+    ? 'Where the work requires a trade credential, ask to see it: ' + nCred +
       ' of these firms carry a trade licence or manufacturer certification Vesta was able to verify.'
-    : ' Where the work requires a trade credential, ask to see it before the job is scheduled.';
+    : 'Where the work requires a trade credential, ask to see it before the job is scheduled.';
+  // Licence-led trades: credential first, registration second and explicitly
+  // framed as conditional. Everyone else keeps registration first.
+  const regSentence = licenceLed
+    ? credBody + ' In Connecticut this is the credential that governs ' + tl +
+      ' work, and licensed firms are often not Home Improvement Contractor registrants — so a low registration count here is ' +
+      'normal rather than a warning.'
+    : regBody;
+  const credSentence = licenceLed ? ' ' + regBody : ' ' + credBody;
   return '<section class="verify-block" id="verify" aria-labelledby="verify-h">' +
     '<h2 class="section-h" id="verify-h">How to verify ' + esc(tPros(trade)) + ' in ' + COUNTY + ', CT</h2>' +
     '<p class="note" style="margin-top:-.2rem">General guidance for the trade — not a claim about any business below.</p>' +
@@ -529,12 +569,22 @@ function hubFaqNodes(trade, rows, canonical) {
   const tl = tLower(trade);
   const pros = tPros(trade);
   const nReg = rows.filter((p) => p.registered).length;
+  // Same licence-led ordering as verifyBlock -- the FAQ answer must not tell a
+  // homeowner to check HIC registration first on a trade the state governs by
+  // licence, or the schema contradicts the page and misinforms the reader.
+  const verifyAnswer = LICENCE_LED.has(trade)
+    ? 'Ask to see the Connecticut trade licence the work requires — for ' + tl + ' that is the credential the state governs the ' +
+      'work by, and licensed firms are often not Home Improvement Contractor registrants, so a low registration count is normal. ' +
+      'Then check Home Improvement Contractor registration where it applies in the Department of Consumer Protection’s public ' +
+      'registry, read the review record for its repeated pattern rather than its average star score, and request a current ' +
+      'certificate of insurance naming you before work begins. Of the ' + rows.length + ' ' + tl +
+      ' companies listed on this Vesta page, ' + nReg + ' hold an active Connecticut registration.'
+    : 'Confirm Connecticut Home Improvement Contractor registration in the Department of Consumer Protection’s public registry, ' +
+      'ask to see any trade licence the work requires, read the review record for its repeated pattern rather than its average ' +
+      'star score, and request a current certificate of insurance naming you before work begins. Of the ' + rows.length + ' ' + tl +
+      ' companies listed on this Vesta page, ' + nReg + ' hold an active Connecticut registration.';
   const qa = [
-    ['How do you verify ' + pros + ' in ' + COUNTY + ', CT?',
-     'Confirm Connecticut Home Improvement Contractor registration in the Department of Consumer Protection’s public registry, ' +
-     'ask to see any trade licence the work requires, read the review record for its repeated pattern rather than its average ' +
-     'star score, and request a current certificate of insurance naming you before work begins. Of the ' + rows.length + ' ' + tl +
-     ' companies listed on this Vesta page, ' + nReg + ' hold an active Connecticut registration.'],
+    ['How do you verify ' + pros + ' in ' + COUNTY + ', CT?', verifyAnswer],
     ['How does Vesta rank ' + pros + ' in ' + COUNTY + '?',
      'Vesta ranks by what homeowners consistently say in the public review record, weighted by how many said it, alongside ' +
      'Connecticut registration and licensing where they apply. Placement is never sold: there are no ads, no pay-to-play and ' +
@@ -549,7 +599,7 @@ function hubFaqNodes(trade, rows, canonical) {
 
 function jsonLd(trade, label, rows, canonical) {
   const items = rows.map((p, i) => {
-    const url = SITE + '/c/' + encodeURIComponent(p.place_id);
+    const url = profileUrl(p);
     const biz = {
       '@type': bizType(trade),
       '@id': url,
@@ -620,7 +670,14 @@ export function shell({ title, description, canonical, headExtra, body }) {
     '<meta property="og:description" content="' + esc(description) + '">\n' +
     '<meta property="og:url" content="' + esc(canonical) + '">\n' +
     '<meta property="og:site_name" content="Vesta by 4th Wall Solutions">\n' +
-    '<meta name="twitter:card" content="summary">\n' +
+    // Share card — see the matching note in _render-contractor.mjs. Static asset:
+    // the Vercel function budget is fully spent (12 of 12), so no generated image.
+    '<meta property="og:image" content="' + SITE + '/og-vesta.jpg">\n' +
+    '<meta property="og:image:width" content="1200">\n' +
+    '<meta property="og:image:height" content="630">\n' +
+    '<meta property="og:image:alt" content="Vesta">\n' +
+    '<meta name="twitter:card" content="summary_large_image">\n' +
+    '<meta name="twitter:image" content="' + SITE + '/og-vesta.jpg">\n' +
     '<link rel="icon" href="/logo.png" type="image/png">\n' +
     '<meta name="theme-color" content="#0f1310">\n' +
     '<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
@@ -955,7 +1012,7 @@ export function renderHubHTML(rows) {
         (+b.rank_score || 0) - (+a.rank_score || 0) ||
         String(a.business_name).localeCompare(String(b.business_name)));
       const links = firms.map((f) =>
-        '<a class="hub-firm" href="/c/' + encodeURIComponent(f.place_id) + '">' +
+        '<a class="hub-firm" href="' + esc(profilePath(f)) + '">' +
           esc(f.business_name) + '</a>').join('');
       return '<div class="hub-town">' +
         '<span class="hub-town-h">' + esc(town) + '</span>' +

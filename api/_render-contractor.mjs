@@ -19,7 +19,7 @@
 // the live public view. api/contractor.mjs fetches the row and calls
 // renderContractorHTML.
 
-import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml, ORG_ID, WEBSITE_ID, publisherNodes, COST_GUIDE } from './_render-directory.mjs';
+import { SITE, COUNTY, esc, tradeLabel, BIZ_TYPE, FOOTER, navHtml, ORG_ID, WEBSITE_ID, publisherNodes, COST_GUIDE, profileUrl, profilePath } from './_render-directory.mjs';
 import { operatedBlocks, SYNTHETIC_CHAIN } from './_blocks-operated.mjs';
 
 // ── Fusion (TP-6.1) ─────────────────────────────────────────────────────────
@@ -37,7 +37,7 @@ export const PROFILE_SELECT =
   'certifications,synthesis,signature,known_for,specialties,' +
   'service_area,owner_name,volume_band,rating_band,tenure_band,trade_n,rating_count,' +
   'capabilities,value_tier,deep_review_count,best_for,project_scale,responsiveness,' +
-  'pricing_profile,recurring_praise,crew_named,enriched_at,index_status';
+  'pricing_profile,recurring_praise,crew_named,enriched_at,index_status,slug';
 export const profileQuery = (placeId) =>
   '/profile_enrichment_public?place_id=eq.' + encodeURIComponent(placeId) +
   '&limit=1&select=' + PROFILE_SELECT;
@@ -49,7 +49,11 @@ export const siblingsQuery = (trade, placeId) =>
   '/profile_enrichment_public?trade=eq.' + encodeURIComponent(trade) +
   '&index_status=eq.ready&place_id=neq.' + encodeURIComponent(placeId) +
   '&order=rank_score.desc.nullslast&limit=3' +
-  '&select=place_id,business_name,city';
+  '&select=place_id,business_name,city,slug';
+
+// profileUrl / profilePath live in _render-directory.mjs (the base of this module
+// pair) so both renderers emit the same profile address. See the note there for
+// why /vesta/<slug> is canonical rather than /c/<place_id>.
 
 // Index gate (two-tier SOP). A profile is index-eligible ONLY when it has earned
 // index_status='ready' by passing the vesta_lint() QC gate in the DB (no rating/
@@ -977,6 +981,10 @@ const ATLAS_MOMENT_CSS =
   '.cp-shell{width:min(1380px,calc(100% - 2*var(--pad)));margin:0 auto;padding:2.1rem 0 3rem}' +
   '.cp-titlebar{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;margin:0 0 1.25rem;padding:.2rem .5rem}' +
   '.cp-titlebar .crumb{margin:0 0 .45rem}' +
+  '.cp-titlebar .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:.34rem;margin:0 0 .45rem}' +
+  '.cp-titlebar .crumbs .crumb{margin:0}' +
+  '.cp-titlebar .crumbs .crumb-sep{color:rgba(18,16,14,.34);font-size:.78rem;line-height:1}' +
+  '.cp-titlebar .crumbs .crumb-here{color:rgba(18,16,14,.52);max-width:22rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
   '.cp-titlebar h1,.cp-titlebar .cp-titlebar-h{font-family:var(--display);font-size:clamp(2rem,3.2vw,3.05rem);font-weight:500;line-height:1;letter-spacing:-.035em;color:var(--pitch)}' +
   '.cp-titlebar p{font-size:.9rem;color:rgba(18,16,14,.58);margin-top:.55rem}' +
   '.cp-titlebar .cp-titlebar-h{margin-top:0;color:var(--pitch)}' +
@@ -1168,7 +1176,16 @@ function shell({ title, description, canonical, indexable, jsonld, body }) {
     '<meta property="og:description" content="' + esc(description) + '">\n' +
     '<meta property="og:url" content="' + esc(canonical) + '">\n' +
     '<meta property="og:site_name" content="Vesta by 4th Wall Solutions">\n' +
-    '<meta name="twitter:card" content="summary">\n' +
+    // Share card. A contractor sharing their own profile is one of the few
+    // distribution paths we get for free, and it was rendering with no image at
+    // all — a blank card reads as a dead link. Static asset, not a generated
+    // per-firm image: the Vercel function budget is fully spent (12 of 12).
+    '<meta property="og:image" content="' + SITE + '/og-vesta.jpg">\n' +
+    '<meta property="og:image:width" content="1200">\n' +
+    '<meta property="og:image:height" content="630">\n' +
+    '<meta property="og:image:alt" content="Vesta">\n' +
+    '<meta name="twitter:card" content="summary_large_image">\n' +
+    '<meta name="twitter:image" content="' + SITE + '/og-vesta.jpg">\n' +
     '<link rel="icon" href="/logo.png" type="image/png">\n' +
     '<meta name="theme-color" content="#30321C">\n' +
     '<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
@@ -1202,7 +1219,7 @@ function relatedBlock(siblings, trade) {
   const tl = tLowerOf(trade);
   const cards = siblings.slice(0, 3).map((s) => {
     if (!s || !s.place_id || !s.business_name) return '';
-    return '<a class="rel-card" href="/c/' + encodeURIComponent(s.place_id) + '">' +
+    return '<a class="rel-card" href="' + esc(profilePath(s)) + '">' +
       '<span class="rel-name">' + esc(s.business_name) + '</span>' +
       '<span class="rel-sub">' + esc(s.city ? s.city + ', CT' : COUNTY + ', CT') + '</span>' +
     '</a>';
@@ -1222,7 +1239,7 @@ export function renderContractorHTML(enr, siblings = [], opts = {}) {
   const trade = enr.trade || '';
   const label = tradeLabel(trade) || 'Contractor';
   const tl = tLowerOf(trade);
-  const canonical = SITE + '/c/' + encodeURIComponent(enr.place_id);
+  const canonical = profileUrl(enr);
   const indexable = isIndexable(enr);
   const hasRead = !!(enr.synthesis || (Array.isArray(enr.known_for) && enr.known_for.length));
 
@@ -1296,7 +1313,19 @@ export function renderContractorHTML(enr, siblings = [], opts = {}) {
 
   const profile = '<section class="cp-shell">' +
     '<header class="cp-titlebar"><div>' +
-      '<a class="crumb" href="' + (trade ? '/fairfield-county/' + trade : '/vesta') + '">← ' + esc(label ? label + ' in ' + COUNTY : 'Vesta') + '</a>' +
+      // A real trail, not a back-link. BreadcrumbList JSON-LD has always shipped
+      // here, but the visible chrome was a single "← Roofing in Fairfield County",
+      // so the hierarchy the schema described did not exist on the page. Same
+      // three rungs as the schema, in the same order.
+      '<nav class="crumbs" aria-label="Breadcrumb">' +
+        '<a class="crumb" href="/vesta">Vesta</a>' +
+        (trade
+          ? '<span class="crumb-sep" aria-hidden="true">›</span>' +
+            '<a class="crumb" href="/fairfield-county/' + trade + '">' + esc(label + ' in ' + COUNTY) + '</a>'
+          : '') +
+        '<span class="crumb-sep" aria-hidden="true">›</span>' +
+        '<span class="crumb crumb-here" aria-current="page">' + esc(enr.business_name) + '</span>' +
+      '</nav>' +
       // Demoted from <h1> so the firm's name can hold it (see hero). Same class
       // hook added to the CSS rule, so this renders pixel-identically.
       '<p class="cp-titlebar-h">' + esc(label) + ' profile</p><p>Fairfield County evidence file · ranked by Vesta.</p>' +
