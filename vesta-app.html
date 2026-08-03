@@ -6171,12 +6171,17 @@ function profMediaRailHTML(){
     '<div class="prof-media-meta"><span>Public business photos</span><div class="prof-media-controls"><button type="button" data-media-prev aria-label="Previous photo">←</button><div>'+photos.map((_,i)=>'<button class="'+(i===0?'active':'')+'" type="button" data-media-dot="'+i+'" aria-label="Show photo '+(i+1)+'"></button>').join('')+'</div><button type="button" data-media-next aria-label="Next photo">→</button></div><button class="prof-media-all" id="prof-media-gallery-btn" type="button">View all '+photos.length+' photos ↗</button></div></section>';
 }
 function profEvidenceRailHTML(){
+  // Count and filter for real: a silenced profile (no synthesis/known_for) was still
+  // advertising "Known for · 3 specific strengths" over an empty panel, because this
+  // list was hardcoded while the mobile builder filtered. Never label evidence we
+  // don't have.
+  const knownN=profDisplayKnown().length;
   const items=[
-    ['known','Known for','3 specific strengths',profIntelKnownHTML()],
+    ['known','Known for',knownN+' specific strength'+(knownN===1?'':'s'),profIntelKnownHTML()],
     ['fit','Best fit & scope','Services, job fit, expectations',profIntelFitHTML()],
     ['guide','Before you hire','Questions worth asking',profIntelGuideHTML()],
     ['sources','Sources & method','Evidence, freshness, Google context',profIntelSourcesHTML()]
-  ];
+  ].filter(it=>it[3]);
   // The claim path must exist on desktop too — the 8/1 rail redesign dropped the
   // 'business' item the old support grid carried, leaving desktop visitors (the URL
   // outreach emails send) with no way to claim. Same builder mobile uses; wireProfile
@@ -6736,7 +6741,7 @@ function profIntelHTML(omitRead,hideNav){
     // The remaining evidence stays available as pills beneath the lead.
     return '<section class="prof-intel-card prof-intel-card--desktop'+(hideNav?' prof-intel-card--read-only':'')+'" aria-label="Vesta’s decision brief">'+
       '<div class="prof-intel-head"><span class="prof-sec-kick">Vesta’s decision brief</span><h2 class="prof-sec-h">What the record supports</h2></div>'+
-      (lead?'<section class="prof-intel-lead-panel" aria-label="Vesta’s read"><span>Vesta’s read</span>'+lead.html+'</section>':'')+
+      (lead?'<section class="prof-intel-lead-panel" aria-label="'+(lead.id==='read'?'Vesta’s read':lead.title)+'"><span>'+(lead.id==='read'?'Vesta’s read':lead.title)+'</span>'+lead.html+'</section>':'')+
       (support.length&&!hideNav?'<div class="prof-intel-grid">'+
         (hideNav?'':'<div class="prof-intel-pills" role="tablist" aria-label="Supporting evidence categories">'+support.map((it,i)=>
           '<button class="prof-intel-pill'+(i===0?' active':'')+'" type="button" role="tab" aria-selected="'+(i===0?'true':'false')+'" aria-controls="prof-intel-'+it.id+'" data-intel="'+it.id+'">'+it.title+'</button>'
