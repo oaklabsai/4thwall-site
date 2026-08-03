@@ -6177,6 +6177,11 @@ function profEvidenceRailHTML(){
     ['guide','Before you hire','Questions worth asking',profIntelGuideHTML()],
     ['sources','Sources & method','Evidence, freshness, Google context',profIntelSourcesHTML()]
   ];
+  // The claim path must exist on desktop too — the 8/1 rail redesign dropped the
+  // 'business' item the old support grid carried, leaving desktop visitors (the URL
+  // outreach emails send) with no way to claim. Same builder mobile uses; wireProfile
+  // already listens on #prof-claim.
+  if (!profData.claimed) items.push(['business','For the business','Claim or correct this profile',profIntelBusinessHTML()]);
   // Every section starts CLOSED — the visitor chooses what to open (Drew 8/1);
   // nothing is pre-expanded on their behalf.
   return '<aside class="prof-desk-evidence" aria-label="Explore the evidence"><span class="prof-evidence-kick">Explore the evidence</span><nav class="prof-evidence-nav">'+items.map(it=>
