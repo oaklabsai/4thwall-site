@@ -806,8 +806,10 @@ export function renderDirectoryHTML(trade, rows) {
   const label = tradeLabel(trade);
   const canonical = SITE + '/fairfield-county/' + trade;
   const title = label + ' Contractors in ' + COUNTY + ', CT — by public record | Vesta';
+  // Keep under ~160 chars: past that Google truncates and the "no pay-to-play"
+  // differentiator — the last clause — is the part that got cut.
   const description = 'The top ' + tLower(trade) + ' contractors in ' + COUNTY +
-    ', CT — ranked by what homeowners actually say, weighted by how many said it, with a plain-English read of each. Compiled by Vesta from public records. No ads, no pay-to-play.';
+    ', CT, ranked by what homeowners actually say. A plain-English read of each. No ads, no pay-to-play.';
 
   const hero =
     '<section class="page-hero" id="hero">' +
