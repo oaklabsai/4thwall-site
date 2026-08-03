@@ -16,6 +16,17 @@
 <meta property="og:image:alt" content="Vesta">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://4thwall.solutions/og-vesta.jpg">
+<!-- /vesta is the brand's landing page and carried NO structured data at all: the
+     one page an engine resolving "what is Vesta" would land on had nothing machine
+     -readable, and it is a JS app so there is little prose to fall back on. Node
+     @ids match the SSR renderers (#org, #website) so this page joins the same
+     entity graph rather than declaring a second, competing one. -->
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","@id":"https://4thwall.solutions#org","name":"4th Wall Solutions","alternateName":"4THWALL","url":"https://4thwall.solutions","logo":"https://4thwall.solutions/logo.png","address":{"@type":"PostalAddress","addressLocality":"Stamford","addressRegion":"CT","addressCountry":"US"},"areaServed":"Fairfield County, CT"},
+{"@type":"WebSite","@id":"https://4thwall.solutions#website","url":"https://4thwall.solutions","name":"4THWALL","publisher":{"@id":"https://4thwall.solutions#org"}},
+{"@type":"WebPage","@id":"https://4thwall.solutions/vesta#webpage","url":"https://4thwall.solutions/vesta","name":"Vesta — Find a contractor worth hiring in Fairfield County, CT","isPartOf":{"@id":"https://4thwall.solutions#website"},"publisher":{"@id":"https://4thwall.solutions#org"},"about":{"@id":"https://4thwall.solutions/vesta#service"},"significantLink":["https://4thwall.solutions/directory","https://4thwall.solutions/fairfield-county-contractor-report"]},
+{"@type":"Service","@id":"https://4thwall.solutions/vesta#service","name":"Vesta","serviceType":"Contractor recommendation service","provider":{"@id":"https://4thwall.solutions#org"},"areaServed":{"@type":"AdministrativeArea","name":"Fairfield County, Connecticut"},"isRelatedTo":{"@type":"Dataset","name":"The Fairfield County Contractor Report","url":"https://4thwall.solutions/fairfield-county-contractor-report"},"description":"Vesta reads the public record — Connecticut registration and licensing plus the full review history of every firm in a trade — and explains in plain English what each contractor is actually known for. Ranked by the record, never by payment: no ads, no pay-to-play, no paid placement."}
+]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://vinytnzzgryodyrftabg.supabase.co">

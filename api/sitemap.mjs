@@ -16,7 +16,13 @@ const DB_KEY  = process.env.SUPABASE_ANON_KEY || 'sb_publishable_IEQcNbThGZblpzq
 
 // Core indexable pages (noindex surfaces like /vesta/search, /myhome, /opt-out,
 // /signin are deliberately excluded).
-const STATIC_PATHS = ['/', '/vesta', '/directory', '/fairfield-county-contractor-report', '/find', '/address', '/atlas', '/contact.html', '/privacy.html', '/terms.html'];
+// /find and /address were listed here while both serve `robots: noindex` and
+// canonicalise to /vesta/search (itself noindex) -- the sitemap said "index this"
+// while the page said "don't", about the same URL. Contradictory signals spend
+// crawl budget and teach a crawler to trust the sitemap less. They are app entry
+// points, not content; the crawlable Vesta surface is /vesta, /directory, the 12
+// hubs and the profiles.
+const STATIC_PATHS = ['/', '/vesta', '/directory', '/fairfield-county-contractor-report', '/atlas', '/contact.html', '/privacy.html', '/terms.html'];
 
 export function sitemapXml(entries) {
   return '<?xml version="1.0" encoding="UTF-8"?>\n' +
