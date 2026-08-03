@@ -1163,7 +1163,7 @@ const ATLAS_MOMENT_CSS =
   '}}' +
   '</style>';
 
-function shell({ title, description, canonical, indexable, jsonld, body }) {
+function shell({ title, description, canonical, indexable, jsonld, body, placeId }) {
   return '<!DOCTYPE html>\n<html lang="en">\n<head>\n' +
     '<meta charset="UTF-8">\n' +
     '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
@@ -1199,7 +1199,12 @@ function shell({ title, description, canonical, indexable, jsonld, body }) {
     jsonld + '\n' +
     '<script src="/home.js" defer></script>\n' +
     '<script src="/profile.js" defer></script>\n' +
-    '</head>\n<body class="cp-page">\n' +
+    // profile.js needs the place id to hydrate photos, the live Google block,
+    // contact and the claim form. It used to read it out of the /c/<placeId>
+    // path, which silently did nothing on /vesta/<slug> — the canonical, human
+    // URL our claim emails actually send. Publishing it here makes hydration
+    // independent of which of the two addresses the visitor arrived on.
+    '</head>\n<body class="cp-page"' + (placeId ? ' data-place-id="' + esc(placeId) + '"' : '') + '>\n' +
     // Profile = single-contractor landing page: logo returns to THIS profile,
     // no "Find a pro" escape to a competitor (the lead stays on the pro they found).
     navHtml({ logoHref: canonical, browse: false }) +
@@ -1337,7 +1342,8 @@ export function renderContractorHTML(enr, siblings = [], opts = {}) {
     title, description, canonical, indexable,
     jsonld: profileJsonLd(enr, trade, label, canonical) +
       (indexable ? '\n<link rel="alternate" type="application/json" href="/evidence/' + encodeURIComponent(enr.place_id) + '" title="Evidence blocks (trust contract)">' : ''),
-    body: profile
+    body: profile,
+    placeId: enr.place_id
   });
 }
 

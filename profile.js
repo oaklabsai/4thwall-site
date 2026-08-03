@@ -13,9 +13,17 @@
     if (!window.HOME) return;
     const esc = HOME.esc;
 
-    const m = location.pathname.match(/^\/c\/([A-Za-z0-9_-]{8,200})\/?$/);
-    if (!m) return;
-    const placeId = m[1];
+    // The SAME page is served at two addresses: /c/<placeId> (the machine form)
+    // and /vesta/<slug> (the canonical, human form -- what claim emails send and
+    // what the app writes into the address bar). This used to match only /c/, so
+    // on the slug URL the script returned here and the page silently lost its
+    // photos, its live Google block, its contact details AND its wired claim
+    // form -- on the exact URL we hand to contractors we are trying to sign.
+    // The place id is not in the slug path, so read it from the DOM: the renderer
+    // publishes it on <body data-place-id>.
+    const fromPath = location.pathname.match(/^\/c\/([A-Za-z0-9_-]{8,200})\/?$/);
+    const placeId = fromPath ? fromPath[1] : (document.body.dataset.placeId || '');
+    if (!placeId) return;
 
     countStat();   // before the awaits — the stat is SSR'd and shouldn't wait on the API
 
