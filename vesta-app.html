@@ -8971,6 +8971,13 @@ function logResume(appTrade, job, axis){ logEvent('resume', { trade:(TRADE_DB[ap
     const d = desktop(); if (d===_wasDesktop) return; _wasDesktop = d;
     syncChatColumn();   // crossing the breakpoint: the column only exists on desktop
     if (S.screen==='browse'){ if (S.mode==='saved') renderSaved(); else { showDeck(); updateBrowseHead(); renderDeck(); } }
+    // The profile is two different DOM shapes too (renderProfile branches on
+    // desktop()), and it used to be left alone here — so rotating a tablet or
+    // dragging a window across the breakpoint kept the OLD shape, and the
+    // mobile-only rules (e.g. #s-profile .prof-mobile-contact-btn) stopped
+    // matching, leaving raw unstyled links on screen until the visitor navigated
+    // away. Re-render it on the same crossing the browse view already handles.
+    else if (S.screen==='profile' && profData){ renderProfile(); }
   });
   // Deep-link: ?place= opens the profile in-app. (/c/:placeId itself is SERVER-rendered
   // by api/contractor.mjs — this path match is a legacy fallback, kept harmless.)
