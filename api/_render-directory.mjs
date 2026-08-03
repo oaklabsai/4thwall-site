@@ -843,11 +843,16 @@ function alsoInBlock(rows, trade) {
     (p.city ? '<span class="also-town">' + esc(p.city) + '</span>' : '') + '</li>').join('');
   return '<section class="also-in" aria-labelledby="also-in-h">' +
     '<h2 class="section-h" id="also-in-h">Also in ' + COUNTY + '</h2>' +
+    // Deliberately says only that no read is published — never WHY. This list holds
+    // two different populations: firms not yet analyzed, and firms whose read was
+    // withdrawn because the record stopped supporting it. Saying "not analyzed yet"
+    // would be false about the second group, and spelling out which is which would
+    // publish the negative read we just refused to publish. No vouch, no verdict.
     '<p class="note">' + rows.length + ' more ' + esc(tLower(trade)) + ' ' +
       (rows.length === 1 ? 'contractor operates' : 'contractors operate') + ' in ' + COUNTY +
-      ' that Vesta has not analyzed yet. They are listed here in no particular order — ' +
-      'no ranking, no read, and no judgment either way. A read appears here only once the ' +
-      'public record supports one.</p>' +
+      ' that Vesta does not currently publish a read on. They are listed here in no ' +
+      'particular order — no ranking and no judgment either way. A read appears only ' +
+      'while the public record supports one.</p>' +
     '<ul class="also-list">' + items + '</ul></section>';
 }
 
