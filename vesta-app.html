@@ -6159,13 +6159,27 @@ function profActionRailHTML(){
     '<button class="prof-call prof-ask-rail" id="prof-ask-btn" type="button"><span aria-hidden="true">✦</span> Ask Vesta about them</button>'+
     '<p class="prof-fine">Your information is not auctioned or resold.</p></section>';
 }
+// A Places photo ref can go dead while the listing still advertises it. Everywhere
+// else a failed image removes itself; the media rail had no guard, so a dead ref
+// rendered a broken-image box in the gallery's LEAD position — on the page a
+// contractor opens from an outreach email. Drop the ref and re-render once, so a
+// firm whose refs are all dead simply shows no gallery instead of a wall of icons.
+let __profPhotoPrune = null;
+function profPhotoFailed(img){
+  const ref = img.getAttribute('data-ref');
+  if (!ref || !profData || !profData.p || !Array.isArray(profData.p.photos)) return;
+  profData.p.photos = profData.p.photos.filter(p => p && p.ref !== ref);
+  clearTimeout(__profPhotoPrune);
+  // Debounced: several refs can fail in the same frame, and one re-render settles them all.
+  __profPhotoPrune = setTimeout(() => { if (S.screen==='profile' && profData) renderProfile(); }, 80);
+}
 function profMediaRailHTML(){
   const photos=(profData.p&&Array.isArray(profData.p.photos)) ? profData.p.photos.filter(x=>x&&x.ref).slice(0,5) : [];
   if (!photos.length) return '';
   return '<section class="prof-media-rail prof-desk-panel" aria-label="Public business photos">'+
     '<div class="prof-media-stage" id="prof-media-stage" data-count="'+photos.length+'">'+photos.map((photo,i)=>
       '<button class="prof-media-slide'+(i===0?' active':'')+'" type="button" data-media-index="'+i+'" aria-label="View work photo '+(i+1)+' of '+photos.length+'">'+
-        '<img src="'+esc(photoUrl(photo.ref,900))+'" alt="Public business work photo '+(i+1)+'" decoding="async" loading="'+(i===0?'eager':'lazy')+'">'+
+        '<img src="'+esc(photoUrl(photo.ref,900))+'" alt="Public business work photo '+(i+1)+'" decoding="async" loading="'+(i===0?'eager':'lazy')+'" data-ref="'+esc(photo.ref)+'" onerror="profPhotoFailed(this)">'+
       '</button>'
     ).join('')+'</div>'+
     '<div class="prof-media-meta"><span>Public business photos</span><div class="prof-media-controls"><button type="button" data-media-prev aria-label="Previous photo">←</button><div>'+photos.map((_,i)=>'<button class="'+(i===0?'active':'')+'" type="button" data-media-dot="'+i+'" aria-label="Show photo '+(i+1)+'"></button>').join('')+'</div><button type="button" data-media-next aria-label="Next photo">→</button></div><button class="prof-media-all" id="prof-media-gallery-btn" type="button">View all '+photos.length+' photos ↗</button></div></section>';
