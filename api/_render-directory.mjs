@@ -131,7 +131,30 @@ export const publisherNodes = () => [ORG, WEBSITE];
 // The exact directory read (mirrors directory.html): established-first, raw stars
 // never leave the DB (rank_score is the volume-weighted homeowner-consensus score).
 export const DIRECTORY_SELECT =
-  'place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,specialties,synthesis,slug';
+  'place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,specialties,synthesis,slug,suppressed';
+
+// THE PUBLISH FLOOR (doctrine rule #6, enforced here 2026-08-03 — it had never
+// actually been implemented in the renderer).
+//
+// A page titled "the top <trade> contractors, ranked by what homeowners actually
+// say" may only rank firms we can say something true about. A name-and-town card
+// sitting in that list implies Vesta analyzed the firm and it placed. It didn't,
+// and it didn't. Thin and true beats thick and hollow.
+//
+// Ranked  = a Vesta read OR a verified credential (CT registration / trade licence
+//           / manufacturer certification) — something on the card is vouched.
+// Unranked = everything else, listed in a plain "Also in Fairfield County" block:
+//           name + town, no position, no ItemList entry, no "top" implication.
+//
+// SUPPRESSION OVERRIDES THE FLOOR. A firm whose read Vesta withdrew (Astacio,
+// Carmine's — 2026-08-03) holds no rank anywhere, credential chips notwithstanding.
+// Withdrawing the vouch from the human page while leaving the firm ranked in the
+// JSON-LD an AI engine quotes is not neutrality — it is vouching in secret.
+export const hasCredential = (p) =>
+  !!(p && (p.registered ||
+    (Array.isArray(p.trade_license) && p.trade_license.length) ||
+    (Array.isArray(p.certifications) && p.certifications.length)));
+export const isRanked = (p) => !!(p && !p.suppressed && (p.synthesis || hasCredential(p)));
 export const directoryQuery = (trade) =>
   '/profile_enrichment_public?trade=eq.' + encodeURIComponent(trade) +
   '&order=rank_score.desc.nullslast&limit=50&select=' + DIRECTORY_SELECT;
@@ -689,6 +712,14 @@ export function shell({ title, description, canonical, headExtra, body }) {
       // M6 market trust bar
       '.verify-block{margin:1.4rem 0 1.1rem}' +
       '.verify-block .vb-body{max-width:68ch;margin:.7rem 0 0;font-size:.97rem;line-height:1.62;color:var(--vink,#12100e)}' +
+      // The unranked tail is deliberately quiet: a plain list, no card chrome, so it
+      // never reads as a ranked position or competes with the vouched grid above.
+      '.also-in{margin:2.4rem 0 0;padding-top:1.4rem;border-top:1px solid var(--line,rgba(74,75,47,.16))}' +
+      '.also-list{list-style:none;margin:1rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .9rem}' +
+      '.also-list li{font-size:.94rem;line-height:1.4}' +
+      '.also-list a{color:var(--vgreen-2,#4a4b2f);text-decoration:none;border-bottom:1px solid rgba(74,75,47,.22)}' +
+      '.also-list a:hover{border-bottom-color:currentColor}' +
+      '.also-town{display:block;font-size:.82rem;color:rgba(18,16,14,.55)}' +
       '.market-bar{margin:.4rem 0 1.1rem;padding:.85rem 1rem;border:1px solid var(--line,rgba(74,75,47,.16));border-radius:12px;background:rgba(212,223,158,.07)}' +
       '.mb-stats{display:flex;flex-wrap:wrap;align-items:baseline;gap:.55rem;font-size:.95rem;color:var(--vink,#12100e)}' +
       '.mb-stat b{font-weight:600}.mb-sep{color:var(--vdim);opacity:.6}' +
@@ -800,6 +831,26 @@ export function renderIndexHTML() {
   });
 }
 
+// "Also in Fairfield County" — the unranked tail. These firms are in the county
+// and reachable, and that is the whole claim: no position, no ordering language,
+// no ItemList entry, nothing that implies Vesta weighed them. Keeping them
+// crawlable without ranking them is the honest middle: we neither vouch for a
+// firm we haven't read, nor bury one we simply haven't got to.
+function alsoInBlock(rows, trade) {
+  if (!Array.isArray(rows) || !rows.length) return '';
+  const items = rows.map((p) =>
+    '<li><a href="' + profilePath(p) + '">' + esc(p.name) + '</a>' +
+    (p.city ? '<span class="also-town">' + esc(p.city) + '</span>' : '') + '</li>').join('');
+  return '<section class="also-in" aria-labelledby="also-in-h">' +
+    '<h2 class="section-h" id="also-in-h">Also in ' + COUNTY + '</h2>' +
+    '<p class="note">' + rows.length + ' more ' + esc(tLower(trade)) + ' ' +
+      (rows.length === 1 ? 'contractor operates' : 'contractors operate') + ' in ' + COUNTY +
+      ' that Vesta has not analyzed yet. They are listed here in no particular order — ' +
+      'no ranking, no read, and no judgment either way. A read appears here only once the ' +
+      'public record supports one.</p>' +
+    '<ul class="also-list">' + items + '</ul></section>';
+}
+
 // A real trade page with its rows (already fetched, established-first).
 export function renderDirectoryHTML(trade, rows) {
   if (!TRADES.includes(trade)) return renderIndexHTML();
@@ -829,18 +880,25 @@ export function renderDirectoryHTML(trade, rows) {
     return shell({ title, description, canonical, headExtra: jsonLd(trade, label, [], canonical), body: hero + main });
   }
 
+  // Split by the publish floor. Everything on the ranked page — the grid, the
+  // market stats, the ItemList — describes `ranked` only, so no count on the page
+  // is inflated by firms we never analyzed.
+  const ranked = rows.filter(isRanked);
+  const alsoIn = rows.filter((p) => !isRanked(p));
+
   main = '<section class="section" id="body">' +
     stripHtml(trade) +
     '<h2 class="section-h">' + esc(label) + ' contractors in ' + COUNTY + '</h2>' +
-    marketBar(rows, trade) +
-    verifyBlock(rows, trade) +
+    marketBar(ranked, trade) +
+    verifyBlock(ranked, trade) +
     criteriaExplainer(trade) +
-    '<div class="grid" style="margin-top:1rem">' + rows.map((p) => card(p, trade)).join('') + '</div>' +
+    '<div class="grid" style="margin-top:1rem">' + ranked.map((p) => card(p, trade)).join('') + '</div>' +
+    alsoInBlock(alsoIn, trade) +
     costSection(trade) +
     disclosure() +
   '</section>';
 
-  return shell({ title, description, canonical, headExtra: jsonLd(trade, label, rows, canonical), body: hero + main });
+  return shell({ title, description, canonical, headExtra: jsonLd(trade, label, ranked, canonical), body: hero + main });
 }
 
 // --- the /directory hub (Stage 3 B1) ----------------------------------------
