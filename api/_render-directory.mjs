@@ -342,12 +342,12 @@ function verifyBlock(rows, trade, place = COUNTY) {
     (Array.isArray(p.certifications) && p.certifications.length)).length;
   const regBody = nReg
     ? 'Of the ' + n + ' ' + tl + ' companies on this page, ' + nReg +
-      ' hold an active Connecticut Home Improvement Contractor registration — a fact you can confirm yourself in the ' +
+      (nReg === 1 ? ' holds' : ' hold') + ' an active Connecticut Home Improvement Contractor registration — a fact you can confirm yourself in the ' +
       'Department of Consumer Protection’s public registry rather than take from a website.'
     : 'Confirm registration yourself in the Connecticut Department of Consumer Protection’s public registry rather than taking it from a website.';
   const credBody = nCred
     ? 'Where the work requires a trade credential, ask to see it: ' + nCred +
-      ' of these firms carry a trade licence or manufacturer certification Vesta was able to verify.'
+      ' of these firms ' + (nCred === 1 ? 'carries' : 'carry') + ' a trade licence or manufacturer certification Vesta was able to verify.'
     : 'Where the work requires a trade credential, ask to see it before the job is scheduled.';
   // Licence-led trades: credential first, registration second and explicitly
   // framed as conditional. Everyone else keeps registration first.
@@ -392,10 +392,10 @@ function statsSection(rows, trade, place = COUNTY) {
 
   const licenceLed = LICENCE_LED.has(trade);
   const credSentence = licenceLed
-    ? (nLic ? nLic + ' carry the Connecticut trade licence the work requires' +
-        (nReg ? ' and ' + nReg + ' also hold a Home Improvement Contractor registration' : '') + '.'
+    ? (nLic ? nLic + (nLic === 1 ? ' carries' : ' carry') + ' the Connecticut trade licence the work requires' +
+        (nReg ? ' and ' + nReg + ' also ' + (nReg === 1 ? 'holds' : 'hold') + ' a Home Improvement Contractor registration' : '') + '.'
       : 'Connecticut governs this work by state trade licence — ask to see it.')
-    : (nReg ? nReg + ' hold an active Connecticut Home Improvement Contractor registration' +
+    : (nReg ? nReg + (nReg === 1 ? ' holds' : ' hold') + ' an active Connecticut Home Improvement Contractor registration' +
         (medTenure !== null && yrs.length >= 3 ? ', and the median registrant has held it for ' + medTenure + ' years' : '') + '.'
       : 'Connecticut Home Improvement Contractor registration applies to this work — confirm it in the state registry.');
   const certSentence = nCert ? ' ' + nCert + (nCert === 1 ? ' carries' : ' carry') + ' a manufacturer certification Vesta verified in the maker’s own directory.' : '';
@@ -731,11 +731,11 @@ function hubFaqNodes(trade, rows, canonical, place = COUNTY) {
       'Then check Home Improvement Contractor registration where it applies in the Department of Consumer Protection’s public ' +
       'registry, read the review record for its repeated pattern rather than its average star score, and request a current ' +
       'certificate of insurance naming you before work begins. Of the ' + rows.length + ' ' + tl +
-      ' companies listed on this Vesta page, ' + nReg + ' hold an active Connecticut registration.'
+      ' companies listed on this Vesta page, ' + nReg + (nReg === 1 ? ' holds' : ' hold') + ' an active Connecticut registration.'
     : 'Confirm Connecticut Home Improvement Contractor registration in the Department of Consumer Protection’s public registry, ' +
       'ask to see any trade licence the work requires, read the review record for its repeated pattern rather than its average ' +
       'star score, and request a current certificate of insurance naming you before work begins. Of the ' + rows.length + ' ' + tl +
-      ' companies listed on this Vesta page, ' + nReg + ' hold an active Connecticut registration.';
+      ' companies listed on this Vesta page, ' + nReg + (nReg === 1 ? ' holds' : ' hold') + ' an active Connecticut registration.';
   const qa = [
     ['How do you verify ' + pros + ' in ' + place + ', CT?', verifyAnswer],
     ['How does Vesta rank ' + pros + ' in ' + place + '?',
