@@ -30,6 +30,53 @@ export const profilePath = (p) => (p && p.slug)
 export const profileUrl = (p) => SITE + profilePath(p);
 export const COUNTY = 'Fairfield County';
 
+// === The town layer (fan-out capture) ========================================
+// AI engines decompose "who should I hire" into town-shaped sub-queries
+// ("roofer in Norwalk"), and pages that match the sub-query are the ones that
+// get cited (route-map § THE WAR PLAN, finding 2). These are the 23 Fairfield
+// County towns, each with the village/section names Google Places actually
+// writes into `city` — a Cos Cob address IS a Greenwich firm, and dropping it
+// would silently shrink the town page. Georgetown straddles Redding/Wilton;
+// it's assigned to Redding (its post office) rather than duplicated.
+export const TOWNS = [
+  { slug: 'bethel',        name: 'Bethel',        cities: ['Bethel'] },
+  { slug: 'bridgeport',    name: 'Bridgeport',    cities: ['Bridgeport'] },
+  { slug: 'brookfield',    name: 'Brookfield',    cities: ['Brookfield'] },
+  { slug: 'danbury',       name: 'Danbury',       cities: ['Danbury'] },
+  { slug: 'darien',        name: 'Darien',        cities: ['Darien'] },
+  { slug: 'easton',        name: 'Easton',        cities: ['Easton'] },
+  { slug: 'fairfield',     name: 'Fairfield',     cities: ['Fairfield', 'Southport'] },
+  { slug: 'greenwich',     name: 'Greenwich',     cities: ['Greenwich', 'Cos Cob', 'Old Greenwich', 'Riverside'] },
+  { slug: 'monroe',        name: 'Monroe',        cities: ['Monroe'] },
+  { slug: 'new-canaan',    name: 'New Canaan',    cities: ['New Canaan'] },
+  { slug: 'new-fairfield', name: 'New Fairfield', cities: ['New Fairfield'] },
+  { slug: 'newtown',       name: 'Newtown',       cities: ['Newtown', 'Sandy Hook', 'Botsford', 'Hawleyville'] },
+  { slug: 'norwalk',       name: 'Norwalk',       cities: ['Norwalk', 'South Norwalk', 'East Norwalk', 'Rowayton'] },
+  { slug: 'redding',       name: 'Redding',       cities: ['Redding', 'West Redding', 'Georgetown'] },
+  { slug: 'ridgefield',    name: 'Ridgefield',    cities: ['Ridgefield'] },
+  { slug: 'shelton',       name: 'Shelton',       cities: ['Shelton'] },
+  { slug: 'sherman',       name: 'Sherman',       cities: ['Sherman'] },
+  { slug: 'stamford',      name: 'Stamford',      cities: ['Stamford', 'Springdale', 'Glenbrook'] },
+  { slug: 'stratford',     name: 'Stratford',     cities: ['Stratford'] },
+  { slug: 'trumbull',      name: 'Trumbull',      cities: ['Trumbull'] },
+  { slug: 'weston',        name: 'Weston',        cities: ['Weston'] },
+  { slug: 'westport',      name: 'Westport',      cities: ['Westport', 'Saugatuck'] },
+  { slug: 'wilton',        name: 'Wilton',        cities: ['Wilton'] },
+];
+export const townBySlug = (slug) => TOWNS.find((t) => t.slug === String(slug || '').toLowerCase()) || null;
+const CITY_TO_TOWN = (() => {
+  const m = Object.create(null);
+  for (const t of TOWNS) for (const c of t.cities) m[c.toLowerCase()] = t;
+  return m;
+})();
+export const townOfCity = (city) => CITY_TO_TOWN[String(city || '').trim().toLowerCase()] || null;
+
+// THE TOWN GATE. A town×trade page exists only when it can rank at least this
+// many vouched firms — below that it's thin content that dilutes the corpus
+// (and hands engines a page that answers its own title badly). Below the gate
+// the route 302s to the county trade page, which genuinely answers the query.
+export const TOWN_MIN_RANKED = 3;
+
 // Vesta's canonical trade order — MUST mirror home.js HOME.TRADES.
 export const TRADES = ['roofing', 'hvac', 'plumbing', 'electrical', 'paving', 'lawn_care', 'painting', 'masonry', 'tree_service', 'flooring', 'windows_doors', 'pool'];
 
@@ -131,7 +178,7 @@ export const publisherNodes = () => [ORG, WEBSITE];
 // The exact directory read (mirrors directory.html): established-first, raw stars
 // never leave the DB (rank_score is the volume-weighted homeowner-consensus score).
 export const DIRECTORY_SELECT =
-  'place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,specialties,synthesis,slug,suppressed';
+  'place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,specialties,synthesis,slug,suppressed,rating_count,enriched_at';
 
 // THE PUBLISH FLOOR (doctrine rule #6, enforced here 2026-08-03 — it had never
 // actually been implemented in the renderer).
@@ -158,6 +205,15 @@ export const isRanked = (p) => !!(p && !p.suppressed && (p.synthesis || hasCrede
 export const directoryQuery = (trade) =>
   '/profile_enrichment_public?trade=eq.' + encodeURIComponent(trade) +
   '&order=rank_score.desc.nullslast&limit=50&select=' + DIRECTORY_SELECT;
+
+// Town-scoped read: same view, same select, but filtered to the town's real
+// city values (villages included) and UNCAPPED past the trade page's 50 — a
+// town page must list the town's whole vouchable roster, including firms whose
+// county-wide rank sits below the trade page's cutoff.
+export const townQuery = (trade, town) =>
+  '/profile_enrichment_public?trade=eq.' + encodeURIComponent(trade) +
+  '&city=in.(' + encodeURIComponent(town.cities.map((c) => '"' + c + '"').join(',')) + ')' +
+  '&order=rank_score.desc.nullslast&limit=200&select=' + DIRECTORY_SELECT;
 
 // Trade icons — mirror of directory.html / vesta.html. Never invent a parallel set.
 const ICON = {
@@ -276,7 +332,7 @@ function marketBar(rows, trade) {
 // credential that actually governs the work.
 const LICENCE_LED = new Set(['hvac', 'plumbing', 'electrical']);
 
-function verifyBlock(rows, trade) {
+function verifyBlock(rows, trade, place = COUNTY) {
   const tl = tLower(trade);
   const n = rows.length;
   const licenceLed = LICENCE_LED.has(trade);
@@ -302,14 +358,88 @@ function verifyBlock(rows, trade) {
     : regBody;
   const credSentence = licenceLed ? ' ' + regBody : ' ' + credBody;
   return '<section class="verify-block" id="verify" aria-labelledby="verify-h">' +
-    '<h2 class="section-h" id="verify-h">How to verify ' + esc(tPros(trade)) + ' in ' + COUNTY + ', CT</h2>' +
+    '<h2 class="section-h" id="verify-h">How to verify ' + esc(tPros(trade)) + ' in ' + esc(place) + ', CT</h2>' +
     '<p class="note" style="margin-top:-.2rem">General guidance for the trade — not a claim about any business below.</p>' +
-    '<p class="vb-body">Before hiring ' + esc(tPros(trade)) + ' in ' + COUNTY + ', Connecticut, four checks separate a documented contractor ' +
+    '<p class="vb-body">Before hiring ' + esc(tPros(trade)) + ' in ' + esc(place) + ', Connecticut, four checks separate a documented contractor ' +
       'from a confident-sounding one. ' + esc(regSentence) + esc(credSentence) +
       ' Read the review record for its pattern rather than its average: one five-star score says far less than what many ' +
       'homeowners repeat about the same crew, which is what Vesta’s plain-English read of each firm below reports. ' +
       'The fourth check is the one no public registry can answer — ask for a current certificate of insurance naming you ' +
       'before any work begins, and confirm who is actually doing the work if the firm subcontracts.</p>' +
+  '</section>';
+}
+
+// The by-the-numbers section — the in-page statistics lever (GEO: statistics in
+// the extractable body ≈ +25.9% citation likelihood; the 252k-trial study says
+// in-page position beats domain authority). One compact stat strip + ONE
+// self-contained 40–70-word paragraph that names the trade, the place, and real
+// numbers computed from THIS page's own ranked rows — so a lifted passage still
+// says what it is about. Counts and tenure only, never star averages (the moat).
+function statsSection(rows, trade, place = COUNTY) {
+  if (!Array.isArray(rows) || !rows.length) return '';
+  const tl = tLower(trade);
+  const n = rows.length;
+  const nReg = rows.filter((p) => p.registered).length;
+  const nLic = rows.filter((p) => Array.isArray(p.trade_license) && p.trade_license.length).length;
+  const nCert = rows.filter((p) => Array.isArray(p.certifications) && p.certifications.length).length;
+  const yrs = rows.filter((p) => p.registered && p.hic_issue_date)
+    .map((p) => (Date.now() - new Date(p.hic_issue_date).getTime()) / (365.25 * 86400_000))
+    .filter((y) => Number.isFinite(y) && y >= 0 && y < 80)
+    .map((y) => Math.round(y)).sort((a, b) => a - b);
+  const medTenure = yrs.length ? (yrs.length % 2 ? yrs[(yrs.length - 1) / 2] : Math.round((yrs[yrs.length / 2 - 1] + yrs[yrs.length / 2]) / 2)) : null;
+  const counts = rows.map((p) => Number(p.rating_count)).filter((x) => Number.isFinite(x) && x >= 0);
+  const totalReviews = counts.reduce((a, b) => a + b, 0);
+
+  const licenceLed = LICENCE_LED.has(trade);
+  const credSentence = licenceLed
+    ? (nLic ? nLic + ' carry the Connecticut trade licence the work requires' +
+        (nReg ? ' and ' + nReg + ' also hold a Home Improvement Contractor registration' : '') + '.'
+      : 'Connecticut governs this work by state trade licence — ask to see it.')
+    : (nReg ? nReg + ' hold an active Connecticut Home Improvement Contractor registration' +
+        (medTenure !== null && yrs.length >= 3 ? ', and the median registrant has held it for ' + medTenure + ' years' : '') + '.'
+      : 'Connecticut Home Improvement Contractor registration applies to this work — confirm it in the state registry.');
+  const certSentence = nCert ? ' ' + nCert + (nCert === 1 ? ' carries' : ' carry') + ' a manufacturer certification Vesta verified in the maker’s own directory.' : '';
+  const reviewSentence = counts.length
+    ? ' Together these firms carry ' + totalReviews.toLocaleString('en-US') +
+      ' public Google reviews — Vesta reports review counts and patterns, never star averages, and placement is never sold.'
+    : ' Vesta reports review counts and patterns, never star averages, and placement is never sold.';
+
+  const strip =
+    '<div class="dstats">' +
+      '<div class="dstat"><span class="ds-big">' + n + '</span><span class="ds-lbl">' + esc(tl) + ' firms tracked in ' + esc(place) + '</span></div>' +
+      (licenceLed
+        ? (nLic ? '<div class="dstat"><span class="ds-big">' + nLic + '</span><span class="ds-lbl">with a verified CT trade licence</span></div>' : '')
+        : (nReg ? '<div class="dstat"><span class="ds-big">' + nReg + '</span><span class="ds-lbl">registered with the State of Connecticut</span></div>' : '')) +
+      (medTenure !== null && yrs.length >= 3 ? '<div class="dstat"><span class="ds-big">' + medTenure + ' yrs</span><span class="ds-lbl">median registration tenure</span></div>' : '') +
+      (counts.length ? '<div class="dstat"><span class="ds-big">' + totalReviews.toLocaleString('en-US') + '</span><span class="ds-lbl">public reviews across these firms</span></div>' : '') +
+    '</div>';
+
+  return '<section class="by-numbers" id="numbers" aria-labelledby="numbers-h">' +
+    '<h2 class="section-h" id="numbers-h">' + esc(tradeLabel(trade)) + ' in ' + esc(place) + ', by the numbers</h2>' +
+    strip +
+    '<p class="bn-body">Vesta currently tracks ' + n + ' ' + esc(tl) + ' ' + (n === 1 ? 'contractor' : 'contractors') +
+    ' in ' + esc(place) + ', Connecticut, compiled from public records. ' + esc(credSentence) + esc(certSentence) + esc(reviewSentence) +
+    ' County-wide figures, refreshed live: <a href="/fairfield-county-contractor-report">the ' + COUNTY + ' Contractor Report</a>.</p>' +
+  '</section>';
+}
+
+// The methodology block — the cite-your-sources lever (GEO: naming sources ≈
+// +24.9% citation likelihood) and the trust anchor a journalist or engine needs
+// before citing anything above it. Names every registry the claims trace to and
+// states plainly what Vesta does NOT verify. Shared verbatim across the
+// directory surfaces so the property speaks with one voice.
+export function methodologyBlock() {
+  return '<section class="method-block" id="methodology" aria-labelledby="method-h">' +
+    '<h2 class="section-h" id="method-h">How Vesta reads are made</h2>' +
+    '<p class="mb-body">Every claim on this page traces to a named public source. Connecticut registration and ' +
+    'licensing are checked in the Department of Consumer Protection’s public registries (CT eLicense and the ' +
+    'state’s open-data portal) — never self-reported by a business. Manufacturer certifications are confirmed ' +
+    'in the manufacturer’s own contractor directory. The “what homeowners say” summaries are written by ' +
+    'Vesta from the public review record — reported as counts and repeated patterns, never star averages, and ' +
+    'always in Vesta’s own words. Rankings are never sold: no ads, no pay-to-play, no paid placement. ' +
+    'What Vesta does not verify: insurance — ask any contractor for a current certificate of insurance naming ' +
+    'you before work begins. Full county-wide figures: <a href="/fairfield-county-contractor-report">the ' +
+    COUNTY + ' Contractor Report</a>.</p>' +
   '</section>';
 }
 
@@ -587,7 +717,7 @@ const bizType = (trade) => BIZ_TYPE[trade] || 'HomeAndConstructionBusiness';
 // Hub FAQ — same fan-out lever as the profile pages, answered from THIS page's
 // own rendered counts. Only emitted when the page actually has rows, and every
 // answer restates what the visible verify block says. No invented numbers.
-function hubFaqNodes(trade, rows, canonical) {
+function hubFaqNodes(trade, rows, canonical, place = COUNTY) {
   if (!Array.isArray(rows) || !rows.length) return [];
   const tl = tLower(trade);
   const pros = tPros(trade);
@@ -607,8 +737,8 @@ function hubFaqNodes(trade, rows, canonical) {
       'star score, and request a current certificate of insurance naming you before work begins. Of the ' + rows.length + ' ' + tl +
       ' companies listed on this Vesta page, ' + nReg + ' hold an active Connecticut registration.';
   const qa = [
-    ['How do you verify ' + pros + ' in ' + COUNTY + ', CT?', verifyAnswer],
-    ['How does Vesta rank ' + pros + ' in ' + COUNTY + '?',
+    ['How do you verify ' + pros + ' in ' + place + ', CT?', verifyAnswer],
+    ['How does Vesta rank ' + pros + ' in ' + place + '?',
      'Vesta ranks by what homeowners consistently say in the public review record, weighted by how many said it, alongside ' +
      'Connecticut registration and licensing where they apply. Placement is never sold: there are no ads, no pay-to-play and ' +
      'no paid placement on this page, and raw star scores are not published.']
@@ -620,7 +750,8 @@ function hubFaqNodes(trade, rows, canonical) {
   }];
 }
 
-function jsonLd(trade, label, rows, canonical) {
+function jsonLd(trade, label, rows, canonical, town = null) {
+  const place = town ? town.name : COUNTY;
   const items = rows.map((p, i) => {
     const url = profileUrl(p);
     const biz = {
@@ -628,7 +759,7 @@ function jsonLd(trade, label, rows, canonical) {
       '@id': url,
       name: p.name,
       url,
-      areaServed: COUNTY + ', CT',
+      areaServed: place + ', CT',
       knowsAbout: label,
       // Canonical Google Maps listing for this place_id — entity disambiguation
       // (helps engines tie our entity to its authoritative Google record).
@@ -645,32 +776,38 @@ function jsonLd(trade, label, rows, canonical) {
       '@type': 'CollectionPage',
       '@id': canonical + '#webpage',
       url: canonical,
-      name: label + ' Contractors in ' + COUNTY + ', CT',
-      description: 'The most-established ' + tLower(trade) + ' contractors in ' + COUNTY +
+      name: label + ' Contractors in ' + place + ', CT',
+      description: 'The most-established ' + tLower(trade) + ' contractors in ' + place +
         ', Connecticut — vouched by state registration and licensing, with a plain-English read of what homeowners actually say. Compiled by Vesta from public records. No ads, no pay-to-play.',
       isPartOf: { '@id': WEBSITE_ID },
       publisher: { '@id': ORG_ID },
-      about: { '@type': 'Thing', name: label + ' contractors in ' + COUNTY + ', CT' },
+      about: { '@type': 'Thing', name: label + ' contractors in ' + place + ', CT' },
       breadcrumb: { '@id': canonical + '#breadcrumb' }
     },
     {
       '@type': 'BreadcrumbList',
       '@id': canonical + '#breadcrumb',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Vesta', item: SITE + '/vesta' },
-        { '@type': 'ListItem', position: 2, name: COUNTY + ', CT', item: SITE + '/fairfield-county/' + trade },
-        { '@type': 'ListItem', position: 3, name: label }
-      ]
+      itemListElement: town
+        ? [
+            { '@type': 'ListItem', position: 1, name: 'Vesta', item: SITE + '/vesta' },
+            { '@type': 'ListItem', position: 2, name: label + ' — ' + COUNTY + ', CT', item: SITE + '/fairfield-county/' + trade },
+            { '@type': 'ListItem', position: 3, name: town.name }
+          ]
+        : [
+            { '@type': 'ListItem', position: 1, name: 'Vesta', item: SITE + '/vesta' },
+            { '@type': 'ListItem', position: 2, name: COUNTY + ', CT', item: SITE + '/fairfield-county/' + trade },
+            { '@type': 'ListItem', position: 3, name: label }
+          ]
     },
     {
       '@type': 'ItemList',
       '@id': canonical + '#list',
-      name: 'Top ' + tLower(trade) + ' contractors in ' + COUNTY + ', CT',
+      name: 'Top ' + tLower(trade) + ' contractors in ' + place + ', CT',
       numberOfItems: items.length,
       itemListOrder: 'https://schema.org/ItemListOrderDescending',
       itemListElement: items
     },
-    ...hubFaqNodes(trade, rows, canonical)
+    ...hubFaqNodes(trade, rows, canonical, place)
   ];
 
   // Escape "<" so the JSON can never break out of the <script> tag.
@@ -751,6 +888,24 @@ export function shell({ title, description, canonical, headExtra, body }) {
       '.cg-factors{font-size:.88rem;line-height:1.6;color:var(--vmut,#4a4b2f);max-width:64ch;margin:1.2rem 0 .8rem}' +
       '.cg-flbl{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;color:var(--vdim);margin-bottom:.25rem}' +
       '.cg-method{font-size:.78rem;line-height:1.55;color:var(--vdim);max-width:64ch;margin:0}' +
+      // By-the-numbers strip + extractable stats paragraph
+      '.by-numbers{margin:1.6rem 0 1.2rem}' +
+      '.dstats{display:flex;flex-wrap:wrap;gap:.8rem;margin:.7rem 0 .9rem}' +
+      '.dstat{min-width:118px;padding:.75rem 1rem;border:1px solid var(--line,rgba(74,75,47,.16));border-radius:12px;background:rgba(212,223,158,.07);display:flex;flex-direction:column;gap:.12rem}' +
+      '.ds-big{font-family:var(--serif,"Fraunces",serif);font-size:1.45rem;font-weight:600;color:var(--vink,#12100e)}' +
+      '.ds-lbl{font-size:.74rem;line-height:1.35;color:var(--vmut,#4a4b2f);max-width:160px}' +
+      '.bn-body{max-width:68ch;margin:.4rem 0 0;font-size:.95rem;line-height:1.62;color:var(--vink,#12100e)}' +
+      '.bn-body a{color:var(--vgreen-2,#4a4b2f)}' +
+      // Methodology block
+      '.method-block{margin:2.4rem 0 .5rem;padding-top:1.7rem;border-top:1px solid var(--line,rgba(74,75,47,.16))}' +
+      '.method-block .mb-body{max-width:68ch;margin:.6rem 0 0;font-size:.9rem;line-height:1.62;color:var(--vmut,#4a4b2f)}' +
+      '.method-block .mb-body a{color:var(--vgreen-2,#4a4b2f)}' +
+      // Town chips (trade page → town pages) + town-page backlink
+      '.town-chips{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:1rem 0 .2rem}' +
+      '.tc-lbl{font-family:var(--mono);font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;color:var(--vdim);margin-right:.2rem}' +
+      '.town-chip{font-size:.8rem;padding:.26rem .68rem;border:1px solid var(--line,rgba(74,75,47,.22));border-radius:999px;color:#3a3b24;background:rgba(212,223,158,.12);text-decoration:none;transition:color .12s ease}' +
+      '.town-chip:hover{color:#12100e}' +
+      '.town-chip b{font-weight:600}' +
     '</style>\n' +
     (headExtra || '') + '\n' +
     '<script src="/home.js" defer></script>\n' +
@@ -895,15 +1050,81 @@ export function renderDirectoryHTML(trade, rows) {
     stripHtml(trade) +
     '<h2 class="section-h">' + esc(label) + ' contractors in ' + COUNTY + '</h2>' +
     marketBar(ranked, trade) +
+    townChips(ranked, trade) +
     verifyBlock(ranked, trade) +
+    statsSection(ranked, trade) +
     criteriaExplainer(trade) +
     '<div class="grid" style="margin-top:1rem">' + ranked.map((p) => card(p, trade)).join('') + '</div>' +
     alsoInBlock(alsoIn, trade) +
     costSection(trade) +
+    methodologyBlock() +
     disclosure() +
   '</section>';
 
   return shell({ title, description, canonical, headExtra: jsonLd(trade, label, ranked, canonical), body: hero + main });
+}
+
+// Town chips on the county trade page — the internal-link mesh downward into the
+// town layer. Computed from THIS page's own ranked rows (the top-50 read), so a
+// chip's count can understate a town's true roster but never overstate it; every
+// linked page re-derives its own uncapped roster and enforces the gate itself.
+function townChips(ranked, trade) {
+  const byTown = new Map();
+  for (const p of ranked) {
+    const t = townOfCity(p.city);
+    if (!t) continue;
+    byTown.set(t.slug, (byTown.get(t.slug) || 0) + 1);
+  }
+  const gated = TOWNS.filter((t) => (byTown.get(t.slug) || 0) >= TOWN_MIN_RANKED);
+  if (!gated.length) return '';
+  const chips = gated.map((t) =>
+    '<a class="town-chip" href="/fairfield-county/' + trade + '/' + t.slug + '">' +
+      esc(t.name) + ' <b>' + byTown.get(t.slug) + '</b></a>').join('');
+  return '<div class="town-chips"><span class="tc-lbl">By town</span>' + chips + '</div>';
+}
+
+// A town × trade page: the fan-out capture unit. Same honesty machinery as the
+// county page (publish floor, ranked-only ItemList, counts never ratings), scoped
+// to one town's uncapped roster. Renders ONLY above the gate — the handler 302s
+// to the county page below it, so no thin page ever exists to crawl.
+export function renderTownHTML(trade, town, rows) {
+  const label = tradeLabel(trade);
+  const place = town.name;
+  const canonical = SITE + '/fairfield-county/' + trade + '/' + town.slug;
+  const title = label + ' Contractors in ' + place + ', CT — by public record | Vesta';
+  const description = 'The top ' + tLower(trade) + ' contractors in ' + place +
+    ', CT, ranked by what homeowners actually say. A plain-English read of each. No ads, no pay-to-play.';
+
+  const ranked = rows.filter(isRanked);
+  const alsoIn = rows.filter((p) => !isRanked(p));
+
+  const villages = town.cities.slice(1);
+  const hero =
+    '<section class="page-hero" id="hero">' +
+      '<a class="crumb" href="/fairfield-county/' + trade + '">← All ' + esc(COUNTY) + ' ' + esc(tLower(trade)) + '</a>' +
+      '<h1 class="page-h">' + esc(label) + ' Contractors in ' + esc(place) + ', CT</h1>' +
+      '<p class="page-sub">The ' + esc(tLower(trade)) + ' contractors based in ' + esc(place) +
+      (villages.length ? ' (including ' + esc(villages.join(', ')) + ')' : '') +
+      ' — ranked by what homeowners actually say, weighted by how many said it, with a plain-English read of each. ' +
+      'Connecticut registration and licensing are shown where they apply. No ads, no pay-to-play.</p>' +
+    '</section>';
+
+  const main = '<section class="section" id="body">' +
+    '<h2 class="section-h">' + esc(label) + ' contractors in ' + esc(place) + '</h2>' +
+    marketBar(ranked, trade) +
+    verifyBlock(ranked, trade, place) +
+    statsSection(ranked, trade, place) +
+    criteriaExplainer(trade) +
+    '<div class="grid" style="margin-top:1rem">' + ranked.map((p) => card(p, trade)).join('') + '</div>' +
+    alsoInBlock(alsoIn, trade) +
+    '<div class="town-chips" style="margin-top:2rem"><span class="tc-lbl">More coverage</span>' +
+      '<a class="town-chip" href="/fairfield-county/' + trade + '">All ' + esc(COUNTY) + ' ' + esc(tLower(trade)) + ' →</a>' +
+      '<a class="town-chip" href="/directory">Every contractor Vesta covers →</a></div>' +
+    methodologyBlock() +
+    disclosure() +
+  '</section>';
+
+  return shell({ title, description, canonical, headExtra: jsonLd(trade, label, ranked, canonical, town), body: hero + main });
 }
 
 // --- the /directory hub (Stage 3 B1) ----------------------------------------
@@ -978,6 +1199,8 @@ const HUB_CSS =
   '@media(max-width:520px){.hub-towns{columns:1}}' +
   '.hub-town{break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;display:inline-block;width:100%;margin:0 0 1.3rem}' +
   '.hub-town-h{display:flex;align-items:baseline;gap:.4rem;font-family:var(--mono);font-size:.63rem;letter-spacing:.11em;text-transform:uppercase;color:var(--vdim);margin-bottom:.25rem}' +
+  'a.hub-town-h{text-decoration:none;color:var(--vgreen-2,#4a4b2f);transition:color .12s ease}' +
+  'a.hub-town-h:hover{color:#12100e}' +
   '.hub-firms{display:flex;flex-direction:column}' +
   // Firm links are the PRIMARY clickable content — full-strength deep olive
   // (#3a3b24 ≈ 10:1 on the cream bg, well past AA), NOT the 0.62-alpha --vmut used
@@ -1079,8 +1302,16 @@ export function renderHubHTML(rows) {
       const links = firms.map((f) =>
         '<a class="hub-firm" href="' + esc(profilePath(f)) + '">' +
           esc(f.business_name) + '</a>').join('');
+      // Town header links into the town×trade page when the group plausibly
+      // clears the gate. Hub rows are the ready set (no credential fields), so
+      // this is a best-effort door — a linked page that misses the ranked gate
+      // 302s to the county trade page, which is a correct landing either way.
+      const tt = townOfCity(town);
+      const townH = (tt && firms.length >= TOWN_MIN_RANKED)
+        ? '<a class="hub-town-h" href="/fairfield-county/' + t + '/' + tt.slug + '">' + esc(town) + ' →</a>'
+        : '<span class="hub-town-h">' + esc(town) + '</span>';
       return '<div class="hub-town">' +
-        '<span class="hub-town-h">' + esc(town) + '</span>' +
+        townH +
         '<div class="hub-firms">' + links + '</div>' +
       '</div>';
     }).join('');
@@ -1103,6 +1334,7 @@ export function renderHubHTML(rows) {
       familyAisles(byTrade) +
       lead +
       '<div class="hub-sections">' + sections + '</div>' +
+      methodologyBlock() +
       disclosure() +
     '</section>';
 

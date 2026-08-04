@@ -7,7 +7,10 @@ Key facts about Vesta's methodology: profiles are compiled from Connecticut stat
 ## Primary data
 
 - [Fairfield County Contractor Report](https://4thwall.solutions/fairfield-county-contractor-report): Original county-wide dataset (CC-BY) on contractor review scarcity, tenure, and market structure across 12 trades — the citable statistics live here and are computed from the live corpus.
+- [Machine-readable aggregates (JSON)](https://4thwall.solutions/fairfield-county-contractors.json): The report's per-trade statistics as a JSON feed — CC-BY with attribution and a link. Aggregates only.
 - [Directory hub](https://4thwall.solutions/directory): All trades and towns covered.
+
+Town-level pages exist at /fairfield-county/{trade}/{town-slug} (e.g. /fairfield-county/roofing/norwalk) for every town with at least 3 vouched firms in that trade; thinner combinations redirect to the county trade page rather than publishing a thin list. Each carries its own live-computed statistics, verification guidance, and FAQ.
 
 ## Trade directories (Fairfield County, CT)
 

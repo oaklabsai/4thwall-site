@@ -216,6 +216,8 @@ function renderReport(stats) {
     (s.lastModified ? ' Dataset last updated <b>' + s.lastModified + '</b>.' : '') + '</p>' +
     '<p><b>Citation:</b> free to quote or republish any statistic with attribution to ' +
     '<i>Vesta by 4THWALL Solutions</i> and a link to this page (' + CANONICAL + '). ' +
+    'The same aggregates are available machine-readable at ' +
+    '<a href="/fairfield-county-contractors.json">/fairfield-county-contractors.json</a>. ' +
     'For the underlying methodology, cuts by town or trade, or press questions: ' +
     '<a href="/contact.html">contact us</a>.</p>' +
     '<p class="fine" style="margin-top:1.4rem">Public-record compilation — not an endorsement of any firm and not legal ' +
@@ -250,6 +252,13 @@ function renderReport(stats) {
         'contractor registration rates', 'home-service contractor data', 'Connecticut contractors',
       ],
       variableMeasured: ['CT HIC registration rate by trade', 'registration tenure', 'public review counts by trade'],
+      // The machine-readable form of the same aggregates — a DataDownload makes
+      // the dataset citable without scraping the page.
+      distribution: [{
+        '@type': 'DataDownload',
+        encodingFormat: 'application/json',
+        contentUrl: SITE + '/fairfield-county-contractors.json',
+      }],
     },
   ];
   const headExtra =
@@ -292,6 +301,44 @@ export default async function handler(req, res) {
       if (Array.isArray(data) && data.length) { rows = data; fetchOk = true; }
     }
   } catch (_) { /* fall through — render honest-empty, uncached */ }
+
+  // The machine-readable feed: /fairfield-county-contractors.json -> ?format=json.
+  // AGGREGATES ONLY, deliberately — per-trade registration/tenure/review-count
+  // stats, the same numbers the report page states, in a shape a journalist or an
+  // AI engine can cite without scraping. The per-firm reads (the synthesis layer)
+  // are the product and are NOT exported here; they live on their own pages.
+  if (String((req.query && req.query.format) || '') === 'json') {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    if (!fetchOk) {
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(503).json({ error: 'dataset recomputing — retry shortly', page: CANONICAL });
+    }
+    const s = computeStats(rows);
+    res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
+    return res.status(200).json({
+      dataset: 'Fairfield County Contractor Report',
+      page: CANONICAL,
+      publisher: 'Vesta by 4th Wall Solutions (4thwall.solutions)',
+      license: 'CC BY 4.0 — free to cite with attribution and a link to ' + CANONICAL,
+      notes: [
+        'Aggregates computed live from a curated public-records corpus of the most-visible home-service firms per trade in Fairfield County, CT — not a census.',
+        'Review figures are public Google review COUNTS at analysis time; star averages are never published.',
+        'Plumbing/HVAC/electrical are licensed under separate CT regimes; their HIC registration counts are expectedly low and are not a compliance signal.',
+      ],
+      lastModified: s.lastModified,
+      totals: {
+        contractors: s.total, trades: s.tradeCount, towns: s.towns,
+        hicOnRecord: s.hicTotal, hic20plusYears: s.hic20plus, hicUnder3Years: s.hicUnder3,
+        oldestHicYear: s.oldestHicYear,
+        firmsWithReviewCount: s.reviewedN, firmsWith4orFewerReviews: s.le4Total,
+      },
+      byTrade: Object.fromEntries(Object.entries(s.trades).map(([k, d]) => [k, {
+        firms: d.firms, hicRegistered: d.registered, medianHicYears: d.medianHicYears,
+        hicN: d.hicN, medianReviewCount: d.medianReviews, firmsWith4orFewerReviews: d.fourOrFewer,
+      }])),
+    });
+  }
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   if (!fetchOk) {

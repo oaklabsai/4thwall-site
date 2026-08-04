@@ -43,9 +43,11 @@
     { "source": "/c/:placeId",    "destination": "/api/contractor?placeId=:placeId" },
     { "source": "/evidence",      "destination": "/api/evidence" },
     { "source": "/evidence/:placeId", "destination": "/api/evidence?placeId=:placeId" },
+    { "source": "/fairfield-county/:trade/:town", "destination": "/api/directory?trade=:trade&town=:town" },
     { "source": "/fairfield-county/:trade", "destination": "/api/directory?trade=:trade" },
     { "source": "/directory",     "destination": "/api/hub" },
     { "source": "/fairfield-county-contractor-report", "destination": "/api/report" },
+    { "source": "/fairfield-county-contractors.json", "destination": "/api/report?format=json" },
     { "source": "/sitemap.xml", "destination": "/api/sitemap" }
   ],
   "redirects": [

@@ -8,7 +8,7 @@
 // switch). A newly-enriched profile joins the sitemap automatically; that's the
 // pipeline. Until the flip, this emits exactly the static surface (no /c/), so
 // cutting over from the old static sitemap.xml is a no-op for Google.
-import { SITE, TRADES, profileUrl } from './_render-directory.mjs';
+import { SITE, TRADES, profileUrl, townOfCity, isRanked, TOWN_MIN_RANKED } from './_render-directory.mjs';
 import { INDEXING_ENABLED } from './_render-contractor.mjs';
 
 const DB_BASE = process.env.SUPABASE_URL || 'https://vinytnzzgryodyrftabg.supabase.co';
@@ -43,10 +43,16 @@ export default async function handler(req, res) {
   // vesta_lint), only once indexing is on.
   let fetchOk = !INDEXING_ENABLED; // nothing to fetch while the gate is off
   const tradeLastmod = Object.create(null);   // trade -> newest enriched_at of its listed firms
+  // trade -> townSlug -> { ranked: n, lastmod } for the town×trade layer. The
+  // sitemap must apply the SAME gate the route enforces (>= TOWN_MIN_RANKED
+  // vouched firms) — listing a URL that 302s teaches a crawler to distrust the
+  // sitemap. isRanked needs the credential fields, so the select carries them.
+  const townAgg = Object.create(null);
   if (INDEXING_ENABLED) {
     try {
       const r = await fetch(DB_BASE + '/rest/v1/profile_enrichment_public' +
-        '?index_status=eq.ready&select=place_id,slug,trade,enriched_at&order=rank_score.desc.nullslast&limit=2000', {
+        '?index_status=eq.ready&select=place_id,slug,trade,enriched_at,city,registered,trade_license,certifications,synthesis,suppressed' +
+        '&order=rank_score.desc.nullslast&limit=2000', {
         headers: { apikey: DB_KEY, Authorization: 'Bearer ' + DB_KEY, Accept: 'application/json' }
       });
       if (r.ok) {
@@ -66,6 +72,14 @@ export default async function handler(req, res) {
             if (row.trade && lastmod && (!tradeLastmod[row.trade] || lastmod > tradeLastmod[row.trade])) {
               tradeLastmod[row.trade] = lastmod;
             }
+            // Town×trade aggregation, ranked firms only (mirrors the route gate).
+            const tt = townOfCity(row.city);
+            if (row.trade && tt && isRanked(row)) {
+              const byTown = (townAgg[row.trade] = townAgg[row.trade] || Object.create(null));
+              const agg = (byTown[tt.slug] = byTown[tt.slug] || { ranked: 0, lastmod: null });
+              agg.ranked += 1;
+              if (lastmod && (!agg.lastmod || lastmod > agg.lastmod)) agg.lastmod = lastmod;
+            }
           }
         }
       }
@@ -81,6 +95,17 @@ export default async function handler(req, res) {
   }
   for (const t of TRADES) {
     entries.push({ loc: SITE + '/fairfield-county/' + t, lastmod: tradeLastmod[t] || null });
+    // Town×trade pages that clear the gate (computed above from ranked, index-
+    // ready rows — strictly tighter than the route's own gate, so no sitemap URL
+    // can ever resolve to a redirect). Lastmod = newest enrichment in the combo.
+    const byTown = townAgg[t];
+    if (byTown) {
+      for (const slug of Object.keys(byTown).sort()) {
+        if (byTown[slug].ranked >= TOWN_MIN_RANKED) {
+          entries.push({ loc: SITE + '/fairfield-county/' + t + '/' + slug, lastmod: byTown[slug].lastmod });
+        }
+      }
+    }
   }
 
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
