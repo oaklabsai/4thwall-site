@@ -1274,7 +1274,9 @@ export function renderHubHTML(rows) {
   const total = list.length;
   const townCount = new Set(list.map((r) => String(r.city || '').trim()).filter(Boolean)).size;
 
-  const title = 'Contractor Directory — ' + COUNTY + ', CT | Vesta';
+  // Front-loaded geo keywords (SEO audit #2, 8/04 — the one technical item in it
+  // that survived verification; everything else it flagged was already live).
+  const title = COUNTY + ', CT Contractor Directory — Roofing, HVAC, Plumbing & 9 More Trades | Vesta';
   const description = 'Every contractor Vesta covers in ' + COUNTY + ', Connecticut — compiled from public records ' +
     'across every trade we track. Browse the full index by trade and town. No ads, no pay-to-play.';
 
