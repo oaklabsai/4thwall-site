@@ -12,7 +12,10 @@ const DB_BASE = process.env.SUPABASE_URL || 'https://vinytnzzgryodyrftabg.supaba
 // Anon-scoped publishable key — RLS-protected, already public in the client.
 const DB_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_IEQcNbThGZblpzqNnEeDeg_r5LXSyzt';
 
-const HUB_SELECT = 'place_id,business_name,trade,city,rank_score,slug';
+// hic_credential is view-gated (only registered firms return one) — rendered as
+// the low-profile entity string next to the name (GEO audit 8/04). known_for
+// feeds the top-ranked one-line snippet per trade section (audit "Summary Gap").
+const HUB_SELECT = 'place_id,business_name,trade,city,rank_score,slug,hic_credential,known_for';
 
 export default async function handler(req, res) {
   let rows = [];

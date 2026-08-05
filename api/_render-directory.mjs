@@ -178,7 +178,7 @@ export const publisherNodes = () => [ORG, WEBSITE];
 // The exact directory read (mirrors directory.html): established-first, raw stars
 // never leave the DB (rank_score is the volume-weighted homeowner-consensus score).
 export const DIRECTORY_SELECT =
-  'place_id,name:business_name,city,registered,hic_issue_date,trade_license,certifications,specialties,synthesis,slug,suppressed,rating_count,enriched_at';
+  'place_id,name:business_name,city,registered,hic_issue_date,hic_credential,trade_license,certifications,specialties,synthesis,slug,suppressed,rating_count,enriched_at';
 
 // THE PUBLISH FLOOR (doctrine rule #6, enforced here 2026-08-03 — it had never
 // actually been implemented in the renderer).
@@ -266,7 +266,11 @@ function card(p, trade) {
   const chips = [];
   if (p.registered) {
     const yr = p.hic_issue_date ? +String(p.hic_issue_date).slice(0, 4) : 0;
-    chips.push('<span class="badge">Registered CT contractor' + (yr && yr !== 1999 ? ' · since ' + yr : '') + ' ✓</span>');
+    // The literal DCP credential number, inline next to the claim (GEO audit
+    // 8/04: proximity turns the name into a verifiable entity point an engine
+    // can cross-check against eLicense). Visible text, never a hidden attribute.
+    const cred = p.hic_credential ? ' · ' + esc(p.hic_credential) : '';
+    chips.push('<span class="badge">Registered CT contractor' + cred + (yr && yr !== 1999 ? ' · since ' + yr : '') + ' ✓</span>');
   }
   if (Array.isArray(p.trade_license) && p.trade_license.length) chips.push('<span class="badge">Licensed ' + esc(tLower(trade)) + ' ✓</span>');
   if (Array.isArray(p.certifications)) for (const c of p.certifications) { if (c && c.issuer && c.level) chips.push('<span class="badge">' + esc(c.issuer + ' ' + c.level) + ' ✓</span>'); }
@@ -766,6 +770,9 @@ function jsonLd(trade, label, rows, canonical, town = null) {
       sameAs: ['https://www.google.com/maps/place/?q=place_id:' + encodeURIComponent(p.place_id)]
     };
     if (p.city) biz.address = { '@type': 'PostalAddress', addressLocality: p.city, addressRegion: 'CT', addressCountry: 'US' };
+    // The state credential as a typed identifier — the machine-readable twin of
+    // the visible badge string. Only present when the registered gate passed.
+    if (p.hic_credential) biz.identifier = { '@type': 'PropertyValue', propertyID: 'CT-DCP-HIC', value: p.hic_credential };
     if (p.synthesis) biz.description = p.synthesis;
     return { '@type': 'ListItem', position: i + 1, url, name: p.name, item: biz };
   });
@@ -1207,7 +1214,13 @@ const HUB_CSS =
   // for the directory's secondary prose. Hover DARKENS to ink (a stronger, not
   // weaker, affordance — the site link color --vgreen-2 is #6B654B, too light here).
   '.hub-firm{padding:.42rem 0;font-size:.9rem;line-height:1.35;color:#3a3b24;border-bottom:1px solid var(--line,rgba(74,75,47,.09));transition:color .12s ease}' +
-  '.hub-firm:hover,.hub-firm:focus{color:#12100e}';
+  '.hub-firm:hover,.hub-firm:focus{color:#12100e}' +
+  // Low-profile credential string — legible, deliberately quiet next to the name.
+  '.hub-lic{font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;color:var(--vdim);white-space:nowrap}' +
+  // One-line known_for snippet under each trade header.
+  '.hub-kf{margin:-.35rem 0 1rem;font-size:.85rem;line-height:1.5;color:var(--vmut,rgba(18,16,14,.62))}' +
+  '.hub-kf a{color:var(--vgreen-2,#4a4b2f);font-weight:600}' +
+  '.hub-kf a:hover{text-decoration:underline}';
 
 function hubJsonLd(canonical, orderedTrades) {
   // ItemList of the 8 trade directories (the hub's children) — NOT all 318
@@ -1301,7 +1314,12 @@ export function renderHubHTML(rows) {
         String(a.business_name).localeCompare(String(b.business_name)));
       const links = firms.map((f) =>
         '<a class="hub-firm" href="' + esc(profilePath(f)) + '">' +
-          esc(f.business_name) + '</a>').join('');
+          esc(f.business_name) +
+          // Inline DCP credential — the audit's proximity fix, as VISIBLE muted
+          // text (hidden attributes are cloaking risk; the honest version also
+          // reads better). View-gated: only registered firms carry one.
+          (f.hic_credential ? ' <span class="hub-lic">' + esc(f.hic_credential) + '</span>' : '') +
+        '</a>').join('');
       // Town header links into the town×trade page when the group plausibly
       // clears the gate. Hub rows are the ready set (no credential fields), so
       // this is a best-effort door — a linked page that misses the ranked gate
@@ -1316,12 +1334,20 @@ export function renderHubHTML(rows) {
       '</div>';
     }).join('');
 
+    // Audit "Summary Gap" fix (8/04): the trade's top-ranked firm gets its
+    // one-line known_for as visible text, so the index reads as vouched entities
+    // to a crawler, not a bare name matrix. One line per trade — never a wall.
+    const top = byTrade[t].slice().sort((a, b) => (+b.rank_score || 0) - (+a.rank_score || 0))[0];
+    const kf = (top && +top.rank_score > 0 && typeof top.known_for === 'string' && top.known_for.trim())
+      ? '<p class="hub-kf"><a href="' + esc(profilePath(top)) + '">' + esc(top.business_name) + '</a> — ' + esc(top.known_for.trim()) + '</p>'
+      : '';
     return '<section class="hub-trade" id="' + t + '">' +
       '<div class="hub-trade-head">' +
         '<svg class="hub-ico" viewBox="0 0 24 24" aria-hidden="true">' + (ICON[t] || ICON.all) + '</svg>' +
         '<h2 class="hub-trade-h">' + esc(label) + '</h2>' +
         '<a class="hub-trade-link" href="/fairfield-county/' + t + '">The ' + esc(tLower(t)) + ' page →</a>' +
       '</div>' +
+      kf +
       '<div class="hub-towns">' + townBlocks + '</div>' +
     '</section>';
   }).join('');
