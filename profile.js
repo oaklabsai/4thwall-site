@@ -205,7 +205,8 @@
           body: { name: form.name.value, phone: form.phone.value, email: form.email.value, zip: data.zip || '' }
         });
         if (r && r.ok) {
-          form.outerHTML = '<p class="note">✓ Thanks, ' + esc(r.first_name) + ' — we have your claim on ' + esc(r.business) + '. We’ll reach out to verify it’s you, then the profile is yours.</p>';
+          form.outerHTML = '<p class="note">✓ Thanks, ' + esc(r.first_name) + ' — we have your claim on ' + esc(r.business) + '.' +
+            ' We’ll verify it’s you, then the profile is yours and your free Atlas opens — we’ll email you the link.</p>';
         } else {
           btn.disabled = false;
           st.className = 'form-status is-error';

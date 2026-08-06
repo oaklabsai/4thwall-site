@@ -739,12 +739,11 @@ function claimBlock(enr) {
     form +
     '<p class="am-fine">Free · no obligation · we verify ownership before anything changes.</p>' +
     '<div class="am-rule"></div>' +
-    '<div class="am-plabel">Then put it to work</div>' +
-    '<p class="am-lede">Verified owners can start free with <b>Lens</b> — connect the tools you already run and ' +
-      'turn your operating record into source-backed answers homeowners can trust — or switch on <b>Atlas</b>, ' +
-      'the operated front office that answers your inbound, books the job, and follows up while you’re on the job.</p>' +
-    '<div class="am-cta"><a class="pill-ghost" href="/lens">Start free with Lens →</a>' +
-      '<a class="pill-ghost" href="/atlas">See what Atlas does →</a></div>' +
+    '<div class="am-plabel">And your Atlas comes with it</div>' +
+    '<p class="am-lede">Once ownership is verified, your free <b>Atlas</b> opens — everything we’ve gathered ' +
+      'on your business in one place: where you stand in your trade across ' + COUNTY + ', what homeowners ' +
+      'say about you, and who’s newly registered in your market. Nothing to install.</p>' +
+    '<div class="am-cta"><a class="pill-ghost" href="/atlas">See what Atlas does →</a></div>' +
   '</section>';
 }
 
