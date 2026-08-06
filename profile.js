@@ -208,14 +208,14 @@
           // Immediate access: the claim itself sent the sign-in link, so the
           // next step is their inbox — never a wait on us.
           var where = r.email ? esc(r.email) : 'your email';
-          var head = r.auto_verified
-            ? '✓ Verified — ' + esc(r.business) + ' is yours.'
-            : '✓ Thanks, ' + esc(r.first_name) + ' — we have your claim on ' + esc(r.business) + '.';
+          // Never announce a verification that hasn't happened. Eligible means
+          // the badge is released when they open the link, not before.
+          var head = '✓ Thanks, ' + esc(r.first_name) + ' — we have your claim on ' + esc(r.business) + '.';
           var body = r.signin_sent
             ? ' Your Atlas is open. We sent a sign-in link to <b>' + where + '</b> — open it and everything we’ve gathered on your business is waiting.'
             : ' Your Atlas is ready at <a href="/workspace/signin">4thwall.solutions/workspace/signin</a> — sign in with ' + where + '.';
-          var tail = r.auto_verified
-            ? ''
+          var tail = r.auto_verify_eligible
+            ? ' Opening that link also confirms you own the business — the verified-owner badge goes up on your public profile automatically.'
             : ' The verified-owner badge on your public profile follows once we confirm it’s you.';
           form.outerHTML = '<p class="note">' + head + body + tail + '</p>';
         } else {
