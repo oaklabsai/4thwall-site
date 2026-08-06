@@ -737,10 +737,10 @@ function claimBlock(enr) {
     '<div class="am-plabel">What claiming gives you</div>' +
     '<div class="am-uses">' + uses + '</div>' +
     form +
-    '<p class="am-fine">Free · no obligation · we verify ownership before anything changes.</p>' +
+    '<p class="am-fine">Free · no obligation · your Atlas opens the moment you claim. Ownership is confirmed automatically when you claim from your business email.</p>' +
     '<div class="am-rule"></div>' +
     '<div class="am-plabel">And your Atlas comes with it</div>' +
-    '<p class="am-lede">Once ownership is verified, your free <b>Atlas</b> opens — everything we’ve gathered ' +
+    '<p class="am-lede">Claim it and your free <b>Atlas</b> opens right away — everything we’ve gathered ' +
       'on your business in one place: where you stand in your trade across ' + COUNTY + ', what homeowners ' +
       'say about you, and who’s newly registered in your market. Nothing to install.</p>' +
     '<div class="am-cta"><a class="pill-ghost" href="/atlas">See what Atlas does →</a></div>' +
