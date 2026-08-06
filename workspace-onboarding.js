@@ -27,7 +27,7 @@
       const button = form.querySelector('button'); const status = document.getElementById('onboarding-status');
       button.disabled = true; status.className = 'auth-status'; status.textContent = 'Creating your workspace…';
       const result = await api('/workspace/profile', { method: 'POST', body: { business_name: form.business_name.value, trade: form.trade.value, service_area: form.service_area.value, website: form.website.value } });
-      if (result.data.ok) { status.textContent = 'Workspace ready. Opening Lens…'; setTimeout(function () { location.replace('/workspace'); }, 450); }
+      if (result.data.ok) { status.textContent = 'Workspace ready. Opening your Atlas…'; setTimeout(function () { location.replace('/workspace'); }, 450); }
       else { button.disabled = false; status.className = 'auth-status error'; status.textContent = result.data.error === 'invalid_website' ? 'Use a complete website address beginning with https://.' : 'We could not save the profile. Check the fields and try again.'; }
     });
   });

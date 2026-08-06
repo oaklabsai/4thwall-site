@@ -1,50 +1,35 @@
 (function () {
   'use strict';
 
+  // Atlas Workspace — the free record-carried Home.
+  //
+  // One face for every firm. The density tier from the report steers which
+  // section leads (a rich file opens on what homeowners say; a sparse one
+  // opens on the record and what's missing) — same components either way,
+  // never a different product. The tier itself is never rendered.
+  //
+  // The office rooms in the sidebar are the offer (Drew's ruling 8/06): a
+  // click brings up what the room does and the door. No prices here — price
+  // comes from the calls.
+
   const API = 'https://vinytnzzgryodyrftabg.supabase.co/functions/v1/home';
   const SESSION_KEY = 'lens_workspace_session';
-  const NOTICE_VERSION = 'connect-provider-data-notice-v1';
-  const data = window.LENS_DEMO;
-  let records = data ? data.records.map(function (record) { return Object.assign({}, record); }) : [];
-  let homeownerAnswers = data ? data.homeownerAnswers.slice() : [];
-  let activeAnswer = homeownerAnswers[0] ? homeownerAnswers[0].id : '';
-  let accountWorkspace = null;
-  let connectionState = null;
-  let liveReceipt = null;
 
-  function escapeHtml(value) {
+  function esc(value) {
     return String(value == null ? '' : value)
       .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
       .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
   }
 
-  function icon(path) {
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">' + path + '</svg>';
-  }
-
-  function showToast(message) {
-    const toast = document.getElementById('workspace-toast');
-    if (!toast) return;
-    toast.textContent = message;
-    toast.classList.add('show');
-    clearTimeout(showToast.timer);
-    showToast.timer = setTimeout(function () { toast.classList.remove('show'); }, 3000);
-  }
-
-  function setText(id, value) {
-    const node = document.getElementById(id);
-    if (node) node.textContent = value;
-  }
-
-  function workspaceToken() {
+  function token() {
     try { return localStorage.getItem(SESSION_KEY) || ''; } catch (_) { return ''; }
   }
 
   async function api(path, options) {
     const opts = Object.assign({}, options || {});
     const headers = Object.assign({ Accept: 'application/json' }, opts.headers || {});
-    const token = workspaceToken();
-    if (token) headers.Authorization = 'Bearer ' + token;
+    const t = token();
+    if (t) headers.Authorization = 'Bearer ' + t;
     if (opts.body && typeof opts.body !== 'string') {
       headers['Content-Type'] = 'application/json';
       opts.body = JSON.stringify(opts.body);
@@ -58,616 +43,237 @@
     }
   }
 
-  function canManage() {
-    const role = accountWorkspace && accountWorkspace.membership && accountWorkspace.membership.role;
-    return role === 'owner' || role === 'admin';
+  function toast(message) {
+    const el = document.getElementById('workspace-toast');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.add('show');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(function () { el.classList.remove('show'); }, 3000);
   }
 
-  function canReview() {
-    const role = accountWorkspace && accountWorkspace.membership && accountWorkspace.membership.role;
-    return canManage() || role === 'reviewer';
+  // ── The office: rooms are the offer ────────────────────────────────────
+  const ROOMS = [
+    { key: 'inbox', label: 'Inbox', title: 'Inbox', body: 'Every text and missed call that reaches your business, answered in seconds instead of hours — booked, qualified, or politely turned away, with you in the loop.' },
+    { key: 'booking', label: 'Booking', title: 'Booking', body: 'Jobs land on a calendar without phone tag. A homeowner texts, gets three real time slots, and picks one while they are still interested.' },
+    { key: 'followup', label: 'Follow-up', title: 'Follow-up', body: 'Estimates that went quiet get a nudge at the right moment. The work you already quoted is the cheapest job you will ever win.' },
+    { key: 'reviews', label: 'Reviews', title: 'Reviews', body: 'Every finished job becomes an ask, sent when the customer is happiest. Your review count is the record homeowners actually read — this grows it on schedule.' },
+    { key: 'storm', label: 'Storm', title: 'Storm', body: 'When severe weather crosses your towns, your response is ready before the phones light up — the National Weather Service alert is the trigger, not the third missed call.' },
+    { key: 'campaigns', label: 'Campaigns', title: 'Campaigns', body: 'Seasonal pushes to past customers — the spring tune-up, the fall cleanup — written and sent without you touching a keyboard.' },
+    { key: 'found', label: 'Being found', title: 'Being found', body: 'Your public profile, kept accurate and working for you where homeowners and their tools actually look.' },
+  ];
+
+  function openOffer(room) {
+    document.getElementById('offer-title').textContent = room.title;
+    document.getElementById('offer-body').textContent = room.body;
+    document.getElementById('offer-door').innerHTML = 'Want this running for your business? <a href="mailto:4thwalldevelopment@gmail.com?subject=' + encodeURIComponent('Atlas — ' + room.title) + '">Reply and it reaches a person.</a>';
+    document.getElementById('veil').classList.add('show');
   }
 
-  function humanDate(value, includeTime) {
-    if (!value) return 'Not yet';
-    try {
-      return new Intl.DateTimeFormat('en-US', includeTime ? {
-        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
-      } : { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(value));
-    } catch (_) { return 'Unavailable'; }
-  }
-
-  function setPill(id, label, className) {
-    const node = document.getElementById(id);
-    if (!node) return;
-    node.textContent = label;
-    node.className = 'status-pill ' + className;
-  }
-
-  function navigate(view, updateHash) {
-    const target = document.querySelector('[data-view-panel="' + view + '"]') ? view : 'overview';
-    document.querySelectorAll('[data-view-panel]').forEach(function (panel) {
-      panel.classList.toggle('active', panel.dataset.viewPanel === target);
+  function buildNav() {
+    const nav = document.getElementById('nav-office');
+    let html = '<button class="on" type="button">Home</button>';
+    ROOMS.forEach(function (room, i) {
+      html += '<button class="quiet" type="button" data-room="' + i + '">' + esc(room.label) + '<i>quiet</i></button>';
     });
-    document.querySelectorAll('.workspace-nav-btn[data-view]').forEach(function (button) {
-      const active = button.dataset.view === target;
-      button.classList.toggle('active', active);
-      if (active) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
+    nav.innerHTML = html;
+    nav.addEventListener('click', function (e) {
+      const b = e.target.closest('[data-room]');
+      if (b) openOffer(ROOMS[Number(b.dataset.room)]);
     });
-    if (updateHash !== false) history.replaceState(null, '', target === 'overview' ? location.pathname + location.search : '#' + target);
-    const main = document.querySelector('.workspace-main');
-    if (main) main.scrollTop = 0;
-  }
-
-  function counts() {
-    return records.reduce(function (result, record) {
-      result[record.status] = (result[record.status] || 0) + 1;
-      return result;
-    }, { visible: 0, private: 0, questioned: 0, pending: 0 });
-  }
-
-  function syncCounts() {
-    const value = counts();
-    const held = value.private + value.questioned + value.pending;
-    setText('included-count', value.visible);
-    setText('held-count', held);
-    setText('attention-count', held);
-    setText('privacy-included-count', value.visible);
-    setText('privacy-included-copy', value.visible === 1
-      ? 'translated record currently feeds the private homeowner preview.'
-      : 'translated records currently feed the private homeowner preview.');
-    setText('privacy-private-count', value.private);
-    setText('privacy-private-copy', value.private === 1
-      ? 'record is stored for your workspace but excluded from the preview.'
-      : 'records are stored for your workspace but excluded from the preview.');
-    const questionedHeld = value.questioned + value.pending;
-    setText('privacy-questioned-count', questionedHeld);
-    setText('privacy-questioned-copy', questionedHeld === 1
-      ? 'record is held while its source date or state is reviewed.'
-      : 'records are held while their source dates or states are reviewed.');
-    setText('translated-count', records.length);
-    setText('record-count-badge', records.length);
-    setText('attention-detail', value.private + ' private · ' + value.questioned + ' source-questioned · ' + value.pending + ' awaiting review');
-  }
-
-  function renderAccountReadiness() {
-    if (!accountWorkspace) return;
-    const connected = connectionState && connectionState.connected;
-    const sync = connected && connectionState.sync || { status: 'not_started' };
-    const value = counts();
-    const reviewed = liveReceipt ? value.visible + value.private + value.questioned : 0;
-    setText('readiness-title', connected ? 'Your private Jobber record is taking shape.' : 'Your workspace is ready for its first source.');
-    setText('readiness-detail', connected
-      ? sync.status === 'complete'
-        ? reviewed + ' of ' + records.length + ' translated records have a decision. Nothing is public.'
-        : 'Jobber is authorized and the first private translation is still processing.'
-      : 'Connect a provider when you are ready. Account creation did not authorize Jobber or publish any evidence.');
-    const synced = connected && sync.status === 'complete';
-    const fraction = synced && records.length ? Math.round((reviewed / records.length) * 100) : connected ? 50 : 20;
-    setText('readiness-percent', synced ? reviewed + '/' + records.length : connected ? 'Syncing' : 'Setup');
-    const meterLabel = document.querySelector('#readiness-meter small');
-    if (meterLabel) meterLabel.textContent = synced ? 'reviewed' : '';
-    const meter = document.getElementById('readiness-meter');
-    if (meter) meter.style.setProperty('--p', fraction);
-  }
-
-  function renderAccountActivity() {
-    if (!accountWorkspace) return;
-    const list = document.getElementById('workspace-activity');
-    if (!list) return;
-    const state = connectionState;
-    if (!state || !state.connected) {
-      list.innerHTML = '<li class="activity-item"><span class="activity-icon">' + icon('<path d="m5 12 4 4L19 6"/>') + '</span><span><strong>Workspace identity established</strong><p>No provider has been authorized and Atlas is not operating this workspace.</p></span><span class="activity-time">Private</span></li>';
-      return;
-    }
-    const sync = state.sync || {};
-    const title = sync.status === 'complete' ? 'Jobber sync completed' : sync.status === 'failed' ? 'Jobber sync needs attention' : 'Jobber sync in progress';
-    const detail = Number(sync.source_records_retrieved || 0) + ' records read · ' + Number(sync.evidence_items_written || 0) + ' translated';
-    list.innerHTML = '<li class="activity-item"><span class="activity-icon">' + icon('<path d="m5 12 4 4L19 6"/>') + '</span><span><strong>' + escapeHtml(title) + '</strong><p>' + escapeHtml(detail) + '</p></span><span class="activity-time">' + escapeHtml(humanDate(sync.completed_at || sync.updated_at, true)) + '</span></li>' +
-      '<li class="activity-item"><span class="activity-icon">' + icon('<path d="M12 3 5 6v5c0 4.4 2.8 8.4 7 10"/>') + '</span><span><strong>Private by default</strong><p>Provider history is not public and cannot affect Vesta ranking.</p></span><span class="activity-time">Controlled</span></li>';
-  }
-
-  function actionButton(record, action, label, path) {
-    const disabled = record.status === action || (liveReceipt && !canReview());
-    return '<button class="record-action" type="button" data-record="' + escapeHtml(record.id) + '" data-decision="' + action + '" title="' + escapeHtml(label) + '" aria-label="' + escapeHtml(label) + '"' + (disabled ? ' disabled' : '') + '>' + icon(path) + '</button>';
-  }
-
-  async function saveDecision(record, decision) {
-    const mapping = {
-      visible: ['accepted', 'confirmed_accurate', 'Included in the private homeowner preview. Nothing here is public.'],
-      private: ['kept_private', 'prefer_private', 'Record kept private.'],
-      questioned: ['disputed', 'not_my_record', 'Source question recorded.']
-    };
-    const selected = mapping[decision];
-    if (!selected) return;
-    if (!liveReceipt) {
-      record.status = decision;
-      record.statusLabel = decision === 'visible' ? 'Included' : decision === 'private' ? 'Private' : 'Source question';
-      renderRecords();
-      syncCounts();
-      showToast(selected[2]);
-      return;
-    }
-    const result = await api('/workspace/decisions', {
-      method: 'POST',
-      body: { evidence_id: record.id, decision: selected[0], reason_code: selected[1] }
+    document.getElementById('offer-close').addEventListener('click', function () {
+      document.getElementById('veil').classList.remove('show');
     });
-    if (!result.ok) {
-      showToast(result.data.error === 'forbidden' ? 'Your workspace role cannot change record decisions.' : 'That decision was not saved. Try again.');
-      renderRecords();
-      return;
-    }
-    showToast(selected[2]);
-    await loadLiveReceipt(String((document.getElementById('project-type') || {}).value || 'roof_replacement'));
-  }
-
-  function renderRecords() {
-    const body = document.getElementById('record-table-body');
-    if (!body) return;
-    const query = String((document.getElementById('record-search') || {}).value || '').trim().toLowerCase();
-    const filter = String((document.getElementById('record-filter') || {}).value || 'all');
-    const visible = records.filter(function (record) {
-      const matchesFilter = filter === 'all' || record.status === filter;
-      const haystack = [record.type, record.source, record.objectType, record.completed, record.statement].join(' ').toLowerCase();
-      return matchesFilter && (!query || haystack.includes(query));
-    });
-    if (!visible.length) {
-      body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:2rem">No translated records match this view.</td></tr>';
-      return;
-    }
-    body.innerHTML = visible.map(function (record) {
-      return '<tr>' +
-        '<td><div class="record-main"><strong>' + escapeHtml(record.type) + '</strong><span>' + escapeHtml(record.objectType) + ' · privacy-trimmed</span></div></td>' +
-        '<td>' + escapeHtml(record.source) + '</td>' +
-        '<td class="mono" style="font-size:.65rem">' + escapeHtml(record.completed) + '</td>' +
-        '<td><span class="record-state ' + record.status + '">' + escapeHtml(record.statusLabel) + '</span></td>' +
-        '<td><div class="record-actions">' +
-          actionButton(record, 'visible', 'Include in private preview', '<path d="m4 12 5 5L20 6"/>') +
-          actionButton(record, 'private', 'Keep private', '<path d="M4 4h16v16H4zM7 17 17 7"/>') +
-          actionButton(record, 'questioned', 'Question source record', '<path d="M12 17h.01M9.1 9a3 3 0 1 1 4.8 2.4c-1.2.9-1.9 1.4-1.9 2.6"/><circle cx="12" cy="12" r="9"/>') +
-        '</div></td></tr>';
-    }).join('');
-    body.querySelectorAll('[data-decision]').forEach(function (button) {
-      button.addEventListener('click', async function () {
-        const record = records.find(function (item) { return item.id === button.dataset.record; });
-        if (!record) return;
-        body.querySelectorAll('button').forEach(function (item) { item.disabled = true; });
-        await saveDecision(record, button.dataset.decision);
-      });
+    document.getElementById('veil').addEventListener('click', function (e) {
+      if (e.target === e.currentTarget) e.currentTarget.classList.remove('show');
     });
   }
 
-  function sourcePills(sources) {
-    return sources.map(function (source) {
-      const className = source === 'Atlas front office' ? 'source-pill operated' : 'source-pill';
-      return '<span class="' + className + '">' + escapeHtml(source) + '</span>';
-    }).join('');
-  }
+  // ── Section renderers (each returns card HTML or '') ───────────────────
 
-  function answerForProject(answer) {
-    if (liveReceipt) return answer;
-    const project = String((document.getElementById('project-type') || {}).value || 'roof_replacement');
-    if (answer.id !== 'experience' || project === 'roof_replacement') return answer;
-    const label = project === 'roof_repair' ? 'roof repair' : 'emergency roof repair';
-    return {
-      id: answer.id,
-      question: answer.question,
-      shortQuestion: answer.shortQuestion,
-      sources: ['Provider recorded'],
-      answer: 'The accepted provider record does not contain enough classified ' + label + ' history for a project-specific statement.',
-      limitation: 'Insufficient evidence stays visible as insufficient; Lens does not borrow proof from a different project category.'
-    };
-  }
-
-  function renderWorkspaceAnswer() {
-    const panel = document.getElementById('workspace-answer');
-    if (!panel || !homeownerAnswers.length) return;
-    const raw = homeownerAnswers.find(function (item) { return item.id === activeAnswer; }) || homeownerAnswers[0];
-    const answer = answerForProject(raw);
-    panel.innerHTML = '<div class="answer-sources">' + sourcePills(answer.sources) + '</div><h3>' + escapeHtml(answer.question) + '</h3><p class="answer">' + escapeHtml(answer.answer) + '</p><p class="limit"><strong>Limit:</strong> ' + escapeHtml(answer.limitation) + '</p>';
-    const tabWrap = document.getElementById('workspace-answer-tabs');
-    if (tabWrap) {
-      tabWrap.innerHTML = homeownerAnswers.map(function (item, index) {
-        return '<button class="btn ' + (item.id === activeAnswer ? 'btn-dark' : 'btn-ghost') + ' btn-sm" type="button" data-answer-tab="' + escapeHtml(item.id) + '" aria-label="Show ' + escapeHtml(item.shortQuestion || item.question) + '">' + (index + 1) + '</button>';
-      }).join('');
-      tabWrap.querySelectorAll('[data-answer-tab]').forEach(function (button) {
-        button.addEventListener('click', function () { activeAnswer = button.dataset.answerTab; renderWorkspaceAnswer(); });
-      });
+  function sYourRecord(r) {
+    const rec = r.record || {};
+    const ten = r.tenure || {};
+    let stats = '';
+    stats += '<div class="stat"><b>' + (rec.reviews == null ? '—' : esc(rec.reviews)) + '</b><span>reviews on your public listing</span></div>';
+    if (ten.regime === 'hic' && ten.record_on_file) {
+      stats += '<div class="stat"><b>' + esc(ten.years) + ' yrs</b><span>registered in CT (since ' + esc(String(ten.since).slice(0, 4)) + ')</span></div>';
     }
-  }
-
-  function mapReceiptRecord(item) {
-    const states = {
-      accepted: ['visible', 'Included'],
-      kept_private: ['private', 'Private'],
-      disputed: ['questioned', 'Source question'],
-      pending: ['pending', 'Needs review']
-    };
-    const state = states[item.review_decision] || states.pending;
-    return {
-      id: item.id,
-      type: String(item.service_category || 'uncategorized').replaceAll('_', ' ').replace(/\b\w/g, function (letter) { return letter.toUpperCase(); }),
-      source: 'Jobber',
-      objectType: String(item.source_object_type || item.job_type || 'provider record').replaceAll('_', ' ').toLowerCase(),
-      completed: item.completed_at ? humanDate(item.completed_at, false) : 'No completion date',
-      statement: 'Provider-recorded ' + String(item.source_status || 'state').toLowerCase(),
-      status: state[0],
-      statusLabel: state[1]
-    };
-  }
-
-  function liveNarrative(receipt) {
-    const metrics = receipt.insights && receipt.insights.metrics || {};
-    const accepted = Number(metrics.completed_items || 0);
-    if (!accepted) return 'No provider-recorded item is currently accepted for this private preview. Review the translated record before Lens states a work-history pattern.';
-    return 'The accepted Jobber record contains ' + accepted + ' completed item' + (accepted === 1 ? '' : 's') + '. Lens keeps the source and limitations attached instead of turning the history into a quality score.';
-  }
-
-  function applyLiveReceipt(receipt) {
-    liveReceipt = receipt;
-    records = (receipt.evidence || []).map(mapReceiptRecord);
-    homeownerAnswers = ((receipt.insights && receipt.insights.risk_answers) || []).map(function (answer) {
-      return {
-        id: answer.id,
-        question: answer.question,
-        shortQuestion: answer.question,
-        sources: [receipt.source || 'Jobber-recorded history'],
-        answer: answer.answer,
-        limitation: answer.limitation
-      };
-    });
-    activeAnswer = homeownerAnswers[0] ? homeownerAnswers[0].id : '';
-    const narrative = liveNarrative(receipt);
-    setText('overview-narrative', narrative);
-    setText('workspace-narrative', narrative);
-    const sync = receipt.sync || {};
-    const skippedCount = Number(sync.skipped || 0);
-    setText('translation-detail', skippedCount + ' unsupported source record' + (skippedCount === 1 ? '' : 's') + ' skipped, never stored');
-    const flag = document.getElementById('demo-flag');
-    if (flag) flag.innerHTML = '<strong>Private beta workspace</strong><span>This Jobber record came through your authorized connection and remains non-publishable. Atlas figures remain simulated until 4THWALL operates this workspace.</span>';
-    renderRecords();
-    syncCounts();
-    renderWorkspaceAnswer();
-    renderAccountReadiness();
-    renderAccountActivity();
-  }
-
-  async function loadLiveReceipt(target) {
-    const result = await api('/workspace/receipt?target=' + encodeURIComponent(target || 'roof_replacement'));
-    if (!result.ok) {
-      if (result.status !== 404) showToast(result.data.error === 'connect_unavailable' ? 'Connect is temporarily unavailable. Your existing private record is unchanged.' : 'The private record is not ready yet.');
-      return false;
+    const vel = r.velocity || {};
+    if (vel.available) {
+      stats += '<div class="stat"><b>+' + esc(vel.gained) + '</b><span>reviews since ' + esc(vel.from) + '</span></div>';
     }
-    applyLiveReceipt(result.data);
-    return true;
+    let body = '<div class="statrow">' + stats + '</div>';
+    if (!vel.available && vel.reason === 'not enough history yet') {
+      body += '<p class="quietnote">Your review count over time starts here — we began keeping that history on ' + esc(vel.since || '2026-08-06') + '. It needs a second reading before it can say anything true.</p>';
+    }
+    if (ten.regime === 'hic' && !ten.record_on_file) {
+      body += '<p class="quietnote">' + esc(ten.coverage_note || '') + '</p>';
+    }
+    const spec = Array.isArray(rec.specialties) ? rec.specialties : [];
+    if (spec.length) body += '<div class="chips">' + spec.map(function (s) { return '<span class="chip">' + esc(s) + '</span>'; }).join('') + '</div>';
+    if (rec.public_profile) body += '<p class="doorline">Your public profile: <a href="' + esc(rec.public_profile) + '" target="_blank" rel="noopener">see it as a homeowner does</a></p>';
+    return '<section class="card wide"><h2>Your record</h2><p class="why">Your business as the public record shows it.</p>' + body + '</section>';
   }
 
-  function updateConnectionUI(state) {
-    connectionState = state;
-    const card = document.getElementById('jobber-connection-card');
-    const action = document.getElementById('jobber-connect-action');
-    const connected = state && state.connected;
-    const sync = state && state.sync || { status: 'not_started' };
-    const hasConnection = Boolean(state && state.connection_status);
-    if (accountWorkspace) {
-      const exportButtons = [document.getElementById('record-export-action'), document.getElementById('settings-export-action')];
-      exportButtons.forEach(function (button) { if (button) button.disabled = !canManage() || !hasConnection; });
-      const disconnectButton = document.getElementById('settings-disconnect-action');
-      const eraseButton = document.getElementById('settings-erase-action');
-      // A lapsed connection must still be revocable: walking away instead of
-      // reconnecting is the contractor's right, not a failure state.
-      const revocable = connected || Boolean(state && state.reauthorization_required);
-      if (disconnectButton) disconnectButton.disabled = !canManage() || !revocable;
-      if (eraseButton) eraseButton.disabled = !canManage() || !hasConnection;
+  function sThemes(r) {
+    const t = r.themes || {};
+    if (!t.available) {
+      return '<section class="card wide"><h2>What homeowners say</h2>' +
+        '<p class="quietnote">' + esc(t.detail || '') + '</p></section>';
     }
-    if (card) card.dataset.state = state && state.error ? 'error' : connected ? 'connected' : 'idle';
-    if (!accountWorkspace) return;
-    // A lapsed provider is NOT the same as never having connected. Falling into
-    // the branch below would zero the record counts, which is false — the
-    // evidence and decisions survive a lapse and the record still loads. Only
-    // the contractor can fix this, so say exactly that.
-    if (state && state.reauthorization_required) {
-      setPill('jobber-status', 'Reconnect needed', 'status-preview');
-      setText('jobber-description', 'Jobber access for this workspace has lapsed or was revoked, so new work cannot sync. Your existing records and decisions are unchanged. Reconnecting resumes syncing.');
-      setText('jobber-coverage', 'Paused until reconnected');
-      setText('jobber-translated', 'Retained');
-      setText('jobber-last-sync', humanDate(sync.completed_at || sync.updated_at, true));
-      setPill('record-source-status', 'Reconnect needed', 'status-preview');
-      setText('evidence-source-count', '1');
-      setText('evidence-source-detail', 'Jobber access lapsed · existing records retained');
-      setPill('evidence-status', 'Reconnect needed', 'status-preview');
-      if (action) { action.textContent = 'Reconnect Jobber'; action.disabled = !canManage(); }
-      renderAccountReadiness();
-      renderAccountActivity();
-      return;
-    }
-    if (!connected) {
-      setPill('jobber-status', state && state.error ? 'Unavailable' : 'Not connected', state && state.error ? 'status-preview' : 'status-private');
-      setText('jobber-description', state && state.error ? 'The private connection service could not be reached. No provider authorization changed.' : 'Authorize Jobber when you are ready to create a private provider-recorded history.');
-      setText('jobber-coverage', 'Not available');
-      setText('jobber-translated', '0 records');
-      setText('jobber-last-sync', 'Not yet');
-      setPill('record-source-status', 'Sample only', 'status-preview');
-      setText('evidence-source-count', '0');
-      setText('evidence-source-detail', 'No real evidence source connected');
-      setPill('evidence-status', 'Not connected', 'status-private');
-      if (action) { action.textContent = 'Connect Jobber'; action.disabled = !canManage() || Boolean(state && state.error); }
-      renderAccountReadiness();
-      renderAccountActivity();
-      return;
-    }
-    const syncLabel = sync.status === 'complete' ? 'Connected' : sync.status === 'failed' ? 'Needs attention' : 'Syncing';
-    setPill('jobber-status', syncLabel, sync.status === 'failed' ? 'status-preview' : sync.status === 'complete' ? 'status-live' : 'status-beta');
-    setText('jobber-description', 'A private, read-only Jobber connection is authorized for this workspace.');
-    setText('jobber-coverage', sync.status === 'complete' ? 'Complete response' : sync.status === 'failed' ? 'Sync failed' : 'In progress');
-    setText('jobber-translated', Number(sync.evidence_items_written || 0) + ' records');
-    setText('jobber-last-sync', humanDate(sync.completed_at || sync.updated_at, true));
-    setPill('record-source-status', sync.status === 'complete' ? 'Source current' : 'Sync ' + sync.status, sync.status === 'complete' ? 'status-live' : 'status-beta');
-    setText('evidence-source-count', '1');
-    setText('evidence-source-detail', 'Jobber history · Atlas not connected');
-    setPill('evidence-status', 'Private', 'status-beta');
-    if (action) { action.textContent = sync.status === 'failed' ? 'Retry sync' : 'Refresh record'; action.disabled = !canManage() || ['queued', 'running', 'paused'].includes(sync.status); }
-    renderAccountReadiness();
-    renderAccountActivity();
+    let body = '';
+    if (t.synthesis) body += '<p class="synth">' + esc(t.synthesis) + '</p>';
+    if (t.signature) body += '<p class="sigline">“' + esc(t.signature) + '”</p>';
+    const kf = Array.isArray(t.known_for) ? t.known_for : [];
+    const praise = Array.isArray(t.recurring_praise) ? t.recurring_praise : [];
+    const chips = kf.concat(praise.filter(function (p) { return kf.indexOf(p) < 0; }));
+    if (chips.length) body += '<div class="chips">' + chips.map(function (c) { return '<span class="chip tea">' + esc(String(c).replaceAll('-', ' ')) + '</span>'; }).join('') + '</div>';
+    return '<section class="card wide"><h2>What homeowners say</h2><p class="why">Read from your reviews — the same read a homeowner sees on Vesta.</p>' + body + '</section>';
   }
 
-  async function loadConnection() {
-    const result = await api('/workspace/connections');
-    if (!result.ok) {
-      updateConnectionUI({ connected: false, error: result.data.error || 'unavailable' });
-      return;
-    }
-    updateConnectionUI(result.data);
-    if (result.data.connected) await loadLiveReceipt(String((document.getElementById('project-type') || {}).value || 'roof_replacement'));
-  }
-
-  async function consumeHandoff() {
-    const fragment = new URLSearchParams((location.hash || '').replace(/^#/, ''));
-    const handoff = fragment.get('connect_handoff');
-    if (!handoff) return;
-    history.replaceState(null, '', location.pathname + location.search);
-    showToast('Finishing your private Jobber connection…');
-    const result = await api('/workspace/connections/handoff', { method: 'POST', body: { handoff_token: handoff } });
-    if (!result.ok) {
-      if (result.data.error === 'connect_unavailable') {
-        showToast('Connection confirmation is temporarily unavailable. Your Jobber authorization may still be safe.');
-        return;
+  function sWatch(r) {
+    const w = r.watch;
+    if (w === null || w === undefined) {
+      if ((r.gated || []).indexOf('watch') >= 0) {
+        return '<section class="card locked"><h2>Only you would see this</h2><p>The private half of our read — what your reviews flag that we never publish. It unlocks when ownership is confirmed.</p></section>';
       }
-      // OAuth returns can be replayed by navigation, restoration or link
-      // handling after the one-use handoff has already succeeded. Reconcile
-      // against the authenticated workspace before showing a false failure.
-      const current = await api('/workspace/connections');
-      if (current.ok && current.data.connected) {
-        updateConnectionUI(current.data);
-        showToast('Jobber is connected. This return was already completed.');
-        return;
+      return '';
+    }
+    if (!w.available) {
+      return '<section class="card"><h2>Only you see this</h2><p class="quietnote">' + esc(w.detail || '') + '</p></section>';
+    }
+    const items = (w.items || []).map(function (i) {
+      return '<div class="wi">' + (i.topic ? '<b>' + esc(i.topic) + '</b>' : '') + '<p>' + esc(i.note) + '</p></div>';
+    }).join('');
+    return '<section class="card wide watchcard"><p class="lock">Private to you — never on your public profile</p><h2>Only you see this</h2><p class="why">What your reviews say when you’re not in the room. We publish none of it; you should know all of it.</p>' + items + '</section>';
+  }
+
+  function sPositioning(r) {
+    const p = r.positioning || {};
+    if (!p.available) return '';
+    let body = '';
+    if (p.value_tier) body += '<div class="chips"><span class="chip tea">' + esc(String(p.value_tier).replaceAll('-', ' ')) + '</span></div>';
+    const ic = Array.isArray(p.ideal_customer) ? p.ideal_customer : [];
+    if (ic.length) body += '<p class="quietnote">You win with homeowners who are:</p><div class="chips">' + ic.map(function (c) { return '<span class="chip">' + esc(String(c).replaceAll('-', ' ')) + '</span>'; }).join('') + '</div>';
+    const ps = Array.isArray(p.project_scale) ? p.project_scale : [];
+    if (ps.length) body += '<p class="quietnote">The work your reviews describe:</p><div class="chips">' + ps.map(function (c) { return '<span class="chip">' + esc(String(c).replaceAll('-', ' ')) + '</span>'; }).join('') + '</div>';
+    return '<section class="card"><h2>Who you win with</h2><p class="why">Read from your own reviews, not a survey.</p>' + body + '</section>';
+  }
+
+  function sCrew(r) {
+    const c = r.crew || {};
+    if (!c.available) return '';
+    const names = (c.named || []).map(function (n) { return '<span class="chip tea">' + esc(n) + '</span>'; }).join('');
+    return '<section class="card"><h2>Your crew, in their words</h2><p class="why">' + esc(c.note || '') + '</p><div class="chips">' + names + '</div></section>';
+  }
+
+  function sCompleteness(r) {
+    const c = r.completeness || {};
+    const item = function (i) {
+      return '<li class="' + (i.done ? 'done' : 'todo') + '"><span class="tick">' + (i.done ? '✓' : '○') + '</span>' + esc(i.label) + '</li>';
+    };
+    const yours = ((c.yours || {}).items || []).map(item).join('');
+    const ours = ((c.ours || {}).items || []).map(item).join('');
+    return '<section class="card wide"><h2>What’s missing</h2><p class="why">' + esc(c.note || '') + '</p>' +
+      '<div class="split"><div><h3>Yours to add</h3><ul class="list">' + yours + '</ul></div>' +
+      '<div><h3>Ours to deliver</h3><ul class="list">' + ours + '</ul></div></div></section>';
+  }
+
+  function sEntrants(r) {
+    if (r.entrants === null || r.entrants === undefined) {
+      if ((r.gated || []).indexOf('entrants') >= 0) {
+        return '<section class="card locked"><h2>New in your trade</h2><p>Who has newly registered into your trade in Fairfield County. It unlocks when ownership is confirmed.</p></section>';
       }
-      showToast('That connection return expired. Check connection status or start again.');
-      return;
+      return '';
     }
-    updateConnectionUI(result.data);
-    showToast('Jobber connected. Your private record is syncing.');
+    if (!r.entrants.length) {
+      return '<section class="card"><h2>New in your trade</h2><p class="quietnote">No newly registered firms in your trade in the last two years — by our copy of the state register.</p></section>';
+    }
+    const rows = r.entrants.map(function (e) {
+      return '<div class="entr"><div>' + esc(e.name) + (e.city ? ' · ' + esc(e.city) : '') + '</div><span>registered ' + esc(String(e.registered).slice(0, 7)) + '</span></div>';
+    }).join('');
+    return '<section class="card"><h2>New in your trade</h2><p class="why">Newly registered in Fairfield County — market news, not a ranking.</p>' + rows + '</section>';
   }
 
-  async function hydrateWorkspaceAccount() {
-    const token = workspaceToken();
-    if (!token) return false;
-    const result = await api('/workspace/me');
-    if (!result.ok || !result.data.workspace) {
+  // ── Assembly ───────────────────────────────────────────────────────────
+
+  function render(workspace, report) {
+    const app = document.getElementById('app');
+    const firm = report.firm || {};
+    const ownership = workspace.ownership || {};
+    const verified = !!firm.verified;
+
+    const missing = (((report.completeness || {}).yours || {}).items || []).filter(function (i) { return !i.done; });
+    const now = new Date();
+    const day = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+    let head = '<div class="kicker">The office · ' + esc(day) + '</div>';
+    head += '<h1>' + esc(firm.name || workspace.display_name || 'Your business') + '</h1>';
+    head += '<p class="sub">' + esc([firm.trade ? String(firm.trade).replaceAll('_', ' ') : '', firm.city].filter(Boolean).join(' · ')) + ' &nbsp; ' +
+      (verified ? '<span class="badge owner">✓ Verified owner</span>'
+        : '<span class="badge pending">Claim pending — the full file unlocks when ownership is confirmed</span>') + '</p>';
+
+    // One face; density steers which section leads. The tier is layout
+    // steering only and is never shown.
+    const tier = (report.density || {}).tier || 'sparse';
+    const sections = tier === 'rich'
+      ? [sThemes, sWatch, sYourRecord, sPositioning, sCrew, sEntrants, sCompleteness]
+      : [sYourRecord, sCompleteness, sThemes, sWatch, sPositioning, sCrew, sEntrants];
+
+    let body = '';
+    if (missing.length) {
+      body += '<section class="card wide"><h2>Needs you · ' + missing.length + '</h2><p class="why">Each of these is visible to homeowners the moment it’s filled in.</p><ul class="list">' +
+        missing.map(function (i) { return '<li class="todo"><span class="tick">○</span>' + esc(i.label) + '</li>'; }).join('') + '</ul>' +
+        '<p class="doorline"><a href="/workspace/onboarding">Fill these in</a> — takes about two minutes.</p></section>';
+    }
+    body += sections.map(function (fn) { return fn(report); }).join('');
+
+    app.classList.remove('skeleton');
+    app.innerHTML = head + '<div class="grid">' + body + '</div>';
+
+    const who = document.getElementById('who');
+    if (who && workspace.membership) who.textContent = 'Signed in as ' + (workspace.membership.role || 'owner');
+  }
+
+  function renderNoProfile(workspace) {
+    const app = document.getElementById('app');
+    app.classList.remove('skeleton');
+    app.innerHTML = '<div class="kicker">The office</div><h1>Welcome to your <em>Atlas.</em></h1>' +
+      '<p class="sub">This workspace isn’t attached to a business yet.</p>' +
+      '<section class="card wide"><h2>Tell us who you are</h2><p class="quietnote">Once we know your business, this page fills itself in — your public record, what homeowners say about you, and the parts only you can see.</p>' +
+      '<p class="doorline"><a href="/workspace/onboarding">Set up your business</a></p></section>';
+  }
+
+  async function boot() {
+    buildNav();
+    if (!token()) { window.location.replace('/workspace/signin'); return; }
+
+    const me = await api('/workspace/me');
+    if (!me.ok) {
+      if (me.status === 401) { try { localStorage.removeItem(SESSION_KEY); } catch (_) {} window.location.replace('/workspace/signin'); return; }
+      document.getElementById('app').textContent = 'Something went wrong opening your Atlas. Refresh to try again.';
+      return;
+    }
+    if (me.data.rotated_session_token) {
+      try { localStorage.setItem(SESSION_KEY, me.data.rotated_session_token); } catch (_) {}
+    }
+    const workspace = me.data.workspace || {};
+
+    const rep = await api('/workspace/report');
+    if (rep.ok && rep.data.report) render(workspace, rep.data.report);
+    else renderNoProfile(workspace);
+
+    document.getElementById('signout').addEventListener('click', async function () {
+      await api('/workspace/signout', { method: 'POST' });
       try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
-      return false;
-    }
-    accountWorkspace = result.data.workspace;
-    if (result.data.rotated_session_token) {
-      try { localStorage.setItem(SESSION_KEY, result.data.rotated_session_token); } catch (_) {}
-    }
-    const profile = accountWorkspace.profile || {};
-    if (!profile.business_name) { location.replace('/workspace/onboarding'); return false; }
-    setPill('workspace-mode', 'Workspace beta', 'status-beta');
-    const flag = document.getElementById('demo-flag');
-    if (flag) flag.innerHTML = '<strong>Private beta workspace</strong><span>Provider evidence becomes real only after consent. Atlas figures remain simulated until 4THWALL operates this workspace.</span>';
-    document.querySelectorAll('.workspace-switcher strong').forEach(function (node) { node.textContent = profile.business_name; });
-    document.querySelectorAll('.workspace-switcher small').forEach(function (node) { node.textContent = profile.service_area || 'Service area not set'; });
-    document.querySelectorAll('.ws-avatar').forEach(function (node) {
-      node.textContent = String(profile.business_name).split(/\s+/).slice(0, 2).map(function (word) { return word[0]; }).join('').toUpperCase();
-    });
-    setText('settings-business-profile', [profile.business_name, profile.trade, profile.service_area].filter(Boolean).join(' · '));
-    setText('settings-membership', 'Signed in as ' + (accountWorkspace.membership && accountWorkspace.membership.role || 'member'));
-    if (accountWorkspace.slug) setText('settings-workspace-ref', accountWorkspace.slug);
-    setText('workspace-greeting', 'Good morning.');
-    setText('preview-candidate-name', profile.business_name);
-    setText('preview-candidate-profile', [profile.trade, profile.service_area].filter(Boolean).join(' · '));
-    setText('preview-candidate-avatar', String(profile.business_name).split(/\s+/).slice(0, 2).map(function (word) { return word[0]; }).join('').toUpperCase());
-    setPill('atlas-source-status', 'Sample · not connected', 'status-preview');
-    const atlasNote = document.getElementById('atlas-sample-note');
-    if (atlasNote) atlasNote.hidden = false;
-    const boundary = document.getElementById('workspace-boundary');
-    if (boundary) boundary.innerHTML = '<strong>Your workspace identity is live.</strong><br>Provider history remains private and non-publishable. Atlas figures on this beta surface remain simulated until Atlas actually operates this workspace.';
-    const action = document.getElementById('workspace-auth-action');
-    if (action) {
-      action.textContent = 'Sign out';
-      action.href = '#';
-      action.addEventListener('click', async function (event) {
-        event.preventDefault();
-        try { await api('/workspace/signout', { method: 'POST' }); } catch (_) {}
-        try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
-        location.replace('/lens');
-      });
-    }
-    wireSignOutEverywhere();
-    await loadSessions();
-    await consumeHandoff();
-    await loadConnection();
-    return true;
-  }
-
-  function describeSession(entry) {
-    const started = new Date(entry.started_at);
-    const label = isNaN(started) ? 'Unknown start' : started.toLocaleDateString(undefined, {
-      month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
-    });
-    return label + (entry.current ? ' · this device' : '');
-  }
-
-  async function loadSessions() {
-    const target = document.getElementById('settings-sessions');
-    if (!target) return;
-    const result = await api('/workspace/sessions', { method: 'GET' });
-    if (!result.ok || !Array.isArray(result.data.sessions)) {
-      setText('settings-sessions', 'Active sessions could not be loaded.');
-      return;
-    }
-    const sessions = result.data.sessions;
-    const count = sessions.length;
-    setText('settings-sessions', count === 1
-      ? 'One active session, started ' + describeSession(sessions[0]) + '.'
-      : count + ' active sessions: ' + sessions.map(describeSession).join(' · ') + '.');
-    const button = document.getElementById('settings-signout-all-action');
-    if (button) button.disabled = count === 0;
-  }
-
-  function wireSignOutEverywhere() {
-    const button = document.getElementById('settings-signout-all-action');
-    if (!button || button.dataset.wired) return;
-    button.dataset.wired = '1';
-    button.addEventListener('click', async function () {
-      if (!window.confirm('Sign out on every device? This ends every session, including this one, and you will need a new sign-in link.')) return;
-      button.disabled = true;
-      const result = await api('/workspace/signout-all', { method: 'POST' });
-      if (!result.ok) { button.disabled = false; setText('settings-sessions', 'Sessions could not be revoked. Nothing changed.'); return; }
-      try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
-      location.replace('/lens');
+      window.location.replace('/workspace/signin');
     });
   }
 
-  function openJobberConsent() {
-    if (!accountWorkspace) { location.href = '/workspace/signin'; return; }
-    if (!canManage()) { showToast('Only a workspace owner or admin can connect a provider.'); return; }
-    const dialog = document.getElementById('jobber-consent-dialog');
-    if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
-  }
+  // Exposed for headless verification against a fixture payload — renders the
+  // same code path the live boot uses. Not referenced by the page itself.
+  window.__atlasRender = render;
 
-  async function startJobber() {
-    const status = document.getElementById('jobber-consent-status');
-    const button = document.getElementById('jobber-consent-continue');
-    if (button) button.disabled = true;
-    if (status) status.textContent = 'Creating a secure Jobber authorization…';
-    const result = await api('/workspace/connections/jobber/start', {
-      method: 'POST', body: { notice_accepted: true, notice_version: NOTICE_VERSION }
-    });
-    if (!result.ok || !result.data.authorization_url) {
-      if (button) button.disabled = false;
-      if (status) { status.className = 'auth-status error'; status.textContent = result.data.error === 'connect_unavailable' ? 'The connection service is temporarily unavailable. Nothing was authorized.' : 'We could not start the Jobber connection. Try again.'; }
-      return;
-    }
-    location.assign(result.data.authorization_url);
-  }
-
-  async function requestSync() {
-    const action = document.getElementById('jobber-connect-action');
-    if (!connectionState || !connectionState.connected) { openJobberConsent(); return; }
-    if (action) action.disabled = true;
-    const result = await api('/workspace/connections/sync', { method: 'POST', body: {} });
-    if (!result.ok) {
-      showToast('The refresh could not be queued. Your existing record is unchanged.');
-      if (action) action.disabled = false;
-      return;
-    }
-    showToast(result.data.reused ? 'A private sync is already in progress.' : 'Private Jobber refresh queued.');
-    setTimeout(loadConnection, 1800);
-  }
-
-  async function exportWorkspace() {
-    if (!accountWorkspace) { showToast('Create a workspace before exporting data.'); return; }
-    if (!canManage()) { showToast('Only a workspace owner or admin can export provider data.'); return; }
-    const result = await api('/workspace/export');
-    if (!result.ok) { showToast('No portable provider record is available yet.'); return; }
-    const blob = new Blob([JSON.stringify(result.data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = '4thwall-lens-jobber-export.json';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-    showToast('Portable Lens export prepared.');
-  }
-
-  async function disconnectWorkspace() {
-    if (!connectionState || !connectionState.connected) { showToast('No active Jobber connection to disconnect.'); return; }
-    if (!canManage()) { showToast('Only a workspace owner or admin can disconnect a provider.'); return; }
-    if (!window.confirm('Disconnect Jobber? Future syncs will stop and private receipt access will be revoked.')) return;
-    const result = await api('/workspace/disconnect', { method: 'POST', body: { confirm: true } });
-    if (!result.ok) { showToast('Jobber was not disconnected. Try again or contact support.'); return; }
-    liveReceipt = null;
-    showToast('Jobber disconnected.');
-    location.reload();
-  }
-
-  async function eraseWorkspaceEvidence() {
-    if (!accountWorkspace || !canManage()) { showToast('Only a workspace owner or admin can erase provider evidence.'); return; }
-    if (!connectionState || !connectionState.connection_status) { showToast('No provider evidence exists to erase.'); return; }
-    const confirmation = window.prompt('This permanently erases imported provider evidence and decisions. Type ERASE to continue.');
-    if (confirmation !== 'ERASE') return;
-    const result = await api('/workspace/erase', { method: 'POST', body: { confirm: 'ERASE' } });
-    if (!result.ok) { showToast('Evidence was not erased. Nothing changed.'); return; }
-    showToast('Provider evidence erased.');
-    location.reload();
-  }
-
-  function bindNavigation() {
-    document.querySelectorAll('[data-view]').forEach(function (button) { button.addEventListener('click', function () { navigate(button.dataset.view); }); });
-    document.querySelectorAll('[data-go]').forEach(function (button) { button.addEventListener('click', function () { navigate(button.dataset.go); }); });
-    document.querySelectorAll('[data-filter-go]').forEach(function (button) {
-      button.addEventListener('click', function () {
-        navigate('record');
-        const select = document.getElementById('record-filter');
-        if (select) select.value = button.dataset.filterGo;
-        renderRecords();
-      });
-    });
-  }
-
-  function bindControls() {
-    const connect = document.getElementById('jobber-connect-action');
-    const accepted = document.getElementById('jobber-notice-accepted');
-    const consent = document.getElementById('jobber-consent-continue');
-    if (connect) connect.addEventListener('click', requestSync);
-    if (accepted && consent) accepted.addEventListener('change', function () { consent.disabled = !accepted.checked; });
-    if (consent) consent.addEventListener('click', startJobber);
-    ['record-export-action', 'settings-export-action'].forEach(function (id) {
-      const button = document.getElementById(id); if (button) button.addEventListener('click', exportWorkspace);
-    });
-    const disconnect = document.getElementById('settings-disconnect-action');
-    const erase = document.getElementById('settings-erase-action');
-    if (disconnect) disconnect.addEventListener('click', disconnectWorkspace);
-    if (erase) erase.addEventListener('click', eraseWorkspaceEvidence);
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    if (!data) return;
-    setText('overview-narrative', data.narrative);
-    setText('workspace-narrative', data.narrative);
-    bindNavigation();
-    bindControls();
-    renderRecords();
-    syncCounts();
-    renderWorkspaceAnswer();
-    const search = document.getElementById('record-search');
-    const filter = document.getElementById('record-filter');
-    const project = document.getElementById('project-type');
-    if (search) search.addEventListener('input', renderRecords);
-    if (filter) filter.addEventListener('change', renderRecords);
-    if (project) project.addEventListener('change', async function () {
-      if (liveReceipt) await loadLiveReceipt(project.value);
-      else { activeAnswer = 'experience'; renderWorkspaceAnswer(); }
-    });
-    document.querySelectorAll('.demo-action').forEach(function (button) {
-      button.addEventListener('click', function () { showToast(button.dataset.demoMessage || 'This action is not available in the product preview.'); });
-    });
-    const initialHash = (location.hash || '').slice(1);
-    navigate(initialHash.includes('=') ? 'overview' : initialHash || 'overview', false);
-    hydrateWorkspaceAccount();
-  });
+  document.addEventListener('DOMContentLoaded', boot);
 })();

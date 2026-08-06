@@ -53,8 +53,6 @@
   "redirects": [
     { "source": "/lens",                  "destination": "/atlas",                              "permanent": false },
     { "source": "/lens.html",             "destination": "/atlas",                              "permanent": false },
-    { "source": "/workspace",             "destination": "/atlas",                              "permanent": false },
-    { "source": "/workspace/(.*)",        "destination": "/atlas",                              "permanent": false },
     { "source": "/trades.html",           "destination": "/atlas",                              "permanent": true },
     { "source": "/trades",                "destination": "/atlas",                              "permanent": true },
     { "source": "/ops.html",              "destination": "/atlas",                              "permanent": true },
