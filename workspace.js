@@ -164,8 +164,10 @@
   function sCrew(r) {
     const c = r.crew || {};
     if (!c.available) return '';
-    const names = (c.named || []).map(function (n) { return '<span class="chip tea">' + esc(n) + '</span>'; }).join('');
-    return '<section class="card"><h2>Your crew, in their words</h2><p class="why">' + esc(c.note || '') + '</p><div class="chips">' + names + '</div></section>';
+    // Never render employee names. The engine ships a count, not a roster.
+    return '<section class="card"><h2>Your people get named</h2><div class="statrow"><div class="stat"><b>' +
+      esc(String(c.people_named || 0)) + '</b><span>named in your reviews</span></div></div>' +
+      '<p class="quietnote">' + esc(c.note || '') + '</p></section>';
   }
 
   function sCompleteness(r) {
